@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
 /**
  * The testing node aggregate identifier value object
  */
-final class TestingNodeAggregateIdentifier
+final class TestingNodeAggregateId
 {
     const NON_EXISTENT = 'i-do-not-exist';
 

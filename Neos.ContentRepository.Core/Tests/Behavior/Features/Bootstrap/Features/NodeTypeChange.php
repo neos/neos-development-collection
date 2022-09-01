@@ -14,14 +14,14 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdentifiersByNodePaths;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * The node type change trait for behavioral tests
@@ -30,9 +30,9 @@ trait NodeTypeChange
 {
     abstract protected function getContentRepository(): ContentRepository;
 
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -44,23 +44,23 @@ trait NodeTypeChange
     public function theCommandChangeNodeAggregateTypeIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->getCurrentContentStreamIdentifier();
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
-        $tetheredDescendantNodeAggregateIdentifiers = isset($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
-            ? NodeAggregateIdentifiersByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIdentifiers'])
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
+        $tetheredDescendantNodeAggregateIds = isset($commandArguments['tetheredDescendantNodeAggregateIds'])
+            ? NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds'])
             : null;
 
         $command = new ChangeNodeAggregateType(
-            $contentStreamIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            $contentStreamId,
+            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['newNodeTypeName']),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($commandArguments['strategy']),
-            $initiatingUserIdentifier,
-            $tetheredDescendantNodeAggregateIdentifiers
+            $initiatingUserId,
+            $tetheredDescendantNodeAggregateIds
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);

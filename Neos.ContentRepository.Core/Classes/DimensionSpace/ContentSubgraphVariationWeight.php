@@ -38,7 +38,7 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
          */
         public readonly array $weight
     ) {
-        foreach ($weight as $dimensionIdentifier => $specializationDepth) {
+        foreach ($weight as $dimensionId => $specializationDepth) {
             if (!$specializationDepth instanceof Dimension\ContentDimensionValueSpecializationDepth) {
                 throw new \InvalidArgumentException(
                     sprintf(
@@ -52,9 +52,9 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
     }
 
     public function getWeightInDimension(
-        Dimension\ContentDimensionIdentifier $dimensionIdentifier
+        Dimension\ContentDimensionId $dimensionId
     ): ?Dimension\ContentDimensionValueSpecializationDepth {
-        return $this->weight[(string)$dimensionIdentifier] ?? null;
+        return $this->weight[(string)$dimensionId] ?? null;
     }
 
     public function canBeComparedTo(ContentSubgraphVariationWeight $other): bool
@@ -71,14 +71,14 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
             throw Exception\ContentSubgraphVariationWeightsAreIncomparable::butWereAttemptedTo($this, $other);
         }
         $decreasedWeight = [];
-        foreach ($this->weight as $rawDimensionIdentifier => $weight) {
-            $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
+        foreach ($this->weight as $rawDimensionId => $weight) {
+            $dimensionId = new Dimension\ContentDimensionId($rawDimensionId);
             /**
              * @var Dimension\ContentDimensionValueSpecializationDepth $otherWeight
              * Null is already excluded by canBeComparedTo above
              */
-            $otherWeight = $other->getWeightInDimension($dimensionIdentifier);
-            $decreasedWeight[$rawDimensionIdentifier] = $weight->decreaseBy($otherWeight);
+            $otherWeight = $other->getWeightInDimension($dimensionId);
+            $decreasedWeight[$rawDimensionId] = $weight->decreaseBy($otherWeight);
         }
 
         return new ContentSubgraphVariationWeight($decreasedWeight);
@@ -88,7 +88,7 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
     {
         $normalizedWeight = 0;
         $exponent = count($this->weight) - 1;
-        foreach ($this->weight as $dimensionIdentifier => $specializationDepth) {
+        foreach ($this->weight as $dimensionId => $specializationDepth) {
             $normalizedWeight += pow($normalizationBase, $exponent) * $specializationDepth->depth;
             $exponent--;
         }

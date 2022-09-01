@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -28,18 +28,18 @@ final class DiscardWorkspace implements CommandInterface
 {
     private function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly UserId $initiatingUserId,
         /**
-         * Content Stream Identifier of the newly created fork, which contains the remaining changes
+         * Content Stream ID of the newly created fork, which contains the remaining changes
          * which were not removed
          */
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier
+        public readonly ContentStreamId $newContentStreamId
     ) {
     }
 
-    public static function create(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier): self
+    public static function create(WorkspaceName $workspaceName, UserId $initiatingUserId): self
     {
-        return new self($workspaceName, $initiatingUserIdentifier, ContentStreamIdentifier::create());
+        return new self($workspaceName, $initiatingUserId, ContentStreamId::create());
     }
 
     /**
@@ -47,9 +47,9 @@ final class DiscardWorkspace implements CommandInterface
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $newContentStreamIdentifier
+        UserId $initiatingUserId,
+        ContentStreamId $newContentStreamId
     ): self {
-        return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
+        return new self($workspaceName, $initiatingUserId, $newContentStreamId);
     }
 }

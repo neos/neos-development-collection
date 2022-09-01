@@ -52,9 +52,9 @@ final class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $node->subgraphIdentity->contentStreamIdentifier->jsonSerialize(),
+                'contentStream' => $node->subgraphIdentity->contentStreamId->jsonSerialize(),
                 'dimensionSpacePoint' => json_encode($node->originDimensionSpacePoint->jsonSerialize()),
-                'nodeAggregateIdentifier' => $node->nodeAggregateIdentifier->jsonSerialize(),
+                'nodeAggregateId' => $node->nodeAggregateId->jsonSerialize(),
                 'isAutoFixable' => ($remediation !== null)
             ],
             $type,
@@ -73,8 +73,8 @@ final class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $nodeAggregate->contentStreamIdentifier->jsonSerialize(),
-                'nodeAggregateIdentifier' => $nodeAggregate->nodeAggregateIdentifier->jsonSerialize(),
+                'contentStream' => $nodeAggregate->contentStreamId->jsonSerialize(),
+                'nodeAggregateId' => $nodeAggregate->nodeAggregateId->jsonSerialize(),
                 'isAutoFixable' => ($remediation !== null)
             ],
             $type,

@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Command;
  */
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * ForkContentStream for creating a new fork of a content stream.
@@ -27,25 +27,26 @@ final class ForkContentStream implements CommandInterface
 {
     public function __construct(
         /**
-         * Content stream identifier for the new content stream
+         * Content stream id for the new content stream
          *
-         * @var ContentStreamIdentifier
+         * @var ContentStreamId
          */
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
-        public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $newContentStreamId,
+        public readonly ContentStreamId $sourceContentStreamId,
+        public readonly UserId $initiatingUserId
     ) {
     }
 
     /**
      * @param array<string,string> $array
+     * @internal only used for testcases
      */
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($array['sourceContentStreamIdentifier']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+            ContentStreamId::fromString($array['contentStreamId']),
+            ContentStreamId::fromString($array['sourceContentStreamId']),
+            UserId::fromString($array['initiatingUserId'])
         );
     }
 }

@@ -14,11 +14,11 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifiersToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 trait WorkspacePublishing
 {
     abstract protected function getContentRepository(): ContentRepository;
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
@@ -38,25 +38,25 @@ trait WorkspacePublishing
     public function theCommandPublishIndividualNodesFromWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $nodesToPublish = NodeIdentifiersToPublishOrDiscard::fromArray($commandArguments['nodesToPublish']);
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $nodesToPublish = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToPublish']);
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
-        $contentStreamIdentifierForMatchingPart = isset($commandArguments['contentStreamIdentifierForMatchingPart'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifierForMatchingPart'])
-            : ContentStreamIdentifier::create();
+        $contentStreamIdForMatchingPart = isset($commandArguments['contentStreamIdForMatchingPart'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamIdForMatchingPart'])
+            : ContentStreamId::create();
 
-        $contentStreamIdentifierForRemainingPart = isset($commandArguments['contentStreamIdentifierForRemainingPart'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifierForRemainingPart'])
-            : ContentStreamIdentifier::create();
+        $contentStreamIdForRemainingPart = isset($commandArguments['contentStreamIdForRemainingPart'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamIdForRemainingPart'])
+            : ContentStreamId::create();
 
         $command = PublishIndividualNodesFromWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             $nodesToPublish,
-            $initiatingUserIdentifier,
-            $contentStreamIdentifierForMatchingPart,
-            $contentStreamIdentifierForRemainingPart
+            $initiatingUserId,
+            $contentStreamIdForMatchingPart,
+            $contentStreamIdForRemainingPart
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
@@ -70,13 +70,13 @@ trait WorkspacePublishing
     public function theCommandPublishWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new PublishWorkspace(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $initiatingUserIdentifier
+            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;

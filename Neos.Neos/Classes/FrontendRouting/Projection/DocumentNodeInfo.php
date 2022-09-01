@@ -16,7 +16,7 @@ namespace Neos\Neos\FrontendRouting\Projection;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\Dto\RouteTags;
@@ -70,39 +70,39 @@ final class DocumentNodeInfo
         return new self($source);
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getNodeAggregateId(): NodeAggregateId
     {
-        return NodeAggregateIdentifier::fromString($this->source['nodeaggregateidentifier']);
+        return NodeAggregateId::fromString($this->source['nodeaggregateid']);
     }
 
     public function isRoot(): bool
     {
-        return $this->source['parentnodeaggregateidentifier'] === null;
+        return $this->source['parentnodeaggregateid'] === null;
     }
 
-    public function getParentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getParentNodeAggregateId(): NodeAggregateId
     {
-        return NodeAggregateIdentifier::fromString($this->source['parentnodeaggregateidentifier']);
+        return NodeAggregateId::fromString($this->source['parentnodeaggregateid']);
     }
 
-    public function hasPrecedingNodeAggregateIdentifier(): bool
+    public function hasPrecedingNodeAggregateId(): bool
     {
-        return $this->source['precedingnodeaggregateidentifier'] !== null;
+        return $this->source['precedingnodeaggregateid'] !== null;
     }
 
-    public function getPrecedingNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getPrecedingNodeAggregateId(): NodeAggregateId
     {
-        return NodeAggregateIdentifier::fromString($this->source['precedingnodeaggregateidentifier']);
+        return NodeAggregateId::fromString($this->source['precedingnodeaggregateid']);
     }
 
-    public function hasSucceedingNodeAggregateIdentifier(): bool
+    public function hasSucceedingNodeAggregateId(): bool
     {
-        return $this->source['succeedingnodeaggregateidentifier'] !== null;
+        return $this->source['succeedingnodeaggregateid'] !== null;
     }
 
-    public function getSucceedingNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getSucceedingNodeAggregateId(): NodeAggregateId
     {
-        return NodeAggregateIdentifier::fromString($this->source['succeedingnodeaggregateidentifier']);
+        return NodeAggregateId::fromString($this->source['succeedingnodeaggregateid']);
     }
 
     public function getDimensionSpacePointHash(): string
@@ -111,13 +111,13 @@ final class DocumentNodeInfo
     }
 
     /**
-     * This is NOT the node path; but the "nodeAggregateIdentifiers on the hierarchy; separated by /"
+     * This is NOT the node path; but the "nodeAggregateIds on the hierarchy; separated by /"
      *
      * @return string
      */
-    public function getNodeAggregateIdentifierPath(): string
+    public function getNodeAggregateIdPath(): string
     {
-        return $this->source['nodeaggregateidentifierpath'];
+        return $this->source['nodeaggregateidpath'];
     }
 
     public function getUriPath(): string
@@ -166,16 +166,16 @@ final class DocumentNodeInfo
 
 
     /**
-     * As the route tags are based on the node aggregate identifiers of the node and its parents up to the site,
-     * we can extract this from the "nodeAggregateIdentifierPath", which contains these identifiers.
+     * As the route tags are based on the node aggregate ids of the node and its parents up to the site,
+     * we can extract this from the "nodeAggregateIdPath", which contains these ids.
      *
      * @return RouteTags
      */
     public function getRouteTags(): RouteTags
     {
-        $nodeAggregateIdentifiers = explode('/', $this->getNodeAggregateIdentifierPath());
-        array_shift($nodeAggregateIdentifiers); // remove the root node identifier from the list
-        return RouteTags::createFromArray($nodeAggregateIdentifiers);
+        $nodeAggregateIds = explode('/', $this->getNodeAggregateIdPath());
+        array_shift($nodeAggregateIds); // remove the root node id from the list
+        return RouteTags::createFromArray($nodeAggregateIds);
     }
 
     public function getSiteNodeName(): SiteNodeName
@@ -215,7 +215,7 @@ final class DocumentNodeInfo
 
     public function __toString(): string
     {
-        return ($this->source['nodeaggregateidentifier'] ?? '<unknown nodeAggregateIdentifier>')
+        return ($this->source['nodeaggregateid'] ?? '<unknown nodeAggregateId>')
             . '@' . ($this->source['dimensionspacepointhash'] ?? '<unkown dimensionSpacePointHash>');
     }
 }

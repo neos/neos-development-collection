@@ -30,9 +30,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
 /**
@@ -58,14 +58,14 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     final public function getSubgraph(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $contentStreamIdentifier . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
+        $index = $contentStreamId . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraph(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints,
                 $this->client,
@@ -82,26 +82,26 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException
      * @throws NodeTypeNotFoundException
      */
-    public function findNodeByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+    public function findNodeById(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?Node {
         $connection = $this->client->getConnection();
 
-        // HINT: we check the ContentStreamIdentifier on the EDGE;
+        // HINT: we check the ContentStreamId on the EDGE;
         // as this is where we actually find out whether the node exists in the content stream
         $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamidentifier, h.name FROM ' . $this->tableNamePrefix . '_node n
+            'SELECT n.*, h.contentstreamid, h.name FROM ' . $this->tableNamePrefix . '_node n
                   INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                       ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                  WHERE n.nodeaggregateid = :nodeAggregateId
                   AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                  AND h.contentstreamidentifier = :contentStreamIdentifier',
+                  AND h.contentstreamid = :contentStreamId',
             [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'nodeAggregateId' => (string)$nodeAggregateId,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier
+                'contentStreamId' => (string)$contentStreamId
             ]
         )->fetchAssociative();
 
@@ -116,22 +116,22 @@ final class ContentGraph implements ContentGraphInterface
      * @throws \Exception
      */
     public function findRootNodeAggregateByType(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
+        $query = 'SELECT n.*, h.contentstreamid, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
                     FROM ' . $this->tableNamePrefix . '_node n
                         JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON h.childnodeanchor = n.relationanchorpoint
-                    WHERE h.contentstreamidentifier = :contentStreamIdentifier
-                        AND h.parentnodeanchor = :rootEdgeParentAnchorIdentifier
+                    WHERE h.contentstreamid = :contentStreamId
+                        AND h.parentnodeanchor = :rootEdgeParentAnchorId
                         AND n.nodetypename = :nodeTypeName';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'rootEdgeParentAnchorIdentifier' => (string)NodeRelationAnchorPoint::forRootEdge(),
+            'contentStreamId' => (string)$contentStreamId,
+            'rootEdgeParentAnchorId' => (string)NodeRelationAnchorPoint::forRootEdge(),
             'nodeTypeName' => (string)$nodeTypeName,
         ];
 
@@ -151,20 +151,20 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     public function findNodeAggregatesByType(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): iterable {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT n.*, h.contentstreamidentifier, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
+        $query = 'SELECT n.*, h.contentstreamid, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
                 FROM ' . $this->tableNamePrefix . '_node n
                     JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         ON h.childnodeanchor = n.relationanchorpoint
-                WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                WHERE h.contentstreamid = :contentStreamId
                     AND n.nodetypename = :nodeTypeName';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
             'nodeTypeName' => (string)$nodeTypeName,
         ];
 
@@ -180,27 +180,27 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException
      * @throws \Exception
      */
-    public function findNodeAggregateByIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+    public function findNodeAggregateById(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*,
-                      h.name, h.contentstreamidentifier, h.dimensionspacepoint AS covereddimensionspacepoint,
+                      h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = h.childnodeanchor
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateidentifier = n.nodeaggregateidentifier
-                          AND r.contentstreamidentifier = h.contentstreamidentifier
-                          AND r.affectednodeaggregateidentifier = n.nodeaggregateidentifier
+                          ON r.originnodeaggregateid = n.nodeaggregateid
+                          AND r.contentstreamid = h.contentstreamid
+                          AND r.affectednodeaggregateid = n.nodeaggregateid
                           AND r.dimensionspacepointhash = h.dimensionspacepointhash
-                      WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                      AND h.contentstreamidentifier = :contentStreamIdentifier';
+                      WHERE n.nodeaggregateid = :nodeAggregateId
+                      AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'nodeAggregateId' => (string)$nodeAggregateId,
+            'contentStreamId' => (string)$contentStreamId
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -217,13 +217,13 @@ final class ContentGraph implements ContentGraphInterface
      * @throws \Exception
      */
     public function findParentNodeAggregates(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId
     ): iterable {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT p.*,
-                      ph.name, ph.contentstreamidentifier, ph.dimensionspacepoint AS covereddimensionspacepoint,
+                      ph.name, ph.contentstreamid, ph.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
@@ -232,16 +232,16 @@ final class ContentGraph implements ContentGraphInterface
                         ON ch.parentnodeanchor = p.relationanchorpoint
                       JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateidentifier = p.nodeaggregateidentifier
-                          AND r.contentstreamidentifier = ph.contentstreamidentifier
-                          AND r.affectednodeaggregateidentifier = p.nodeaggregateidentifier
+                          ON r.originnodeaggregateid = p.nodeaggregateid
+                          AND r.contentstreamid = ph.contentstreamid
+                          AND r.affectednodeaggregateid = p.nodeaggregateid
                           AND r.dimensionspacepointhash = ph.dimensionspacepointhash
-                      WHERE c.nodeaggregateidentifier = :nodeAggregateIdentifier
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
-                      AND ch.contentstreamidentifier = :contentStreamIdentifier';
+                      WHERE c.nodeaggregateid = :nodeAggregateId
+                      AND ph.contentstreamid = :contentStreamId
+                      AND ch.contentstreamid = :contentStreamId';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'nodeAggregateId' => (string)$childNodeAggregateId,
+            'contentStreamId' => (string)$contentStreamId
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -257,39 +257,39 @@ final class ContentGraph implements ContentGraphInterface
      * @throws \Exception
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*,
-                      h.name, h.contentstreamidentifier, h.dimensionspacepoint AS covereddimensionspacepoint,
+                      h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node n
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                           ON h.childnodeanchor = n.relationanchorpoint
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateidentifier = n.nodeaggregateidentifier
-                          AND r.contentstreamidentifier = h.contentstreamidentifier
-                          AND r.affectednodeaggregateidentifier = n.nodeaggregateidentifier
+                          ON r.originnodeaggregateid = n.nodeaggregateid
+                          AND r.contentstreamid = h.contentstreamid
+                          AND r.affectednodeaggregateid = n.nodeaggregateid
                           AND r.dimensionspacepointhash = h.dimensionspacepointhash
-                      WHERE n.nodeaggregateidentifier = (
-                          SELECT p.nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node p
+                      WHERE n.nodeaggregateid = (
+                          SELECT p.nodeaggregateid FROM ' . $this->tableNamePrefix . '_node p
                           INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
                               ON ch.parentnodeanchor = p.relationanchorpoint
                           INNER JOIN ' . $this->tableNamePrefix . '_node c
                               ON ch.childnodeanchor = c.relationanchorpoint
-                          WHERE ch.contentstreamidentifier = :contentStreamIdentifier
+                          WHERE ch.contentstreamid = :contentStreamId
                           AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
-                          AND c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                          AND c.nodeaggregateid = :childNodeAggregateId
                           AND c.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
                       )
-                      AND h.contentstreamidentifier = :contentStreamIdentifier';
+                      AND h.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
+            'childNodeAggregateId' => (string)$childNodeAggregateId,
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash,
         ];
 
@@ -306,16 +306,16 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException|\Exception
      */
     public function findChildNodeAggregates(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId
     ): iterable {
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery();
 
         $parameters = [
-            'parentNodeAggregateIdentifier' => (string) $parentNodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string) $contentStreamIdentifier
+            'parentNodeAggregateId' => (string) $parentNodeAggregateId,
+            'contentStreamId' => (string) $contentStreamId
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -331,8 +331,8 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException|NodeTypeNotFoundException
      */
     public function findChildNodeAggregatesByName(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): iterable {
         $connection = $this->client->getConnection();
@@ -341,8 +341,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND ch.name = :relationName';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
+            'parentNodeAggregateId' => (string)$parentNodeAggregateId,
             'relationName' => (string)$name
         ];
 
@@ -359,8 +359,8 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException|NodeTypeNotFoundException
      */
     public function findTetheredChildNodeAggregates(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId
     ): iterable {
         $connection = $this->client->getConnection();
 
@@ -368,8 +368,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND c.classification = :tetheredClassification';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
+            'parentNodeAggregateId' => (string)$parentNodeAggregateId,
             'tetheredClassification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
         ];
 
@@ -384,7 +384,7 @@ final class ContentGraph implements ContentGraphInterface
     private function createChildNodeAggregateQuery(): string
     {
         return 'SELECT c.*,
-                      ch.name, ch.contentstreamidentifier, ch.dimensionspacepoint AS covereddimensionspacepoint,
+                      ch.name, ch.contentstreamid, ch.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
@@ -394,28 +394,28 @@ final class ContentGraph implements ContentGraphInterface
                       JOIN ' . $this->tableNamePrefix . '_node c
                           ON ch.childnodeanchor = c.relationanchorpoint
                       LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateidentifier = p.nodeaggregateidentifier
-                          AND r.contentstreamidentifier = ph.contentstreamidentifier
-                          AND r.affectednodeaggregateidentifier = p.nodeaggregateidentifier
+                          ON r.originnodeaggregateid = p.nodeaggregateid
+                          AND r.contentstreamid = ph.contentstreamid
+                          AND r.affectednodeaggregateid = p.nodeaggregateid
                           AND r.dimensionspacepointhash = ph.dimensionspacepointhash
-                      WHERE p.nodeaggregateidentifier = :parentNodeAggregateIdentifier
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
-                      AND ch.contentstreamidentifier = :contentStreamIdentifier';
+                      WHERE p.nodeaggregateid = :parentNodeAggregateId
+                      AND ph.contentstreamid = :contentStreamId
+                      AND ch.contentstreamid = :contentStreamId';
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param NodeName $nodeName
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateId $parentNodeAggregateId
      * @param OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
      * @return DimensionSpacePointSet
      * @throws DBALException
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeName $nodeName,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet {
@@ -427,16 +427,16 @@ final class ContentGraph implements ContentGraphInterface
                           ON h.parentnodeanchor = n.relationanchorpoint
                       INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
                           ON ph.childnodeanchor = n.relationanchorpoint
-                      WHERE n.nodeaggregateidentifier = :parentNodeAggregateIdentifier
+                      WHERE n.nodeaggregateid = :parentNodeAggregateId
                       AND n.origindimensionspacepointhash = :parentNodeOriginDimensionSpacePointHash
-                      AND ph.contentstreamidentifier = :contentStreamIdentifier
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      AND ph.contentstreamid = :contentStreamId
+                      AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
                       AND h.name = :nodeName';
         $parameters = [
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier,
+            'parentNodeAggregateId' => (string)$parentNodeAggregateId,
             'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
-            'contentStreamIdentifier' => (string) $contentStreamIdentifier,
+            'contentStreamId' => (string) $contentStreamId,
             'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
             'nodeName' => (string) $nodeName
         ];

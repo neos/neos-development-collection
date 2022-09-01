@@ -16,7 +16,7 @@ namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -51,7 +51,7 @@ class NodeShortcutResolver
 
     /**
      * "adapter" for {@see resolveNode} when working with NodeAddresses.
-     * Note: The ContentStreamIdentifier is not required for this service,
+     * Note: The ContentStreamId is not required for this service,
      * because it is only covering the live workspace
      *
      * @param NodeAddress $nodeAddress
@@ -65,7 +65,7 @@ class NodeShortcutResolver
     {
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
         $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateIdentifier,
+            $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
         $resolvedTarget = $this->resolveNode($documentNodeInfo, $contentRepository);
@@ -75,13 +75,13 @@ class NodeShortcutResolver
         if ($resolvedTarget === $documentNodeInfo) {
             return $nodeAddress;
         }
-        return $nodeAddress->withNodeAggregateIdentifier($documentNodeInfo->getNodeAggregateIdentifier());
+        return $nodeAddress->withNodeAggregateId($documentNodeInfo->getNodeAggregateId());
     }
 
     /**
      * This method is used during routing (when creating URLs), to directly generate URLs to the shortcut TARGET,
      * if linking to a shortcut.
-     * Note: The ContentStreamIdentifier is not required for this service,
+     * Note: The ContentStreamId is not required for this service,
      * because it is only covering the live workspace
      *
      * @param DocumentNodeInfo $documentNodeInfo
@@ -112,21 +112,21 @@ class NodeShortcutResolver
                         throw new InvalidShortcutException(sprintf(
                             'Shortcut Node "%s" points to a non-existing parent node "%s"',
                             $documentNodeInfo,
-                            $documentNodeInfo->getNodeAggregateIdentifier()
+                            $documentNodeInfo->getNodeAggregateId()
                         ), 1599669406, $e);
                     }
                     if ($documentNodeInfo->isDisabled()) {
                         throw new InvalidShortcutException(sprintf(
                             'Shortcut Node "%s" points to disabled parent node "%s"',
                             $documentNodeInfo,
-                            $documentNodeInfo->getNodeAggregateIdentifier()
+                            $documentNodeInfo->getNodeAggregateId()
                         ), 1599664517);
                     }
                     continue 2;
                 case 'firstChildNode':
                     try {
                         $documentNodeInfo = $documentUriPathFinder->getFirstEnabledChildNode(
-                            $documentNodeInfo->getNodeAggregateIdentifier(),
+                            $documentNodeInfo->getNodeAggregateId(),
                             $documentNodeInfo->getDimensionSpacePointHash()
                         );
                     } catch (\Exception $e) {
@@ -148,10 +148,10 @@ class NodeShortcutResolver
                         ), 1599043489, $e);
                     }
                     if ($targetUri->getScheme() === 'node') {
-                        $targetNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($targetUri->getHost());
+                        $targetNodeAggregateId = NodeAggregateId::fromString($targetUri->getHost());
                         try {
                             $documentNodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-                                $targetNodeAggregateIdentifier,
+                                $targetNodeAggregateId,
                                 $documentNodeInfo->getDimensionSpacePointHash()
                             );
                         } catch (\Exception $e) {
@@ -165,7 +165,7 @@ class NodeShortcutResolver
                             throw new InvalidShortcutException(sprintf(
                                 'Shortcut target in Node "%s" points to disabled node "%s"',
                                 $documentNodeInfo,
-                                $documentNodeInfo->getNodeAggregateIdentifier()
+                                $documentNodeInfo->getNodeAggregateId()
                             ), 1599664423);
                         }
                         continue 2;

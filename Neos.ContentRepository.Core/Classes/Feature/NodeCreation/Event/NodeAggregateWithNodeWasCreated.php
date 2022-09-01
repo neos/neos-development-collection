@@ -14,16 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeCreation\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
@@ -35,31 +35,31 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 final class NodeAggregateWithNodeWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
-    EmbedsContentStreamAndNodeAggregateIdentifier
+    EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly DimensionSpacePointSet $coveredDimensionSpacePoints,
-        public readonly NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        public readonly NodeAggregateId $parentNodeAggregateId,
         public readonly ?NodeName $nodeName,
         public readonly SerializedPropertyValues $initialPropertyValues,
         public readonly NodeAggregateClassification $nodeAggregateClassification,
-        public readonly UserIdentifier $initiatingUserIdentifier,
-        public readonly ?NodeAggregateIdentifier $succeedingNodeAggregateIdentifier = null
+        public readonly UserId $initiatingUserId,
+        public readonly ?NodeAggregateId $succeedingNodeAggregateId = null
     ) {
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getContentStreamId(): ContentStreamId
     {
-        return $this->contentStreamIdentifier;
+        return $this->contentStreamId;
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getNodeAggregateId(): NodeAggregateId
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeAggregateId;
     }
 
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
@@ -67,38 +67,38 @@ final class NodeAggregateWithNodeWasCreated implements
         return $this->originDimensionSpacePoint;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
     {
         return new self(
-            $targetContentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
+            $targetContentStreamId,
+            $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
             $this->coveredDimensionSpacePoints,
-            $this->parentNodeAggregateIdentifier,
+            $this->parentNodeAggregateId,
             $this->nodeName,
             $this->initialPropertyValues,
             $this->nodeAggregateClassification,
-            $this->initiatingUserIdentifier,
-            $this->succeedingNodeAggregateIdentifier
+            $this->initiatingUserId,
+            $this->succeedingNodeAggregateId
         );
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($values['contentStreamId']),
+            NodeAggregateId::fromString($values['nodeAggregateId']),
             NodeTypeName::fromString($values['nodeTypeName']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
             DimensionSpacePointSet::fromArray($values['coveredDimensionSpacePoints']),
-            NodeAggregateIdentifier::fromString($values['parentNodeAggregateIdentifier']),
+            NodeAggregateId::fromString($values['parentNodeAggregateId']),
             isset($values['nodeName']) ? NodeName::fromString($values['nodeName']) : null,
             SerializedPropertyValues::fromArray($values['initialPropertyValues']),
             NodeAggregateClassification::from($values['nodeAggregateClassification']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
-            isset($values['succeedingNodeAggregateIdentifier'])
-                ? NodeAggregateIdentifier::fromString($values['succeedingNodeAggregateIdentifier'])
+            UserId::fromString($values['initiatingUserId']),
+            isset($values['succeedingNodeAggregateId'])
+                ? NodeAggregateId::fromString($values['succeedingNodeAggregateId'])
                 : null,
         );
     }
@@ -106,17 +106,17 @@ final class NodeAggregateWithNodeWasCreated implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'nodeTypeName' => $this->nodeTypeName,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'coveredDimensionSpacePoints' => $this->coveredDimensionSpacePoints,
-            'parentNodeAggregateIdentifier' => $this->parentNodeAggregateIdentifier,
+            'parentNodeAggregateId' => $this->parentNodeAggregateId,
             'nodeName' => $this->nodeName,
             'initialPropertyValues' => $this->initialPropertyValues,
             'nodeAggregateClassification' => $this->nodeAggregateClassification,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
-            'succeedingNodeAggregateIdentifier' => $this->succeedingNodeAggregateIdentifier
+            'initiatingUserId' => $this->initiatingUserId,
+            'succeedingNodeAggregateId' => $this->succeedingNodeAggregateId
         ];
     }
 }

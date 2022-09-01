@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\EventStore\EventStoreInterface;
 
 /**
@@ -29,7 +29,7 @@ use Neos\EventStore\EventStoreInterface;
 final class ProjectionFactoryDependencies
 {
     public function __construct(
-        public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        public readonly ContentRepositoryId $contentRepositoryId,
         public readonly EventStoreInterface $eventStore,
         public readonly EventNormalizer $eventNormalizer,
         public readonly NodeTypeManager $nodeTypeManager,

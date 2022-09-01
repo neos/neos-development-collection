@@ -87,8 +87,8 @@ class PrevUntilOperation extends AbstractOperation
 
             foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null &&
-                    !isset($outputNodeIdentifiers[(string)$prevNode->nodeAggregateIdentifier])) {
-                    $outputNodeIdentifiers[(string)$prevNode->nodeAggregateIdentifier] = true;
+                    !isset($outputNodeIdentifiers[(string)$prevNode->nodeAggregateId])) {
+                    $outputNodeIdentifiers[(string)$prevNode->nodeAggregateId] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -108,11 +108,11 @@ class PrevUntilOperation extends AbstractOperation
     protected function getPrevForNode(Node $contextNode): Nodes
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
         if ($parentNode === null) {
             return Nodes::createEmpty();
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->previousAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId)->previousAll($contextNode);
     }
 }

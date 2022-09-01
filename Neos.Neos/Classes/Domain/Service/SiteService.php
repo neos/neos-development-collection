@@ -16,9 +16,9 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
@@ -76,7 +76,7 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
             $site->getConfiguration()['contentRepository']
             ?? throw new \RuntimeException(
                 'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
@@ -180,10 +180,10 @@ class SiteService
         //return $site; // TODO: FIX ME (CODE BELOW)
         $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
         if (is_null($currentUserIdentifier)) {
-            $currentUserIdentifier = UserIdentifier::forSystemUser();
+            $currentUserIdentifier = UserId::forSystemUser();
         }
 
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
             $site->getConfiguration()['contentRepository']
             ?? throw new \RuntimeException(
                 'There is no content repository identifier configured in Sites configuration in Settings.yaml:'

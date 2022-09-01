@@ -68,10 +68,10 @@ class NodeReferenceConverter extends AbstractTypeConverter
         if (is_array($source)) {
             $result = [];
             foreach ($source as $node) {
-                $result[] = (string)$node->nodeAggregateIdentifier;
+                $result[] = (string)$node->nodeAggregateId;
             }
         } else {
-            $result = (string)$source->nodeAggregateIdentifier;
+            $result = (string)$source->nodeAggregateId;
         }
 
         return $result;

@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 trait RemoveNodeAggregateTrait
@@ -18,16 +18,16 @@ trait RemoveNodeAggregateTrait
     {
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $tetheredNodeAggregate->contentStreamIdentifier,
-                $tetheredNodeAggregate->nodeAggregateIdentifier,
+                $tetheredNodeAggregate->contentStreamId,
+                $tetheredNodeAggregate->nodeAggregateId,
                 $tetheredNodeAggregate->occupiedDimensionSpacePoints,
                 $tetheredNodeAggregate->coveredDimensionSpacePoints,
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $tetheredNodeAggregate->contentStreamIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            $tetheredNodeAggregate->contentStreamId
         );
         return new EventsToPublish(
             $streamName->getEventStreamName(),

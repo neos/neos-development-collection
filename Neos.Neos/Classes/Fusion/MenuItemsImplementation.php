@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -154,7 +154,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
         if (!is_null($this->getItemCollection())) {
             $childSubtree = $subgraph->findSubtrees(
-                NodeAggregateIdentifiers::fromNodes($this->getItemCollection()),
+                NodeAggregateIds::fromNodes($this->getItemCollection()),
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
@@ -165,7 +165,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             }
 
             $childSubtree = $subgraph->findSubtrees(
-                NodeAggregateIdentifiers::create($entryParentNode->nodeAggregateIdentifier),
+                NodeAggregateIds::create($entryParentNode->nodeAggregateId),
                 $this->getMaximumLevels(),
                 $this->getNodeTypeConstraints()
             );
@@ -229,7 +229,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $fusionContext = $this->runtime->getCurrentContext();
         $traversalStartingPoint = $this->getStartingPoint() ?: $fusionContext['node'] ?? null;
 
-        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryIdentifier;
+        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         if (!$traversalStartingPoint instanceof Node) {
@@ -314,7 +314,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
             $shouldContinueTraversal = $callback($node);
-            $node = $subgraph->findParentNode($node->nodeAggregateIdentifier);
+            $node = $subgraph->findParentNode($node->nodeAggregateId);
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 }

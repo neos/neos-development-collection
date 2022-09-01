@@ -15,13 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeVariation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Create a variant of a node in a content stream
@@ -34,14 +34,14 @@ final class CreateNodeVariant implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdentifierToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $targetOrigin,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -51,11 +51,11 @@ final class CreateNodeVariant implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -65,29 +65,29 @@ final class CreateNodeVariant implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'sourceOrigin' => $this->sourceOrigin,
             'targetOrigin' => $this->targetOrigin,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserId' => $this->initiatingUserId
         ];
     }
 
-    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
-        return $this->contentStreamIdentifier->equals($nodeIdentifierToPublish->contentStreamIdentifier)
-            && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
-            && $this->targetOrigin->equals($nodeIdentifierToPublish->dimensionSpacePoint);
+        return $this->contentStreamId->equals($nodeIdToPublish->contentStreamId)
+            && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+            && $this->targetOrigin->equals($nodeIdToPublish->dimensionSpacePoint);
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): CommandInterface
+    public function createCopyForContentStream(ContentStreamId $target): CommandInterface
     {
         return new self(
             $target,
-            $this->nodeAggregateIdentifier,
+            $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->targetOrigin,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserId
         );
     }
 }

@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -50,10 +50,10 @@ trait NodeRemoval
         RemoveNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
@@ -62,9 +62,9 @@ trait NodeRemoval
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
-        if ($command->removalAttachmentPoint instanceof NodeAggregateIdentifier) {
+        if ($command->removalAttachmentPoint instanceof NodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamIdentifier,
+                $command->contentStreamId,
                 $command->removalAttachmentPoint,
                 $contentRepository
             );
@@ -72,8 +72,8 @@ trait NodeRemoval
 
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->nodeAggregateId,
                 $command->nodeVariantSelectionStrategy->resolveAffectedOriginDimensionSpacePoints(
                     $nodeAggregate->getOccupationByCovered($command->coveredDimensionSpacePoint),
                     $nodeAggregate,
@@ -84,13 +84,13 @@ trait NodeRemoval
                     $nodeAggregate,
                     $this->getInterDimensionalVariationGraph()
                 ),
-                $command->initiatingUserIdentifier,
+                $command->initiatingUserId,
                 $command->removalAttachmentPoint
             )
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -104,7 +104,7 @@ trait NodeRemoval
     {
         if ($nodeAggregate->classification->isTethered()) {
             throw new TetheredNodeAggregateCannotBeRemoved(
-                'The node aggregate "' . $nodeAggregate->nodeAggregateIdentifier
+                'The node aggregate "' . $nodeAggregate->nodeAggregateId
                 . '" is tethered, and thus cannot be removed.',
                 1597753832
             );

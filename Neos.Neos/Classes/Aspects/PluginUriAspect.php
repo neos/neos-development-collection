@@ -84,7 +84,7 @@ class PluginUriAspect
                 if ($documentNode->nodeType->isOfType((string)NodeTypeNameFactory::forDocument())) {
                     break;
                 }
-                $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateIdentifier);
+                $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateId);
             }
         }
 
@@ -139,7 +139,7 @@ class PluginUriAspect
         // store original node path to restore it after generating the uri
         $originalNodePath = $request->getMainRequest()->getArgument('node');
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);

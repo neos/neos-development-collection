@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Neos\FrontendRouting\NodeAddress;
@@ -33,19 +33,19 @@ class NodeSiteResolvingService
 
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,
-        ContentRepositoryIdentifier $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryIdentifier
     ): ?Node {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $contentRepositoryIdentifier
         );
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,
             $nodeAddress->isInLiveWorkspace()
                 ? VisibilityConstraints::frontend()
                 : VisibilityConstraints::withoutRestrictions()
         );
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $node = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
         if (is_null($node)) {
             return null;
         }
@@ -56,7 +56,7 @@ class NodeSiteResolvingService
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->nodeAggregateIdentifier));
+        } while ($node = $subgraph->findParentNode($node->nodeAggregateId));
 
         // no Site node found at rootline
         return null;

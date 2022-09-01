@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\Workspace;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -34,7 +34,7 @@ class Workspace
         public readonly ?WorkspaceName $baseWorkspaceName,
         public readonly ?WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
-        public readonly ContentStreamIdentifier $currentContentStreamIdentifier,
+        public readonly ContentStreamId $currentContentStreamId,
         public readonly WorkspaceStatus $status,
         public readonly ?string $workspaceOwner
     ) {

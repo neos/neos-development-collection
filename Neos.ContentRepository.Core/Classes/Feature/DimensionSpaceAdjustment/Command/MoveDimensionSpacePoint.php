@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 
 /**
@@ -34,7 +34,7 @@ final class MoveDimensionSpacePoint implements
     RebasableToOtherContentStreamsInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamId $contentStreamId,
         public readonly DimensionSpacePoint $source,
         public readonly DimensionSpacePoint $target
     ) {
@@ -46,7 +46,7 @@ final class MoveDimensionSpacePoint implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
         );
@@ -58,13 +58,13 @@ final class MoveDimensionSpacePoint implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'contentStreamId' => $this->contentStreamId,
             'source' => $this->source,
             'target' => $this->target,
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): self
+    public function createCopyForContentStream(ContentStreamId $target): self
     {
         return new self(
             $target,

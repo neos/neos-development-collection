@@ -21,7 +21,7 @@ use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensi
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -62,7 +62,7 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    public function get(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepository
+    public function get(ContentRepositoryId $contentRepositoryIdentifier): ContentRepository
     {
         if (!array_key_exists($contentRepositoryIdentifier->value, $this->contentRepositoryInstances)) {
             $this->contentRepositoryInstances[$contentRepositoryIdentifier->value] = $this->getFactory($contentRepositoryIdentifier)->build();
@@ -72,9 +72,9 @@ final class ContentRepositoryRegistry
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
-        $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryIdentifier);
+        $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
         return $contentRepository->getContentGraph()->getSubgraph(
-            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->subgraphIdentity->contentStreamId,
             $node->subgraphIdentity->dimensionSpacePoint,
             $node->subgraphIdentity->visibilityConstraints
         );
@@ -86,7 +86,7 @@ final class ContentRepositoryRegistry
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      * @template T of ContentRepositoryServiceInterface
      */
-    public function getService(ContentRepositoryIdentifier $contentRepositoryIdentifier, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
+    public function getService(ContentRepositoryId $contentRepositoryIdentifier, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
     {
         if (!isset($this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)])) {
             $this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)] = $this->getFactory($contentRepositoryIdentifier)->buildService($contentRepositoryServiceFactory);
@@ -98,7 +98,7 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    private function getFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepositoryFactory
+    private function getFactory(ContentRepositoryId $contentRepositoryIdentifier): ContentRepositoryFactory
     {
         // This cache is CRUCIAL, because it ensures that the same CR always deals with the same objects internally, even if multiple services
         // are called on the same CR.
@@ -111,7 +111,7 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    private function buildFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier): ContentRepositoryFactory
+    private function buildFactory(ContentRepositoryId $contentRepositoryIdentifier): ContentRepositoryFactory
     {
         assert(is_array($this->settings['contentRepositories']));
         assert(isset($this->settings['contentRepositories'][$contentRepositoryIdentifier->value]) && is_array($this->settings['contentRepositories'][$contentRepositoryIdentifier->value]), ContentRepositoryNotFound::notConfigured($contentRepositoryIdentifier));
@@ -136,7 +136,7 @@ final class ContentRepositoryRegistry
         }
     }
 
-    private function buildEventStore(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): EventStoreInterface
+    private function buildEventStore(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): EventStoreInterface
     {
         assert(isset($contentRepositoryPreset['eventStore']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have eventStore.factoryObjectName configured.', $contentRepositorySettings['preset']));
         $eventStoreFactory = $this->objectManager->get($contentRepositoryPreset['eventStore']['factoryObjectName']);
@@ -146,7 +146,7 @@ final class ContentRepositoryRegistry
         return $eventStoreFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['eventStore']);
     }
 
-    private function buildNodeTypeManager(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): NodeTypeManager
+    private function buildNodeTypeManager(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): NodeTypeManager
     {
         assert(isset($contentRepositoryPreset['nodeTypeManager']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have nodeTypeManager.factoryObjectName configured.', $contentRepositorySettings['preset']));
         $nodeTypeManagerFactory = $this->objectManager->get($contentRepositoryPreset['nodeTypeManager']['factoryObjectName']);
@@ -156,7 +156,7 @@ final class ContentRepositoryRegistry
         return $nodeTypeManagerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['nodeTypeManager']);
     }
 
-    private function buildContentDimensionSource(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ContentDimensionSourceInterface
+    private function buildContentDimensionSource(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ContentDimensionSourceInterface
     {
         assert(isset($contentRepositoryPreset['contentDimensionSource']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have contentDimensionSource.factoryObjectName configured.', $contentRepositorySettings['preset']));
         $contentDimensionSourceFactory = $this->objectManager->get($contentRepositoryPreset['contentDimensionSource']['factoryObjectName']);
@@ -190,7 +190,7 @@ final class ContentRepositoryRegistry
         return new Serializer($normalizers);
     }
 
-    private function buildProjectionsFactory(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ProjectionsFactory
+    private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ProjectionsFactory
     {
         assert(isset($contentRepositoryPreset['projections']) && is_array($contentRepositoryPreset['projections']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have projections configured, or the value is no array.', $contentRepositorySettings['preset']));
         $projectionsFactory = new ProjectionsFactory();
@@ -215,7 +215,7 @@ final class ContentRepositoryRegistry
         return $projectionsFactory;
     }
 
-    private function buildProjectionCatchUpTrigger(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ProjectionCatchUpTriggerInterface
+    private function buildProjectionCatchUpTrigger(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ProjectionCatchUpTriggerInterface
     {
         assert(isset($contentRepositoryPreset['projectionCatchUpTrigger']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have projectionCatchUpTrigger.factoryObjectName configured.', $contentRepositorySettings['preset']));
         $projectionCatchUpTriggerFactory = $this->objectManager->get($contentRepositoryPreset['projectionCatchUpTrigger']['factoryObjectName']);

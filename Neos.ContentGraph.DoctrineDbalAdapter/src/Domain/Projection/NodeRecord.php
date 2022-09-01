@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
@@ -30,7 +30,7 @@ final class NodeRecord
 {
     public function __construct(
         public NodeRelationAnchorPoint $relationAnchorPoint,
-        public NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public NodeAggregateId $nodeAggregateId,
         /** @var array<string,string> */
         public array $originDimensionSpacePoint,
         public string $originDimensionSpacePointHash,
@@ -50,7 +50,7 @@ final class NodeRecord
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
             'relationanchorpoint' => (string)$this->relationAnchorPoint,
-            'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
+            'nodeaggregateid' => (string)$this->nodeAggregateId,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
@@ -68,7 +68,7 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
-                'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
+                'nodeaggregateid' => (string)$this->nodeAggregateId,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
@@ -101,7 +101,7 @@ final class NodeRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),

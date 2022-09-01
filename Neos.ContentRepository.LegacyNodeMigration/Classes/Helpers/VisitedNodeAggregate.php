@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -21,12 +21,12 @@ final class VisitedNodeAggregate
     private array $variants = [];
 
     public function __construct(
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeAggregateId $nodeAggregateIdentifier,
         public readonly NodeTypeName $nodeTypeName,
 
     ) {}
 
-    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateIdentifier $parentNodeAggregateIdentifier): void
+    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateIdentifier): void
     {
         if (isset($this->variants[$originDimensionSpacePoint->hash])) {
             throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateIdentifier, $originDimensionSpacePoint), 1653050442);

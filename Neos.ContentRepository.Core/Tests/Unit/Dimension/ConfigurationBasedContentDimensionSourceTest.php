@@ -104,8 +104,8 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
      */
     public function testDimensionValuesAreCorrectlyInitialized()
     {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
-        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
+        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionB'));
 
         $this->assertEquals(
             new Dimension\ContentDimensionValue(
@@ -181,7 +181,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
      */
     public function testSpecializationsAreCorrectlyInitialized()
     {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
         $this->assertSame(
             [
                 'valueA1.1' => $dimensionA->getValue('valueA1.1')
@@ -211,7 +211,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
             $dimensionA->getGeneralization($dimensionA->getValue('valueA2'))
         );
 
-        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
+        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionB'));
         $this->assertSame(
             [],
             $dimensionB->getSpecializations($dimensionB->getValue('valueB1'))
@@ -245,8 +245,8 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
      */
     public function testMaximumDepthIsCorrectlyInitialized()
     {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
-        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
+        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionB'));
 
         $this->assertEquals(
             new Dimension\ContentDimensionValueSpecializationDepth(1),
@@ -263,20 +263,20 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
      */
     public function testRestrictionsAreCorrectlyInitialized()
     {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
-        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionB'));
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
+        $dimensionB = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionB'));
 
         $valueA1 = $dimensionA->getValue('valueA1');
         $this->assertSame(
             false,
-            $valueA1->getConstraints($dimensionB->identifier)->isWildcardAllowed
+            $valueA1->getConstraints($dimensionB->id)->isWildcardAllowed
         );
         $this->assertEquals(
             [
                 'valueB1' => true,
                 'valueB2' => false
             ],
-            $valueA1->getConstraints($dimensionB->identifier)->identifierRestrictions
+            $valueA1->getConstraints($dimensionB->id)->identifierRestrictions
         );
 
         $valueA11 = $dimensionA->getValue('valueA1.1');
@@ -288,14 +288,14 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         $valueA2 = $dimensionA->getValue('valueA2');
         $this->assertSame(
             true,
-            $valueA2->getConstraints($dimensionB->identifier)->isWildcardAllowed
+            $valueA2->getConstraints($dimensionB->id)->isWildcardAllowed
         );
         $this->assertEquals(
             [
                 'valueB1' => false,
                 'valueB2' => true
             ],
-            $valueA2->getConstraints($dimensionB->identifier)->identifierRestrictions
+            $valueA2->getConstraints($dimensionB->id)->identifierRestrictions
         );
 
         $valueB1 = $dimensionB->getValue('valueB1');
@@ -322,7 +322,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
      */
     public function testDimensionConfigurationValuesAreCorrectlyInitialized()
     {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
 
         $this->assertSame('anotherValue', $dimensionA->getConfigurationValue('dimensionConfiguration.anotherKey'));
     }
@@ -332,7 +332,7 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
      */
     public function testDimensionValueConfigurationValuesAreCorrectlyInitialized()
     {
-        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionIdentifier('dimensionA'));
+        $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
         $dimensionValueA1 = $dimensionA->getValue('valueA1');
 
         $this->assertSame('value', $dimensionValueA1->getConfigurationValue('dimensionValueConfiguration.key'));

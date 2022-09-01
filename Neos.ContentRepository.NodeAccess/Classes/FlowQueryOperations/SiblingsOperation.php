@@ -67,22 +67,22 @@ class SiblingsOperation extends AbstractOperation
         $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var Node $contextNode */
-            $outputNodeAggregateIdentifiers[(string)$contextNode->nodeAggregateIdentifier] = true;
+            $outputNodeAggregateIdentifiers[(string)$contextNode->nodeAggregateId] = true;
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
 
-            $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
+            $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
             if ($parentNode === null) {
                 // no parent found
                 continue;
             }
 
-            foreach ($subgraph->findChildNodes($parentNode->nodeAggregateIdentifier) as $childNode) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier])) {
+            foreach ($subgraph->findChildNodes($parentNode->nodeAggregateId) as $childNode) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier] = true;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId] = true;
                 }
             }
         }

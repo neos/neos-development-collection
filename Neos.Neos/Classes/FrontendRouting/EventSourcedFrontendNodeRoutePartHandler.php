@@ -62,7 +62,7 @@ use Psr\Http\Message\UriInterface;
  * ┌──────────────┐                     │   EventSourcedFrontendNodeRoutePartHandler    │
  * │SiteDetection │                     │ ┌─────────────────────┐                       │
  * │Middleware (*)│────────────────────▶│ │DimensionResolver (*)│─────▶ Finding the    ─┼─▶NodeAddress
- * └──────────────┘ current site        │ └─────────────────────┘       NodeIdentifier  │
+ * └──────────────┘ current site        │ └─────────────────────┘       NodeId          │
  *                                      └───────────────────────────────────────────────┘
  *                  current Content                              current
  *                  Repository                                   DimensionSpacePoint
@@ -111,10 +111,10 @@ use Psr\Http\Message\UriInterface;
  * The **result** of the {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters} call is a
  * {@see NodeAddress} (wrapped in a {@see MatchResult}); so to build the NodeAddress, we need:
  * - the {@see WorkspaceName} (which is always **live** in our case)
- * - the {@see ContentStreamIdentifier} of the Live workspace
+ * - the {@see ContentStreamId} of the Live workspace
  * - The {@see DimensionSpacePoint} we want to see the page in (i.e. in language=de)
  *   - resolved by {@see DimensionResolverInterface}
- * - The {@see NodeAggregateIdentifier} (of the Document Node we want to show)
+ * - The {@see NodeAggregateId} (of the Document Node we want to show)
  *   - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
  *
  *
@@ -197,7 +197,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         // if incomplete -> no match + log
 
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         try {
             $matchResult = $this->matchUriPath(
@@ -237,9 +237,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $dimensionSpacePoint->hash
         );
         $nodeAddress = new NodeAddress(
-            $documentUriPathFinder->getLiveContentStreamIdentifier(),
+            $documentUriPathFinder->getLiveContentStreamId(),
             $dimensionSpacePoint,
-            $nodeInfo->getNodeAggregateIdentifier(),
+            $nodeInfo->getNodeAggregateId(),
             WorkspaceName::forLive()
         );
         return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
@@ -287,11 +287,11 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     ): ResolveResult {
         // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $currentRequestSiteDetectionResult->contentRepositoryIdentifier
+            $currentRequestSiteDetectionResult->contentRepositoryId
         );
         $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathProjection::class);
         $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateIdentifier,
+            $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
         if ($nodeInfo->isDisabled()) {

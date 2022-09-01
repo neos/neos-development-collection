@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -27,14 +27,14 @@ final class WorkspaceWasRebased implements EventInterface
     public function __construct(
         public readonly WorkspaceName $workspaceName,
         /**
-         * The new content stream identifier (after the rebase was successful)
+         * The new content stream ID (after the rebase was successful)
          */
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
+        public readonly ContentStreamId $newContentStreamId,
         /**
-         * The old content stream identifier (which is not active anymore now)
+         * The old content stream ID (which is not active anymore now)
          */
-        public readonly ContentStreamIdentifier $previousContentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $previousContentStreamId,
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -42,9 +42,9 @@ final class WorkspaceWasRebased implements EventInterface
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
-            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($values['previousContentStreamIdentifier']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            ContentStreamId::fromString($values['newContentStreamId']),
+            ContentStreamId::fromString($values['previousContentStreamId']),
+            UserId::fromString($values['initiatingUserId']),
         );
     }
 
@@ -52,9 +52,9 @@ final class WorkspaceWasRebased implements EventInterface
     {
         return [
             'workspaceName' => $this->workspaceName,
-            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
-            'previousContentStreamIdentifier' => $this->previousContentStreamIdentifier,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'newContentStreamId' => $this->newContentStreamId,
+            'previousContentStreamId' => $this->previousContentStreamId,
+            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

@@ -28,47 +28,47 @@ Feature: Remove Nodes from Aggregate
       | workspaceName            | "live"                                 |
       | workspaceTitle           | "Live"                                 |
       | workspaceDescription     | "The live workspace"                   |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier  | "live-cs-identifier"                   |
+      | initiatingUserId | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamId  | "live-cs-identifier"                   |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
-      | contentStreamIdentifier  | "live-cs-identifier"                   |
-      | nodeAggregateIdentifier  | "lady-eleonode-nodesworth"             |
+      | contentStreamId  | "live-cs-identifier"                   |
+      | nodeAggregateId  | "lady-eleonode-nodesworth"             |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+      | initiatingUserId | "00000000-0000-0000-0000-000000000000" |
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                      |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
+      | contentStreamId       | "live-cs-identifier"                      |
+      | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-nodesworth"                |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-nodesworth"                |
       | nodeName                      | "document"                                |
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                      |
-      | nodeAggregateIdentifier       | "nodimus-prime"                           |
+      | contentStreamId       | "live-cs-identifier"                      |
+      | nodeAggregateId       | "nodimus-prime"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "nody-mc-nodeface"                        |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
     # We also want to add a grandchild node to make sure it is correctly removed when the parent is removed
     # Node /document/child-document/grandchild-document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "live-cs-identifier"                      |
-      | nodeAggregateIdentifier       | "nodasaurus-rex"                          |
+      | contentStreamId       | "live-cs-identifier"                      |
+      | nodeAggregateId       | "nodasaurus-rex"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "nodimus-prime"                           |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "nodimus-prime"                           |
       | nodeName                      | "grandchild-document"                     |
     And the graph projection is fully up to date
 
@@ -78,16 +78,16 @@ Feature: Remove Nodes from Aggregate
   Scenario: (Exception) Trying to remove a non existing node should fail with an exception
     When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
       | Key                     | Value                                  |
-      | contentStreamIdentifier | "live-cs-identifier"                   |
-      | nodeAggregateIdentifier | "non-existing-agg-identifier"          |
+      | contentStreamId | "live-cs-identifier"                   |
+      | nodeAggregateId | "non-existing-agg-identifier"          |
       | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
     Then the last command should have thrown an exception of type "NodeAggregateNotFound"
 
   Scenario: (Exception) Trying to remove a node in a parent dimension without specializing the corresponding specialization dimension throw an exception
     When the command RemoveNodesFromAggregate was published with payload and exceptions are caught:
       | Key                     | Value                |
-      | contentStreamIdentifier | "live-cs-identifier" |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | contentStreamId | "live-cs-identifier" |
+      | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"de"}]  |
     Then the last command should have thrown an exception of type "SpecializedDimensionsMustBePartOfDimensionSpacePointSet"
 
@@ -98,8 +98,8 @@ Feature: Remove Nodes from Aggregate
   Scenario: (1.A.a) In LIVE workspace, removing a node WITHOUT children leads also to removal of the node in the specializations of its dimension space point if specified
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                                  |
-      | contentStreamIdentifier | "live-cs-identifier"                   |
-      | nodeAggregateIdentifier | "nodasaurus-rex"                       |
+      | contentStreamId | "live-cs-identifier"                   |
+      | nodeAggregateId | "nodasaurus-rex"                       |
       | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
     And the graph projection is fully up to date
 
@@ -123,8 +123,8 @@ Feature: Remove Nodes from Aggregate
   Scenario: (1.A.b) In LIVE workspace, removing a node WITHOUT children does not lead to removal of its generalization
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
-      | contentStreamIdentifier | "live-cs-identifier" |
-      | nodeAggregateIdentifier | "nodasaurus-rex"     |
+      | contentStreamId | "live-cs-identifier" |
+      | nodeAggregateId | "nodasaurus-rex"     |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
     And the graph projection is fully up to date
 
@@ -154,8 +154,8 @@ Feature: Remove Nodes from Aggregate
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
-      | contentStreamIdentifier | "live-cs-identifier" |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | contentStreamId | "live-cs-identifier" |
+      | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"de"}]  |
     And the graph projection is fully up to date
 
@@ -174,8 +174,8 @@ Feature: Remove Nodes from Aggregate
   Scenario: (1.B.b) In LIVE workspace, removing a node WITH children does not lead to the removal of their generalizations
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
-      | contentStreamIdentifier | "live-cs-identifier" |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | contentStreamId | "live-cs-identifier" |
+      | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
     And the graph projection is fully up to date
 
@@ -203,13 +203,13 @@ Feature: Remove Nodes from Aggregate
   Scenario: (2.A.a) In USER workspace, removing a node WITHOUT children also leads to its removal in the specializations of its subgraph
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                |
-      | contentStreamIdentifier       | "user-cs-identifier" |
-      | sourceContentStreamIdentifier | "live-cs-identifier" |
+      | contentStreamId       | "user-cs-identifier" |
+      | sourceContentStreamId | "live-cs-identifier" |
     And the graph projection is fully up to date
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                                  |
-      | contentStreamIdentifier | "user-cs-identifier"                   |
-      | nodeAggregateIdentifier | "nodasaurus-rex"                        |
+      | contentStreamId | "user-cs-identifier"                   |
+      | nodeAggregateId | "nodasaurus-rex"                        |
       | dimensionSpacePointSet  | [{"language":"de"}] |
     And the graph projection is fully up to date
 
@@ -250,22 +250,22 @@ Feature: Remove Nodes from Aggregate
   Scenario: (2.A.b) In USER workspace, removing a node WITHOUT children does not lead to removal of the node in the parent dimension
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                 |
-      | contentStreamIdentifier   | "live-cs-identifier"  |
-      | nodeAggregateIdentifier   | "nodimus-prime"       |
+      | contentStreamId   | "live-cs-identifier"  |
+      | nodeAggregateId   | "nodimus-prime"       |
       | sourceOrigin | {"language":"de"}     |
       | targetOrigin | {"language":"gsw"}    |
       | specializationIdentifier  | "cdoc-identifier-gsw" |
 
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                |
-      | contentStreamIdentifier       | "user-cs-identifier" |
-      | sourceContentStreamIdentifier | "live-cs-identifier" |
+      | contentStreamId       | "user-cs-identifier" |
+      | sourceContentStreamId | "live-cs-identifier" |
     And the graph projection is fully up to date
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
-      | contentStreamIdentifier | "user-cs-identifier" |
-      | nodeAggregateIdentifier | "nodimus-prime"      |
+      | contentStreamId | "user-cs-identifier" |
+      | nodeAggregateId | "nodimus-prime"      |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
     And the graph projection is fully up to date
 
@@ -300,14 +300,14 @@ Feature: Remove Nodes from Aggregate
 
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                |
-      | contentStreamIdentifier       | "user-cs-identifier" |
-      | sourceContentStreamIdentifier | "live-cs-identifier" |
+      | contentStreamId       | "user-cs-identifier" |
+      | sourceContentStreamId | "live-cs-identifier" |
     And the graph projection is fully up to date
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                                  |
-      | contentStreamIdentifier | "user-cs-identifier"                   |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"                     |
+      | contentStreamId | "user-cs-identifier"                   |
+      | nodeAggregateId | "nody-mc-nodeface"                     |
       | dimensionSpacePointSet  | [{"language":"de"},{"language":"gsw"}] |
     And the graph projection is fully up to date
 
@@ -334,22 +334,22 @@ Feature: Remove Nodes from Aggregate
   Scenario: (2.B.b) In USER workspace, removing a node WITH children does not lead to removal of the node in the parent dimension
     When the command CreateNodeVariant is executed with payload:
       | Key                       | Value                |
-      | contentStreamIdentifier   | "live-cs-identifier" |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"   |
+      | contentStreamId   | "live-cs-identifier" |
+      | nodeAggregateId   | "nody-mc-nodeface"   |
       | sourceOrigin | {"language":"de"}    |
       | targetOrigin | {"language":"gsw"}   |
       | specializationIdentifier  | "doc-identifier-gsw" |
 
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                |
-      | contentStreamIdentifier       | "user-cs-identifier" |
-      | sourceContentStreamIdentifier | "live-cs-identifier" |
+      | contentStreamId       | "user-cs-identifier" |
+      | sourceContentStreamId | "live-cs-identifier" |
     And the graph projection is fully up to date
 
     When the command RemoveNodesFromAggregate was published with payload:
       | Key                     | Value                |
-      | contentStreamIdentifier | "user-cs-identifier" |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"   |
+      | contentStreamId | "user-cs-identifier" |
+      | nodeAggregateId | "nody-mc-nodeface"   |
       | dimensionSpacePointSet  | [{"language":"gsw"}] |
     And the graph projection is fully up to date
 

@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 /**
  * A collection of SerializedNodeReference objects, to be used when creating reference relations.
@@ -55,12 +55,12 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
         ));
     }
 
-    public static function fromNodeAggregateIdentifiers(NodeAggregateIdentifiers $nodeAggregateIdentifiers): self
+    public static function fromNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
     {
         return new self(...array_map(
-            static fn (NodeAggregateIdentifier $nodeAggregateIdentifier): SerializedNodeReference
-            => new SerializedNodeReference($nodeAggregateIdentifier, null),
-            $nodeAggregateIdentifiers->getIterator()->getArrayCopy()
+            static fn (NodeAggregateId $nodeAggregateId): SerializedNodeReference
+            => new SerializedNodeReference($nodeAggregateId, null),
+            $nodeAggregateIds->getIterator()->getArrayCopy()
         ));
     }
 

@@ -8,7 +8,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * @api
@@ -37,7 +37,7 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
             /* @var Workspace $workspace */
             $this->contentRepository->handle(RebaseWorkspace::create(
                 $workspace->workspaceName,
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             ))->block();
         }
 

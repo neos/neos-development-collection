@@ -130,7 +130,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         }
         throw new \InvalidArgumentException(sprintf(
             'The node %s does not exist in this set',
-            $subject->nodeAggregateIdentifier
+            $subject->nodeAggregateId
         ), 1542901216);
     }
 

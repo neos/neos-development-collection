@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * This interface is implemented by **events** which can be published to different content streams.
@@ -27,5 +27,5 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
  */
 interface PublishableToOtherContentStreamsInterface
 {
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self;
+    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self;
 }

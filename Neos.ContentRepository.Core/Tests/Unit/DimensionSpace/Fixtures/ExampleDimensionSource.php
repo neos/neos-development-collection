@@ -95,25 +95,25 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
 
         $this->dimensions = [
             'market' => new Dimension\ContentDimension(
-                new Dimension\ContentDimensionIdentifier('market'),
+                new Dimension\ContentDimensionId('market'),
                 $marketValues,
                 Dimension\ContentDimensionValueVariationEdges::createEmpty()
             ),
             'language' => new Dimension\ContentDimension(
-                new Dimension\ContentDimensionIdentifier('language'),
+                new Dimension\ContentDimensionId('language'),
                 $languageValues,
                 Dimension\ContentDimensionValueVariationEdges::createEmpty()
             )
         ];
     }
 
-    public function getDimension(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimension
+    public function getDimension(Dimension\ContentDimensionId $dimensionId): ?Dimension\ContentDimension
     {
         if (is_null($this->dimensions)) {
             $this->initializeDimensions();
         }
 
-        return $this->dimensions[(string)$dimensionIdentifier] ?? null;
+        return $this->dimensions[(string)$dimensionId] ?? null;
     }
 
     /**

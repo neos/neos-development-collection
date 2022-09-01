@@ -38,14 +38,14 @@ trait NodeReferencing
         $this->transactional(function () use ($event) {
             foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $originDimensionSpacePoint,
-                    $event->sourceNodeAggregateIdentifier
+                    $event->sourceNodeAggregateId
                 );
 
                 if ($nodeRecord) {
                     $anchorPoint = $this->copyOnWrite(
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $nodeRecord,
                         function (NodeRecord $node) {
                         }
@@ -65,7 +65,7 @@ trait NodeReferencing
                             $event->referenceName,
                             $position,
                             $reference->properties,
-                            $reference->targetNodeAggregateIdentifier
+                            $reference->targetNodeAggregateId
                         );
                         $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                         $position++;

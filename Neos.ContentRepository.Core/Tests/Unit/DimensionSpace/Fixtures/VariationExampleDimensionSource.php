@@ -38,7 +38,7 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
 
         $this->dimensions = [
             'dimensionA' => new Dimension\ContentDimension(
-                new Dimension\ContentDimensionIdentifier('dimensionA'),
+                new Dimension\ContentDimensionId('dimensionA'),
                 new Dimension\ContentDimensionValues([
                     $dimensionAValue1->value => $dimensionAValue1,
                     $dimensionAValue11->value => $dimensionAValue11,
@@ -52,7 +52,7 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
                 ])
             ),
             'dimensionB' => new Dimension\ContentDimension(
-                new Dimension\ContentDimensionIdentifier('dimensionB'),
+                new Dimension\ContentDimensionId('dimensionB'),
                 new Dimension\ContentDimensionValues([
                     $dimensionBValue1->value => $dimensionBValue1,
                     $dimensionBValue11->value => $dimensionBValue11,
@@ -68,13 +68,13 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
         ];
     }
 
-    public function getDimension(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimension
+    public function getDimension(Dimension\ContentDimensionId $dimensionId): ?Dimension\ContentDimension
     {
         if (!$this->dimensions) {
             $this->initializeDimensions();
         }
 
-        return $this->dimensions[(string)$dimensionIdentifier] ?? null;
+        return $this->dimensions[(string)$dimensionId] ?? null;
     }
 
     /**

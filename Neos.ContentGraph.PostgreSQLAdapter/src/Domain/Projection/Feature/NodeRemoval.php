@@ -22,8 +22,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 
 /**
@@ -43,9 +43,9 @@ trait NodeRemoval
             // first step: remove hierarchy relations
             foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                    $event->getContentStreamIdentifier(),
+                    $event->getContentStreamId(),
                     $dimensionSpacePoint,
-                    $event->getNodeAggregateIdentifier()
+                    $event->getNodeAggregateId()
                 );
                 if (is_null($nodeRecord)) {
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
@@ -54,7 +54,7 @@ trait NodeRemoval
                 /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordByChildNodeAnchor(
-                        $event->getContentStreamIdentifier(),
+                        $event->getContentStreamId(),
                         $dimensionSpacePoint,
                         $nodeRecord->relationAnchorPoint
                     );
@@ -64,15 +64,15 @@ trait NodeRemoval
                     $this->tableNamePrefix
                 );
                 $this->removeFromRestrictions(
-                    $event->getContentStreamIdentifier(),
+                    $event->getContentStreamId(),
                     $dimensionSpacePoint,
-                    $event->getNodeAggregateIdentifier()
+                    $event->getNodeAggregateId()
                 );
 
                 $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
 
                 $this->cascadeHierarchy(
-                    $event->getContentStreamIdentifier(),
+                    $event->getContentStreamId(),
                     $dimensionSpacePoint,
                     $nodeRecord->relationAnchorPoint,
                     $affectedRelationAnchorPoints
@@ -113,7 +113,7 @@ trait NodeRemoval
      * @param array<int,NodeRelationAnchorPoint> &$affectedRelationAnchorPoints
      */
     private function cascadeHierarchy(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $nodeRelationAnchorPoint,
         array &$affectedRelationAnchorPoints
@@ -156,16 +156,16 @@ trait NodeRemoval
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateIdentifier
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
     private function removeFromRestrictions(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(

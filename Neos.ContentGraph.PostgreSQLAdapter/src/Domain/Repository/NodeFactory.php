@@ -16,14 +16,14 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -52,7 +52,7 @@ final class NodeFactory
     private PropertyConverter $propertyConverter;
 
     public function __construct(
-        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        private readonly ContentRepositoryId $contentRepositoryIdentifier,
         NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
@@ -67,17 +67,17 @@ final class NodeFactory
         array $nodeRow,
         VisibilityConstraints $visibilityConstraints,
         ?DimensionSpacePoint $dimensionSpacePoint = null,
-        ?ContentStreamIdentifier $contentStreamIdentifier = null
+        ?ContentStreamId $contentStreamIdentifier = null
     ): Node {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $result = new Node(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryIdentifier,
-                $contentStreamIdentifier ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
+                $contentStreamIdentifier ?: ContentStreamId::fromString($nodeRow['contentstreamidentifier']),
                 $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
                 $visibilityConstraints
             ),
-            NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($nodeRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
@@ -98,7 +98,7 @@ final class NodeFactory
     public function mapNodeRowsToNodes(
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints,
-        ContentStreamIdentifier $contentStreamIdentifier = null
+        ContentStreamId $contentStreamIdentifier = null
     ): Nodes {
         $nodes = [];
         foreach ($nodeRows as $nodeRow) {
@@ -119,7 +119,7 @@ final class NodeFactory
     public function mapReferenceRowsToReferences(
         array $referenceRows,
         VisibilityConstraints $visibilityConstraints,
-        ContentStreamIdentifier $contentStreamIdentifier = null
+        ContentStreamId $contentStreamIdentifier = null
     ): References {
         $references = [];
         foreach ($referenceRows as $referenceRow) {
@@ -195,7 +195,7 @@ final class NodeFactory
         $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
             $contentStreamIdentifier = $contentStreamIdentifier
-                ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
+                ?: ContentStreamId::fromString($nodeRow['contentstreamidentifier']);
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
@@ -203,7 +203,7 @@ final class NodeFactory
                 $contentStreamIdentifier
             );
             $nodeAggregateIdentifier = $nodeAggregateIdentifier
-                ?: NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']);
+                ?: NodeAggregateId::fromString($nodeRow['nodeaggregateidentifier']);
             $nodeAggregateClassification = $nodeAggregateClassification
                 ?: NodeAggregateClassification::from($nodeRow['classification']);
             $nodeTypeName = $nodeTypeName ?: NodeTypeName::fromString($nodeRow['nodetypename']);
@@ -254,7 +254,7 @@ final class NodeFactory
         }
 
         $contentStreamIdentifier = null;
-        /** @var NodeAggregateIdentifier[] $nodeAggregateIdentifiers */
+        /** @var NodeAggregateId[] $nodeAggregateIdentifiers */
         $nodeAggregateIdentifiers = [];
         /** @var NodeAggregateClassification[] $nodeAggregateClassifications */
         $nodeAggregateClassifications = [];
@@ -279,14 +279,14 @@ final class NodeFactory
         foreach ($nodeRows as $nodeRow) {
             $key = $nodeRow['nodeaggregateidentifier'];
             $contentStreamIdentifier = $contentStreamIdentifier
-                ?: ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']);
+                ?: ContentStreamId::fromString($nodeRow['contentstreamidentifier']);
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints,
                 null,
                 $contentStreamIdentifier
             );
-            $nodeAggregateIdentifiers[$key] = NodeAggregateIdentifier::fromString(
+            $nodeAggregateIdentifiers[$key] = NodeAggregateId::fromString(
                 $nodeRow['nodeaggregateidentifier']
             );
             if (!isset($nodeAggregateClassifications[$key])) {

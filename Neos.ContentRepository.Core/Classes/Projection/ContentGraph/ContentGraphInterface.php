@@ -17,8 +17,8 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -37,19 +37,20 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 interface ContentGraphInterface extends ProjectionStateInterface
 {
     public function getSubgraph(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface;
 
-    public function findNodeByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+    // TODO: ONLY RELEVANT FOR TESTCASES
+    public function findNodeById(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?Node;
 
     public function findRootNodeAggregateByType(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate;
 
@@ -57,16 +58,16 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @return iterable<NodeAggregate>
      */
     public function findNodeAggregatesByType(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): iterable;
 
     /**
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function findNodeAggregateByIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+    public function findNodeAggregateById(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate;
 
     /**
@@ -74,8 +75,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate;
 
@@ -84,8 +85,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregates(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId
     ): iterable;
 
     /**
@@ -93,8 +94,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption inside the Command Handler
      */
     public function findChildNodeAggregates(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId
     ): iterable;
 
     /**
@@ -105,8 +106,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption inside the Command Handler
      */
     public function findChildNodeAggregatesByName(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId,
         NodeName $name
     ): iterable;
 
@@ -115,17 +116,17 @@ interface ContentGraphInterface extends ProjectionStateInterface
      * @internal only for consumption inside the Command Handler
      */
     public function findTetheredChildNodeAggregates(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId
     ): iterable;
 
     /**
      * @internal only for consumption inside the Command Handler
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeName $nodeName,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint,
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet;

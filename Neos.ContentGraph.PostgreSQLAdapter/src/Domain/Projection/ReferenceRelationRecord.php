@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
@@ -32,7 +32,7 @@ final class ReferenceRelationRecord
         public readonly ReferenceName $name,
         public readonly int $position,
         public readonly ?SerializedPropertyValues $properties,
-        public readonly NodeAggregateIdentifier $targetNodeAggregateIdentifier
+        public readonly NodeAggregateId $targetNodeAggregateIdentifier
     ) {
     }
 
@@ -48,7 +48,7 @@ final class ReferenceRelationRecord
             $databaseRow['properties']
                 ? SerializedPropertyValues::fromJsonString($databaseRow['properties'])
                 : null,
-            NodeAggregateIdentifier::fromString($databaseRow['targetnodeaggregateidentifier'])
+            NodeAggregateId::fromString($databaseRow['targetnodeaggregateidentifier'])
         );
     }
 

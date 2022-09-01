@@ -35,27 +35,27 @@ Feature: Add Dimension Specialization
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | contentStreamId     | "cs-identifier"                                          |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"}] |
-      | initiatingUserIdentifier    | "system-user"                                            |
+      | initiatingUserId    | "system-user"                                            |
       | nodeAggregateClassification | "root"                                                   |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "de"}                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "hello" }                        |
     And the graph projection is fully up to date
 
@@ -110,11 +110,11 @@ Feature: Add Dimension Specialization
     # as expected)
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamIdentifier   | "migration-cs"               |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"     |
+      | contentStreamId   | "migration-cs"               |
+      | nodeAggregateId   | "sir-david-nodenborough"     |
       | originDimensionSpacePoint | {"language": "de"}           |
       | propertyValues            | {"text": "changed"}          |
-      | initiatingUserIdentifier  | "initiating-user-identifier" |
+      | initiatingUserId  | "initiating-user-identifier" |
     And the graph projection is fully up to date
     When I am in content stream "migration-cs" and dimension space point {"language": "de"}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node migration-cs;sir-david-nodenborough;{"language": "de"}
@@ -144,11 +144,11 @@ Feature: Add Dimension Specialization
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
-      | contentStreamIdentifier      | "cs-identifier"                        |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | contentStreamId      | "cs-identifier"                        |
+      | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
+      | initiatingUserId     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
@@ -202,11 +202,11 @@ Feature: Add Dimension Specialization
     # we create a node in CH
     When the command CreateNodeVariant is executed with payload:
       | Key                      | Value                    |
-      | contentStreamIdentifier  | "cs-identifier"          |
-      | nodeAggregateIdentifier  | "sir-david-nodenborough" |
+      | contentStreamId  | "cs-identifier"          |
+      | nodeAggregateId  | "sir-david-nodenborough" |
       | sourceOrigin             | {"language":"de"}        |
       | targetOrigin             | {"language":"en"}        |
-      | initiatingUserIdentifier | "foo"                    |
+      | initiatingUserId | "foo"                    |
 
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:

@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\NodeAccess\FlowQueryOperations\FindOperation;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\Eel\FlowQuery\FlowQuery;
 use PHPUnit\Framework\Assert;
@@ -36,9 +36,9 @@ trait FlowQueryTrait
     private $readModelFactory;
 
     /**
-     * @var ContentStreamIdentifier
+     * @var ContentStreamId
      */
-    private ?ContentStreamIdentifier $contentStreamIdentifier = null;
+    private ?ContentStreamId $contentStreamIdentifier = null;
 
     /**
      * @var DimensionSpacePoint
@@ -55,12 +55,12 @@ trait FlowQueryTrait
     public function iHaveAFlowQueryWithNode(string $serializedNodeAggregateIdentifier)
     {
         $subgraph = $this->contentGraph->getSubgraph(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+        $nodeAggregateIdentifier = NodeAggregateId::fromString($serializedNodeAggregateIdentifier);
+        $node = $subgraph->findNodeByNodeAggregateId($nodeAggregateIdentifier);
         $this->currentFlowQuery = new FlowQuery([$node]);
     }
 
@@ -90,11 +90,11 @@ trait FlowQueryTrait
      */
     public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheFlowQueryContext(string $serializedExpectedNodeAggregateIdentifier)
     {
-        $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedExpectedNodeAggregateIdentifier);
+        $expectedNodeAggregateIdentifier = NodeAggregateId::fromString($serializedExpectedNodeAggregateIdentifier);
         $expectationMet = false;
         foreach ($this->currentFlowQuery->getContext() as $node) {
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node */
-            if ($node->nodeAggregateIdentifier->equals($expectedNodeAggregateIdentifier)) {
+            if ($node->nodeAggregateId->equals($expectedNodeAggregateIdentifier)) {
                 $expectationMet = true;
                 break;
             }

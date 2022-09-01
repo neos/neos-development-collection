@@ -66,7 +66,7 @@ class NodeConverter extends AbstractTypeConverter
         PropertyMappingConfigurationInterface $configuration = null
     ) {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $source->subgraphIdentity->contentRepositoryIdentifier
+            $source->subgraphIdentity->contentRepositoryId
         );
         return NodeAddressFactory::create($contentRepository)->createFromNode($source)->serializeForUri();
     }

@@ -17,7 +17,7 @@ namespace Neos\Neos\FrontendRouting;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Neos\FrontendRouting\NodeAddress;
 
@@ -38,20 +38,20 @@ class NodeAddressFactory
 
     public function createFromNode(Node $node): NodeAddress
     {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-            $node->subgraphIdentity->contentStreamIdentifier
+        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $node->subgraphIdentity->contentStreamId
         );
         if ($workspace === null) {
             throw new \RuntimeException(
-                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->nodeAggregateIdentifier
-                . ', because the content stream ' . $node->subgraphIdentity->contentStreamIdentifier
+                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->nodeAggregateId
+                . ', because the content stream ' . $node->subgraphIdentity->contentStreamId
                 . ' is not assigned to a workspace.'
             );
         }
         return new NodeAddress(
-            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->subgraphIdentity->contentStreamId,
             $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateIdentifier,
+            $node->nodeAggregateId,
             $workspace->workspaceName
         );
     }
@@ -65,10 +65,10 @@ class NodeAddressFactory
             = explode('__', $serializedNodeAddress);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeAggregateIdentifierSerialized);
+        $nodeAggregateIdentifier = NodeAggregateId::fromString($nodeAggregateIdentifierSerialized);
 
         $contentStreamIdentifier = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
-            ?->currentContentStreamIdentifier;
+            ?->currentContentStreamId;
         if (is_null($contentStreamIdentifier)) {
             throw new \InvalidArgumentException(
                 'Could not resolve content stream identifier for node address ' . $serializedNodeAddress,

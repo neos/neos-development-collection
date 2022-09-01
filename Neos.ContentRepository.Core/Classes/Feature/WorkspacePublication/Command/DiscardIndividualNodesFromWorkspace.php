@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifiersToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -29,26 +29,26 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
 {
     private function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly NodeIdsToPublishOrDiscard $nodesToDiscard,
+        public readonly UserId $initiatingUserId,
         /**
-         * Content Stream Identifier of the newly created fork, which contains the remaining changes which were
+         * Content Stream Id of the newly created fork, which contains the remaining changes which were
          * not removed
          */
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier
+        public readonly ContentStreamId $newContentStreamId
     ) {
     }
 
     public static function create(
         WorkspaceName $workspaceName,
-        NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
-        UserIdentifier $initiatingUserIdentifier
+        NodeIdsToPublishOrDiscard $nodesToDiscard,
+        UserId $initiatingUserId
     ): self {
         return new self(
             $workspaceName,
             $nodesToDiscard,
-            $initiatingUserIdentifier,
-            ContentStreamIdentifier::create()
+            $initiatingUserId,
+            ContentStreamId::create()
         );
     }
 
@@ -57,10 +57,10 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        NodeIdentifiersToPublishOrDiscard $nodesToDiscard,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $newContentStreamIdentifier
+        NodeIdsToPublishOrDiscard $nodesToDiscard,
+        UserId $initiatingUserId,
+        ContentStreamId $newContentStreamId
     ): self {
-        return new self($workspaceName, $nodesToDiscard, $initiatingUserIdentifier, $newContentStreamIdentifier);
+        return new self($workspaceName, $nodesToDiscard, $initiatingUserId, $newContentStreamId);
     }
 }

@@ -16,8 +16,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * The active record for reading and writing restriction hyperrelations from and to the database
@@ -26,18 +26,18 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
  */
 final class RestrictionHyperrelationRecord
 {
-    public ContentStreamIdentifier $contentStreamIdentifier;
+    public ContentStreamId $contentStreamIdentifier;
 
     public string $dimensionSpacePointHash;
 
-    public NodeAggregateIdentifier $originNodeAggregateIdentifier;
+    public NodeAggregateId $originNodeAggregateIdentifier;
 
     public NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         string $dimensionSpacePointHash,
-        NodeAggregateIdentifier $originNodeAggregateIdentifier,
+        NodeAggregateId $originNodeAggregateIdentifier,
         NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -52,9 +52,9 @@ final class RestrictionHyperrelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
+            ContentStreamId::fromString($databaseRow['contentstreamidentifier']),
             $databaseRow['dimensionspacepointhash'],
-            NodeAggregateIdentifier::fromString($databaseRow['originnodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['originnodeaggregateidentifier']),
             NodeAggregateIdentifiers::fromDatabaseString($databaseRow['affectednodeaggregateidentifiers'])
         );
     }
@@ -63,7 +63,7 @@ final class RestrictionHyperrelationRecord
      * @throws DBALException
      */
     public function addAffectedNodeAggregateIdentifier(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         Connection $databaseConnection,
         string $tableNamePrefix
     ): void {
@@ -80,7 +80,7 @@ final class RestrictionHyperrelationRecord
      * @throws DBALException
      */
     public function removeAffectedNodeAggregateIdentifier(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         Connection $databaseConnection,
         string $tableNamePrefix
     ): void {

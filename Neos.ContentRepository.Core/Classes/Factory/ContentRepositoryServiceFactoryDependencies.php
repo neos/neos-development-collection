@@ -33,7 +33,7 @@ final class ContentRepositoryServiceFactoryDependencies
 {
     private function __construct(
         // These properties are from ProjectionFactoryDependencies
-        public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        public readonly ContentRepositoryId $contentRepositoryId,
         public readonly EventStoreInterface $eventStore,
         public readonly EventNormalizer $eventNormalizer,
         public readonly NodeTypeManager $nodeTypeManager,
@@ -57,7 +57,7 @@ final class ContentRepositoryServiceFactoryDependencies
         EventPersister $eventPersister,
     ): self {
         return new self(
-            $projectionFactoryDependencies->contentRepositoryIdentifier,
+            $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->eventStore,
             $projectionFactoryDependencies->eventNormalizer,
             $projectionFactoryDependencies->nodeTypeManager,

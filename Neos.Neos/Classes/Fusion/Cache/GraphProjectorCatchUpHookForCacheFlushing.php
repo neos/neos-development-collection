@@ -14,12 +14,12 @@ namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\EventEnvelope;
 
 class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
@@ -43,21 +43,21 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
         //     return;
         //}
         if ($eventInstance instanceof NodeAggregateWasRemoved) {
-            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
-                $eventInstance->getContentStreamIdentifier(),
-                $eventInstance->getNodeAggregateIdentifier()
+            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
+                $eventInstance->getContentStreamId(),
+                $eventInstance->getNodeAggregateId()
             );
             if ($nodeAggregate) {
                 $parentNodeAggregates = $this->contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamIdentifier,
-                    $nodeAggregate->nodeAggregateIdentifier
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 );
                 foreach ($parentNodeAggregates as $parentNodeAggregate) {
                     assert($parentNodeAggregate instanceof NodeAggregate);
                     $this->scheduleCacheFlushJobForNodeAggregate(
                         $this->contentRepository,
-                        $parentNodeAggregate->contentStreamIdentifier,
-                        $parentNodeAggregate->nodeAggregateIdentifier
+                        $parentNodeAggregate->contentStreamId,
+                        $parentNodeAggregate->nodeAggregateId
                     );
                 }
             }
@@ -74,18 +74,18 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
         if (
             !($eventInstance instanceof NodeAggregateWasRemoved)
-            && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateIdentifier
+            && $eventInstance instanceof EmbedsContentStreamAndNodeAggregateId
         ) {
-            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
-                $eventInstance->getContentStreamIdentifier(),
-                $eventInstance->getNodeAggregateIdentifier()
+            $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
+                $eventInstance->getContentStreamId(),
+                $eventInstance->getNodeAggregateId()
             );
 
             if ($nodeAggregate) {
                 $this->scheduleCacheFlushJobForNodeAggregate(
                     $this->contentRepository,
-                    $nodeAggregate->contentStreamIdentifier,
-                    $nodeAggregate->nodeAggregateIdentifier
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 );
             }
         }
@@ -97,8 +97,8 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     protected function scheduleCacheFlushJobForNodeAggregate(
         ContentRepository $contentRepository,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier
     ): void {
         // we store this in an associative array deduplicate.
         $this->cacheFlushes[$contentStreamIdentifier->getValue() . '__' . $nodeAggregateIdentifier->getValue()] = [

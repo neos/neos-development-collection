@@ -28,15 +28,16 @@ trait NodeDisabling
                 '
 -- GraphProjector::whenNodeAggregateWasDisabled
 insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
-(
+    (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid)
+
     -- we build a recursive tree
     with recursive tree as (
          -- --------------------------------
-         -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIdentifiers
+         -- INITIAL query: select the root nodes of the tree; as given in $menuLevelNodeIds
          -- --------------------------------
          select
             n.relationanchorpoint,
-            n.nodeaggregateidentifier,
+            n.nodeaggregateid,
             h.dimensionspacepointhash
          from
             ' . $this->getTableNamePrefix() . '_node n
@@ -44,8 +45,8 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
          inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
             on h.childnodeanchor = n.relationanchorpoint
          where
-            n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
-            and h.contentstreamidentifier = :contentStreamIdentifier
+            n.nodeaggregateid = :entryNodeAggregateId
+            and h.contentstreamid = :contentStreamId
             and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
     union
          -- --------------------------------
@@ -53,7 +54,7 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
          -- --------------------------------
          select
             c.relationanchorpoint,
-            c.nodeaggregateidentifier,
+            c.nodeaggregateid,
             h.dimensionspacepointhash
          from
             tree p
@@ -62,21 +63,20 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
          inner join ' . $this->getTableNamePrefix() . '_node c
             on h.childnodeanchor = c.relationanchorpoint
          where
-            h.contentstreamidentifier = :contentStreamIdentifier
+            h.contentstreamid = :contentStreamId
             and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
     )
 
     select
-        "' . $event->contentStreamIdentifier . '" as contentstreamidentifier,
+        "' . $event->contentStreamId . '" as contentstreamid,
         dimensionspacepointhash,
-        "' . $event->nodeAggregateIdentifier . '" as originnodeaggregateidentifier,
-        nodeaggregateidentifier as affectednodeaggregateidentifier
+        "' . $event->nodeAggregateId . '" as originnodeaggregateid,
+        nodeaggregateid as affectednodeaggregateid
     from tree
-)
             ',
                 [
-                    'entryNodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
-                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                    'entryNodeAggregateId' => (string)$event->nodeAggregateId,
+                    'contentStreamId' => (string)$event->contentStreamId,
                     'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
                 ],
                 [

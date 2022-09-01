@@ -26,7 +26,7 @@ class DocumentUriPathSchemaBuilder
     {
 
         $table = $schema->createTable($this->tableNamePrefix . '_uri');
-        $table->addColumn('nodeaggregateidentifier', Types::STRING)
+        $table->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setDefault('')
             ->setNotnull(true);
@@ -43,7 +43,7 @@ class DocumentUriPathSchemaBuilder
             ->setUnsigned(true)
             ->setDefault(0)
             ->setNotnull(true);
-        $table->addColumn('nodeaggregateidentifierpath', Types::STRING)
+        $table->addColumn('nodeaggregateidpath', Types::STRING)
             ->setLength(4000)
             ->setDefault('')
             ->setNotnull(true);
@@ -55,13 +55,13 @@ class DocumentUriPathSchemaBuilder
             ->setLength(255)
             ->setDefault('')
             ->setNotnull(true);
-        $table->addColumn('parentnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('parentnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
-        $table->addColumn('precedingnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('precedingnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
-        $table->addColumn('succeedingnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('succeedingnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
         $table->addColumn('shortcuttarget', Types::STRING)
@@ -69,11 +69,11 @@ class DocumentUriPathSchemaBuilder
             ->setNotnull(false);
 
         $table
-            ->addUniqueIndex(['nodeaggregateidentifier', 'dimensionspacepointhash'], 'variant')
+            ->addUniqueIndex(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
             ->addIndex([
-                'parentnodeaggregateidentifier',
-                'precedingnodeaggregateidentifier',
-                'succeedingnodeaggregateidentifier'
+                'parentnodeaggregateid',
+                'precedingnodeaggregateid',
+                'succeedingnodeaggregateid'
             ], 'preceding_succeeding')
             ->addIndex(['sitenodename', 'uripath'], 'sitenode_uripath', [], ['lengths' => [null,100]]);
     }
@@ -81,7 +81,7 @@ class DocumentUriPathSchemaBuilder
     private function createLiveContentStreamsTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_livecontentstreams');
-        $table->addColumn('contentstreamidentifier', Types::STRING)
+        $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(255)
             ->setDefault('')
             ->setNotnull(true);
@@ -89,6 +89,6 @@ class DocumentUriPathSchemaBuilder
             ->setLength(255)
             ->setDefault('')
             ->setNotnull(true);
-        $table->setPrimaryKey(['contentstreamidentifier']);
+        $table->setPrimaryKey(['contentstreamid']);
     }
 }

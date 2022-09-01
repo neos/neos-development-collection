@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 
@@ -64,16 +64,16 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         CreateContentStream $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToNotExistYet($command->contentStreamIdentifier, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+        $this->requireContentStreamToNotExistYet($command->contentStreamId, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasCreated(
-                    $command->contentStreamIdentifier,
-                    $command->initiatingUserIdentifier
+                    $command->contentStreamId,
+                    $command->initiatingUserId
                 )
             ),
             ExpectedVersion::NO_STREAM()
@@ -88,23 +88,23 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         ForkContentStream $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->sourceContentStreamIdentifier, $contentRepository);
-        $this->requireContentStreamToNotExistYet($command->newContentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->sourceContentStreamId, $contentRepository);
+        $this->requireContentStreamToNotExistYet($command->newContentStreamId, $contentRepository);
 
         $sourceContentStreamVersion = $contentRepository->getContentStreamFinder()
-            ->findVersionForContentStream($command->sourceContentStreamIdentifier);
+            ->findVersionForContentStream($command->sourceContentStreamId);
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->newContentStreamIdentifier)
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->newContentStreamId)
             ->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasForked(
-                    $command->newContentStreamIdentifier,
-                    $command->sourceContentStreamIdentifier,
+                    $command->newContentStreamId,
+                    $command->sourceContentStreamId,
                     $sourceContentStreamVersion->unwrap(),
-                    $command->initiatingUserIdentifier
+                    $command->initiatingUserId
                 ),
             ),
             ExpectedVersion::ANY()
@@ -115,18 +115,18 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         RemoveContentStream $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $command->contentStreamIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            $command->contentStreamId
         )->getEventStreamName();
 
         return new EventsToPublish(
             $streamName,
             Events::with(
                 new ContentStreamWasRemoved(
-                    $command->contentStreamIdentifier,
-                    $command->initiatingUserIdentifier
+                    $command->contentStreamId,
+                    $command->initiatingUserId
                 ),
             ),
             ExpectedVersion::ANY()
@@ -134,32 +134,32 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamAlreadyExists
      */
     protected function requireContentStreamToNotExistYet(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): void {
-        if ($contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
+        if ($contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamAlreadyExists(
-                'Content stream "' . $contentStreamIdentifier . '" already exists.',
+                'Content stream "' . $contentStreamId . '" already exists.',
                 1521386345
             );
         }
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
     protected function requireContentStreamToExist(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): void {
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamIdentifier)) {
+        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamIdentifier . '" does not exist yet.',
+                'Content stream "' . $contentStreamId . '" does not exist yet.',
                 1521386692
             );
         }

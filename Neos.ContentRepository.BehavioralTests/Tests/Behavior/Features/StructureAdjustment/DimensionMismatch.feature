@@ -22,16 +22,16 @@ Feature: Dimension mismatch
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
-      | contentStreamIdentifier     | "cs-identifier"                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                 |
+      | contentStreamId     | "cs-identifier"                          |
+      | nodeAggregateId     | "lady-eleonode-rootford"                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"            |
       | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "en"}] |
-      | initiatingUserIdentifier    | "system-user"                            |
+      | initiatingUserId    | "system-user"                            |
       | nodeAggregateClassification | "root"                                   |
     And the graph projection is fully up to date
 
@@ -39,17 +39,17 @@ Feature: Dimension mismatch
     # Node /document
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "en"}                        |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
-      | initiatingUserIdentifier      | "user"                                    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "user"                                    |
     And the graph projection is fully up to date
 
     When I have the following content dimensions:
       | Identifier | Values | Generalizations |
       | language   | en, de | en->de          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                                | nodeAggregateIdentifier |
+      | Type                                | nodeAggregateId |
       | NODE_COVERS_GENERALIZATION_OR_PEERS | sir-david-nodenborough  |

@@ -15,21 +15,21 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * CreateNodeAggregateWithNode
  *
- * Creates a new node aggregate with a new node in the given `contentStreamIdentifier`
- * with the given `nodeAggregateIdentifier` and `originDimensionSpacePoint`.
- * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
+ * Creates a new node aggregate with a new node in the given `contentStreamId`
+ * with the given `nodeAggregateId` and `originDimensionSpacePoint`.
+ * The node will be appended as child node of the given `parentNodeId` which must cover the given
  * `originDimensionSpacePoint`.
  *
  * @api commands are the write-API of the ContentRepository
@@ -37,10 +37,10 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 final class CreateNodeAggregateWithNode implements CommandInterface
 {
     /**
-     * Node aggregate identifier of the node's succeeding sibling (optional)
+     * Node aggregate id of the node's succeeding sibling (optional)
      * If not given, the node will be added as the parent's first child
      */
-    public readonly ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier;
+    public readonly ?NodeAggregateId $succeedingSiblingNodeAggregateId;
 
     /**
      * The node's optional name. Set if there is a meaningful relation to its parent that should be named.
@@ -53,19 +53,19 @@ final class CreateNodeAggregateWithNode implements CommandInterface
     public readonly PropertyValuesToWrite $initialPropertyValues;
 
     /**
-     * NodeAggregateIdentifiers for tethered descendants (optional).
+     * NodeAggregateIds for tethered descendants (optional).
      *
-     * If the given node type declares tethered child nodes, you may predefine their node aggregate identifiers
+     * If the given node type declares tethered child nodes, you may predefine their node aggregate ids
      * using this assignment registry.
      * Since tethered child nodes may have tethered child nodes themselves,
      * this registry is indexed using relative node paths to the node to create in the first place.
      */
-    public readonly NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers;
+    public readonly NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds;
 
     // TODO: CREATE METHODS FÜR ALLE COMMANDS
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamIdd,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
         /**
          * Origin of the new node in the dimension space.
@@ -73,33 +73,33 @@ final class CreateNodeAggregateWithNode implements CommandInterface
          * from the configured specializations.
          */
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly UserIdentifier $initiatingUserIdentifier,
-        public readonly NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
+        public readonly UserId $initiatingUserId,
+        public readonly NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId = null,
         ?NodeName $nodeName = null,
         ?PropertyValuesToWrite $initialPropertyValues = null,
-        ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
+        ?NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds = null
     ) {
-        $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
+        $this->succeedingSiblingNodeAggregateId = $succeedingSiblingNodeAggregateId;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues ?: PropertyValuesToWrite::fromArray([]);
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers
-            ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->tetheredDescendantNodeAggregateIds = $tetheredDescendantNodeAggregateIds
+            ?: new NodeAggregateIdsByNodePaths([]);
     }
 
     public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self
     {
         return new self(
-            $this->contentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
+            $this->contentStreamIdd,
+            $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->initiatingUserIdentifier,
-            $this->parentNodeAggregateIdentifier,
-            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->initiatingUserId,
+            $this->parentNodeAggregateId,
+            $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $newInitialPropertyValues,
-            $this->tetheredDescendantNodeAggregateIdentifiers
+            $this->tetheredDescendantNodeAggregateIds
         );
     }
 }

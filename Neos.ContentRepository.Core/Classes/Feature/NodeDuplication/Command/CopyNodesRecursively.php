@@ -15,24 +15,24 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdentifierMapping;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * CopyNodesRecursively command
  *
- * Creates a new node aggregate with a new node with the given `nodeAggregateIdentifier` and `nodeIdentifier`.
- * The node will be appended as child node of the given `parentNodeIdentifier` which must cover the given
+ * Creates a new node aggregate with a new node with the given `nodeAggregateId` and `nodeId`.
+ * The node will be appended as child node of the given `parentNodeId` which must cover the given
  * `dimensionSpacePoint`.
  *
  * @api commands are the write-API of the ContentRepository
@@ -40,18 +40,18 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 final class CopyNodesRecursively implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdentifierToPublishOrDiscardInterface,
+    MatchableWithNodeIdToPublishOrDiscardInterface,
     RebasableToOtherContentStreamsInterface
 {
     private function __construct(
         /**
-         * The identifier of the content stream this command is to be handled in
+         * The id of the content stream this command is to be handled in
          *
-         * @var ContentStreamIdentifier
+         * @var ContentStreamId
          */
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamId $contentStreamId,
         /**
-         * The to be copied node's node aggregate identifier
+         * The to be copied node's node aggregate id
          *
          * @var NodeSubtreeSnapshot
          */
@@ -62,30 +62,30 @@ final class CopyNodesRecursively implements
          * @var OriginDimensionSpacePoint
          */
         public readonly OriginDimensionSpacePoint $targetDimensionSpacePoint,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly UserId $initiatingUserId,
         /**
-         * Node aggregate identifier of the target node's parent (optional)
+         * Node aggregate id of the target node's parent (optional)
          *
          * If not given, the node will be added as a root node
          *
-         * @var NodeAggregateIdentifier
+         * @var NodeAggregateId
          */
-        public readonly NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
+        public readonly NodeAggregateId $targetParentNodeAggregateId,
         /**
-         * Node aggregate identifier of the target node's succeeding sibling (optional)
+         * Node aggregate id of the target node's succeeding sibling (optional)
          *
          * If not given, the node will be added as the parent's first child
          *
-         * @var NodeAggregateIdentifier|null
+         * @var NodeAggregateId|null
          */
-        public readonly ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        public readonly ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
         /**
          * the root node name of the root-inserted-node
          *
          * @var NodeName|null
          */
         public readonly ?NodeName $targetNodeName,
-        public readonly NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+        public readonly NodeAggregateIdMapping $nodeAggregateIdMapping
     ) {
     }
 
@@ -96,22 +96,22 @@ final class CopyNodesRecursively implements
         ContentSubgraphInterface $subgraph,
         Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
-        UserIdentifier $initiatingUserIdentifier,
-        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        UserId $initiatingUserId,
+        NodeAggregateId $targetParentNodeAggregateId,
+        ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
         ?NodeName $targetNodeName
     ): self {
         $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $startNode);
 
         return new self(
-            $subgraph->getContentStreamIdentifier(),
+            $subgraph->getContentStreamId(),
             $nodeSubtreeSnapshot,
             $dimensionSpacePoint,
-            $initiatingUserIdentifier,
-            $targetParentNodeAggregateIdentifier,
-            $targetSucceedingSiblingNodeAggregateIdentifier,
+            $initiatingUserId,
+            $targetParentNodeAggregateId,
+            $targetSucceedingSiblingNodeAggregateId,
             $targetNodeName,
-            NodeAggregateIdentifierMapping::generateForNodeSubtreeSnapshot($nodeSubtreeSnapshot)
+            NodeAggregateIdMapping::generateForNodeSubtreeSnapshot($nodeSubtreeSnapshot)
         );
     }
 
@@ -121,16 +121,16 @@ final class CopyNodesRecursively implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
             NodeSubtreeSnapshot::fromArray($array['nodeTreeToInsert']),
             OriginDimensionSpacePoint::fromArray($array['targetDimensionSpacePoint']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            NodeAggregateIdentifier::fromString($array['targetParentNodeAggregateIdentifier']),
-            isset($array['targetSucceedingSiblingNodeAggregateIdentifier'])
-                ? NodeAggregateIdentifier::fromString($array['targetSucceedingSiblingNodeAggregateIdentifier'])
+            UserId::fromString($array['initiatingUserId']),
+            NodeAggregateId::fromString($array['targetParentNodeAggregateId']),
+            isset($array['targetSucceedingSiblingNodeAggregateId'])
+                ? NodeAggregateId::fromString($array['targetSucceedingSiblingNodeAggregateId'])
                 : null,
             isset($array['targetNodeName']) ? NodeName::fromString($array['targetNodeName']) : null,
-            NodeAggregateIdentifierMapping::fromArray($array['nodeAggregateIdentifierMapping'])
+            NodeAggregateIdMapping::fromArray($array['nodeAggregateIdMapping'])
         );
     }
 
@@ -140,56 +140,56 @@ final class CopyNodesRecursively implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'contentStreamId' => $this->contentStreamId,
             'nodeTreeToInsert' => $this->nodeTreeToInsert,
             'targetDimensionSpacePoint' => $this->targetDimensionSpacePoint,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
-            'targetParentNodeAggregateIdentifier' => $this->targetParentNodeAggregateIdentifier,
-            'targetSucceedingSiblingNodeAggregateIdentifier' => $this->targetSucceedingSiblingNodeAggregateIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
+            'targetParentNodeAggregateId' => $this->targetParentNodeAggregateId,
+            'targetSucceedingSiblingNodeAggregateId' => $this->targetSucceedingSiblingNodeAggregateId,
             'targetNodeName' => $this->targetNodeName,
-            'nodeAggregateIdentifierMapping' => $this->nodeAggregateIdentifierMapping,
+            'nodeAggregateIdMapping' => $this->nodeAggregateIdMapping,
         ];
     }
 
-    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
-        $targetNodeAggregateIdentifier = $this->nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
-            $this->nodeTreeToInsert->nodeAggregateIdentifier
+        $targetNodeAggregateId = $this->nodeAggregateIdMapping->getNewNodeAggregateId(
+            $this->nodeTreeToInsert->nodeAggregateId
         );
         return (
-            !is_null($targetNodeAggregateIdentifier)
-                && $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
-                && $this->targetDimensionSpacePoint->equals($nodeIdentifierToPublish->dimensionSpacePoint)
-                && $targetNodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
+            !is_null($targetNodeAggregateId)
+                && $this->contentStreamId === $nodeIdToPublish->contentStreamId
+                && $this->targetDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+                && $targetNodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): self
+    public function createCopyForContentStream(ContentStreamId $target): self
     {
         return new self(
             $target,
             $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
-            $this->initiatingUserIdentifier,
-            $this->targetParentNodeAggregateIdentifier,
-            $this->targetSucceedingSiblingNodeAggregateIdentifier,
+            $this->initiatingUserId,
+            $this->targetParentNodeAggregateId,
+            $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
-            $this->nodeAggregateIdentifierMapping
+            $this->nodeAggregateIdMapping
         );
     }
 
-    public function withNodeAggregateIdentifierMapping(
-        NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping
+    public function withNodeAggregateIdMapping(
+        NodeAggregateIdMapping $nodeAggregateIdMapping
     ): self {
         return new self(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
-            $this->initiatingUserIdentifier,
-            $this->targetParentNodeAggregateIdentifier,
-            $this->targetSucceedingSiblingNodeAggregateIdentifier,
+            $this->initiatingUserId,
+            $this->targetParentNodeAggregateId,
+            $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
-            $nodeAggregateIdentifierMapping
+            $nodeAggregateIdMapping
         );
     }
 }

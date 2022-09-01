@@ -16,11 +16,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
@@ -50,15 +50,15 @@ final class SiteNodeUtility
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->nodeAggregateIdentifier));
+        } while ($node = $subgraph->findParentNode($node->nodeAggregateId));
 
         // no Site node found at rootline
         throw new \RuntimeException('No site node found!');
     }
 
     public function findCurrentSiteNode(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
@@ -80,10 +80,10 @@ final class SiteNodeUtility
                     $contentStreamIdentifier,
                     NodeTypeName::fromString('Neos.Neos:Sites')
                 );
-            $sitesNode = $subgraph->findNodeByNodeAggregateIdentifier($rootNodeAggregate->nodeAggregateIdentifier);
+            $sitesNode = $subgraph->findNodeByNodeAggregateId($rootNodeAggregate->nodeAggregateId);
             if ($sitesNode) {
                 $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                    $sitesNode->nodeAggregateIdentifier,
+                    $sitesNode->nodeAggregateId,
                     $site->getNodeName()->toNodeName()
                 );
                 if ($siteNode instanceof Node) {

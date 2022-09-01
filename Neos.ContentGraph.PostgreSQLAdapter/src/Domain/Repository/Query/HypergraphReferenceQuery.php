@@ -16,8 +16,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 
@@ -29,7 +29,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         string $nodeFieldsToFetch,
         string $tableNamePrefix
     ): self {
@@ -70,7 +70,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
-    public function withSourceNodeAggregateIdentifier(NodeAggregateIdentifier $sourceNodeAggregateIdentifier): self
+    public function withSourceNodeAggregateIdentifier(NodeAggregateId $sourceNodeAggregateIdentifier): self
     {
         $query = $this->query;
         $query .= '
@@ -83,7 +83,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     }
 
     public function withTargetNodeAggregateIdentifier(
-        NodeAggregateIdentifier $targetNodeAggregateIdentifier
+        NodeAggregateId $targetNodeAggregateIdentifier
     ): self {
         $query = $this->query;
         $query .= '

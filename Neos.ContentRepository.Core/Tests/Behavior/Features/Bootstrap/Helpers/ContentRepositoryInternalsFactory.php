@@ -14,7 +14,7 @@ class ContentRepositoryInternalsFactory implements ContentRepositoryServiceFacto
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ContentRepositoryServiceInterface
     {
         return new ContentRepositoryInternals(
-            $serviceFactoryDependencies->contentRepositoryIdentifier,
+            $serviceFactoryDependencies->contentRepositoryId,
             $serviceFactoryDependencies->eventStore,
             $serviceFactoryDependencies->eventNormalizer,
             $serviceFactoryDependencies->nodeTypeManager,

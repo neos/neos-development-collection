@@ -75,7 +75,7 @@ class ClosestOperation extends AbstractOperation
 
             foreach ($contextNodeQuery as $result) {
                 /* @var Node $result */
-                $output[(string)$result->nodeAggregateIdentifier] = $result;
+                $output[(string)$result->nodeAggregateId] = $result;
             }
         }
 

@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
@@ -27,12 +27,12 @@ use PHPUnit\Framework\Assert;
  */
 trait StructureAdjustmentsTrait
 {
-    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+    abstract protected function getContentRepositoryId(): ContentRepositoryId;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     protected function getStructureAdjustmentService(): StructureAdjustmentService
     {
-        return $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new StructureAdjustmentServiceFactory());
+        return $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new StructureAdjustmentServiceFactory());
     }
 
     /**
@@ -81,12 +81,12 @@ trait StructureAdjustmentsTrait
         Assert::assertCount(count($expectedAdjustments->getHash()), $actualAdjustments, 'Number of adjustments must match.');
 
         foreach ($expectedAdjustments->getHash() as $i => $row) {
-            if (!isset($row['Type']) || !isset($row['nodeAggregateIdentifier'])) {
-                Assert::fail('Type and nodeAggregateIdentifier must be specified in assertion!');
+            if (!isset($row['Type']) || !isset($row['nodeAggregateId'])) {
+                Assert::fail('Type and nodeAggregateId must be specified in assertion!');
             }
-            $adjustment = $this->findAdjustmentsBasedOnTypeAndNodeAggregateIdentifier($actualAdjustments, $row['Type'], $row['nodeAggregateIdentifier']);
+            $adjustment = $this->findAdjustmentsBasedOnTypeAndNodeAggregateId($actualAdjustments, $row['Type'], $row['nodeAggregateId']);
             foreach ($row as $k => $v) {
-                if (in_array($k, ['Type', 'nodeAggregateIdentifier'])) {
+                if (in_array($k, ['Type', 'nodeAggregateId'])) {
                     continue;
                 }
 
@@ -95,14 +95,14 @@ trait StructureAdjustmentsTrait
         }
     }
 
-    private function findAdjustmentsBasedOnTypeAndNodeAggregateIdentifier(array $actualAdjustments, string $type, string $nodeAggregateIdentifier): StructureAdjustment
+    private function findAdjustmentsBasedOnTypeAndNodeAggregateId(array $actualAdjustments, string $type, string $nodeAggregateId): StructureAdjustment
     {
         foreach ($actualAdjustments as $adjustment) {
             assert($adjustment instanceof StructureAdjustment);
-            if ($adjustment->getType() === $type && $adjustment->getArguments()['nodeAggregateIdentifier'] === $nodeAggregateIdentifier) {
+            if ($adjustment->getType() === $type && $adjustment->getArguments()['nodeAggregateId'] === $nodeAggregateId) {
                 return $adjustment;
             }
         }
-        Assert::fail('Adjustment not found for type "' . $type . '" and node aggregate identifier "' . $nodeAggregateIdentifier . '"');
+        Assert::fail('Adjustment not found for type "' . $type . '" and node aggregate id "' . $nodeAggregateId . '"');
     }
 }

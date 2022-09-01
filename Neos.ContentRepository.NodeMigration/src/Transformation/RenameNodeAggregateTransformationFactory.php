@@ -19,8 +19,8 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 class RenameNodeAggregateTransformationFactory implements TransformationFactoryInterface
 {
@@ -48,13 +48,13 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
 
             public function execute(
                 NodeAggregate $nodeAggregate,
-                ContentStreamIdentifier $contentStreamForWriting
+                ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(new ChangeNodeAggregateName(
                     $contentStreamForWriting,
-                    $nodeAggregate->nodeAggregateIdentifier,
+                    $nodeAggregate->nodeAggregateId,
                     NodeName::fromString($this->newNodeName),
-                    UserIdentifier::forSystemUser()
+                    UserId::forSystemUser()
                 ));
             }
         };

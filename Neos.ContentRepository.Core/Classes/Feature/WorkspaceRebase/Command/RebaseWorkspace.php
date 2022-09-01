@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -28,17 +28,17 @@ final class RebaseWorkspace implements CommandInterface
 {
     public function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly UserId $initiatingUserId,
         /**
          * Name of the new content stream which is created during the rebase
          */
-        public readonly ContentStreamIdentifier $rebasedContentStreamIdentifier
+        public readonly ContentStreamId $rebasedContentStreamId
     ) {
     }
 
-    public static function create(WorkspaceName $workspaceName, UserIdentifier $initiatingUserIdentifier): self
+    public static function create(WorkspaceName $workspaceName, UserId $initiatingUserId): self
     {
-        return new self($workspaceName, $initiatingUserIdentifier, ContentStreamIdentifier::create());
+        return new self($workspaceName, $initiatingUserId, ContentStreamId::create());
     }
 
     /**
@@ -46,9 +46,9 @@ final class RebaseWorkspace implements CommandInterface
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $newContentStreamIdentifier
+        UserId $initiatingUserId,
+        ContentStreamId $newContentStreamId
     ): self {
-        return new self($workspaceName, $initiatingUserIdentifier, $newContentStreamIdentifier);
+        return new self($workspaceName, $initiatingUserId, $newContentStreamId);
     }
 }

@@ -65,9 +65,9 @@ final class NodeAggregateEventPublisher
                 }
                 $commandPayload = $command->jsonSerialize();
 
-                if (!isset($commandPayload['contentStreamIdentifier'])) {
+                if (!isset($commandPayload['contentStreamId'])) {
                     throw new \RuntimeException(sprintf(
-                        'TODO: Command %s does not have a property "contentStreamIdentifier" (which is required).',
+                        'TODO: Command %s does not have a property "contentStreamId" (which is required).',
                         get_class($command)
                     ));
                 }

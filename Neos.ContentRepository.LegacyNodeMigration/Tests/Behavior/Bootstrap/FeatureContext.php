@@ -27,9 +27,9 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\EventExporter;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\Flow\Property\PropertyMapper;
@@ -87,7 +87,7 @@ class FeatureContext implements Context
             return [
                 'path' => $row['Path'],
                 'parentpath' => implode('/', array_slice(explode('/', $row['Path']), 0, -1)) ?: '/',
-                'identifier' => $row['Identifier'] ?? (string)NodeAggregateIdentifier::create(),
+                'identifier' => $row['Identifier'] ?? (string)NodeAggregateId::create(),
                 'nodetype' => $row['Node Type'] ?? 'unstructured',
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',
@@ -113,7 +113,7 @@ class FeatureContext implements Context
         $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
         $migration = new NodeDataToEventsProcessor($nodeTypeManager, $propertyMapper, $propertyConverter, $interDimensionalVariationGraph, $eventNormalizer, $this->mockFilesystem, $this->nodeDataRows);
         if ($contentStream !== null) {
-            $migration->setContentStreamIdentifier(ContentStreamIdentifier::fromString($contentStream));
+            $migration->setContentStreamIdentifier(ContentStreamId::fromString($contentStream));
         }
         $this->lastMigrationResult = $migration->run();
     }

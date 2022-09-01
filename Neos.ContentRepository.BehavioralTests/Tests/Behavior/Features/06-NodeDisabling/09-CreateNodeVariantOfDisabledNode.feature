@@ -19,12 +19,12 @@ Feature: Variation of hidden nodes
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And VisibilityConstraints are set to "frontend"
@@ -32,24 +32,24 @@ Feature: Variation of hidden nodes
   Scenario: Specialize a node where the specialization target is enabled
     Given I am in dimension space point {"language":"de"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"gsw"} |
     And the graph projection is fully up to date
@@ -62,18 +62,18 @@ Feature: Variation of hidden nodes
   Scenario: Specialize a node where the specialization target is disabled
     Given I am in dimension space point {"language":"de"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"gsw"} |
     And the graph projection is fully up to date
@@ -86,7 +86,7 @@ Feature: Variation of hidden nodes
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
@@ -97,18 +97,18 @@ Feature: Variation of hidden nodes
   Scenario: Generalize a node where the generalization target is enabled
     Given I am in dimension space point {"language":"de"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
@@ -122,25 +122,25 @@ Feature: Variation of hidden nodes
   Scenario: Generalize a node where the generalization target is disabled
     Given I am in dimension space point {"language":"ltz"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
 
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini"    |
+      | nodeAggregateId | "the-great-nodini"    |
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"de"}  |
     And the graph projection is fully up to date
@@ -153,7 +153,7 @@ Feature: Variation of hidden nodes
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"      |
+      | nodeAggregateId      | "the-great-nodini"      |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
@@ -164,18 +164,18 @@ Feature: Variation of hidden nodes
   Scenario: Peer vary a node where the peer target is enabled
     Given I am in dimension space point {"language":"de"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"en"}  |
     And the graph projection is fully up to date
@@ -189,24 +189,24 @@ Feature: Variation of hidden nodes
   Scenario: Peer vary a node where the peer target is disabled
     Given I am in dimension space point {"language":"de"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName       |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"en"}  |
     And the graph projection is fully up to date
@@ -219,7 +219,7 @@ Feature: Variation of hidden nodes
 
     When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "the-great-nodini"   |
+      | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"en"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date

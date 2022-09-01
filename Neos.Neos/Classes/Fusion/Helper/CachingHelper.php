@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion\Helper;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -62,8 +62,8 @@ class CachingHelper implements ProtectedContextAwareInterface
         foreach ($nodes as $node) {
             if ($node instanceof Node) {
                 $prefixedNodeIdentifiers[] = $prefix . '_'
-                    . $this->renderContentStreamIdentifierTag($node->subgraphIdentity->contentStreamIdentifier)
-                    . '_' . $node->nodeAggregateIdentifier;
+                    . $this->renderContentStreamIdentifierTag($node->subgraphIdentity->contentStreamId)
+                    . '_' . $node->nodeAggregateId;
             } else {
                 throw new Exception(sprintf(
                     'One of the elements in array passed to this helper was not a Node, but of type: "%s".',
@@ -106,7 +106,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $contentStreamTag = '';
         if ($contextNode instanceof Node) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag(
-                $contextNode->subgraphIdentity->contentStreamIdentifier
+                $contextNode->subgraphIdentity->contentStreamId
             ) . '_';
         }
 
@@ -149,7 +149,7 @@ class CachingHelper implements ProtectedContextAwareInterface
 
         if ($contextNode instanceof Node) {
             $contentStreamTag = $this->renderContentStreamIdentifierTag(
-                $contextNode->subgraphIdentity->contentStreamIdentifier
+                $contextNode->subgraphIdentity->contentStreamId
             ) . '_';
         }
 
@@ -183,10 +183,10 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
      * @return string
      */
-    private function renderContentStreamIdentifierTag(ContentStreamIdentifier $contentStreamIdentifier)
+    private function renderContentStreamIdentifierTag(ContentStreamId $contentStreamIdentifier)
     {
         return '%' . $contentStreamIdentifier . '%';
     }
@@ -202,13 +202,13 @@ class CachingHelper implements ProtectedContextAwareInterface
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
 
 
         /** @var Workspace $currentWorkspace */
-        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-            $node->subgraphIdentity->contentStreamIdentifier
+        $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $node->subgraphIdentity->contentStreamId
         );
         $workspaceChain = [];
         // TODO: Maybe write CTE here

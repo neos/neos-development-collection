@@ -17,8 +17,8 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -84,8 +84,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 LEFT JOIN ' . $this->tableNamePrefix . '_node p ON h.parentnodeanchor = p.relationanchorpoint
                 LEFT JOIN ' . $this->tableNamePrefix . '_node c ON h.childnodeanchor = c.relationanchorpoint
                 WHERE h.parentnodeanchor != :rootNodeAnchor
-                GROUP BY p.nodeaggregateidentifier, c.nodeaggregateidentifier,
-                         h.dimensionspacepointhash, h.contentstreamidentifier
+                GROUP BY p.nodeaggregateid, c.nodeaggregateid,
+                         h.dimensionspacepointhash, h.contentstreamid
                 HAVING uniquenessCounter > 1
                 ',
             [
@@ -114,13 +114,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         $ambiguouslySortedHierarchyRelationRecords = $this->client->getConnection()->executeQuery(
             'SELECT *, COUNT(position)
                     FROM ' . $this->tableNamePrefix . '_hierarchyrelation
-                    GROUP BY position, parentnodeanchor, contentstreamidentifier, dimensionspacepointhash
+                    GROUP BY position, parentnodeanchor, contentstreamid, dimensionspacepointhash
                     HAVING COUNT(position) > 1'
         );
 
         foreach ($ambiguouslySortedHierarchyRelationRecords as $hierarchyRelationRecord) {
             $ambiguouslySortedNodeRecords = $this->client->getConnection()->executeQuery(
-                'SELECT nodeaggregateidentifier
+                'SELECT nodeaggregateid
                     FROM ' . $this->tableNamePrefix . '_node
                     WHERE relationanchorpoint = :relationAnchorPoint',
                 [
@@ -130,9 +130,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
             $result->addError(new Error(
                 'Siblings ' . implode(', ', array_map(function (array $record) {
-                    return $record['nodeaggregateidentifier'];
+                    return $record['nodeaggregateid'];
                 }, $ambiguouslySortedNodeRecords))
-                . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamidentifier']
+                . ' are ambiguously sorted in content stream ' . $hierarchyRelationRecord['contentstreamid']
                 . ' and dimension space point ' . $hierarchyRelationRecord['dimensionspacepoint'],
                 self::ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED
             ));
@@ -148,13 +148,13 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         $unnamedTetheredNodeRecords = $this->client->getConnection()->executeQuery(
-            'SELECT n.nodeaggregateidentifier, h.contentstreamidentifier
+            'SELECT n.nodeaggregateid, h.contentstreamid
                     FROM ' . $this->tableNamePrefix . '_node n
                 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                     ON h.childnodeanchor = n.relationanchorpoint
                 WHERE n.classification = :tethered
               AND h.name IS NULL
-              GROUP BY n.nodeaggregateidentifier, h.contentstreamidentifier',
+              GROUP BY n.nodeaggregateid, h.contentstreamid',
             [
                 'tethered' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
             ]
@@ -162,8 +162,8 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 
         foreach ($unnamedTetheredNodeRecords as $unnamedTetheredNodeRecord) {
             $result->addError(new Error(
-                'Node aggregate ' . $unnamedTetheredNodeRecord['nodeaggregateidentifier']
-                . ' is unnamed in content stream ' . $unnamedTetheredNodeRecord['contentstreamidentifier'] . '.',
+                'Node aggregate ' . $unnamedTetheredNodeRecord['nodeaggregateid']
+                . ' is unnamed in content stream ' . $unnamedTetheredNodeRecord['contentstreamid'] . '.',
                 self::ERROR_CODE_TETHERED_NODE_IS_UNNAMED
             ));
         }
@@ -179,27 +179,27 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
         $nodeRecordsWithMissingRestrictions = $this->client->getConnection()->executeQuery(
-            'SELECT c.nodeaggregateidentifier, h.contentstreamidentifier, h.dimensionspacepoint
+            'SELECT c.nodeaggregateid, h.contentstreamid, h.dimensionspacepoint
             FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
             INNER JOIN ' . $this->tableNamePrefix . '_node p
                 ON p.relationanchorpoint = h.parentnodeanchor
             INNER JOIN ' . $this->tableNamePrefix . '_restrictionrelation pr
-                ON pr.affectednodeaggregateidentifier = p.nodeaggregateidentifier
-                AND pr.contentstreamidentifier = h.contentstreamidentifier
+                ON pr.affectednodeaggregateid = p.nodeaggregateid
+                AND pr.contentstreamid = h.contentstreamid
                 AND pr.dimensionspacepointhash = h.dimensionspacepointhash
             INNER JOIN ' . $this->tableNamePrefix . '_node c
                 ON c.relationanchorpoint = h.childnodeanchor
             LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation cr
-                ON cr.affectednodeaggregateidentifier = c.nodeaggregateidentifier
-                AND cr.contentstreamidentifier = h.contentstreamidentifier
+                ON cr.affectednodeaggregateid = c.nodeaggregateid
+                AND cr.contentstreamid = h.contentstreamid
                 AND cr.dimensionspacepointhash = h.dimensionspacepointhash
-            WHERE cr.affectednodeaggregateidentifier IS NULL'
+            WHERE cr.affectednodeaggregateid IS NULL'
         )->fetchAllAssociative();
 
         foreach ($nodeRecordsWithMissingRestrictions as $nodeRecord) {
             $result->addError(new Error(
-                'Node aggregate ' . $nodeRecord['nodeaggregateidentifier']
-                . ' misses a restriction relation in content stream ' . $nodeRecord['contentstreamidentifier']
+                'Node aggregate ' . $nodeRecord['nodeaggregateid']
+                . ' misses a restriction relation in content stream ' . $nodeRecord['contentstreamid']
                 . ' and dimension space point ' . $nodeRecord['dimensionspacepoint'],
                 self::ERROR_CODE_NODE_HAS_MISSING_RESTRICTION
             ));
@@ -222,25 +222,25 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     ' . $this->tableNamePrefix . '_node p
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
                         ON p.relationanchorpoint = ph.childnodeanchor
-                ) ON p.nodeaggregateidentifier = r.originnodeaggregateidentifier
-                AND ph.contentstreamidentifier = r.contentstreamidentifier
+                ) ON p.nodeaggregateid = r.originnodeaggregateid
+                AND ph.contentstreamid = r.contentstreamid
                 AND ph.dimensionspacepointhash = r.dimensionspacepointhash
                 LEFT JOIN (
                     ' . $this->tableNamePrefix . '_node c
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
                         ON c.relationanchorpoint = ch.childnodeanchor
-                ) ON c.nodeaggregateidentifier = r.affectednodeaggregateidentifier
-                AND ch.contentstreamidentifier = r.contentstreamidentifier
+                ) ON c.nodeaggregateid = r.affectednodeaggregateid
+                AND ch.contentstreamid = r.contentstreamid
                 AND ch.dimensionspacepointhash = r.dimensionspacepointhash
-            WHERE p.nodeaggregateidentifier IS NULL
-            OR c.nodeaggregateidentifier IS NULL'
+            WHERE p.nodeaggregateid IS NULL
+            OR c.nodeaggregateid IS NULL'
         )->fetchAllAssociative();
 
         foreach ($restrictionRelationRecordsWithoutOriginOrAffectedNode as $relationRecord) {
             $result->addError(new Error(
-                'Restriction relation ' . $relationRecord['originnodeaggregateidentifier']
-                . ' -> ' . $relationRecord['affectednodeaggregateidentifier']
-                . ' does not connect two nodes in content stream ' . $relationRecord['contentstreamidentifier']
+                'Restriction relation ' . $relationRecord['originnodeaggregateid']
+                . ' -> ' . $relationRecord['affectednodeaggregateid']
+                . ' does not connect two nodes in content stream ' . $relationRecord['contentstreamid']
                 . ' and dimension space point ' . $relationRecord['dimensionspacepointhash'],
                 self::ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED
             ));
@@ -272,9 +272,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         }
 
         $referenceRelationRecordsWithInvalidTarget = $this->client->getConnection()->executeQuery(
-            'SELECT sh.contentstreamidentifier AS contentstreamIdentifier,
-                    s.nodeaggregateidentifier AS sourceNodeAggregateIdentifier,
-                    r.destinationnodeaggregateidentifier AS destinationNodeAggregateIdentifier
+            'SELECT sh.contentstreamid AS contentstreamId,
+                    s.nodeaggregateid AS sourceNodeAggregateId,
+                    r.destinationnodeaggregateid AS destinationNodeAggregateId
                 FROM ' . $this->tableNamePrefix . '_referencerelation r
                 INNER JOIN ' . $this->tableNamePrefix . '_node s ON r.nodeanchorpoint = s.relationanchorpoint
                 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation sh
@@ -283,18 +283,18 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     ' . $this->tableNamePrefix . '_node d
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation dh
                         ON d.relationanchorpoint = dh.childnodeanchor
-                ) ON r.destinationnodeaggregateidentifier = d.nodeaggregateidentifier
-                    AND sh.contentstreamidentifier = dh.contentstreamidentifier
+                ) ON r.destinationnodeaggregateid = d.nodeaggregateid
+                    AND sh.contentstreamid = dh.contentstreamid
                     AND sh.dimensionspacepointhash = dh.dimensionspacepointhash
-                WHERE d.nodeaggregateidentifier IS NULL
-                GROUP BY s.nodeaggregateidentifier'
+                WHERE d.nodeaggregateid IS NULL
+                GROUP BY s.nodeaggregateid'
         )->fetchAllAssociative();
 
         foreach ($referenceRelationRecordsWithInvalidTarget as $record) {
             $result->addError(new Error(
-                'Destination node aggregate ' . $record['destinationNodeAggregateIdentifier']
-                . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateIdentifier']
-                . ' does in content stream ' . $record['contentstreamIdentifier'],
+                'Destination node aggregate ' . $record['destinationNodeAggregateId']
+                . ' does not cover any dimension space points the source ' . $record['sourceNodeAggregateId']
+                . ' does in content stream ' . $record['contentstreamId'],
                 self::ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED
             ));
         }
@@ -319,9 +319,9 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     {
         $result = new Result();
 
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
-                $nodeAggregateIdentifiersInCycles = $this->client->getConnection()->executeQuery(
+                $nodeAggregateIdsInCycles = $this->client->getConnection()->executeQuery(
                     'WITH RECURSIVE subgraph AS (
     SELECT
      	h.childnodeanchor
@@ -329,7 +329,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
         ' . $this->tableNamePrefix . '_hierarchyrelation h
     WHERE
         h.parentnodeanchor = :rootAnchorPoint
-        AND h.contentstreamidentifier = :contentStreamIdentifier
+        AND h.contentstreamid = :contentStreamId
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
     UNION
      -- --------------------------------
@@ -342,33 +342,33 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
 	 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
         on h.parentnodeanchor = p.childnodeanchor
 	 WHERE
-	 	h.contentstreamidentifier = :contentStreamIdentifier
+	 	h.contentstreamid = :contentStreamId
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
 )
-SELECT nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node n
+SELECT nodeaggregateid FROM ' . $this->tableNamePrefix . '_node n
 INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
     ON h.childnodeanchor = n.relationanchorpoint
 WHERE
-    h.contentstreamidentifier = :contentStreamIdentifier
+    h.contentstreamid = :contentStreamId
 	AND h.dimensionspacepointhash = :dimensionSpacePointHash
     AND relationanchorpoint NOT IN (SELECT * FROM subgraph)',
                     [
                         'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge(),
-                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                        'contentStreamId' => (string)$contentStreamId,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAllAssociative();
 
-                if (!empty($nodeAggregateIdentifiersInCycles)) {
-                    $nodeAggregateIdentifiersInCycles = array_map(function (array $record) {
-                        return $record['nodeaggregateidentifier'];
-                    }, $nodeAggregateIdentifiersInCycles);
+                if (!empty($nodeAggregateIdsInCycles)) {
+                    $nodeAggregateIdsInCycles = array_map(function (array $record) {
+                        return $record['nodeaggregateid'];
+                    }, $nodeAggregateIdsInCycles);
 
                     $result->addError(new Error(
-                        'Subgraph defined by content strean ' . $contentStreamIdentifier
+                        'Subgraph defined by content strean ' . $contentStreamId
                         . ' and dimension space point ' . (string) $dimensionSpacePoint
                         . ' is cyclic for node aggregates '
-                        . implode(',', $nodeAggregateIdentifiersInCycles),
+                        . implode(',', $nodeAggregateIdsInCycles),
                         self::ERROR_CODE_NODE_IS_DISCONNECTED_FROM_THE_ROOT
                     ));
                 }
@@ -392,30 +392,30 @@ WHERE
     /**
      * @inheritDoc
      */
-    public function nodeAggregateIdentifiersAreUniquePerSubgraph(): Result
+    public function nodeAggregateIdsAreUniquePerSubgraph(): Result
     {
         $result = new Result();
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $ambiguousNodeAggregateRecords = $this->client->getConnection()->executeQuery(
-                    'SELECT n.nodeaggregateidentifier, COUNT(n.relationanchorpoint)
+                    'SELECT n.nodeaggregateid, COUNT(n.relationanchorpoint)
                     FROM ' . $this->tableNamePrefix . '_node n
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         ON h.childnodeanchor = n.relationanchorpoint
-                    WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                    WHERE h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                    GROUP BY n.nodeaggregateidentifier
+                    GROUP BY n.nodeaggregateid
                     HAVING COUNT(DISTINCT(n.relationanchorpoint)) > 1',
                     [
-                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                        'contentStreamId' => (string)$contentStreamId,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAllAssociative();
 
                 foreach ($ambiguousNodeAggregateRecords as $ambiguousRecord) {
                     $result->addError(new Error(
-                        'Node aggregate ' . $ambiguousRecord['nodeaggregateidentifier']
-                        . ' is ambiguous in content stream ' . $contentStreamIdentifier
+                        'Node aggregate ' . $ambiguousRecord['nodeaggregateid']
+                        . ' is ambiguous in content stream ' . $contentStreamId
                         . ' and dimension space point ' . (string) $dimensionSpacePoint,
                         self::ERROR_CODE_AMBIGUOUS_NODE_AGGREGATE_IN_SUBGRAPH
                     ));
@@ -432,27 +432,27 @@ WHERE
     public function allNodesHaveAtMostOneParentPerSubgraph(): Result
     {
         $result = new Result();
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach ($this->findProjectedDimensionSpacePoints() as $dimensionSpacePoint) {
                 $nodeRecordsWithMultipleParents = $this->client->getConnection()->executeQuery(
-                    'SELECT c.nodeaggregateidentifier
+                    'SELECT c.nodeaggregateid
                     FROM ' . $this->tableNamePrefix . '_node c
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         ON h.childnodeanchor = c.relationanchorpoint
-                    WHERE h.contentstreamidentifier = :contentStreamIdentifier
+                    WHERE h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash = :dimensionSpacePointHash
                     GROUP BY c.relationanchorpoint
                     HAVING COUNT(DISTINCT(h.parentnodeanchor)) > 1',
                     [
-                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                        'contentStreamId' => (string)$contentStreamId,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAllAssociative();
 
                 foreach ($nodeRecordsWithMultipleParents as $record) {
                     $result->addError(new Error(
-                        'Node aggregate ' . $record['nodeaggregateidentifier']
-                        . ' has multiple parents in content stream ' . $contentStreamIdentifier
+                        'Node aggregate ' . $record['nodeaggregateid']
+                        . ' has multiple parents in content stream ' . $contentStreamId
                         . ' and dimension space point ' . (string) $dimensionSpacePoint,
                         self::ERROR_CODE_NODE_HAS_MULTIPLE_PARENTS
                     ));
@@ -469,28 +469,28 @@ WHERE
     public function nodeAggregatesAreConsistentlyTypedPerContentStream(): Result
     {
         $result = new Result();
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach (
-                $this->findProjectedNodeAggregateIdentifiersInContentStream(
-                    $contentStreamIdentifier
-                ) as $nodeAggregateIdentifier
+                $this->findProjectedNodeAggregateIdsInContentStream(
+                    $contentStreamId
+                ) as $nodeAggregateId
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.nodetypename FROM ' . $this->tableNamePrefix . '_node n
                         INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON h.childnodeanchor = n.relationanchorpoint
-                        WHERE h.contentstreamidentifier = :contentStreamIdentifier
-                        AND n.nodeaggregateidentifier = :nodeAggregateIdentifier',
+                        WHERE h.contentstreamid = :contentStreamId
+                        AND n.nodeaggregateid = :nodeAggregateId',
                     [
-                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                        'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+                        'contentStreamId' => (string)$contentStreamId,
+                        'nodeAggregateId' => (string)$nodeAggregateId
                     ]
                 )->fetchAllAssociative();
 
                 if (count($nodeAggregateRecords) > 1) {
                     $result->addError(new Error(
-                        'Node aggregate ' . $nodeAggregateIdentifier
-                        . ' in content stream ' . $contentStreamIdentifier
+                        'Node aggregate ' . $nodeAggregateId
+                        . ' in content stream ' . $contentStreamId
                         . ' is of ambiguous type ("' . implode('","', array_map(
                             function (array $record) {
                                 return $record['nodetypename'];
@@ -512,28 +512,28 @@ WHERE
     public function nodeAggregatesAreConsistentlyClassifiedPerContentStream(): Result
     {
         $result = new Result();
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             foreach (
-                $this->findProjectedNodeAggregateIdentifiersInContentStream(
-                    $contentStreamIdentifier
-                ) as $nodeAggregateIdentifier
+                $this->findProjectedNodeAggregateIdsInContentStream(
+                    $contentStreamId
+                ) as $nodeAggregateId
             ) {
                 $nodeAggregateRecords = $this->client->getConnection()->executeQuery(
                     'SELECT DISTINCT n.classification FROM ' . $this->tableNamePrefix . '_node n
                         INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON h.childnodeanchor = n.relationanchorpoint
-                        WHERE h.contentstreamidentifier = :contentStreamIdentifier
-                        AND n.nodeaggregateidentifier = :nodeAggregateIdentifier',
+                        WHERE h.contentstreamid = :contentStreamId
+                        AND n.nodeaggregateid = :nodeAggregateId',
                     [
-                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                        'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+                        'contentStreamId' => (string)$contentStreamId,
+                        'nodeAggregateId' => (string)$nodeAggregateId
                     ]
                 )->fetchAllAssociative();
 
                 if (count($nodeAggregateRecords) > 1) {
                     $result->addError(new Error(
-                        'Node aggregate ' . $nodeAggregateIdentifier
-                        . ' in content stream ' . $contentStreamIdentifier
+                        'Node aggregate ' . $nodeAggregateId
+                        . ' in content stream ' . $contentStreamId
                         . ' is ambiguously classified ("' . implode('","', array_map(
                             function (array $record) {
                                 return $record['classification'];
@@ -555,27 +555,27 @@ WHERE
     public function childNodeCoverageIsASubsetOfParentNodeCoverage(): Result
     {
         $result = new Result();
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             $excessivelyCoveringNodeRecords = $this->client->getConnection()->executeQuery(
-                'SELECT n.nodeaggregateidentifier, c.dimensionspacepoint
+                'SELECT n.nodeaggregateid, c.dimensionspacepoint
                     FROM ' . $this->tableNamePrefix . '_hierarchyrelation c
                     INNER JOIN ' . $this->tableNamePrefix . '_node n
                         ON c.childnodeanchor = n.relationanchorpoint
                     LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p
                         ON c.parentnodeanchor = p.childnodeanchor
-                    WHERE c.contentstreamidentifier = :contentStreamIdentifier
-                    AND p.contentstreamidentifier = :contentStreamIdentifier
+                    WHERE c.contentstreamid = :contentStreamId
+                    AND p.contentstreamid = :contentStreamId
                     AND c.dimensionspacepointhash = p.dimensionspacepointhash
                     AND p.childnodeanchor IS NULL',
                 [
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier
+                    'contentStreamId' => (string)$contentStreamId
                 ]
             )->fetchAllAssociative();
 
             foreach ($excessivelyCoveringNodeRecords as $excessivelyCoveringNodeRecord) {
                 $result->addError(new Error(
-                    'Node aggregate ' . $excessivelyCoveringNodeRecord['nodeaggregateidentifier']
-                    . ' in content stream ' . $contentStreamIdentifier
+                    'Node aggregate ' . $excessivelyCoveringNodeRecord['nodeaggregateid']
+                    . ' in content stream ' . $contentStreamId
                     . ' covers dimension space point ' . $excessivelyCoveringNodeRecord['dimensionspacepoint']
                     . ' but its parent does not.',
                     self::ERROR_CODE_CHILD_NODE_COVERAGE_IS_NO_SUBSET_OF_PARENT_NODE_COVERAGE
@@ -592,34 +592,34 @@ WHERE
     public function allNodesCoverTheirOrigin(): Result
     {
         $result = new Result();
-        foreach ($this->findProjectedContentStreamIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->findProjectedContentStreamIds() as $contentStreamId) {
             $nodeRecordsWithMissingOriginCoverage = $this->client->getConnection()->executeQuery(
-                'SELECT nodeaggregateidentifier, origindimensionspacepoint
+                'SELECT nodeaggregateid, origindimensionspacepoint
                     FROM ' . $this->tableNamePrefix . '_node n
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         ON h.childnodeanchor = n.relationanchorpoint
                     WHERE
-                        h.contentstreamidentifier = :contentStreamIdentifier
-                    AND nodeaggregateidentifier NOT IN (
+                        h.contentstreamid = :contentStreamId
+                    AND nodeaggregateid NOT IN (
                         -- this query finds all nodes whose origin *IS COVERED* by an incoming hierarchy relation.
-                        SELECT n.nodeaggregateidentifier
+                        SELECT n.nodeaggregateid
                         FROM ' . $this->tableNamePrefix . '_node n
                         LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyrelation p
                             ON p.childnodeanchor = n.relationanchorpoint
                             AND p.dimensionspacepointhash = n.origindimensionspacepointhash
-                            WHERE p.contentstreamidentifier = :contentStreamIdentifier
+                            WHERE p.contentstreamid = :contentStreamId
                     )
                     AND classification != :rootClassification',
                 [
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'contentStreamId' => (string)$contentStreamId,
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
                 ]
             )->fetchAllAssociative();
 
             foreach ($nodeRecordsWithMissingOriginCoverage as $nodeRecord) {
                 $result->addError(new Error(
-                    'Node aggregate ' . $nodeRecord['nodeaggregateidentifier']
-                    . ' in content stream ' . $contentStreamIdentifier
+                    'Node aggregate ' . $nodeRecord['nodeaggregateid']
+                    . ' in content stream ' . $contentStreamId
                     . ' does not cover its origin dimension space point ' . $nodeRecord['origindimensionspacepoint']
                     . '.',
                     self::ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN
@@ -631,20 +631,20 @@ WHERE
     }
 
     /**
-     * Returns all content stream identifiers
+     * Returns all content stream ids
      *
-     * @return iterable<ContentStreamIdentifier>
+     * @return iterable<ContentStreamId>
      */
-    protected function findProjectedContentStreamIdentifiers(): iterable
+    protected function findProjectedContentStreamIds(): iterable
     {
         $connection = $this->client->getConnection();
 
         $rows = $connection->executeQuery(
-            'SELECT DISTINCT contentstreamidentifier FROM ' . $this->tableNamePrefix . '_hierarchyrelation'
+            'SELECT DISTINCT contentstreamid FROM ' . $this->tableNamePrefix . '_hierarchyrelation'
         )->fetchAllAssociative();
 
         return array_map(function (array $row) {
-            return ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
+            return ContentStreamId::fromString($row['contentstreamid']);
         }, $rows);
     }
 
@@ -667,18 +667,18 @@ WHERE
     }
 
     /**
-     * @return array<int,NodeAggregateIdentifier>
+     * @return array<int,NodeAggregateId>
      * @throws \Doctrine\DBAL\Exception | \Doctrine\DBAL\Driver\Exception
      */
-    protected function findProjectedNodeAggregateIdentifiersInContentStream(
-        ContentStreamIdentifier $contentStreamIdentifier
+    protected function findProjectedNodeAggregateIdsInContentStream(
+        ContentStreamId $contentStreamId
     ): array {
         $records = $this->client->getConnection()->executeQuery(
-            'SELECT DISTINCT nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node'
+            'SELECT DISTINCT nodeaggregateid FROM ' . $this->tableNamePrefix . '_node'
         )->fetchAllAssociative();
 
         return array_map(function (array $record) {
-            return NodeAggregateIdentifier::fromString($record['nodeaggregateidentifier']);
+            return NodeAggregateId::fromString($record['nodeaggregateid']);
         }, $records);
     }
 }

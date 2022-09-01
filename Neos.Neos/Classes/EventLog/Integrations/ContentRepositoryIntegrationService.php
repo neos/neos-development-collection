@@ -413,14 +413,14 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $documentNode = $node;
         while ($documentNode !== null && !$documentNode->nodeType->isAggregate()) {
-            $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateIdentifier);
+            $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateId);
         }
 
         if ($documentNode === null) {
             return;
         }
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
@@ -434,7 +434,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
         ];
 
         $this->scheduledNodeEventUpdates[$documentNodeAddress->serializeForUri()]
-            ['nestedNodeIdentifiersWhichArePublished'][] = $node->nodeAggregateIdentifier;
+            ['nestedNodeIdentifiersWhichArePublished'][] = $node->nodeAggregateId;
     }
 
     /**

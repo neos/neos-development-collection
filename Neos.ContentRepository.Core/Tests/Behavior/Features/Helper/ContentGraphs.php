@@ -82,16 +82,16 @@ final class ContentGraphs implements \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * @param array<int,string> $identifiers
+     * @param array<int,string> $contentGraphIds
      */
-    public function reduceTo(array $identifiers): self
+    public function reduceTo(array $contentGraphIds): self
     {
         $reduction = [];
-        foreach ($identifiers as $identifier) {
-            if (array_key_exists($identifier, $this->contentGraphs)) {
-                $reduction[$identifier] = $this->contentGraphs[$identifier];
+        foreach ($contentGraphIds as $contentGraphId) {
+            if (array_key_exists($contentGraphId, $this->contentGraphs)) {
+                $reduction[$contentGraphId] = $this->contentGraphs[$contentGraphId];
             } else {
-                throw new \InvalidArgumentException('Unknown adapter "' . $identifier . '"', 1648406324);
+                throw new \InvalidArgumentException('Unknown adapter "' . $contentGraphId . '"', 1648406324);
             }
         }
 

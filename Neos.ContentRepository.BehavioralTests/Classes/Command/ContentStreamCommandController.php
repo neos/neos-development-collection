@@ -18,8 +18,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Cli\CommandController;
 
 final class ContentStreamCommandController extends CommandController
@@ -36,7 +36,7 @@ final class ContentStreamCommandController extends CommandController
 //
 //    private HypergraphProjector $hypergraphProjector;
 //
-//    private ContentStreamIdentifier $contentStreamIdentifier;
+//    private contentStreamId $contentStreamId;
 //
 //    private DimensionSpacePointSet $dimensionSpacePoints;
 //
@@ -44,7 +44,7 @@ final class ContentStreamCommandController extends CommandController
 //    {
 //        $this->graphProjector = $graphProjector;
 //        $this->hypergraphProjector = $hypergraphProjector;
-//        $this->contentStreamIdentifier = ContentStreamIdentifier::fromString('cs-identifier');
+//        $this->contentStreamId = contentStreamId::fromString('cs-identifier');
 //        $this->dimensionSpacePoints = new DimensionSpacePointSet([
 //            DimensionSpacePoint::fromArray(['language' => 'mul']),
 //            DimensionSpacePoint::fromArray(['language' => 'de']),
@@ -62,10 +62,10 @@ final class ContentStreamCommandController extends CommandController
 //    {
 //        $this->graphProjector->reset();
 //        $this->hypergraphProjector->reset();
-//        $rootNodeAggregateIdentifier = NodeAggregateIdentifier::fromString('lady-eleonode-rootford');
+//        $rootnodeAggregateId = nodeAggregateId::fromString('lady-eleonode-rootford');
 //        $rootNodeAggregateWasCreated = new RootNodeAggregateWithNodeWasCreated(
-//            $this->contentStreamIdentifier,
-//            $rootNodeAggregateIdentifier,
+//            $this->contentStreamId,
+//            $rootnodeAggregateId,
 //            NodeTypeName::fromString('Neos.ContentRepository:Root'),
 //            $this->dimensionSpacePoints,
 //            NodeAggregateClassification::CLASSIFICATION_ROOT,
@@ -74,7 +74,7 @@ final class ContentStreamCommandController extends CommandController
 //        $this->graphProjector->whenRootNodeAggregateWithNodeWasCreated($rootNodeAggregateWasCreated);
 //        $this->hypergraphProjector->whenRootNodeAggregateWithNodeWasCreated($rootNodeAggregateWasCreated);
 //        #$time = microtime(true);
-//        $this->createHierarchy($rootNodeAggregateIdentifier, 1, $levels, $nodesPerLevel);
+//        $this->createHierarchy($rootnodeAggregateId, 1, $levels, $nodesPerLevel);
 //        #$this->outputLine(microtime(true) - $time . ' elapsed');
 //    }
 //
@@ -82,21 +82,21 @@ final class ContentStreamCommandController extends CommandController
 //     * @throws \Throwable
 //     */
 //    private function createHierarchy(
-//        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+//        nodeAggregateId $parentNodeAggregateId,
 //        int $currentLevel,
 //        int $maximumLevel,
 //        int $numberOfNodes
 //    ): void {
 //        if ($currentLevel <= $maximumLevel) {
 //            for ($i = 0; $i < $numberOfNodes; $i++) {
-//                $nodeAggregateIdentifier = NodeAggregateIdentifier::create();
+//                $nodeAggregateId = nodeAggregateId::create();
 //                $nodeAggregateWasCreated = new NodeAggregateWithNodeWasCreated(
-//                    $this->contentStreamIdentifier,
-//                    $nodeAggregateIdentifier,
+//                    $this->contentStreamId,
+//                    $nodeAggregateId,
 //                    NodeTypeName::fromString('Neos.ContentRepository:Testing'),
 //                    OriginDimensionSpacePoint::fromArray(['language' => 'mul']),
 //                    $this->dimensionSpacePoints,
-//                    $parentNodeAggregateIdentifier,
+//                    $parentNodeAggregateId,
 //                    null,
 //                    SerializedPropertyValues::fromArray([]),
 //                    NodeAggregateClassification::CLASSIFICATION_REGULAR,
@@ -104,7 +104,7 @@ final class ContentStreamCommandController extends CommandController
 //                );
 //                $this->graphProjector->whenNodeAggregateWithNodeWasCreated($nodeAggregateWasCreated);
 //                $this->hypergraphProjector->whenNodeAggregateWithNodeWasCreated($nodeAggregateWasCreated);
-//                $this->createHierarchy($nodeAggregateIdentifier, $currentLevel + 1, $maximumLevel, $numberOfNodes);
+//                $this->createHierarchy($nodeAggregateId, $currentLevel + 1, $maximumLevel, $numberOfNodes);
 //            }
 //        }
 //    }
@@ -115,8 +115,8 @@ final class ContentStreamCommandController extends CommandController
 //    public function testPerformanceCommand(string $projectorName): void
 //    {
 //        $contentStreamWasForked = new ContentStreamWasForked(
-//            ContentStreamIdentifier::create(),
-//            $this->contentStreamIdentifier,
+//            contentStreamId::create(),
+//            $this->contentStreamId,
 //            1,
 //            UserIdentifier::forSystemUser()
 //        );

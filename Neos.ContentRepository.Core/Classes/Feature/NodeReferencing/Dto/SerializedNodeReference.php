@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * "Raw" / Serialized node reference as saved in the event log // in projections.
@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 final class SerializedNodeReference implements \JsonSerializable
 {
     public function __construct(
-        public readonly NodeAggregateIdentifier $targetNodeAggregateIdentifier,
+        public readonly NodeAggregateId $targetNodeAggregateId,
         public readonly ?SerializedPropertyValues $properties
     ) {
     }
@@ -36,7 +36,7 @@ final class SerializedNodeReference implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         return new self(
-            NodeAggregateIdentifier::fromString($array['targetNodeAggregateIdentifier']),
+            NodeAggregateId::fromString($array['targetNodeAggregateId']),
             $array['properties'] ? SerializedPropertyValues::fromArray($array['properties']) : null
         );
     }
@@ -47,7 +47,7 @@ final class SerializedNodeReference implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'targetNodeAggregateIdentifier' => $this->targetNodeAggregateIdentifier,
+            'targetNodeAggregateId' => $this->targetNodeAggregateId,
             'properties' => $this->properties
         ];
     }

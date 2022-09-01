@@ -15,13 +15,13 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeAggregatesByAdapter;
@@ -40,15 +40,15 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect the node aggregate "([^"]*)" to exist$/
-     * @param string $serializedNodeAggregateIdentifier
+     * @param string $serializedNodeAggregateId
      * @throws NodeAggregatesTypeIsAmbiguous
      */
-    public function iExpectTheNodeAggregateToExist(string $serializedNodeAggregateIdentifier): void
+    public function iExpectTheNodeAggregateToExist(string $serializedNodeAggregateId): void
     {
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
-        $this->initializeCurrentNodeAggregates(function (ContentGraphInterface $contentGraph, string $adapterName) use ($nodeAggregateIdentifier) {
-            $currentNodeAggregate = $contentGraph->findNodeAggregateByIdentifier($this->contentStreamIdentifier, $nodeAggregateIdentifier);
-            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s" in adapter "%s".', $nodeAggregateIdentifier, $this->contentStreamIdentifier, $adapterName));
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $this->initializeCurrentNodeAggregates(function (ContentGraphInterface $contentGraph, string $adapterName) use ($nodeAggregateId) {
+            $currentNodeAggregate = $contentGraph->findNodeAggregateById($this->contentStreamId, $nodeAggregateId);
+            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s" in adapter "%s".', $nodeAggregateId, $this->contentStreamId, $adapterName));
             return $currentNodeAggregate;
         });
     }
@@ -175,8 +175,8 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
                 iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamIdentifier,
-                    $nodeAggregate->nodeAggregateIdentifier
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 )),
                 'Did not expect parent node aggregates in adapter "' . $adapterName . '".'
             );
@@ -185,27 +185,27 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect this node aggregate to have the parent node aggregates (.*)$/
-     * @param string $serializedExpectedNodeAggregateIdentifiers
+     * @param string $serializedExpectedNodeAggregateIds
      */
-    public function iExpectThisNodeAggregateToHaveTheParentNodeAggregates(string $serializedExpectedNodeAggregateIdentifiers): void
+    public function iExpectThisNodeAggregateToHaveTheParentNodeAggregates(string $serializedExpectedNodeAggregateIds): void
     {
-        $expectedNodeAggregateIdentifiers = NodeAggregateIdentifiers::fromJsonString($serializedExpectedNodeAggregateIdentifiers);
-        $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIdentifiers) {
-            $expectedDiscriminators = array_values(array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
-                return $this->contentStreamIdentifier . ';' . $nodeAggregateIdentifier;
-            }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
+        $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
+        $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIds) {
+            $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
+                return $this->contentStreamId . ';' . $nodeAggregateId;
+            }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
-                return $parentNodeAggregate->contentStreamIdentifier . ';' . $parentNodeAggregate->nodeAggregateIdentifier;
+                return $parentNodeAggregate->contentStreamId . ';' . $parentNodeAggregate->nodeAggregateId;
             }, iterator_to_array(
                 $this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamIdentifier,
-                    $nodeAggregate->nodeAggregateIdentifier
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 )
             )));
             Assert::assertSame(
                 $expectedDiscriminators,
                 $actualDiscriminators,
-                'Parent node aggregate identifiers do not match in adapter "' . $adapterName . '", expected ' . json_encode($expectedDiscriminators) . ', got ' . json_encode($actualDiscriminators)
+                'Parent node aggregate ids do not match in adapter "' . $adapterName . '", expected ' . json_encode($expectedDiscriminators) . ', got ' . json_encode($actualDiscriminators)
             );
         });
     }
@@ -218,8 +218,8 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) {
             Assert::assertEmpty(
                 iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
-                    $nodeAggregate->contentStreamIdentifier,
-                    $nodeAggregate->nodeAggregateIdentifier
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 )),
                 'No child node aggregates were expected in adapter "' . $adapterName . '".'
             );
@@ -228,26 +228,26 @@ trait ProjectedNodeAggregateTrait
 
     /**
      * @Then /^I expect this node aggregate to have the child node aggregates (.*)$/
-     * @param string $serializedExpectedNodeAggregateIdentifiers
+     * @param string $serializedExpectedNodeAggregateIds
      */
-    public function iExpectThisNodeAggregateToHaveTheChildNodeAggregates(string $serializedExpectedNodeAggregateIdentifiers): void
+    public function iExpectThisNodeAggregateToHaveTheChildNodeAggregates(string $serializedExpectedNodeAggregateIds): void
     {
-        $expectedNodeAggregateIdentifiers = NodeAggregateIdentifiers::fromJsonString($serializedExpectedNodeAggregateIdentifiers);
-        $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIdentifiers) {
-            $expectedDiscriminators = array_values(array_map(function (NodeAggregateIdentifier $nodeAggregateIdentifier) {
-                return $this->contentStreamIdentifier . ':' . $nodeAggregateIdentifier;
-            }, $expectedNodeAggregateIdentifiers->getIterator()->getArrayCopy()));
+        $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
+        $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIds) {
+            $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
+                return $this->contentStreamId . ':' . $nodeAggregateId;
+            }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
-                return $parentNodeAggregate->contentStreamIdentifier . ':' . $parentNodeAggregate->nodeAggregateIdentifier;
+                return $parentNodeAggregate->contentStreamId . ':' . $parentNodeAggregate->nodeAggregateId;
             }, iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
-                $nodeAggregate->contentStreamIdentifier,
-                $nodeAggregate->nodeAggregateIdentifier
+                $nodeAggregate->contentStreamId,
+                $nodeAggregate->nodeAggregateId
             ))));
 
             Assert::assertSame(
                 $expectedDiscriminators,
                 $actualDiscriminators,
-                'Child node aggregate identifiers do not match in adapter "' . $adapterName . '", expected ' . json_encode($expectedDiscriminators) . ', got ' . json_encode($actualDiscriminators)
+                'Child node aggregate ids do not match in adapter "' . $adapterName . '", expected ' . json_encode($expectedDiscriminators) . ', got ' . json_encode($actualDiscriminators)
             );
         });
     }

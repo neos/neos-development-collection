@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -63,10 +63,10 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $workspace;
     }
 
-    public function findOneByCurrentContentStreamIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier
+    public function findOneByCurrentContentStreamId(
+        ContentStreamId $contentStreamId
     ): ?Workspace {
-        $workspace = $this->workspaceRuntimeCache->getByCurrentContentStreamIdentifier($contentStreamIdentifier);
+        $workspace = $this->workspaceRuntimeCache->getByCurrentContentStreamId($contentStreamId);
         if ($workspace !== null) {
             return $workspace;
         }
@@ -75,10 +75,10 @@ final class WorkspaceFinder implements ProjectionStateInterface
         $workspaceRow = $connection->executeQuery(
             '
             SELECT * FROM ' . $this->tableName . '
-            WHERE currentContentStreamIdentifier = :currentContentStreamIdentifier
+            WHERE currentContentStreamId = :currentContentStreamId
         ',
             [
-                ':currentContentStreamIdentifier' => (string)$contentStreamIdentifier
+                ':currentContentStreamId' => (string)$contentStreamId
             ]
         )->fetchAssociative();
 
@@ -223,7 +223,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             !empty($row['baseworkspacename']) ? WorkspaceName::fromString($row['baseworkspacename']) : null,
             !empty($row['workspacetitle']) ? WorkspaceTitle::fromString($row['workspacetitle']) : null,
             WorkspaceDescription::fromString($row['workspacedescription']),
-            ContentStreamIdentifier::fromString($row['currentcontentstreamidentifier']),
+            ContentStreamId::fromString($row['currentcontentstreamid']),
             WorkspaceStatus::from($row['status']),
             $row['workspaceowner']
         );

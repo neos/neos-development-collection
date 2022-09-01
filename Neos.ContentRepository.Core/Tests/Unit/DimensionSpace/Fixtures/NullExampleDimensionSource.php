@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\Dimension;
  */
 class NullExampleDimensionSource implements Dimension\ContentDimensionSourceInterface
 {
-    public function getDimension(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?Dimension\ContentDimension
+    public function getDimension(Dimension\ContentDimensionId $dimensionId): ?Dimension\ContentDimension
     {
         return null;
     }

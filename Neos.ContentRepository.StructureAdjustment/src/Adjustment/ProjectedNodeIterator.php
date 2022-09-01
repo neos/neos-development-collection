@@ -8,7 +8,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -44,11 +44,11 @@ class ProjectedNodeIterator
         }
     }
 
-    private function findLiveContentStream(): ContentStreamIdentifier
+    private function findLiveContentStream(): ContentStreamId
     {
         $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
         assert($liveWorkspace !== null, 'Live workspace not found');
 
-        return $liveWorkspace->currentContentStreamIdentifier;
+        return $liveWorkspace->currentContentStreamId;
     }
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\Utility\PositionalArraySorter;
 
 /**
@@ -39,7 +39,7 @@ final class Segments
 
         $segments = array_map(function (array $segArr) {
             return Segment::create(
-                new ContentDimensionIdentifier($segArr['dimensionIdentifier']),
+                new ContentDimensionId($segArr['dimensionIdentifier']),
                 SegmentMapping::fromArray($segArr['dimensionValueMapping'] ?? []),
             );
         }, $arr);

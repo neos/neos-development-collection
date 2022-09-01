@@ -15,17 +15,17 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdentifiersByNodePaths;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * The properties of {@see CreateNodeAggregateWithNode} are directly serialized; and then this command
@@ -37,7 +37,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdentifierToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface
 {
     /**
      * The node's optional name. Set if there is a meaningful relation to its parent that should be named.
@@ -48,7 +48,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
      * Node aggregate identifier of the node's succeeding sibling (optional)
      * If not given, the node will be added as the parent's first child
      */
-    public readonly ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier;
+    public readonly ?NodeAggregateId $succeedingSiblingNodeAggregateId;
 
     /**
      * The node's initial property values. Will be merged over the node type's default property values
@@ -56,18 +56,18 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     public readonly SerializedPropertyValues $initialPropertyValues;
 
     /**
-     * NodeAggregateIdentifiers for tethered descendants (optional).
+     * NodeAggregateIds for tethered descendants (optional).
      *
-     * If the given node type declares tethered child nodes, you may predefine their node aggregate identifiers
+     * If the given node type declares tethered child nodes, you may predefine their node aggregate ids
      * using this assignment registry.
      * Since tethered child nodes may have tethered child nodes themselves,
      * this registry is indexed using relative node paths to the node to create in the first place.
      */
-    public readonly NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers;
+    public readonly NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds;
 
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
         /**
          * Origin of the new node in the dimension space.
@@ -75,18 +75,18 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
          * from the configured specializations.
          */
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly UserIdentifier $initiatingUserIdentifier,
-        public readonly NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $succeedingSiblingNodeAggregateIdentifier = null,
+        public readonly UserId $initiatingUserId,
+        public readonly NodeAggregateId $parentNodeAggregateId,
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId = null,
         ?NodeName $nodeName = null,
         ?SerializedPropertyValues $initialPropertyValues = null,
-        ?NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers = null
+        ?NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds = null
     ) {
-        $this->succeedingSiblingNodeAggregateIdentifier = $succeedingSiblingNodeAggregateIdentifier;
+        $this->succeedingSiblingNodeAggregateId = $succeedingSiblingNodeAggregateId;
         $this->nodeName = $nodeName;
         $this->initialPropertyValues = $initialPropertyValues ?: SerializedPropertyValues::fromArray([]);
-        $this->tetheredDescendantNodeAggregateIdentifiers = $tetheredDescendantNodeAggregateIdentifiers
-            ?: new NodeAggregateIdentifiersByNodePaths([]);
+        $this->tetheredDescendantNodeAggregateIds = $tetheredDescendantNodeAggregateIds
+            ?: new NodeAggregateIdsByNodePaths([]);
     }
 
     /**
@@ -95,14 +95,14 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['nodeTypeName']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier']),
-            NodeAggregateIdentifier::fromString($array['parentNodeAggregateIdentifier']),
-            isset($array['succeedingSiblingNodeAggregateIdentifier'])
-                ? NodeAggregateIdentifier::fromString($array['succeedingSiblingNodeAggregateIdentifier'])
+            UserId::fromString($array['initiatingUserId']),
+            NodeAggregateId::fromString($array['parentNodeAggregateId']),
+            isset($array['succeedingSiblingNodeAggregateId'])
+                ? NodeAggregateId::fromString($array['succeedingSiblingNodeAggregateId'])
                 : null,
             isset($array['nodeName'])
                 ? NodeName::fromString($array['nodeName'])
@@ -110,38 +110,33 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
             isset($array['initialPropertyValues'])
                 ? SerializedPropertyValues::fromArray($array['initialPropertyValues'])
                 : null,
-            isset($array['tetheredDescendantNodeAggregateIdentifiers'])
-                ? NodeAggregateIdentifiersByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIdentifiers'])
+            isset($array['tetheredDescendantNodeAggregateIds'])
+                ? NodeAggregateIdsByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIds'])
                 : null
         );
     }
 
-    public function getInitialPropertyValues(): SerializedPropertyValues
-    {
-        return $this->initialPropertyValues;
-    }
-
     /**
      * Create a new CreateNodeAggregateWithNode command with all original values,
-     * except the tetheredDescendantNodeAggregateIdentifiers (where the passed in arguments are used).
+     * except the tetheredDescendantNodeAggregateIds (where the passed in arguments are used).
      *
      * Is needed to make this command fully deterministic before storing it at the events
      * - we need this
      */
-    public function withTetheredDescendantNodeAggregateIdentifiers(
-        NodeAggregateIdentifiersByNodePaths $tetheredDescendantNodeAggregateIdentifiers
+    public function withTetheredDescendantNodeAggregateIds(
+        NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds
     ): self {
         return new self(
-            $this->contentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
+            $this->contentStreamId,
+            $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->initiatingUserIdentifier,
-            $this->parentNodeAggregateIdentifier,
-            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->initiatingUserId,
+            $this->parentNodeAggregateId,
+            $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $this->initialPropertyValues,
-            $tetheredDescendantNodeAggregateIdentifiers
+            $tetheredDescendantNodeAggregateIds
         );
     }
 
@@ -151,41 +146,41 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'nodeTypeName' => $this->nodeTypeName,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
-            'parentNodeAggregateIdentifier' => $this->parentNodeAggregateIdentifier,
-            'succeedingSiblingNodeAggregateIdentifier' => $this->succeedingSiblingNodeAggregateIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
+            'parentNodeAggregateId' => $this->parentNodeAggregateId,
+            'succeedingSiblingNodeAggregateId' => $this->succeedingSiblingNodeAggregateId,
             'nodeName' => $this->nodeName,
             'initialPropertyValues' => $this->initialPropertyValues,
-            'tetheredDescendantNodeAggregateIdentifiers' => $this->tetheredDescendantNodeAggregateIdentifiers
+            'tetheredDescendantNodeAggregateIds' => $this->tetheredDescendantNodeAggregateIds
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): self
+    public function createCopyForContentStream(ContentStreamId $target): self
     {
         return new self(
             $target,
-            $this->nodeAggregateIdentifier,
+            $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->initiatingUserIdentifier,
-            $this->parentNodeAggregateIdentifier,
-            $this->succeedingSiblingNodeAggregateIdentifier,
+            $this->initiatingUserId,
+            $this->parentNodeAggregateId,
+            $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
             $this->initialPropertyValues,
-            $this->tetheredDescendantNodeAggregateIdentifiers
+            $this->tetheredDescendantNodeAggregateIds
         );
     }
 
-    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
-                && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
-                && $this->originDimensionSpacePoint->equals($nodeIdentifierToPublish->dimensionSpacePoint)
+            $this->contentStreamId === $nodeIdToPublish->contentStreamId
+                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+                && $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
         );
     }
 }

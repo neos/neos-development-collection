@@ -85,7 +85,7 @@ class AuthorizationService
     {
         $privilegeSubject = new CreateNodePrivilegeSubject($referenceNode);
 
-        $contentRepository = $this->contentRepositoryRegistry->get($referenceNode->subgraphIdentity->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($referenceNode->subgraphIdentity->contentRepositoryId);
         $allNodeTypes = $contentRepository->getNodeTypeManager()->getNodeTypes();
 
         $deniedCreationNodeTypes = [];

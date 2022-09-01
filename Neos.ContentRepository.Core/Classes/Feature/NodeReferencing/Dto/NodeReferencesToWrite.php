@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
 use JetBrains\PhpStorm\Internal\TentativeType;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
 /**
  * Node references to write, supports arbitrary objects as reference property values.
@@ -60,12 +60,12 @@ final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializab
         ));
     }
 
-    public static function fromNodeAggregateIdentifiers(NodeAggregateIdentifiers $nodeAggregateIdentifiers): self
+    public static function fromNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
     {
         return new self(...array_map(
-            fn (NodeAggregateIdentifier $nodeAggregateIdentifier): NodeReferenceToWrite
-                => new NodeReferenceToWrite($nodeAggregateIdentifier, null),
-            $nodeAggregateIdentifiers->getIterator()->getArrayCopy()
+            fn (NodeAggregateId $nodeAggregateId): NodeReferenceToWrite
+                => new NodeReferenceToWrite($nodeAggregateId, null),
+            $nodeAggregateIds->getIterator()->getArrayCopy()
         ));
     }
 

@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
@@ -37,25 +37,25 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 final class NodePropertiesWereSet implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
-    EmbedsContentStreamAndNodeAggregateIdentifier
+    EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly SerializedPropertyValues $propertyValues,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getContentStreamId(): ContentStreamId
     {
-        return $this->contentStreamIdentifier;
+        return $this->contentStreamId;
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getNodeAggregateId(): NodeAggregateId
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeAggregateId;
     }
 
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
@@ -63,47 +63,47 @@ final class NodePropertiesWereSet implements
         return $this->originDimensionSpacePoint;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
     {
         return new self(
-            $targetContentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
+            $targetContentStreamId,
+            $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->propertyValues,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserId
         );
     }
 
     public function mergeProperties(self $other): self
     {
         return new self(
-            $this->contentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
+            $this->contentStreamId,
+            $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->propertyValues->merge($other->propertyValues),
-            $this->initiatingUserIdentifier
+            $this->initiatingUserId
         );
     }
 
     public static function fromArray(array $values): EventInterface
     {
         return new self(
-            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($values['contentStreamId']),
+            NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($values['propertyValues']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
             'propertyValues' => $this->propertyValues,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserId' => $this->initiatingUserId
         ];
     }
 }

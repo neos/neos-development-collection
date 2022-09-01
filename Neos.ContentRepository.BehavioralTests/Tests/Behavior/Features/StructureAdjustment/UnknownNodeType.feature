@@ -16,26 +16,26 @@ Feature: Unknown node types
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "system-user"                 |
+      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
@@ -48,7 +48,7 @@ Feature: Unknown node types
     'Neos.Neos:FallbackNode': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type              | nodeAggregateIdentifier |
+      | Type              | nodeAggregateId |
       | NODE_TYPE_MISSING | sir-david-nodenborough  |
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"

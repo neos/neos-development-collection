@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifiersToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -30,13 +30,13 @@ final class WorkspaceWasPartiallyDiscarded implements EventInterface
         /**
          * The new content stream; containing the data which we want to keep
          */
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
+        public readonly ContentStreamId $newContentStreamId,
         /**
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
-        public readonly ContentStreamIdentifier $previousContentStreamIdentifier,
-        public readonly NodeIdentifiersToPublishOrDiscard $discardedNodes,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $previousContentStreamId,
+        public readonly NodeIdsToPublishOrDiscard $discardedNodes,
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -44,10 +44,10 @@ final class WorkspaceWasPartiallyDiscarded implements EventInterface
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
-            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($values['previousContentStreamIdentifier']),
-            NodeIdentifiersToPublishOrDiscard::fromArray($values['discardedNodes']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+            ContentStreamId::fromString($values['newContentStreamId']),
+            ContentStreamId::fromString($values['previousContentStreamId']),
+            NodeIdsToPublishOrDiscard::fromArray($values['discardedNodes']),
+            UserId::fromString($values['initiatingUserId'])
         );
     }
 
@@ -55,10 +55,10 @@ final class WorkspaceWasPartiallyDiscarded implements EventInterface
     {
         return [
             'workspaceName' => $this->workspaceName,
-            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
-            'previousContentStreamIdentifier' => $this->previousContentStreamIdentifier,
+            'newContentStreamId' => $this->newContentStreamId,
+            'previousContentStreamId' => $this->previousContentStreamId,
             'discardedNodes' => $this->discardedNodes,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

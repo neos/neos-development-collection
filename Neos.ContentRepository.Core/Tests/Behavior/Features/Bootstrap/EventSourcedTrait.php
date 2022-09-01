@@ -35,8 +35,9 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -46,14 +47,14 @@ use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
@@ -112,9 +113,9 @@ trait EventSourcedTrait
 
     protected ContentGraphs $activeContentGraphs;
 
-    protected ?NodeAggregateIdentifier $rootNodeAggregateIdentifier;
+    protected ?NodeAggregateId $rootNodeAggregateId;
 
-    private ContentRepositoryIdentifier $contentRepositoryIdentifier;
+    private ContentRepositoryId $contentRepositoryId;
     private ContentRepositoryRegistry $contentRepositoryRegistry;
     private ContentRepository $contentRepository;
     private ContentRepositoryInternals $contentRepositoryInternals;
@@ -122,9 +123,9 @@ trait EventSourcedTrait
     abstract protected function getObjectManager(): ObjectManagerInterface;
 
 
-    protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier
+    protected function getContentRepositoryId(): ContentRepositoryId
     {
-        return $this->contentRepositoryIdentifier;
+        return $this->contentRepositoryId;
     }
 
     protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
@@ -172,7 +173,7 @@ trait EventSourcedTrait
     {
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
-        $this->contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString('default');
+        $this->contentRepositoryId = ContentRepositoryId::fromString('default');
 
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
             CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
@@ -243,13 +244,13 @@ trait EventSourcedTrait
             $this->getObjectManager()
         );
 
-        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
+        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
         if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
             $this->contentRepository->setUp();
             self::$wasContentRepositorySetupCalled = true;
         }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryIdentifier, new ContentRepositoryInternalsFactory());
+        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryId, new ContentRepositoryInternalsFactory());
 
         $availableContentGraphs = [];
         $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
@@ -292,10 +293,10 @@ trait EventSourcedTrait
 
         $this->visibilityConstraints = VisibilityConstraints::frontend();
         $this->dimensionSpacePoint = null;
-        $this->rootNodeAggregateIdentifier = null;
-        $this->contentStreamIdentifier = null;
+        $this->rootNodeAggregateId = null;
+        $this->contentStreamId = null;
         $this->currentNodeAggregates = null;
-        $this->currentUserIdentifier = null;
+        $this->currentUserId = null;
         $this->currentNodes = null;
 
         $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
@@ -342,7 +343,7 @@ trait EventSourcedTrait
          * Catch Up process and the testcase reset.
          */
 
-        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryIdentifier);
+        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
         // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
@@ -416,14 +417,14 @@ trait EventSourcedTrait
 
     /**
      * called by {@see readPayloadTable()} above, from RebasingAutoCreatedChildNodesWorks.feature
-     * @return NodeAggregateIdentifier
+     * @return NodeAggregateId
      */
-    protected function currentNodeAggregateIdentifier(): NodeAggregateIdentifier
+    protected function currentNodeAggregateId(): NodeAggregateId
     {
         $currentNodes = $this->currentNodes->getIterator()->getArrayCopy();
         $firstNode = reset($currentNodes);
         assert($firstNode instanceof Node);
-        return $firstNode->nodeAggregateIdentifier;
+        return $firstNode->nodeAggregateId;
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
@@ -475,8 +476,8 @@ trait EventSourcedTrait
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
-                $workspaceA->currentContentStreamIdentifier->getValue(),
-                $workspaceB->currentContentStreamIdentifier->getValue(),
+                $workspaceA->currentContentStreamId->getValue(),
+                $workspaceB->currentContentStreamId->getValue(),
                 'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
             );
         }
@@ -485,11 +486,11 @@ trait EventSourcedTrait
     /**
      * @Then /^workspace "([^"]*)" does not point to content stream "([^"]*)"$/
      */
-    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamIdentifier)
+    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId)
     {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
-        Assert::assertNotEquals($rawContentStreamIdentifier, (string)$workspace->currentContentStreamIdentifier);
+        Assert::assertNotEquals($rawContentStreamId, (string)$workspace->currentContentStreamId);
     }
 
     /**
@@ -508,21 +509,21 @@ trait EventSourcedTrait
      * @Then /^the subtree for node aggregate "([^"]*)" with node types "([^"]*)" and (\d+) levels deep should be:$/
      */
     public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(
-        string $serializedNodeAggregateIdentifier,
+        string $serializedNodeAggregateId,
         string $serializedNodeTypeConstraints,
         int $maximumLevels,
         TableNode $table
     ): void
     {
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($serializedNodeAggregateIdentifier);
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();
 
             $subtree = $contentGraph
-                ->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints)
-                ->findSubtrees(NodeAggregateIdentifiers::fromArray([$nodeAggregateIdentifier]), $maximumLevels, $nodeTypeConstraints);
+                ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
+                ->findSubtrees(NodeAggregateIds::fromArray([$nodeAggregateId]), $maximumLevels, $nodeTypeConstraints);
 
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];
@@ -534,9 +535,9 @@ trait EventSourcedTrait
                 $expectedLevel = (int)$expectedRow['Level'];
                 $actualLevel = $flattenedSubtree[$i]->level;
                 Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
-                $expectedNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($expectedRow['NodeAggregateIdentifier']);
-                $actualNodeAggregateIdentifier = $flattenedSubtree[$i]->node->nodeAggregateIdentifier;
-                Assert::assertTrue($expectedNodeAggregateIdentifier->equals($actualNodeAggregateIdentifier), 'NodeAggregateIdentifier does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateIdentifier . '", actual: "' . $actualNodeAggregateIdentifier . '" (adapter: ' . $adapterName . ')');
+                $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
+                $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
+                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId), 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
             }
         }
     }
@@ -578,22 +579,22 @@ trait EventSourcedTrait
 
     /**
      * @Given /^I get the node address for node aggregate "([^"]*)"(?:, remembering it as "([^"]*)")?$/
-     * @param string $rawNodeAggregateIdentifier
+     * @param string $rawNodeAggregateId
      * @param string $alias
      */
-    public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateIdentifier, $alias = 'DEFAULT')
+    public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
-        Assert::assertNotNull($node, 'Did not find a node with aggregate identifier "' . $nodeAggregateIdentifier . '"');
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
+        $node = $subgraph->findNodeByNodeAggregateId($nodeAggregateId);
+        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)
+                ->findOneByCurrentContentStreamId($this->contentStreamId)
                 ->workspaceName
         );
     }
@@ -606,19 +607,19 @@ trait EventSourcedTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamIdentifier, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        if (!$this->getRootNodeAggregateIdentifier()) {
-            throw new \Exception('ERROR: rootNodeAggregateIdentifier needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        if (!$this->getRootNodeAggregateId()) {
+            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
-        $node = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateIdentifier());
+        $node = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateId());
         Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
-            $node->nodeAggregateIdentifier,
+            $node->nodeAggregateId,
             $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamIdentifier($this->contentStreamIdentifier)
+                ->findOneByCurrentContentStreamId($this->contentStreamId)
                 ->workspaceName
         );
     }
@@ -632,31 +633,32 @@ trait EventSourcedTrait
         return $this->getContentRepositoryInternals()->eventStore;
     }
 
-    protected function getRootNodeAggregateIdentifier(): ?NodeAggregateIdentifier
+    protected function getRootNodeAggregateId(): ?NodeAggregateId
     {
-        if ($this->rootNodeAggregateIdentifier) {
-            return $this->rootNodeAggregateIdentifier;
+        if ($this->rootNodeAggregateId) {
+            return $this->rootNodeAggregateId;
         }
 
         $contentGraphs = $this->getActiveContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
-        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamIdentifier, \Neos\ContentRepository\Core\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamId, \Neos\ContentRepository\Core\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
         if ($sitesNodeAggregate) {
-            return $sitesNodeAggregate->getIdentifier();
+            assert($sitesNodeAggregate instanceof NodeAggregate);
+            return $sitesNodeAggregate->nodeAggregateId;
         }
 
         return null;
     }
 
     /**
-     * @Then the content stream :contentStreamIdentifier has state :expectedState
+     * @Then the content stream :contentStreamId has state :expectedState
      */
-    public function theContentStreamHasState(string $contentStreamIdentifier, string $expectedState)
+    public function theContentStreamHasState(string $contentStreamId, string $expectedState)
     {
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+        $contentStreamId = ContentStreamId::fromString($contentStreamId);
         $contentStreamFinder = $this->getContentRepository()->getContentStreamFinder();
 
-        $actual = $contentStreamFinder->findStateForContentStream($contentStreamIdentifier);
+        $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
         Assert::assertEquals($expectedState, $actual);
     }
 
@@ -665,7 +667,7 @@ trait EventSourcedTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState)
     {
-        $this->theContentStreamHasState($this->contentStreamIdentifier->jsonSerialize(), $expectedState);
+        $this->theContentStreamHasState($this->contentStreamId->jsonSerialize(), $expectedState);
     }
 
     /**
@@ -674,7 +676,7 @@ trait EventSourcedTrait
     public function iPruneUnusedContentStreams()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
         $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
@@ -685,7 +687,7 @@ trait EventSourcedTrait
     public function iPruneRemovedContentStreamsFromTheEventStream()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new ContentStreamPrunerFactory());
         $contentStreamPruner->pruneRemovedFromEventStream();
     }
 }

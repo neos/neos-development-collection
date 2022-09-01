@@ -17,56 +17,56 @@ Feature: Create an intact content graph and run integrity violation detection
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamId | "cs-identifier"                        |
 
   Scenario: Create an intact content graph
     When the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
-      | contentStreamIdentifier     | "cs-identifier"                        |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | contentStreamId     | "cs-identifier"                        |
+      | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | initiatingUserId    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the graph projection is fully up to date
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
       | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}]    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
       | coveredDimensionSpacePoints   | [{"language":"de"}]                       |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
+      | parentNodeAggregateId | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"              |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"gsw"}                        |
       | coveredDimensionSpacePoints   | [{"language":"gsw"}]                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "tethered"                                |
     And the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                                           |
-      | contentStreamIdentifier                  | "cs-identifier"                                                                 |
-      | sourceNodeAggregateIdentifier            | "nody-mc-nodeface"                                                              |
+      | contentStreamId                  | "cs-identifier"                                                                 |
+      | sourceNodeAggregateId            | "nody-mc-nodeface"                                                              |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                             |
       | referenceName                            | "referenceProperty"                                                             |
-      | references                               | [{"targetNodeAggregateIdentifier":"sir-david-nodenborough", "properties":null}] |
+      | references                               | [{"targetNodeAggregateId":"sir-david-nodenborough", "properties":null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 0 errors

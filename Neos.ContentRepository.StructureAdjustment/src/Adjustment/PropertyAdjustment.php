@@ -12,7 +12,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWer
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
@@ -124,15 +124,15 @@ class PropertyAdjustment
     ): EventsToPublish {
         $events = Events::with(
             new NodePropertiesWereSet(
-                $node->subgraphIdentity->contentStreamIdentifier,
-                $node->nodeAggregateIdentifier,
+                $node->subgraphIdentity->contentStreamId,
+                $node->nodeAggregateId,
                 $node->originDimensionSpacePoint,
                 $serializedPropertyValues,
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($node->subgraphIdentity->contentStreamIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($node->subgraphIdentity->contentStreamId);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             $events,

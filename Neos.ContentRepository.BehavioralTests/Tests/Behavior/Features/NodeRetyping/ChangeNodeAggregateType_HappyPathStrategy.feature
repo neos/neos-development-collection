@@ -36,29 +36,29 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
-      | contentStreamIdentifier     | "cs-identifier"                           |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                  |
+      | contentStreamId     | "cs-identifier"                           |
+      | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"             |
       | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "gsw"}] |
-      | initiatingUserIdentifier    | "system-user"                             |
+      | initiatingUserId    | "system-user"                             |
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                           |
-      | contentStreamIdentifier       | "cs-identifier"                                 |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                        |
+      | contentStreamId       | "cs-identifier"                                 |
+      | nodeAggregateId       | "sir-david-nodenborough"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint     | {"language":"de"}                               |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                        |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                        |
       | nodeName                      | "parent"                                        |
       | initialPropertyValues         | {}                                              |
-      | initiatingUserIdentifier      | "user"                                          |
+      | initiatingUserId      | "user"                                          |
 
     And the graph projection is fully up to date
 
@@ -73,21 +73,21 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
     """
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
+      | contentStreamId       | "cs-identifier"                            |
+      | nodeAggregateId       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                   |
-      | initiatingUserIdentifier      | "user"                                     |
+      | parentNodeAggregateId | "sir-david-nodenborough"                   |
+      | initiatingUserId      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                      | Value                                            |
-      | contentStreamIdentifier  | "cs-identifier"                                  |
-      | nodeAggregateIdentifier  | "sir-david-nodenborough"                         |
+      | contentStreamId  | "cs-identifier"                                  |
+      | nodeAggregateId  | "sir-david-nodenborough"                         |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy                 | "happypath"                                      |
-      | initiatingUserIdentifier | "user"                                           |
+      | initiatingUserId | "user"                                           |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the HAPPYPATH conflict resolution strategy
@@ -113,66 +113,66 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
     """
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                           |
-      | contentStreamIdentifier                    | "cs-identifier"                                 |
-      | nodeAggregateIdentifier                    | "parent2-na"                                    |
+      | contentStreamId                    | "cs-identifier"                                 |
+      | nodeAggregateId                    | "parent2-na"                                    |
       | nodeTypeName                               | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint                  | {"language":"de"}                               |
-      | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                        |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                        |
       | nodeName                                   | "parent2"                                       |
-      | tetheredDescendantNodeAggregateIdentifiers | {"autocreated": "autocreated-child"}            |
-      | initiatingUserIdentifier                   | "user"                                          |
+      | tetheredDescendantNodeAggregateIds | {"autocreated": "autocreated-child"}            |
+      | initiatingUserId                   | "user"                                          |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                      |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                         |
+      | contentStreamId       | "cs-identifier"                            |
+      | nodeAggregateId       | "nody-mc-nodeface"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
-      | parentNodeAggregateIdentifier | "autocreated-child"                        |
+      | parentNodeAggregateId | "autocreated-child"                        |
       | initialPropertyValues         | {}                                         |
-      | initiatingUserIdentifier      | "user"                                     |
+      | initiatingUserId      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                      | Value                                            |
-      | contentStreamIdentifier  | "cs-identifier"                                  |
-      | nodeAggregateIdentifier  | "parent2-na"                                     |
+      | contentStreamId  | "cs-identifier"                                  |
+      | nodeAggregateId  | "parent2-na"                                     |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy                 | "happypath"                                      |
-      | initiatingUserIdentifier | "user"                                           |
+      | initiatingUserId | "user"                                           |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Change node type successfully
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                      |
-      | contentStreamIdentifier                    | "cs-identifier"                            |
-      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | contentStreamId                    | "cs-identifier"                            |
+      | nodeAggregateId                    | "nodea-identifier-de"                      |
       | nodeTypeName                               | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint                  | {"language":"de"}                          |
-      | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                   |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                   |
       | initialPropertyValues                      | {}                                         |
-      | initiatingUserIdentifier                   | "user"                                     |
-      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-a": "child-of-type-a-id"} |
+      | initiatingUserId                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIds | { "child-of-type-a": "child-of-type-a-id"} |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                      | Value                 |
-      | contentStreamIdentifier  | "cs-identifier"       |
-      | nodeAggregateIdentifier  | "nodea-identifier-de" |
+      | contentStreamId  | "cs-identifier"       |
+      | nodeAggregateId  | "nodea-identifier-de" |
       | sourceOrigin             | {"language":"de"}     |
       | targetOrigin             | {"language":"gsw"}    |
-      | initiatingUserIdentifier | "user"                |
+      | initiatingUserId | "user"                |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key                                        | Value                                      |
-      | contentStreamIdentifier                    | "cs-identifier"                            |
-      | nodeAggregateIdentifier                    | "nodea-identifier-de"                      |
+      | contentStreamId                    | "cs-identifier"                            |
+      | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                            | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                                   | "happypath"                                |
-      | initiatingUserIdentifier                   | "user"                                     |
-      | tetheredDescendantNodeAggregateIdentifiers | { "child-of-type-b": "child-of-type-b-id"} |
+      | initiatingUserId                   | "user"                                     |
+      | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "child-of-type-b-id"} |
     And the graph projection is fully up to date
 
     # the type has changed

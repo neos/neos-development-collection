@@ -16,13 +16,13 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
@@ -33,16 +33,16 @@ final class EnableNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdentifierToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         /** The covered dimension space point of the node aggregate in which the user intends to enable it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         /** The strategy the user chose to determine which specialization variants will also be disabled */
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -52,11 +52,11 @@ final class EnableNodeAggregate implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -66,31 +66,31 @@ final class EnableNodeAggregate implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
             'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserId' => $this->initiatingUserId
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): self
+    public function createCopyForContentStream(ContentStreamId $target): self
     {
         return new self(
             $target,
-            $this->nodeAggregateIdentifier,
+            $this->nodeAggregateId,
             $this->coveredDimensionSpacePoint,
             $this->nodeVariantSelectionStrategy,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserId
         );
     }
 
-    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
-                && $this->coveredDimensionSpacePoint === $nodeIdentifierToPublish->dimensionSpacePoint
-                && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
+            $this->contentStreamId === $nodeIdToPublish->contentStreamId
+                && $this->coveredDimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint
+                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }
 }

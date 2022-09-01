@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Cache;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -55,20 +55,20 @@ class ContentCacheFlusher
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      *
      * @param ContentRepository $contentRepository
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
+     * @param NodeAggregateId $nodeAggregateIdentifier
      */
     public function flushNodeAggregate(
         ContentRepository $contentRepository,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier
     ): void {
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $this->registerChangeOnNodeIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier, $tagsToFlush);
-        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateByIdentifier(
+        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
         );
@@ -107,33 +107,33 @@ class ContentCacheFlusher
 
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
-            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateIdentifier->getValue()])) {
+            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->getValue()])) {
                 // we've already processed this NodeAggregateIdentifier (i.e. flushed the caches for it);
                 // thus we can skip this one, and thus break the cycle.
                 continue;
             }
-            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateIdentifier->getValue()] = true;
+            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->getValue()] = true;
 
-            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamIdentifier
-                . '%_' . $nodeAggregate->nodeAggregateIdentifier;
+            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId
+                . '%_' . $nodeAggregate->nodeAggregateId;
             $tagsToFlush[$tagName] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName,
-                $nodeAggregate->nodeAggregateIdentifier
+                $nodeAggregate->nodeAggregateId
             );
 
             // Legacy
-            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateIdentifier;
+            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateId;
             $tagsToFlush[$legacyTagName] = sprintf(
                 'which were tagged with legacy "%s" because node "%s" has changed.',
                 $legacyTagName,
-                $nodeAggregate->nodeAggregateIdentifier
+                $nodeAggregate->nodeAggregateId
             );
 
             foreach (
                 $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $nodeAggregate->contentStreamIdentifier,
-                    $nodeAggregate->nodeAggregateIdentifier
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 ) as $parentNodeAggregate
             ) {
                 $parentNodeAggregates[] = $parentNodeAggregate;
@@ -152,8 +152,8 @@ class ContentCacheFlusher
      * @param array<string,string> &$tagsToFlush
      */
     private function registerChangeOnNodeIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         array &$tagsToFlush
     ): void {
         $cacheIdentifier = '%' . $contentStreamIdentifier . '%_' . $nodeAggregateIdentifier;
@@ -191,8 +191,8 @@ class ContentCacheFlusher
      */
     private function registerChangeOnNodeType(
         NodeTypeName $nodeTypeName,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        ?NodeAggregateIdentifier $referenceNodeIdentifier,
+        ContentStreamId $contentStreamIdentifier,
+        ?NodeAggregateId $referenceNodeIdentifier,
         array &$tagsToFlush,
         ContentRepository $contentRepository
     ): void {

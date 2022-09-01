@@ -21,13 +21,13 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal implementation details of command handlers
@@ -37,11 +37,11 @@ trait TetheredNodeInternals
     use NodeVariationInternals;
 
     abstract protected function createEventsForVariations(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
-        UserIdentifier $initiatingUserIdentifier,
+        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events;
 
@@ -57,14 +57,14 @@ trait TetheredNodeInternals
         NodeAggregate $parentNodeAggregate,
         Node $parentNode,
         NodeName $tetheredNodeName,
-        ?NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
+        ?NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
-        UserIdentifier $initiatingUserIdentifier,
+        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $parentNode->subgraphIdentity->contentStreamIdentifier,
-            $parentNode->nodeAggregateIdentifier,
+            $parentNode->subgraphIdentity->contentStreamId,
+            $parentNode->nodeAggregateId,
             $tetheredNodeName
         );
 
@@ -79,16 +79,16 @@ trait TetheredNodeInternals
             // there is no tethered child node aggregate already; let's create it!
             return Events::with(
                 new NodeAggregateWithNodeWasCreated(
-                    $parentNode->subgraphIdentity->contentStreamIdentifier,
-                    $tetheredNodeAggregateIdentifier ?: NodeAggregateIdentifier::create(),
+                    $parentNode->subgraphIdentity->contentStreamId,
+                    $tetheredNodeAggregateId ?: NodeAggregateId::create(),
                     $expectedTetheredNodeType->name,
                     $parentNode->originDimensionSpacePoint,
                     $parentNodeAggregate->getCoverageByOccupant($parentNode->originDimensionSpacePoint),
-                    $parentNode->nodeAggregateIdentifier,
+                    $parentNode->nodeAggregateId,
                     $tetheredNodeName,
                     SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                    $initiatingUserIdentifier
+                    $initiatingUserId
                 )
             );
         } elseif (count($childNodeAggregates) === 1) {
@@ -109,11 +109,11 @@ trait TetheredNodeInternals
             }
             /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNode->subgraphIdentity->contentStreamIdentifier,
+                $parentNode->subgraphIdentity->contentStreamId,
                 $childNodeSource->originDimensionSpacePoint,
                 $parentNode->originDimensionSpacePoint,
                 $parentNodeAggregate,
-                $initiatingUserIdentifier,
+                $initiatingUserId,
                 $contentRepository
             );
         } else {

@@ -5,7 +5,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -24,7 +24,7 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
     public function catchupCommand(string $contentRepositoryIdentifier, string $projectionClassName): void
     {
 
-        $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier));
+        $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryIdentifier));
         $contentRepository->catchUpProjection($projectionClassName);
     }
 }

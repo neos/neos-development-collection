@@ -163,13 +163,13 @@ class InterDimensionalVariationGraph
                     = $generalization->weight->normalize($this->determineWeightNormalizationBase());
             }
 
-            foreach ($generalization->dimensionValues as $rawDimensionIdentifier => $contentDimensionValue) {
-                $dimensionIdentifier = new Dimension\ContentDimensionIdentifier($rawDimensionIdentifier);
+            foreach ($generalization->dimensionValues as $rawDimensionId => $contentDimensionValue) {
+                $dimensionId = new Dimension\ContentDimensionId($rawDimensionId);
                 /** @var Dimension\ContentDimension $dimension */
-                $dimension = $this->contentDimensionSource->getDimension($dimensionIdentifier);
+                $dimension = $this->contentDimensionSource->getDimension($dimensionId);
                 foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
                     $specializedDimensionSpacePoint = $generalization->dimensionSpacePoint
-                        ->vary($dimensionIdentifier, (string)$specializedValue);
+                        ->vary($dimensionId, (string)$specializedValue);
                     if (
                         !$this->contentDimensionZookeeper->getAllowedDimensionSubspace()
                             ->contains($specializedDimensionSpacePoint)

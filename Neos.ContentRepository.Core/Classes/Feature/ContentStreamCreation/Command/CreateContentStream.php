@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command;
  */
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * CreateContentStream for creating the FIRST content stream.
@@ -27,8 +27,8 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 final class CreateContentStream implements CommandInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $contentStreamId,
+        public readonly UserId $initiatingUserId
     ) {
     }
 }

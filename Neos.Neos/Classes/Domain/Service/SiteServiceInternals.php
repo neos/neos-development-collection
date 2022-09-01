@@ -30,12 +30,12 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -67,14 +67,14 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
         $contentGraph = $this->contentRepository->getContentGraph();
 
-        foreach ($this->contentRepository->getContentStreamFinder()->findAllIdentifiers() as $contentStreamIdentifier) {
+        foreach ($this->contentRepository->getContentStreamFinder()->findAllIds() as $contentStreamIdentifier) {
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 $contentStreamIdentifier,
                 NodeTypeName::fromString('Neos.Neos:Sites')
             );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
                 $contentStreamIdentifier,
-                $sitesNodeAggregate->nodeAggregateIdentifier,
+                $sitesNodeAggregate->nodeAggregateId,
                 $siteNodeName->toNodeName()
             );
 
@@ -82,16 +82,16 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                 assert($siteNodeAggregate instanceof NodeAggregate);
                 $this->contentRepository->handle(new RemoveNodeAggregate(
                     $contentStreamIdentifier,
-                    $siteNodeAggregate->nodeAggregateIdentifier,
+                    $siteNodeAggregate->nodeAggregateId,
                     $arbitraryDimensionSpacePoint,
                     NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
-                    UserIdentifier::forSystemUser()
+                    UserId::forSystemUser()
                 ));
             }
         }
     }
 
-    public function createSiteNode(Site $site, string $nodeTypeName, UserIdentifier $currentUserIdentifier): void
+    public function createSiteNode(Site $site, string $nodeTypeName, UserId $currentUserIdentifier): void
     {
         $bootstrapper = ContentRepositoryBootstrapper::create($this->contentRepository);
         $liveContentStreamIdentifier = $bootstrapper->getOrCreateLiveContentStream();
@@ -117,7 +117,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
-        $siteNodeAggregateIdentifier = NodeAggregateIdentifier::create();
+        $siteNodeAggregateIdentifier = NodeAggregateId::create();
         $this->contentRepository->handle(new CreateNodeAggregateWithNode(
             $liveContentStreamIdentifier,
             $siteNodeAggregateIdentifier,

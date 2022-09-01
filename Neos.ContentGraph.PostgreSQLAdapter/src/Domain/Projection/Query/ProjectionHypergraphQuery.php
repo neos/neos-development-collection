@@ -19,9 +19,9 @@ use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @internal
@@ -51,7 +51,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         $this->types = $types;
     }
 
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier, string $tableNamePrefix): self
+    public static function create(ContentStreamId $contentStreamIdentifier, string $tableNamePrefix): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
@@ -102,7 +102,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         return new self($query, $parameters, $this->types);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
     {
         $query = $this->query .= '
             AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';

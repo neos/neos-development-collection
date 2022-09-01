@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Factory\EventStore;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
 
@@ -16,7 +16,7 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $eventStorePreset): EventStoreInterface
+    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $eventStorePreset): EventStoreInterface
     {
         return new DoctrineEventStore(
             $this->connection,
@@ -24,7 +24,7 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
         );
     }
 
-    public static function databaseTableName(ContentRepositoryIdentifier $contentRepositoryIdentifier): string
+    public static function databaseTableName(ContentRepositoryId $contentRepositoryIdentifier): string
     {
         return sprintf('cr_%s_events', $contentRepositoryIdentifier);
     }

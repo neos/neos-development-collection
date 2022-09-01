@@ -6,7 +6,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -20,7 +20,7 @@ class WorkspaceCommandController extends CommandController
      */
     public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
             $contentRepositoryIdentifier,
             new WorkspaceMaintenanceServiceFactory()

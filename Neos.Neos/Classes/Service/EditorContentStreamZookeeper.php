@@ -17,8 +17,8 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -92,7 +92,7 @@ final class EditorContentStreamZookeeper
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
         assert($requestHandler instanceof HttpRequestHandlerInterface);
         $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         $isEditor = false;
         foreach ($token->getAccount()->getRoles() as $role) {
@@ -113,12 +113,12 @@ final class EditorContentStreamZookeeper
                     $workspaceName->toContentRepositoryWorkspaceName()
                 );
 
-                $userIdentifier = UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user));
+                $userIdentifier = UserId::fromString($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {
                     // @todo: find base workspace for user
                     /** @var Workspace $baseWorkspace */
                     $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-                    $editorsNewContentStreamIdentifier = ContentStreamIdentifier::create();
+                    $editorsNewContentStreamIdentifier = ContentStreamId::create();
                     $similarlyNamedWorkspaces = $contentRepository->getWorkspaceFinder()->findByPrefix(
                         $workspaceName->toContentRepositoryWorkspaceName()
                     );

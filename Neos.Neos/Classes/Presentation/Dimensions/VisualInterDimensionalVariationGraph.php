@@ -48,7 +48,7 @@ final class VisualInterDimensionalVariationGraph
         $height = 0;
 
         foreach ($contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-            $identifier = (string)$contentDimension->identifier;
+            $identifier = (string)$contentDimension->id;
             $offsets[$identifier] = self::resolveOffsets($contentDimension);
         }
 

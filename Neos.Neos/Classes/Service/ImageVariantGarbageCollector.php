@@ -77,9 +77,9 @@ class ImageVariantGarbageCollector
                 // If the result contains exactly the node that got a new ImageVariant assigned
                 // then we are safe to remove the asset here.
                 if (
-                    $usageItem->contentStreamIdentifier === $node->subgraphIdentity->contentStreamIdentifier
+                    $usageItem->contentStreamIdentifier === $node->subgraphIdentity->contentStreamId
                     && $usageItem->originDimensionSpacePoint === $node->originDimensionSpacePoint->hash
-                    && $usageItem->nodeAggregateIdentifier === $node->nodeAggregateIdentifier
+                    && $usageItem->nodeAggregateIdentifier === $node->nodeAggregateId
                 ) {
                     $this->assetRepository->remove($oldValue);
                 }

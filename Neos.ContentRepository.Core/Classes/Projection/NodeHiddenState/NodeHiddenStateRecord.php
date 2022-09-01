@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * Node Hidden State database record
@@ -31,37 +31,37 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
  */
 class NodeHiddenStateRecord
 {
-    private ?ContentStreamIdentifier $contentStreamIdentifier;
+    private ?ContentStreamId $contentStreamId;
 
-    private ?NodeAggregateIdentifier $nodeAggregateIdentifier;
+    private ?NodeAggregateId $nodeAggregateId;
 
     private ?DimensionSpacePoint $dimensionSpacePoint;
 
     private bool $hidden;
 
     public function __construct(
-        ?ContentStreamIdentifier $contentStreamIdentifier,
-        ?NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ?ContentStreamId $contentStreamId,
+        ?NodeAggregateId $nodeAggregateId,
         ?DimensionSpacePoint $dimensionSpacePoint,
         bool $hidden
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->contentStreamId = $contentStreamId;
+        $this->nodeAggregateId = $nodeAggregateId;
         $this->dimensionSpacePoint = $dimensionSpacePoint;
         $this->hidden = $hidden;
     }
 
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
-        if (is_null($this->contentStreamIdentifier)) {
+        if (is_null($this->contentStreamId)) {
             throw new \BadMethodCallException(
-                'Cannot add NodeHiddenState to database without a contentStreamIdentifier',
+                'Cannot add NodeHiddenState to database without a contentStreamId',
                 1645383933
             );
         }
-        if (is_null($this->nodeAggregateIdentifier)) {
+        if (is_null($this->nodeAggregateId)) {
             throw new \BadMethodCallException(
-                'Cannot add NodeHiddenState to database without a nodeAggregateIdentifier',
+                'Cannot add NodeHiddenState to database without a nodeAggregateId',
                 1645383950
             );
         }
@@ -72,8 +72,8 @@ class NodeHiddenStateRecord
             );
         }
         $databaseConnection->insert($tableName, [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+            'contentStreamId' => (string)$this->contentStreamId,
+            'nodeAggregateId' => (string)$this->nodeAggregateId,
             'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'hidden' => (int)$this->hidden,

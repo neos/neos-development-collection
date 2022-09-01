@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command;
  */
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Command to remove an existing content stream
@@ -26,8 +26,8 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 final class RemoveContentStream implements CommandInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $contentStreamId,
+        public readonly UserId $initiatingUserId
     ) {
     }
 }

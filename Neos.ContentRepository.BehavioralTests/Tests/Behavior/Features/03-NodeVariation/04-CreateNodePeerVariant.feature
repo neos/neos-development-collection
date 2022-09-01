@@ -28,17 +28,17 @@ Feature: Create node peer variant
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "user-id"            |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "user-id"            |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | originDimensionSpacePoint        | nodeName            | parentNodeAggregateIdentifier | nodeTypeName                                                   | tetheredDescendantNodeAggregateIdentifiers                                               |
+      | nodeAggregateId | originDimensionSpacePoint        | nodeName            | parentNodeAggregateId | nodeTypeName                                                   | tetheredDescendantNodeAggregateIds                                               |
     # We have to add another node since root nodes have no origin dimension space points and thus cannot be varied.
     # We also need a tethered child node to test that it is reachable from the freshly created peer variant of the parent
     # and we need a tethered child node of the tethered child node to test that this works recursively
@@ -55,29 +55,29 @@ Feature: Create node peer variant
   Scenario: Create peer variant of node to dimension space point without specializations
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"CH", "language":"fr"} |
     Then I expect exactly 13 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 10 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
-      | contentStreamIdentifier | "cs-identifier"                    |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"           |
+      | contentStreamId | "cs-identifier"                    |
+      | nodeAggregateId | "sir-david-nodenborough"           |
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
     And event at index 11 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
-      | contentStreamIdentifier | "cs-identifier"                    |
-      | nodeAggregateIdentifier | "nodimus-prime"                    |
+      | contentStreamId | "cs-identifier"                    |
+      | nodeAggregateId | "nodimus-prime"                    |
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
     And event at index 12 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                           |
-      | contentStreamIdentifier | "cs-identifier"                    |
-      | nodeAggregateIdentifier | "nodimus-mediocre"                 |
+      | contentStreamId | "cs-identifier"                    |
+      | nodeAggregateId | "nodimus-mediocre"                 |
       | sourceOrigin            | {"market":"DE", "language":"en"}   |
       | peerOrigin              | {"market":"CH", "language":"fr"}   |
       | peerCoverage            | [{"market":"CH", "language":"fr"}] |
@@ -225,22 +225,22 @@ Feature: Create node peer variant
   Scenario: Create peer variant of node to dimension space point with specializations that are partially occupied
     Given the event NodePeerVariantWasCreated was published with payload:
       | Key                     | Value                                                                                                                                   |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier | "madame-lanode"                                                                                                                         |
+      | contentStreamId | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId | "madame-lanode"                                                                                                                         |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                     | Value                                                                                                                                   |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier | "nodesis-prime"                                                                                                                         |
+      | contentStreamId | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId | "nodesis-prime"                                                                                                                         |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                     | Value                                                                                                                                   |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier | "nodesis-mediocre"                                                                                                                      |
+      | contentStreamId | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId | "nodesis-mediocre"                                                                                                                      |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
@@ -248,8 +248,8 @@ Feature: Create node peer variant
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "madame-lanode"                  |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "madame-lanode"                  |
       | sourceOrigin            | {"market":"CH", "language":"fr"} |
       | targetOrigin            | {"market":"DE", "language":"en"} |
     Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
@@ -257,8 +257,8 @@ Feature: Create node peer variant
     # The second is the first above
     And event at index 13 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
-      | contentStreamIdentifier | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier | "madame-lanode"                                                     |
+      | contentStreamId | "cs-identifier"                                                     |
+      | nodeAggregateId | "madame-lanode"                                                     |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"en"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
@@ -266,8 +266,8 @@ Feature: Create node peer variant
     # The second is the second above
     And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
-      | contentStreamIdentifier | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier | "nodesis-prime"                                                     |
+      | contentStreamId | "cs-identifier"                                                     |
+      | nodeAggregateId | "nodesis-prime"                                                     |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"en"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
@@ -275,8 +275,8 @@ Feature: Create node peer variant
     # The second is the third above
     And event at index 15 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
-      | contentStreamIdentifier | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier | "nodesis-mediocre"                                                  |
+      | contentStreamId | "cs-identifier"                                                     |
+      | nodeAggregateId | "nodesis-mediocre"                                                  |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                    |
       | peerOrigin              | {"market":"DE", "language":"en"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
@@ -429,22 +429,22 @@ Feature: Create node peer variant
   Scenario: Create peer variant of node to dimension space point that is already covered
     Given the event NodePeerVariantWasCreated was published with payload:
       | Key                     | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier | "madame-lanode"                                                                                                                                                                                           |
+      | contentStreamId | "cs-identifier"                                                                                                                                                                                           |
+      | nodeAggregateId | "madame-lanode"                                                                                                                                                                                           |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
       | peerOrigin              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                     | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier | "nodesis-prime"                                                                                                                                                                                           |
+      | contentStreamId | "cs-identifier"                                                                                                                                                                                           |
+      | nodeAggregateId | "nodesis-prime"                                                                                                                                                                                           |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
       | peerOrigin              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And the event NodePeerVariantWasCreated was published with payload:
       | Key                     | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier | "nodesis-mediocre"                                                                                                                                                                                        |
+      | contentStreamId | "cs-identifier"                                                                                                                                                                                           |
+      | nodeAggregateId | "nodesis-mediocre"                                                                                                                                                                                        |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                                                                                          |
       | peerOrigin              | {"market":"DE", "language":"en"}                                                                                                                                                                          |
       | peerCoverage            | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
@@ -452,8 +452,8 @@ Feature: Create node peer variant
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "madame-lanode"                  |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "madame-lanode"                  |
       | sourceOrigin            | {"market":"CH", "language":"fr"} |
       | targetOrigin            | {"market":"DE", "language":"de"} |
     Then I expect exactly 16 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
@@ -461,8 +461,8 @@ Feature: Create node peer variant
     # The second is the first above
     And event at index 13 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier | "madame-lanode"                                                                                                                         |
+      | contentStreamId | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId | "madame-lanode"                                                                                                                         |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
@@ -470,8 +470,8 @@ Feature: Create node peer variant
     # The second is the second above
     And event at index 14 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier | "nodesis-prime"                                                                                                                         |
+      | contentStreamId | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId | "nodesis-prime"                                                                                                                         |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
@@ -479,8 +479,8 @@ Feature: Create node peer variant
     # The second is the third above
     And event at index 15 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                                                                                                |
-      | contentStreamIdentifier | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier | "nodesis-mediocre"                                                                                                                      |
+      | contentStreamId | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId | "nodesis-mediocre"                                                                                                                      |
       | sourceOrigin            | {"market":"CH", "language":"fr"}                                                                                                        |
       | peerOrigin              | {"market":"DE", "language":"de"}                                                                                                        |
       | peerCoverage            | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
@@ -680,23 +680,23 @@ Feature: Create node peer variant
   Scenario: Create a peer node variant to a dimension space point with specializations and where the parent node aggregate is already specialized in
     Given the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"fr"} |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "sir-david-nodenborough"         |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin            | {"market":"DE", "language":"fr"} |
       | targetOrigin            | {"market":"CH", "language":"fr"} |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"               |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "nody-mc-nodeface"               |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"fr"} |
     Then I expect exactly 17 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
@@ -711,8 +711,8 @@ Feature: Create node peer variant
     # Event 17 is NodePeerVariantWasCreated for Nody McNodeface
     And event at index 16 is of type "NodePeerVariantWasCreated" with payload:
       | Key                     | Expected                                                            |
-      | contentStreamIdentifier | "cs-identifier"                                                     |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"                                                  |
+      | contentStreamId | "cs-identifier"                                                     |
+      | nodeAggregateId | "nody-mc-nodeface"                                                  |
       | sourceOrigin            | {"market":"DE", "language":"en"}                                    |
       | peerOrigin              | {"market":"DE", "language":"fr"}                                    |
       | peerCoverage            | [{"market":"DE", "language":"fr"},{"market":"CH", "language":"fr"}] |

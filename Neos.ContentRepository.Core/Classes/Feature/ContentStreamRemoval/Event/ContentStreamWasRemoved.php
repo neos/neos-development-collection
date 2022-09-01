@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
@@ -24,24 +24,24 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 final class ContentStreamWasRemoved implements EventInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $contentStreamId,
+        public readonly UserId $initiatingUserId
     ) {
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            ContentStreamId::fromString($values['contentStreamId']),
+            UserId::fromString($values['initiatingUserId']),
         );
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

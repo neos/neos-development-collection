@@ -17,11 +17,11 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 use Neos\Flow\Utility\Algorithms;
 
 /**
- * The NodeAggregateIdentifier supersedes the Node Identifier from Neos <= 9.x.
+ * The NodeAggregateId supersedes the Node Identifier from Neos <= 9.x.
  *
  * @api
  */
-final class NodeAggregateIdentifier implements \JsonSerializable, \Stringable
+final class NodeAggregateId implements \JsonSerializable, \Stringable
 {
     /**
      * A preg pattern to match against node aggregate identifiers

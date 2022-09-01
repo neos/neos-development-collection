@@ -51,10 +51,10 @@ trait NodeVariation
         CreateNodeVariant $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
@@ -64,8 +64,8 @@ trait NodeVariation
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $command->sourceOrigin,
             $contentRepository
         );
@@ -75,17 +75,17 @@ trait NodeVariation
         );
 
         $events = $this->createEventsForVariations(
-            $command->contentStreamIdentifier,
+            $command->contentStreamId,
             $command->sourceOrigin,
             $command->targetOrigin,
             $nodeAggregate,
-            $command->initiatingUserIdentifier,
+            $command->initiatingUserId,
             $contentRepository
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->contentStreamIdentifier
+            ContentStreamEventStreamName::fromContentStreamId(
+                $command->contentStreamId
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

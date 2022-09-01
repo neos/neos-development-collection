@@ -30,7 +30,7 @@ class DimensionController extends AbstractModuleController
     public function indexAction(string $type = 'intraDimension', string $dimensionSpacePointHash = null): void
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
         $dimensionControllerInternals = $this->contentRepositoryRegistry->getService(
             $contentRepositoryIdentifier,
             new DimensionControllerInternalsFactory()

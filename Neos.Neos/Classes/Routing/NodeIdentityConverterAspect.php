@@ -48,7 +48,7 @@ class NodeIdentityConverterAspect
         $objectArgument = $joinPoint->getMethodArgument('object');
         if ($objectArgument instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $objectArgument->subgraphIdentity->contentRepositoryIdentifier
+                $objectArgument->subgraphIdentity->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($objectArgument);

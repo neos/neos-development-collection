@@ -3,7 +3,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -20,7 +20,7 @@ class ContentStreamCommandController extends CommandController
      */
     public function exportCommand(string $contentStreamIdentifier, string $contentRepositoryIdentifier = 'default', int $startSequenceNumber = 0): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         throw new \RuntimeException('TODO IMPL??');
         // TODO??$events = $this->contentRepositoryEventStore->load(
         //    StreamName::fromString($contentStreamIdentifier),
@@ -123,7 +123,7 @@ class ContentStreamCommandController extends CommandController
      */
     public function pruneCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->prune();
@@ -142,7 +142,7 @@ class ContentStreamCommandController extends CommandController
      */
     public function pruneRemovedFromEventStreamCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();

@@ -14,10 +14,11 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
 
@@ -26,11 +27,11 @@ use PHPUnit\Framework\Assert;
  */
 trait NodeRenaming
 {
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -38,13 +39,14 @@ trait NodeRenaming
 
     /**
      * @Then /^I expect the node "([^"]*)" to have the name "([^"]*)"$/
-     * @param string $nodeAggregateIdentifier
+     * @param string $nodeAggregateId
      * @param string $nodeName
      */
-    public function iExpectTheNodeToHaveTheName(string $nodeAggregateIdentifier, string $nodeName)
+    public function iExpectTheNodeToHaveTheName(string $nodeAggregateId, string $nodeName)
     {
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
-            $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+            assert($subgraph instanceof ContentSubgraphInterface);
+            $node = $subgraph->findNodeByNodeAggregateId(NodeAggregateId::fromString($nodeAggregateId));
             Assert::assertEquals($nodeName, (string)$node->nodeName, 'Node Names do not match in adapter ' . $adapterName);
         }
     }

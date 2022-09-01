@@ -195,15 +195,15 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
     {
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         foreach (
             $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier
+                $command->contentStreamId,
+                $command->nodeAggregateId
             ) as $parentAggregate
         ) {
             /* @var $parentAggregate NodeAggregate */
@@ -227,8 +227,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             }
             foreach (
                 $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $command->contentStreamIdentifier,
-                    $parentAggregate->nodeAggregateIdentifier
+                    $command->contentStreamId,
+                    $parentAggregate->nodeAggregateId
                 ) as $grandParentAggregate
             ) {
                 /* @var $grandParentAggregate NodeAggregate */

@@ -87,8 +87,8 @@ class NextUntilOperation extends AbstractOperation
 
             foreach ($nextNodes as $nextNode) {
                 if ($nextNode !== null
-                    && !isset($outputNodeIdentifiers[(string)$nextNode->nodeAggregateIdentifier])) {
-                    $outputNodeIdentifiers[(string)$nextNode->nodeAggregateIdentifier] = true;
+                    && !isset($outputNodeIdentifiers[(string)$nextNode->nodeAggregateId])) {
+                    $outputNodeIdentifiers[(string)$nextNode->nodeAggregateId] = true;
                     $output[] = $nextNode;
                 }
             }
@@ -109,11 +109,11 @@ class NextUntilOperation extends AbstractOperation
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
 
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
         if ($parentNode === null) {
             return Nodes::createEmpty();
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->nextAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId)->nextAll($contextNode);
     }
 }

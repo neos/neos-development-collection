@@ -14,9 +14,9 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\PyStringNode;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
@@ -33,7 +33,7 @@ trait MigrationsTrait
     protected NodeMigrationService $nodeMigrationService;
 
     abstract protected function getObjectManager(): ObjectManagerInterface;
-    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+    abstract protected function getContentRepositoryId(): ContentRepositoryId;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     /**
@@ -42,9 +42,9 @@ trait MigrationsTrait
     public function iRunTheFollowingNodeMigration(string $workspaceName, string $contentStreams, PyStringNode $string)
     {
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
-        $contentStreamIdentifiers = array_map(fn (string $cs) => ContentStreamIdentifier::fromString($cs), explode(',', $contentStreams));
-        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIdentifiers);
-        $nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryIdentifier(), new NodeMigrationServiceFactory());
+        $contentStreamIds = array_map(fn (string $cs) => ContentStreamId::fromString($cs), explode(',', $contentStreams));
+        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
+        $nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new NodeMigrationServiceFactory());
         $nodeMigrationService->executeMigration($command);
     }
 

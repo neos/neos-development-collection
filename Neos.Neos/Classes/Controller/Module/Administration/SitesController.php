@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -181,7 +181,7 @@ class SitesController extends AbstractModuleController
         if ($site->getNodeName() !== $newSiteNodeName) {
             $this->redirect('index');
         }
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
             $site->getConfiguration()['contentRepository']
             ?? throw new \RuntimeException(
                 'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
@@ -200,7 +200,7 @@ class SitesController extends AbstractModuleController
 
         try {
             $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $liveWorkspace->currentContentStreamIdentifier,
+                $liveWorkspace->currentContentStreamId,
                 NodeTypeName::fromString('Neos.Neos:Sites')
             );
         } catch (\Exception $exception) {
@@ -223,15 +223,15 @@ class SitesController extends AbstractModuleController
             /** @var NodeAggregate[] $siteNodeAggregates */
             /** @var Workspace $workspace */
             $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-                $workspace->currentContentStreamIdentifier,
-                $sitesNode->nodeAggregateIdentifier,
+                $workspace->currentContentStreamId,
+                $sitesNode->nodeAggregateId,
                 $site->getNodeName()->toNodeName()
             );
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
                 $contentRepository->handle(new ChangeNodeAggregateName(
-                    $workspace->currentContentStreamIdentifier,
-                    $siteNodeAggregate->nodeAggregateIdentifier,
+                    $workspace->currentContentStreamId,
+                    $siteNodeAggregate->nodeAggregateId,
                     NodeName::fromString($newSiteNodeName),
                     $this->persistenceManager->getIdentifierByObject($currentUser)
                 ));
@@ -262,7 +262,7 @@ class SitesController extends AbstractModuleController
     {
         // This is not 100% correct, but it is as good as we can get it to work right now
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
 

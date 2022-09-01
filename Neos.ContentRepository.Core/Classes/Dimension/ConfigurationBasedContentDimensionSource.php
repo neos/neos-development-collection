@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Dimension;
 
-use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionIdentifierIsInvalid;
+use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionIdIsInvalid;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueIsInvalid;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInvalid;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
@@ -49,7 +49,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     }
 
     /**
-     * @throws ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionIdIsInvalid
      * @throws ContentDimensionValueIsInvalid
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
      * @throws ContentDimensionValuesAreInvalid
@@ -58,8 +58,8 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     {
         if (!empty($this->dimensionConfiguration)) {
             $this->contentDimensions = [];
-            foreach ($this->dimensionConfiguration as $rawDimensionIdentifier => $dimensionConfiguration) {
-                $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
+            foreach ($this->dimensionConfiguration as $rawDimensionId => $dimensionConfiguration) {
+                $dimensionId = new ContentDimensionId($rawDimensionId);
                 $values = [];
                 $variationEdges = [];
                 $additionalConfiguration = $dimensionConfiguration;
@@ -78,8 +78,8 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                 }
                 unset($additionalConfiguration['values']);
 
-                $this->contentDimensions[$rawDimensionIdentifier] = new ContentDimension(
-                    $dimensionIdentifier,
+                $this->contentDimensions[$rawDimensionId] = new ContentDimension(
+                    $dimensionId,
                     new ContentDimensionValues($values),
                     new ContentDimensionValueVariationEdges($variationEdges),
                     $additionalConfiguration
@@ -107,13 +107,13 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
         $constraints = [];
         $additionalConfiguration = $configuration;
         if (isset($configuration['constraints'])) {
-            foreach ($configuration['constraints'] as $rawDimensionIdentifier => $currentConstraints) {
+            foreach ($configuration['constraints'] as $rawDimensionId => $currentConstraints) {
                 $wildcardAllowed = true;
                 $identifierRestrictions = [];
-                if (!is_string($rawDimensionIdentifier)) {
+                if (!is_string($rawDimensionId)) {
                     throw new \InvalidArgumentException(
                         'Dimension combination constraints must be indexed by dimension name, '
-                            . $rawDimensionIdentifier . ' given.'
+                            . $rawDimensionId . ' given.'
                     );
                 }
                 foreach ($currentConstraints as $rawDimensionValue => $allowed) {
@@ -135,7 +135,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
                         $identifierRestrictions[$rawDimensionValue] = $allowed;
                     }
                 }
-                $constraints[$rawDimensionIdentifier] = new ContentDimensionConstraints(
+                $constraints[$rawDimensionId] = new ContentDimensionConstraints(
                     $wildcardAllowed,
                     $identifierRestrictions
                 );
@@ -169,23 +169,23 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
     }
 
     /**
-     * @throws ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionIdIsInvalid
      * @throws ContentDimensionValueIsInvalid
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
      * @throws ContentDimensionValuesAreInvalid
      */
-    public function getDimension(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimension
+    public function getDimension(ContentDimensionId $dimensionId): ?ContentDimension
     {
         if (is_null($this->contentDimensions)) {
             $this->initializeDimensions();
         }
 
-        return $this->contentDimensions[(string)$dimensionIdentifier] ?? null;
+        return $this->contentDimensions[(string)$dimensionId] ?? null;
     }
 
     /**
      * @return array<string,ContentDimension>
-     * @throws ContentDimensionIdentifierIsInvalid
+     * @throws ContentDimensionIdIsInvalid
      * @throws ContentDimensionValueIsInvalid
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
      * @throws ContentDimensionValuesAreInvalid

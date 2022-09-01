@@ -53,7 +53,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
             if ($currentNode->nodeType->isOfType('Neos.Neos:Document')) {
                 $documentNodes[] = $currentNode;
             }
-            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateIdentifier);
+            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);
         }
         $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);

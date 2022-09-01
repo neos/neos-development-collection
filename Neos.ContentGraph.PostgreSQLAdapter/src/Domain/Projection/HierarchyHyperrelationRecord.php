@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The active record for reading and writing hierarchy hyperrelations from and to the database
@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
  */
 final class HierarchyHyperrelationRecord
 {
-    public ContentStreamIdentifier $contentStreamIdentifier;
+    public ContentStreamId $contentStreamIdentifier;
 
     public DimensionSpacePoint $dimensionSpacePoint;
 
@@ -38,7 +38,7 @@ final class HierarchyHyperrelationRecord
     public NodeRelationAnchorPoints $childNodeAnchors;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         NodeRelationAnchorPoint $parentNodeAnchor,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoints $childNodeAnchorPoints
@@ -55,7 +55,7 @@ final class HierarchyHyperrelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
+            ContentStreamId::fromString($databaseRow['contentstreamidentifier']),
             NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
             DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
             NodeRelationAnchorPoints::fromDatabaseString(

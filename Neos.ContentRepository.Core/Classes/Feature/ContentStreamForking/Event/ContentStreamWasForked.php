@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Event;
  */
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\Event\Version;
 
 /**
@@ -28,30 +28,30 @@ final class ContentStreamWasForked implements EventInterface
         /**
          * Content stream identifier for the new content stream
          */
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier,
-        public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
+        public readonly ContentStreamId $newContentStreamId,
+        public readonly ContentStreamId $sourceContentStreamId,
         public readonly Version $versionOfSourceContentStream,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($values['sourceContentStreamIdentifier']),
+            ContentStreamId::fromString($values['newContentStreamId']),
+            ContentStreamId::fromString($values['sourceContentStreamId']),
             Version::fromInteger($values['versionOfSourceContentStream']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            UserId::fromString($values['initiatingUserId']),
         );
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->newContentStreamIdentifier,
-            'sourceContentStreamIdentifier' => $this->sourceContentStreamIdentifier,
+            'newContentStreamId' => $this->newContentStreamId,
+            'sourceContentStreamId' => $this->sourceContentStreamId,
             'versionOfSourceContentStream' => $this->versionOfSourceContentStream->value,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

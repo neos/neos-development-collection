@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -33,12 +33,12 @@ final class WorkspaceRebaseFailed implements EventInterface
          * The content stream on which we could not apply the source content stream's commands -- i.e. the "failed"
          * state.
          */
-        public readonly ContentStreamIdentifier $candidateContentStreamIdentifier,
+        public readonly ContentStreamId $candidateContentStreamId,
         /**
          * The content stream which we tried to rebase
          */
-        public readonly ContentStreamIdentifier $sourceContentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly ContentStreamId $sourceContentStreamId,
+        public readonly UserId $initiatingUserId,
         public readonly array $errors
     ) {
     }
@@ -47,9 +47,9 @@ final class WorkspaceRebaseFailed implements EventInterface
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
-            ContentStreamIdentifier::fromString($values['candidateContentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($values['sourceContentStreamIdentifier']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            ContentStreamId::fromString($values['candidateContentStreamId']),
+            ContentStreamId::fromString($values['sourceContentStreamId']),
+            UserId::fromString($values['initiatingUserId']),
             $values['errors']
         );
     }
@@ -58,9 +58,9 @@ final class WorkspaceRebaseFailed implements EventInterface
     {
         return [
             'workspaceName' => $this->workspaceName,
-            'candidateContentStreamIdentifier' => $this->candidateContentStreamIdentifier,
-            'sourceContentStreamIdentifier' => $this->sourceContentStreamIdentifier,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'candidateContentStreamId' => $this->candidateContentStreamId,
+            'sourceContentStreamId' => $this->sourceContentStreamId,
+            'initiatingUserId' => $this->initiatingUserId,
             'errors' => $this->errors
         ];
     }

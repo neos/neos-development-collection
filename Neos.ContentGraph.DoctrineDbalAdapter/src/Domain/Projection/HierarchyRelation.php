@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
@@ -30,7 +30,7 @@ final class HierarchyRelation
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
         public ?NodeName $name,
-        public ContentStreamIdentifier $contentStreamIdentifier,
+        public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
         public int $position
@@ -46,7 +46,7 @@ final class HierarchyRelation
             'parentnodeanchor' => $this->parentNodeAnchor,
             'childnodeanchor' => $this->childNodeAnchor,
             'name' => $this->name,
-            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'contentstreamid' => $this->contentStreamId,
             'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'position' => $this->position
@@ -58,7 +58,7 @@ final class HierarchyRelation
      */
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete($tableNamePrefix . '_hierarchyrelation', $this->getDatabaseIdentifier());
+        $databaseConnection->delete($tableNamePrefix . '_hierarchyrelation', $this->getDatabaseId());
     }
 
     /**
@@ -75,7 +75,7 @@ final class HierarchyRelation
             [
                 'childnodeanchor' => $childAnchorPoint
             ],
-            $this->getDatabaseIdentifier()
+            $this->getDatabaseId()
         );
     }
 
@@ -97,7 +97,7 @@ final class HierarchyRelation
         $databaseConnection->update(
             $tableNamePrefix . '_hierarchyrelation',
             $data,
-            $this->getDatabaseIdentifier()
+            $this->getDatabaseId()
         );
     }
 
@@ -108,19 +108,19 @@ final class HierarchyRelation
             [
                 'position' => $position
             ],
-            $this->getDatabaseIdentifier()
+            $this->getDatabaseId()
         );
     }
 
     /**
      * @return array<string,mixed>
      */
-    public function getDatabaseIdentifier(): array
+    public function getDatabaseId(): array
     {
         return [
             'parentnodeanchor' => $this->parentNodeAnchor,
             'childnodeanchor' => $this->childNodeAnchor,
-            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'contentstreamid' => $this->contentStreamId,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }

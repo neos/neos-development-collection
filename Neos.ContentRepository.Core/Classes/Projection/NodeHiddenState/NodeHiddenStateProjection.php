@@ -72,10 +72,10 @@ class NodeHiddenStateProjection implements ProjectionInterface
         }
         $schema = new Schema();
         $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentstreamidentifier', Types::STRING)
+        $contentStreamTable->addColumn('contentstreamid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $contentStreamTable->addColumn('nodeaggregateidentifier', Types::STRING)
+        $contentStreamTable->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $contentStreamTable->addColumn('dimensionspacepointhash', Types::STRING)
@@ -88,7 +88,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
             ->setNotnull(false);
 
         $contentStreamTable->setPrimaryKey(
-            ['contentstreamidentifier', 'nodeaggregateidentifier', 'dimensionspacepointhash']
+            ['contentstreamid', 'nodeaggregateid', 'dimensionspacepointhash']
         );
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
@@ -161,14 +161,14 @@ class NodeHiddenStateProjection implements ProjectionInterface
             foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
                 if (
                     !$this->getState()->findHiddenState(
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $dimensionSpacePoint,
-                        $event->nodeAggregateIdentifier
+                        $event->nodeAggregateId
                     )->isHidden
                 ) {
                     $nodeHiddenState = new NodeHiddenStateRecord(
-                        $event->contentStreamIdentifier,
-                        $event->nodeAggregateIdentifier,
+                        $event->contentStreamId,
+                        $event->nodeAggregateId,
                         $dimensionSpacePoint,
                         true
                     );
@@ -185,13 +185,13 @@ class NodeHiddenStateProjection implements ProjectionInterface
                 DELETE FROM
                     ' . $this->tableName . '
                 WHERE
-                    contentstreamidentifier = :contentStreamIdentifier
-                    AND nodeaggregateidentifier = :nodeAggregateIdentifier
+                    contentstreamid = :contentStreamId
+                    AND nodeaggregateid = :nodeAggregateId
                     AND dimensionspacepointhash IN (:dimensionSpacePointHashes)
             ',
             [
-                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
-                'nodeAggregateIdentifier' => (string)$event->nodeAggregateIdentifier,
+                'contentStreamId' => (string)$event->contentStreamId,
+                'nodeAggregateId' => (string)$event->nodeAggregateId,
                 'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
             ],
             [
@@ -205,23 +205,23 @@ class NodeHiddenStateProjection implements ProjectionInterface
         $this->transactional(function () use ($event) {
             $this->getDatabaseConnection()->executeUpdate('
                 INSERT INTO ' . $this->tableName . ' (
-                    contentstreamidentifier,
-                    nodeaggregateidentifier,
+                    contentstreamid,
+                    nodeaggregateid,
                     dimensionspacepoint,
                     dimensionspacepointhash,
                     hidden
                 )
                 SELECT
-                  "' . (string)$event->newContentStreamIdentifier . '" AS contentstreamidentifier,
-                  nodeaggregateidentifier,
+                  "' . (string)$event->newContentStreamId . '" AS contentstreamid,
+                  nodeaggregateid,
                   dimensionspacepoint,
                   dimensionspacepointhash,
                   hidden
                 FROM
                     ' . $this->tableName . ' h
-                    WHERE h.contentstreamidentifier = :sourceContentStreamIdentifier
+                    WHERE h.contentstreamid = :sourceContentStreamId
             ', [
-                'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamIdentifier
+                'sourceContentStreamId' => (string)$event->sourceContentStreamId
             ]);
         });
     }
@@ -237,13 +237,13 @@ class NodeHiddenStateProjection implements ProjectionInterface
                         nhs.dimensionspacepointhash = :newDimensionSpacePointHash
                     WHERE
                       nhs.dimensionspacepointhash = :originalDimensionSpacePointHash
-                      AND nhs.contentstreamidentifier = :contentStreamIdentifier
+                      AND nhs.contentstreamid = :contentStreamId
                       ',
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
                     'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
-                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
+                    'contentStreamId' => (string)$event->contentStreamId
                 ]
             );
         });

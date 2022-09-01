@@ -14,18 +14,18 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\Common;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
- * This interface is implemented by **events** which contain ContentStreamIdentifier and NodeAggregateIdentifier.
+ * This interface is implemented by **events** which contain ContentStreamId and NodeAggregateId.
  *
  * This is relevant e.g. for content cache flushing as a result of an event.
  *
  * @internal
  */
-interface EmbedsContentStreamAndNodeAggregateIdentifier
+interface EmbedsContentStreamAndNodeAggregateId
 {
-    public function getContentStreamIdentifier(): ContentStreamIdentifier;
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier;
+    public function getContentStreamId(): ContentStreamId;
+    public function getNodeAggregateId(): NodeAggregateId;
 }

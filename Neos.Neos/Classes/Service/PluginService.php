@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -65,7 +65,7 @@ class PluginService
     public function getPluginNodesWithViewDefinitions(
         WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepositoryIdentifier $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryIdentifier
     ): Nodes {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
@@ -76,7 +76,7 @@ class PluginService
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
             $contentRepositoryIdentifier,
-            $workspace->currentContentStreamIdentifier,
+            $workspace->currentContentStreamId,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -102,7 +102,7 @@ class PluginService
     {
         return $this->contentRepositoryRegistry->subgraphForNode($siteNode)
             ->findDescendants(
-                [$siteNode->nodeAggregateIdentifier],
+                [$siteNode->nodeAggregateId],
                 NodeTypeConstraints::create($nodeTypeNames, NodeTypeNames::createEmpty()),
                 null
             );
@@ -148,7 +148,7 @@ class PluginService
         string $actionName
     ): ?Node {
         $viewDefinition = $this->getPluginViewDefinitionByAction(
-            $currentNode->subgraphIdentity->contentRepositoryIdentifier,
+            $currentNode->subgraphIdentity->contentRepositoryId,
             $controllerObjectName,
             $actionName
         );
@@ -177,7 +177,7 @@ class PluginService
      * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
      */
     public function getPluginViewDefinitionByAction(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryIdentifier,
         $controllerObjectName,
         $actionName
     ): ?PluginViewDefinition {
@@ -221,7 +221,7 @@ class PluginService
             ])) as $pluginViewNode
         ) {
             if (
-                $pluginViewNode->getProperty('plugin') === (string)$node->nodeAggregateIdentifier
+                $pluginViewNode->getProperty('plugin') === (string)$node->nodeAggregateId
                 && $pluginViewNode->getProperty('view') === $viewName
             ) {
                 return $pluginViewNode;

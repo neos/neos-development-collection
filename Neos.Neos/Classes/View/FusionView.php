@@ -178,7 +178,7 @@ class FusionView extends AbstractView
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         while ($node !== null && !$node->nodeType->isOfType('Neos.Neos:Document')) {
-            $node = $subgraph->findParentNode($node->nodeAggregateIdentifier);
+            $node = $subgraph->findParentNode($node->nodeAggregateId);
         }
 
         return $node;

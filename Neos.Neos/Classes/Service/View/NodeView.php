@@ -107,7 +107,7 @@ class NodeView extends JsonView
                 $closestDocumentNode = $this->findClosestDocumentNode($node);
                 if ($closestDocumentNode !== null) {
                     $contentRepository = $this->contentRepositoryRegistry->get(
-                        $node->subgraphIdentity->contentRepositoryIdentifier
+                        $node->subgraphIdentity->contentRepositoryId
                     );
                     $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
                     $data[] = [
@@ -120,7 +120,7 @@ class NodeView extends JsonView
                         'You have a node that is no longer connected to a document node ancestor.'
                             . ' Name: %s (Identifier: %s)',
                         $node->nodeName,
-                        $node->nodeAggregateIdentifier
+                        $node->nodeAggregateId
                     ), LogEnvironment::fromMethodName(__METHOD__));
                 }
             }
@@ -138,7 +138,7 @@ class NodeView extends JsonView
             if ($documentNode->nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                 return $documentNode;
             }
-            $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateIdentifier);
+            $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateId);
         }
 
         return null;
@@ -261,14 +261,14 @@ class NodeView extends JsonView
     ) {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
         $nodeTypeConstraints = $nodeTypeFilter
             ? NodeTypeConstraints::fromFilterString($nodeTypeFilter)
             : null;
-        foreach ($subgraph->findChildNodes($node->nodeAggregateIdentifier, $nodeTypeConstraints) as $childNode) {
+        foreach ($subgraph->findChildNodes($node->nodeAggregateId, $nodeTypeConstraints) as $childNode) {
             if (
                 !$this->privilegeManager->isGranted(
                     NodeTreePrivilege::class,
@@ -284,8 +284,8 @@ class NodeView extends JsonView
                 $expand === false
                 && $untilNode !== null
                 && strpos(
-                    (string)$subgraph->findNodePath($untilNode->nodeAggregateIdentifier),
-                    (string)$subgraph->findNodePath($childNode->nodeAggregateIdentifier),
+                    (string)$subgraph->findNodePath($untilNode->nodeAggregateId),
+                    (string)$subgraph->findNodePath($childNode->nodeAggregateId),
                 ) === 0
                 && $childNode !== $untilNode
             ) {
@@ -320,7 +320,7 @@ class NodeView extends JsonView
                 case self::STYLE_TREE:
                     $children = [];
                     $grandChildNodes = $subgraph->findChildNodes(
-                        $childNode->nodeAggregateIdentifier,
+                        $childNode->nodeAggregateId,
                         $nodeTypeConstraints
                     );
                     $hasChildNodes = $grandChildNodes->count() > 0;
@@ -350,11 +350,11 @@ class NodeView extends JsonView
     public function collectParentNodeData(Node $rootNode, Nodes $nodes): array
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($rootNode);
-        $rootNodePath = (string)$subgraph->findNodePath($rootNode->nodeAggregateIdentifier);
+        $rootNodePath = (string)$subgraph->findNodePath($rootNode->nodeAggregateId);
         $nodeCollection = [];
 
         $addNode = function (Node $node, bool $matched) use ($subgraph, $rootNodePath, &$nodeCollection) {
-            $nodePath = (string)$subgraph->findNodePath($node->nodeAggregateIdentifier);
+            $nodePath = (string)$subgraph->findNodePath($node->nodeAggregateId);
             $path = str_replace('/', '.children.', substr($nodePath, strlen($rootNodePath) + 1));
             if ($path !== '') {
                 $nodeCollection = Arrays::setValueByPath($nodeCollection, $path . '.node', $node);
@@ -365,7 +365,7 @@ class NodeView extends JsonView
         };
 
         $findParent = function (Node $node) use ($subgraph, &$findParent, &$addNode) {
-            $parent = $subgraph->findParentNode($node->nodeAggregateIdentifier);
+            $parent = $subgraph->findParentNode($node->nodeAggregateId);
             if ($parent !== null) {
                 if (
                     $this->privilegeManager->isGranted(
@@ -429,16 +429,16 @@ class NodeView extends JsonView
         bool $matched = false
     ): array {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromNode($node);
         $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
         /* @var NodeHiddenStateFinder $nodeHiddenStateFinder */
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
-            $nodeAddress->contentStreamIdentifier,
+            $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,
-            $nodeAddress->nodeAggregateIdentifier
+            $nodeAddress->nodeAggregateId
         );
 
         $classes = [];

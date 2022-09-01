@@ -7,14 +7,14 @@ namespace Neos\ContentRepository\NodeMigration;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\NodeMigration\Filter\InvalidMigrationFilterSpecified;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -76,14 +76,14 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                     $workspace->workspaceName,
                     WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
                     WorkspaceDescription::fromString(''),
-                    UserIdentifier::forSystemUser(),
+                    UserId::forSystemUser(),
                     $contentStreamForWriting,
                 )
             )->block();
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
-                $workspace->currentContentStreamIdentifier,
+                $workspace->currentContentStreamId,
                 $contentStreamForWriting
             );
         }
@@ -97,8 +97,8 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
      */
     protected function executeSubMigrationAndBlock(
         array $migrationDescription,
-        ContentStreamIdentifier $contentStreamForReading,
-        ContentStreamIdentifier $contentStreamForWriting
+        ContentStreamId $contentStreamForReading,
+        ContentStreamId $contentStreamForWriting
     ): void
     {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);

@@ -100,7 +100,7 @@ class HasOperation extends AbstractOperation
             foreach ($elements as $element) {
                 if ($element instanceof Node) {
                     $parent = $this->contentRepositoryRegistry->subgraphForNode($element)
-                        ->findParentNode($element->nodeAggregateIdentifier);
+                        ->findParentNode($element->nodeAggregateId);
                     if (!is_null($parent)) {
                         foreach ($context as $contextElement) {
                             /** @var Node $contextElement */

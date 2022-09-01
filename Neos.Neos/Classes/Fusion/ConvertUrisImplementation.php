@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -115,7 +115,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         }
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
@@ -133,8 +133,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 $resolvedUri = null;
                 switch ($matches[1]) {
                     case 'node':
-                        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
-                            NodeAggregateIdentifier::fromString($matches[2])
+                        $nodeAddress = $nodeAddress->withNodeAggregateId(
+                            NodeAggregateId::fromString($matches[2])
                         );
                         $uriBuilder = new UriBuilder();
                         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
  * API Contract for creating a {@see DimensionResolverInterface} from Settings (usually
@@ -18,12 +18,12 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
 interface DimensionResolverFactoryInterface
 {
     /**
-     * @param ContentRepositoryIdentifier $contentRepositoryIdentifier
+     * @param ContentRepositoryId $contentRepositoryIdentifier
      * @param array<string,mixed> $dimensionResolverOptions
      * @return DimensionResolverInterface
      */
     public function create(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryIdentifier,
         array $dimensionResolverOptions
     ): DimensionResolverInterface;
 }

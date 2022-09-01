@@ -164,7 +164,7 @@ class BackendRedirectionService
     protected function getLastVisitedNode(string $workspaceName, ActionRequest $actionRequest): ?Node
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($actionRequest->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if (!$workspace || !$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
@@ -178,10 +178,10 @@ class BackendRedirectionService
             );
 
             return $contentRepository->getContentGraph()->getSubgraph(
-                $workspace->currentContentStreamIdentifier,
+                $workspace->currentContentStreamId,
                 $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
-            )->findNodeByNodeAggregateIdentifier($lastVisitedNode->nodeAggregateIdentifier);
+            )->findNodeByNodeAggregateId($lastVisitedNode->nodeAggregateId);
         } catch (\Exception $exception) {
             return null;
         }

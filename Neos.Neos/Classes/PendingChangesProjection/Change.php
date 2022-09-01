@@ -16,8 +16,8 @@ namespace Neos\Neos\PendingChangesProjection;
 
 use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
@@ -30,12 +30,12 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 class Change
 {
     /**
-     * @var ContentStreamIdentifier
+     * @var ContentStreamId
      */
     public $contentStreamIdentifier;
 
     /**
-     * @var NodeAggregateIdentifier
+     * @var NodeAggregateId
      */
     public $nodeAggregateIdentifier;
 
@@ -62,16 +62,16 @@ class Change
     /**
      * {@see RemoveNodeAggregate::$removalAttachmentPoint} for docs
      */
-    public ?NodeAggregateIdentifier $removalAttachmentPoint;
+    public ?NodeAggregateId $removalAttachmentPoint;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         bool $changed,
         bool $moved,
         bool $deleted,
-        ?NodeAggregateIdentifier $removalAttachmentPoint = null
+        ?NodeAggregateId $removalAttachmentPoint = null
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
@@ -125,14 +125,14 @@ class Change
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($databaseRow['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($databaseRow['contentStreamIdentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],
             (bool)$databaseRow['deleted'],
             isset($databaseRow['removalAttachmentPoint'])
-                ? NodeAggregateIdentifier::fromString($databaseRow['removalAttachmentPoint'])
+                ? NodeAggregateId::fromString($databaseRow['removalAttachmentPoint'])
                 : null
         );
     }

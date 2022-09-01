@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -25,7 +25,7 @@ abstract class AbstractQueryOperationsTest extends UnitTestCase
     {
         /** @var Node|MockObject $mockNode */
         $mockNode = $this->getMockBuilder(Node::class)->getMock();
-        $mockNode->method('getNodeAggregateIdentifier')->willReturn(NodeAggregateIdentifier::fromString($nodeAggregateIdentifier));
+        $mockNode->method('getNodeAggregateIdentifier')->willReturn(NodeAggregateId::fromString($nodeAggregateIdentifier));
         $mockNode->method('equals')->willReturnCallback(function (Node $other) use ($mockNode) {
             return $other === $mockNode;
         });

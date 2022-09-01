@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
@@ -38,7 +38,7 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
      * @param array<string,mixed> $dimensionResolverOptions
      */
     public function create(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryIdentifier,
         array $dimensionResolverOptions
     ): DimensionResolverInterface {
         $internals = $this->contentRepositoryRegistry->getService(

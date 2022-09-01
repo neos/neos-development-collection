@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * Describes the intention of the user making the current request:
  * Show me
- *  node $nodeAggregateIdentifier
+ *  node $nodeAggregateId
  *  in dimensions $dimensionSpacePoint
  *  in contentStreamIdentifier $contentStreamIdentifier
  *
@@ -38,19 +38,19 @@ final class NodeAddress
      * @internal use NodeAddressFactory, if you want to create a NodeAddress
      */
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentStreamId $contentStreamId,
         public readonly DimensionSpacePoint $dimensionSpacePoint,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly WorkspaceName $workspaceName
     ) {
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         return new self(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             $this->workspaceName
         );
     }
@@ -61,7 +61,7 @@ final class NodeAddress
         // when changing the serialization here
         return $this->workspaceName->name
             . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
-            . '__' . $this->nodeAggregateIdentifier->jsonSerialize();
+            . '__' . $this->nodeAggregateId->jsonSerialize();
     }
 
     public function isInLiveWorkspace(): bool
@@ -73,9 +73,9 @@ final class NodeAddress
     {
         return sprintf(
             'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateIdentifier=%s, workspaceName=%s]',
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
-            $this->nodeAggregateIdentifier,
+            $this->nodeAggregateId,
             $this->workspaceName
         );
     }

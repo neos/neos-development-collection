@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 final class Transformations
 {
@@ -90,8 +90,8 @@ final class Transformations
     }
 
     public function executeGlobalAndBlock(
-        ContentStreamIdentifier $contentStreamForReading,
-        ContentStreamIdentifier $contentStreamForWriting
+        ContentStreamId $contentStreamForReading,
+        ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->globalTransformations as $globalTransformation) {
             $globalTransformation->execute($contentStreamForReading, $contentStreamForWriting)->block();
@@ -100,7 +100,7 @@ final class Transformations
 
     public function executeNodeAggregateBasedAndBlock(
         NodeAggregate $nodeAggregate,
-        ContentStreamIdentifier $contentStreamForWriting
+        ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->nodeAggregateBasedTransformations as $nodeAggregateBasedTransformation) {
             $nodeAggregateBasedTransformation->execute($nodeAggregate, $contentStreamForWriting)->block();
@@ -110,7 +110,7 @@ final class Transformations
     public function executeNodeBasedAndBlock(
         Node $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
-        ContentStreamIdentifier $contentStreamForWriting
+        ContentStreamId $contentStreamForWriting
     ): void {
         foreach ($this->nodeBasedTransformations as $nodeBasedTransformation) {
             $nodeBasedTransformation->execute($node, $coveredDimensionSpacePoints, $contentStreamForWriting)?->block();

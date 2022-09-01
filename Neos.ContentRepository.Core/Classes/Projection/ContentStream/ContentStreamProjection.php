@@ -21,12 +21,12 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
@@ -86,12 +86,12 @@ class ContentStreamProjection implements ProjectionInterface
 
         $schema = new Schema();
         $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentStreamIdentifier', Types::STRING)
+        $contentStreamTable->addColumn('contentStreamId', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $contentStreamTable->addColumn('version', Types::INTEGER)
             ->setNotnull(true);
-        $contentStreamTable->addColumn('sourceContentStreamIdentifier', Types::STRING)
+        $contentStreamTable->addColumn('sourceContentStreamId', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
         $contentStreamTable->addColumn('state', Types::STRING)
@@ -130,7 +130,7 @@ class ContentStreamProjection implements ProjectionInterface
                 WorkspaceRebaseFailed::class,
                 ContentStreamWasRemoved::class,
             ])
-            || is_subclass_of($eventClassName, EmbedsContentStreamAndNodeAggregateIdentifier::class);
+            || is_subclass_of($eventClassName, EmbedsContentStreamAndNodeAggregateId::class);
     }
 
     public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
@@ -147,7 +147,7 @@ class ContentStreamProjection implements ProjectionInterface
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
 
-        if ($eventInstance instanceof EmbedsContentStreamAndNodeAggregateIdentifier) {
+        if ($eventInstance instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($eventInstance, $eventEnvelope);
             return;
         }
@@ -187,7 +187,7 @@ class ContentStreamProjection implements ProjectionInterface
     private function whenContentStreamWasCreated(ContentStreamWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'contentStreamIdentifier' => $event->contentStreamIdentifier,
+            'contentStreamId' => $event->contentStreamId,
             'version' => self::extractVersion($eventEnvelope),
             'state' => ContentStreamFinder::STATE_CREATED,
         ]);
@@ -199,7 +199,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamIdentifier' => $event->newContentStreamIdentifier
+            'contentStreamId' => $event->newContentStreamId
         ]);
     }
 
@@ -209,16 +209,16 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamIdentifier' => $event->newContentStreamIdentifier
+            'contentStreamId' => $event->newContentStreamId
         ]);
     }
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'contentStreamIdentifier' => $event->newContentStreamIdentifier,
+            'contentStreamId' => $event->newContentStreamId,
             'version' => self::extractVersion($eventEnvelope),
-            'sourceContentStreamIdentifier' => $event->sourceContentStreamIdentifier,
+            'sourceContentStreamId' => $event->sourceContentStreamId,
             'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
         ]);
     }
@@ -227,13 +227,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->newContentStreamIdentifier,
+            $event->newContentStreamId,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->previousContentStreamIdentifier,
+            $event->previousContentStreamId,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }
@@ -242,13 +242,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->newContentStreamIdentifier,
+            $event->newContentStreamId,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->previousContentStreamIdentifier,
+            $event->previousContentStreamId,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }
@@ -257,13 +257,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->newSourceContentStreamIdentifier,
+            $event->newSourceContentStreamId,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->previousSourceContentStreamIdentifier,
+            $event->previousSourceContentStreamId,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }
@@ -272,13 +272,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->newSourceContentStreamIdentifier,
+            $event->newSourceContentStreamId,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->previousSourceContentStreamIdentifier,
+            $event->previousSourceContentStreamId,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }
@@ -287,13 +287,13 @@ class ContentStreamProjection implements ProjectionInterface
     {
         // the new content stream is in use now
         $this->updateStateForContentStream(
-            $event->newContentStreamIdentifier,
+            $event->newContentStreamId,
             ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE
         );
 
         // the previous content stream is no longer in use
         $this->updateStateForContentStream(
-            $event->previousContentStreamIdentifier,
+            $event->previousContentStreamId,
             ContentStreamFinder::STATE_NO_LONGER_IN_USE
         );
     }
@@ -301,7 +301,7 @@ class ContentStreamProjection implements ProjectionInterface
     private function whenWorkspaceRebaseFailed(WorkspaceRebaseFailed $event): void
     {
         $this->updateStateForContentStream(
-            $event->candidateContentStreamIdentifier,
+            $event->candidateContentStreamId,
             ContentStreamFinder::STATE_REBASE_ERROR
         );
     }
@@ -312,16 +312,16 @@ class ContentStreamProjection implements ProjectionInterface
             'removed' => true,
             'version' => self::extractVersion($eventEnvelope),
         ], [
-            'contentStreamIdentifier' => $event->contentStreamIdentifier
+            'contentStreamId' => $event->contentStreamId
         ]);
     }
 
-    private function updateStateForContentStream(ContentStreamIdentifier $contentStreamIdentifier, string $state): void
+    private function updateStateForContentStream(ContentStreamId $contentStreamId, string $state): void
     {
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => $state,
         ], [
-            'contentStreamIdentifier' => $contentStreamIdentifier
+            'contentStreamId' => $contentStreamId
         ]);
     }
 
@@ -331,13 +331,13 @@ class ContentStreamProjection implements ProjectionInterface
     }
 
     private function updateContentStreamVersion(
-        EmbedsContentStreamAndNodeAggregateIdentifier $eventInstance,
+        EmbedsContentStreamAndNodeAggregateId $eventInstance,
         EventEnvelope $eventEnvelope
     ): void {
         $this->getDatabaseConnection()->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
-            'contentStreamIdentifier' => $eventInstance->getContentStreamIdentifier()
+            'contentStreamId' => $eventInstance->getContentStreamId()
         ]);
     }
 

@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
@@ -99,7 +99,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $workspaceTable->addColumn('workspaceowner', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
-        $workspaceTable->addColumn('currentcontentstreamidentifier', Types::STRING)
+        $workspaceTable->addColumn('currentcontentstreamid', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
         $workspaceTable->addColumn('status', Types::STRING)
@@ -201,7 +201,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'workspaceTitle' => $event->workspaceTitle,
             'workspaceDescription' => $event->workspaceDescription,
             'workspaceOwner' => $event->workspaceOwner,
-            'currentContentStreamIdentifier' => $event->newContentStreamIdentifier,
+            'currentContentStreamId' => $event->newContentStreamId,
             'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
     }
@@ -212,20 +212,20 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'workspaceName' => $event->workspaceName,
             'workspaceTitle' => $event->workspaceTitle,
             'workspaceDescription' => $event->workspaceDescription,
-            'currentContentStreamIdentifier' => $event->newContentStreamIdentifier,
+            'currentContentStreamId' => $event->newContentStreamId,
             'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
     }
 
     private function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
-        $this->updateContentStreamIdentifier($event->newContentStreamIdentifier, $event->workspaceName);
+        $this->updateContentStreamId($event->newContentStreamId, $event->workspaceName);
         $this->markDependentWorkspacesAsOutdated($event->workspaceName);
     }
 
     private function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
-        $this->updateContentStreamIdentifier($event->newContentStreamIdentifier, $event->workspaceName);
+        $this->updateContentStreamId($event->newContentStreamId, $event->workspaceName);
         $this->markDependentWorkspacesAsOutdated($event->workspaceName);
     }
 
@@ -233,8 +233,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         // TODO: How do we test this method?
         // It's hard to design a BDD testcase failing if this method is commented out...
-        $this->updateContentStreamIdentifier(
-            $event->newSourceContentStreamIdentifier,
+        $this->updateContentStreamId(
+            $event->newSourceContentStreamId,
             $event->sourceWorkspaceName
         );
 
@@ -250,8 +250,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         // TODO: How do we test this method?
         // It's hard to design a BDD testcase failing if this method is commented out...
-        $this->updateContentStreamIdentifier(
-            $event->newSourceContentStreamIdentifier,
+        $this->updateContentStreamId(
+            $event->newSourceContentStreamId,
             $event->sourceWorkspaceName
         );
 
@@ -265,7 +265,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
-        $this->updateContentStreamIdentifier($event->newContentStreamIdentifier, $event->workspaceName);
+        $this->updateContentStreamId($event->newContentStreamId, $event->workspaceName);
         $this->markDependentWorkspacesAsOutdated($event->workspaceName);
 
         // When the rebase is successful, we can set the status of the workspace back to UP_TO_DATE.
@@ -277,12 +277,12 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
     }
 
-    private function updateContentStreamIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
+    private function updateContentStreamId(
+        ContentStreamId $contentStreamId,
         WorkspaceName $workspaceName
     ): void {
         $this->getDatabaseConnection()->update($this->tableName, [
-            'currentContentStreamIdentifier' => $contentStreamIdentifier
+            'currentContentStreamId' => $contentStreamId
         ], [
             'workspaceName' => $workspaceName
         ]);

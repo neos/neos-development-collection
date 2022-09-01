@@ -7,7 +7,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
@@ -25,7 +25,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
     }
 
     public static function graphProjectionTableNamePrefix(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryIdentifier
     ): string {
         return sprintf('cr_%s_p_hypergraph', $contentRepositoryIdentifier);
     }
@@ -37,7 +37,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
         Projections $projectionsSoFar
     ): HypergraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
-            $projectionFactoryDependencies->contentRepositoryIdentifier
+            $projectionFactoryDependencies->contentRepositoryId
         );
 
         return new HypergraphProjection(
@@ -45,7 +45,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
             $this->dbalClient,
             $catchUpHookFactory,
             new NodeFactory(
-                $projectionFactoryDependencies->contentRepositoryIdentifier,
+                $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager,
                 $projectionFactoryDependencies->propertyConverter
             ),

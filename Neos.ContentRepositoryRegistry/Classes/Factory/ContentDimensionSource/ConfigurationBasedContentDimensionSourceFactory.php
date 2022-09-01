@@ -4,7 +4,7 @@ namespace Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource;
 
 use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 class ConfigurationBasedContentDimensionSourceFactory implements ContentDimensionSourceFactoryInterface
 {
@@ -13,7 +13,7 @@ class ConfigurationBasedContentDimensionSourceFactory implements ContentDimensio
     {
     }
 
-    public function build(ContentRepositoryIdentifier $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentDimensionSourcePreset): ContentDimensionSourceInterface
+    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentDimensionSourcePreset): ContentDimensionSourceInterface
     {
         return new ConfigurationBasedContentDimensionSource(
             $contentRepositorySettings['contentDimensions'] ?? []

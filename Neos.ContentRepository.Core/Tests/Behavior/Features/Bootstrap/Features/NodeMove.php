@@ -16,12 +16,12 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -31,11 +31,11 @@ trait NodeMove
 {
     abstract protected function getContentRepository(): ContentRepository;
 
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -49,37 +49,37 @@ trait NodeMove
     public function theCommandMoveNodeIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->getCurrentContentStreamIdentifier();
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
         $dimensionSpacePoint = isset($commandArguments['dimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['dimensionSpacePoint'])
             : $this->getCurrentDimensionSpacePoint();
-        $newParentNodeAggregateIdentifier = isset($commandArguments['newParentNodeAggregateIdentifier'])
-            ? NodeAggregateIdentifier::fromString($commandArguments['newParentNodeAggregateIdentifier'])
+        $newParentNodeAggregateId = isset($commandArguments['newParentNodeAggregateId'])
+            ? NodeAggregateId::fromString($commandArguments['newParentNodeAggregateId'])
             : null;
-        $newPrecedingSiblingNodeAggregateIdentifier = isset($commandArguments['newPrecedingSiblingNodeAggregateIdentifier'])
-            ? NodeAggregateIdentifier::fromString($commandArguments['newPrecedingSiblingNodeAggregateIdentifier'])
+        $newPrecedingSiblingNodeAggregateId = isset($commandArguments['newPrecedingSiblingNodeAggregateId'])
+            ? NodeAggregateId::fromString($commandArguments['newPrecedingSiblingNodeAggregateId'])
             : null;
-        $newSucceedingSiblingNodeAggregateIdentifier = isset($commandArguments['newSucceedingSiblingNodeAggregateIdentifier'])
-            ? NodeAggregateIdentifier::fromString($commandArguments['newSucceedingSiblingNodeAggregateIdentifier'])
+        $newSucceedingSiblingNodeAggregateId = isset($commandArguments['newSucceedingSiblingNodeAggregateId'])
+            ? NodeAggregateId::fromString($commandArguments['newSucceedingSiblingNodeAggregateId'])
             : null;
         $relationDistributionStrategy = RelationDistributionStrategy::fromString(
             $commandArguments['relationDistributionStrategy'] ?? null
         );
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new MoveNodeAggregate(
-            $contentStreamIdentifier,
+            $contentStreamId,
             $dimensionSpacePoint,
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
-            $newParentNodeAggregateIdentifier,
-            $newPrecedingSiblingNodeAggregateIdentifier,
-            $newSucceedingSiblingNodeAggregateIdentifier,
+            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
+            $newParentNodeAggregateId,
+            $newPrecedingSiblingNodeAggregateId,
+            $newSucceedingSiblingNodeAggregateId,
             $relationDistributionStrategy,
-            $initiatingUserIdentifier
+            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -106,14 +106,14 @@ trait NodeMove
     public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();
+        if (!isset($eventPayload['initiatingUserId'])) {
+            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
-        if (!isset($eventPayload['contentStreamIdentifier'])) {
-            $eventPayload['contentStreamIdentifier'] = (string)$this->getCurrentContentStreamIdentifier();
+        if (!isset($eventPayload['contentStreamId'])) {
+            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 
         $this->publishEvent('NodeAggregateWasMoved', $streamName->getEventStreamName(), $eventPayload);
     }

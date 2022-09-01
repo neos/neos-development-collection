@@ -14,13 +14,13 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -32,7 +32,7 @@ use Neos\EventStore\Model\Event\StreamName;
 trait WorkspaceCreation
 {
     abstract protected function getContentRepository(): ContentRepository;
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -47,16 +47,16 @@ trait WorkspaceCreation
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $userIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $userId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new CreateRootWorkspace(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
-            $userIdentifier,
-            ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier'])
+            $userId,
+            ContentStreamId::fromString($commandArguments['newContentStreamId'])
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -69,11 +69,11 @@ trait WorkspaceCreation
     public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();
+        if (!isset($eventPayload['initiatingUserId'])) {
+            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
-        $newContentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['newContentStreamIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($newContentStreamIdentifier);
+        $newContentStreamId = ContentStreamId::fromString($eventPayload['newContentStreamId']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($newContentStreamId);
         $this->publishEvent('RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
     }
 
@@ -85,18 +85,18 @@ trait WorkspaceCreation
     public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $userIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $userId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new CreateWorkspace(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             WorkspaceName::fromString($commandArguments['baseWorkspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
-            $userIdentifier,
-            ContentStreamIdentifier::fromString($commandArguments['newContentStreamIdentifier']),
-            isset($commandArguments['workspaceOwner']) ? UserIdentifier::fromString($commandArguments['workspaceOwner']) : null
+            $userId,
+            ContentStreamId::fromString($commandArguments['newContentStreamId']),
+            isset($commandArguments['workspaceOwner']) ? UserId::fromString($commandArguments['workspaceOwner']) : null
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
@@ -111,18 +111,18 @@ trait WorkspaceCreation
     public function theCommandRebaseWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $userIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $userId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
-        $rebasedContentStreamIdentifier = isset($commandArguments['rebasedContentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['rebasedContentStreamIdentifier'])
-            : ContentStreamIdentifier::create();
+        $rebasedContentStreamId = isset($commandArguments['rebasedContentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['rebasedContentStreamId'])
+            : ContentStreamId::create();
 
         $command = RebaseWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $userIdentifier,
-            $rebasedContentStreamIdentifier,
+            $userId,
+            $rebasedContentStreamId,
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;

@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * Node Hidden State Read Model.

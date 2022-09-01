@@ -14,28 +14,28 @@ Feature: Node Property Conversion
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "user-id"       |
+      | newContentStreamId | "cs-identifier" |
+      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "initiating-user-identifier"  |
+      | initiatingUserId    | "initiating-user-identifier"  |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
 
   Scenario: DateTime objects at Node Creation
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                 |
+      | contentStreamId       | "cs-identifier"                                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
       | originDimensionSpacePoint     | {}                                                 |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"             |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                           |
       | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
 
     And the graph projection is fully up to date
@@ -49,22 +49,22 @@ Feature: Node Property Conversion
   Scenario: DateTime objects at Node Property Updating
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                 |
+      | contentStreamId       | "cs-identifier"                                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
       | originDimensionSpacePoint     | {}                                                 |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"             |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                           |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"             |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                           |
       | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
     And the graph projection is fully up to date
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamIdentifier   | "cs-identifier"                                    |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                 |
+      | contentStreamId   | "cs-identifier"                                    |
+      | nodeAggregateId   | "nody-mc-nodeface"                                 |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"dateProperty": "Date:1997-07-19T19:20:30+05:00"} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                       |
+      | initiatingUserId  | "initiating-user-identifier"                       |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}

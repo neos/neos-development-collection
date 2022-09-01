@@ -83,7 +83,7 @@ class EmulatedLegacyContext
         $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
 
         return new EmulatedLegacyWorkspace(
-            $this->node->subgraphIdentity->contentRepositoryIdentifier,
+            $this->node->subgraphIdentity->contentRepositoryId,
             $this->getNodeAddressOfContextNode()
         );
     }
@@ -98,7 +98,7 @@ class EmulatedLegacyContext
     private function getNodeAddressOfContextNode(): NodeAddress
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $this->node->subgraphIdentity->contentRepositoryIdentifier
+            $this->node->subgraphIdentity->contentRepositoryId
         );
         return NodeAddressFactory::create($contentRepository)->createFromNode($this->node);
     }

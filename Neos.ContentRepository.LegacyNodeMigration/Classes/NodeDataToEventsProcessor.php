@@ -36,8 +36,8 @@ use Neos\ContentRepository\LegacyNodeMigration\Helpers\SerializedPropertyValuesA
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregate;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregates;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifiers;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -46,8 +46,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Property\PropertyMapper;
 use Ramsey\Uuid\Uuid;
@@ -57,7 +57,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 {
 
     private NodeTypeName $sitesNodeTypeName;
-    private ContentStreamIdentifier $contentStreamIdentifier;
+    private ContentStreamId $contentStreamIdentifier;
     private VisitedNodeAggregates $visitedNodes;
 
     /**
@@ -84,11 +84,11 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         private readonly iterable $nodeDataRows,
     ) {
         $this->sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
-        $this->contentStreamIdentifier = ContentStreamIdentifier::create();
+        $this->contentStreamIdentifier = ContentStreamId::create();
         $this->visitedNodes = new VisitedNodeAggregates();
     }
 
-    public function setContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): void
+    public function setContentStreamIdentifier(ContentStreamId $contentStreamIdentifier): void
     {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
     }
@@ -109,9 +109,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
         foreach ($this->nodeDataRows as $nodeDataRow) {
             if ($nodeDataRow['path'] === '/sites') {
-                $sitesNodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeDataRow['identifier']);
+                $sitesNodeAggregateIdentifier = NodeAggregateId::fromString($nodeDataRow['identifier']);
                 $this->visitedNodes->addRootNode($sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, NodePath::fromString('/sites'), $this->interDimensionalVariationGraph->getDimensionSpacePoints());
-                $this->exportEvent(new RootNodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, $this->interDimensionalVariationGraph->getDimensionSpacePoints(), NodeAggregateClassification::CLASSIFICATION_ROOT, UserIdentifier::forSystemUser()));
+                $this->exportEvent(new RootNodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, $this->interDimensionalVariationGraph->getDimensionSpacePoints(), NodeAggregateClassification::CLASSIFICATION_ROOT, UserId::forSystemUser()));
                 continue;
             }
             if ($this->metaDataExported === false && $nodeDataRow['parentpath'] === '/sites') {
@@ -180,7 +180,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      */
     private function processNodeData(array $nodeDataRow): void
     {
-        $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodeDataRow['identifier']);
+        $nodeAggregateIdentifier = NodeAggregateId::fromString($nodeDataRow['identifier']);
         $nodePath = NodePath::fromString(strtolower($nodeDataRow['path']));
         try {
             $dimensionArray = json_decode($nodeDataRow['dimensionvalues'], true, 512, JSON_THROW_ON_ERROR);
@@ -203,20 +203,20 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             // Create tethered node if the node was not found before.
             // If the node was already visited, we want to create a node variant (and keep the tethering status)
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet());
-            $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, UserIdentifier::forSystemUser(), null));
+            $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, UserId::forSystemUser(), null));
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
             // Create node variant, BOTH for tethered and regular nodes
             $this->createNodeVariant($nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
         } else {
             // create node aggregate
-            $this->exportEvent( new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, UserIdentifier::forSystemUser(), null));
+            $this->exportEvent( new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, UserId::forSystemUser(), null));
         }
         // nodes are hidden via NodeAggregateWasDisabled event
         if ($nodeDataRow['hidden']) {
-            $this->exportEvent( new NodeAggregateWasDisabled($this->contentStreamIdentifier, $nodeAggregateIdentifier, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet()), UserIdentifier::forSystemUser()));
+            $this->exportEvent( new NodeAggregateWasDisabled($this->contentStreamIdentifier, $nodeAggregateIdentifier, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet()), UserId::forSystemUser()));
         }
         foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIdentifiers) {
-            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), PropertyName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIdentifiers($destinationNodeAggregateIdentifiers), UserIdentifier::forSystemUser());
+            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), PropertyName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIdentifiers), UserId::forSystemUser());
         }
 
         $this->visitedNodes->add($nodeAggregateIdentifier, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateIdentifier);
@@ -241,7 +241,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     if (!is_array($propertyValue)) {
                         $propertyValue = [$propertyValue];
                     }
-                    $references[$propertyName] = NodeAggregateIdentifiers::fromArray(array_map(static fn (string $identifier) => NodeAggregateIdentifier::fromString($identifier), $propertyValue));
+                    $references[$propertyName] = NodeAggregateIds::fromArray(array_map(static fn (string $identifier) => NodeAggregateId::fromString($identifier), $propertyValue));
                 }
                 continue;
             }
@@ -270,7 +270,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      * NOTE: We prioritize specializations/generalizations over peer variants ("ch" creates a specialization variant of "de" rather than a peer of "en" if both has been seen before).
      * For that reason we loop over all previously visited dimension space points until we encounter a specialization/generalization. Otherwise, the last NodePeerVariantWasCreated will be used
      */
-    private function createNodeVariant(NodeAggregateIdentifier $nodeAggregateIdentifier, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValuesAndReferences $serializedPropertyValuesAndReferences, VisitedNodeAggregate $parentNodeAggregate): void
+    private function createNodeVariant(NodeAggregateId $nodeAggregateIdentifier, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValuesAndReferences $serializedPropertyValuesAndReferences, VisitedNodeAggregate $parentNodeAggregate): void
     {
         $alreadyVisitedOriginDimensionSpacePoints = $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier);
         $coveredDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $alreadyVisitedOriginDimensionSpacePoints->toDimensionSpacePointSet());
@@ -279,9 +279,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         foreach ($alreadyVisitedOriginDimensionSpacePoints as $alreadyVisitedOriginDimensionSpacePoint) {
             $variantType = $this->interDimensionalVariationGraph->getVariantType($originDimensionSpacePoint->toDimensionSpacePoint(), $alreadyVisitedOriginDimensionSpacePoint->toDimensionSpacePoint());
             $variantCreatedEvent = match ($variantType) {
-                VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserIdentifier::forSystemUser()),
-                VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserIdentifier::forSystemUser()),
-                VariantType::TYPE_PEER => new NodePeerVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserIdentifier::forSystemUser()),
+                VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserId::forSystemUser()),
+                VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserId::forSystemUser()),
+                VariantType::TYPE_PEER => new NodePeerVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserId::forSystemUser()),
                 VariantType::TYPE_SAME => null,
             };
             $variantSourceOriginDimensionSpacePoint = $alreadyVisitedOriginDimensionSpacePoint;
@@ -294,7 +294,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         $this->exportEvent($variantCreatedEvent);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0) {
-            $this->exportEvent(new NodePropertiesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences->serializedPropertyValues, UserIdentifier::forSystemUser()));
+            $this->exportEvent(new NodePropertiesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences->serializedPropertyValues, UserId::forSystemUser()));
         }
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
@@ -311,7 +311,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                     )
                 ]),
                 new DimensionSpacePointSet([]),
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             ));
         }
     }

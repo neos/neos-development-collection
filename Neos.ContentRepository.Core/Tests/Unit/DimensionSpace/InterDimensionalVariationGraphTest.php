@@ -618,7 +618,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $firstDepth = new Dimension\ContentDimensionValueSpecializationDepth(random_int(0, 100));
         $firstDummy = new Dimension\ContentDimensionValue('firstDummy', $firstDepth);
         $firstDimension = new Dimension\ContentDimension(
-            new Dimension\ContentDimensionIdentifier('first'),
+            new Dimension\ContentDimensionId('first'),
             new Dimension\ContentDimensionValues([$firstDummy]),
             Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );
@@ -626,7 +626,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $secondDepth = new Dimension\ContentDimensionValueSpecializationDepth(random_int(0, 100));
         $secondDummy = new Dimension\ContentDimensionValue('secondDummy', $secondDepth);
         $secondDimension = new Dimension\ContentDimension(
-            new Dimension\ContentDimensionIdentifier('second'),
+            new Dimension\ContentDimensionId('second'),
             new Dimension\ContentDimensionValues([$secondDummy]),
             Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );

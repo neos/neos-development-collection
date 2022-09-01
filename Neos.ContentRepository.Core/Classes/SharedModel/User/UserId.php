@@ -19,9 +19,9 @@ use Neos\Flow\Utility\Algorithms;
 /**
  * @api
  */
-final class UserIdentifier implements \JsonSerializable, \Stringable
+final class UserId implements \JsonSerializable, \Stringable
 {
-    public const SYSTEM_USER_IDENTIFIER = 'system';
+    public const SYSTEM_USER_ID = 'system';
 
     /**
      * @var array<string,self>
@@ -44,11 +44,11 @@ final class UserIdentifier implements \JsonSerializable, \Stringable
     }
 
     /**
-     * Creates a special user identifier which refers to the virtual "system" user.
+     * Creates a special user ID which refers to the virtual "system" user.
      */
     public static function forSystemUser(): self
     {
-        return self::instance(self::SYSTEM_USER_IDENTIFIER);
+        return self::instance(self::SYSTEM_USER_ID);
     }
 
     public static function fromString(string $value): self
@@ -58,7 +58,7 @@ final class UserIdentifier implements \JsonSerializable, \Stringable
 
     public function isSystemUser(): bool
     {
-        return $this->value === self::SYSTEM_USER_IDENTIFIER;
+        return $this->value === self::SYSTEM_USER_ID;
     }
 
     public function jsonSerialize(): string

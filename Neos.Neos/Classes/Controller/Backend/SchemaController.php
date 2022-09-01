@@ -45,7 +45,7 @@ class SchemaController extends ActionController
     public function nodeTypeSchemaAction(): string
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
 
         if ($this->request->hasArgument('version')) {
             /** @var string $version */

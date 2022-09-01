@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Set property values for a given node.
@@ -36,25 +36,11 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
 final class SetNodeProperties implements CommandInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly PropertyValuesToWrite $propertyValues,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
-    }
-
-    /**
-     * @param array<string,mixed> $array
-     */
-    public static function fromArray(array $array): self
-    {
-        return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
-            OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
-            PropertyValuesToWrite::fromArray($array['propertyValues']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
-        );
     }
 }

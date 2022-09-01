@@ -40,45 +40,45 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                   |
-      | contentStreamIdentifier     | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                |
+      | contentStreamId     | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                                                                                                |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                           |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                                                                                                  |
+      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"                                                                                                  |
       | nodeAggregateClassification | "root"                                                                                                                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                                                |
+      | contentStreamId       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId       | "sir-david-nodenborough"                                                                                                                |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentWithTetheredChildNode"                                                                          |
       | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
       | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                |
       | nodeName                      | "document"                                                                                                                              |
       | nodeAggregateClassification   | "regular"                                                                                                                               |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier       | "nodewyn-tetherton"                                                                                                                     |
+      | contentStreamId       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId       | "nodewyn-tetherton"                                                                                                                     |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                |
       | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
       | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
+      | parentNodeAggregateId | "sir-david-nodenborough"                                                                                                                |
       | nodeName                      | "tethered"                                                                                                                              |
       | nodeAggregateClassification   | "tethered"                                                                                                                              |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                         |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                                                                                            |
+      | contentStreamId       | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId       | "sir-nodeward-nodington-iii"                                                                                                            |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                               |
       | originDimensionSpacePoint     | {"market":"DE", "language":"de"}                                                                                                        |
       | coveredDimensionSpacePoints   | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                |
+      | parentNodeAggregateId | "sir-david-nodenborough"                                                                                                                |
       | nodeName                      | "esquire"                                                                                                                               |
       | nodeAggregateClassification   | "regular"                                                                                                                               |
     And the graph projection is fully up to date
@@ -86,117 +86,117 @@ Feature: Move node to a new parent / within the current parent before a sibling 
   Scenario: Try to move a node in a non-existing content stream:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
-      | contentStreamIdentifier      | "non-existing"                     |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"           |
+      | contentStreamId      | "non-existing"                     |
+      | nodeAggregateId      | "sir-david-nodenborough"           |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserIdentifier     | "user"                             |
+      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to move a node of a non-existing node aggregate:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
-      | contentStreamIdentifier      | "cs-identifier"                    |
-      | nodeAggregateIdentifier      | "i-do-not-exist"                   |
+      | contentStreamId      | "cs-identifier"                    |
+      | nodeAggregateId      | "i-do-not-exist"                   |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserIdentifier     | "user"                             |
+      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node of a root node aggregate:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                            |
-      | contentStreamIdentifier      | "cs-identifier"                  |
-      | nodeAggregateIdentifier      | "lady-eleonode-rootford"         |
+      | contentStreamId      | "cs-identifier"                  |
+      | nodeAggregateId      | "lady-eleonode-rootford"         |
       | dimensionSpacePoint          | {"market":"DE", "language":"de"} |
       | relationDistributionStrategy | "scatter"                        |
-      | initiatingUserIdentifier     | "user"                           |
+      | initiatingUserId     | "user"                           |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to move a node of a tethered node aggregate:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
-      | contentStreamIdentifier      | "cs-identifier"                    |
-      | nodeAggregateIdentifier      | "nodewyn-tetherton"                |
+      | contentStreamId      | "cs-identifier"                    |
+      | nodeAggregateId      | "nodewyn-tetherton"                |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserIdentifier     | "user"                             |
+      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to move a node in a non-existing dimension space point:
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                     |
-      | contentStreamIdentifier      | "cs-identifier"                           |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"                  |
+      | contentStreamId      | "cs-identifier"                           |
+      | nodeAggregateId      | "sir-david-nodenborough"                  |
       | dimensionSpacePoint          | {"market": "nope", "language": "neither"} |
       | relationDistributionStrategy | "scatter"                                 |
-      | initiatingUserIdentifier     | "user"                                    |
+      | initiatingUserId     | "user"                                    |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to move a node in a dimension space point the aggregate does not cover
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                              |
-      | contentStreamIdentifier      | "cs-identifier"                    |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"           |
+      | contentStreamId      | "cs-identifier"                    |
+      | nodeAggregateId      | "sir-david-nodenborough"           |
       | dimensionSpacePoint          | {"market": "DE", "language": "fr"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserIdentifier     | "user"                             |
+      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   Scenario: Try to move existing node to a non-existing parent
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
-      | contentStreamIdentifier          | "cs-identifier"                    |
+      | contentStreamId          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier          | "sir-david-nodenborough"           |
-      | newParentNodeAggregateIdentifier | "non-existing-parent-identifier"   |
+      | nodeAggregateId          | "sir-david-nodenborough"           |
+      | newParentNodeAggregateId | "non-existing-parent-identifier"   |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserIdentifier         | "user"                             |
+      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node to a parent that already has a child node of the same name
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
+      | contentStreamId       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
+      | parentNodeAggregateId | "sir-david-nodenborough"                                                                                                                           |
       | nodeName                      | "document"                                                                                                                                         |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
-      | contentStreamIdentifier          | "cs-identifier"                    |
+      | contentStreamId          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
-      | newParentNodeAggregateIdentifier | "lady-eleonode-rootford"           |
+      | nodeAggregateId          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateId | "lady-eleonode-rootford"           |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserIdentifier         | "user"                             |
+      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Move a node that has no name
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
+      | contentStreamId       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                                                                                                           |
+      | parentNodeAggregateId | "sir-david-nodenborough"                                                                                                                           |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                              | Value                              |
-      | contentStreamIdentifier          | "cs-identifier"                    |
+      | contentStreamId          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
-      | newParentNodeAggregateIdentifier | "lady-eleonode-rootford"           |
+      | nodeAggregateId          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateId | "lady-eleonode-rootford"           |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserIdentifier         | "user"                             |
+      | initiatingUserId         | "user"                             |
     And the graph projection is fully up to date
     When I am in content stream "cs-identifier" and dimension space point {"market": "DE", "language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE","language":"de"}
@@ -205,77 +205,77 @@ Feature: Move node to a new parent / within the current parent before a sibling 
   Scenario: Try to move a node to a parent whose node type does not allow child nodes of the node's type
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
+      | contentStreamId       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                                                                                          |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                           |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                           |
       | nodeName                      | "other-document"                                                                                                                                   |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
-      | contentStreamIdentifier          | "cs-identifier"                    |
+      | contentStreamId          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
-      | newParentNodeAggregateIdentifier | "nodewyn-tetherton"                |
+      | nodeAggregateId          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateId | "nodewyn-tetherton"                |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserIdentifier         | "user"                             |
+      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                              |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                                                 |
+      | contentStreamId       | "cs-identifier"                                                                                                                                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"                                                                                                           |
       | originDimensionSpacePoint     | {"market": "DE", "language": "de"}                                                                                                                 |
       | coveredDimensionSpacePoints   | [{"market": "DE", "language": "de"}, {"market": "DE", "language": "gsw"}, {"market": "CH", "language": "de"}, {"market": "CH", "language": "gsw"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                                           |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                           |
       | nodeName                      | "content"                                                                                                                                          |
       | nodeAggregateClassification   | "regular"                                                                                                                                          |
     And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
-      | contentStreamIdentifier          | "cs-identifier"                    |
+      | contentStreamId          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier          | "nody-mc-nodeface"                 |
-      | newParentNodeAggregateIdentifier | "nodewyn-tetherton"                |
+      | nodeAggregateId          | "nody-mc-nodeface"                 |
+      | newParentNodeAggregateId | "nodewyn-tetherton"                |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserIdentifier         | "user"                             |
+      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                                         | Value                              |
-      | contentStreamIdentifier                     | "cs-identifier"                    |
+      | contentStreamId                     | "cs-identifier"                    |
       | dimensionSpacePoint                         | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough"           |
-      | newSucceedingSiblingNodeAggregateIdentifier | "i-do-not-exist"                   |
+      | nodeAggregateId                     | "sir-david-nodenborough"           |
+      | newSucceedingSiblingNodeAggregateId | "i-do-not-exist"                   |
       | relationDistributionStrategy                | "scatter"                          |
-      | initiatingUserIdentifier                    | "user"                             |
+      | initiatingUserId                    | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move existing node to a non-existing preceding sibling
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                                        | Value                              |
-      | contentStreamIdentifier                    | "cs-identifier"                    |
+      | contentStreamId                    | "cs-identifier"                    |
       | dimensionSpacePoint                        | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier                    | "sir-david-nodenborough"           |
-      | newPrecedingSiblingNodeAggregateIdentifier | "i-do-not-exist"                   |
+      | nodeAggregateId                    | "sir-david-nodenborough"           |
+      | newPrecedingSiblingNodeAggregateId | "i-do-not-exist"                   |
       | relationDistributionStrategy               | "scatter"                          |
-      | initiatingUserIdentifier                   | "user"                             |
+      | initiatingUserId                   | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node to one of its children
     When the command MoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                              | Value                              |
-      | contentStreamIdentifier          | "cs-identifier"                    |
+      | contentStreamId          | "cs-identifier"                    |
       | dimensionSpacePoint              | {"market": "DE", "language": "de"} |
-      | nodeAggregateIdentifier          | "sir-david-nodenborough"           |
-      | newParentNodeAggregateIdentifier | "nodewyn-tetherton"                |
+      | nodeAggregateId          | "sir-david-nodenborough"           |
+      | newParentNodeAggregateId | "nodewyn-tetherton"                |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserIdentifier         | "user"                             |
+      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateIsDescendant"

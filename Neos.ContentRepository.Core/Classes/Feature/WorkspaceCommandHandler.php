@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifiersToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -35,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
@@ -54,7 +54,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlr
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\EventStoreInterface;
@@ -137,9 +137,9 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // When the workspace is created, we first have to fork the content stream
         $contentRepository->handle(
             new ForkContentStream(
-                $command->newContentStreamIdentifier,
-                $baseWorkspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $command->newContentStreamId,
+                $baseWorkspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
@@ -149,8 +149,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->baseWorkspaceName,
                 $command->workspaceTitle,
                 $command->workspaceDescription,
-                $command->initiatingUserIdentifier,
-                $command->newContentStreamIdentifier,
+                $command->initiatingUserId,
+                $command->newContentStreamId,
                 $command->workspaceOwner
             ),
         );
@@ -180,11 +180,11 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             ), 1505848624450);
         }
 
-        $contentStreamIdentifier = $command->newContentStreamIdentifier;
+        $newContentStreamId = $command->newContentStreamId;
         $contentRepository->handle(
             new CreateContentStream(
-                $contentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $newContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
@@ -193,8 +193,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName,
                 $command->workspaceTitle,
                 $command->workspaceDescription,
-                $command->initiatingUserIdentifier,
-                $contentStreamIdentifier
+                $command->initiatingUserId,
+                $newContentStreamId
             )
         );
 
@@ -222,17 +222,17 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         $this->publishContentStream(
-            $workspace->currentContentStreamIdentifier,
-            $baseWorkspace->currentContentStreamIdentifier
+            $workspace->currentContentStreamId,
+            $baseWorkspace->currentContentStreamId
         )?->block();
 
         // After publishing a workspace, we need to again fork from Base.
-        $newContentStream = ContentStreamIdentifier::create();
+        $newContentStream = ContentStreamId::create();
         $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $baseWorkspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
@@ -242,8 +242,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName,
                 $baseWorkspace->workspaceName,
                 $newContentStream,
-                $workspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $workspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
@@ -259,12 +259,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Exception
      */
     private function publishContentStream(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        ContentStreamIdentifier $baseContentStreamIdentifier
+        ContentStreamId $contentStreamId,
+        ContentStreamId $baseContentStreamId
     ): ?CommandResult {
-        $contentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
-        $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $baseContentStreamIdentifier
+        $contentStreamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
+        $baseWorkspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $baseContentStreamId
         );
 
         // TODO: please check the code below in-depth. it does:
@@ -288,7 +288,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             if ($event instanceof ContentStreamWasForked) {
                 if ($contentStreamWasForkedEvent !== null) {
                     throw new \RuntimeException(
-                        'Invariant violation: The content stream "' . $contentStreamIdentifier
+                        'Invariant violation: The content stream "' . $contentStreamId
                         . '" has two forked events.',
                         1658740373
                     );
@@ -296,7 +296,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $contentStreamWasForkedEvent = $event;
             } elseif ($event instanceof PublishableToOtherContentStreamsInterface) {
                 /** @var EventInterface $copiedEvent */
-                $copiedEvent = $event->createCopyForContentStream($baseContentStreamIdentifier);
+                $copiedEvent = $event->createCopyForContentStream($baseContentStreamId);
                 // We need to add the event metadata here for rebasing in nested workspace situations
                 // (and for exporting)
                 $events[] = DecoratedEvent::withMetadata(
@@ -307,7 +307,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if ($contentStreamWasForkedEvent === null) {
-            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamIdentifier
+            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamId
                 . '" has NO forked event.', 1658740407);
         }
 
@@ -327,7 +327,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 'The base workspace has been modified in the meantime; please rebase.'
                     . ' Expected version %d of source content stream %s',
                 $contentStreamWasForkedEvent->versionOfSourceContentStream->value,
-                $baseContentStreamIdentifier
+                $baseContentStreamId
             ));
         }
     }
@@ -349,17 +349,17 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // TODO: please check the code below in-depth. it does:
         // - fork a new content stream
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
-        $rebasedContentStream = $command->rebasedContentStreamIdentifier;
+        $rebasedContentStream = $command->rebasedContentStreamId;
         $contentRepository->handle(
             new ForkContentStream(
                 $rebasedContentStream,
-                $baseWorkspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $baseWorkspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $workspace->currentContentStreamIdentifier
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $workspace->currentContentStreamId
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
@@ -396,7 +396,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     $i,
                     get_class($commandToRebase),
                     $baseWorkspace->workspaceName,
-                    $baseWorkspace->currentContentStreamIdentifier,
+                    $baseWorkspace->currentContentStreamId,
                     $fullCommandListSoFar
                 ), $e);
             }
@@ -410,8 +410,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 new WorkspaceWasRebased(
                     $command->workspaceName,
                     $rebasedContentStream,
-                    $workspace->currentContentStreamIdentifier,
-                    $command->initiatingUserIdentifier
+                    $workspace->currentContentStreamId,
+                    $command->initiatingUserId
                 ),
             );
 
@@ -427,8 +427,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 new WorkspaceRebaseFailed(
                     $command->workspaceName,
                     $rebasedContentStream,
-                    $workspace->currentContentStreamIdentifier,
-                    $command->initiatingUserIdentifier,
+                    $workspace->currentContentStreamId,
+                    $command->initiatingUserId,
                     $rebaseStatistics->getErrors()
                 )
             );
@@ -488,8 +488,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // 1) separate commands in two halves - the ones MATCHING the nodes from the command, and the REST
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $workspace->currentContentStreamIdentifier
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $workspace->currentContentStreamId
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
@@ -499,10 +499,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $remainingCommands = [];
 
         foreach ($originalCommands as $originalCommand) {
-            if (!$originalCommand instanceof MatchableWithNodeIdentifierToPublishOrDiscardInterface) {
+            if (!$originalCommand instanceof MatchableWithNodeIdToPublishOrDiscardInterface) {
                 throw new \Exception(
                     'Command class ' . get_class($originalCommand) . ' does not implement '
-                        . MatchableWithNodeIdentifierToPublishOrDiscardInterface::class,
+                        . MatchableWithNodeIdToPublishOrDiscardInterface::class,
                     1645393655
                 );
             }
@@ -514,12 +514,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
-        $matchingContentStream = $command->contentStreamIdentifierForMatchingPart;
+        $matchingContentStream = $command->contentStreamIdForMatchingPart;
         $contentRepository->handle(
             new ForkContentStream(
                 $matchingContentStream,
-                $baseWorkspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $baseWorkspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
@@ -535,12 +535,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
-        $remainingContentStream = $command->contentStreamIdentifierForRemainingPart;
+        $remainingContentStream = $command->contentStreamIdForRemainingPart;
         $contentRepository->handle(
             new ForkContentStream(
                 $remainingContentStream,
                 $matchingContentStream,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             )
         )->block();
 
@@ -559,7 +559,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
         $this->publishContentStream(
             $matchingContentStream,
-            $baseWorkspace->currentContentStreamIdentifier
+            $baseWorkspace->currentContentStreamId
         )?->block();
 
         // 5) TODO Re-target base workspace
@@ -572,9 +572,9 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName,
                 $baseWorkspace->workspaceName,
                 $remainingContentStream,
-                $workspace->currentContentStreamIdentifier,
+                $workspace->currentContentStreamId,
                 $command->nodesToPublish,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             ),
         );
 
@@ -606,18 +606,18 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 1) filter commands, only keeping the ones NOT MATCHING the nodes from the command
         // (i.e. the modifications we want to keep)
-        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $workspace->currentContentStreamIdentifier
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $workspace->currentContentStreamId
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $commandsToKeep = [];
 
         foreach ($originalCommands as $originalCommand) {
-            if (!$originalCommand instanceof MatchableWithNodeIdentifierToPublishOrDiscardInterface) {
+            if (!$originalCommand instanceof MatchableWithNodeIdToPublishOrDiscardInterface) {
                 throw new \Exception(
                     'Command class ' . get_class($originalCommand) . ' does not implement '
-                    . MatchableWithNodeIdentifierToPublishOrDiscardInterface::class,
+                    . MatchableWithNodeIdToPublishOrDiscardInterface::class,
                     1645393476
                 );
             }
@@ -627,12 +627,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
-        $newContentStream = $command->newContentStreamIdentifier;
+        $newContentStream = $command->newContentStreamId;
         $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $baseWorkspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
@@ -655,9 +655,9 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new WorkspaceWasPartiallyDiscarded(
                 $command->workspaceName,
                 $newContentStream,
-                $workspace->currentContentStreamIdentifier,
+                $workspace->currentContentStreamId,
                 $command->nodesToDiscard,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             )
         );
 
@@ -671,11 +671,11 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     private function commandMatchesAtLeastOneNode(
-        MatchableWithNodeIdentifierToPublishOrDiscardInterface $command,
-        NodeIdentifiersToPublishOrDiscard $nodeIdentifiers
+        MatchableWithNodeIdToPublishOrDiscardInterface $command,
+        NodeIdsToPublishOrDiscard $nodeIds
     ): bool {
-        foreach ($nodeIdentifiers as $nodeIdentifier) {
-            if ($command->matchesNodeIdentifier($nodeIdentifier)) {
+        foreach ($nodeIds as $nodeId) {
+            if ($command->matchesNodeId($nodeId)) {
                 return true;
             }
         }
@@ -695,12 +695,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
-        $newContentStream = $command->newContentStreamIdentifier;
+        $newContentStream = $command->newContentStreamId;
         $contentRepository->handle(
             new ForkContentStream(
                 $newContentStream,
-                $baseWorkspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $baseWorkspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         )->block();
 
@@ -710,8 +710,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new WorkspaceWasDiscarded(
                 $command->workspaceName,
                 $newContentStream,
-                $workspace->currentContentStreamIdentifier,
-                $command->initiatingUserIdentifier
+                $workspace->currentContentStreamId,
+                $command->initiatingUserId
             )
         );
 

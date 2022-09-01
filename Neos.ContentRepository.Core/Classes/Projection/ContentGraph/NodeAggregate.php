@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrently
 use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
@@ -53,8 +53,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 final class NodeAggregate
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeAggregateClassification $classification,
         public readonly NodeTypeName $nodeTypeName,
         public readonly ?NodeName $nodeName,
@@ -94,7 +94,7 @@ final class NodeAggregate
     ): Node {
         if (!$this->occupiedDimensionSpacePoints->contains($occupiedDimensionSpacePoint)) {
             throw NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint::butWasSupposedTo(
-                $this->nodeAggregateIdentifier,
+                $this->nodeAggregateId,
                 $occupiedDimensionSpacePoint
             );
         }
@@ -113,7 +113,7 @@ final class NodeAggregate
         $coverage = $this->coverageByOccupant->getCoverage($occupiedDimensionSpacePoint);
         if (is_null($coverage)) {
             throw NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint::butWasSupposedTo(
-                $this->nodeAggregateIdentifier,
+                $this->nodeAggregateId,
                 $occupiedDimensionSpacePoint
             );
         }
@@ -125,7 +125,7 @@ final class NodeAggregate
     {
         if (!isset($this->coveredDimensionSpacePoints[$coveredDimensionSpacePoint->hash])) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
-                $this->nodeAggregateIdentifier,
+                $this->nodeAggregateId,
                 $coveredDimensionSpacePoint
             );
         }
@@ -138,7 +138,7 @@ final class NodeAggregate
         $occupation = $this->occupationByCovered->getOrigin($coveredDimensionSpacePoint);
         if (is_null($occupation)) {
             throw NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
-                $this->nodeAggregateIdentifier,
+                $this->nodeAggregateId,
                 $coveredDimensionSpacePoint
             );
         }

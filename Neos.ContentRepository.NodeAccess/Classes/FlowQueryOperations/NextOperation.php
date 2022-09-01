@@ -69,8 +69,8 @@ class NextOperation extends AbstractOperation
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $nextNode = $this->getNextForNode($contextNode);
-            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateIdentifier])) {
-                $outputNodePaths[(string)$nextNode->nodeAggregateIdentifier] = true;
+            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateId])) {
+                $outputNodePaths[(string)$nextNode->nodeAggregateId] = true;
                 $output[] = $nextNode;
             }
         }
@@ -89,11 +89,11 @@ class NextOperation extends AbstractOperation
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
 
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
         if ($parentNode === null) {
             return null;
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->next($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId)->next($contextNode);
     }
 }

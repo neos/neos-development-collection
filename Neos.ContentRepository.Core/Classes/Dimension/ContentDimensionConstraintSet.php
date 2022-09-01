@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Dimension;
 
 /**
- * A set of content dimension constraints, indexed by dimension identifier
+ * A set of content dimension constraints, indexed by dimension id
  *
  * @implements \IteratorAggregate<string,ContentDimensionConstraints>
  * @internal
@@ -32,10 +32,10 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
      */
     public function __construct(array $array)
     {
-        foreach ($array as $dimensionIdentifier => $constraints) {
-            if (!is_string($dimensionIdentifier) || empty($dimensionIdentifier)) {
+        foreach ($array as $dimensionId => $constraints) {
+            if (!is_string($dimensionId) || empty($dimensionId)) {
                 throw new \InvalidArgumentException(
-                    'ContentDimensionConstraintSets must be indexed by dimension identifier',
+                    'ContentDimensionConstraintSets must be indexed by dimension id',
                     1639654304
                 );
             }
@@ -63,17 +63,17 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
         return new \ArrayIterator($this->constraints);
     }
 
-    public function getConstraints(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimensionConstraints
+    public function getConstraints(ContentDimensionId $dimensionId): ?ContentDimensionConstraints
     {
-        return $this->constraints[(string)$dimensionIdentifier] ?? null;
+        return $this->constraints[(string)$dimensionId] ?? null;
     }
 
     public function allowsCombinationWith(
-        ContentDimensionIdentifier $contentDimensionIdentifier,
+        ContentDimensionId $contentDimensionId,
         ContentDimensionValue $contentDimensionValue
     ): bool {
-        return isset($this->constraints[(string)$contentDimensionIdentifier])
-            ? $this->constraints[(string)$contentDimensionIdentifier]->allowsCombinationWith($contentDimensionValue)
+        return isset($this->constraints[(string)$contentDimensionId])
+            ? $this->constraints[(string)$contentDimensionId]->allowsCombinationWith($contentDimensionValue)
             : true;
     }
 }

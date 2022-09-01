@@ -175,6 +175,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-        return $subgraph->findNodePath($node->nodeAggregateIdentifier)->getDepth() - 2; // sites always are depth 2;
+        return $subgraph->findNodePath($node->nodeAggregateId)->getDepth() - 2; // sites always are depth 2;
     }
 }

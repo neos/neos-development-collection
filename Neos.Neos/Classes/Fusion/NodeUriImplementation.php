@@ -122,7 +122,7 @@ class NodeUriImplementation extends AbstractFusionObject
         $node = $this->getNode();
         if ($node instanceof Node) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryIdentifier
+                $node->subgraphIdentity->contentRepositoryId
             );
             $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
             $nodeAddress = $nodeAddressFactory->createFromNode($node);

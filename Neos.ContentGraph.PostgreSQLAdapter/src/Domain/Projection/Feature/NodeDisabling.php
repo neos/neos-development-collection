@@ -35,18 +35,18 @@ trait NodeDisabling
         $this->transactional(function () use ($event) {
             $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
                 = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $event->affectedDimensionSpacePoints,
-                    $event->nodeAggregateIdentifier
+                    $event->nodeAggregateId
                 );
 
             /** @codingStandardsIgnoreStart */
             foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers) {
             /** @codingStandardsIgnoreEnd */
                 $restrictionRelation = new RestrictionHyperrelationRecord(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $dimensionSpacePointHash,
-                    $event->nodeAggregateIdentifier,
+                    $event->nodeAggregateId,
                     $descendantNodeAggregateIdentifiers
                 );
 
@@ -62,9 +62,9 @@ trait NodeDisabling
     {
         $this->transactional(function () use ($event) {
             $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 $event->affectedDimensionSpacePoints,
-                $event->nodeAggregateIdentifier,
+                $event->nodeAggregateId,
             );
             foreach ($restrictionRelations as $restrictionRelation) {
                 $restrictionRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);

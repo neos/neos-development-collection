@@ -24,7 +24,7 @@ interface ContentDimensionSourceInterface
     /**
      * Returns a content dimension by its identifier, if available
      */
-    public function getDimension(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimension;
+    public function getDimension(ContentDimensionId $dimensionId): ?ContentDimension;
 
     /**
      * Returns all available content dimensions in correct order of priority, indexed by identifier

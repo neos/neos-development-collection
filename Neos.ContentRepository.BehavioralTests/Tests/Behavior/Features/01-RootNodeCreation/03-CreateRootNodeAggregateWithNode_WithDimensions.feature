@@ -20,25 +20,25 @@ Feature: Create a root node aggregate
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "user-id"            |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "user-id"            |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
 
   Scenario: Create the initial root node aggregate using valid payload with dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
 
     Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                                             |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                    |
+      | contentStreamId     | "cs-identifier"                                                             |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                                    |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier"                                                |
+      | initiatingUserId    | "initiating-user-identifier"                                                |
       | nodeAggregateClassification | "root"                                                                      |
 
     When the graph projection is fully up to date
@@ -84,23 +84,23 @@ Feature: Create a root node aggregate
   Scenario: Create a root node aggregate using valid payload without dimensions
     Given the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"            |
+      | nodeAggregateId | "nody-mc-nodeface"            |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
 
     Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                                             |
-      | nodeAggregateIdentifier     | "nody-mc-nodeface"                                                          |
+      | contentStreamId     | "cs-identifier"                                                             |
+      | nodeAggregateId     | "nody-mc-nodeface"                                                          |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier"                                                |
+      | initiatingUserId    | "initiating-user-identifier"                                                |
       | nodeAggregateClassification | "root"                                                                      |
 
     When the graph projection is fully up to date

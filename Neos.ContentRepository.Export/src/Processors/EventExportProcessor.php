@@ -39,7 +39,7 @@ final class EventExportProcessor implements ProcessorInterface
             return ProcessorResult::error('Failed to find live workspace');
         }
         $streamName = StreamName::fromString(
-            'Neos.ContentRepository:ContentStream:' . $liveWorkspace->currentContentStreamIdentifier
+            'Neos.ContentRepository:ContentStream:' . $liveWorkspace->currentContentStreamId
         );
         $eventStream = $this->eventStore->load($streamName);
 

@@ -86,10 +86,10 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            $contentRepositoryIdentifier = $documentNode->subgraphIdentity->contentRepositoryIdentifier;
+            $contentRepositoryIdentifier = $documentNode->subgraphIdentity->contentRepositoryId;
             $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-                $documentNode->subgraphIdentity->contentStreamIdentifier
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+                $documentNode->subgraphIdentity->contentStreamId
             );
             if (
                 $workspace && !$workspace->workspaceName->isLive()

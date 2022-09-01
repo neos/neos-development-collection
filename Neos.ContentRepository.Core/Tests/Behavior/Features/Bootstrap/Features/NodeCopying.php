@@ -16,14 +16,14 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdentifierMapping;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodesByAdapter;
 
@@ -34,11 +34,11 @@ trait NodeCopying
 {
     abstract protected function getContentRepository(): ContentRepository;
 
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
@@ -56,7 +56,7 @@ trait NodeCopying
         $contentGraph = reset($contentGraphs);
         assert($contentGraph instanceof ContentGraphInterface);
         $subgraph = $contentGraph->getSubgraph(
-            $this->getCurrentContentStreamIdentifier(),
+            $this->getCurrentContentStreamId(),
             $this->getCurrentDimensionSpacePoint(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -65,11 +65,11 @@ trait NodeCopying
         $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
-        $targetSucceedingSiblingNodeAggregateIdentifier = isset($commandArguments['targetSucceedingSiblingNodeAggregateIdentifier'])
-            ? NodeAggregateIdentifier::fromString($commandArguments['targetSucceedingSiblingNodeAggregateIdentifier'])
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
+        $targetSucceedingSiblingNodeAggregateId = isset($commandArguments['targetSucceedingSiblingNodeAggregateId'])
+            ? NodeAggregateId::fromString($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             : null;
         $targetNodeName = isset($commandArguments['targetNodeName'])
             ? NodeName::fromString($commandArguments['targetNodeName'])
@@ -79,12 +79,12 @@ trait NodeCopying
             $subgraph,
             $currentNode,
             $targetDimensionSpacePoint,
-            $initiatingUserIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['targetParentNodeAggregateIdentifier']),
-            $targetSucceedingSiblingNodeAggregateIdentifier,
+            $initiatingUserId,
+            NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
+            $targetSucceedingSiblingNodeAggregateId,
             $targetNodeName
         );
-        $command = $command->withNodeAggregateIdentifierMapping(NodeAggregateIdentifierMapping::fromArray($commandArguments['nodeAggregateIdentifierMapping']));
+        $command = $command->withNodeAggregateIdMapping(NodeAggregateIdMapping::fromArray($commandArguments['nodeAggregateIdMapping']));
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }

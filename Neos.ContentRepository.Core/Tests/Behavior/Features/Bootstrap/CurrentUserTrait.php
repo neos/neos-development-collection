@@ -12,26 +12,26 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * The feature trait to test projected nodes
  */
 trait CurrentUserTrait
 {
-    protected ?UserIdentifier $currentUserIdentifier = null;
+    protected ?UserId $currentUserId = null;
 
     /**
      * @Given /^I am user identified by "([^"]*)"$/
-     * @param string $userIdentifier
+     * @param string $userId
      */
-    public function iAmUserIdentifiedBy(string $userIdentifier): void
+    public function iAmUserIdentifiedBy(string $userId): void
     {
-        $this->currentUserIdentifier = UserIdentifier::fromString($userIdentifier);
+        $this->currentUserId = UserId::fromString($userId);
     }
 
-    public function getCurrentUserIdentifier(): ?UserIdentifier
+    public function getCurrentUserId(): ?UserId
     {
-        return $this->currentUserIdentifier;
+        return $this->currentUserId;
     }
 }

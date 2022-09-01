@@ -62,7 +62,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 return $subNode;
             } else {
                 $nodePathOfNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                    ->findNodePath($node->nodeAggregateIdentifier);
+                    ->findNodePath($node->nodeAggregateId);
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
@@ -101,7 +101,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function nodeAddressToString(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
@@ -123,7 +123,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         while (true) {
             $parentNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateIdentifier);
+                ->findParentNode($node->nodeAggregateId);
             if ($parentNode === null) {
                 // there is no parent, so the root node was the node before
                 return $node;
@@ -137,7 +137,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     {
         foreach ($nodePath->getParts() as $nodeName) {
             $childNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findChildNodeConnectedThroughEdgeName($node->nodeAggregateIdentifier, $nodeName);
+                ->findChildNodeConnectedThroughEdgeName($node->nodeAggregateId, $nodeName);
             if ($childNode === null) {
                 // we cannot find the child node, so there is no node on this path
                 return null;

@@ -41,9 +41,10 @@ final class ContentDimensionZookeeper
             /** @var array<int,array<string,Dimension\ContentDimensionValue>> $dimensionCombinations */
             $dimensionCombinations = [];
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
+                assert($contentDimension instanceof Dimension\ContentDimension);
                 if (empty($dimensionCombinations)) {
                     foreach ($contentDimension->values as $serializedValue => $dimensionValue) {
-                        $dimensionCombinations[] = [(string)$contentDimension->identifier => $dimensionValue];
+                        $dimensionCombinations[] = [(string)$contentDimension->id => $dimensionValue];
                     }
                 } else {
                     $this->extendCombinationsWithDimension($dimensionCombinations, $contentDimension);
@@ -66,14 +67,14 @@ final class ContentDimensionZookeeper
         foreach ($dimensionCombinations as $dimensionCombination) {
             /* @var $currentDimensionValue Dimension\ContentDimensionValue */
             foreach ($contentDimension->values as $currentDimensionValue) {
-                foreach ($dimensionCombination as $otherDimensionIdentifier => $otherDimensionValue) {
+                foreach ($dimensionCombination as $otherDimensionId => $otherDimensionValue) {
                     if (
                         !$currentDimensionValue->canBeCombinedWith(
-                            new Dimension\ContentDimensionIdentifier($otherDimensionIdentifier),
+                            new Dimension\ContentDimensionId($otherDimensionId),
                             $otherDimensionValue
                         )
                         || !$otherDimensionValue->canBeCombinedWith(
-                            $contentDimension->identifier,
+                            $contentDimension->id,
                             $currentDimensionValue
                         )
                     ) {
@@ -81,7 +82,7 @@ final class ContentDimensionZookeeper
                     }
                 }
                 $newDimensionCombination = $dimensionCombination;
-                $newDimensionCombination[(string)$contentDimension->identifier] = $currentDimensionValue;
+                $newDimensionCombination[(string)$contentDimension->id] = $currentDimensionValue;
                 $currentDimensionCombinations[] = $newDimensionCombination;
             }
         }
@@ -109,8 +110,8 @@ final class ContentDimensionZookeeper
 
         foreach ($this->getAllowedCombinations() as $dimensionCombination) {
             $coordinates = [];
-            foreach ($dimensionCombination as $contentDimensionIdentifier => $contentDimensionValue) {
-                $coordinates[$contentDimensionIdentifier] = (string)$contentDimensionValue;
+            foreach ($dimensionCombination as $contentDimensionId => $contentDimensionValue) {
+                $coordinates[$contentDimensionId] = (string)$contentDimensionValue;
             }
 
             $point = DimensionSpacePoint::fromArray($coordinates);

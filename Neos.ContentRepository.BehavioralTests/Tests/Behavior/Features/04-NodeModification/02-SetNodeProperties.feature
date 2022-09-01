@@ -53,28 +53,28 @@ Feature: Set properties
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeName | parentNodeAggregateIdentifier | nodeTypeName                            |
+      | nodeAggregateId | nodeName | parentNodeAggregateId | nodeTypeName                            |
       | nody-mc-nodeface        | document | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document |
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
+      | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin            | {"language":"mul"} |
       | targetOrigin            | {"language":"de"}  |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
+      | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin            | {"language":"mul"} |
       | targetOrigin            | {"language":"gsw"} |
     And the graph projection is fully up to date
@@ -82,8 +82,8 @@ Feature: Set properties
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                                                                                                                                                                                           |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                                                                                                                 |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                                                                                                                                                                                                              |
+      | contentStreamId   | "cs-identifier"                                                                                                                                                                                                                                                 |
+      | nodeAggregateId   | "nody-mc-nodeface"                                                                                                                                                                                                                                              |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                                                                                                              |
       | propertyValues            | {"string":"My new string", "int":8472, "float":72.84, "bool":true, "array":{"givenName":"David", "familyName":"Nodenborough","age":84}, "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "postalAddress":"PostalAddress:anotherDummy"} |
     And the graph projection is fully up to date
@@ -102,8 +102,8 @@ Feature: Set properties
   Scenario: Set node properties, partially
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                      |
-      | contentStreamIdentifier   | "cs-identifier"            |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"         |
+      | contentStreamId   | "cs-identifier"            |
+      | nodeAggregateId   | "nody-mc-nodeface"         |
       | originDimensionSpacePoint | {"language": "de"}         |
       | propertyValues            | {"string":"My new string"} |
     And the graph projection is fully up to date

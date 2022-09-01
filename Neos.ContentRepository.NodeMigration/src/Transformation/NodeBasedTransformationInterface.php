@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
@@ -29,6 +29,6 @@ interface NodeBasedTransformationInterface
     public function execute(
         Node $node,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
-        ContentStreamIdentifier $contentStreamForWriting
+        ContentStreamId $contentStreamForWriting
     ): ?CommandResult;
 }

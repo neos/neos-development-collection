@@ -22,13 +22,13 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlr
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -73,13 +73,13 @@ class WorkspaceCommandController extends CommandController
         $verbose = false,
         $dryRun = false
     ) {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         if (!$dryRun) {
             $contentRepository->handle(new PublishWorkspace(
                 WorkspaceName::fromString($workspace),
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             ))->block();
 
             $this->outputLine(
@@ -105,7 +105,7 @@ class WorkspaceCommandController extends CommandController
         $verbose = false,
         $dryRun = false
     ) {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         if (!$dryRun) {
@@ -113,7 +113,7 @@ class WorkspaceCommandController extends CommandController
                 $contentRepository->handle(
                     DiscardWorkspace::create(
                         WorkspaceName::fromString($workspace),
-                        UserIdentifier::forSystemUser()
+                        UserId::forSystemUser()
                     )
                 )->block();
             } catch (WorkspaceDoesNotExist $exception) {
@@ -126,15 +126,15 @@ class WorkspaceCommandController extends CommandController
 
     public function createRootCommand(string $name, string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         $contentRepository->handle(new CreateRootWorkspace(
             WorkspaceName::fromString($name),
             WorkspaceTitle::fromString($name),
             WorkspaceDescription::fromString($name),
-            UserIdentifier::forSystemUser(),
-            ContentStreamIdentifier::create()
+            UserId::forSystemUser(),
+            ContentStreamId::create()
         ))->block();
     }
 
@@ -158,7 +158,7 @@ class WorkspaceCommandController extends CommandController
         $owner = '',
         string $contentRepositoryIdentifier = 'default'
     ) {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         if ($owner === '') {
@@ -177,8 +177,8 @@ class WorkspaceCommandController extends CommandController
                 WorkspaceName::fromString($baseWorkspace),
                 WorkspaceTitle::fromString($title ?: $workspace),
                 WorkspaceDescription::fromString($description ?: $workspace),
-                UserIdentifier::forSystemUser(),
-                ContentStreamIdentifier::create(),
+                UserId::forSystemUser(),
+                ContentStreamId::create(),
                 $workspaceOwner
             ))->block();
         } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
@@ -189,7 +189,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        if ($workspaceOwner instanceof UserIdentifier) {
+        if ($workspaceOwner instanceof UserId) {
             $this->outputLine(
                 'Created a new workspace "%s", based on workspace "%s", owned by "%s".',
                 [$workspace, $baseWorkspace, $owner]
@@ -345,7 +345,7 @@ class WorkspaceCommandController extends CommandController
      */
     public function listCommand(string $contentRepositoryIdentifier = 'default')
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         $workspaces = $contentRepository->getWorkspaceFinder()->findAll();

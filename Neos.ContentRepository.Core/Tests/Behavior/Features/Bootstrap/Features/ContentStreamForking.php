@@ -14,10 +14,10 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamCommandHandler;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * The content stream forking feature trait for behavioral tests
@@ -26,9 +26,9 @@ trait ContentStreamForking
 {
     abstract protected function getContentRepository(): ContentRepository;
 
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -40,17 +40,17 @@ trait ContentStreamForking
     public function theCommandForkContentStreamIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $sourceContentStreamIdentifier = isset($commandArguments['sourceContentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['sourceContentStreamIdentifier'])
-            : $this->getCurrentContentStreamIdentifier();
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $sourceContentStreamId = isset($commandArguments['sourceContentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['sourceContentStreamId'])
+            : $this->getCurrentContentStreamId();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new ForkContentStream(
-            ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier']),
-            $sourceContentStreamIdentifier,
-            $initiatingUserIdentifier
+            ContentStreamId::fromString($commandArguments['contentStreamId']),
+            $sourceContentStreamId,
+            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);

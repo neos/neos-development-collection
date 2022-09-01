@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 /**
@@ -27,9 +27,9 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         HypergraphSiblingQueryMode $queryMode,
         string $tableNamePrefix
     ): self {

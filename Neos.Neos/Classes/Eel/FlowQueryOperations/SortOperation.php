@@ -123,8 +123,8 @@ class SortOperation extends AbstractOperation
                 $propertyValue = $propertyValue->getTimestamp();
             }
 
-            $sortSequence[(string)$node->nodeAggregateIdentifier] = $propertyValue;
-            $nodesByIdentifier[(string)$node->nodeAggregateIdentifier] = $node;
+            $sortSequence[(string)$node->nodeAggregateId] = $propertyValue;
+            $nodesByIdentifier[(string)$node->nodeAggregateId] = $node;
         }
 
         // Create the sort sequence

@@ -20,14 +20,14 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -37,11 +37,11 @@ trait NodeReferencing
 {
     abstract protected function getContentRepository(): ContentRepository;
 
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -57,19 +57,19 @@ trait NodeReferencing
     public function theCommandSetNodeReferencesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->getCurrentContentStreamIdentifier();
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
         $sourceOriginDimensionSpacePoint = isset($commandArguments['sourceOriginDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['sourceOriginDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
         $references = NodeReferencesToWrite::fromReferences(
             array_map(
                 fn (array $referenceData): NodeReferenceToWrite => new NodeReferenceToWrite(
-                    NodeAggregateIdentifier::fromString($referenceData['target']),
+                    NodeAggregateId::fromString($referenceData['target']),
                     isset($referenceData['properties'])
                         ? $this->deserializeProperties($referenceData['properties'])
                         : null
@@ -79,12 +79,12 @@ trait NodeReferencing
         );
 
         $command = new SetNodeReferences(
-            $contentStreamIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['sourceNodeAggregateIdentifier']),
+            $contentStreamId,
+            NodeAggregateId::fromString($commandArguments['sourceNodeAggregateId']),
             $sourceOriginDimensionSpacePoint,
             ReferenceName::fromString($commandArguments['referenceName']),
             $references,
-            $initiatingUserIdentifier
+            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -112,15 +112,15 @@ trait NodeReferencing
     public function theEventNodeReferencesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamIdentifier'])) {
-            $eventPayload['contentStreamIdentifier'] = (string)$this->getCurrentContentStreamIdentifier();
+        if (!isset($eventPayload['contentStreamId'])) {
+            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();
+        if (!isset($eventPayload['initiatingUserId'])) {
+            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
-        $contentStreamIdentifier = ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier']);
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $contentStreamIdentifier
+        $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            $contentStreamId
         );
 
         $this->publishEvent('NodeReferencesWereSet', $streamName->getEventStreamName(), $eventPayload);

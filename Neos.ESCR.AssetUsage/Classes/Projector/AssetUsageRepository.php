@@ -9,8 +9,8 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
@@ -68,9 +68,9 @@ final class AssetUsageRepository
             foreach ($result->iterateAssociative() as $row) {
                 yield new AssetUsage(
                     $row['assetidentifier'],
-                    ContentStreamIdentifier::fromString($row['contentstreamidentifier']),
+                    ContentStreamId::fromString($row['contentstreamidentifier']),
                     $row['origindimensionspacepointhash'],
-                    NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']),
+                    NodeAggregateId::fromString($row['nodeaggregateidentifier']),
                     $row['propertyname']
                 );
             }
@@ -92,8 +92,8 @@ final class AssetUsageRepository
                 . ' AND nodeAggregateIdentifier = :nodeAggregateIdentifier'
                 . ' AND originDimensionSpacePointHash = :originDimensionSpacePointHash'
                 . ' AND propertyName IN (:propertyNames)', [
-                    'contentStreamIdentifier' => $nodeAddress->contentStreamIdentifier,
-                    'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateIdentifier,
+                    'contentStreamIdentifier' => $nodeAddress->contentStreamId,
+                    'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateId,
                     'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
                     'propertyNames' => $assetIdsByProperty->propertyNamesWithoutAsset(),
                 ], [
@@ -105,8 +105,8 @@ final class AssetUsageRepository
                 try {
                     $this->dbal->insert(self::TABLE_NAME, [
                         'assetIdentifier' => $assetIdentifier,
-                        'contentStreamIdentifier' => $nodeAddress->contentStreamIdentifier,
-                        'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateIdentifier,
+                        'contentStreamIdentifier' => $nodeAddress->contentStreamId,
+                        'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateId,
                         'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
                         'propertyName' => $propertyName,
                     ]);
@@ -117,14 +117,14 @@ final class AssetUsageRepository
         }
     }
 
-    public function removeContentStream(ContentStreamIdentifier $contentStreamIdentifier): void
+    public function removeContentStream(ContentStreamId $contentStreamIdentifier): void
     {
         $this->dbal->delete(self::TABLE_NAME, ['contentStreamIdentifier' => $contentStreamIdentifier]);
     }
 
     public function copyContentStream(
-        ContentStreamIdentifier $sourceContentStreamIdentifier,
-        ContentStreamIdentifier $targetContentStreamIdentifier
+        ContentStreamId $sourceContentStreamIdentifier,
+        ContentStreamId $targetContentStreamIdentifier
     ): void {
         $this->dbal->executeStatement(
             'INSERT INTO ' . self::TABLE_NAME
@@ -179,7 +179,7 @@ final class AssetUsageRepository
     }
 
     public function removeNode(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         DimensionSpacePointSet $dimensionSpacePoints
     ): void {
         $this->dbal->executeStatement(

@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeVariation\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
@@ -29,61 +29,61 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 final class NodePeerVariantWasCreated implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
-    EmbedsContentStreamAndNodeAggregateIdentifier
+    EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $peerOrigin,
         public readonly DimensionSpacePointSet $peerCoverage,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getContentStreamId(): ContentStreamId
     {
-        return $this->contentStreamIdentifier;
+        return $this->contentStreamId;
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getNodeAggregateId(): NodeAggregateId
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeAggregateId;
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $targetContentStreamIdentifier): self
+    public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
     {
         return new self(
-            $targetContentStreamIdentifier,
-            $this->nodeAggregateIdentifier,
+            $targetContentStreamId,
+            $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->peerOrigin,
             $this->peerCoverage,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserId
         );
     }
 
     public static function fromArray(array $values): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($values['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($values['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($values['contentStreamId']),
+            NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['peerOrigin']),
             DimensionSpacePointSet::fromArray($values['peerCoverage']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
+            UserId::fromString($values['initiatingUserId']),
         );
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'sourceOrigin' => $this->sourceOrigin,
             'peerOrigin' => $this->peerOrigin,
             'peerCoverage' => $this->peerCoverage,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserId' => $this->initiatingUserId
         ];
     }
 }

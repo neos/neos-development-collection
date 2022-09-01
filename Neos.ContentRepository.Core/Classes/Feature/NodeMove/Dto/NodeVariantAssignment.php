@@ -15,10 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
- * A node variant assignment, identifying a node variant by node aggregate identifier and origin dimension space point.
+ * A node variant assignment, identifying a node variant by node aggregate id and origin dimension space point.
  *
  * This is used in structural operations like node move to assign a new node within the same content stream
  * as a new parent, sibling etc.
@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 final class NodeVariantAssignment implements \JsonSerializable
 {
     public function __construct(
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
     }
@@ -41,7 +41,7 @@ final class NodeVariantAssignment implements \JsonSerializable
     public static function createFromArray(array $array): self
     {
         return new self(
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint'])
         );
     }
@@ -52,7 +52,7 @@ final class NodeVariantAssignment implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
         ];
     }

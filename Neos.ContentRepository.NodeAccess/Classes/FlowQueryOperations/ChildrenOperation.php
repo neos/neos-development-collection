@@ -83,11 +83,11 @@ class ChildrenOperation extends AbstractOperation
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findChildNodes($contextNode->nodeAggregateIdentifier);
+                ->findChildNodes($contextNode->nodeAggregateId);
             foreach ($childNodes as $childNode) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier])) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateIdentifier] = true;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId] = true;
                 }
             }
         }
@@ -144,16 +144,16 @@ class ChildrenOperation extends AbstractOperation
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($resolvedNode)
                                 ->findChildNodeConnectedThroughEdgeName(
-                                $resolvedNode->nodeAggregateIdentifier,
+                                $resolvedNode->nodeAggregateId,
                                 NodeName::fromString($nodePathSegment)
                             );
                         }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
-                            (string)$resolvedNode->nodeAggregateIdentifier
+                            (string)$resolvedNode->nodeAggregateId
                         ])) {
                             $filteredOutput[] = $resolvedNode;
-                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->nodeAggregateIdentifier] = true;
+                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->nodeAggregateId] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -163,10 +163,10 @@ class ChildrenOperation extends AbstractOperation
                     }, $instanceOfFilters);
                     /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryIdentifier);
+                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryId);
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findChildNodes(
-                            $contextNode->nodeAggregateIdentifier,
+                            $contextNode->nodeAggregateId,
                             NodeTypeConstraints::create(
                                 NodeTypeNames::fromStringArray($allowedNodeTypes),
                                 NodeTypeNames::createEmpty()
@@ -175,10 +175,10 @@ class ChildrenOperation extends AbstractOperation
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[
-                                (string)$childNode->nodeAggregateIdentifier
+                                (string)$childNode->nodeAggregateId
                             ])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodeIdentifiers[(string)$childNode->nodeAggregateIdentifier] = true;
+                                $filteredOutputNodeIdentifiers[(string)$childNode->nodeAggregateId] = true;
                             }
                         }
                     }
@@ -199,7 +199,7 @@ class ChildrenOperation extends AbstractOperation
 
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->nodeAggregateIdentifier])) {
+                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->nodeAggregateId])) {
                         $output[] = $filteredNode;
                     }
                 }

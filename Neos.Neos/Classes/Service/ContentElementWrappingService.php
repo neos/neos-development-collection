@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -109,12 +109,12 @@ class ContentElementWrappingService
         array $additionalAttributes = []
     ): ?string {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
 
         if (
             $this->isContentStreamOfLiveWorkspace(
-                $node->subgraphIdentity->contentStreamIdentifier,
+                $node->subgraphIdentity->contentStreamId,
                 $contentRepository
             )
         ) {
@@ -162,7 +162,7 @@ class ContentElementWrappingService
         ?Node $siteNode = null
     ): string {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         if ($this->needsMetadata($node, $contentRepository, true) === false) {
             return $content;
@@ -188,12 +188,12 @@ class ContentElementWrappingService
     protected function addGenericEditingMetadata(array $attributes, Node $node): array
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
         $attributes['typeof'] = 'typo3:' . $node->nodeType->getName();
         $attributes['about'] = $nodeAddress->serializeForUri();
-        $attributes['data-node-_identifier'] = (string)$node->nodeAggregateIdentifier;
+        $attributes['data-node-_identifier'] = (string)$node->nodeAggregateId;
         $attributes['data-node-__workspace-name'] = $nodeAddress->workspaceName;
         $attributes['data-node-__label'] = $node->getLabel();
 
@@ -202,7 +202,7 @@ class ContentElementWrappingService
         }
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $parentNode = $subgraph->findParentNode($node->nodeAggregateIdentifier);
+        $parentNode = $subgraph->findParentNode($node->nodeAggregateId);
         // these properties are needed together with the current NodeType to evaluate Node Type Constraints
         // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
         if ($parentNode) {
@@ -220,7 +220,7 @@ class ContentElementWrappingService
             // as the Node-Type-Switcher in the UI relies on that.
             $attributes['data-node-__parent-node-name'] = $parentNode->nodeName;
             $attributes['data-node-__grandparent-node-type']
-                = $subgraph->findParentNode($parentNode->nodeAggregateIdentifier)?->nodeType->getName();
+                = $subgraph->findParentNode($parentNode->nodeAggregateId)?->nodeType->getName();
         }
 
         return $attributes;
@@ -298,7 +298,7 @@ class ContentElementWrappingService
                     $siteNode = $siteCandidate;
                     break;
                 }
-                $siteCandidate = $subgraph->findParentNode($siteCandidate->nodeAggregateIdentifier);
+                $siteCandidate = $subgraph->findParentNode($siteCandidate->nodeAggregateId);
             }
         }
         $siteNodeAddress = null;
@@ -350,11 +350,11 @@ class ContentElementWrappingService
     protected function appendNonRenderedContentNodeMetadata(Node $documentNode): void
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->subgraphIdentity->contentRepositoryIdentifier
+            $documentNode->subgraphIdentity->contentRepositoryId
         );
         if (
             $this->isContentStreamOfLiveWorkspace(
-                $documentNode->subgraphIdentity->contentStreamIdentifier,
+                $documentNode->subgraphIdentity->contentStreamId,
                 $contentRepository
             )
         ) {
@@ -366,12 +366,12 @@ class ContentElementWrappingService
 
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
-        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateIdentifier) as $node) {
+        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateId) as $node) {
             if ($node->nodeType->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
 
-            if (isset($this->renderedNodes[(string)$node->nodeAggregateIdentifier]) === false) {
+            if (isset($this->renderedNodes[(string)$node->nodeAggregateId]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $nodeAddressFactory->createFromNode($node)->serializeForUri();
                 /** @codingStandardsIgnoreStart */
@@ -379,7 +379,7 @@ class ContentElementWrappingService
                 /** @codingStandardsIgnoreEnd */
             }
 
-            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateIdentifier);
+            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateId);
             $hasChildNodes = false;
             foreach ($nestedNodes as $nestedNode) {
                 $hasChildNodes = true;
@@ -439,7 +439,7 @@ class ContentElementWrappingService
         bool $renderCurrentDocumentMetadata
     ): bool {
         return $this->isContentStreamOfLiveWorkspace(
-            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->subgraphIdentity->contentStreamId,
             $contentRepository
         )
              && ($renderCurrentDocumentMetadata === true
@@ -447,11 +447,11 @@ class ContentElementWrappingService
     }
 
     private function isContentStreamOfLiveWorkspace(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         ContentRepository $contentRepository
     ): bool {
         return $contentRepository->getWorkspaceFinder()
-            ->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ->findOneByCurrentContentStreamId($contentStreamIdentifier)
             ?->workspaceName->isLive() ?: false;
     }
 }

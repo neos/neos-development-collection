@@ -68,8 +68,8 @@ class PrevOperation extends AbstractOperation
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $nextNode = $this->getPrevForNode($contextNode);
-            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateIdentifier])) {
-                $outputNodePaths[(string)$nextNode->nodeAggregateIdentifier] = true;
+            if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateId])) {
+                $outputNodePaths[(string)$nextNode->nodeAggregateId] = true;
                 $output[] = $nextNode;
             }
         }
@@ -87,11 +87,11 @@ class PrevOperation extends AbstractOperation
     protected function getPrevForNode(Node $contextNode): ?Node
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateIdentifier);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
         if ($parentNode === null) {
             return null;
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateIdentifier)->previous($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId)->previous($contextNode);
     }
 }

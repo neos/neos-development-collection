@@ -35,14 +35,14 @@ trait NodeRemoval
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->affectedCoveredDimensionSpacePoints
             );
 
             $ingoingRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->affectedCoveredDimensionSpacePoints
             );
 
@@ -64,7 +64,7 @@ trait NodeRemoval
         foreach (
             $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
-                $ingoingRelation->contentStreamIdentifier,
+                $ingoingRelation->contentStreamId,
                 new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
             ) as $outgoingRelation
         ) {
@@ -84,7 +84,7 @@ trait NodeRemoval
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     -- the following line means "left join leads to NO MATCHING hierarchyrelation"
-                    AND h.contentstreamidentifier IS NULL
+                    AND h.contentstreamid IS NULL
                 ',
             [
                 'anchorPointForNode' => (string)$ingoingRelation->childNodeAnchor,

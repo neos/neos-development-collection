@@ -19,41 +19,41 @@ Feature: ForkContentStream Without Dimensions
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "user-id"       |
+      | newContentStreamId | "cs-identifier" |
+      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "user-identifier"             |
+      | initiatingUserId    | "user-identifier"             |
       | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
-      | contentStreamIdentifier       | "cs-identifier"                          |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
+      | contentStreamId       | "cs-identifier"                          |
+      | nodeAggregateId       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
       | coveredDimensionSpacePoints   | [{}]                                     |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
       | nodeAggregateClassification   | "regular"                                |
     And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
       | Key                       | Value                                                   |
-      | contentStreamIdentifier   | "cs-identifier"                                         |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | contentStreamId   | "cs-identifier"                                         |
+      | nodeAggregateId   | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint | {}                                                      |
       | propertyValues            | {"text": {"value": "original value", "type": "string"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                            |
+      | initiatingUserId  | "initiating-user-identifier"                            |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                        |
-      | contentStreamIdentifier       | "user-cs-identifier"         |
-      | sourceContentStreamIdentifier | "cs-identifier"              |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | contentStreamId       | "user-cs-identifier"         |
+      | sourceContentStreamId | "cs-identifier"              |
+      | initiatingUserId      | "initiating-user-identifier" |
     And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and dimension space point {}
 
@@ -62,16 +62,16 @@ Feature: ForkContentStream Without Dimensions
   Scenario: When a change is applied to the forked content stream AFTER the fork, it is not visible in the live content stream.
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                        |
-      | contentStreamIdentifier       | "user-cs-identifier"         |
-      | sourceContentStreamIdentifier | "cs-identifier"              |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | contentStreamId       | "user-cs-identifier"         |
+      | sourceContentStreamId | "cs-identifier"              |
+      | initiatingUserId      | "initiating-user-identifier" |
     And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:user-cs-identifier" with payload:
       | Key                       | Value                                                   |
-      | contentStreamIdentifier   | "user-cs-identifier"                                    |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | contentStreamId   | "user-cs-identifier"                                    |
+      | nodeAggregateId   | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint | {}                                                      |
       | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                            |
+      | initiatingUserId  | "initiating-user-identifier"                            |
     And the graph projection is fully up to date
 
       # live
@@ -92,16 +92,16 @@ Feature: ForkContentStream Without Dimensions
   Scenario: When a change is applied on the live content stream AFTER the fork, it is NOT visible in the forked content stream.
     When the command "ForkContentStream" is executed with payload:
       | Key                           | Value                        |
-      | contentStreamIdentifier       | "user-cs-identifier"         |
-      | sourceContentStreamIdentifier | "cs-identifier"              |
-      | initiatingUserIdentifier      | "initiating-user-identifier" |
+      | contentStreamId       | "user-cs-identifier"         |
+      | sourceContentStreamId | "cs-identifier"              |
+      | initiatingUserId      | "initiating-user-identifier" |
     And the Event "NodePropertiesWereSet" was published to stream "Neos.ContentRepository:ContentStream:cs-identifier" with payload:
       | Key                       | Value                                                   |
-      | contentStreamIdentifier   | "cs-identifier"                                         |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                      |
+      | contentStreamId   | "cs-identifier"                                         |
+      | nodeAggregateId   | "nody-mc-nodeface"                                      |
       | originDimensionSpacePoint | {}                                                      |
       | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                            |
+      | initiatingUserId  | "initiating-user-identifier"                            |
     And the graph projection is fully up to date
 
     # live

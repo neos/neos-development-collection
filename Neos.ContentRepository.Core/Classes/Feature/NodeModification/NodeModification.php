@@ -18,9 +18,9 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
@@ -39,8 +39,8 @@ trait NodeModification
     abstract protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         ContentRepository $contentRepository
     ): NodeAggregate;
 
@@ -48,11 +48,11 @@ trait NodeModification
         SetNodeProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
@@ -61,14 +61,14 @@ trait NodeModification
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
         $lowLevelCommand = new SetSerializedNodeProperties(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $command->originDimensionSpacePoint,
             $this->getPropertyConverter()->serializePropertyValues(
                 $command->propertyValues,
                 $this->requireNodeType($nodeTypeName)
             ),
-            $command->initiatingUserIdentifier
+            $command->initiatingUserId
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
@@ -80,8 +80,8 @@ trait NodeModification
     ): EventsToPublish {
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $nodeType = $this->requireNodeType($nodeAggregate->nodeTypeName);
@@ -97,18 +97,18 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $command->contentStreamIdentifier,
-                    $command->nodeAggregateIdentifier,
+                    $command->contentStreamId,
+                    $command->nodeAggregateId,
                     $affectedOrigin,
                     $propertyValues,
-                    $command->initiatingUserIdentifier
+                    $command->initiatingUserId
                 );
             }
         }
         $events = $this->mergeSplitEvents($events);
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

@@ -83,8 +83,8 @@ class ParentsUntilOperation extends AbstractOperation
 
             foreach ($parentNodes as $parentNode) {
                 if ($parentNode !== null
-                    && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateIdentifier])) {
-                    $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateIdentifier] = true;
+                    && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId])) {
+                    $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId] = true;
                     $output[] = $parentNode;
                 }
             }

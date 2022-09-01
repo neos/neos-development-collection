@@ -18,7 +18,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventStream\MaybeVersion;
 
@@ -42,34 +42,34 @@ final class ContentStreamFinder implements ProjectionStateInterface
     }
 
     /**
-     * @return iterable<ContentStreamIdentifier>
+     * @return iterable<ContentStreamId>
      */
-    public function findAllIdentifiers(): iterable
+    public function findAllIds(): iterable
     {
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamIdentifier FROM ' . $this->tableName . '
+            SELECT contentStreamId FROM ' . $this->tableName . '
             ',
         )->fetchAllAssociative();
 
         return array_map(
-            fn (array $databaseRow): ContentStreamIdentifier => ContentStreamIdentifier::fromString(
-                $databaseRow['contentStreamIdentifier']
+            fn (array $databaseRow): ContentStreamId => ContentStreamId::fromString(
+                $databaseRow['contentStreamId']
             ),
             $databaseRows
         );
     }
 
     /**
-     * @return array<int,ContentStreamIdentifier>
+     * @return array<int,ContentStreamId>
      */
     public function findUnusedContentStreams(): iterable
     {
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamIdentifier FROM ' . $this->tableName . '
+            SELECT contentStreamId FROM ' . $this->tableName . '
                 WHERE removed = FALSE
                 AND state IN (:state)
             ',
@@ -86,28 +86,28 @@ final class ContentStreamFinder implements ProjectionStateInterface
 
         $contentStreams = [];
         foreach ($databaseRows as $databaseRow) {
-            $contentStreams[] = ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']);
+            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentStreamId']);
         }
 
         return $contentStreams;
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @return string one of the self::STATE_* constants
      */
-    public function findStateForContentStream(ContentStreamIdentifier $contentStreamIdentifier): ?string
+    public function findStateForContentStream(ContentStreamId $contentStreamId): ?string
     {
         $connection = $this->client->getConnection();
         /* @var $state string|false */
         $state = $connection->executeQuery(
             '
             SELECT state FROM ' . $this->tableName . '
-                WHERE contentStreamIdentifier = :contentStreamIdentifier
+                WHERE contentStreamId = :contentStreamId
                 AND removed = FALSE
             ',
             [
-                'contentStreamIdentifier' => $contentStreamIdentifier->jsonSerialize()
+                'contentStreamId' => $contentStreamId->jsonSerialize()
             ]
         )->fetchColumn();
 
@@ -119,38 +119,38 @@ final class ContentStreamFinder implements ProjectionStateInterface
     }
 
     /**
-     * @return array<int,ContentStreamIdentifier>
+     * @return array<int,ContentStreamId>
      */
     public function findUnusedAndRemovedContentStreams(): iterable
     {
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            WITH RECURSIVE transitiveUsedContentStreams (contentStreamIdentifier) AS (
+            WITH RECURSIVE transitiveUsedContentStreams (contentStreamId) AS (
                     -- initial case: find all content streams currently in direct use by a workspace
-                    SELECT contentStreamIdentifier FROM ' . $this->tableName . '
+                    SELECT contentStreamId FROM ' . $this->tableName . '
                     WHERE
                         state = :inUseState
                         AND removed = false
                 UNION
                     -- now, when a content stream is in use by a workspace, its source content stream is
                     -- also "transitively" in use.
-                    SELECT sourceContentStreamIdentifier FROM ' . $this->tableName . '
+                    SELECT sourceContentStreamId FROM ' . $this->tableName . '
                     JOIN transitiveUsedContentStreams
-                        ON ' . $this->tableName . '.contentStreamIdentifier
-                            = transitiveUsedContentStreams.contentStreamIdentifier
+                        ON ' . $this->tableName . '.contentStreamId
+                            = transitiveUsedContentStreams.contentStreamId
                     WHERE
-                        ' . $this->tableName . '.sourceContentStreamIdentifier IS NOT NULL
+                        ' . $this->tableName . '.sourceContentStreamId IS NOT NULL
             )
 
             -- now, we check for removed content streams which we do not need anymore transitively
-            SELECT contentStreamIdentifier FROM ' . $this->tableName . ' AS cs
+            SELECT contentStreamId FROM ' . $this->tableName . ' AS cs
                 WHERE removed = true
                 AND NOT EXISTS (
                     SELECT 1
                     FROM transitiveUsedContentStreams
                     WHERE
-                        cs.contentStreamIdentifier = transitiveUsedContentStreams.contentStreamIdentifier
+                        cs.contentStreamId = transitiveUsedContentStreams.contentStreamId
                 )
             ',
             [
@@ -160,23 +160,23 @@ final class ContentStreamFinder implements ProjectionStateInterface
 
         $contentStreams = [];
         foreach ($databaseRows as $databaseRow) {
-            $contentStreams[] = ContentStreamIdentifier::fromString($databaseRow['contentStreamIdentifier']);
+            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentStreamId']);
         }
 
         return $contentStreams;
     }
 
-    public function findVersionForContentStream(ContentStreamIdentifier $contentStreamIdentifier): MaybeVersion
+    public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion
     {
         $connection = $this->client->getConnection();
         /* @var $state string|false */
         $version = $connection->executeQuery(
             '
             SELECT version FROM ' . $this->tableName . '
-                WHERE contentStreamIdentifier = :contentStreamIdentifier
+                WHERE contentStreamId = :contentStreamId
             ',
             [
-                'contentStreamIdentifier' => $contentStreamIdentifier->jsonSerialize()
+                'contentStreamId' => $contentStreamId->jsonSerialize()
             ]
         )->fetchOne();
 
@@ -187,17 +187,17 @@ final class ContentStreamFinder implements ProjectionStateInterface
         return MaybeVersion::fromVersionOrNull(Version::fromInteger($version));
     }
 
-    public function hasContentStream(ContentStreamIdentifier $contentStreamIdentifier): bool
+    public function hasContentStream(ContentStreamId $contentStreamId): bool
     {
         $connection = $this->client->getConnection();
         /* @var $state string|false */
         $version = $connection->executeQuery(
             '
             SELECT version FROM ' . $this->tableName . '
-                WHERE contentStreamIdentifier = :contentStreamIdentifier
+                WHERE contentStreamId = :contentStreamId
             ',
             [
-                'contentStreamIdentifier' => $contentStreamIdentifier->jsonSerialize()
+                'contentStreamId' => $contentStreamId->jsonSerialize()
             ]
         )->fetchOne();
 

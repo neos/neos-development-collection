@@ -7,7 +7,7 @@ Feature: Rebasing auto-created nodes works
   - root workspace with a single "root" node inside.
   - then, a nested workspace user-test is created
   - In the user-test workspace, we create a new node with auto-created child nodes WITHOUT SPECIFYING THE
-  NESTED NODE IDENTIFIERS (tetheredDescendantNodeAggregateIdentifiers)
+  NESTED NODE IDENTIFIERS (tetheredDescendantNodeAggregateIds)
   - then, for the auto-created child node, set a property.
   - finally, try to rebase the whole thing.
 
@@ -31,16 +31,16 @@ Feature: Rebasing auto-created nodes works
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "user-id"       |
+      | newContentStreamId | "cs-identifier" |
+      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "initiating-user-identifier"  |
+      | initiatingUserId    | "initiating-user-identifier"  |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
 
@@ -48,21 +48,21 @@ Feature: Rebasing auto-created nodes works
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
     # USER workspace: create a new node with auto-created child nodes
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                           | Value                                    |
-      | contentStreamIdentifier       | "user-cs-identifier"                     |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
+      | contentStreamId       | "user-cs-identifier"                     |
+      | nodeAggregateId       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | nodeName                      | "mcnodeface"                             |
       | originDimensionSpacePoint     | {}                                       |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"   |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"   |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                 |
     And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and dimension space point {}
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier;nody-mc-nodeface;{}
@@ -72,17 +72,17 @@ Feature: Rebasing auto-created nodes works
     # - then, for the auto-created child node, set a property.
     When the command "SetSerializedNodeProperties" is executed with payload:
       | Key                       | Value                                          |
-      | contentStreamIdentifier   | "user-cs-identifier"                           |
-      | nodeAggregateIdentifier   | $this->currentNodeAggregateIdentifier          |
+      | contentStreamId   | "user-cs-identifier"                           |
+      | nodeAggregateId   | $this->currentnodeAggregateId          |
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
-      | initiatingUserIdentifier  | "initiating-user-identifier"                   |
+      | initiatingUserId  | "initiating-user-identifier"                   |
     And the graph projection is fully up to date
 
     When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
-      | initiatingUserIdentifier | "initiating-user-identifier" |
+      | initiatingUserId | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # This should properly work; no error.
 

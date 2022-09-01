@@ -17,8 +17,8 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * @internal
@@ -31,7 +31,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
      * @param array<int,string>|null $fieldsToFetch
      */
     public static function create(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         string $tableNamePrefix,
         ?array $fieldsToFetch = null
     ): self {
@@ -55,7 +55,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $tableNamePrefix);
     }
 
-    public function withChildNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withChildNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
     {
         $query = $this->query .= '
             AND cn.nodeaggregateidentifier = :nodeAggregateIdentifier';

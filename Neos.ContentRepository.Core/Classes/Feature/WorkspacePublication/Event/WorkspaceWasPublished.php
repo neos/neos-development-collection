@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -34,14 +34,14 @@ final class WorkspaceWasPublished implements EventInterface
          */
         public readonly WorkspaceName $targetWorkspaceName,
         /**
-         * The new, empty content stream identifier of $sourceWorkspaceName, (after the publish was successful)
+         * The new, empty content stream ID of $sourceWorkspaceName, (after the publish was successful)
          */
-        public readonly ContentStreamIdentifier $newSourceContentStreamIdentifier,
+        public readonly ContentStreamId $newSourceContentStreamId,
         /**
-         * The old content stream identifier of $sourceWorkspaceName (which is not active anymore now)
+         * The old content stream ID of $sourceWorkspaceName (which is not active anymore now)
          */
-        public readonly ContentStreamIdentifier $previousSourceContentStreamIdentifier,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $previousSourceContentStreamId,
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -50,9 +50,9 @@ final class WorkspaceWasPublished implements EventInterface
         return new self(
             WorkspaceName::fromString($values['sourceWorkspaceName']),
             WorkspaceName::fromString($values['targetWorkspaceName']),
-            ContentStreamIdentifier::fromString($values['newSourceContentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($values['previousSourceContentStreamIdentifier']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+            ContentStreamId::fromString($values['newSourceContentStreamId']),
+            ContentStreamId::fromString($values['previousSourceContentStreamId']),
+            UserId::fromString($values['initiatingUserId'])
         );
     }
 
@@ -61,9 +61,9 @@ final class WorkspaceWasPublished implements EventInterface
         return [
             'sourceWorkspaceName' => $this->sourceWorkspaceName,
             'targetWorkspaceName' => $this->targetWorkspaceName,
-            'newSourceContentStreamIdentifier' => $this->newSourceContentStreamIdentifier,
-            'previousSourceContentStreamIdentifier' => $this->previousSourceContentStreamIdentifier,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'newSourceContentStreamId' => $this->newSourceContentStreamId,
+            'previousSourceContentStreamId' => $this->previousSourceContentStreamId,
+            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

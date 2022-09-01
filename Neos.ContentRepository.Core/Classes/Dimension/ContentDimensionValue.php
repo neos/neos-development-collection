@@ -48,19 +48,14 @@ final class ContentDimensionValue implements \Stringable
      * @internal
      * @deprecated unused
      */
-    public function getConstraints(ContentDimensionIdentifier $dimensionIdentifier): ?ContentDimensionConstraints
+    public function getConstraints(ContentDimensionId $dimensionId): ?ContentDimensionConstraints
     {
-        return $this->constraints->getConstraints($dimensionIdentifier);
+        return $this->constraints->getConstraints($dimensionId);
     }
 
-    public function canBeCombinedWith(
-        ContentDimensionIdentifier $dimensionIdentifier,
-        ContentDimensionValue $otherDimensionValue
-    ): bool {
-        return $this->constraints->allowsCombinationWith(
-            $dimensionIdentifier,
-            $otherDimensionValue
-        );
+    public function canBeCombinedWith(ContentDimensionId $dimensionId, ContentDimensionValue $otherDimensionValue): bool
+    {
+        return $this->constraints->allowsCombinationWith($dimensionId, $otherDimensionValue);
     }
 
     public function getConfigurationValue(string $path): mixed

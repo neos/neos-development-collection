@@ -6,7 +6,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepositoryRegistry\Command\SubprocessProjectionCatchUpCommandController;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Core\Booting\Scripts;
 
 /**
@@ -21,7 +21,7 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
     protected $flowSettings;
 
     public function __construct(
-        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier
+        private readonly ContentRepositoryId $contentRepositoryIdentifier
     )
     {
     }

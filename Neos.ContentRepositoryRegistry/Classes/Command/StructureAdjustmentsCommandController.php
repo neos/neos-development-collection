@@ -17,7 +17,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Annotations as Flow;
 
@@ -31,7 +31,7 @@ final class StructureAdjustmentsCommandController extends CommandController
 
     public function detectCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
@@ -47,7 +47,7 @@ final class StructureAdjustmentsCommandController extends CommandController
 
     public function fixCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {

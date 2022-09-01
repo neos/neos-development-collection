@@ -16,7 +16,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -56,14 +56,14 @@ class DisallowedChildNodeAdjustment
             // Then, we only want to remove the single edge.
             foreach ($nodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAggregate->contentStreamIdentifier,
+                    $nodeAggregate->contentStreamId,
                     $coveredDimensionSpacePoint,
                     VisibilityConstraints::withoutRestrictions()
                 );
 
-                $parentNode = $subgraph->findParentNode($nodeAggregate->nodeAggregateIdentifier);
+                $parentNode = $subgraph->findParentNode($nodeAggregate->nodeAggregateId);
                 $grandparentNode = $parentNode !== null
-                    ? $subgraph->findParentNode($parentNode->nodeAggregateIdentifier)
+                    ? $subgraph->findParentNode($parentNode->nodeAggregateId)
                     : null;
 
 
@@ -94,7 +94,7 @@ class DisallowedChildNodeAdjustment
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
-                    $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregate->nodeAggregateIdentifier);
+                    $node = $subgraph->findNodeByNodeAggregateId($nodeAggregate->nodeAggregateId);
                     if (is_null($node)) {
                         continue;
                     }
@@ -134,18 +134,18 @@ class DisallowedChildNodeAdjustment
         $referenceOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
         $events = Events::with(
             new NodeAggregateWasRemoved(
-                $nodeAggregate->contentStreamIdentifier,
-                $nodeAggregate->nodeAggregateIdentifier,
+                $nodeAggregate->contentStreamId,
+                $nodeAggregate->nodeAggregateId,
                 $nodeAggregate->occupiesDimensionSpacePoint($referenceOrigin)
                     ? new OriginDimensionSpacePointSet([$referenceOrigin])
                     : new OriginDimensionSpacePointSet([]),
                 new DimensionSpacePointSet([$dimensionSpacePoint]),
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             )
         );
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $nodeAggregate->contentStreamIdentifier
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            $nodeAggregate->contentStreamId
         );
 
         return new EventsToPublish(

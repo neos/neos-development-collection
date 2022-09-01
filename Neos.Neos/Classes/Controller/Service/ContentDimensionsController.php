@@ -58,7 +58,7 @@ class ContentDimensionsController extends ActionController
     public function indexAction()
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
         $controllerInternals = $this->contentRepositoryRegistry->getService(
             $contentRepositoryIdentifier,
             new ContentDimensionsControllerInternalsFactory()

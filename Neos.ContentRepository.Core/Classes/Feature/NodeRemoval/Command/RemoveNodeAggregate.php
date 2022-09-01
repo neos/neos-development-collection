@@ -16,13 +16,13 @@ namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * @api commands are the write-API of the ContentRepository
@@ -31,20 +31,20 @@ final class RemoveNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdentifierToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         /** One of the dimension space points covered by the node aggregate in which the user intends to remove it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly UserId $initiatingUserId,
         /**
-         * This is usually the NodeAggregateIdentifier of the parent node of the deleted node. It is needed for instance
+         * This is usually the NodeAggregateId of the parent node of the deleted node. It is needed for instance
          * in the Neos UI for the following scenario:
          * - when removing a node, you still need to be able to publish the removal.
-         * - For this to work, the Neos UI needs to know the identifier of the removed Node, **on the page
+         * - For this to work, the Neos UI needs to know the id of the removed Node, **on the page
          *   where the removal happened** (so that the user can decide to publish a single page INCLUDING the removal
          *   on the page)
          * - Because this command will *remove* the edge,
@@ -53,7 +53,7 @@ final class RemoveNodeAggregate implements
          * That's why we need this field: For the Neos UI, it stores the document node of the removed node
          * (see Remove.php), as that is what the UI needs lateron for the change display.
          */
-        public readonly ?NodeAggregateIdentifier $removalAttachmentPoint = null
+        public readonly ?NodeAggregateId $removalAttachmentPoint = null
     ) {
     }
 
@@ -63,13 +63,13 @@ final class RemoveNodeAggregate implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier']),
+            UserId::fromString($array['initiatingUserId']),
             isset($array['removalAttachmentPoint'])
-                ? NodeAggregateIdentifier::fromString($array['removalAttachmentPoint'])
+                ? NodeAggregateId::fromString($array['removalAttachmentPoint'])
                 : null
         );
     }
@@ -80,33 +80,33 @@ final class RemoveNodeAggregate implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
             'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
             'removalAttachmentPoint' => $this->removalAttachmentPoint
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): self
+    public function createCopyForContentStream(ContentStreamId $target): self
     {
         return new self(
             $target,
-            $this->nodeAggregateIdentifier,
+            $this->nodeAggregateId,
             $this->coveredDimensionSpacePoint,
             $this->nodeVariantSelectionStrategy,
-            $this->initiatingUserIdentifier,
+            $this->initiatingUserId,
             $this->removalAttachmentPoint
         );
     }
 
-    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
-                && $this->nodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
-                && $this->coveredDimensionSpacePoint === $nodeIdentifierToPublish->dimensionSpacePoint
+            $this->contentStreamId === $nodeIdToPublish->contentStreamId
+                && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+                && $this->coveredDimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint
         );
     }
 }

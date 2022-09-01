@@ -15,14 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifierToPublishOrDiscard;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdentifierToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
@@ -36,15 +36,15 @@ final class SetSerializedNodeReferences implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
-    MatchableWithNodeIdentifierToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $sourceNodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $sourceNodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly ReferenceName $referenceName,
         public readonly SerializedNodeReferences $references,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -54,12 +54,12 @@ final class SetSerializedNodeReferences implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['sourceNodeAggregateIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
+            NodeAggregateId::fromString($array['sourceNodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
             ReferenceName::fromString($array['referenceName']),
             SerializedNodeReferences::fromArray($array['references']),
-            UserIdentifier::fromString($array['initiatingUserIdentifier'])
+            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -70,33 +70,33 @@ final class SetSerializedNodeReferences implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'sourceNodeAggregateIdentifier' => $this->sourceNodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'sourceNodeAggregateId' => $this->sourceNodeAggregateId,
             'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
             'referenceName' => $this->referenceName,
             'references' => $this->references,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier
+            'initiatingUserId' => $this->initiatingUserId
         ];
     }
 
-    public function createCopyForContentStream(ContentStreamIdentifier $target): self
+    public function createCopyForContentStream(ContentStreamId $target): self
     {
         return new self(
             $target,
-            $this->sourceNodeAggregateIdentifier,
+            $this->sourceNodeAggregateId,
             $this->sourceOriginDimensionSpacePoint,
             $this->referenceName,
             $this->references,
-            $this->initiatingUserIdentifier
+            $this->initiatingUserId
         );
     }
 
-    public function matchesNodeIdentifier(NodeIdentifierToPublishOrDiscard $nodeIdentifierToPublish): bool
+    public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->contentStreamIdentifier === $nodeIdentifierToPublish->contentStreamIdentifier
-                && $this->sourceOriginDimensionSpacePoint->equals($nodeIdentifierToPublish->dimensionSpacePoint)
-                && $this->sourceNodeAggregateIdentifier->equals($nodeIdentifierToPublish->nodeAggregateIdentifier)
+            $this->contentStreamId === $nodeIdToPublish->contentStreamId
+                && $this->sourceOriginDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+                && $this->sourceNodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }
 }

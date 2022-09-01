@@ -16,7 +16,7 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -159,17 +159,17 @@ class ContentController extends ActionController
     {
         $nodeAddressString = $node;
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
 
         $node = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $nodeAddress->contentStreamIdentifier,
+                $nodeAddress->contentStreamId,
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )
-            ->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
+            ->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
 
 
         $this->response->setContentType('application/json');
@@ -395,7 +395,7 @@ class ContentController extends ActionController
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         $this->response->setContentType('application/json');
@@ -406,12 +406,12 @@ class ContentController extends ActionController
         }
         $subgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
-                $workspace->currentContentStreamIdentifier,
+                $workspace->currentContentStreamId,
                 DimensionSpacePoint::fromArray($dimensions),
                 VisibilityConstraints::withoutRestrictions()
             );
         $node = $identifier
-            ? $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($identifier))
+            ? $subgraph->findNodeByNodeAggregateId(NodeAggregateId::fromString($identifier))
             : null;
 
         $views = [];
@@ -436,7 +436,7 @@ class ContentController extends ActionController
                     continue;
                 }
                 $contentRepository = $this->contentRepositoryRegistry->get(
-                    $documentNode->subgraphIdentity->contentRepositoryIdentifier
+                    $documentNode->subgraphIdentity->contentRepositoryId
                 );
                 $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
                 $uri = $this->uriBuilder
@@ -467,7 +467,7 @@ class ContentController extends ActionController
     public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryIdentifier;
+            ->contentRepositoryId;
 
         $this->response->setContentType('application/json');
 
@@ -484,7 +484,7 @@ class ContentController extends ActionController
                 continue;
             }
             $translationHelper = new TranslationHelper();
-            $masterPlugins[(string)$pluginNode->nodeAggregateIdentifier] = $translationHelper->translate(
+            $masterPlugins[(string)$pluginNode->nodeAggregateId] = $translationHelper->translate(
                 'masterPlugins.nodeTypeOnPageLabel',
                 null,
                 [
@@ -506,7 +506,7 @@ class ContentController extends ActionController
                 return $node;
             }
             $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateIdentifier);
+                ->findParentNode($node->nodeAggregateId);
         }
 
         return null;

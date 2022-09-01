@@ -13,14 +13,14 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\EventStore\EventStoreInterface;
 
 class ContentRepositoryInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
         // These properties are from ProjectionFactoryDependencies
-        public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        public readonly ContentRepositoryId $contentRepositoryId,
         public readonly EventStoreInterface $eventStore,
         public readonly EventNormalizer $eventNormalizer,
         public readonly NodeTypeManager $nodeTypeManager,

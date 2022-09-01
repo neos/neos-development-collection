@@ -92,20 +92,20 @@ class PropertyOperation extends AbstractOperation
             $element = $context[0];
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             if ($propertyPath === '_path') {
-                return (string)$subgraph->findNodePath($element->nodeAggregateIdentifier);
+                return (string)$subgraph->findNodePath($element->nodeAggregateId);
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
                 if ($element->nodeType->getPropertyType($propertyPath) === 'reference') {
                     return (
                         $subgraph->findReferencedNodes(
-                            $element->nodeAggregateIdentifier,
+                            $element->nodeAggregateId,
                             PropertyName::fromString($propertyPath)
                         )[0] ?? null
                     )?->node;
                 } elseif ($element->nodeType->getPropertyType($propertyPath) === 'references') {
                     return $subgraph->findReferencedNodes(
-                        $element->nodeAggregateIdentifier,
+                        $element->nodeAggregateId,
                         PropertyName::fromString($propertyPath)
                     )->getNodes();
                 } else {

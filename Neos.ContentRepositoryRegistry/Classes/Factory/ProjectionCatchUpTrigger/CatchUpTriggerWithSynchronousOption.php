@@ -7,7 +7,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
  * Pragmatic performance booster for some "batch" operations needed by the Neos UI.
@@ -54,7 +54,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
     }
 
     public function __construct(
-        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        private readonly ContentRepositoryId $contentRepositoryIdentifier,
         private readonly SubprocessProjectionCatchUpTrigger $inner
     )
     {

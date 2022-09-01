@@ -17,7 +17,7 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -234,8 +234,8 @@ class LinkingService
                         );
                     }
                     return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                        ->findNodeByNodeAggregateIdentifier(
-                            NodeAggregateIdentifier::fromString($matches[2])
+                        ->findNodeByNodeAggregateId(
+                            NodeAggregateId::fromString($matches[2])
                         );
                 case 'asset':
                     /** @var ?AssetInterface $asset */
@@ -311,18 +311,18 @@ class LinkingService
                 // if we get a node string, we need to assume it links to the current site
                 $contentRepositoryIdentifier = SiteDetectionResult::fromRequest(
                     $controllerContext->getRequest()->getHttpRequest()
-                )->contentRepositoryIdentifier;
+                )->contentRepositoryId;
                 $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                    $nodeAddress->contentStreamIdentifier,
+                    $nodeAddress->contentStreamId,
                     $nodeAddress->dimensionSpacePoint,
                     $workspace && !$workspace->isPublicWorkspace()
                         ? VisibilityConstraints::withoutRestrictions()
                         : VisibilityConstraints::frontend()
                 );
-                $node = $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
+                $node = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
             } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(
@@ -331,7 +331,7 @@ class LinkingService
                     );
                 }
                 $node = $this->contentRepositoryRegistry->subgraphForNode($baseNode)
-                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->nodeAggregateIdentifier);
+                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->nodeAggregateId);
             }
             if (!$node instanceof Node) {
                 throw new NeosException(sprintf(
@@ -352,17 +352,17 @@ class LinkingService
         $this->lastLinkedNode = $node;
 
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-            $node->subgraphIdentity->contentStreamIdentifier
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $node->subgraphIdentity->contentStreamId
         );
         $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateProjection::class);
         /* @var $nodeHiddenStateFinder NodeHiddenStateFinder */
         $hiddenState = $nodeHiddenStateFinder->findHiddenState(
-            $node->subgraphIdentity->contentStreamIdentifier,
+            $node->subgraphIdentity->contentStreamId,
             $node->subgraphIdentity->dimensionSpacePoint,
-            $node->nodeAggregateIdentifier
+            $node->nodeAggregateId
         );
 
         $request = $controllerContext->getRequest()->getMainRequest();

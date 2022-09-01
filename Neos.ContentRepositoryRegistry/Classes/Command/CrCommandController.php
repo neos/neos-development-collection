@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageProjection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -35,7 +35,7 @@ class CrCommandController extends CommandController
 
     public function setupCommand(string $contentRepositoryIdentifier = 'default')
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $contentRepository->setUp();
@@ -44,7 +44,7 @@ class CrCommandController extends CommandController
 
     public function replayCommand(string $projectionName, string $contentRepositoryIdentifier = 'default', int $maximumSequenceNumber = null, bool $quiet = false)
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 

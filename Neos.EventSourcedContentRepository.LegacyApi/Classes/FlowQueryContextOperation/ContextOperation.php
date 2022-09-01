@@ -86,7 +86,7 @@ class ContextOperation extends AbstractOperation
             /** @var Node $contextNode */
 
             $contentRepository = $this->contentRepositoryRegistry
-                ->get($contextNode->subgraphIdentity->contentRepositoryIdentifier);
+                ->get($contextNode->subgraphIdentity->contentRepositoryId);
             $subgraphIdentity = $contextNode->subgraphIdentity;
             if (array_key_exists('invisibleContentShown', $targetContext)) {
                 $invisibleContentShown = boolval($targetContext['invisibleContentShown']);
@@ -101,26 +101,26 @@ class ContextOperation extends AbstractOperation
             if (array_key_exists('workspaceName', $targetContext)) {
                 $workspaceName = WorkspaceName::fromString($targetContext['workspaceName']);
                 $contentRepository = $this->contentRepositoryRegistry->get(
-                    $contextNode->subgraphIdentity->contentRepositoryIdentifier
+                    $contextNode->subgraphIdentity->contentRepositoryId
                 );
 
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
                 if (!is_null($workspace)) {
-                    $subgraphIdentity = $subgraphIdentity->withContentStreamIdentifier(
-                        $workspace->currentContentStreamIdentifier
+                    $subgraphIdentity = $subgraphIdentity->withContentStreamId(
+                        $workspace->currentContentStreamId
                     );
                 }
             }
 
             $nodeInModifiedSubgraph = $contentRepository->getContentGraph()
                 ->getSubgraph(
-                    $subgraphIdentity->contentStreamIdentifier,
+                    $subgraphIdentity->contentStreamId,
                     $subgraphIdentity->dimensionSpacePoint,
                     $subgraphIdentity->visibilityConstraints
                 )
-                ->findNodeByNodeAggregateIdentifier($contextNode->nodeAggregateIdentifier);
+                ->findNodeByNodeAggregateId($contextNode->nodeAggregateId);
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->nodeAggregateIdentifier->__toString()] = $nodeInModifiedSubgraph;
+                $output[$nodeInModifiedSubgraph->nodeAggregateId->__toString()] = $nodeInModifiedSubgraph;
             }
         }
 

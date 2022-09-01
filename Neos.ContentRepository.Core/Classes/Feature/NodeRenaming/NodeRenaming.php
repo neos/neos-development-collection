@@ -35,16 +35,16 @@ trait NodeRenaming
         // TODO: check if aggregate is root
         $events = Events::with(
             new NodeAggregateNameWasChanged(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->nodeAggregateId,
                 $command->newNodeName,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             ),
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->contentStreamIdentifier
+            ContentStreamEventStreamName::fromContentStreamId(
+                $command->contentStreamId
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

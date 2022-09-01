@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Dimension\Exception;
 
-use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 
 /**
@@ -26,11 +26,11 @@ class GeneralizationIsInvalid extends \DomainException
     public static function becauseComparedValueIsNoSpecialization(
         ContentDimensionValue $value,
         ContentDimensionValue $comparedValue,
-        ContentDimensionIdentifier $dimensionIdentifier
+        ContentDimensionId $dimensionId
     ): self {
         return new self(
             '"' . $comparedValue . '" is no specialization of "' . $value
-                . '" in dimension "' . $dimensionIdentifier . '".'
+                . '" in dimension "' . $dimensionId . '".'
         );
     }
 }

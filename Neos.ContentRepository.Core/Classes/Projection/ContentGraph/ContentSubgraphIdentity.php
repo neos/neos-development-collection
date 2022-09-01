@@ -4,19 +4,19 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
  * This describes a node's read model identity parts which are rooted in the {@see ContentSubgraphInterface}, namely:
- * - {@see contentRepositoryIdentifier}
- * - {@see contentStreamIdentifier}
+ * - {@see ContentRepositoryId}
+ * - {@see ContentStreamId}
  * - {@see dimensionSpacePoint}
  * - {@see visibilityConstraints}
  *
  * In addition to the above subgraph identity, a Node's read model identity is further described
- * by {@see Node::$nodeAggregateIdentifier}.
+ * by {@see Node::$nodeAggregateId}.
  *
  * With the above information, you can fetch a Subgraph directly by using
  * {@see ContentRepositoryRegistry::subgraphForNode()}.
@@ -38,8 +38,8 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 final class ContentSubgraphIdentity
 {
     private function __construct(
-        public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ContentRepositoryId $contentRepositoryId,
+        public readonly ContentStreamId $contentStreamId,
         /**
          * DimensionSpacePoint a node has been accessed in.
          */
@@ -52,14 +52,14 @@ final class ContentSubgraphIdentity
      * @api
      */
     public static function create(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentRepositoryId $contentRepositoryId,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): self {
         return new self(
-            $contentRepositoryIdentifier,
-            $contentStreamIdentifier,
+            $contentRepositoryId,
+            $contentStreamId,
             $dimensionSpacePoint,
             $visibilityConstraints
         );
@@ -67,17 +67,17 @@ final class ContentSubgraphIdentity
 
     public function equals(ContentSubgraphIdentity $other): bool
     {
-        return $this->contentRepositoryIdentifier->equals($other->contentRepositoryIdentifier)
-            && $this->contentStreamIdentifier->equals($other->contentStreamIdentifier)
+        return $this->contentRepositoryId->equals($other->contentRepositoryId)
+            && $this->contentStreamId->equals($other->contentStreamId)
             && $this->dimensionSpacePoint->equals($other->dimensionSpacePoint)
             && $this->visibilityConstraints->getHash() === $other->visibilityConstraints->getHash();
     }
 
-    public function withContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): self
+    public function withContentStreamId(ContentStreamId $contentStreamId): self
     {
         return new self(
-            $this->contentRepositoryIdentifier,
-            $contentStreamIdentifier,
+            $this->contentRepositoryId,
+            $contentStreamId,
             $this->dimensionSpacePoint,
             $this->visibilityConstraints
         );
@@ -86,8 +86,8 @@ final class ContentSubgraphIdentity
     public function withVisibilityConstraints(VisibilityConstraints $visibilityConstraints): self
     {
         return new self(
-            $this->contentRepositoryIdentifier,
-            $this->contentStreamIdentifier,
+            $this->contentRepositoryId,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $visibilityConstraints
         );

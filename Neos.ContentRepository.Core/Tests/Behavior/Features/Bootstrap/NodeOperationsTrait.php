@@ -16,7 +16,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionConstraintSet;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdge;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -125,7 +125,7 @@ trait NodeOperationsTrait
 
                 $dimensionConfiguration = [];
                 $dimensions[$row['Identifier']] = new ContentDimension(
-                    new ContentDimensionIdentifier($row['Identifier']),
+                    new ContentDimensionId($row['Identifier']),
                     new ContentDimensionValues($dimensionValues),
                     new ContentDimensionValueVariationEdges($variationEdges),
                     $dimensionConfiguration

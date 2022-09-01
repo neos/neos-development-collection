@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -29,7 +29,7 @@ class EmulatedLegacyWorkspace
     protected ?Workspace $workspace;
 
     public function __construct(
-        private readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        private readonly ContentRepositoryId $contentRepositoryIdentifier,
         private readonly NodeAddress $nodeAddressOfContextNode
     ) {
     }

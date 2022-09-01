@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -60,12 +60,12 @@ class ContentElementEditableService
     public function wrapContentProperty(Node $node, string $property, string $content): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryIdentifier
+            $node->subgraphIdentity->contentRepositoryId
         );
 
         if (
             $this->isContentStreamOfLiveWorkspace(
-                $node->subgraphIdentity->contentStreamIdentifier,
+                $node->subgraphIdentity->contentStreamId,
                 $contentRepository
             )
         ) {
@@ -88,11 +88,11 @@ class ContentElementEditableService
     }
 
     private function isContentStreamOfLiveWorkspace(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         ContentRepository $contentRepository
     ): bool {
         return $contentRepository->getWorkspaceFinder()
-            ->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
+            ->findOneByCurrentContentStreamId($contentStreamIdentifier)
             ?->workspaceName->isLive() ?: false;
     }
 }

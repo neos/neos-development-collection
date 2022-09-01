@@ -38,9 +38,9 @@ trait NodeMove
                 foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                     // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
                     /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping $moveNodeMapping */
-                    $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIdentifiers(
-                        $event->getContentStreamIdentifier(),
-                        $event->getNodeAggregateIdentifier(),
+                    $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIds(
+                        $event->getContentStreamId(),
+                        $event->getNodeAggregateId(),
                         $moveNodeMapping->movedNodeOrigin
                     );
                     if (is_null($nodeToBeMoved)) {
@@ -52,7 +52,7 @@ trait NodeMove
 
                     $ingoingHierarchyRelations = $projectionContentGraph->findIngoingHierarchyRelationsForNode(
                         $nodeToBeMoved->relationAnchorPoint,
-                        $event->getContentStreamIdentifier()
+                        $event->getContentStreamId()
                     );
                     $coveredDimensionSpacePoints = [];
                     foreach ($ingoingHierarchyRelations as $ingoingHierarchyRelation) {
@@ -76,8 +76,8 @@ trait NodeMove
                             // (if the parent is not visible in this DimensionSpacePoint)
                             $newParentNodes[$coveredDimensionSpacePoint->hash] = $this->getProjectionContentGraph()
                                 ->findNodeInAggregate(
-                                    $event->getContentStreamIdentifier(),
-                                    $newParentAssignment->nodeAggregateIdentifier,
+                                    $event->getContentStreamId(),
+                                    $newParentAssignment->nodeAggregateId,
                                     $coveredDimensionSpacePoint
                                 );
                             $affectedHierarchyDimensionSpacePoints[] = $coveredDimensionSpacePoint;
@@ -87,8 +87,8 @@ trait NodeMove
                     // because we will reassign the parent relations,
                     // we have to clear the restiction relations for these.
                     $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
-                        $event->getContentStreamIdentifier(),
-                        $event->getNodeAggregateIdentifier(),
+                        $event->getContentStreamId(),
+                        $event->getNodeAggregateId(),
                         new DimensionSpacePointSet(
                             $affectedHierarchyDimensionSpacePoints
                         )
@@ -100,9 +100,9 @@ trait NodeMove
                     $assignments = $moveNodeMapping->newSucceedingSiblingAssignments;
                     foreach ($assignments as $coveredDimensionSpacePointHash => $newSucceedingSiblingAssignment) {
                         $newSucceedingSiblingNodes[$coveredDimensionSpacePointHash]
-                            = $this->getProjectionContentGraph()->findNodeByIdentifiers(
-                                $event->getContentStreamIdentifier(),
-                                $newSucceedingSiblingAssignment->nodeAggregateIdentifier,
+                            = $this->getProjectionContentGraph()->findNodeByIds(
+                                $event->getContentStreamId(),
+                                $newSucceedingSiblingAssignment->nodeAggregateId,
                                 $newSucceedingSiblingAssignment->originDimensionSpacePoint
                             );
                     }
@@ -118,7 +118,7 @@ trait NodeMove
                                 $newParentNode->relationAnchorPoint,
                                 null,
                                 $newSucceedingSibling?->relationAnchorPoint,
-                                $event->getContentStreamIdentifier(),
+                                $event->getContentStreamId(),
                                 $coveredDimensionSpacePoint
                             );
 
@@ -132,9 +132,9 @@ trait NodeMove
 
                             // re-build restriction relations
                             $this->cascadeRestrictionRelations(
-                                $event->getContentStreamIdentifier(),
-                                $newParentNode->nodeAggregateIdentifier,
-                                $event->getNodeAggregateIdentifier(),
+                                $event->getContentStreamId(),
+                                $newParentNode->nodeAggregateId,
+                                $event->getNodeAggregateId(),
                                 new DimensionSpacePointSet([
                                     $coveredDimensionSpacePoint
                                 ])
@@ -148,7 +148,7 @@ trait NodeMove
                                 null,
                                 $nodeToBeMoved->relationAnchorPoint,
                                 $newSucceedingSibling->relationAnchorPoint,
-                                $event->getContentStreamIdentifier(),
+                                $event->getContentStreamId(),
                                 $coveredDimensionSpacePoint
                             );
 
@@ -169,7 +169,7 @@ trait NodeMove
                                 null,
                                 $nodeToBeMoved->relationAnchorPoint,
                                 null,
-                                $event->getContentStreamIdentifier(),
+                                $event->getContentStreamId(),
                                 $coveredDimensionSpacePoint
                             );
                             $ingoingHierarchyRelation->assignNewPosition(

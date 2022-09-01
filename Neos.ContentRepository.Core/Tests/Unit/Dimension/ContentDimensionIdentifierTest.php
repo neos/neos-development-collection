@@ -24,7 +24,7 @@ class ContentDimensionIdentifierTest extends UnitTestCase
 {
     public function testInitializationThrowsExceptionForEmptyValue()
     {
-        $this->expectException(Dimension\Exception\ContentDimensionIdentifierIsInvalid::class);
-        new Dimension\ContentDimensionIdentifier('');
+        $this->expectException(Dimension\Exception\ContentDimensionIdIsInvalid::class);
+        new Dimension\ContentDimensionId('');
     }
 }

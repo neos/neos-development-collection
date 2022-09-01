@@ -8,14 +8,14 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -63,12 +63,12 @@ class TetheredNodeAdjustments
                     $tetheredNodeName = NodeName::fromString($tetheredNodeName);
 
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                        $node->subgraphIdentity->contentStreamIdentifier,
+                        $node->subgraphIdentity->contentStreamId,
                         $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
                     $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                        $node->nodeAggregateIdentifier,
+                        $node->nodeAggregateId,
                         $tetheredNodeName
                     );
                     if ($tetheredNode === null) {
@@ -86,12 +86,12 @@ class TetheredNodeAdjustments
                                     $tetheredNodeName,
                                     null,
                                     $expectedTetheredNodeType,
-                                    UserIdentifier::forSystemUser(),
+                                    UserId::forSystemUser(),
                                     $this->contentRepository
                                 );
 
-                                $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-                                    $node->subgraphIdentity->contentStreamIdentifier
+                                $streamName = ContentStreamEventStreamName::fromContentStreamId(
+                                    $node->subgraphIdentity->contentStreamId
                                 );
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
@@ -109,8 +109,8 @@ class TetheredNodeAdjustments
 
             // find disallowed tethered nodes
             $tetheredNodeAggregates = $this->contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
-                $nodeAggregate->contentStreamIdentifier,
-                $nodeAggregate->nodeAggregateIdentifier
+                $nodeAggregate->contentStreamId,
+                $nodeAggregate->nodeAggregateId
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 /* @var $tetheredNodeAggregate NodeAggregate */
@@ -133,11 +133,11 @@ class TetheredNodeAdjustments
                 foreach ($nodeAggregate->getNodes() as $node) {
                     assert($node instanceof Node);
                     $subgraph = $this->contentRepository->getContentGraph()->getSubgraph(
-                        $node->subgraphIdentity->contentStreamIdentifier,
+                        $node->subgraphIdentity->contentStreamId,
                         $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateIdentifier);
+                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateId);
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];
@@ -158,7 +158,7 @@ class TetheredNodeAdjustments
                                 . implode(', ', array_keys($actualTetheredChildNodes)),
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 return $this->reorderNodes(
-                                    $node->subgraphIdentity->contentStreamIdentifier,
+                                    $node->subgraphIdentity->contentStreamId,
                                     $actualTetheredChildNodes,
                                     array_keys($expectedTetheredNodes)
                                 );
@@ -215,7 +215,7 @@ class TetheredNodeAdjustments
      * @param array<int,string> $expectedNodeOrdering
      */
     private function reorderNodes(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
     ): EventsToPublish {
@@ -232,28 +232,28 @@ class TetheredNodeAdjustments
 
             $events[] = new NodeAggregateWasMoved(
                 $contentStreamIdentifier,
-                $nodeToMove->nodeAggregateIdentifier,
+                $nodeToMove->nodeAggregateId,
                 NodeMoveMappings::fromArray([
                     new NodeMoveMapping(
                         $nodeToMove->originDimensionSpacePoint,
                         NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
                         NodeVariantAssignments::createFromArray([
                             $nodeToMove->originDimensionSpacePoint->hash => new NodeVariantAssignment(
-                                $succeedingNode->nodeAggregateIdentifier,
+                                $succeedingNode->nodeAggregateId,
                                 $succeedingNode->originDimensionSpacePoint
                             )
                         ])
                     )
                 ]),
                 new DimensionSpace\DimensionSpacePointSet([]),
-                UserIdentifier::forSystemUser()
+                UserId::forSystemUser()
             );
 
             // now, go one step left.
             $succeedingSiblingNodeName = $nodeNameToMove;
         }
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamIdentifier);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             Events::fromArray($events),

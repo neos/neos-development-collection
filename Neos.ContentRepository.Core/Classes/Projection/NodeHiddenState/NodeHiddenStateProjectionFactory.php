@@ -48,7 +48,7 @@ class NodeHiddenStateProjectionFactory implements ProjectionFactoryInterface
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_%s',
-                $projectionFactoryDependencies->contentRepositoryIdentifier,
+                $projectionFactoryDependencies->contentRepositoryId,
                 $projectionShortName
             ),
         );

@@ -15,9 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifiersToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -29,8 +29,8 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
 {
     private function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly NodeIdentifiersToPublishOrDiscard $nodesToPublish,
-        public readonly UserIdentifier $initiatingUserIdentifier,
+        public readonly NodeIdsToPublishOrDiscard $nodesToPublish,
+        public readonly UserId $initiatingUserId,
         /**
          * during the publish process, we sort the events so that the events we want to publish
          * come first. In this process, two new content streams are generated:
@@ -38,31 +38,31 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
          * - the second one is based on the first one, and contains all the remaining events (which we want to keep
          *   in the user workspace).
          *
-         * This property contains the identifier of the first content stream, so that this command
+         * This property contains the ID of the first content stream, so that this command
          * can run fully deterministic - we need this for the test cases.
          */
-        public readonly ContentStreamIdentifier $contentStreamIdentifierForMatchingPart,
+        public readonly ContentStreamId $contentStreamIdForMatchingPart,
         /**
-         * See the description of {@see $contentStreamIdentifierForMatchingPart}.
+         * See the description of {@see $contentStreamIdForMatchingPart}.
          *
-         * This property contains the identifier of the second content stream, so that this command
+         * This property contains the ID of the second content stream, so that this command
          * can run fully deterministic - we need this for the test cases.
          */
-        public readonly ContentStreamIdentifier $contentStreamIdentifierForRemainingPart
+        public readonly ContentStreamId $contentStreamIdForRemainingPart
     ) {
     }
 
     public static function create(
         WorkspaceName $workspaceName,
-        NodeIdentifiersToPublishOrDiscard $nodesToPublish,
-        UserIdentifier $initiatingUserIdentifier
+        NodeIdsToPublishOrDiscard $nodesToPublish,
+        UserId $initiatingUserId
     ): self {
         return new self(
             $workspaceName,
             $nodesToPublish,
-            $initiatingUserIdentifier,
-            ContentStreamIdentifier::create(),
-            ContentStreamIdentifier::create()
+            $initiatingUserId,
+            ContentStreamId::create(),
+            ContentStreamId::create()
         );
     }
 
@@ -71,17 +71,17 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        NodeIdentifiersToPublishOrDiscard $nodesToPublish,
-        UserIdentifier $initiatingUserIdentifier,
-        ContentStreamIdentifier $contentStreamIdentifierForMatchingPart,
-        ContentStreamIdentifier $contentStreamIdentifierForRemainingPart
+        NodeIdsToPublishOrDiscard $nodesToPublish,
+        UserId $initiatingUserId,
+        ContentStreamId $contentStreamIdForMatchingPart,
+        ContentStreamId $contentStreamIdForRemainingPart
     ): self {
         return new self(
             $workspaceName,
             $nodesToPublish,
-            $initiatingUserIdentifier,
-            $contentStreamIdentifierForMatchingPart,
-            $contentStreamIdentifierForRemainingPart
+            $initiatingUserId,
+            $contentStreamIdForMatchingPart,
+            $contentStreamIdForRemainingPart
         );
     }
 }

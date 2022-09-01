@@ -17,13 +17,13 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Strip all tags on a given property
@@ -53,7 +53,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                ContentStreamIdentifier $contentStreamForWriting
+                ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     /** @var PropertyCollectionInterface $properties */
@@ -71,7 +71,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                     return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
-                            $node->nodeAggregateIdentifier,
+                            $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => new SerializedPropertyValue(
@@ -79,7 +79,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                                     $serializedPropertyValue->getType()
                                 )
                             ]),
-                            UserIdentifier::forSystemUser()
+                            UserId::forSystemUser()
                         )
                     );
                 }

@@ -36,12 +36,12 @@ trait NodeTypeChange
         $this->transactional(function () use ($event) {
             foreach (
                 $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier
+                    $event->contentStreamId,
+                    $event->nodeAggregateId
                 ) as $originNode
             ) {
                 $this->copyOnWrite(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $originNode,
                     function (NodeRecord $nodeRecord) use ($event) {
                         $nodeRecord->nodeTypeName = $event->newNodeTypeName;

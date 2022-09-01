@@ -78,8 +78,8 @@ final class VisualContentDimension
 
         return new self(
             $offset,
-            (string)$contentDimension->identifier,
-            $contentDimension->getConfigurationValue('label') ?: (string)$contentDimension->identifier,
+            (string)$contentDimension->id,
+            $contentDimension->getConfigurationValue('label') ?: (string)$contentDimension->id,
             $nodes,
             $edges
         );

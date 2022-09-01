@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdentifiersToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -37,13 +37,13 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
         /**
          * The new content stream for the $sourceWorkspaceName
          */
-        public readonly ContentStreamIdentifier $newSourceContentStreamIdentifier,
+        public readonly ContentStreamId $newSourceContentStreamId,
         /**
          * The old content stream, which contains ALL the data (discarded and non-discarded)
          */
-        public readonly ContentStreamIdentifier $previousSourceContentStreamIdentifier,
-        public readonly NodeIdentifiersToPublishOrDiscard $publishedNodes,
-        public readonly UserIdentifier $initiatingUserIdentifier
+        public readonly ContentStreamId $previousSourceContentStreamId,
+        public readonly NodeIdsToPublishOrDiscard $publishedNodes,
+        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -52,10 +52,10 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
         return new self(
             WorkspaceName::fromString($values['sourceWorkspaceName']),
             WorkspaceName::fromString($values['targetWorkspaceName']),
-            ContentStreamIdentifier::fromString($values['newSourceContentStreamIdentifier']),
-            ContentStreamIdentifier::fromString($values['previousSourceContentStreamIdentifier']),
-            NodeIdentifiersToPublishOrDiscard::fromArray($values['publishedNodes']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier'])
+            ContentStreamId::fromString($values['newSourceContentStreamId']),
+            ContentStreamId::fromString($values['previousSourceContentStreamId']),
+            NodeIdsToPublishOrDiscard::fromArray($values['publishedNodes']),
+            UserId::fromString($values['initiatingUserId'])
         );
     }
 
@@ -64,10 +64,10 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
         return [
             'sourceWorkspaceName' => $this->sourceWorkspaceName,
             'targetWorkspaceName' => $this->targetWorkspaceName,
-            'newSourceContentStreamIdentifier' => $this->newSourceContentStreamIdentifier,
-            'previousSourceContentStreamIdentifier' => $this->previousSourceContentStreamIdentifier,
+            'newSourceContentStreamId' => $this->newSourceContentStreamId,
+            'previousSourceContentStreamId' => $this->previousSourceContentStreamId,
             'publishedNodes' => $this->publishedNodes,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 
 /**
@@ -47,8 +47,8 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
             }
 
             public function execute(
-                ContentStreamIdentifier $contentStreamForReading,
-                ContentStreamIdentifier $contentStreamForWriting
+                ContentStreamId $contentStreamForReading,
+                ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(
                     new MoveDimensionSpacePoint(

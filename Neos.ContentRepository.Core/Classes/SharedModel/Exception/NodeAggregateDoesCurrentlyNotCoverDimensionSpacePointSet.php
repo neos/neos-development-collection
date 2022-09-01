@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * The exception to be thrown if a node aggregate does currently not cover the given dimension space point set
@@ -26,12 +26,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet extends \DomainException
 {
     public static function butWasSupposedTo(
-        NodeAggregateIdentifier $identifier,
+        NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $expectedCoveredDimensionSpacePointSet,
         DimensionSpacePointSet $actualDimensionSpacePointSet
     ): NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet {
         return new self(
-            'Node aggregate "' . $identifier . '" does not cover expected dimension space point set '
+            'Node aggregate "' . $nodeAggregateId . '" does not cover expected dimension space point set '
                 . $expectedCoveredDimensionSpacePointSet . ' but ' . $actualDimensionSpacePointSet . '.',
             1571134743
         );

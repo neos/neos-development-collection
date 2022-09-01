@@ -19,10 +19,10 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Remove Node
@@ -64,7 +64,7 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                ContentStreamIdentifier $contentStreamForWriting
+                ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($this->strategy === null) {
                     $this->strategy = NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS;
@@ -88,10 +88,10 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
 
                 return $this->contentRepository->handle(new RemoveNodeAggregate(
                     $contentStreamForWriting,
-                    $node->nodeAggregateIdentifier,
+                    $node->nodeAggregateId,
                     $coveredDimensionSpacePoint,
                     $this->strategy,
-                    UserIdentifier::forSystemUser()
+                    UserId::forSystemUser()
                 ));
             }
         };

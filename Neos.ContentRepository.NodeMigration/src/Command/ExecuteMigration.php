@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\NodeMigration\Command;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -49,7 +49,7 @@ final class ExecuteMigration
      *
      * This effectively makes all changes of the first submigration visible in the next submigration.
      *
-     * @var ContentStreamIdentifier[]
+     * @var ContentStreamId[]
      */
     private $contentStreamIdentifiersForWriting;
 
@@ -57,7 +57,7 @@ final class ExecuteMigration
      * ExecuteMigration constructor.
      * @param MigrationConfiguration $migrationConfiguration
      * @param WorkspaceName $workspaceName
-     * @param ContentStreamIdentifier[] $contentStreamIdentifiersForWriting
+     * @param ContentStreamId[] $contentStreamIdentifiersForWriting
      */
     public function __construct(
         MigrationConfiguration $migrationConfiguration,
@@ -85,12 +85,12 @@ final class ExecuteMigration
         return $this->workspaceName;
     }
 
-    public function getOrCreateContentStreamIdentifierForWriting(int $index): ContentStreamIdentifier
+    public function getOrCreateContentStreamIdentifierForWriting(int $index): ContentStreamId
     {
         if (isset($this->contentStreamIdentifiersForWriting[$index])) {
             return $this->contentStreamIdentifiersForWriting[$index];
         }
 
-        return ContentStreamIdentifier::create();
+        return ContentStreamId::create();
     }
 }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\Workspace;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,7 +34,7 @@ final class WorkspaceRuntimeCache
     /**
      * @var array<string,Workspace>
      */
-    private array $cachedWorkspacesByContentStreamIdentifier = [];
+    private array $cachedWorkspacesByContentStreamId = [];
 
     /**
      * @return void
@@ -43,7 +43,7 @@ final class WorkspaceRuntimeCache
     {
         $this->cacheEnabled = false;
         $this->cachedWorkspacesByName = [];
-        $this->cachedWorkspacesByContentStreamIdentifier = [];
+        $this->cachedWorkspacesByContentStreamId = [];
     }
 
     public function getWorkspaceByName(WorkspaceName $name): ?Workspace
@@ -58,19 +58,19 @@ final class WorkspaceRuntimeCache
     {
         if ($this->cacheEnabled === true) {
             $this->cachedWorkspacesByName[$workspace->workspaceName->name] = $workspace;
-            $this->cachedWorkspacesByContentStreamIdentifier[
-                $workspace->currentContentStreamIdentifier->getValue()
+            $this->cachedWorkspacesByContentStreamId[
+                $workspace->currentContentStreamId->getValue()
             ] = $workspace;
         }
     }
 
-    public function getByCurrentContentStreamIdentifier(ContentStreamIdentifier $contentStreamIdentifier): ?Workspace
+    public function getByCurrentContentStreamId(ContentStreamId $contentStreamId): ?Workspace
     {
         if (
             $this->cacheEnabled === true
-            && isset($this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier])
+            && isset($this->cachedWorkspacesByContentStreamId[(string)$contentStreamId])
         ) {
-            return $this->cachedWorkspacesByContentStreamIdentifier[(string)$contentStreamIdentifier];
+            return $this->cachedWorkspacesByContentStreamId[(string)$contentStreamId];
         }
         return null;
     }

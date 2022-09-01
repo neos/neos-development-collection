@@ -19,11 +19,11 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
@@ -73,7 +73,7 @@ trait RoutingTrait
      */
     abstract protected function getObjectManager();
 
-    abstract protected function getContentRepositoryIdentifier(): ContentRepositoryIdentifier;
+    abstract protected function getContentRepositoryId(): ContentRepositoryId;
 
     /**
      * @Given A site exists for node name :nodeName
@@ -192,8 +192,8 @@ trait RoutingTrait
         $nodeAddress = $this->match($this->requestUrl);
         Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateIdentifier);
-        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamIdentifier);
+        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateId);
+        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamId);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             $nodeAddress->dimensionSpacePoint,
@@ -273,7 +273,7 @@ trait RoutingTrait
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
-            $this->getContentRepositoryIdentifier()
+            $this->getContentRepositoryId()
         );
         $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidentifierpath');
         $expectedResult = array_map(static function (array $row) {
@@ -291,9 +291,9 @@ trait RoutingTrait
         }
         putenv('FLOW_REWRITEURLS=1');
         $nodeAddress = new NodeAddress(
-            ContentStreamIdentifier::fromString($contentStreamIdentifier),
+            ContentStreamId::fromString($contentStreamIdentifier),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
+            NodeAggregateId::fromString($nodeAggregateIdentifier),
             WorkspaceName::forLive()
         );
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
@@ -320,9 +320,9 @@ trait RoutingTrait
         $dimensionResolverFactory = $this->getObjectManager()->get($factoryClassName);
         assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
         $resolverOptions = Yaml::parse($resolverOptionsYaml->getRaw()) ?? [];
-        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryIdentifier::fromString('default'), $resolverOptions);
+        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryId::fromString('default'), $resolverOptions);
 
-        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryIdentifier::fromString("default"));
+        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryId::fromString("default"));
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
         $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);

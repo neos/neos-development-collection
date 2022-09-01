@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
@@ -72,8 +72,8 @@ class PluginViewImplementation extends PluginImplementation
         // Set the node to render this to the master plugin node
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->pluginViewNode);
-        $node = $subgraph->findNodeByNodeAggregateIdentifier(
-            NodeAggregateIdentifier::fromString($pluginNodeIdentifier)
+        $node = $subgraph->findNodeByNodeAggregateId(
+            NodeAggregateId::fromString($pluginNodeIdentifier)
         );
         $this->node = $node;
         if ($node === null) {

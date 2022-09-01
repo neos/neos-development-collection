@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\AddDime
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command\MoveDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Exception\DimensionSpacePointAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -70,12 +70,12 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         MoveDimensionSpacePoint $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $command->contentStreamIdentifier,
+            $command->contentStreamId,
             $contentRepository->getContentGraph()
         );
         $this->requireDimensionSpacePointToExistInConfiguration($command->target);
@@ -84,7 +84,7 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
             $streamName,
             Events::with(
                 new DimensionSpacePointWasMoved(
-                    $command->contentStreamIdentifier,
+                    $command->contentStreamId,
                     $command->source,
                     $command->target
                 ),
@@ -97,12 +97,12 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         AddDimensionShineThrough $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $command->contentStreamIdentifier,
+            $command->contentStreamId,
             $contentRepository->getContentGraph()
         );
         $this->requireDimensionSpacePointToExistInConfiguration($command->target);
@@ -113,7 +113,7 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
             $streamName,
             Events::with(
                 new DimensionShineThroughWasAdded(
-                    $command->contentStreamIdentifier,
+                    $command->contentStreamId,
                     $command->source,
                     $command->target
                 )
@@ -135,18 +135,18 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 
     private static function requireDimensionSpacePointToBeEmptyInContentStream(
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         ContentGraphInterface $contentGraph
     ): void {
         $subgraph = $contentGraph->getSubgraph(
-            $contentStreamIdentifier,
+            $contentStreamId,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
         if ($subgraph->countNodes() > 0) {
             throw new DimensionSpacePointAlreadyExists(sprintf(
                 'the content stream %s already contained nodes in dimension space point %s - this is not allowed.',
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint
             ), 1612898126);
         }

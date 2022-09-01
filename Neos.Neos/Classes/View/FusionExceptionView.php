@@ -17,7 +17,7 @@ namespace Neos\Neos\View;
 use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -93,20 +93,20 @@ class FusionExceptionView extends AbstractView
             : ServerRequest::fromGlobals();
 
         $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
-        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
         $fusionExceptionViewInternals = $this->contentRepositoryRegistry->getService(
-            $siteDetectionResult->contentRepositoryIdentifier,
+            $siteDetectionResult->contentRepositoryId,
             new FusionExceptionViewInternalsFactory()
         );
         $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
 
         $contentStreamIdentifier = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive())
-            ?->currentContentStreamIdentifier;
+            ?->currentContentStreamId;
 
         $currentSiteNode = null;
-        if ($contentStreamIdentifier instanceof ContentStreamIdentifier) {
+        if ($contentStreamIdentifier instanceof ContentStreamId) {
             $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
-                $siteDetectionResult->contentRepositoryIdentifier,
+                $siteDetectionResult->contentRepositoryId,
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,
                 VisibilityConstraints::frontend()

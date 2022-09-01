@@ -64,9 +64,9 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
             );
         }
         $nodeAddress = new NodeAddress(
-            $event->contentStreamIdentifier,
+            $event->contentStreamId,
             $event->originDimensionSpacePoint->toDimensionSpacePoint(),
-            $event->nodeAggregateIdentifier,
+            $event->nodeAggregateId,
             null
         );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
@@ -88,9 +88,9 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
             );
         }
         $nodeAddress = new NodeAddress(
-            $event->getContentStreamIdentifier(),
+            $event->getContentStreamId(),
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-            $event->getNodeAggregateIdentifier(),
+            $event->getNodeAggregateId(),
             null
         );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
@@ -99,7 +99,7 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
     public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->repository->removeNode(
-            $event->getNodeAggregateIdentifier(),
+            $event->getNodeAggregateId(),
             $event->getAffectedOccupiedDimensionSpacePoints()->toDimensionSpacePointSet()
         );
     }
@@ -113,39 +113,39 @@ final class AssetUsageProjection implements ProjectionInterface // TODO IMPLEMEN
     public function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->repository->copyContentStream(
-            $event->sourceContentStreamIdentifier,
-            $event->newContentStreamIdentifier
+            $event->sourceContentStreamId,
+            $event->newContentStreamId
         );
     }
 
     public function whenWorkspaceWasDiscarded(WorkspaceWasDiscarded $event): void
     {
-        $this->repository->removeContentStream($event->previousContentStreamIdentifier);
+        $this->repository->removeContentStream($event->previousContentStreamId);
     }
 
     public function whenWorkspaceWasPartiallyDiscarded(WorkspaceWasPartiallyDiscarded $event): void
     {
-        $this->repository->removeContentStream($event->previousContentStreamIdentifier);
+        $this->repository->removeContentStream($event->previousContentStreamId);
     }
 
     public function whenWorkspaceWasPartiallyPublished(WorkspaceWasPartiallyPublished $event): void
     {
-        $this->repository->removeContentStream($event->previousSourceContentStreamIdentifier);
+        $this->repository->removeContentStream($event->previousSourceContentStreamId);
     }
 
     public function whenWorkspaceWasPublished(WorkspaceWasPublished $event): void
     {
-        $this->repository->removeContentStream($event->previousSourceContentStreamIdentifier);
+        $this->repository->removeContentStream($event->previousSourceContentStreamId);
     }
 
     public function whenWorkspaceWasRebased(WorkspaceWasRebased $event): void
     {
-        $this->repository->removeContentStream($event->previousContentStreamIdentifier);
+        $this->repository->removeContentStream($event->previousContentStreamId);
     }
 
     public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
-        $this->repository->removeContentStream($event->contentStreamIdentifier);
+        $this->repository->removeContentStream($event->contentStreamId);
     }
 
 

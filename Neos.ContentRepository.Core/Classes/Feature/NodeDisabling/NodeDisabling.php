@@ -49,11 +49,11 @@ trait NodeDisabling
         DisableNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -74,15 +74,15 @@ trait NodeDisabling
 
         $events = Events::with(
             new NodeAggregateWasDisabled(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             ),
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -103,11 +103,11 @@ trait NodeDisabling
         EnableNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
@@ -126,19 +126,17 @@ trait NodeDisabling
                 $this->getInterDimensionalVariationGraph()
             );
 
-        $contentStreamIdentifier = $command->contentStreamIdentifier;
-
         $events = Events::with(
             new NodeAggregateWasEnabled(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             )
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamIdentifier)->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand($command, $events),
             ExpectedVersion::ANY()
         );

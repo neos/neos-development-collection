@@ -56,7 +56,7 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
     {
         if ($node !== null) {
             $contentRepository = $this->contentRepositoryRegistry->get(
-                $node->subgraphIdentity->contentRepositoryIdentifier
+                $node->subgraphIdentity->contentRepositoryId
             );
             return NodeAddressFactory::create($contentRepository)->createFromNode($node);
         }

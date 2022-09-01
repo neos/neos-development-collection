@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -128,14 +128,14 @@ class FindOperation extends AbstractOperation
         /** @todo fetch them $elsewhere (fusion runtime?) */
         $firstContextNode = reset($contextNodes);
         assert($firstContextNode instanceof Node);
-        $contentRepository = $this->contentRepositoryRegistry->get($firstContextNode->subgraphIdentity->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($firstContextNode->subgraphIdentity->contentRepositoryId);
 
         $entryPoints = $this->getEntryPoints($contextNodes);
         foreach ($parsedFilter['Filters'] as $filter) {
             $filterResults = [];
             $generatedNodes = false;
             if (isset($filter['IdentifierFilter'])) {
-                $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($filter['IdentifierFilter']);
+                $nodeAggregateIdentifier = NodeAggregateId::fromString($filter['IdentifierFilter']);
                 $filterResults = $this->addNodesByIdentifier($nodeAggregateIdentifier, $entryPoints, $filterResults);
                 $generatedNodes = true;
             } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
@@ -171,9 +171,9 @@ class FindOperation extends AbstractOperation
         $usedKeys = [];
         foreach ($result as $item) {
             $identifier = (string) new NodeAddress(
-                $item->subgraphIdentity->contentStreamIdentifier,
+                $item->subgraphIdentity->contentStreamId,
                 $item->subgraphIdentity->dimensionSpacePoint,
-                $item->nodeAggregateIdentifier,
+                $item->nodeAggregateId,
                 null
             );
             if (!isset($usedKeys[$identifier])) {
@@ -214,14 +214,14 @@ class FindOperation extends AbstractOperation
      * @return array<int,Node>
      */
     protected function addNodesByIdentifier(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         array $entryPoints,
         array $result
     ): array {
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
-            $nodeByIdentifier = $subgraph->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+            $nodeByIdentifier = $subgraph->findNodeByNodeAggregateId($nodeAggregateIdentifier);
             if ($nodeByIdentifier) {
                 $result[] = $nodeByIdentifier;
             }
@@ -245,13 +245,13 @@ class FindOperation extends AbstractOperation
                 if ($nodePath->isAbsolute()) {
                     $rootNode = $node;
                     while ($rootNode instanceof Node && !$rootNode->classification->isRoot()) {
-                        $rootNode = $subgraph->findParentNode($rootNode->nodeAggregateIdentifier);
+                        $rootNode = $subgraph->findParentNode($rootNode->nodeAggregateId);
                     }
                     if ($rootNode instanceof Node) {
-                        $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->nodeAggregateIdentifier);
+                        $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->nodeAggregateId);
                     }
                 } else {
-                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->nodeAggregateIdentifier);
+                    $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
                 }
                 if (isset($nodeByPath)) {
                     $result[] = $nodeByPath;

@@ -13,8 +13,8 @@ use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -40,7 +40,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         private readonly Filesystem $files,
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
-        private ?ContentStreamIdentifier $contentStreamIdentifier,
+        private ?ContentStreamId $contentStreamIdentifier,
     ) {}
 
     public function onMessage(\Closure $callback): void
@@ -113,7 +113,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
                     $this->contentStreamIdentifier,
-                    UserIdentifier::forSystemUser(),
+                    UserId::forSystemUser(),
                 )
             )
         );
@@ -131,7 +131,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     $workspaceName,
                     WorkspaceTitle::fromString('live workspace'),
                     WorkspaceDescription::fromString('live workspace'),
-                    UserIdentifier::forSystemUser(),
+                    UserId::forSystemUser(),
                     $this->contentStreamIdentifier
                 )
             )
@@ -180,14 +180,14 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
     /**
      * @param array<string, mixed> $payload
-     * @return ContentStreamIdentifier
+     * @return ContentStreamId
      */
-    private static function extractContentStreamIdentifier(array $payload): ContentStreamIdentifier
+    private static function extractContentStreamIdentifier(array $payload): ContentStreamId
     {
         if (!isset($payload['contentStreamIdentifier']) || !is_string($payload['contentStreamIdentifier'])) {
             throw new \RuntimeException('Failed to extract "contentStreamIdentifier" from event', 1646404169);
         }
-        return ContentStreamIdentifier::fromString($payload['contentStreamIdentifier']);
+        return ContentStreamId::fromString($payload['contentStreamIdentifier']);
     }
 
     private function dispatch(Severity $severity, string $message, mixed ...$args): void

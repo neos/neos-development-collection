@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -32,9 +32,9 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdentifierMapping;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -85,7 +85,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository
     ): EventsToPublish {
         // Basic constraints (Content Stream / Dimension Space Point / Node Type of to-be-inserted root node)
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->targetDimensionSpacePoint->toDimensionSpacePoint()
         );
@@ -96,30 +96,30 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // NOTE: we only check this for the *root* node of the to-be-inserted structure; and not for its
         // children (as we want to create the structure as-is; assuming it was already valid beforehand).
         $this->requireConstraintsImposedByAncestorsAreMet(
-            $command->contentStreamIdentifier,
+            $command->contentStreamId,
             $nodeType,
             $command->targetNodeName,
-            [$command->targetParentNodeAggregateIdentifier],
+            [$command->targetParentNodeAggregateId],
             $contentRepository
         );
 
-        // Constraint: The new nodeAggregateIdentifiers are not allowed to exist yet.
-        $this->requireNewNodeAggregateIdentifiersToNotExist(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifierMapping,
+        // Constraint: The new nodeAggregateIds are not allowed to exist yet.
+        $this->requireNewNodeAggregateIdsToNotExist(
+            $command->contentStreamId,
+            $command->nodeAggregateIdMapping,
             $contentRepository
         );
 
         // Constraint: the parent node must exist in the command's DimensionSpacePoint as well
         $parentNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->targetParentNodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->targetParentNodeAggregateId,
             $contentRepository
         );
-        if ($command->targetSucceedingSiblingNodeAggregateIdentifier) {
+        if ($command->targetSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamIdentifier,
-                $command->targetSucceedingSiblingNodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->targetSucceedingSiblingNodeAggregateId,
                 $contentRepository
             );
         }
@@ -140,9 +140,9 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Constraint: The node name must be free in all these dimension space points
         if ($command->targetNodeName) {
             $this->requireNodeNameToBeUnoccupied(
-                $command->contentStreamIdentifier,
+                $command->contentStreamId,
                 $command->targetNodeName,
-                $command->targetParentNodeAggregateIdentifier,
+                $command->targetParentNodeAggregateId,
                 $command->targetDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
                 $contentRepository
@@ -152,21 +152,21 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         // Now, we can start creating the recursive structure.
         $events = [];
         $this->createEventsForNodeToInsert(
-            $command->contentStreamIdentifier,
+            $command->contentStreamId,
             $command->targetDimensionSpacePoint,
             $coveredDimensionSpacePoints,
-            $command->targetParentNodeAggregateIdentifier,
-            $command->targetSucceedingSiblingNodeAggregateIdentifier,
+            $command->targetParentNodeAggregateId,
+            $command->targetSucceedingSiblingNodeAggregateId,
             $command->targetNodeName,
             $command->nodeTreeToInsert,
-            $command->nodeAggregateIdentifierMapping,
-            $command->initiatingUserIdentifier,
+            $command->nodeAggregateIdMapping,
+            $command->initiatingUserId,
             $events
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->contentStreamIdentifier
+            ContentStreamEventStreamName::fromContentStreamId(
+                $command->contentStreamId
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -176,15 +176,15 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         );
     }
 
-    private function requireNewNodeAggregateIdentifiersToNotExist(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        Dto\NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
+    private function requireNewNodeAggregateIdsToNotExist(
+        ContentStreamId $contentStreamId,
+        Dto\NodeAggregateIdMapping $nodeAggregateIdMapping,
         ContentRepository $contentRepository
     ): void {
-        foreach ($nodeAggregateIdentifierMapping->getAllNewNodeAggregateIdentifiers() as $nodeAggregateIdentifier) {
+        foreach ($nodeAggregateIdMapping->getAllNewNodeAggregateIds() as $nodeAggregateId) {
             $this->requireProjectedNodeAggregateToNotExist(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
+                $contentStreamId,
+                $nodeAggregateId,
                 $contentRepository
             );
         }
@@ -194,48 +194,48 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
      * @param array<NodeAggregateWithNodeWasCreated> $events
      */
     private function createEventsForNodeToInsert(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
-        NodeAggregateIdentifier $targetParentNodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $targetSucceedingSiblingNodeAggregateIdentifier,
+        NodeAggregateId $targetParentNodeAggregateId,
+        ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
         ?NodeName $targetNodeName,
         NodeSubtreeSnapshot $nodeToInsert,
-        Dto\NodeAggregateIdentifierMapping $nodeAggregateIdentifierMapping,
-        UserIdentifier $initiatingUserIdentifier,
+        Dto\NodeAggregateIdMapping $nodeAggregateIdMapping,
+        UserId $initiatingUserId,
         array &$events
     ): void {
         $events[] = new NodeAggregateWithNodeWasCreated(
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
-                $nodeToInsert->nodeAggregateIdentifier
-            ) ?: NodeAggregateIdentifier::create(),
+            $contentStreamId,
+            $nodeAggregateIdMapping->getNewNodeAggregateId(
+                $nodeToInsert->nodeAggregateId
+            ) ?: NodeAggregateId::create(),
             $nodeToInsert->nodeTypeName,
             $originDimensionSpacePoint,
             $coveredDimensionSpacePoints,
-            $targetParentNodeAggregateIdentifier,
+            $targetParentNodeAggregateId,
             $targetNodeName,
             $nodeToInsert->propertyValues,
             $nodeToInsert->nodeAggregateClassification,
-            $initiatingUserIdentifier,
-            $targetSucceedingSiblingNodeAggregateIdentifier
+            $initiatingUserId,
+            $targetSucceedingSiblingNodeAggregateId
         );
 
         foreach ($nodeToInsert->childNodes as $childNodeToInsert) {
             $this->createEventsForNodeToInsert(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $originDimensionSpacePoint,
                 $coveredDimensionSpacePoints,
-                // the just-inserted node becomes the new parent node Identifier
-                $nodeAggregateIdentifierMapping->getNewNodeAggregateIdentifier(
-                    $nodeToInsert->nodeAggregateIdentifier
-                ) ?: NodeAggregateIdentifier::create(),
+                // the just-inserted node becomes the new parent node ID
+                $nodeAggregateIdMapping->getNewNodeAggregateId(
+                    $nodeToInsert->nodeAggregateId
+                ) ?: NodeAggregateId::create(),
                 // $childNodesToInsert is already in the correct order; so appending only is fine.
                 null,
                 $childNodeToInsert->nodeName,
                 $childNodeToInsert,
-                $nodeAggregateIdentifierMapping,
-                $initiatingUserIdentifier,
+                $nodeAggregateIdMapping,
+                $initiatingUserId,
                 $events
             );
         }

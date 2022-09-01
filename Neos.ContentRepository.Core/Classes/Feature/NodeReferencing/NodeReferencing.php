@@ -28,8 +28,8 @@ use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReference
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -40,8 +40,8 @@ trait NodeReferencing
     use ConstraintChecks;
 
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         ContentRepository $contentRepository
     ): NodeAggregate;
 
@@ -50,11 +50,11 @@ trait NodeReferencing
         SetNodeReferences $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint());
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->sourceNodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->sourceNodeAggregateId,
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
@@ -71,13 +71,13 @@ trait NodeReferencing
         }
 
         $lowLevelCommand = new SetSerializedNodeReferences(
-            $command->contentStreamIdentifier,
-            $command->sourceNodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->sourceNodeAggregateId,
             $command->sourceOriginDimensionSpacePoint,
             $command->referenceName,
             Dto\SerializedNodeReferences::fromReferences(array_map(
                 fn (NodeReferenceToWrite $reference): SerializedNodeReference => new SerializedNodeReference(
-                    $reference->targetNodeAggregateIdentifier,
+                    $reference->targetNodeAggregateId,
                     $reference->properties
                         ? $this->getPropertyConverter()->serializeReferencePropertyValues(
                             $reference->properties,
@@ -88,7 +88,7 @@ trait NodeReferencing
                 ),
                 $command->references->references
             )),
-            $command->initiatingUserIdentifier
+            $command->initiatingUserId
         );
 
         return $this->handleSetSerializedNodeReferences($lowLevelCommand, $contentRepository);
@@ -103,13 +103,13 @@ trait NodeReferencing
         SetSerializedNodeReferences $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist(
             $command->sourceOriginDimensionSpacePoint->toDimensionSpacePoint()
         );
         $sourceNodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->sourceNodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->sourceNodeAggregateId,
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($sourceNodeAggregate);
@@ -120,9 +120,10 @@ trait NodeReferencing
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $command->referenceName);
 
         foreach ($command->references as $reference) {
+            assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->contentStreamIdentifier,
-                $reference->targetNodeAggregateIdentifier,
+                $command->contentStreamId,
+                $reference->targetNodeAggregateId,
                 $contentRepository
             );
             $this->requireNodeAggregateToNotBeRoot($destinationNodeAggregate);
@@ -149,17 +150,17 @@ trait NodeReferencing
 
         $events = Events::with(
             new NodeReferencesWereSet(
-                $command->contentStreamIdentifier,
-                $command->sourceNodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->sourceNodeAggregateId,
                 $affectedOrigins,
                 $command->referenceName,
                 $command->references,
-                $command->initiatingUserIdentifier
+                $command->initiatingUserId
             )
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier($command->contentStreamIdentifier)
+            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

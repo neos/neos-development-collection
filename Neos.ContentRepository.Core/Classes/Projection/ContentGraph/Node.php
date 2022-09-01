@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -41,15 +41,15 @@ final class Node
     public function __construct(
         public readonly ContentSubgraphIdentity $subgraphIdentity,
         /**
-         * NodeAggregateIdentifier (identifier) of this node
+         * NodeAggregateId (identifier) of this node
          * This is part of the node's "Read Model" identity, whis is defined by:
          * - {@see getSubgraphIdentitity}
-         * - {@see getNodeAggregateIdentifier} (this method)
+         * - {@see getNodeAggregateId} (this method)
          *
          * With the above information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraph()}.
          * or {@see ContentRepositoryRegistry::subgraphForNode()}
          */
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly NodeAggregateId $nodeAggregateId,
         /**
          * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
          * in order to update it.
@@ -112,6 +112,6 @@ final class Node
     public function equals(Node $other): bool
     {
         return $this->subgraphIdentity->equals($other->subgraphIdentity)
-            && $this->nodeAggregateIdentifier->equals($other->nodeAggregateIdentifier);
+            && $this->nodeAggregateId->equals($other->nodeAggregateId);
     }
 }

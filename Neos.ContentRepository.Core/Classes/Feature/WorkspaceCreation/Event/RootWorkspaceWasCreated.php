@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event;
 
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -36,8 +36,8 @@ final class RootWorkspaceWasCreated implements EventInterface
         public readonly WorkspaceName $workspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
-        public readonly UserIdentifier $initiatingUserIdentifier,
-        public readonly ContentStreamIdentifier $newContentStreamIdentifier
+        public readonly UserId $initiatingUserId,
+        public readonly ContentStreamId $newContentStreamId
     ) {
     }
 
@@ -47,8 +47,8 @@ final class RootWorkspaceWasCreated implements EventInterface
             WorkspaceName::fromString($values['workspaceName']),
             WorkspaceTitle::fromString($values['workspaceTitle']),
             WorkspaceDescription::fromString($values['workspaceDescription']),
-            UserIdentifier::fromString($values['initiatingUserIdentifier']),
-            ContentStreamIdentifier::fromString($values['newContentStreamIdentifier']),
+            UserId::fromString($values['initiatingUserId']),
+            ContentStreamId::fromString($values['newContentStreamId']),
         );
     }
 
@@ -58,8 +58,8 @@ final class RootWorkspaceWasCreated implements EventInterface
             'workspaceName' => $this->workspaceName,
             'workspaceTitle' => $this->workspaceTitle,
             'workspaceDescription' => $this->workspaceDescription,
-            'initiatingUserIdentifier' => $this->initiatingUserIdentifier,
-            'newContentStreamIdentifier' => $this->newContentStreamIdentifier,
+            'initiatingUserId' => $this->initiatingUserId,
+            'newContentStreamId' => $this->newContentStreamId,
         ];
     }
 }

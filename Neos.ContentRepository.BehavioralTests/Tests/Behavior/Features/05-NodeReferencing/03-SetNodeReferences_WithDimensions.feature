@@ -27,23 +27,23 @@ Feature: Node References with Dimensions
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                                      | parentNodeAggregateIdentifier |
+      | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
       | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
 
   Scenario: Create a reference and check whether they can be read in the different subgraphs
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date

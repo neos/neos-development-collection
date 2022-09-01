@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
@@ -44,7 +44,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function buildItems(): array
     {
         $menuItems = [];
-        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryIdentifier;
+        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get(
             $contentRepositoryIdentifier,
         );
@@ -66,18 +66,18 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 } else {
                     $variant = $contentRepository->getContentGraph()
                         ->getSubgraph(
-                            $this->currentNode->subgraphIdentity->contentStreamIdentifier,
+                            $this->currentNode->subgraphIdentity->contentStreamId,
                             $dimensionSpacePoint,
                             $this->currentNode->subgraphIdentity->visibilityConstraints,
                         )
-                        ->findNodeByNodeAggregateIdentifier($this->currentNode->nodeAggregateIdentifier);
+                        ->findNodeByNodeAggregateId($this->currentNode->nodeAggregateId);
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
-                        $this->currentNode->nodeAggregateIdentifier,
+                        $this->currentNode->nodeAggregateId,
                         $dimensionMenuItemsImplementationInternals,
                         $contentRepository
                     );
@@ -143,8 +143,8 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
     protected function findClosestGeneralizationMatchingDimensionValue(
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentDimensionIdentifier $contentDimensionIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentDimensionId $contentDimensionIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals,
         ContentRepository $contentRepository
     ): ?Node {
@@ -158,11 +158,11 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             ) {
                 $variant = $contentRepository->getContentGraph()
                     ->getSubgraph(
-                        $this->currentNode->subgraphIdentity->contentStreamIdentifier,
+                        $this->currentNode->subgraphIdentity->contentStreamId,
                         $generalization,
                         $this->currentNode->subgraphIdentity->visibilityConstraints,
                     )
-                    ->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+                    ->findNodeByNodeAggregateId($nodeAggregateIdentifier);
                 if ($variant) {
                     return $variant;
                 }
@@ -183,7 +183,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         array_walk(
             $metadata,
             function (&$dimensionValue, $rawDimensionIdentifier) use ($dimensionMenuItemsImplementationInternals) {
-                $dimensionIdentifier = new ContentDimensionIdentifier($rawDimensionIdentifier);
+                $dimensionIdentifier = new ContentDimensionId($rawDimensionIdentifier);
                 $dimensionValue = [
                 'value' => $dimensionValue,
                 'label' => $dimensionMenuItemsImplementationInternals
@@ -242,12 +242,12 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @return ContentDimensionIdentifier|null
+     * @return ContentDimensionId|null
      */
-    protected function getContentDimensionIdentifierToLimitTo(): ?ContentDimensionIdentifier
+    protected function getContentDimensionIdentifierToLimitTo(): ?ContentDimensionId
     {
         return $this->fusionValue('dimension')
-            ? new ContentDimensionIdentifier($this->fusionValue('dimension'))
+            ? new ContentDimensionId($this->fusionValue('dimension'))
             : null;
     }
 

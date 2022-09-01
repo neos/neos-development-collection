@@ -15,15 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 
 /**
- * This cache is only filled for a $parentNodeIdentifier if we have retrieved *all* childNodes, without any restriction.
+ * This cache is only filled for a $parentNodeId if we have retrieved *all* childNodes, without any restriction.
  *
  * @internal
  */
-final class AllChildNodesByNodeIdentifierCache
+final class AllChildNodesByNodeIdCache
 {
     /**
      * @var array<string,array<string,array<int,Node>>>
@@ -41,7 +41,7 @@ final class AllChildNodesByNodeIdentifierCache
      * @param array<int,Node> $allChildNodes
      */
     public function add(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraintsWithSubNodeTypes,
         array $allChildNodes
     ): void {
@@ -49,19 +49,19 @@ final class AllChildNodesByNodeIdentifierCache
             return;
         }
 
-        $key = (string)$parentNodeAggregateIdentifier;
+        $key = (string)$parentNodeAggregateId;
         $this->childNodes[$key][(string)$nodeTypeConstraintsWithSubNodeTypes] = $allChildNodes;
     }
 
     public function contains(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraintsWithSubNodeTypes
     ): bool {
         if ($this->isEnabled === false) {
             return false;
         }
 
-        $key = (string)$parentNodeAggregateIdentifier;
+        $key = (string)$parentNodeAggregateId;
         return isset($this->childNodes[$key][(string)$nodeTypeConstraintsWithSubNodeTypes]);
     }
 
@@ -69,7 +69,7 @@ final class AllChildNodesByNodeIdentifierCache
      * @return array<int,Node>
      */
     public function findChildNodes(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraintsWithSubNodeTypes,
         int $limit = null,
         int $offset = null
@@ -78,7 +78,7 @@ final class AllChildNodesByNodeIdentifierCache
             return [];
         }
 
-        $key = (string)$parentNodeAggregateIdentifier;
+        $key = (string)$parentNodeAggregateId;
         $result = [];
 
         if (isset($this->childNodes[$key][(string)$nodeTypeConstraintsWithSubNodeTypes])) {

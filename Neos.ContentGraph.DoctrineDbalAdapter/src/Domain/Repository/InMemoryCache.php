@@ -14,13 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\AllChildNodesByNodeIdentifierCache;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NamedChildNodeByNodeIdentifierCache;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodeByNodeAggregateIdentifierCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\AllChildNodesByNodeIdCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NamedChildNodeByNodeIdCache;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodeByNodeAggregateIdCache;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\NodePathCache;
-// @codingStandardsIgnoreStart
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\ParentNodeIdentifierByChildNodeIdentifierCache;
-// @codingStandardsIgnoreEnd
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache\ParentNodeIdByChildNodeIdCache;
+
 /**
  * Accessors to in Memory Cache
  *
@@ -37,24 +36,24 @@ final class InMemoryCache
     private $nodePathCache;
 
     /**
-     * @var NodeByNodeAggregateIdentifierCache
+     * @var NodeByNodeAggregateIdCache
      */
-    private $nodeByNodeAggregateIdentifierCache;
+    private $nodeByNodeAggregateIdCache;
 
     /**
-     * @var AllChildNodesByNodeIdentifierCache
+     * @var AllChildNodesByNodeIdCache
      */
-    private $allChildNodesByNodeIdentifierCache;
+    private $allChildNodesByNodeIdCache;
 
     /**
-     * @var NamedChildNodeByNodeIdentifierCache
+     * @var NamedChildNodeByNodeIdCache
      */
-    private $namedChildNodeByNodeIdentifierCache;
+    private $namedChildNodeByNodeIdCache;
 
     /**
-     * @var ParentNodeIdentifierByChildNodeIdentifierCache
+     * @var ParentNodeIdByChildNodeIdCache
      */
-    private $parentNodeIdentifierByChildNodeIdentifierCache;
+    private $parentNodeIdByChildNodeIdCache;
 
     public function __construct()
     {
@@ -86,33 +85,33 @@ final class InMemoryCache
         return $this->nodePathCache;
     }
 
-    public function getNodeByNodeAggregateIdentifierCache(): NodeByNodeAggregateIdentifierCache
+    public function getNodeByNodeAggregateIdCache(): NodeByNodeAggregateIdCache
     {
-        return $this->nodeByNodeAggregateIdentifierCache;
+        return $this->nodeByNodeAggregateIdCache;
     }
 
     /**
-     * @return AllChildNodesByNodeIdentifierCache
+     * @return AllChildNodesByNodeIdCache
      */
-    public function getAllChildNodesByNodeIdentifierCache(): AllChildNodesByNodeIdentifierCache
+    public function getAllChildNodesByNodeIdCache(): AllChildNodesByNodeIdCache
     {
-        return $this->allChildNodesByNodeIdentifierCache;
+        return $this->allChildNodesByNodeIdCache;
     }
 
     /**
-     * @return NamedChildNodeByNodeIdentifierCache
+     * @return NamedChildNodeByNodeIdCache
      */
-    public function getNamedChildNodeByNodeIdentifierCache(): NamedChildNodeByNodeIdentifierCache
+    public function getNamedChildNodeByNodeIdCache(): NamedChildNodeByNodeIdCache
     {
-        return $this->namedChildNodeByNodeIdentifierCache;
+        return $this->namedChildNodeByNodeIdCache;
     }
 
     /**
-     * @return ParentNodeIdentifierByChildNodeIdentifierCache
+     * @return ParentNodeIdByChildNodeIdCache
      */
-    public function getParentNodeIdentifierByChildNodeIdentifierCache(): ParentNodeIdentifierByChildNodeIdentifierCache
+    public function getParentNodeIdByChildNodeIdCache(): ParentNodeIdByChildNodeIdCache
     {
-        return $this->parentNodeIdentifierByChildNodeIdentifierCache;
+        return $this->parentNodeIdByChildNodeIdCache;
     }
 
     /**
@@ -121,10 +120,10 @@ final class InMemoryCache
     private function reset(bool $isEnabled): void
     {
         $this->nodePathCache = new NodePathCache($isEnabled);
-        $this->nodeByNodeAggregateIdentifierCache = new NodeByNodeAggregateIdentifierCache($isEnabled);
-        $this->allChildNodesByNodeIdentifierCache = new AllChildNodesByNodeIdentifierCache($isEnabled);
-        $this->namedChildNodeByNodeIdentifierCache = new NamedChildNodeByNodeIdentifierCache($isEnabled);
-        $this->parentNodeIdentifierByChildNodeIdentifierCache
-            = new ParentNodeIdentifierByChildNodeIdentifierCache($isEnabled);
+        $this->nodeByNodeAggregateIdCache = new NodeByNodeAggregateIdCache($isEnabled);
+        $this->allChildNodesByNodeIdCache = new AllChildNodesByNodeIdCache($isEnabled);
+        $this->namedChildNodeByNodeIdCache = new NamedChildNodeByNodeIdCache($isEnabled);
+        $this->parentNodeIdByChildNodeIdCache
+            = new ParentNodeIdByChildNodeIdCache($isEnabled);
     }
 }

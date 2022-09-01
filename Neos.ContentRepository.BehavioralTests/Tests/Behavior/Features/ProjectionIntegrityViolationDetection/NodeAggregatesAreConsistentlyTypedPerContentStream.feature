@@ -19,38 +19,38 @@ Feature: Run projection integrity violation detection regarding node aggregate t
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
-      | contentStreamIdentifier     | "cs-identifier"                           |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                  |
+      | contentStreamId     | "cs-identifier"                           |
+      | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"    |
+      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"    |
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
   Scenario: Create node variants of different type
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                   |
+      | contentStreamId       | "cs-identifier"                            |
+      | nodeAggregateId       | "sir-david-nodenborough"                   |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | coveredDimensionSpacePoints   | [{"language":"de"}]                        |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                   |
       | nodeName                      | "document"                                 |
       | nodeAggregateClassification   | "regular"                                  |
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                      |
-      | contentStreamIdentifier       | "cs-identifier"                            |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                   |
+      | contentStreamId       | "cs-identifier"                            |
+      | nodeAggregateId       | "sir-david-nodenborough"                   |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:DocumentB" |
       | originDimensionSpacePoint     | {"language":"gsw"}                         |
       | coveredDimensionSpacePoints   | [{"language":"gsw"}]                       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                   |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                   |
       | nodeName                      | "document"                                 |
       | nodeAggregateClassification   | "regular"                                  |
     And the graph projection is fully up to date

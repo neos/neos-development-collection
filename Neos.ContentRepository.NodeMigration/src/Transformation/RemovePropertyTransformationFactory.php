@@ -17,11 +17,11 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Remove the property from nodes
@@ -51,18 +51,18 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
-                ContentStreamIdentifier $contentStreamForWriting
+                ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     return $this->contentRepository->handle(
                         new SetSerializedNodeProperties(
                             $contentStreamForWriting,
-                            $node->nodeAggregateIdentifier,
+                            $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => null
                             ]),
-                            UserIdentifier::forSystemUser()
+                            UserId::forSystemUser()
                         )
                     );
                 }

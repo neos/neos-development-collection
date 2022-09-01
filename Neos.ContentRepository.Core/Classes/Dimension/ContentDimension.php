@@ -47,7 +47,7 @@ final class ContentDimension
      * @internal
      */
     public function __construct(
-        public readonly ContentDimensionIdentifier $identifier,
+        public readonly ContentDimensionId $id,
         public readonly ContentDimensionValues $values,
         ContentDimensionValueVariationEdges $variationEdges,
         /** General configuration like UI, detection etc. */
@@ -130,7 +130,7 @@ final class ContentDimension
         throw Exception\GeneralizationIsInvalid::becauseComparedValueIsNoSpecialization(
             $generalization,
             $specialization,
-            $this->identifier
+            $this->id
         );
     }
 

@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\Factory;
  *
  * @api
  */
-final class ContentRepositoryIdentifier
+final class ContentRepositoryId
 {
     private function __construct(
         public readonly string $value

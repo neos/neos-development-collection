@@ -44,7 +44,7 @@ final class ContentRepositoryFactory
     private Projections $projections;
 
     public function __construct(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         EventStoreInterface $eventStore,
         NodeTypeManager $nodeTypeManager,
         ContentDimensionSourceInterface $contentDimensionSource,
@@ -59,7 +59,7 @@ final class ContentRepositoryFactory
         );
 
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             $eventStore,
             new EventNormalizer(),
             $nodeTypeManager,

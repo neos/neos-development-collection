@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
-use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * A single node references to write, supports arbitrary objects as reference property values
@@ -29,7 +29,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
 final class NodeReferenceToWrite implements \JsonSerializable
 {
     public function __construct(
-        public readonly NodeAggregateIdentifier $targetNodeAggregateIdentifier,
+        public readonly NodeAggregateId $targetNodeAggregateId,
         public readonly ?PropertyValuesToWrite $properties
     ) {
     }
@@ -40,7 +40,7 @@ final class NodeReferenceToWrite implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         return new self(
-            NodeAggregateIdentifier::fromString($array['targetNodeAggregateIdentifier']),
+            NodeAggregateId::fromString($array['targetNodeAggregateId']),
             isset($array['properties']) ? PropertyValuesToWrite::fromArray($array['properties']) : null
         );
     }
@@ -51,7 +51,7 @@ final class NodeReferenceToWrite implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'targetNodeAggregateIdentifier' => $this->targetNodeAggregateIdentifier,
+            'targetNodeAggregateId' => $this->targetNodeAggregateId,
             'properties' => $this->properties
         ];
     }

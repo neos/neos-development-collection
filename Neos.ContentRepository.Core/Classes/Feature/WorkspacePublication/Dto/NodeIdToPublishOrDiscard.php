@@ -17,11 +17,11 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * A node identifier (Content Stream, NodeAggregateIdentifier, DimensionSpacePoint); used when
+ * A node id (Content Stream, NodeAggregateId, DimensionSpacePoint); used when
  * publishing or discarding individual nodes
  * ({@see \Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace} and
  * {@see \Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace}
@@ -29,11 +29,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
  *
  * @api used as part of commands
  */
-final class NodeIdentifierToPublishOrDiscard implements \JsonSerializable
+final class NodeIdToPublishOrDiscard implements \JsonSerializable
 {
     public function __construct(
-        public readonly ContentStreamIdentifier $contentStreamIdentifier,
-        public readonly NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly DimensionSpacePoint $dimensionSpacePoint,
     ) {
     }
@@ -44,8 +44,8 @@ final class NodeIdentifierToPublishOrDiscard implements \JsonSerializable
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($array['contentStreamIdentifier']),
-            NodeAggregateIdentifier::fromString($array['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($array['contentStreamId']),
+            NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['dimensionSpacePoint']),
         );
     }
@@ -56,8 +56,8 @@ final class NodeIdentifierToPublishOrDiscard implements \JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'dimensionSpacePoint' => $this->dimensionSpacePoint,
         ];
     }

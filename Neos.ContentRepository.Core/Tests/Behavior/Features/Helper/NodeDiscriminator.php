@@ -16,8 +16,8 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
 
 use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
@@ -25,34 +25,34 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  *
  * Represents the identity of a specific node in the content graph and is thus composed of
  * * the content stream the node exists in
- * * the node's aggregate's external identifier
+ * * the node's aggregate's external id
  * * the dimension space point the node originates in within its aggregate
  */
-final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
+final class NodeDiscriminator implements \JsonSerializable
 {
-    private ContentStreamIdentifier $contentStreamIdentifier;
+    private ContentStreamId $contentStreamId;
 
-    private NodeAggregateIdentifier $nodeAggregateIdentifier;
+    private NodeAggregateId $nodeAggregateId;
 
     private OriginDimensionSpacePoint $originDimensionSpacePoint;
 
     private function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->contentStreamId = $contentStreamId;
+        $this->nodeAggregateId = $nodeAggregateId;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
     }
 
     public static function fromShorthand(string $shorthand): self
     {
-        list($contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint) = explode(';', $shorthand);
+        list($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint) = explode(';', $shorthand);
 
         return new self(
-            ContentStreamIdentifier::fromString($contentStreamIdentifier),
-            NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
+            ContentStreamId::fromString($contentStreamId),
+            NodeAggregateId::fromString($nodeAggregateId),
             OriginDimensionSpacePoint::fromJsonString($originDimensionSpacePoint)
         );
     }
@@ -60,20 +60,20 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
     public static function fromNode(Node $node): self
     {
         return new NodeDiscriminator(
-            $node->subgraphIdentity->contentStreamIdentifier,
-            $node->nodeAggregateIdentifier,
+            $node->subgraphIdentity->contentStreamId,
+            $node->nodeAggregateId,
             $node->originDimensionSpacePoint
         );
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function getContentStreamId(): ContentStreamId
     {
-        return $this->contentStreamIdentifier;
+        return $this->contentStreamId;
     }
 
-    public function getNodeAggregateIdentifier(): NodeAggregateIdentifier
+    public function getNodeAggregateId(): NodeAggregateId
     {
-        return $this->nodeAggregateIdentifier;
+        return $this->nodeAggregateId;
     }
 
     public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
@@ -81,29 +81,24 @@ final class NodeDiscriminator implements CacheAwareInterface, \JsonSerializable
         return $this->originDimensionSpacePoint;
     }
 
-    public function getCacheEntryIdentifier(): string
-    {
-        return sha1(json_encode($this));
-    }
-
     public function equals(NodeDiscriminator $other): bool
     {
-        return $this->contentStreamIdentifier->equals($other->getContentStreamIdentifier())
-            && $this->getNodeAggregateIdentifier()->equals($other->getNodeAggregateIdentifier())
+        return $this->contentStreamId->equals($other->getContentStreamId())
+            && $this->getNodeAggregateId()->equals($other->getNodeAggregateId())
             && $this->getOriginDimensionSpacePoint()->equals($other->getOriginDimensionSpacePoint());
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $this->nodeAggregateIdentifier,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'originDimensionSpacePoint' => $this->originDimensionSpacePoint
         ];
     }
 
     public function __toString(): string
     {
-        return $this->getCacheEntryIdentifier();
+        return sha1(json_encode($this));
     }
 }

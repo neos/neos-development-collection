@@ -158,7 +158,7 @@ class Package extends BasePackage
                         $newUriPath,
                         301,
                         [],
-                        (string)$event->initiatingUserIdentifier,
+                        (string)$event->initiatingUserId,
                         'via DocumentUriPathProjector'
                     );
                 }

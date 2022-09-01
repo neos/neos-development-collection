@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\LegacyNodeMigration;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\ResourceManager;
@@ -40,7 +40,7 @@ class LegacyMigrationServiceFactory implements ContentRepositoryServiceFactoryIn
         private readonly ResourceRepository $resourceRepository,
         private readonly ResourceManager $resourceManager,
         private readonly PropertyMapper $propertyMapper,
-        private readonly ContentStreamIdentifier $contentStreamIdentifier,
+        private readonly ContentStreamId $contentStreamIdentifier,
     )
     {
     }

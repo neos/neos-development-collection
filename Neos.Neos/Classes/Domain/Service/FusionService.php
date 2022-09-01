@@ -16,7 +16,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -153,7 +153,7 @@ class FusionService
 
         $mergedFusionCode = '';
         $mergedFusionCode .= $this->generateNodeTypeDefinitions(
-            $startNode->subgraphIdentity->contentRepositoryIdentifier
+            $startNode->subgraphIdentity->contentRepositoryId
         );
         $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
         $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
@@ -188,7 +188,7 @@ class FusionService
      * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateNodeTypeDefinitions(ContentRepositoryIdentifier $contentRepositoryIdentifier)
+    protected function generateNodeTypeDefinitions(ContentRepositoryId $contentRepositoryIdentifier)
     {
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $code = '';

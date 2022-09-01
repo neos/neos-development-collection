@@ -15,15 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Dimension\Exception;
 
 /**
- * The exception to be thrown if an invalid content dimension identifier was attempted to be initialized
+ * The exception to be thrown if an invalid content dimension id was attempted to be initialized
  * @api
  */
-class ContentDimensionIdentifierIsInvalid extends \DomainException
+class ContentDimensionIdIsInvalid extends \DomainException
 {
     public static function becauseItMustNotBeEmpty(): self
     {
         return new self(
-            'Content dimension identifiers must not be empty.',
+            'Content dimension id must not be empty.',
             1515166615
         );
     }

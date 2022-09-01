@@ -17,8 +17,8 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Finder for hidden states
@@ -34,22 +34,22 @@ final class NodeHiddenStateFinder implements ProjectionStateInterface
     }
 
     public function findHiddenState(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): NodeHiddenState {
         $connection = $this->client->getConnection();
         $result = $connection->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
-                WHERE contentstreamidentifier = :contentStreamIdentifier
+                WHERE contentstreamid = :contentStreamId
                 AND dimensionspacepointhash = :dimensionSpacePointHash
-                AND nodeaggregateidentifier = :nodeAggregateIdentifier
+                AND nodeaggregateid = :nodeAggregateId
             ',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'contentStreamId' => (string)$contentStreamId,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'nodeAggregateId' => (string)$nodeAggregateId,
             ]
         )->fetch();
 

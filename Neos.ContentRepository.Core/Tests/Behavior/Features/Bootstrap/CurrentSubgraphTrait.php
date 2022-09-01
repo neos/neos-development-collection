@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -29,7 +29,7 @@ use PHPUnit\Framework\Assert;
  */
 trait CurrentSubgraphTrait
 {
-    protected ?ContentStreamIdentifier $contentStreamIdentifier = null;
+    protected ?ContentStreamId $contentStreamId = null;
 
     protected ?DimensionSpacePoint $dimensionSpacePoint = null;
 
@@ -41,11 +41,11 @@ trait CurrentSubgraphTrait
 
     /**
      * @Given /^I am in content stream "([^"]*)"$/
-     * @param string $contentStreamIdentifier
+     * @param string $contentStreamId
      */
-    public function iAmInContentStream(string $contentStreamIdentifier): void
+    public function iAmInContentStream(string $contentStreamId): void
     {
-        $this->contentStreamIdentifier = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+        $this->contentStreamId = ContentStreamId::fromString($contentStreamId);
     }
     /**
      * @Given /^I am in dimension space point (.*)$/
@@ -58,12 +58,12 @@ trait CurrentSubgraphTrait
 
     /**
      * @Given /^I am in content stream "([^"]*)" and dimension space point (.*)$/
-     * @param string $contentStreamIdentifier
+     * @param string $contentStreamId
      * @param string $dimensionSpacePoint
      */
-    public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamIdentifier, string $dimensionSpacePoint)
+    public function iAmInContentStreamAndDimensionSpacePoint(string $contentStreamId, string $dimensionSpacePoint)
     {
-        $this->iAmInContentStream($contentStreamIdentifier);
+        $this->iAmInContentStream($contentStreamId);
         $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
     }
 
@@ -78,7 +78,7 @@ trait CurrentSubgraphTrait
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
         }
-        $this->contentStreamIdentifier = $workspace->currentContentStreamIdentifier;
+        $this->contentStreamId = $workspace->currentContentStreamId;
         $this->dimensionSpacePoint = DimensionSpacePoint::fromJsonString($dimensionSpacePoint);
     }
 
@@ -107,9 +107,9 @@ trait CurrentSubgraphTrait
         }
     }
 
-    public function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier
+    public function getCurrentContentStreamId(): ?ContentStreamId
     {
-        return $this->contentStreamIdentifier;
+        return $this->contentStreamId;
     }
 
     public function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint
@@ -128,7 +128,7 @@ trait CurrentSubgraphTrait
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             assert($contentGraph instanceof ContentGraphInterface);
             $currentSubgraphs[$adapterName] = $contentGraph->getSubgraph(
-                $this->contentStreamIdentifier,
+                $this->contentStreamId,
                 $this->dimensionSpacePoint,
                 $this->visibilityConstraints
             );

@@ -58,10 +58,10 @@ trait RootNodeCreation
         CreateRootNodeAggregateWithNode $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireProjectedNodeAggregateToNotExist(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
         $nodeType = $this->requireNodeType($command->nodeTypeName);
@@ -75,8 +75,8 @@ trait RootNodeCreation
             )
         );
 
-        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            $command->contentStreamIdentifier
+        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
+            $command->contentStreamId
         );
         return new EventsToPublish(
             $contentStreamEventStream->getEventStreamName(),
@@ -93,12 +93,12 @@ trait RootNodeCreation
         DimensionSpacePointSet $coveredDimensionSpacePoints
     ): RootNodeAggregateWithNodeWasCreated {
         return new RootNodeAggregateWithNodeWasCreated(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $command->nodeTypeName,
             $coveredDimensionSpacePoints,
             NodeAggregateClassification::CLASSIFICATION_ROOT,
-            $command->initiatingUserIdentifier
+            $command->initiatingUserId
         );
     }
 }

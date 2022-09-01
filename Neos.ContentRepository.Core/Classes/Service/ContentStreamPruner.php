@@ -8,8 +8,8 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\EventStore\EventStoreInterface;
 
@@ -35,7 +35,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *       To remove the deleted Content Streams,
      *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
-     * @return iterable<int,ContentStreamIdentifier> the identifiers of the removed content streams
+     * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
      */
     public function prune(): iterable
     {
@@ -45,7 +45,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $this->lastCommandResult = $this->contentRepository->handle(
                 new RemoveContentStream(
                     $contentStream,
-                    UserIdentifier::forSystemUser()
+                    UserId::forSystemUser()
                 )
             );
         }
@@ -62,7 +62,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *
      *   - Otherwise, we cannot replay the other content streams correctly (if the base content streams are missing).
      *
-     * @return iterable<int,ContentStreamIdentifier> the identifiers of the removed content streams
+     * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
      */
     public function pruneRemovedFromEventStream(): iterable
     {
@@ -70,7 +70,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             ->findUnusedAndRemovedContentStreams();
 
         foreach ($removedContentStreams as $removedContentStream) {
-            $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier($removedContentStream)
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($removedContentStream)
                 ->getEventStreamName();
             $this->eventStore->deleteStream($streamName);
         }

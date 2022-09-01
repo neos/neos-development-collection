@@ -32,7 +32,7 @@ class ContentDimensionTest extends UnitTestCase
     {
         parent::setUp();
 
-        $dimensionIdentifier = new Dimension\ContentDimensionIdentifier('market');
+        $dimensionIdentifier = new Dimension\ContentDimensionId('market');
         $values['world'] = new Dimension\ContentDimensionValue(
             'world',
             new Dimension\ContentDimensionValueSpecializationDepth(0),
@@ -69,7 +69,7 @@ class ContentDimensionTest extends UnitTestCase
     {
         $this->expectException(ContentDimensionValuesAreInvalid::class);
         new Dimension\ContentDimension(
-            new Dimension\ContentDimensionIdentifier('dimension'),
+            new Dimension\ContentDimensionId('dimension'),
             new Dimension\ContentDimensionValues([]),
             Dimension\ContentDimensionValueVariationEdges::createEmpty()
         );

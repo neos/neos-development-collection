@@ -30,51 +30,51 @@ Feature: Tethered Nodes integrity violations
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                                                                                  |
+      | contentStreamId     | "cs-identifier"                                                                                                                                                                                           |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                                                                                             |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier    | "system-user"                                                                                                                                                                                             |
+      | initiatingUserId    | "system-user"                                                                                                                                                                                             |
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
       | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
     # We add a tethered child node to provide for test cases for node aggregates of that classification
     # Node /document/tethered-node
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nodewyn-tetherton"                       |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "nodewyn-tetherton"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Tethered" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}         |
       | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]       |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
+      | parentNodeAggregateId | "sir-david-nodenborough"                  |
       | nodeName                      | "tethered-node"                           |
       | nodeAggregateClassification   | "tethered"                                |
     # We add a tethered grandchild node to provide for test cases that this works recursively
     # Node /document/tethered-node/tethered-leaf
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                         |
-      | contentStreamIdentifier       | "cs-identifier"                               |
-      | nodeAggregateIdentifier       | "nodimer-tetherton"                           |
+      | contentStreamId       | "cs-identifier"                               |
+      | nodeAggregateId       | "nodimer-tetherton"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:TetheredLeaf" |
       | originDimensionSpacePoint     | {"market":"CH", "language":"gsw"}             |
       | coveredDimensionSpacePoints   | [{"market":"CH", "language":"gsw"}]           |
-      | parentNodeAggregateIdentifier | "nodewyn-tetherton"                           |
+      | parentNodeAggregateId | "nodewyn-tetherton"                           |
       | nodeName                      | "tethered-leaf"                               |
       | nodeAggregateClassification   | "tethered"                                    |
     And the graph projection is fully up to date
@@ -89,7 +89,7 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:Tethered'
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                  | nodeAggregateIdentifier |
+      | Type                  | nodeAggregateId |
       | TETHERED_NODE_MISSING | sir-david-nodenborough  |
 
 
@@ -131,7 +131,7 @@ Feature: Tethered Nodes integrity violations
         'tethered-node': ~
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                     | nodeAggregateIdentifier |
+      | Type                     | nodeAggregateId |
       | DISALLOWED_TETHERED_NODE | nodewyn-tetherton       |
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
@@ -148,6 +148,6 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                     | nodeAggregateIdentifier |
+      | Type                     | nodeAggregateId |
       | TETHERED_NODE_TYPE_WRONG | nodewyn-tetherton       |
 

@@ -18,7 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
@@ -115,7 +115,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $this->siteRepository->add($site);
         $this->persistenceManager->persistAll();
 
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
             $site->getConfiguration()['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository')
         );
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);

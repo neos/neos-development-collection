@@ -37,7 +37,7 @@ final class ProjectionIntegrityViolationDetectionRunner implements ContentReposi
         $result->merge($this->projectionIntegrityViolationDetector->hierarchyIntegrityIsProvided());
         $result->merge($this->projectionIntegrityViolationDetector->tetheredNodesAreNamed());
         $result->merge($this->projectionIntegrityViolationDetector->allNodesAreConnectedToARootNodePerSubgraph());
-        $result->merge($this->projectionIntegrityViolationDetector->nodeAggregateIdentifiersAreUniquePerSubgraph());
+        $result->merge($this->projectionIntegrityViolationDetector->nodeAggregateIdsAreUniquePerSubgraph());
         $result->merge($this->projectionIntegrityViolationDetector->allNodesHaveAtMostOneParentPerSubgraph());
         $result->merge($this->projectionIntegrityViolationDetector
             ->nodeAggregatesAreConsistentlyTypedPerContentStream());

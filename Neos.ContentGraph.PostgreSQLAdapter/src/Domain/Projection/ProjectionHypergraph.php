@@ -20,8 +20,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHyperg
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
@@ -64,9 +64,9 @@ final class ProjectionHypergraph
      * @throws \Exception
      */
     public function findNodeRecordByCoverage(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): ?NodeRecord {
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
@@ -81,9 +81,9 @@ final class ProjectionHypergraph
      * @throws \Exception
      */
     public function findNodeRecordByOrigin(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): ?NodeRecord {
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
@@ -100,9 +100,9 @@ final class ProjectionHypergraph
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findParentNodeRecordByOrigin(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateIdentifier
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT p.*
@@ -154,9 +154,9 @@ final class ProjectionHypergraph
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findParentNodeRecordByCoverage(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateIdentifier
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT p.*
@@ -185,8 +185,8 @@ final class ProjectionHypergraph
      * @throws \Exception
      */
     public function findNodeRecordsForNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier
     ): array {
         $query = ProjectionHypergraphQuery::create($contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
@@ -204,7 +204,7 @@ final class ProjectionHypergraph
      * @throws DBALException
      */
     public function findIngoingHierarchyHyperrelationRecords(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         NodeRelationAnchorPoint $childNodeAnchor,
         ?DimensionSpacePointSet $affectedDimensionSpacePoints = null
     ): array {
@@ -239,7 +239,7 @@ final class ProjectionHypergraph
      * @throws DBALException
      */
     public function findOutgoingHierarchyHyperrelationRecords(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         NodeRelationAnchorPoint $parentNodeAnchor,
         ?DimensionSpacePointSet $affectedDimensionSpacePoints = null
     ): array {
@@ -298,7 +298,7 @@ final class ProjectionHypergraph
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordByParentNodeAnchor(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $parentNodeAnchor
     ): ?HierarchyHyperrelationRecord {
@@ -325,7 +325,7 @@ final class ProjectionHypergraph
      * @throws DBALException
      */
     public function findHierarchyHyperrelationRecordByChildNodeAnchor(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $childNodeAnchor
     ): ?HierarchyHyperrelationRecord {
@@ -378,9 +378,9 @@ final class ProjectionHypergraph
      * @throws DBALException
      */
     public function findChildHierarchyHyperrelationRecord(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
@@ -402,14 +402,14 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
      * @param NodeRelationAnchorPoint $nodeRelationAnchorPoint
      * @return DimensionSpacePointSet
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findCoverageByNodeRelationAnchorPoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
     ): DimensionSpacePointSet {
         $query = /** @lang PostgreSQL */
@@ -432,15 +432,15 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
+     * @param NodeAggregateId $nodeAggregateIdentifier
      * @return DimensionSpacePointSet
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findCoverageByNodeAggregateIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier
     ): DimensionSpacePointSet {
         $query = /** @lang PostgreSQL */
             'SELECT h.dimensionspacepoint
@@ -462,17 +462,17 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePoints
-     * @param NodeAggregateIdentifier $originNodeAggregateIdentifier
+     * @param NodeAggregateId $originNodeAggregateIdentifier
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findOutgoingRestrictionRelations(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePoints,
-        NodeAggregateIdentifier $originNodeAggregateIdentifier
+        NodeAggregateId $originNodeAggregateIdentifier
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
@@ -507,9 +507,9 @@ final class ProjectionHypergraph
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findIngoingRestrictionRelations(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
@@ -534,17 +534,17 @@ final class ProjectionHypergraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
      * @param DimensionSpacePointSet $dimensionSpacePoints
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateIdentifier
      * @return array|NodeAggregateIdentifiers[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findDescendantNodeAggregateIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePointSet $dimensionSpacePoints,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): array {
         $query = /** @lang PostgreSQL */ '
             -- ProjectionHypergraph::findDescendantNodeAggregateIdentifiers
@@ -598,7 +598,7 @@ final class ProjectionHypergraph
         foreach ($rows as $row) {
             $nodeAggregateIdentifiersByDimensionSpacePoint[$row['dimensionspacepointhash']]
                 [$row['nodeaggregateidentifier']]
-                = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
+                = NodeAggregateId::fromString($row['nodeaggregateidentifier']);
         }
 
         return array_map(function (array $nodeAggregateIdentifiers) {

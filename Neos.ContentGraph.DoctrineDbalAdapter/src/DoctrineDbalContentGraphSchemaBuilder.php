@@ -34,7 +34,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('relationanchorpoint', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('nodeaggregateidentifier', Types::STRING)
+        $table->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(false);
         $table->addColumn('origindimensionspacepoint', Types::TEXT)
@@ -52,7 +52,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setNotnull(true);
         $table
             ->setPrimaryKey(['relationanchorpoint'])
-            ->addIndex(['nodeaggregateidentifier'], 'NODE_AGGREGATE_IDENTIFIER')
+            ->addIndex(['nodeaggregateid'], 'NODE_AGGREGATE_ID')
             ->addIndex(['nodetypename'], 'NODE_TYPE_NAME');
     }
 
@@ -64,7 +64,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setNotnull(false);
         $table->addColumn('position', Types::INTEGER)
             ->setNotnull(true);
-        $table->addColumn('contentstreamidentifier', Types::STRING)
+        $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepoint', Types::TEXT)
@@ -80,9 +80,9 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setNotnull(true);
         $table
             ->addIndex(['childnodeanchor'], 'CHILDNODEANCHOR')
-            ->addIndex(['contentstreamidentifier'], 'CONTENTSTREAMIDENTIFIER')
+            ->addIndex(['contentstreamid'], 'CONTENTSTREAMID')
             ->addIndex(['parentnodeanchor'], 'PARENTNODEANCHOR')
-            ->addIndex(['contentstreamidentifier', 'dimensionspacepointhash'], 'SUBGRAPH_IDENTIFIER');
+            ->addIndex(['contentstreamid', 'dimensionspacepointhash'], 'SUBGRAPH_ID');
     }
 
     private function createReferenceRelationTable(Schema $schema): void
@@ -98,7 +98,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setNotnull(true);
         $table->addColumn('properties', Types::TEXT)
             ->setNotnull(false);
-        $table->addColumn('destinationnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('destinationnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
 
@@ -109,25 +109,25 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createRestrictionRelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
-        $table->addColumn('contentstreamidentifier', Types::STRING)
+        $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('originnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('originnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateidentifier', Types::STRING)
+        $table->addColumn('affectednodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
 
         $table
             ->setPrimaryKey([
-                'contentstreamidentifier',
+                'contentstreamid',
                 'dimensionspacepointhash',
-                'originnodeaggregateidentifier',
-                'affectednodeaggregateidentifier'
+                'originnodeaggregateid',
+                'affectednodeaggregateid'
             ]);
     }
 }

@@ -19,8 +19,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelation
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -37,8 +37,8 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
      * @param array<int,string>|null $fieldsToFetch
      */
     public static function create(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $parentNodeAggregateIdentifier,
         string $tableNamePrefix,
         ?array $fieldsToFetch = null
     ): self {

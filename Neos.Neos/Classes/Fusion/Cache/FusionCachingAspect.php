@@ -40,7 +40,7 @@ class FusionCachingAspect
     {
         /* @var Node $currentSiteNode */
         $currentSiteNode = $joinPoint->getMethodArgument('startNode');
-        $cacheIdentifier = $currentSiteNode->nodeAggregateIdentifier->jsonSerialize();
+        $cacheIdentifier = $currentSiteNode->nodeAggregateId->jsonSerialize();
 
         if ($this->fusionCache->has($cacheIdentifier)) {
             $fusionObjectTree = $this->fusionCache->get($cacheIdentifier);

@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\NodeDataLoader;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
@@ -57,7 +57,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly EventNormalizer $eventNormalizer,
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentStreamIdentifier $contentStreamIdentifier,
+        private readonly ContentStreamId $contentStreamIdentifier,
     )
     {
     }

@@ -81,34 +81,34 @@ abstract class AbstractDimensionSpacePoint implements
      */
     final public function isDirectVariantInDimension(
         self $other,
-        Dimension\ContentDimensionIdentifier $contentDimensionIdentifier
+        Dimension\ContentDimensionId $contentDimensionId
     ): bool {
-        if (!$this->hasCoordinate($contentDimensionIdentifier) || !$other->hasCoordinate($contentDimensionIdentifier)) {
+        if (!$this->hasCoordinate($contentDimensionId) || !$other->hasCoordinate($contentDimensionId)) {
             return false;
         }
         if (
-            $this->coordinates[(string)$contentDimensionIdentifier]
-            === $other->coordinates[(string)$contentDimensionIdentifier]
+            $this->coordinates[(string)$contentDimensionId]
+            === $other->coordinates[(string)$contentDimensionId]
         ) {
             return false;
         }
 
         $theseCoordinates = $this->coordinates;
         $otherCoordinates = $other->coordinates;
-        unset($theseCoordinates[(string)$contentDimensionIdentifier]);
-        unset($otherCoordinates[(string)$contentDimensionIdentifier]);
+        unset($theseCoordinates[(string)$contentDimensionId]);
+        unset($otherCoordinates[(string)$contentDimensionId]);
 
         return $theseCoordinates === $otherCoordinates;
     }
 
-    final public function hasCoordinate(Dimension\ContentDimensionIdentifier $dimensionIdentifier): bool
+    final public function hasCoordinate(Dimension\ContentDimensionId $dimensionId): bool
     {
-        return isset($this->coordinates[(string)$dimensionIdentifier]);
+        return isset($this->coordinates[(string)$dimensionId]);
     }
 
-    final public function getCoordinate(Dimension\ContentDimensionIdentifier $dimensionIdentifier): ?string
+    final public function getCoordinate(Dimension\ContentDimensionId $dimensionId): ?string
     {
-        return $this->coordinates[(string)$dimensionIdentifier] ?? null;
+        return $this->coordinates[(string)$dimensionId] ?? null;
     }
 
     /**

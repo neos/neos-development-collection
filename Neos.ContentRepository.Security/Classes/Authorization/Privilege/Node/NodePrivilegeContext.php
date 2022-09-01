@@ -11,9 +11,9 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Dimension\ContentDimensionIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -61,7 +61,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with($nodePathOrResult, (string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateIdentifier));
+        return str_starts_with($nodePathOrResult, (string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateId));
     }
 
     /**
@@ -80,7 +80,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with((string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateIdentifier), $nodePathOrResult);
+        return str_starts_with((string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateId), $nodePathOrResult);
     }
 
     /**
@@ -133,10 +133,10 @@ class NodePrivilegeContext
      */
     public function isInWorkspace(array $workspaceNames): bool
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($this->node->subgraphIdentity->contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($this->node->subgraphIdentity->contentRepositoryId);
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamIdentifier(
-            $this->node->subgraphIdentity->contentStreamIdentifier
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $this->node->subgraphIdentity->contentStreamId
         );
         return !is_null($workspace) && in_array((string)$workspace->workspaceName, $workspaceNames);
     }
@@ -161,7 +161,7 @@ class NodePrivilegeContext
 
         return in_array(
             $this->node->subgraphIdentity->dimensionSpacePoint->getCoordinate(
-                new ContentDimensionIdentifier($dimensionName)
+                new ContentDimensionId($dimensionName)
             ),
             $presets
         );
@@ -178,15 +178,15 @@ class NodePrivilegeContext
     protected function resolveNodePathOrResult(string $nodePathOrIdentifier): bool|string
     {
         try {
-            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodePathOrIdentifier);
-            if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateIdentifier)) {
+            $nodeAggregateIdentifier = NodeAggregateId::fromString($nodePathOrIdentifier);
+            if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateId)) {
                 return true;
             }
-            $otherNode = $this->getSubgraph()->findNodeByNodeAggregateIdentifier($nodeAggregateIdentifier);
+            $otherNode = $this->getSubgraph()->findNodeByNodeAggregateId($nodeAggregateIdentifier);
             if (is_null($otherNode)) {
                 return false;
             }
-            return $this->getSubgraph()->findNodePath($otherNode->nodeAggregateIdentifier) . '/';
+            return $this->getSubgraph()->findNodePath($otherNode->nodeAggregateId) . '/';
         } catch (\InvalidArgumentException $e) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }

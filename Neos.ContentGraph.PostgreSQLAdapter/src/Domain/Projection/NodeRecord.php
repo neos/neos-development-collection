@@ -17,7 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -32,7 +32,7 @@ final class NodeRecord
 {
     public NodeRelationAnchorPoint $relationAnchorPoint;
 
-    public NodeAggregateIdentifier $nodeAggregateIdentifier;
+    public NodeAggregateId $nodeAggregateIdentifier;
 
     public OriginDimensionSpacePoint $originDimensionSpacePoint;
 
@@ -48,7 +48,7 @@ final class NodeRecord
 
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         string $originDimensionSpacePointHash,
         SerializedPropertyValues $properties,
@@ -74,7 +74,7 @@ final class NodeRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['origindimensionspacepoint']),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),

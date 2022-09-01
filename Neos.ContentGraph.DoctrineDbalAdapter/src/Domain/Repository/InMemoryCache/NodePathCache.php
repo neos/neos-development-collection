@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 
 /**
- * Node Identifier -> Node Path cache
+ * Node ID -> Node Path cache
  *
  * @internal
  */
@@ -36,30 +36,30 @@ final class NodePathCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function contains(NodeAggregateIdentifier $nodeAggregateIdentifier): bool
+    public function contains(NodeAggregateId $nodeAggregateId): bool
     {
         if ($this->isEnabled === false) {
             return false;
         }
-        $key = (string)$nodeAggregateIdentifier;
+        $key = (string)$nodeAggregateId;
         return isset($this->nodePaths[$key]);
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, NodePath $nodePath): void
+    public function add(NodeAggregateId $nodeAggregateId, NodePath $nodePath): void
     {
         if ($this->isEnabled === false) {
             return;
         }
-        $key = (string)$nodeAggregateIdentifier;
+        $key = (string)$nodeAggregateId;
         $this->nodePaths[$key] = $nodePath;
     }
 
-    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodePath
+    public function get(NodeAggregateId $nodeAggregateId): ?NodePath
     {
         if ($this->isEnabled === false) {
             return null;
         }
-        $key = (string)$nodeAggregateIdentifier;
+        $key = (string)$nodeAggregateId;
 
         return $this->nodePaths[$key] ?? null;
     }

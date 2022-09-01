@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Controller;
 
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Log\ThrowableStorageInterface;
@@ -156,12 +156,12 @@ abstract class AbstractServiceController extends ActionController
         return $exceptionData;
     }
 
-    protected function getCurrentUserIdentifier(): ?UserIdentifier
+    protected function getCurrentUserIdentifier(): ?UserId
     {
         $user = $this->domainUserService->getCurrentUser();
 
         return $user
-            ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($user))
+            ? UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
             : null;
     }
 }

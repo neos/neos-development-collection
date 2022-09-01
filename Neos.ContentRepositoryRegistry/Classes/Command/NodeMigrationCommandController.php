@@ -17,7 +17,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Migration\Factory\MigrationFactory;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
@@ -53,7 +53,7 @@ class NodeMigrationCommandController extends CommandController
      */
     public function migrateCommand(string $version, $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default')
     {
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString($contentRepositoryIdentifier);
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
         try {
             $migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version);

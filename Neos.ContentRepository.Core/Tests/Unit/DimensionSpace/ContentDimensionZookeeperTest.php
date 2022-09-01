@@ -41,8 +41,8 @@ class ContentDimensionZookeeperTest extends UnitTestCase
     public function getAllowedCombinationsCorrectlyDeterminesAllowedCombinations()
     {
         $allowedCombinations = $this->subject->getAllowedCombinations();
-        $marketIdentifier = new Dimension\ContentDimensionIdentifier('market');
-        $languageIdentifier = new Dimension\ContentDimensionIdentifier('language');
+        $marketIdentifier = new Dimension\ContentDimensionId('market');
+        $languageIdentifier = new Dimension\ContentDimensionId('language');
 
         $this->assertSame(6, count($allowedCombinations));
         $this->assertContains([

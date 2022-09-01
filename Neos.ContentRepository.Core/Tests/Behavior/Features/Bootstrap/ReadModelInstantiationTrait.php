@@ -15,8 +15,8 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -29,7 +29,7 @@ use PHPUnit\Framework\Assert;
  */
 trait ReadModelInstantiationTrait
 {
-    protected ?ContentStreamIdentifier $contentStreamIdentifier = null;
+    protected ?ContentStreamId $contentStreamId = null;
 
     protected ?DimensionSpacePoint $dimensionSpacePoint = null;
 
@@ -45,12 +45,12 @@ trait ReadModelInstantiationTrait
 
     /**
      * @When /^the read model with node aggregate identifier "([^"]*)" is instantiated and exceptions are caught$/
-     * @param string $rawNodeAggregateIdentifier
+     * @param string $rawNodeAggregateId
      */
-    public function theReadModelWithNodeAggregateIdentifierXIsInstantiatedAndExceptionsAreCaught(string $rawNodeAggregateIdentifier): void
+    public function theReadModelWithNodeAggregateIdXIsInstantiatedAndExceptionsAreCaught(string $rawNodeAggregateId): void
     {
         try {
-            $this->theReadModelWithNodeAggregateIdentifierXIsInstantiated($rawNodeAggregateIdentifier);
+            $this->theReadModelWithNodeAggregateIdXIsInstantiated($rawNodeAggregateId);
         } catch (\Exception $exception) {
             $this->lastInstantiationException = $exception;
         }
@@ -58,19 +58,19 @@ trait ReadModelInstantiationTrait
 
     /**
      * @When /^the read model with node aggregate identifier "([^"]*)" is instantiated$/
-     * @param string $rawNodeAggregateIdentifier
+     * @param string $rawNodeAggregateId
      */
-    public function theReadModelWithNodeAggregateIdentifierXIsInstantiated(string $rawNodeAggregateIdentifier): void
+    public function theReadModelWithNodeAggregateIdXIsInstantiated(string $rawNodeAggregateId): void
     {
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             assert($contentGraph instanceof ContentGraphInterface);
             $subgraph = $contentGraph->getSubgraph(
-                $this->contentStreamIdentifier,
+                $this->contentStreamId,
                 $this->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
 
-            $node = $subgraph->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier));
+            $node = $subgraph->findNodeByNodeAggregateId(NodeAggregateId::fromString($rawNodeAggregateId));
 
             $this->currentReadModel = $node;
         }

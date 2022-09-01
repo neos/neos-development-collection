@@ -18,7 +18,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The copy on write feature set for the hypergraph projector
@@ -31,7 +31,7 @@ trait CopyOnWrite
      * @throws \Throwable
      */
     public function copyOnWrite(
-        ContentStreamIdentifier $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamIdentifier,
         NodeRecord $originNode,
         callable $preprocessor
     ): NodeRelationAnchorPoint {
@@ -76,7 +76,7 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function reassignIngoingHierarchyRelations(
-        ContentStreamIdentifier $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamIdentifier,
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
@@ -99,7 +99,7 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function reassignOutgoingHierarchyRelations(
-        ContentStreamIdentifier $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamIdentifier,
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {

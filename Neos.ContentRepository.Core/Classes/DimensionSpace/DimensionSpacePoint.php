@@ -87,10 +87,10 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
     /**
      * Varies a dimension space point in a single coordinate
      */
-    final public function vary(Dimension\ContentDimensionIdentifier $dimensionIdentifier, string $value): self
+    final public function vary(Dimension\ContentDimensionId $dimensionId, string $value): self
     {
         $variedCoordinates = $this->coordinates;
-        $variedCoordinates[(string)$dimensionIdentifier] = $value;
+        $variedCoordinates[(string)$dimensionId] = $value;
 
         return self::instance($variedCoordinates);
     }

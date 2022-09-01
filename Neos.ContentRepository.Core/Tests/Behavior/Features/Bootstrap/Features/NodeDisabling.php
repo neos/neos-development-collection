@@ -15,14 +15,14 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -32,11 +32,11 @@ trait NodeDisabling
 {
     abstract protected function getContentRepository(): ContentRepository;
 
-    abstract protected function getCurrentContentStreamIdentifier(): ?ContentStreamIdentifier;
+    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserIdentifier(): ?UserIdentifier;
+    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -50,22 +50,22 @@ trait NodeDisabling
     public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->getCurrentContentStreamIdentifier();
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->getCurrentDimensionSpacePoint();
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new DisableNodeAggregate(
-            $contentStreamIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            $contentStreamId,
+            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserIdentifier
+            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -92,14 +92,14 @@ trait NodeDisabling
     public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();
+        if (!isset($eventPayload['initiatingUserId'])) {
+            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
-        if (!isset($eventPayload['contentStreamIdentifier'])) {
-            $eventPayload['contentStreamIdentifier'] = (string)$this->getCurrentContentStreamIdentifier();
+        if (!isset($eventPayload['contentStreamId'])) {
+            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier'])
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            ContentStreamId::fromString($eventPayload['contentStreamId'])
         );
 
         $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
@@ -114,14 +114,14 @@ trait NodeDisabling
     public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserIdentifier'])) {
-            $eventPayload['initiatingUserIdentifier'] = (string)$this->getCurrentUserIdentifier();
+        if (!isset($eventPayload['initiatingUserId'])) {
+            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
-        if (!isset($eventPayload['contentStreamIdentifier'])) {
-            $eventPayload['contentStreamIdentifier'] = (string)$this->getCurrentContentStreamIdentifier();
+        if (!isset($eventPayload['contentStreamId'])) {
+            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        $streamName = ContentStreamEventStreamName::fromContentStreamIdentifier(
-            ContentStreamIdentifier::fromString($eventPayload['contentStreamIdentifier'])
+        $streamName = ContentStreamEventStreamName::fromContentStreamId(
+            ContentStreamId::fromString($eventPayload['contentStreamId'])
         );
 
         $this->publishEvent('NodeAggregateWasEnabled', $streamName->getEventStreamName(), $eventPayload);
@@ -136,22 +136,22 @@ trait NodeDisabling
     public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamIdentifier = isset($commandArguments['contentStreamIdentifier'])
-            ? ContentStreamIdentifier::fromString($commandArguments['contentStreamIdentifier'])
-            : $this->getCurrentContentStreamIdentifier();
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->getCurrentDimensionSpacePoint();
-        $initiatingUserIdentifier = isset($commandArguments['initiatingUserIdentifier'])
-            ? UserIdentifier::fromString($commandArguments['initiatingUserIdentifier'])
-            : $this->getCurrentUserIdentifier();
+        $initiatingUserId = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
 
         $command = new EnableNodeAggregate(
-            $contentStreamIdentifier,
-            NodeAggregateIdentifier::fromString($commandArguments['nodeAggregateIdentifier']),
+            $contentStreamId,
+            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserIdentifier
+            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);

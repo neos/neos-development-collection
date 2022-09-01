@@ -15,18 +15,18 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
- * Parent Node Identifier + Node Name => Child Node
+ * Parent Node ID + Node Name => Child Node
  *
  * @internal
  */
-final class NamedChildNodeByNodeIdentifierCache
+final class NamedChildNodeByNodeIdCache
 {
     /**
-     * first level: Parent Node Identifier
+     * first level: Parent Node ID
      * Second Level: Node Name
      * Value: Node
      * @var array<string,array<string,Node>>
@@ -41,7 +41,7 @@ final class NamedChildNodeByNodeIdentifierCache
     }
 
     public function add(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         ?NodeName $nodeName,
         Node $node
     ): void {
@@ -53,24 +53,24 @@ final class NamedChildNodeByNodeIdentifierCache
             return;
         }
 
-        $this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName] = $node;
+        $this->nodes[(string)$parentNodeAggregateId][(string)$nodeName] = $node;
     }
 
-    public function contains(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): bool
+    public function contains(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): bool
     {
         if ($this->isEnabled === false) {
             return false;
         }
 
-        return isset($this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName]);
+        return isset($this->nodes[(string)$parentNodeAggregateId][(string)$nodeName]);
     }
 
-    public function get(NodeAggregateIdentifier $parentNodeAggregateIdentifier, NodeName $nodeName): ?Node
+    public function get(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         if ($this->isEnabled === false) {
             return null;
         }
 
-        return $this->nodes[(string)$parentNodeAggregateIdentifier][(string)$nodeName] ?? null;
+        return $this->nodes[(string)$parentNodeAggregateId][(string)$nodeName] ?? null;
     }
 }

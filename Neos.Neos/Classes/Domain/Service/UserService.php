@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -270,12 +270,12 @@ class UserService
         return $user;
     }
 
-    public function getCurrentUserIdentifier(): ?UserIdentifier
+    public function getCurrentUserIdentifier(): ?UserId
     {
         $currentUser = $this->getCurrentUser();
 
         return $currentUser
-            ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($currentUser))
+            ? UserId::fromString($this->persistenceManager->getIdentifierByObject($currentUser))
             : null;
     }
 

@@ -16,7 +16,7 @@ namespace Neos\Neos\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -106,7 +106,7 @@ class LinkHelper implements ProtectedContextAwareInterface
             return null;
         }
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $targetNode->subgraphIdentity->contentRepositoryIdentifier
+            $targetNode->subgraphIdentity->contentRepositoryId
         );
         $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {
@@ -119,7 +119,7 @@ class LinkHelper implements ProtectedContextAwareInterface
         ) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',
-                $targetNode->nodeAggregateIdentifier,
+                $targetNode->nodeAggregateId,
                 $e->getMessage()
             ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
@@ -167,7 +167,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                         );
                     }
                     return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                        ->findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier::fromString($matches[2]));
+                        ->findNodeByNodeAggregateId(NodeAggregateId::fromString($matches[2]));
                 case 'asset':
                     /** @var AssetInterface|null $asset */
                     /** @noinspection OneTimeUseVariablesInspection */

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Exception;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
@@ -26,11 +26,11 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \DomainException
 {
     public static function butWasSupposedTo(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): self {
         return new self(
-            'Node aggregate "' . $nodeAggregateIdentifier
+            'Node aggregate "' . $nodeAggregateId
                 . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
             1554902613
         );

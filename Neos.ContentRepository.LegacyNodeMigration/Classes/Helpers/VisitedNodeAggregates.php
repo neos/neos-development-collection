@@ -5,7 +5,7 @@ namespace Neos\ContentRepository\LegacyNodeMigration\Helpers;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
@@ -28,12 +28,12 @@ final class VisitedNodeAggregates
      */
     private array $byNodeAggregateIdentifier = [];
 
-    public function addRootNode(NodeAggregateIdentifier $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, NodePath $nodePath, DimensionSpacePointSet $allowedDimensionSubspace): void
+    public function addRootNode(NodeAggregateId $nodeAggregateIdentifier, NodeTypeName $nodeTypeName, NodePath $nodePath, DimensionSpacePointSet $allowedDimensionSubspace): void
     {
-        $this->add($nodeAggregateIdentifier, $allowedDimensionSubspace, $nodeTypeName, $nodePath, NodeAggregateIdentifier::fromString('00000000-0000-0000-0000-000000000000'));
+        $this->add($nodeAggregateIdentifier, $allowedDimensionSubspace, $nodeTypeName, $nodePath, NodeAggregateId::fromString('00000000-0000-0000-0000-000000000000'));
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, DimensionSpacePointSet $coveredDimensionSpacePoints, NodeTypeName $nodeTypeName, NodePath $nodePath, NodeAggregateIdentifier $parentNodeAggregateIdentifier): void
+    public function add(NodeAggregateId $nodeAggregateIdentifier, DimensionSpacePointSet $coveredDimensionSpacePoints, NodeTypeName $nodeTypeName, NodePath $nodePath, NodeAggregateId $parentNodeAggregateIdentifier): void
     {
         $visitedNodeAggregate = $this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()] ?? new VisitedNodeAggregate($nodeAggregateIdentifier, $nodeTypeName);
         if (!$nodeTypeName->equals($visitedNodeAggregate->nodeTypeName)) {
@@ -50,12 +50,12 @@ final class VisitedNodeAggregates
         $this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()] = $visitedNodeAggregate;
     }
 
-    public function containsNodeAggregate(NodeAggregateIdentifier $nodeAggregateIdentifier): bool
+    public function containsNodeAggregate(NodeAggregateId $nodeAggregateIdentifier): bool
     {
         return isset($this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()]);
     }
 
-    public function getByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): VisitedNodeAggregate
+    public function getByNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): VisitedNodeAggregate
     {
         if (!isset($this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()])) {
             throw new \InvalidArgumentException(sprintf('Node aggregate with id "%s" has not been visited before', $nodeAggregateIdentifier), 1655912733);
@@ -63,7 +63,7 @@ final class VisitedNodeAggregates
         return $this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()];
     }
 
-    public function alreadyVisitedOriginDimensionSpacePoints(NodeAggregateIdentifier $nodeAggregateIdentifier): OriginDimensionSpacePointSet
+    public function alreadyVisitedOriginDimensionSpacePoints(NodeAggregateId $nodeAggregateIdentifier): OriginDimensionSpacePointSet
     {
         return isset($this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()]) ? $this->byNodeAggregateIdentifier[$nodeAggregateIdentifier->getValue()]->getOriginDimensionSpacePoints() : OriginDimensionSpacePointSet::fromArray([]);
     }

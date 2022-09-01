@@ -19,10 +19,10 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -35,9 +35,9 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdentifiersByNodePaths;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /** @codingStandardsIgnoreStart */
@@ -50,16 +50,16 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChan
 trait NodeTypeChange
 {
     abstract protected function requireProjectedNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         ContentRepository $contentRepository
     ): NodeAggregate;
 
     abstract protected function requireConstraintsImposedByAncestorsAreMet(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeType $nodeType,
         ?NodeName $nodeName,
-        array $parentNodeAggregateIdentifiers,
+        array $parentNodeAggregateIds,
         ContentRepository $contentRepository
     ): void;
 
@@ -87,19 +87,19 @@ trait NodeTypeChange
         NodeType $nodeType
     ): bool;
 
-    abstract protected static function populateNodeAggregateIdentifiers(
+    abstract protected static function populateNodeAggregateIds(
         NodeType $nodeType,
-        NodeAggregateIdentifiersByNodePaths $nodeAggregateIdentifiers,
+        NodeAggregateIdsByNodePaths $nodeAggregateIds,
         NodePath $childPath = null
-    ): NodeAggregateIdentifiersByNodePaths;
+    ): NodeAggregateIdsByNodePaths;
 
     abstract protected function createEventsForMissingTetheredNode(
         NodeAggregate $parentNodeAggregate,
         Node $parentNode,
         NodeName $tetheredNodeName,
-        NodeAggregateIdentifier $tetheredNodeAggregateIdentifier,
+        NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
-        UserIdentifier $initiatingUserIdentifier,
+        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events;
 
@@ -117,11 +117,11 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $this->requireContentStreamToExist($command->contentStreamIdentifier, $contentRepository);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
+            $command->contentStreamId,
+            $command->nodeAggregateId,
             $contentRepository
         );
 
@@ -132,15 +132,16 @@ trait NodeTypeChange
 
         // the new node type must be allowed at this position in the tree
         $parentNodeAggregates = $contentRepository->getContentGraph()->findParentNodeAggregates(
-            $nodeAggregate->contentStreamIdentifier,
-            $nodeAggregate->nodeAggregateIdentifier
+            $nodeAggregate->contentStreamId,
+            $nodeAggregate->nodeAggregateId
         );
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
+            assert($parentNodeAggregate instanceof NodeAggregate);
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamIdentifier,
+                $command->contentStreamId,
                 $newNodeType,
                 $nodeAggregate->nodeName,
-                [$parentNodeAggregate->nodeAggregateIdentifier],
+                [$parentNodeAggregate->nodeAggregateId],
                 $contentRepository
             );
         }
@@ -156,21 +157,21 @@ trait NodeTypeChange
         /**************
          * Preparation - make the command fully deterministic in case of rebase
          **************/
-        $descendantNodeAggregateIdentifiers = static::populateNodeAggregateIdentifiers(
+        $descendantNodeAggregateIds = static::populateNodeAggregateIds(
             $newNodeType,
-            $command->tetheredDescendantNodeAggregateIdentifiers
+            $command->tetheredDescendantNodeAggregateIds
         );
-        // Write the auto-created descendant node aggregate identifiers back to the command;
+        // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
-        $command = $command->withTetheredDescendantNodeAggregateIdentifiers($descendantNodeAggregateIdentifiers);
+        $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);
 
         /**************
          * Creating the events
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
-                $command->contentStreamIdentifier,
-                $command->nodeAggregateIdentifier,
+                $command->contentStreamId,
+                $command->nodeAggregateId,
                 $command->newNodeTypeName
             ),
         ];
@@ -180,13 +181,13 @@ trait NodeTypeChange
             array_push($events, ...iterator_to_array($this->deleteDisallowedNodesWhenChangingNodeType(
                 $nodeAggregate,
                 $newNodeType,
-                $command->initiatingUserIdentifier,
+                $command->initiatingUserId,
                 $contentRepository
             )));
             array_push($events, ...iterator_to_array($this->deleteObsoleteTetheredNodesWhenChangingNodeType(
                 $nodeAggregate,
                 $newNodeType,
-                $command->initiatingUserIdentifier,
+                $command->initiatingUserId,
                 $contentRepository
             )));
         }
@@ -199,25 +200,25 @@ trait NodeTypeChange
                 $tetheredNodeName = NodeName::fromString($serializedTetheredNodeName);
 
                 $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                    $node->subgraphIdentity->contentStreamIdentifier,
+                    $node->subgraphIdentity->contentStreamId,
                     $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                     VisibilityConstraints::withoutRestrictions()
                 );
                 $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-                    $node->nodeAggregateIdentifier,
+                    $node->nodeAggregateId,
                     $tetheredNodeName
                 );
                 if ($tetheredNode === null) {
-                    $tetheredNodeAggregateIdentifier = $command->tetheredDescendantNodeAggregateIdentifiers
-                        ?->getNodeAggregateIdentifier(NodePath::fromString((string)$tetheredNodeName))
-                        ?: NodeAggregateIdentifier::create();
+                    $tetheredNodeAggregateId = $command->tetheredDescendantNodeAggregateIds
+                        ?->getNodeAggregateId(NodePath::fromString((string)$tetheredNodeName))
+                        ?: NodeAggregateId::create();
                     array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
                         $nodeAggregate,
                         $node,
                         $tetheredNodeName,
-                        $tetheredNodeAggregateIdentifier,
+                        $tetheredNodeAggregateId,
                         $expectedTetheredNodeType,
-                        $command->initiatingUserIdentifier,
+                        $command->initiatingUserId,
                         $contentRepository
                     )));
                 }
@@ -225,8 +226,8 @@ trait NodeTypeChange
         }
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamIdentifier(
-                $command->contentStreamIdentifier
+            ContentStreamEventStreamName::fromContentStreamId(
+                $command->contentStreamId
             )->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
@@ -250,8 +251,8 @@ trait NodeTypeChange
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-            $nodeAggregate->contentStreamIdentifier,
-            $nodeAggregate->nodeAggregateIdentifier
+            $nodeAggregate->contentStreamId,
+            $nodeAggregate->nodeAggregateId
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
             /* @var $childNodeAggregate NodeAggregate */
@@ -269,8 +270,8 @@ trait NodeTypeChange
             // additionally, we need to look one level down to the grandchildren as well
             // - as it could happen that these are affected by our constraint checks as well.
             $grandchildNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-                $childNodeAggregate->contentStreamIdentifier,
-                $childNodeAggregate->nodeAggregateIdentifier
+                $childNodeAggregate->contentStreamId,
+                $childNodeAggregate->nodeAggregateId
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
                 /* @var $grandchildNodeAggregate NodeAggregate */
@@ -293,15 +294,15 @@ trait NodeTypeChange
     private function deleteDisallowedNodesWhenChangingNodeType(
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
-        UserIdentifier $initiatingUserIdentifier,
+        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $events = [];
         // if we have children, we need to check whether they are still allowed
         // after we changed the node type of the $nodeAggregate to $newNodeType.
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-            $nodeAggregate->contentStreamIdentifier,
-            $nodeAggregate->nodeAggregateIdentifier
+            $nodeAggregate->contentStreamId,
+            $nodeAggregate->nodeAggregateId
         );
         foreach ($childNodeAggregates as $childNodeAggregate) {
             /* @var $childNodeAggregate NodeAggregate */
@@ -326,7 +327,7 @@ trait NodeTypeChange
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
                     $childNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
-                    $initiatingUserIdentifier
+                    $initiatingUserId
                 );
             }
 
@@ -336,8 +337,8 @@ trait NodeTypeChange
             // additionally, we need to look one level down to the grandchildren as well
             // - as it could happen that these are affected by our constraint checks as well.
             $grandchildNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregates(
-                $childNodeAggregate->contentStreamIdentifier,
-                $childNodeAggregate->nodeAggregateIdentifier
+                $childNodeAggregate->contentStreamId,
+                $childNodeAggregate->nodeAggregateId
             );
             foreach ($grandchildNodeAggregates as $grandchildNodeAggregate) {
                 /* @var $grandchildNodeAggregate NodeAggregate */
@@ -363,7 +364,7 @@ trait NodeTypeChange
                     $events[] = $this->removeNodeInDimensionSpacePointSet(
                         $grandchildNodeAggregate,
                         $dimensionSpacePointsToBeRemoved,
-                        $initiatingUserIdentifier
+                        $initiatingUserId
                     );
                 }
             }
@@ -375,7 +376,7 @@ trait NodeTypeChange
     private function deleteObsoleteTetheredNodesWhenChangingNodeType(
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
-        UserIdentifier $initiatingUserIdentifier,
+        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
@@ -383,8 +384,8 @@ trait NodeTypeChange
         $events = [];
         // find disallowed tethered nodes
         $tetheredNodeAggregates = $contentRepository->getContentGraph()->findTetheredChildNodeAggregates(
-            $nodeAggregate->contentStreamIdentifier,
-            $nodeAggregate->nodeAggregateIdentifier
+            $nodeAggregate->contentStreamId,
+            $nodeAggregate->nodeAggregateId
         );
 
         foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
@@ -401,7 +402,7 @@ trait NodeTypeChange
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
                     $tetheredNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
-                    $initiatingUserIdentifier
+                    $initiatingUserId
                 );
             }
         }
@@ -440,14 +441,14 @@ trait NodeTypeChange
         $points = [];
         foreach ($childNodeAggregate->coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $childNodeAggregate->contentStreamIdentifier,
+                $childNodeAggregate->contentStreamId,
                 $coveredDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
-            $parentNode = $subgraph->findParentNode($childNodeAggregate->nodeAggregateIdentifier);
+            $parentNode = $subgraph->findParentNode($childNodeAggregate->nodeAggregateId);
             if (
                 $parentNode
-                && $parentNode->nodeAggregateIdentifier->equals($parentNodeAggregate->nodeAggregateIdentifier)
+                && $parentNode->nodeAggregateId->equals($parentNodeAggregate->nodeAggregateId)
             ) {
                 $points[] = $coveredDimensionSpacePoint;
             }
@@ -459,11 +460,11 @@ trait NodeTypeChange
     private function removeNodeInDimensionSpacePointSet(
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
-        UserIdentifier $initiatingUserIdentifier
+        UserId $initiatingUserId
     ): NodeAggregateWasRemoved {
         return new NodeAggregateWasRemoved(
-            $nodeAggregate->contentStreamIdentifier,
-            $nodeAggregate->nodeAggregateIdentifier,
+            $nodeAggregate->contentStreamId,
+            $nodeAggregate->nodeAggregateId,
             // TODO: we also use the covered dimension space points as OCCUPIED dimension space points
             // - however the OCCUPIED dimension space points are not really used by now
             // (except for the change projector, which needs love anyways...)
@@ -471,7 +472,7 @@ trait NodeTypeChange
                 $coveredDimensionSpacePointsToBeRemoved
             ),
             $coveredDimensionSpacePointsToBeRemoved,
-            $initiatingUserIdentifier
+            $initiatingUserId
         );
     }
 }

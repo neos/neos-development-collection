@@ -14,17 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
 
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
- * NodeAggregateIdentifier -> Node cache
+ * NodeAggregateId -> Node cache
  *
- * also contains a *blacklist* of unknown NodeAggregateIdentifiers.
+ * also contains a *blacklist* of unknown NodeAggregateIds.
  *
  * @internal
  */
-final class NodeByNodeAggregateIdentifierCache
+final class NodeByNodeAggregateIdCache
 {
     /**
      * @var array<string,Node>
@@ -34,7 +34,7 @@ final class NodeByNodeAggregateIdentifierCache
     /**
      * @var array<string,bool>
      */
-    protected array $nonExistingNodeAggregateIdentifiers = [];
+    protected array $nonExistingNodeAggregateIds = [];
 
     protected bool $isEnabled;
 
@@ -46,43 +46,43 @@ final class NodeByNodeAggregateIdentifierCache
     /**
      * basically like "contains"
      */
-    public function knowsAbout(NodeAggregateIdentifier $nodeAggregateIdentifier): bool
+    public function knowsAbout(NodeAggregateId $nodeAggregateId): bool
     {
         if ($this->isEnabled === false) {
             return false;
         }
 
-        $key = (string)$nodeAggregateIdentifier;
-        return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIdentifiers[$key]);
+        $key = (string)$nodeAggregateId;
+        return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIds[$key]);
     }
 
-    public function add(NodeAggregateIdentifier $nodeAggregateIdentifier, Node $node): void
+    public function add(NodeAggregateId $nodeAggregateId, Node $node): void
     {
         if ($this->isEnabled === false) {
             return;
         }
 
-        $key = (string)$nodeAggregateIdentifier;
+        $key = (string)$nodeAggregateId;
         $this->nodes[$key] = $node;
     }
 
-    public function rememberNonExistingNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): void
+    public function rememberNonExistingNodeAggregateId(NodeAggregateId $nodeAggregateId): void
     {
         if ($this->isEnabled === false) {
             return;
         }
 
-        $key = (string)$nodeAggregateIdentifier;
-        $this->nonExistingNodeAggregateIdentifiers[$key] = true;
+        $key = (string)$nodeAggregateId;
+        $this->nonExistingNodeAggregateIds[$key] = true;
     }
 
-    public function get(NodeAggregateIdentifier $nodeAggregateIdentifier): ?Node
+    public function get(NodeAggregateId $nodeAggregateId): ?Node
     {
         if ($this->isEnabled === false) {
             return null;
         }
 
-        $key = (string)$nodeAggregateIdentifier;
+        $key = (string)$nodeAggregateId;
         return $this->nodes[$key] ?? null;
     }
 }
