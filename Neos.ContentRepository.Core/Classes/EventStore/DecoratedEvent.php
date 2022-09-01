@@ -33,13 +33,13 @@ final class DecoratedEvent
         return new self($event->innerEvent, $eventId, $event->eventMetadata);
     }
 
-    public static function withCausationIdentifier(
+    public static function withCausationId(
         DecoratedEvent|EventInterface $event,
-        EventId $causationIdentifier
+        EventId $causationId
     ): self {
         $event = self::wrapWithDecoratedEventIfNecessary($event);
         $eventMetadata = $event->eventMetadata->value;
-        $eventMetadata['causationIdentifier'] = $causationIdentifier->value;
+        $eventMetadata['causationId'] = $causationId->value;
 
         return new self($event->innerEvent, $event->eventId, EventMetadata::fromArray($eventMetadata));
     }

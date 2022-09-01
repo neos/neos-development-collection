@@ -36,7 +36,7 @@ final class NodeAggregateEventPublisher
         Events $events,
     ): Events {
         $processedEvents = [];
-        $causationIdentifier = null;
+        $causationId = null;
         $i = 0;
         foreach ($events as $event) {
             if ($event instanceof DecoratedEvent) {
@@ -77,11 +77,11 @@ final class NodeAggregateEventPublisher
                 ]);
                 $event = DecoratedEvent::withMetadata($event, $metadata);
                 // we remember the 1st event's identifier as causation identifier for all the others
-                $causationIdentifier = $event->eventId;
+                $causationId = $event->eventId;
             } else {
                 // event 2,3,4,...n get a causation identifier set, as they all originate from the 1st event.
-                if ($causationIdentifier !== null) {
-                    $event = DecoratedEvent::withCausationIdentifier($event, $causationIdentifier);
+                if ($causationId !== null) {
+                    $event = DecoratedEvent::withCausationId($event, $causationId);
                 }
             }
             $processedEvents[] = $event;

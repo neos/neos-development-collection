@@ -79,14 +79,14 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     ->processMetadata(static function(array $metadata) use ($eventIdMap) {
                         $processedMetadata = $metadata;
                         /** @var string|null $causationId */
-                        $causationId = $processedMetadata['causationIdentifier'] ?? null;
+                        $causationId = $processedMetadata['causationId'] ?? null;
                         if ($causationId !== null && array_key_exists($causationId, $eventIdMap)) {
-                            $processedMetadata['causationIdentifier'] = $eventIdMap[$causationId];
+                            $processedMetadata['causationId'] = $eventIdMap[$causationId];
                         }
                         /** @var string|null $correlationId */
-                        $correlationId = $processedMetadata['correlationIdentifier'] ?? null;
+                        $correlationId = $processedMetadata['correlationId'] ?? null;
                         if ($correlationId !== null && array_key_exists($correlationId, $eventIdMap)) {
-                            $processedMetadata['correlationIdentifier'] = $eventIdMap[$correlationId];
+                            $processedMetadata['correlationId'] = $eventIdMap[$correlationId];
                         }
                         return $processedMetadata;
                     });
