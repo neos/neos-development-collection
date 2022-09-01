@@ -17,12 +17,11 @@ namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * @api commands are the write-API of the ContentRepository
@@ -39,7 +38,6 @@ final class RemoveNodeAggregate implements
         /** One of the dimension space points covered by the node aggregate in which the user intends to remove it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
-        public readonly UserId $initiatingUserId,
         /**
          * This is usually the NodeAggregateId of the parent node of the deleted node. It is needed for instance
          * in the Neos UI for the following scenario:
@@ -67,7 +65,6 @@ final class RemoveNodeAggregate implements
             NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
-            UserId::fromString($array['initiatingUserId']),
             isset($array['removalAttachmentPoint'])
                 ? NodeAggregateId::fromString($array['removalAttachmentPoint'])
                 : null
@@ -79,14 +76,7 @@ final class RemoveNodeAggregate implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-            'nodeVariantSelectionStrategy' => $this->nodeVariantSelectionStrategy,
-            'initiatingUserId' => $this->initiatingUserId,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -96,7 +86,6 @@ final class RemoveNodeAggregate implements
             $this->nodeAggregateId,
             $this->coveredDimensionSpacePoint,
             $this->nodeVariantSelectionStrategy,
-            $this->initiatingUserId,
             $this->removalAttachmentPoint
         );
     }

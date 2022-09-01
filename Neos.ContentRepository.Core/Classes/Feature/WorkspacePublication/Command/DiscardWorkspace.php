@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -28,7 +27,6 @@ final class DiscardWorkspace implements CommandInterface
 {
     private function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly UserId $initiatingUserId,
         /**
          * Content Stream ID of the newly created fork, which contains the remaining changes
          * which were not removed
@@ -37,9 +35,9 @@ final class DiscardWorkspace implements CommandInterface
     ) {
     }
 
-    public static function create(WorkspaceName $workspaceName, UserId $initiatingUserId): self
+    public static function create(WorkspaceName $workspaceName): self
     {
-        return new self($workspaceName, $initiatingUserId, ContentStreamId::create());
+        return new self($workspaceName, ContentStreamId::create());
     }
 
     /**
@@ -47,9 +45,8 @@ final class DiscardWorkspace implements CommandInterface
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        UserId $initiatingUserId,
         ContentStreamId $newContentStreamId
     ): self {
-        return new self($workspaceName, $initiatingUserId, $newContentStreamId);
+        return new self($workspaceName, $newContentStreamId);
     }
 }

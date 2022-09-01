@@ -15,15 +15,14 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Set property values for a given node (internal implementation).
@@ -44,7 +43,6 @@ final class SetSerializedNodeReferences implements
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly ReferenceName $referenceName,
         public readonly SerializedNodeReferences $references,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -59,7 +57,6 @@ final class SetSerializedNodeReferences implements
             OriginDimensionSpacePoint::fromArray($array['sourceOriginDimensionSpacePoint']),
             ReferenceName::fromString($array['referenceName']),
             SerializedNodeReferences::fromArray($array['references']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -69,14 +66,7 @@ final class SetSerializedNodeReferences implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'sourceNodeAggregateId' => $this->sourceNodeAggregateId,
-            'sourceOriginDimensionSpacePoint' => $this->sourceOriginDimensionSpacePoint,
-            'referenceName' => $this->referenceName,
-            'references' => $this->references,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -87,7 +77,6 @@ final class SetSerializedNodeReferences implements
             $this->sourceOriginDimensionSpacePoint,
             $this->referenceName,
             $this->references,
-            $this->initiatingUserId
         );
     }
 

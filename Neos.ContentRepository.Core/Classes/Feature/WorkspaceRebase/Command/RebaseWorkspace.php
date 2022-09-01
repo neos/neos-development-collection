@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -28,7 +27,6 @@ final class RebaseWorkspace implements CommandInterface
 {
     public function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly UserId $initiatingUserId,
         /**
          * Name of the new content stream which is created during the rebase
          */
@@ -36,9 +34,9 @@ final class RebaseWorkspace implements CommandInterface
     ) {
     }
 
-    public static function create(WorkspaceName $workspaceName, UserId $initiatingUserId): self
+    public static function create(WorkspaceName $workspaceName): self
     {
-        return new self($workspaceName, $initiatingUserId, ContentStreamId::create());
+        return new self($workspaceName, ContentStreamId::create());
     }
 
     /**
@@ -46,9 +44,8 @@ final class RebaseWorkspace implements CommandInterface
      */
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
-        UserId $initiatingUserId,
         ContentStreamId $newContentStreamId
     ): self {
-        return new self($workspaceName, $initiatingUserId, $newContentStreamId);
+        return new self($workspaceName, $newContentStreamId);
     }
 }
