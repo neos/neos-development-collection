@@ -82,7 +82,7 @@ final class ContentGraph implements ContentGraphInterface
      * @throws DBALException
      * @throws NodeTypeNotFoundException
      */
-    public function findNodeById(
+    public function findNodeByIdAndOriginDimensionSpacePoint(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint

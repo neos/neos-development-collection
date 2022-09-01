@@ -32,23 +32,22 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  * The most important API method is {@see ContentGraphInterface::getSubgraph()},
  * where you can access the most important read model, the {@see ContentSubgraphInterface}.
  *
- * @api
+ * @api only the methods marked as API
  */
 interface ContentGraphInterface extends ProjectionStateInterface
 {
+    /**
+     * @api main API method of ContentGraph
+     */
     public function getSubgraph(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface;
 
-    // TODO: ONLY RELEVANT FOR TESTCASES
-    public function findNodeById(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?Node;
-
+    /**
+     * @api
+     */
     public function findRootNodeAggregateByType(
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
@@ -56,6 +55,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
 
     /**
      * @return iterable<NodeAggregate>
+     * @api
      */
     public function findNodeAggregatesByType(
         ContentStreamId $contentStreamId,
@@ -64,6 +64,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
 
     /**
      * @throws NodeAggregatesTypeIsAmbiguous
+     * @api
      */
     public function findNodeAggregateById(
         ContentStreamId $contentStreamId,
@@ -71,7 +72,23 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ?NodeAggregate;
 
     /**
+     * Returns all node types in use, from the graph projection
      *
+     * @return iterable<NodeTypeName>
+     * @api
+     */
+    public function findUsedNodeTypeNames(): iterable;
+
+    /**
+     * @internal
+     */
+    public function findNodeByIdAndOriginDimensionSpacePoint(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint
+    ): ?Node;
+
+    /**
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
@@ -131,12 +148,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
         DimensionSpacePointSet $dimensionSpacePointsToCheck
     ): DimensionSpacePointSet;
 
-    public function countNodes(): int;
-
     /**
-     * Returns all node types in use, from the graph projection
-     *
-     * @return iterable<NodeTypeName>
+     * @internal only for consumption in testcases
      */
-    public function findUsedNodeTypeNames(): iterable;
+    public function countNodes(): int;
 }

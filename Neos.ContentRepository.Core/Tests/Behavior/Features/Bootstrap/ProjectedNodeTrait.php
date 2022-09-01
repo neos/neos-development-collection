@@ -93,7 +93,7 @@ trait ProjectedNodeTrait
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodesFromContentGraphs(function (ContentGraphInterface $contentGraph, string $adapterName) use ($nodeDiscriminator) {
-            $currentNode = $contentGraph->findNodeById(
+            $currentNode = $contentGraph->findNodeByIdAndOriginDimensionSpacePoint(
                 $nodeDiscriminator->getContentStreamId(),
                 $nodeDiscriminator->getNodeAggregateId(),
                 $nodeDiscriminator->getOriginDimensionSpacePoint()

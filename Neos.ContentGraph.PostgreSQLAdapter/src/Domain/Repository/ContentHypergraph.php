@@ -84,7 +84,7 @@ final class ContentHypergraph implements ContentGraphInterface
         return $this->subhypergraphs[$index];
     }
 
-    public function findNodeById(
+    public function findNodeByIdAndOriginDimensionSpacePoint(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
