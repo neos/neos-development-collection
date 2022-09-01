@@ -48,7 +48,6 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         private readonly NodeTypeManager $nodeTypeManager
     ) {
@@ -56,7 +55,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
     public function removeSiteNode(SiteNodeName $siteNodeName): void
     {
-        $dimensionSpacePoints = $this->contentDimensionZookeeper->getAllowedDimensionSubspace()->points;
+        $dimensionSpacePoints = $this->interDimensionalVariationGraph->getDimensionSpacePoints()->points;
         $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints) ?: null;
         if (!$arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
             throw new \InvalidArgumentException(

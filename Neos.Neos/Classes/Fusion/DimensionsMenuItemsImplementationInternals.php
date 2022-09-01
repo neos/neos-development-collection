@@ -15,7 +15,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 class DimensionsMenuItemsImplementationInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
-        public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         public readonly ContentDimensionSourceInterface $contentDimensionSource,
         public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph
     ) {

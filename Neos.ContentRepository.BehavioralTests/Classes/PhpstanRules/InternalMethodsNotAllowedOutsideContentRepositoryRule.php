@@ -31,8 +31,7 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
     {
         assert($node instanceof Node\Expr\CallLike);
 
-        // TODO CORE
-        if ($scope->getNamespace() && str_starts_with($scope->getNamespace(), 'Neos\ContentRepository')) {
+        if ($scope->getNamespace() && str_starts_with($scope->getNamespace(), 'Neos\ContentRepository\Core')) {
             // Core is allowed to call all namespaces
             // TODO !!! ONLY FROM WITHIN OWN PACKAGE!!!!
             return [];
@@ -41,9 +40,13 @@ class InternalMethodsNotAllowedOutsideContentRepositoryRule implements Rule
             $methodCallTargetClass = $scope->getType($node->var);
             if ($methodCallTargetClass instanceof ObjectType) {
                 $targetClassName = $methodCallTargetClass->getClassName();
-                if (!str_starts_with($targetClassName, 'Neos\ContentRepository')) {
+                // TODO: also extend to more packages
+                if (
+                    !str_starts_with($targetClassName, 'Neos\ContentRepository\Core')
+                ) {
                     return [];
                 }
+
 
                 // here, we know an OUTSIDE class is calling into Neos\ContentRepository Core -> only allowed to use
                 // public API

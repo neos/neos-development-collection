@@ -67,12 +67,12 @@ class ContentDimensionsController extends ActionController
         if ($this->view instanceof JsonView) {
             $this->view->assign(
                 'value',
-                $controllerInternals->contentDimensionZookeeper->getAllowedDimensionSubspace()
+                $controllerInternals->interDimensionalVariationGraph->getDimensionSpacePoints()
             );
         } else {
             $this->view->assign(
                 'contentDimensionsPresets',
-                $controllerInternals->contentDimensionZookeeper->getAllowedDimensionSubspace()
+                $controllerInternals->interDimensionalVariationGraph->getDimensionSpacePoints()
             );
         }
     }

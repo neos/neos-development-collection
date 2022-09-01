@@ -55,10 +55,10 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         );
         assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
 
-        $contentDimensionZookeeper = $dimensionMenuItemsImplementationInternals->contentDimensionZookeeper;
+        $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
         $currentDimensionSpacePoint = $this->currentNode->subgraphIdentity->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
-        foreach ($contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
+        foreach ($interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {

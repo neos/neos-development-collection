@@ -27,7 +27,7 @@ class ContentDimensionsControllerInternalsFactory implements ContentRepositorySe
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
     ): ContentDimensionsControllerInternals {
         return new ContentDimensionsControllerInternals(
-            $serviceFactoryDependencies->contentDimensionZookeeper
+            $serviceFactoryDependencies->interDimensionalVariationGraph
         );
     }
 }

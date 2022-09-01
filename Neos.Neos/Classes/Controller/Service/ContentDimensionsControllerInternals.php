@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 
 /**
@@ -23,7 +24,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 class ContentDimensionsControllerInternals implements ContentRepositoryServiceInterface
 {
     public function __construct(
-        public readonly ContentDimensionZookeeper $contentDimensionZookeeper
+        public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph
     ) {
     }
 }

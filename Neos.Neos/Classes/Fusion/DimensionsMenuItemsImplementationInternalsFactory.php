@@ -16,7 +16,6 @@ class DimensionsMenuItemsImplementationInternalsFactory implements ContentReposi
         ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
     ): DimensionsMenuItemsImplementationInternals {
         return new DimensionsMenuItemsImplementationInternals(
-            $serviceFactoryDependencies->contentDimensionZookeeper,
             $serviceFactoryDependencies->contentDimensionSource,
             $serviceFactoryDependencies->interDimensionalVariationGraph
         );
