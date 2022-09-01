@@ -182,7 +182,7 @@ class NodePrivilegeContext
             if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateId)) {
                 return true;
             }
-            $otherNode = $this->getSubgraph()->findNodeByNodeAggregateId($nodeAggregateIdentifier);
+            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateIdentifier);
             if (is_null($otherNode)) {
                 return false;
             }

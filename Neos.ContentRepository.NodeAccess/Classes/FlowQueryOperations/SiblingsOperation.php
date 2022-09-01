@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -79,7 +80,9 @@ class SiblingsOperation extends AbstractOperation
                 continue;
             }
 
-            foreach ($subgraph->findChildNodes($parentNode->nodeAggregateId) as $childNode) {
+            foreach (
+                $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all()) as $childNode
+            ) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;
                     $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId] = true;

@@ -734,7 +734,7 @@ class WorkspacesController extends AbstractModuleController
                 VisibilityConstraints::withoutRestrictions()
             );
 
-            $node = $subgraph->findNodeByNodeAggregateId($change->nodeAggregateIdentifier);
+            $node = $subgraph->findNodeById($change->nodeAggregateIdentifier);
             if ($node) {
                 $pathParts = explode('/', (string)$subgraph->findNodePath($node->nodeAggregateId));
                 if (count($pathParts) > 2) {
@@ -823,7 +823,7 @@ class WorkspacesController extends AbstractModuleController
             $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $baseSubgraph->findNodeByNodeAggregateId($modifiedNode->nodeAggregateId);
+        $node = $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
 
         return $node;
     }

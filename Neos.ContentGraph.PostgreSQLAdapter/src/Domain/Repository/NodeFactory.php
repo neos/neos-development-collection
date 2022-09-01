@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -149,13 +150,14 @@ final class NodeFactory
     public function mapNodeRowsToSubtree(
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
-    ): Subtree {
+    ): Subtrees {
         $subtreesByParentNodeAggregateIdentifier = [];
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints
             );
+
             $subtreesByParentNodeAggregateIdentifier[$nodeRow['parentnodeaggregateidentifier']][] = new Subtree(
                 (int)$nodeRow['level'],
                 $node,
@@ -163,7 +165,7 @@ final class NodeFactory
             );
         }
 
-        return $subtreesByParentNodeAggregateIdentifier['ROOT'][0];
+        return Subtrees::fromArray($subtreesByParentNodeAggregateIdentifier['ROOT']);
     }
 
     /**

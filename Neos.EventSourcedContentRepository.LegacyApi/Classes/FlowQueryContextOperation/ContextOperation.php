@@ -118,7 +118,7 @@ class ContextOperation extends AbstractOperation
                     $subgraphIdentity->dimensionSpacePoint,
                     $subgraphIdentity->visibilityConstraints
                 )
-                ->findNodeByNodeAggregateId($contextNode->nodeAggregateId);
+                ->findNodeById($contextNode->nodeAggregateId);
             if ($nodeInModifiedSubgraph !== null) {
                 $output[$nodeInModifiedSubgraph->nodeAggregateId->__toString()] = $nodeInModifiedSubgraph;
             }

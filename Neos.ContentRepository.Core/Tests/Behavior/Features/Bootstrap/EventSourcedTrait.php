@@ -38,11 +38,13 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
@@ -522,13 +524,14 @@ trait EventSourcedTrait
             assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();
 
-            $subtree = $contentGraph
+            $subtrees = $contentGraph
                 ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
-                ->findSubtrees(NodeAggregateIds::fromArray([$nodeAggregateId]), $maximumLevels, $nodeTypeConstraints);
+                ->findSubtrees(NodeAggregateIds::fromArray([$nodeAggregateId]),
+                    FindSubtreesFilter::nodeTypeConstraints($nodeTypeConstraints)->withMaximumLevels($maximumLevels));
 
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];
-            self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
+            self::flattenSubtreeForComparison($subtrees, $flattenedSubtree);
 
             Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match (adapter: ' . $adapterName . ')');
 
@@ -543,13 +546,18 @@ trait EventSourcedTrait
         }
     }
 
-    private static function flattenSubtreeForComparison(Subtree $subtree, array &$result)
+    private static function flattenSubtreeForComparison(Subtree|Subtrees $subtree, array &$result)
     {
-        if ($subtree->node) {
+        if ($subtree instanceof Subtrees) {
+            foreach ($subtree as $childSubtree) {
+                self::flattenSubtreeForComparison($childSubtree, $result);
+            }
+        } else {
             $result[] = $subtree;
-        }
-        foreach ($subtree->children as $childSubtree) {
-            self::flattenSubtreeForComparison($childSubtree, $result);
+
+            foreach ($subtree->children as $childSubtree) {
+                self::flattenSubtreeForComparison($childSubtree, $result);
+            }
         }
     }
 
@@ -587,7 +595,7 @@ trait EventSourcedTrait
     {
         $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
-        $node = $subgraph->findNodeByNodeAggregateId($nodeAggregateId);
+        $node = $subgraph->findNodeById($nodeAggregateId);
         Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(

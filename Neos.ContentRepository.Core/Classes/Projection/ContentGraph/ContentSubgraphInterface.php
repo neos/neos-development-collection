@@ -15,6 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -54,44 +58,29 @@ interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
      * @param NodeAggregateId $parentNodeAggregateId
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param FindChildNodesFilter $filter
      * @return Nodes
      */
     public function findChildNodes(
         NodeAggregateId $parentNodeAggregateId,
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        Filter\FindChildNodesFilter $filter
     ): Nodes;
 
     public function findReferencedNodes(
         NodeAggregateId $nodeAggregateId,
-        PropertyName $name = null
+        Filter\FindReferencedNodesFilter $filter
     ): References;
 
     public function findReferencingNodes(
         NodeAggregateId $nodeAggregateId,
-        PropertyName $name = null
+        Filter\FindReferencingNodesFilter $filter
     ): References;
 
     /**
-     * TODO: RENAME: findById? or findByNodeAggregateId?
      * @param NodeAggregateId $nodeAggregateId
      * @return Node|null
      */
-    public function findNodeByNodeAggregateId(NodeAggregateId $nodeAggregateId): ?Node;
-
-    /**
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @return int
-     */
-    public function countChildNodes(
-        NodeAggregateId $parentNodeAggregateId,
-        NodeTypeConstraints $nodeTypeConstraints = null
-    ): int;
+    public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node;
 
     /**
      * @param NodeAggregateId $childNodeAggregateId
@@ -121,44 +110,22 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param NodeAggregateId $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return Nodes
-     */
-    public function findSiblings(
-        NodeAggregateId $sibling,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
-    ): Nodes;
-
-    /**
-     * @param NodeAggregateId $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param FindSucceedingSiblingsFilter $filter
      * @return Nodes
      */
     public function findSucceedingSiblings(
         NodeAggregateId $sibling,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        Filter\FindSucceedingSiblingsFilter $filter
     ): Nodes;
 
     /**
      * @param NodeAggregateId $sibling
-     * @param NodeTypeConstraints|null $nodeTypeConstraints
-     * @param int|null $limit
-     * @param int|null $offset
+     * @param FindPrecedingSiblingsFilter $filter
      * @return Nodes
      */
     public function findPrecedingSiblings(
         NodeAggregateId $sibling,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        Filter\FindPrecedingSiblingsFilter $filter,
     ): Nodes;
 
     /**
@@ -167,21 +134,10 @@ interface ContentSubgraphInterface extends \JsonSerializable
      */
     public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath;
 
-    /**
-     * @return ContentStreamId
-     */
-    public function getContentStreamId(): ContentStreamId;
-
-    /**
-     * @return DimensionSpacePoint
-     */
-    public function getDimensionSpacePoint(): DimensionSpacePoint;
-
     public function findSubtrees(
         NodeAggregateIds $entryNodeAggregateIds,
-        int $maximumLevels,
-        NodeTypeConstraints $nodeTypeConstraints
-    ): Subtree;
+        Filter\FindSubtreesFilter $filter
+    ): Subtrees;
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateIds,
@@ -189,16 +145,18 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
-     * @param array<int,NodeAggregateId> $entryNodeAggregateIds
-     * @param NodeTypeConstraints $nodeTypeConstraints
-     * @param SearchTerm|null $searchTerm
+     * @param NodeAggregateIds $entryNodeAggregateIds
+     * @param FindDescendantsFilter $filter
      * @return Nodes
      */
     public function findDescendants(
-        array $entryNodeAggregateIds,
-        NodeTypeConstraints $nodeTypeConstraints,
-        ?SearchTerm $searchTerm
+        NodeAggregateIds $entryNodeAggregateIds,
+        Filter\FindDescendantsFilter $filter
     ): Nodes;
 
+    /**
+     * @return int
+     * @internal this method might change without further notice.
+     */
     public function countNodes(): int;
 }

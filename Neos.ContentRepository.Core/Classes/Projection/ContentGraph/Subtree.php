@@ -14,7 +14,7 @@ final class Subtree
      */
     public function __construct(
         public readonly int $level,
-        public readonly ?Node $node = null,
+        public readonly Node $node,
         public array $children = []
     ) {
     }

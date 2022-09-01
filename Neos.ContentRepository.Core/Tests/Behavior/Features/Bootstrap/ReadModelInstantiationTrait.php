@@ -70,7 +70,7 @@ trait ReadModelInstantiationTrait
                 VisibilityConstraints::withoutRestrictions()
             );
 
-            $node = $subgraph->findNodeByNodeAggregateId(NodeAggregateId::fromString($rawNodeAggregateId));
+            $node = $subgraph->findNodeById(NodeAggregateId::fromString($rawNodeAggregateId));
 
             $this->currentReadModel = $node;
         }

@@ -88,7 +88,7 @@ final class AssetUsageCommandController extends CommandController
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $subGraph->findNodeByNodeAggregateId($usage->nodeAggregateIdentifier);
+        $node = $subGraph->findNodeById($usage->nodeAggregateIdentifier);
         return $node !== null;
     }
 

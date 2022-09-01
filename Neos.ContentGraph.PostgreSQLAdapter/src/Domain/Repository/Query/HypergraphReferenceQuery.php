@@ -16,6 +16,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -95,7 +96,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
-    public function withReferenceName(PropertyName $referenceName): self
+    public function withReferenceName(ReferenceName $referenceName): self
     {
         $query = $this->query;
         $query .= '

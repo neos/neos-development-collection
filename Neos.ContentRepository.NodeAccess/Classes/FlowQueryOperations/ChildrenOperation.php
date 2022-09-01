@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
@@ -83,7 +84,7 @@ class ChildrenOperation extends AbstractOperation
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findChildNodes($contextNode->nodeAggregateId);
+                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::all());
             foreach ($childNodes as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;
@@ -167,9 +168,11 @@ class ChildrenOperation extends AbstractOperation
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findChildNodes(
                             $contextNode->nodeAggregateId,
-                            NodeTypeConstraints::create(
-                                NodeTypeNames::fromStringArray($allowedNodeTypes),
-                                NodeTypeNames::createEmpty()
+                            FindChildNodesFilter::nodeTypeConstraints(
+                                NodeTypeConstraints::create(
+                                    NodeTypeNames::fromStringArray($allowedNodeTypes),
+                                    NodeTypeNames::createEmpty()
+                                )
                             )
                         );
 

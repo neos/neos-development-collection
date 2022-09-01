@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Dto;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -44,7 +46,9 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
     public static function fromSubgraphAndStartNode(ContentSubgraphInterface $subgraph, Node $sourceNode): self
     {
         $childNodes = [];
-        foreach ($subgraph->findChildNodes($sourceNode->nodeAggregateId) as $sourceChildNode) {
+        foreach (
+            $subgraph->findChildNodes($sourceNode->nodeAggregateId, FindChildNodesFilter::all()) as $sourceChildNode
+        ) {
             $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
         }
         /** @var PropertyCollectionInterface $properties */
@@ -57,7 +61,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->classification,
             $properties->serialized(),
             NodeReferencesSnapshot::fromReferences(
-                $subgraph->findReferencedNodes($sourceNode->nodeAggregateId)
+                $subgraph->findReferencedNodes($sourceNode->nodeAggregateId, FindReferencedNodesFilter::all())
             ),
             $childNodes
         );

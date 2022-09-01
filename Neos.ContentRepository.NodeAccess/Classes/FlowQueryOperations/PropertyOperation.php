@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -100,13 +101,13 @@ class PropertyOperation extends AbstractOperation
                     return (
                         $subgraph->findReferencedNodes(
                             $element->nodeAggregateId,
-                            PropertyName::fromString($propertyPath)
+                            FindReferencedNodesFilter::referenceName($propertyPath)
                         )[0] ?? null
                     )?->node;
                 } elseif ($element->nodeType->getPropertyType($propertyPath) === 'references') {
                     return $subgraph->findReferencedNodes(
                         $element->nodeAggregateId,
-                        PropertyName::fromString($propertyPath)
+                        FindReferencedNodesFilter::referenceName($propertyPath)
                     )->getNodes();
                 } else {
                     return $element->getProperty($propertyPath);

@@ -45,7 +45,7 @@ class NodeSiteResolvingService
                 ? VisibilityConstraints::frontend()
                 : VisibilityConstraints::withoutRestrictions()
         );
-        $node = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+        $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
         if (is_null($node)) {
             return null;
         }

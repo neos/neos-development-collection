@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -153,65 +154,56 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
         if (!is_null($this->getItemCollection())) {
-            $childSubtree = $subgraph->findSubtrees(
+            $childSubtrees = $subgraph->findSubtrees(
                 NodeAggregateIds::fromNodes($this->getItemCollection()),
-                $this->getMaximumLevels(),
-                $this->getNodeTypeConstraints()
+                FindSubtreesFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
+                    ->withMaximumLevels($this->getMaximumLevels())
             );
+            $items = [];
+            foreach ($childSubtrees as $childSubtree) {
+                $items[] = $this->traverseChildren($childSubtree);
+            }
+            return $items;
         } else {
             $entryParentNode = $this->findMenuStartingPoint();
             if (!$entryParentNode) {
                 return [];
             }
 
-            $childSubtree = $subgraph->findSubtrees(
+            $childSubtrees = $subgraph->findSubtrees(
                 NodeAggregateIds::create($entryParentNode->nodeAggregateId),
-                $this->getMaximumLevels(),
-                $this->getNodeTypeConstraints()
+                FindSubtreesFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
+                    ->withMaximumLevels($this->getMaximumLevels())
             );
-            $childSubtree = $childSubtree->children[0];
-        }
-
-        $items = [];
-        foreach ($childSubtree->children as $childSubtree) {
-            $node = $childSubtree->node;
-            if (!is_null($node) && !$this->isNodeHidden($node)) {
-                $item = $this->traverseChildren($childSubtree);
-                if (!is_null($item)) {
-                    $items[] = $item;
-                }
+            $childSubtree = $childSubtrees->first();
+            if (!$childSubtree) {
+                return [];
             }
+            return $this->traverseChildren($childSubtree)->getChildren();
         }
-
-        return $items;
     }
 
-    protected function traverseChildren(Subtree $subtree): ?MenuItem
+    protected function traverseChildren(Subtree $subtree): MenuItem
     {
         $children = [];
 
         foreach ($subtree->children as $childSubtree) {
             $node = $childSubtree->node;
-            if (!is_null($node) && !$this->isNodeHidden($node)) {
+            if (!$this->isNodeHidden($node)) {
                 $childNode = $this->traverseChildren($childSubtree);
-                if (!is_null($childNode)) {
-                    $children[] = $childNode;
-                }
+                $children[] = $childNode;
             }
         }
 
         $node = $subtree->node;
-        if (!is_null($node)) {
-            return new MenuItem(
-                $node,
-                MenuItemState::normal(),
-                $node->getLabel(),
-                $subtree->level,
-                $children
-            );
-        }
 
-        return null;
+        return new MenuItem(
+            $node,
+            MenuItemState::normal(),
+            $node->getLabel(),
+            $subtree->level,
+            $children
+        );
     }
 
     /**

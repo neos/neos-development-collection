@@ -167,7 +167,7 @@ class LinkHelper implements ProtectedContextAwareInterface
                         );
                     }
                     return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                        ->findNodeByNodeAggregateId(NodeAggregateId::fromString($matches[2]));
+                        ->findNodeById(NodeAggregateId::fromString($matches[2]));
                 case 'asset':
                     /** @var AssetInterface|null $asset */
                     /** @noinspection OneTimeUseVariablesInspection */

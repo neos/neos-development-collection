@@ -94,7 +94,7 @@ class DisallowedChildNodeAdjustment
                 }
 
                 if (!$allowedByParent && !$allowedByGrandparent) {
-                    $node = $subgraph->findNodeByNodeAggregateId($nodeAggregate->nodeAggregateId);
+                    $node = $subgraph->findNodeById($nodeAggregate->nodeAggregateId);
                     if (is_null($node)) {
                         continue;
                     }

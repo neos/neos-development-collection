@@ -234,7 +234,7 @@ class LinkingService
                         );
                     }
                     return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                        ->findNodeByNodeAggregateId(
+                        ->findNodeById(
                             NodeAggregateId::fromString($matches[2])
                         );
                 case 'asset':
@@ -322,7 +322,7 @@ class LinkingService
                         ? VisibilityConstraints::withoutRestrictions()
                         : VisibilityConstraints::frontend()
                 );
-                $node = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+                $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(

@@ -16,6 +16,7 @@ namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -23,6 +24,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -102,9 +104,10 @@ class PluginService
     {
         return $this->contentRepositoryRegistry->subgraphForNode($siteNode)
             ->findDescendants(
-                [$siteNode->nodeAggregateId],
-                NodeTypeConstraints::create($nodeTypeNames, NodeTypeNames::createEmpty()),
-                null
+                NodeAggregateIds::create($siteNode->nodeAggregateId),
+                FindDescendantsFilter::nodeTypeConstraints(
+                    NodeTypeConstraints::create($nodeTypeNames, NodeTypeNames::createEmpty())
+                )
             );
     }
 

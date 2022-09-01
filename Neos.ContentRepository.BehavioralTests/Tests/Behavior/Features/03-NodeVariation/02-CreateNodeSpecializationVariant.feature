@@ -24,70 +24,70 @@ Feature: Create node specialization
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeName       | parentNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                 |
+      | nodeAggregateId        | nodeName       | parentNodeAggregateId  | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
     # We have to add another node since root node aggregates do not support variation
     # Node /document
-      | sir-david-nodenborough  | document       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
+      | sir-david-nodenborough | document       | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
     # We also want to add a child node to make sure it is still reachable after creating a specialization of the parent
     # Node /document/child-document
-      | nody-mc-nodeface        | child-document | sir-david-nodenborough        | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | nody-mc-nodeface       | child-document | sir-david-nodenborough | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
 
   Scenario: check the tree state before the specialization
     When I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
-      | 0     | sir-david-nodenborough  |
-      | 1     | nodewyn-tetherton       |
-      | 2     | nodimer-tetherton       |
-      | 1     | nody-mc-nodeface        |
+      | Level | nodeAggregateId        |
+      | 0     | sir-david-nodenborough |
+      | 1     | nodewyn-tetherton      |
+      | 2     | nodimer-tetherton      |
+      | 1     | nody-mc-nodeface       |
 
   Scenario: Create specialization of node to dimension space point without further specializations
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"DE", "language":"en"}  |
-      | targetOrigin            | {"market":"CH", "language":"gsw"} |
+      | sourceOrigin    | {"market":"DE", "language":"en"}  |
+      | targetOrigin    | {"market":"CH", "language":"gsw"} |
     Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 6 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                            |
-      | contentStreamId | "cs-identifier"                     |
-      | nodeAggregateId | "sir-david-nodenborough"            |
-      | sourceOrigin            | {"market":"DE", "language":"en"}    |
-      | specializationOrigin    | {"market":"CH", "language":"gsw"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"gsw"}] |
+      | Key                    | Expected                            |
+      | contentStreamId        | "cs-identifier"                     |
+      | nodeAggregateId        | "sir-david-nodenborough"            |
+      | sourceOrigin           | {"market":"DE", "language":"en"}    |
+      | specializationOrigin   | {"market":"CH", "language":"gsw"}   |
+      | specializationCoverage | [{"market":"CH", "language":"gsw"}] |
 
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 7 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                            |
-      | contentStreamId | "cs-identifier"                     |
-      | nodeAggregateId | "nodewyn-tetherton"                 |
-      | sourceOrigin            | {"market":"DE", "language":"en"}    |
-      | specializationOrigin    | {"market":"CH", "language":"gsw"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"gsw"}] |
+      | Key                    | Expected                            |
+      | contentStreamId        | "cs-identifier"                     |
+      | nodeAggregateId        | "nodewyn-tetherton"                 |
+      | sourceOrigin           | {"market":"DE", "language":"en"}    |
+      | specializationOrigin   | {"market":"CH", "language":"gsw"}   |
+      | specializationCoverage | [{"market":"CH", "language":"gsw"}] |
 
     # The first event is NodeAggregateWithNodeWasCreated
     And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                            |
-      | contentStreamId | "cs-identifier"                     |
-      | nodeAggregateId | "nodimer-tetherton"                 |
-      | sourceOrigin            | {"market":"DE", "language":"en"}    |
-      | specializationOrigin    | {"market":"CH", "language":"gsw"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"gsw"}] |
+      | Key                    | Expected                            |
+      | contentStreamId        | "cs-identifier"                     |
+      | nodeAggregateId        | "nodimer-tetherton"                 |
+      | sourceOrigin           | {"market":"DE", "language":"en"}    |
+      | specializationOrigin   | {"market":"CH", "language":"gsw"}   |
+      | specializationCoverage | [{"market":"CH", "language":"gsw"}] |
 
     When the graph projection is fully up to date
 
@@ -164,11 +164,11 @@ Feature: Create node specialization
       | tethered-node  | cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"} |
       | child-document | cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}   |
     And the subtree for node aggregate "sir-david-nodenborough" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
-      | 0     | sir-david-nodenborough  |
-      | 1     | nodewyn-tetherton       |
-      | 2     | nodimer-tetherton       |
-      | 1     | nody-mc-nodeface        |
+      | Level | nodeAggregateId        |
+      | 0     | sir-david-nodenborough |
+      | 1     | nodewyn-tetherton      |
+      | 2     | nodimer-tetherton      |
+      | 1     | nody-mc-nodeface       |
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/tethered-node" to lead to node cs-identifier;nodewyn-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/tethered-node/tethered-leaf" to lead to node cs-identifier;nodimer-tetherton;{"market":"CH", "language":"gsw"}
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE", "language":"en"}
@@ -176,32 +176,32 @@ Feature: Create node specialization
 
   Scenario: Create specialization of node to dimension space point with further specializations
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                            |
+      | Key             | Value                            |
       | nodeAggregateId | "sir-david-nodenborough"         |
-      | sourceOrigin            | {"market":"DE", "language":"en"} |
-      | targetOrigin            | {"market":"DE", "language":"de"} |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"de"} |
     Then I expect exactly 9 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 6 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                                                                |
-      | contentStreamId | "cs-identifier"                                                                                                                         |
-      | nodeAggregateId | "sir-david-nodenborough"                                                                                                                |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                                                                                        |
-      | specializationOrigin    | {"market":"DE", "language":"de"}                                                                                                        |
-      | specializationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | Key                    | Expected                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId        | "sir-david-nodenborough"                                                                                                                |
+      | sourceOrigin           | {"market":"DE", "language":"en"}                                                                                                        |
+      | specializationOrigin   | {"market":"DE", "language":"de"}                                                                                                        |
+      | specializationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And event at index 7 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                                                                |
-      | contentStreamId | "cs-identifier"                                                                                                                         |
-      | nodeAggregateId | "nodewyn-tetherton"                                                                                                                     |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                                                                                        |
-      | specializationOrigin    | {"market":"DE", "language":"de"}                                                                                                        |
-      | specializationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | Key                    | Expected                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                                                                                     |
+      | sourceOrigin           | {"market":"DE", "language":"en"}                                                                                                        |
+      | specializationOrigin   | {"market":"DE", "language":"de"}                                                                                                        |
+      | specializationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
     And event at index 8 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                                                                |
-      | contentStreamId | "cs-identifier"                                                                                                                         |
-      | nodeAggregateId | "nodimer-tetherton"                                                                                                                     |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                                                                                        |
-      | specializationOrigin    | {"market":"DE", "language":"de"}                                                                                                        |
-      | specializationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
+      | Key                    | Expected                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                         |
+      | nodeAggregateId        | "nodimer-tetherton"                                                                                                                     |
+      | sourceOrigin           | {"market":"DE", "language":"en"}                                                                                                        |
+      | specializationOrigin   | {"market":"DE", "language":"de"}                                                                                                        |
+      | specializationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 8 nodes
@@ -279,62 +279,62 @@ Feature: Create node specialization
 
   Scenario: Create specialization of node to dimension space point with specializations that are partially occupied
     When the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                |
-      | contentStreamId | "cs-identifier"                                                      |
-      | nodeAggregateId | "sir-david-nodenborough"                                             |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                     |
-      | specializationOrigin    | {"market":"CH", "language":"de"}                                     |
-      | specializationCoverage  | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | Key                    | Value                                                                |
+      | contentStreamId        | "cs-identifier"                                                      |
+      | nodeAggregateId        | "sir-david-nodenborough"                                             |
+      | sourceOrigin           | {"market":"DE", "language":"en"}                                     |
+      | specializationOrigin   | {"market":"CH", "language":"de"}                                     |
+      | specializationCoverage | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                |
-      | contentStreamId | "cs-identifier"                                                      |
-      | nodeAggregateId | "nodewyn-tetherton"                                                  |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                     |
-      | specializationOrigin    | {"market":"CH", "language":"de"}                                     |
-      | specializationCoverage  | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | Key                    | Value                                                                |
+      | contentStreamId        | "cs-identifier"                                                      |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                  |
+      | sourceOrigin           | {"market":"DE", "language":"en"}                                     |
+      | specializationOrigin   | {"market":"CH", "language":"de"}                                     |
+      | specializationCoverage | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the event NodeSpecializationVariantWasCreated was published with payload:
-      | Key                     | Value                                                                |
-      | contentStreamId | "cs-identifier"                                                      |
-      | nodeAggregateId | "nodimer-tetherton"                                                  |
-      | sourceOrigin            | {"market":"DE", "language":"en"}                                     |
-      | specializationOrigin    | {"market":"CH", "language":"de"}                                     |
-      | specializationCoverage  | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
+      | Key                    | Value                                                                |
+      | contentStreamId        | "cs-identifier"                                                      |
+      | nodeAggregateId        | "nodimer-tetherton"                                                  |
+      | sourceOrigin           | {"market":"DE", "language":"en"}                                     |
+      | specializationOrigin   | {"market":"CH", "language":"de"}                                     |
+      | specializationCoverage | [{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                            |
+      | Key             | Value                            |
       | contentStreamId | "cs-identifier"                  |
       | nodeAggregateId | "sir-david-nodenborough"         |
-      | sourceOrigin            | {"market":"DE", "language":"en"} |
-      | targetOrigin            | {"market":"CH", "language":"en"} |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"CH", "language":"en"} |
     Then I expect exactly 12 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 9 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                           |
-      | contentStreamId | "cs-identifier"                    |
-      | nodeAggregateId | "sir-david-nodenborough"           |
-      | sourceOrigin            | {"market":"DE", "language":"en"}   |
-      | specializationOrigin    | {"market":"CH", "language":"en"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"en"}] |
+      | Key                    | Expected                           |
+      | contentStreamId        | "cs-identifier"                    |
+      | nodeAggregateId        | "sir-david-nodenborough"           |
+      | sourceOrigin           | {"market":"DE", "language":"en"}   |
+      | specializationOrigin   | {"market":"CH", "language":"en"}   |
+      | specializationCoverage | [{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 10 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                           |
-      | contentStreamId | "cs-identifier"                    |
-      | nodeAggregateId | "nodewyn-tetherton"                |
-      | sourceOrigin            | {"market":"DE", "language":"en"}   |
-      | specializationOrigin    | {"market":"CH", "language":"en"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"en"}] |
+      | Key                    | Expected                           |
+      | contentStreamId        | "cs-identifier"                    |
+      | nodeAggregateId        | "nodewyn-tetherton"                |
+      | sourceOrigin           | {"market":"DE", "language":"en"}   |
+      | specializationOrigin   | {"market":"CH", "language":"en"}   |
+      | specializationCoverage | [{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 11 is of type "NodeSpecializationVariantWasCreated" with payload:
-      | Key                     | Expected                           |
-      | contentStreamId | "cs-identifier"                    |
-      | nodeAggregateId | "nodimer-tetherton"                |
-      | sourceOrigin            | {"market":"DE", "language":"en"}   |
-      | specializationOrigin    | {"market":"CH", "language":"en"}   |
-      | specializationCoverage  | [{"market":"CH", "language":"en"}] |
+      | Key                    | Expected                           |
+      | contentStreamId        | "cs-identifier"                    |
+      | nodeAggregateId        | "nodimer-tetherton"                |
+      | sourceOrigin           | {"market":"DE", "language":"en"}   |
+      | specializationOrigin   | {"market":"CH", "language":"en"}   |
+      | specializationCoverage | [{"market":"CH", "language":"en"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes
@@ -419,16 +419,16 @@ Feature: Create node specialization
 
   Scenario: Create specialization of node to dimension space point that is already covered
     Given the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                            |
+      | Key             | Value                            |
       | nodeAggregateId | "sir-david-nodenborough"         |
-      | sourceOrigin            | {"market":"DE", "language":"en"} |
-      | targetOrigin            | {"market":"DE", "language":"de"} |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"DE", "language":"en"}  |
-      | targetOrigin            | {"market":"DE", "language":"gsw"} |
+      | sourceOrigin    | {"market":"DE", "language":"en"}  |
+      | targetOrigin    | {"market":"DE", "language":"gsw"} |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"market":"DE", "language":"en"}

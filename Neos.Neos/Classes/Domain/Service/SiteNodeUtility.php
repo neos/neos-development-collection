@@ -80,7 +80,7 @@ final class SiteNodeUtility
                     $contentStreamIdentifier,
                     NodeTypeName::fromString('Neos.Neos:Sites')
                 );
-            $sitesNode = $subgraph->findNodeByNodeAggregateId($rootNodeAggregate->nodeAggregateId);
+            $sitesNode = $subgraph->findNodeById($rootNodeAggregate->nodeAggregateId);
             if ($sitesNode) {
                 $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
                     $sitesNode->nodeAggregateId,

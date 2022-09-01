@@ -16,6 +16,7 @@ namespace Neos\Neos\Controller\Frontend;
 
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
@@ -149,7 +150,7 @@ class NodeController extends ActionController
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph, $contentRepository);
 
-        $nodeInstance = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException(
@@ -225,7 +226,7 @@ class NodeController extends ActionController
 
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph, $contentRepository);
 
-        $nodeInstance = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+        $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
         if (is_null($nodeInstance)) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
@@ -323,17 +324,17 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtrees(
             NodeAggregateIds::fromArray([$nodeAggregateIdentifier]),
-            10,
-            NodeTypeConstraints::fromFilterString('!Neos.Neos:Document')
-        );
-        $subtree = $subtree->children[0];
+            FindSubtreesFilter::nodeTypeConstraints('!Neos.Neos:Document')
+                ->withMaximumLevels(20)
+        )->first();
+        if (is_null($subtree)) {
+            return;
+        }
 
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $currentDocumentNode = $subtree->node;
-        if (is_null($currentDocumentNode)) {
-            return;
-        }
+
         $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->nodeAggregateId);
 
         $nodePathCache->add($currentDocumentNode->nodeAggregateId, $nodePathOfDocumentNode);
@@ -355,9 +356,6 @@ class NodeController extends ActionController
         InMemoryCache $inMemoryCache
     ): void {
         $node = $subtree->node;
-        if (is_null($node)) {
-            return;
-        }
 
         $parentNodeIdentifierByChildNodeIdentifierCache
             = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
@@ -387,9 +385,7 @@ class NodeController extends ActionController
                 self::fillCacheInternal($childSubtree, $node, $nodePath, $inMemoryCache);
             }
             $childNode = $childSubtree->node;
-            if (!is_null($childNode)) {
-                $allChildNodes[] = $childNode;
-            }
+            $allChildNodes[] = $childNode;
         }
 
         // TODO Explain why this is safe (Content can not contain other documents)

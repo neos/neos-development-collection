@@ -104,7 +104,7 @@ final class CopyNodesRecursively implements
         $nodeSubtreeSnapshot = NodeSubtreeSnapshot::fromSubgraphAndStartNode($subgraph, $startNode);
 
         return new self(
-            $subgraph->getContentStreamId(),
+            $startNode->subgraphIdentity->contentStreamId,
             $nodeSubtreeSnapshot,
             $dimensionSpacePoint,
             $initiatingUserId,

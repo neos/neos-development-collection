@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -366,7 +367,7 @@ class ContentElementWrappingService
 
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
-        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateId) as $node) {
+        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateId, FindChildNodesFilter::all()) as $node) {
             if ($node->nodeType->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
@@ -379,7 +380,7 @@ class ContentElementWrappingService
                 /** @codingStandardsIgnoreEnd */
             }
 
-            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateId);
+            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::all());
             $hasChildNodes = false;
             foreach ($nestedNodes as $nestedNode) {
                 $hasChildNodes = true;

@@ -70,7 +70,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                             $dimensionSpacePoint,
                             $this->currentNode->subgraphIdentity->visibilityConstraints,
                         )
-                        ->findNodeByNodeAggregateId($this->currentNode->nodeAggregateId);
+                        ->findNodeById($this->currentNode->nodeAggregateId);
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
@@ -162,7 +162,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                         $generalization,
                         $this->currentNode->subgraphIdentity->visibilityConstraints,
                     )
-                    ->findNodeByNodeAggregateId($nodeAggregateIdentifier);
+                    ->findNodeById($nodeAggregateIdentifier);
                 if ($variant) {
                     return $variant;
                 }

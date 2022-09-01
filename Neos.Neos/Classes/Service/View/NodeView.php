@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\View;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
@@ -265,10 +266,10 @@ class NodeView extends JsonView
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
-        $nodeTypeConstraints = $nodeTypeFilter
-            ? NodeTypeConstraints::fromFilterString($nodeTypeFilter)
-            : null;
-        foreach ($subgraph->findChildNodes($node->nodeAggregateId, $nodeTypeConstraints) as $childNode) {
+        $filter = $nodeTypeFilter
+            ? FindChildNodesFilter::nodeTypeConstraints($nodeTypeFilter)
+            : FindChildNodesFilter::all();
+        foreach ($subgraph->findChildNodes($node->nodeAggregateId, $filter) as $childNode) {
             if (
                 !$this->privilegeManager->isGranted(
                     NodeTreePrivilege::class,
@@ -321,7 +322,7 @@ class NodeView extends JsonView
                     $children = [];
                     $grandChildNodes = $subgraph->findChildNodes(
                         $childNode->nodeAggregateId,
-                        $nodeTypeConstraints
+                        $filter
                     );
                     $hasChildNodes = $grandChildNodes->count() > 0;
                     if ($expand && $hasChildNodes) {

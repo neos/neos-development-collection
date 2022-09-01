@@ -60,7 +60,7 @@ trait FlowQueryTrait
             VisibilityConstraints::withoutRestrictions()
         );
         $nodeAggregateIdentifier = NodeAggregateId::fromString($serializedNodeAggregateIdentifier);
-        $node = $subgraph->findNodeByNodeAggregateId($nodeAggregateIdentifier);
+        $node = $subgraph->findNodeById($nodeAggregateIdentifier);
         $this->currentFlowQuery = new FlowQuery([$node]);
     }
 

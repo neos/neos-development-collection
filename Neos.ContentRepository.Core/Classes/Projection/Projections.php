@@ -101,6 +101,7 @@ final class Projections implements \IteratorAggregate
     public function getProjectionState(string $projectionStateClassName): ProjectionStateInterface
     {
         if (isset($this->projectionStateCache[$projectionStateClassName])) {
+            // @phpstan-ignore-next-line
             return $this->projectionStateCache[$projectionStateClassName];
         }
 

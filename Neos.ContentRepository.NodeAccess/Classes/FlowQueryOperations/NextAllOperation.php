@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -95,6 +96,7 @@ class NextAllOperation extends AbstractOperation
             return Nodes::createEmpty();
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId)->nextAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all())
+            ->nextAll($contextNode);
     }
 }

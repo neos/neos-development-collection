@@ -181,7 +181,7 @@ class BackendRedirectionService
                 $workspace->currentContentStreamId,
                 $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
-            )->findNodeByNodeAggregateId($lastVisitedNode->nodeAggregateId);
+            )->findNodeById($lastVisitedNode->nodeAggregateId);
         } catch (\Exception $exception) {
             return null;
         }

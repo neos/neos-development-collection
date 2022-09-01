@@ -290,7 +290,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 $node->subgraphIdentity->visibilityConstraints
             );
 
-        $resolvedNode = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+        $resolvedNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
         if ($resolvedNode === null) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to resolve node "%s" on subgraph "%s"',
@@ -306,7 +306,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 );
                 if ($shortcutNodeAddress instanceof NodeAddress) {
                     $resolvedNode = $subgraph
-                        ->findNodeByNodeAggregateId($shortcutNodeAddress->nodeAggregateId);
+                        ->findNodeById($shortcutNodeAddress->nodeAggregateId);
                 }
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
                 $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(

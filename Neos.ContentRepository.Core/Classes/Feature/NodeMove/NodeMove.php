@@ -21,6 +21,8 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -361,8 +363,7 @@ trait NodeMove
                 if ($precedingSiblingId && $precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblings(
                         $precedingSiblingId,
-                        null,
-                        1
+                        FindSucceedingSiblingsFilter::all()->withPagination(1, 0)
                     );
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();
@@ -398,7 +399,7 @@ trait NodeMove
         ?NodeAggregateId $parentId,
         NodeAggregateId $siblingId
     ): ?Node {
-        $siblingCandidate = $contentSubgraph->findNodeByNodeAggregateId($siblingId);
+        $siblingCandidate = $contentSubgraph->findNodeById($siblingId);
         if ($parentId && $siblingCandidate) {
             // If a parent node aggregate is explicitly given, all siblings must have this parent
             $parent = $contentSubgraph->findParentNode($siblingId);
@@ -428,10 +429,10 @@ trait NodeMove
     ): ?Node {
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array($precedingSiblingId
-            ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingId)
+            ? $originContentSubgraph->findPrecedingSiblings($precedingSiblingId, FindPrecedingSiblingsFilter::all())
             : Nodes::createEmpty());
         $succeedingSiblingCandidates = iterator_to_array($succeedingSiblingId
-            ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingId)
+            ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingId, FindSucceedingSiblingsFilter::all())
             : Nodes::createEmpty());
         /* @var $precedingSiblingCandidates Node[] */
         /* @var $succeedingSiblingCandidates Node[] */
@@ -464,8 +465,7 @@ trait NodeMove
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblings(
                         $precedingSiblingId,
-                        null,
-                        1
+                        FindSucceedingSiblingsFilter::all()->withPagination(1, 0)
                     );
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();

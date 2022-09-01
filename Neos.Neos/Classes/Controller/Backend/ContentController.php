@@ -169,7 +169,7 @@ class ContentController extends ActionController
                 $nodeAddress->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             )
-            ->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+            ->findNodeById($nodeAddress->nodeAggregateId);
 
 
         $this->response->setContentType('application/json');
@@ -411,7 +411,7 @@ class ContentController extends ActionController
                 VisibilityConstraints::withoutRestrictions()
             );
         $node = $identifier
-            ? $subgraph->findNodeByNodeAggregateId(NodeAggregateId::fromString($identifier))
+            ? $subgraph->findNodeById(NodeAggregateId::fromString($identifier))
             : null;
 
         $views = [];

@@ -163,7 +163,6 @@ Feature: Create node aggregate with node
       | Name    | NodeDiscriminator                           |
       | node    | cs-identifier;sir-david-nodenborough;{}     |
       | esquire | cs-identifier;sir-nodeward-nodington-iii;{} |
-    And I expect this node to have no siblings
     And I expect this node to have no references
     And I expect this node to not be referenced
     And I expect this node to have no preceding siblings
@@ -174,9 +173,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name       | NodeDiscriminator                 |
       | child-node | cs-identifier;nody-mc-nodeface;{} |
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                           |
-      | cs-identifier;sir-nodeward-nodington-iii;{} |
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                           |
@@ -185,16 +181,12 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
 
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;sir-david-nodenborough;{} |
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;sir-david-nodenborough;{} |
@@ -237,9 +229,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;sir-david-nodenborough;{} |
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                       |
@@ -391,7 +380,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name | NodeDiscriminator                       |
       | node | cs-identifier;sir-david-nodenborough;{} |
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -402,7 +390,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name       | NodeDiscriminator                 |
       | child-node | cs-identifier;nody-mc-nodeface;{} |
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -413,7 +400,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name            | NodeDiscriminator              |
       | grandchild-node | cs-identifier;nodimus-prime;{} |
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -422,7 +408,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "nodimus-prime" and node path "node/child-node/grandchild-node" to lead to node cs-identifier;nodimus-prime;{}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references

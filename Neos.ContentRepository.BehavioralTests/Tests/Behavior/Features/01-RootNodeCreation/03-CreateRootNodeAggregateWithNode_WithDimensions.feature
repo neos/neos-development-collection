@@ -65,7 +65,6 @@ Feature: Create a root node aggregate
     And I expect this node to be classified as "root"
     And I expect this node to have no parent node
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -128,9 +127,6 @@ Feature: Create a root node aggregate
     When I am in dimension space point {"language":"mul"}
     Then I expect the subgraph projection to consist of exactly 2 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                 |
-      | cs-identifier;nody-mc-nodeface;{} |
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                 |
@@ -141,9 +137,6 @@ Feature: Create a root node aggregate
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have no parent node
     And I expect this node to have no child nodes
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;lady-eleonode-rootford;{} |
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;lady-eleonode-rootford;{} |

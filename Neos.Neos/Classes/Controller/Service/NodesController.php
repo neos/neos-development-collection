@@ -19,11 +19,14 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -143,14 +146,15 @@ class NodesController extends ActionController
         }
 
         if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
-            $entryNode = $subgraph->findNodeByNodeAggregateId($nodeAddress->nodeAggregateId);
+            $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             $nodes = !is_null($entryNode) ? $subgraph->findDescendants(
-                [$entryNode->nodeAggregateId],
-                NodeTypeConstraints::create(
-                    NodeTypeNames::fromStringArray($nodeTypes),
-                    NodeTypeNames::createEmpty()
-                ),
-                SearchTerm::fulltext($searchTerm)
+                NodeAggregateIds::create($entryNode->nodeAggregateId),
+                FindDescendantsFilter::nodeTypeConstraints(
+                    NodeTypeConstraints::create(
+                        NodeTypeNames::fromStringArray($nodeTypes),
+                        NodeTypeNames::createEmpty()
+                    )
+                )->withSearchTerm($searchTerm)
             ) : [];
         } else {
             if (!empty($searchTerm)) {
@@ -159,7 +163,7 @@ class NodesController extends ActionController
 
             $nodes = [];
             foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
-                $node = $subgraph->findNodeByNodeAggregateId(
+                $node = $subgraph->findNodeById(
                     NodeAggregateId::fromString($nodeAggregateIdentifier)
                 );
                 if ($node !== null) {
@@ -199,7 +203,7 @@ class NodesController extends ActionController
                 VisibilityConstraints::withoutRestrictions()
             );
 
-        $node = $subgraph->findNodeByNodeAggregateId($identifier);
+        $node = $subgraph->findNodeById($identifier);
 
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
@@ -267,19 +271,22 @@ class NodesController extends ActionController
                 VisibilityConstraints::withoutRestrictions()
             );
 
+        $targetDimensionSpacePoint = DimensionSpacePoint::fromLegacyDimensionArray($dimensions);
         $targetSubgraph = $contentRepository->getContentGraph()
             ->getSubgraph(
                 $workspace->currentContentStreamId,
-                DimensionSpacePoint::fromLegacyDimensionArray($dimensions),
+                $targetDimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
             );
 
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
             CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                 $this->adoptNodeAndParents(
+                    $workspace->currentContentStreamId,
                     $identifier,
                     $sourceSubgraph,
                     $targetSubgraph,
+                    $targetDimensionSpacePoint,
                     $contentRepository,
                     $mode === 'adoptFromAnotherDimensionAndCopyContent'
                 ));
@@ -367,18 +374,18 @@ class NodesController extends ActionController
      * @return void
      */
     protected function adoptNodeAndParents(
+        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateIdentifier,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
+        DimensionSpacePoint $targetDimensionSpacePoint,
         ContentRepository $contentRepository,
         bool $copyContent
     ) {
-        assert($sourceSubgraph->getContentStreamId()->equals($targetSubgraph->getContentStreamId()));
-
         $identifiersFromRootlineToTranslate = [];
         while (
             $nodeAggregateIdentifier
-            && $targetSubgraph->findNodeByNodeAggregateId($nodeAggregateIdentifier) === null
+            && $targetSubgraph->findNodeById($nodeAggregateIdentifier) === null
         ) {
             $identifiersFromRootlineToTranslate[] = $nodeAggregateIdentifier;
             $nodeAggregateIdentifier = $sourceSubgraph->findParentNode($nodeAggregateIdentifier)
@@ -393,17 +400,17 @@ class NodesController extends ActionController
             // NOTE: for creating node variants, we need to find the ORIGIN DSP
             // of the source node (in order to unambiguously identify it);
             // so we need to load it from the source subgraph
-            $sourceNode = $sourceSubgraph->findNodeByNodeAggregateId($identifier);
+            $sourceNode = $sourceSubgraph->findNodeById($identifier);
             if (!$sourceNode) {
                 throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier
                     . ' not found. This should never happen.', 1660905374);
             }
             $contentRepository->handle(
                 new CreateNodeVariant(
-                    $sourceSubgraph->getContentStreamId(),
+                    $contentStreamId,
                     $identifier,
                     $sourceNode->originDimensionSpacePoint,
-                    OriginDimensionSpacePoint::fromDimensionSpacePoint($targetSubgraph->getDimensionSpacePoint()),
+                    OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                     UserId::forSystemUser() // TODO: USE THE CORRECT USER HERE
                 )
             )->block();
@@ -411,10 +418,12 @@ class NodesController extends ActionController
             if ($copyContent === true) {
                 $contentNodeConstraint = NodeTypeConstraints::fromFilterString('!Neos.Neos:Document');
                 $this->createNodeVariantsForChildNodes(
+                    $contentStreamId,
                     $identifier,
                     $contentNodeConstraint,
                     $sourceSubgraph,
                     $targetSubgraph,
+                    $targetDimensionSpacePoint,
                     $contentRepository
                 );
             }
@@ -422,32 +431,41 @@ class NodesController extends ActionController
     }
 
     private function createNodeVariantsForChildNodes(
+        ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeId,
         NodeTypeConstraints $constraints,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
+        DimensionSpacePoint $targetDimensionSpacePoint,
         ContentRepository $contentRepository
     ): void {
-        foreach ($sourceSubgraph->findChildNodes($parentNodeId, $constraints) as $childNode) {
+        foreach (
+            $sourceSubgraph->findChildNodes(
+                $parentNodeId,
+                FindChildNodesFilter::nodeTypeConstraints($constraints)
+            ) as $childNode
+        ) {
             if ($childNode->classification->isRegular()) {
                 // Tethered nodes' variants are automatically created when the parent is translated.
                 // TODO: DOES THIS MAKE SENSE?
                 $contentRepository->handle(
                     new CreateNodeVariant(
-                        $sourceSubgraph->getContentStreamId(),
+                        $contentStreamId,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,
-                        OriginDimensionSpacePoint::fromDimensionSpacePoint($targetSubgraph->getDimensionSpacePoint()),
+                        OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
                         UserId::forSystemUser() // TODO: USE THE CORRECT USER HERE
                     )
                 )->block();
             }
 
             $this->createNodeVariantsForChildNodes(
+                $contentStreamId,
                 $childNode->nodeAggregateId,
                 $constraints,
                 $sourceSubgraph,
                 $targetSubgraph,
+                $targetDimensionSpacePoint,
                 $contentRepository
             );
         }
