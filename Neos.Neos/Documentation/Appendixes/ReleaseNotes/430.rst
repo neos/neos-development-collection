@@ -36,7 +36,7 @@ The matcher receives the context values ``exception``, ``renderingOptions``, ``s
 
 By extending the ``error`` case you can add custom 404 rendering like in the example below.
 
-.. code-block: javascript
+.. code-block:: javascript
 
   #
   # Extend error matcher to render the document with uriPathSegment ``notfound``
@@ -84,7 +84,7 @@ of webp-images as alternate sources.
 Additionally the option ``convertFormats`` is added to settings to automatically convert non-web images into
 web images. The example shows how to configure Neos to automatically convert tiff images to jpg.
 
-.. code-block: yaml
+.. code-block:: yaml
 
   Neos:
     Media:
