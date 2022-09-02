@@ -26,7 +26,7 @@ It also provides all relevant Neos CSS variables and is about 70% smaller than t
 
 Example:
 
-.. code-block: yaml
+.. code-block:: yaml
   Neos:
     modules:
       management: # Or any other module group
@@ -63,7 +63,7 @@ FEATURE: Sortable NodeType Post processors
 ==========================================
 Allows a `position` to be specified in the NodeType `postprocessors` configuration:
 
-.. code-block: yaml
+.. code-block:: yaml
   'Some.Custom:NodeType':
     # ...
     postprocessors:
