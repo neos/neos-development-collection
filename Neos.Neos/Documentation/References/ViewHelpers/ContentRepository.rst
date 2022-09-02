@@ -1,7 +1,7 @@
 .. _`Content Repository ViewHelper Reference`:
 
 Content Repository ViewHelper Reference
-=======================================
+#######################################
 
 This reference was automatically generated from code on 2022-09-02
 
@@ -32,6 +32,7 @@ Arguments
 * ``nodeTypeFilter`` (string, *optional*): A node type (or more complex filter) to filter for in the results
 
 * ``configuration`` (array, *optional*): Widget configuration
+
 
 
 
