@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2021-08-31
+This reference was automatically generated from code on 2022-09-02
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -214,7 +214,7 @@ Allows to push multiple elements at once::
 
     Array.push(array, e1, e2)
 
-* ``array`` (iterable)
+* ``array`` (iterable|scalar|null)
 * ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
@@ -1107,7 +1107,7 @@ Rounds the subject to the given precision
 The precision defines the number of digits after the decimal point.
 Negative values are also supported (-1 rounds to full 10ths).
 
-* ``subject`` (float) The value to round
+* ``subject`` (mixed) The value to round
 * ``precision`` (integer, *optional*) The precision (digits after decimal point) to use, defaults to 0
 
 **Return** (float) The rounded value
