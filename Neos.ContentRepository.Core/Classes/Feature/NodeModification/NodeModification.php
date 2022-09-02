@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedPrivateMethodInspection */
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
-use Neos\ContentRepository\Core\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**

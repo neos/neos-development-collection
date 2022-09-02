@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnusedPrivateMethodInspection */
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -59,7 +59,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
-use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
@@ -147,7 +146,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceAlreadyExists
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateRootWorkspace(
+    private function handleCreateRootWorkspace(
         CreateRootWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -193,7 +192,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handlePublishWorkspace(
+    private function handlePublishWorkspace(
         PublishWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -318,7 +317,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleRebaseWorkspace(
+    private function handleRebaseWorkspace(
         RebaseWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -459,7 +458,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
      */
-    public function handlePublishIndividualNodesFromWorkspace(
+    private function handlePublishIndividualNodesFromWorkspace(
         PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -576,7 +575,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function handleDiscardIndividualNodesFromWorkspace(
+    private function handleDiscardIndividualNodesFromWorkspace(
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -667,7 +666,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handleDiscardWorkspace(
+    private function handleDiscardWorkspace(
         DiscardWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
