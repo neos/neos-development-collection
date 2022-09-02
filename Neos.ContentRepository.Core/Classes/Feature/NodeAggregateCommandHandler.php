@@ -17,39 +17,39 @@ namespace Neos\ContentRepository\Core\Feature;
 use Neos\ContentRepository\Core\CommandHandler\CommandHandlerInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
+use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Core\Feature\NodeCreation\NodeCreation;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\NodeDisabling;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeModification\NodeModification;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeMove\NodeMove;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetSerializedNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\NodeReferencing;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\NodeRemoval;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\NodeRenaming;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\NodeTypeChange;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeCreation;
-use Neos\ContentRepository\Core\DimensionSpace;
-use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
-use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
-use Neos\ContentRepository\Core\Feature\NodeCreation\NodeCreation;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\NodeDisabling;
-use Neos\ContentRepository\Core\Feature\NodeModification\NodeModification;
-use Neos\ContentRepository\Core\Feature\NodeMove\NodeMove;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\NodeReferencing;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\NodeRemoval;
-use Neos\ContentRepository\Core\Feature\NodeRenaming\NodeRenaming;
-use Neos\ContentRepository\Core\Feature\NodeTypeChange\NodeTypeChange;
-use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
-use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -106,23 +106,9 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof SetNodeProperties
-            || $command instanceof SetSerializedNodeProperties
-            || $command instanceof SetNodeReferences
-            || $command instanceof SetSerializedNodeReferences
-            || $command instanceof ChangeNodeAggregateType
-            || $command instanceof RemoveNodeAggregate
-            || $command instanceof CreateNodeAggregateWithNode
-            || $command instanceof CreateNodeAggregateWithNodeAndSerializedProperties
-            || $command instanceof MoveNodeAggregate
-            || $command instanceof CreateNodeVariant
-            || $command instanceof CreateRootNodeAggregateWithNode
-            || $command instanceof DisableNodeAggregate
-            || $command instanceof EnableNodeAggregate
-            || $command instanceof ChangeNodeAggregateName;
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
-    /** @codingStandardsIgnoreStart */
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
         // @phpstan-ignore-next-line
@@ -143,7 +129,6 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
         };
     }
-    /** @codingStandardsIgnoreStop */
 
     protected function getNodeTypeManager(): NodeTypeManager
     {
@@ -253,4 +238,5 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             }
         }
     }
+
 }

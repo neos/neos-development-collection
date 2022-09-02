@@ -39,22 +39,16 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof CreateContentStream
-            || $command instanceof ForkContentStream
-            || $command instanceof RemoveContentStream;
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        if ($command instanceof CreateContentStream) {
-            return $this->handleCreateContentStream($command, $contentRepository);
-        } elseif ($command instanceof ForkContentStream) {
-            return $this->handleForkContentStream($command, $contentRepository);
-        } elseif ($command instanceof RemoveContentStream) {
-            return $this->handleRemoveContentStream($command, $contentRepository);
-        }
-
-        throw new \RuntimeException('Unsupported command type');
+        return match ($command::class) {
+            CreateContentStream::class => $this->handleCreateContentStream($command, $contentRepository),
+            ForkContentStream::class => $this->handleForkContentStream($command, $contentRepository),
+            RemoveContentStream::class => $this->handleRemoveContentStream($command, $contentRepository),
+        };
     }
 
     /**
@@ -164,4 +158,5 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             );
         }
     }
+
 }
