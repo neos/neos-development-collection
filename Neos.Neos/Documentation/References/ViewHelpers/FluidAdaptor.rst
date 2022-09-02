@@ -1,7 +1,7 @@
 .. _`FluidAdaptor ViewHelper Reference`:
 
 FluidAdaptor ViewHelper Reference
-=================================
+#################################
 
 This reference was automatically generated from code on 2022-09-02
 
@@ -2848,6 +2848,7 @@ Arguments
 * ``ajax`` (boolean, *optional*): true if the URI should be to an AJAX widget, false otherwise
 
 * ``includeWidgetContext`` (boolean, *optional*): true if the URI should contain the serialized widget context (only useful for stateless AJAX widgets)
+
 
 
 
