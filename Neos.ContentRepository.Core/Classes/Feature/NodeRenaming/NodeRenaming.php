@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+<?php
 
 /*
  * This file is part of the Neos.ContentRepository package.

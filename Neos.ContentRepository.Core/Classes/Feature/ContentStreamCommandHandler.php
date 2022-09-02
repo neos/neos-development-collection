@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+<?php
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -39,12 +39,16 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 {
     public function canHandle(CommandInterface $command): bool
     {
-        return method_exists($this, self::handlerMethodName($command));
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        return $this->{self::handlerMethodName($command)}($command, $contentRepository);
+        return match ($command::class) {
+            CreateContentStream::class => $this->handleCreateContentStream($command, $contentRepository),
+            ForkContentStream::class => $this->handleForkContentStream($command, $contentRepository),
+            RemoveContentStream::class => $this->handleRemoveContentStream($command, $contentRepository),
+        };
     }
 
     /**
@@ -155,8 +159,4 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
         }
     }
 
-    private static function handlerMethodName(CommandInterface $command): string
-    {
-        return 'handle' . (new \ReflectionClass($command))->getShortName();
-    }
 }

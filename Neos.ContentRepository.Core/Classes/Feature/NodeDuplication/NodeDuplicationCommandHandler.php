@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+<?php
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -61,15 +61,16 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
     }
 
-
     public function canHandle(CommandInterface $command): bool
     {
-        return method_exists($this, self::handlerMethodName($command));
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        return $this->{self::handlerMethodName($command)}($command, $contentRepository);
+        return match ($command::class) {
+            CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command, $contentRepository),
+        };
     }
 
     /**
@@ -234,10 +235,5 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $events
             );
         }
-    }
-
-    private static function handlerMethodName(CommandInterface $command): string
-    {
-        return 'handle' . (new \ReflectionClass($command))->getShortName();
     }
 }

@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+<?php
 
 declare(strict_types=1);
 

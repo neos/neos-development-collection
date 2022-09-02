@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnusedPrivateMethodInspection */
+<?php
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -77,12 +77,20 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface $command): bool
     {
-        return method_exists($this, self::handlerMethodName($command));
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        return $this->{self::handlerMethodName($command)}($command, $contentRepository);
+        return match ($command::class) {
+            CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
+            CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
+            PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
+            RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
+            PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
+            DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
+            DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
+        };
     }
 
     /**
@@ -731,10 +739,5 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return $baseWorkspace;
-    }
-
-    private static function handlerMethodName(CommandInterface $command): string
-    {
-        return 'handle' . (new \ReflectionClass($command))->getShortName();
     }
 }
