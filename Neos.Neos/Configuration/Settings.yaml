@@ -563,37 +563,37 @@ Neos:
     collections:
       Neos:
         commandReferences:
-          - 'Neos:NeosCommands'
+          'Neos:NeosCommands': true
         references:
-          - 'TYPO3Fluid:ViewHelpers'
-          - 'Neos:FluidAdaptorViewHelpers'
-          - 'Neos:MediaViewHelpers'
-          - 'Neos:FormViewHelpers'
-          - 'Neos:NeosViewHelpers'
-          - 'Neos:ContentRepositoryViewHelpers'
-          - 'Neos:FusionViewHelpers'
-          - 'Neos:FlowValidators'
-          - 'Neos:PartyValidators'
-          - 'Neos:MediaValidators'
-          - 'Neos:FlowSignals'
-          - 'Neos:NeosSignals'
-          - 'Neos:MediaSignals'
-          - 'Neos:ContentRepositorySignals'
-          - 'Neos:FlowQueryOperations'
-          - 'Neos:EelHelpers'
+          'TYPO3Fluid:ViewHelpers': true
+          'Neos:FluidAdaptorViewHelpers': true
+          'Neos:MediaViewHelpers': true
+          'Neos:FormViewHelpers': true
+          'Neos:NeosViewHelpers': true
+          'Neos:ContentRepositoryViewHelpers': true
+          'Neos:FusionViewHelpers': true
+          'Neos:FlowValidators': true
+          'Neos:PartyValidators': true
+          'Neos:MediaValidators': true
+          'Neos:FlowSignals': true
+          'Neos:NeosSignals': true
+          'Neos:MediaSignals': true
+          'Neos:ContentRepositorySignals': true
+          'Neos:FlowQueryOperations': true
+          'Neos:EelHelpers': true
     commandReferences:
       'Neos:NeosCommands':
         title: 'Neos Command Reference'
         packageKeys:
-          - Neos.Flow
-          - Neos.Party
-          - Neos.FluidAdaptor
-          - Neos.Kickstarter
-          - Neos.Welcome
-          - Neos.Media
-          - Neos.ContentRepository
-          - Neos.SiteKickstarter
-          - Neos.Neos
+          'Neos.Flow': true
+          'Neos.Party': true
+          'Neos.FluidAdaptor': true
+          'Neos.Kickstarter': true
+          'Neos.Welcome': true
+          'Neos.Media': true
+          'Neos.ContentRepository': true
+          'Neos.SiteKickstarter': true
+          'Neos.Neos': true
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
     references:
       'TYPO3Fluid:ViewHelpers':
