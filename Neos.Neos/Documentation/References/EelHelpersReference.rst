@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2021-08-31
+This reference was automatically generated from code on 2022-09-02
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -214,7 +214,7 @@ Allows to push multiple elements at once::
 
     Array.push(array, e1, e2)
 
-* ``array`` (iterable)
+* ``array`` (iterable|scalar|null)
 * ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
@@ -1107,7 +1107,7 @@ Rounds the subject to the given precision
 The precision defines the number of digits after the decimal point.
 Negative values are also supported (-1 rounds to full 10ths).
 
-* ``subject`` (float) The value to round
+* ``subject`` (mixed) The value to round
 * ``precision`` (integer, *optional*) The precision (digits after decimal point) to use, defaults to 0
 
 **Return** (float) The rounded value
@@ -1166,7 +1166,7 @@ on the sign of the number.
 
 * ``x`` (float) A number
 
-**Return** (integer) The integral part of the given number
+**Return** (int|float) The integral part of the given number or NAN if the given value was not numeric
 
 
 
@@ -1800,7 +1800,7 @@ Example::
 
 * ``string`` (string) The string
 * ``search`` (string) A string to search
-* ``position`` (integer, *optional*) Optional position for limiting the string
+* ``position`` (int|null, *optional*) Optional position for limiting the string
 
 **Return** (boolean) true if the string ends with the given search
 
@@ -2071,8 +2071,8 @@ Example::
 Node: This implementation follows JavaScript semantics without support of regular expressions.
 
 * ``string`` (string) The string to split
-* ``separator`` (string, *optional*) The separator where the string should be splitted
-* ``limit`` (integer, *optional*) The maximum amount of items to split (exceeding items will be discarded)
+* ``separator`` (string|null, *optional*) The separator where the string should be splitted
+* ``limit`` (int|null, *optional*) The maximum amount of items to split (exceeding items will be discarded)
 
 **Return** (array) An array of the splitted parts, excluding the separators
 
@@ -2105,7 +2105,7 @@ Example::
 This is a wrapper for the strip_tags() PHP function.
 
 * ``string`` (string) The string to strip
-* ``allowableTags`` (string, *optional*) Specify tags which should not be stripped
+* ``allowableTags`` (string|null, *optional*) Specify tags which should not be stripped
 
 **Return** (string) The string with tags stripped
 
@@ -2151,7 +2151,7 @@ String.toBoolean(string)
 
 Convert a string to boolean
 
-A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
+A value is ``true``, if it is either the string ``"true"`` or ``"TRUE"`` or the number ``1``.
 
 * ``string`` (string) The string to convert
 
