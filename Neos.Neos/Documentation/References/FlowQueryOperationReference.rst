@@ -3,7 +3,7 @@
 FlowQuery Operation Reference
 =============================
 
-This reference was automatically generated from code on 2021-08-31
+This reference was automatically generated from code on 2022-09-02
 
 
 .. _`FlowQuery Operation Reference: add`:
@@ -55,13 +55,12 @@ Example:
 children
 --------
 
-"children" operation working on generic objects. It iterates over all
-context elements and returns the values of the properties given in the
-filter expression that has to be specified as argument or in a following
-filter operation.
+"children" operation working on ContentRepository nodes. It iterates over all
+context elements and returns all child nodes or only those matching
+the filter expression specified as optional argument.
 
-:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
-:Priority: 1
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ChildrenOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -74,12 +73,13 @@ filter operation.
 children
 --------
 
-"children" operation working on ContentRepository nodes. It iterates over all
-context elements and returns all child nodes or only those matching
-the filter expression specified as optional argument.
+"children" operation working on generic objects. It iterates over all
+context elements and returns the values of the properties given in the
+filter expression that has to be specified as argument or in a following
+filter operation.
 
-:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ChildrenOperation
-:Priority: 100
+:Implementation: Neos\\Eel\\FlowQuery\\Operations\\Object\\ChildrenOperation
+:Priority: 1
 :Final: No
 :Returns: void
 
@@ -159,14 +159,14 @@ A filter expression is written in Fizzle, a grammar inspired by CSS selectors.
 It has the form `"[" [<value>] <operator> <operand> "]"` and supports the
 following operators:
 
-=
-  Strict equality of value and operand
 =~
   Strict equality of case-insensitive value and operand
-!=
-  Strict inequality of value and operand
+=
+  Strict equality of value and operand
 !=~
   Strict inequality of case-insensitive value and operand
+!=
+  Strict inequality of value and operand
 <
   Value is less than operand
 <=
@@ -175,18 +175,18 @@ following operators:
   Value is greater than operand
 >=
   Value is greater than or equal to operand
-$=
-  Value ends with operand (string-based) or value's last element is equal to operand (array-based)
 $=~
   Value ends with operand (string-based) or case-insensitive value's last element is equal to operand (array-based)
-^=
-  Value starts with operand (string-based) or value's first element is equal to operand (array-based)
+$=
+  Value ends with operand (string-based) or value's last element is equal to operand (array-based)
 ^=~
   Value starts with operand (string-based) or case-insensitive value's first element is equal to operand (array-based)
-*=
-  Value contains operand (string-based) or value contains an element that is equal to operand (array based)
+^=
+  Value starts with operand (string-based) or value's first element is equal to operand (array-based)
 *=~
   Value contains operand (string-based) or case-insensitive value contains an element that is equal to operand (array based)
+*=
+  Value contains operand (string-based) or value contains an element that is equal to operand (array based)
 instanceof
   Checks if the value is an instance of the operand
 !instanceof
@@ -532,8 +532,8 @@ context elements and returns the parent nodes until the matching parent is found
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
-:Priority: 100
+:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentsUntilOperation
+:Priority: 0
 :Final: No
 :Returns: void
 
@@ -551,8 +551,8 @@ context elements and returns the parent nodes until the matching parent is found
 If an optional filter expression is provided as a second argument,
 it only returns the nodes matching the given expression.
 
-:Implementation: Neos\\ContentRepository\\Eel\\FlowQueryOperations\\ParentsUntilOperation
-:Priority: 0
+:Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\ParentsUntilOperation
+:Priority: 100
 :Final: No
 :Returns: void
 
@@ -737,6 +737,18 @@ Sorts nodes by specified node properties.
 
 First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
 Second argument is the sort direction (ASC or DESC).
+Third optional argument are the sort options (see https://www.php.net/manual/en/function.sort):
+ - 'SORT_REGULAR'
+ - 'SORT_NUMERIC'
+ - 'SORT_STRING'
+ - 'SORT_LOCALE_STRING'
+ - 'SORT_NATURAL'
+ - 'SORT_FLAG_CASE' (use as last option with SORT_STRING, SORT_LOCALE_STRING or SORT_NATURAL)
+A single sort option can be supplied as string. Multiple sort options are supplied as array.
+Other than the above listed sort options throw an error. Omitting the third parameter leaves FlowQuery sort() in SORT_REGULAR sort mode.
+Example usages:
+     sort("title", "ASC", ["SORT_NATURAL", "SORT_FLAG_CASE"])
+     sort("risk", "DESC", "SORT_NUMERIC")
 
 :Implementation: Neos\\Neos\\Eel\\FlowQueryOperations\\SortOperation
 :Priority: 1
