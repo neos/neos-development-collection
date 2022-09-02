@@ -1,7 +1,7 @@
 .. _`Neos ViewHelper Reference`:
 
 Neos ViewHelper Reference
-=========================
+#########################
 
 This reference was automatically generated from code on 2022-09-02
 
@@ -1162,6 +1162,7 @@ Expected result::
 
 	about/us.html
 	(depending on current workspace, current node, format etc.)
+
 
 
 

@@ -1,7 +1,7 @@
 .. _`Media ViewHelper Reference`:
 
 Media ViewHelper Reference
-==========================
+##########################
 
 This reference was automatically generated from code on 2022-09-02
 
@@ -572,6 +572,7 @@ Expected result::
 
 	(depending on the asset; has scaled keeping the aspect ratio)
 	_Resources/Persistent/b29[...]95d.jpeg
+
 
 
 
