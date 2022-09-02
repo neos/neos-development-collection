@@ -1,7 +1,7 @@
 .. _`Form ViewHelper Reference`:
 
 Form ViewHelper Reference
-=========================
+#########################
 
 This reference was automatically generated from code on 2022-09-02
 
@@ -443,6 +443,7 @@ Arguments
 * ``property`` (string): The property to translate
 
 * ``element`` (Neos\Form\Core\Model\FormElementInterface, *optional*): Form element
+
 
 
 
