@@ -171,7 +171,7 @@ class UserService
      * @return QueryResultInterface The users
      * @api
      */
-    public function getUsers(string $sortBy = 'accountidentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
+    public function getUsers(string $sortBy = 'accounts.accountIdentifier', string $sortDirection = QueryInterface::ORDER_ASCENDING): QueryResultInterface
     {
         return $this->userRepository->findAllOrdered($sortBy, $sortDirection);
     }
