@@ -77,34 +77,20 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof CreateWorkspace
-            || $command instanceof CreateRootWorkspace
-            || $command instanceof PublishWorkspace
-            || $command instanceof RebaseWorkspace
-            || $command instanceof PublishIndividualNodesFromWorkspace
-            || $command instanceof DiscardIndividualNodesFromWorkspace
-            || $command instanceof DiscardWorkspace;
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        if ($command instanceof CreateWorkspace) {
-            return $this->handleCreateWorkspace($command, $contentRepository);
-        } elseif ($command instanceof CreateRootWorkspace) {
-            return $this->handleCreateRootWorkspace($command, $contentRepository);
-        } elseif ($command instanceof PublishWorkspace) {
-            return $this->handlePublishWorkspace($command, $contentRepository);
-        } elseif ($command instanceof RebaseWorkspace) {
-            return $this->handleRebaseWorkspace($command, $contentRepository);
-        } elseif ($command instanceof PublishIndividualNodesFromWorkspace) {
-            return $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository);
-        } elseif ($command instanceof DiscardIndividualNodesFromWorkspace) {
-            return $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository);
-        } elseif ($command instanceof DiscardWorkspace) {
-            return $this->handleDiscardWorkspace($command, $contentRepository);
-        }
-
-        throw new \RuntimeException('invalid command');
+        return match ($command::class) {
+            CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
+            CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
+            PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
+            RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
+            PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
+            DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
+            DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
+        };
     }
 
     /**
@@ -152,7 +138,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->initiatingUserId,
                 $command->newContentStreamId,
                 $command->workspaceOwner
-            ),
+            )
         );
 
         return new EventsToPublish(
@@ -168,7 +154,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceAlreadyExists
      * @throws ContentStreamAlreadyExists
      */
-    public function handleCreateRootWorkspace(
+    private function handleCreateRootWorkspace(
         CreateRootWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -214,7 +200,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handlePublishWorkspace(
+    private function handlePublishWorkspace(
         PublishWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -339,7 +325,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      */
-    public function handleRebaseWorkspace(
+    private function handleRebaseWorkspace(
         RebaseWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -480,7 +466,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
      */
-    public function handlePublishIndividualNodesFromWorkspace(
+    private function handlePublishIndividualNodesFromWorkspace(
         PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -597,7 +583,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function handleDiscardIndividualNodesFromWorkspace(
+    private function handleDiscardIndividualNodesFromWorkspace(
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
@@ -688,7 +674,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
      */
-    public function handleDiscardWorkspace(
+    private function handleDiscardWorkspace(
         DiscardWorkspace $command,
         ContentRepository $contentRepository
     ): EventsToPublish {

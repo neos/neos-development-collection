@@ -32,7 +32,6 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
@@ -62,19 +61,16 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         return $this->contentDimensionZookeeper->getAllowedDimensionSubspace();
     }
 
-
     public function canHandle(CommandInterface $command): bool
     {
-        return $command instanceof CopyNodesRecursively;
+        return method_exists($this, 'handle' . (new \ReflectionClass($command))->getShortName());
     }
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        if ($command instanceof CopyNodesRecursively) {
-            return $this->handleCopyNodesRecursively($command, $contentRepository);
-        }
-
-        throw new \RuntimeException('Command not supported');
+        return match ($command::class) {
+            CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command, $contentRepository),
+        };
     }
 
     /**
