@@ -114,3 +114,16 @@ processors.newSyntax.usingThisInProcessor = Value {
 	@process.1 = ${value + this.append}
 	append = " append"
 }
+
+// https://github.com/neos/neos-development-collection/issues/3469
+processors.newSyntax.skippedLazyPropsInProcessor = Neos.Fusion:Component {
+  lazyPropValue = "foo"
+
+  lazyPropSkipped = "skip"
+  lazyPropSkipped.@if.1 = false
+
+  renderer = Neos.Fusion:DataStructure {
+    buz = "bar"
+    @process.combine = ${Array.concat(value, Array.filter(props, prop => prop != null))}
+  }
+}

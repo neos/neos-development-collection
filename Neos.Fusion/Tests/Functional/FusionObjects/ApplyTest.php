@@ -286,4 +286,14 @@ class ApplyTest extends AbstractFusionObjectTest
         $view->setFusionPath('apply/renderWithNestedProps');
         self::assertEquals('::example::', $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function evaluateLazyPropsWithLastOneSkipped()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('apply/evaluateLazyPropsWithLastOneSkipped');
+        self::assertSame(['lazyPropValue' => 'foo'], $view->render());
+    }
 }
