@@ -13,12 +13,11 @@ Feature: Run integrity violation detection regarding parent relations
     'Neos.ContentRepository.Testing:Document': []
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                  | Value                                  |
-      | workspaceName        | "live"                                 |
-      | workspaceTitle       | "Live"                                 |
-      | workspaceDescription | "The live workspace"                   |
-      | initiatingUserId     | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamId   | "cs-identifier"                        |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
@@ -26,7 +25,6 @@ Feature: Run integrity violation detection regarding parent relations
       | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | initiatingUserId            | "00000000-0000-0000-0000-000000000000"                   |
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |

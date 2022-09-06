@@ -239,7 +239,6 @@ class WorkspacesController extends AbstractModuleController
                     $baseWorkspace,
                     $title,
                     $description,
-                    $currentUserIdentifier,
                     ContentStreamId::create(),
                     $visibility === 'private' ? $currentUserIdentifier : null
                 )

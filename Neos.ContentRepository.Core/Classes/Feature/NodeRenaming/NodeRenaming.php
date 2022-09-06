@@ -38,7 +38,6 @@ trait NodeRenaming
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $command->newNodeName,
-                $command->initiatingUserId
             ),
         );
 

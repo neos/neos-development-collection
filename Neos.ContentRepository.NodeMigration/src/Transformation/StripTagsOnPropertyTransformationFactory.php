@@ -79,7 +79,6 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                                     $serializedPropertyValue->getType()
                                 )
                             ]),
-                            UserId::forSystemUser()
                         )
                     );
                 }

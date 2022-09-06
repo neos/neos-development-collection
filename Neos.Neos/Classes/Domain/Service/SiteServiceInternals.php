@@ -84,13 +84,12 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                     $siteNodeAggregate->nodeAggregateId,
                     $arbitraryDimensionSpacePoint,
                     NodeVariantSelectionStrategy::STRATEGY_ALL_VARIANTS,
-                    UserId::forSystemUser()
                 ));
             }
         }
     }
 
-    public function createSiteNode(Site $site, string $nodeTypeName, UserId $currentUserIdentifier): void
+    public function createSiteNode(Site $site, string $nodeTypeName): void
     {
         $bootstrapper = ContentRepositoryBootstrapper::create($this->contentRepository);
         $liveContentStreamIdentifier = $bootstrapper->getOrCreateLiveContentStream();
@@ -122,7 +121,6 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             $siteNodeAggregateIdentifier,
             NodeTypeName::fromString($nodeTypeName),
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
-            $currentUserIdentifier,
             $sitesNodeIdentifier,
             null,
             $site->getNodeName()->toNodeName(),
@@ -138,7 +136,6 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                 $siteNodeAggregateIdentifier,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),
-                $currentUserIdentifier
             ))->block();
         }
     }

@@ -23,7 +23,6 @@ Feature: Dimension mismatch
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                    |
@@ -31,7 +30,6 @@ Feature: Dimension mismatch
       | nodeAggregateId     | "lady-eleonode-rootford"                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"            |
       | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "en"}] |
-      | initiatingUserId    | "system-user"                            |
       | nodeAggregateClassification | "root"                                   |
     And the graph projection is fully up to date
 
@@ -44,7 +42,6 @@ Feature: Dimension mismatch
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "en"}                        |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | initiatingUserId      | "user"                                    |
     And the graph projection is fully up to date
 
     When I have the following content dimensions:

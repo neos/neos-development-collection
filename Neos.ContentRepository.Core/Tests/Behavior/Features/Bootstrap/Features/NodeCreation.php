@@ -63,16 +63,12 @@ trait NodeCreation
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->getCurrentContentStreamId();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
 
         $command = new CreateRootNodeAggregateWithNode(
             $contentStreamId,
             $nodeAggregateId,
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -103,9 +99,6 @@ trait NodeCreation
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $nodeAggregateId = NodeAggregateId::fromString($eventPayload['nodeAggregateId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
@@ -127,16 +120,12 @@ trait NodeCreation
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
-        $userId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new CreateNodeAggregateWithNode(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
             $originDimensionSpacePoint,
-            $userId,
             NodeAggregateId::fromString($commandArguments['parentNodeAggregateId']),
             isset($commandArguments['succeedingSiblingNodeAggregateId'])
                 ? NodeAggregateId::fromString($commandArguments['succeedingSiblingNodeAggregateId'])
@@ -180,15 +169,11 @@ trait NodeCreation
             $originDimensionSpacePoint = isset($row['originDimensionSpacePoint'])
                 ? OriginDimensionSpacePoint::fromJsonString($row['originDimensionSpacePoint'])
                 : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
-            $initiatingUserId = isset($row['initiatingUserId'])
-                ? UserId::fromString($row['initiatingUserId'])
-                : $this->getCurrentUserId();
             $command = new CreateNodeAggregateWithNode(
                 $contentStreamId,
                 NodeAggregateId::fromString($row['nodeAggregateId']),
                 NodeTypeName::fromString($row['nodeTypeName']),
                 $originDimensionSpacePoint,
-                $initiatingUserId,
                 NodeAggregateId::fromString($row['parentNodeAggregateId']),
                 isset($row['succeedingSiblingNodeAggregateId'])
                     ? NodeAggregateId::fromString($row['succeedingSiblingNodeAggregateId'])
@@ -279,9 +264,6 @@ trait NodeCreation
         }
         if (!isset($eventPayload['nodeName'])) {
             $eventPayload['nodeName'] = null;
-        }
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = 'initiating-user-id';
         }
 
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);

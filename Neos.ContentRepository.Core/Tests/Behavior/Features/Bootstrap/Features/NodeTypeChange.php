@@ -47,9 +47,6 @@ trait NodeTypeChange
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->getCurrentContentStreamId();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $tetheredDescendantNodeAggregateIds = isset($commandArguments['tetheredDescendantNodeAggregateIds'])
             ? NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds'])
             : null;
@@ -59,7 +56,6 @@ trait NodeTypeChange
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['newNodeTypeName']),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($commandArguments['strategy']),
-            $initiatingUserId,
             $tetheredDescendantNodeAggregateIds
         );
 

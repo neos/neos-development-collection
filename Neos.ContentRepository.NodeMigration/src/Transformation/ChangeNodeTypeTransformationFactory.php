@@ -70,7 +70,6 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                     $nodeAggregate->nodeAggregateId,
                     NodeTypeName::fromString($this->newType),
                     $this->strategy,
-                    UserId::forSystemUser()
                 ));
             }
         };

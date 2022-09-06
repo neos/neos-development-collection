@@ -17,43 +17,42 @@ Feature: Remove NodeAggregate
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
-      | nodingers-cat           | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | pet      |
-      | nodingers-kitten        | Neos.ContentRepository.Testing:Document | nodingers-cat                 | kitten   |
+      | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document |
+      | nodingers-cat          | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | pet      |
+      | nodingers-kitten       | Neos.ContentRepository.Testing:Document | nodingers-cat          | kitten   |
     And the command SetNodeReferences is executed with payload:
-      | Key                           | Value                                  |
+      | Key                   | Value                                  |
       | sourceNodeAggregateId | "nodingers-cat"                        |
-      | referenceName                 | "references"                           |
-      | references                    | [{"target": "sir-david-nodenborough"}] |
+      | referenceName         | "references"                           |
+      | references            | [{"target": "sir-david-nodenborough"}] |
 
   Scenario: Remove a node aggregate
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
-      | nodeAggregateId      | "nodingers-cat" |
+      | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
     Then I expect exactly 7 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasRemoved" with payload:
-      | Key                                  | Expected                     |
-      | contentStreamId              | "cs-identifier"              |
-      | nodeAggregateId              | "nodingers-cat"              |
-      | affectedOccupiedDimensionSpacePoints | [[]]                         |
-      | affectedCoveredDimensionSpacePoints  | [[]]                         |
-      | initiatingUserId             | "initiating-user-identifier" |
-      | removalAttachmentPoint               | null                         |
+      | Key                                  | Expected        |
+      | contentStreamId                      | "cs-identifier" |
+      | nodeAggregateId                      | "nodingers-cat" |
+      | affectedOccupiedDimensionSpacePoints | [[]]            |
+      | affectedCoveredDimensionSpacePoints  | [[]]            |
+      | removalAttachmentPoint               | null            |
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -63,9 +62,9 @@ Feature: Remove NodeAggregate
       | Name     | NodeDiscriminator                       |
       | document | cs-identifier;sir-david-nodenborough;{} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 1 levels deep should be:
-      | Level | nodeAggregateId |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
+      | Level | nodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no references
@@ -75,20 +74,20 @@ Feature: Remove NodeAggregate
   Scenario: Disable a node aggregate, remove it, recreate it and expect it to be enabled
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value           |
-      | nodeAggregateId      | "nodingers-cat" |
+      | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
     And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
-      | nodeAggregateId      | "nodingers-cat" |
+      | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
     And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
+      | Key                   | Value                                     |
       | nodeAggregateId       | "nodingers-cat"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "pet"                                     |
+      | nodeName              | "pet"                                     |
     And the graph projection is fully up to date
 
     Then I expect the node aggregate "nodingers-cat" to exist
@@ -103,10 +102,10 @@ Feature: Remove NodeAggregate
       | document | cs-identifier;sir-david-nodenborough;{} |
       | pet      | cs-identifier;nodingers-cat;{}          |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 1 levels deep should be:
-      | Level | nodeAggregateId |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
-      | 1     | nodingers-cat           |
+      | Level | nodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+      | 1     | nodingers-cat          |
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect node aggregate identifier "nodingers-cat" and node path "pet" to lead to node cs-identifier;nodingers-cat;{}
@@ -115,15 +114,15 @@ Feature: Remove NodeAggregate
   Scenario: Remove a node aggregate, recreate it and expect it to have no references
     When the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
-      | nodeAggregateId      | "nodingers-cat" |
+      | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
     And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
+      | Key                   | Value                                     |
       | nodeAggregateId       | "nodingers-cat"                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Document" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | nodeName                      | "pet"                                     |
+      | nodeName              | "pet"                                     |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{}

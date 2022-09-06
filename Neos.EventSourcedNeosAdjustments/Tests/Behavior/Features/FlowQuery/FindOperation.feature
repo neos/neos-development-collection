@@ -20,7 +20,6 @@ Feature: The FlowQuery find operation
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamIdentifier | "cs-identifier"                        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
@@ -28,7 +27,6 @@ Feature: The FlowQuery find operation
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the graph projection is fully up to date
 
@@ -39,7 +37,6 @@ Feature: The FlowQuery find operation
       | nodeAggregateIdentifier                    | "sir-david-nodenborough"                                    |
       | nodeTypeName                               | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
       | originDimensionSpacePoint                  | {}                                                          |
-      | initiatingUserIdentifier                   | "00000000-0000-0000-0000-000000000000"                      |
       | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                                    |
       | tetheredDescendantNodeAggregateIdentifiers | {"tethered": "nodewyn-tetherton"}                           |
     And the graph projection is fully up to date

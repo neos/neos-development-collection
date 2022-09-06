@@ -65,9 +65,6 @@ trait NodeCopying
         $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $targetSucceedingSiblingNodeAggregateId = isset($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             ? NodeAggregateId::fromString($commandArguments['targetSucceedingSiblingNodeAggregateId'])
             : null;
@@ -79,7 +76,6 @@ trait NodeCopying
             $subgraph,
             $currentNode,
             $targetDimensionSpacePoint,
-            $initiatingUserId,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
             $targetSucceedingSiblingNodeAggregateId,
             $targetNodeName

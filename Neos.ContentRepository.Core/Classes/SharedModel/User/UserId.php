@@ -61,6 +61,11 @@ final class UserId implements \JsonSerializable, \Stringable
         return $this->value === self::SYSTEM_USER_ID;
     }
 
+    public function equals(UserId $other): bool
+    {
+        return $other->value === $this->value;
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value;

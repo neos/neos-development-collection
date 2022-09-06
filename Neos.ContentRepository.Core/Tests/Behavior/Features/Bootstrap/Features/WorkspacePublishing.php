@@ -39,9 +39,6 @@ trait WorkspacePublishing
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $nodesToPublish = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToPublish']);
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $contentStreamIdForMatchingPart = isset($commandArguments['contentStreamIdForMatchingPart'])
             ? ContentStreamId::fromString($commandArguments['contentStreamIdForMatchingPart'])
@@ -54,7 +51,6 @@ trait WorkspacePublishing
         $command = PublishIndividualNodesFromWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             $nodesToPublish,
-            $initiatingUserId,
             $contentStreamIdForMatchingPart,
             $contentStreamIdForRemainingPart
         );
@@ -70,13 +66,9 @@ trait WorkspacePublishing
     public function theCommandPublishWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new PublishWorkspace(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;

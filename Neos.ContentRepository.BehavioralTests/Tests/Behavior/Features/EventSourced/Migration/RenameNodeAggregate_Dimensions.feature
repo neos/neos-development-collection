@@ -34,7 +34,6 @@ Feature: Rename Node Aggregate
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                      |
@@ -42,7 +41,6 @@ Feature: Rename Node Aggregate
       | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
-      | initiatingUserId    | "system-user"                                                              |
       | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
     # Node /document (in "de")
@@ -53,7 +51,6 @@ Feature: Rename Node Aggregate
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | nodeName                      | "foo"                                     |
       | originDimensionSpacePoint     | {"language": "de"}                        |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "Original text"}                 |
     And the graph projection is fully up to date
@@ -65,7 +62,6 @@ Feature: Rename Node Aggregate
       | nodeAggregateId  | "sir-david-nodenborough" |
       | sourceOrigin             | {"language":"de"}        |
       | targetOrigin             | {"language":"en"}        |
-      | initiatingUserId | "system-user"            |
     And the graph projection is fully up to date
 
 

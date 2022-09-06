@@ -113,7 +113,6 @@ final class EventStoreImportProcessor implements ProcessorInterface
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
                     $this->contentStreamId,
-                    UserId::forSystemUser(),
                 )
             )
         );
@@ -131,7 +130,6 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     $workspaceName,
                     WorkspaceTitle::fromString('live workspace'),
                     WorkspaceDescription::fromString('live workspace'),
-                    UserId::forSystemUser(),
                     $this->contentStreamId
                 )
             )

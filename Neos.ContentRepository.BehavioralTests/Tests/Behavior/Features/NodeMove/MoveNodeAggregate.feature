@@ -40,7 +40,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -49,7 +48,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId     | "lady-eleonode-rootford"                                                                                                                |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                           |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"                                                                                                  |
       | nodeAggregateClassification | "root"                                                                                                                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
@@ -90,7 +88,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId      | "sir-david-nodenborough"           |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to move a node of a non-existing node aggregate:
@@ -100,7 +97,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId      | "i-do-not-exist"                   |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node of a root node aggregate:
@@ -110,7 +106,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId      | "lady-eleonode-rootford"         |
       | dimensionSpacePoint          | {"market":"DE", "language":"de"} |
       | relationDistributionStrategy | "scatter"                        |
-      | initiatingUserId     | "user"                           |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
 
   Scenario: Try to move a node of a tethered node aggregate:
@@ -120,7 +115,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId      | "nodewyn-tetherton"                |
       | dimensionSpacePoint          | {"market": "DE", "language": "de"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
 
   Scenario: Try to move a node in a non-existing dimension space point:
@@ -130,7 +124,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId      | "sir-david-nodenborough"                  |
       | dimensionSpacePoint          | {"market": "nope", "language": "neither"} |
       | relationDistributionStrategy | "scatter"                                 |
-      | initiatingUserId     | "user"                                    |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to move a node in a dimension space point the aggregate does not cover
@@ -140,7 +133,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId      | "sir-david-nodenborough"           |
       | dimensionSpacePoint          | {"market": "DE", "language": "fr"} |
       | relationDistributionStrategy | "scatter"                          |
-      | initiatingUserId     | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
   Scenario: Try to move existing node to a non-existing parent
@@ -151,7 +143,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId          | "sir-david-nodenborough"           |
       | newParentNodeAggregateId | "non-existing-parent-identifier"   |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node to a parent that already has a child node of the same name
@@ -174,7 +165,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId          | "nody-mc-nodeface"                 |
       | newParentNodeAggregateId | "lady-eleonode-rootford"           |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeNameIsAlreadyCovered"
 
   Scenario: Move a node that has no name
@@ -196,7 +186,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId          | "nody-mc-nodeface"                 |
       | newParentNodeAggregateId | "lady-eleonode-rootford"           |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserId         | "user"                             |
     And the graph projection is fully up to date
     When I am in content stream "cs-identifier" and dimension space point {"market": "DE", "language": "de"}
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{"market":"DE","language":"de"}
@@ -222,7 +211,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId          | "nody-mc-nodeface"                 |
       | newParentNodeAggregateId | "nodewyn-tetherton"                |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move a node to a parent whose parent's node type does not allow grand child nodes of the node's type
@@ -244,7 +232,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId          | "nody-mc-nodeface"                 |
       | newParentNodeAggregateId | "nodewyn-tetherton"                |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to move existing node to a non-existing succeeding sibling
@@ -255,7 +242,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId                     | "sir-david-nodenborough"           |
       | newSucceedingSiblingNodeAggregateId | "i-do-not-exist"                   |
       | relationDistributionStrategy                | "scatter"                          |
-      | initiatingUserId                    | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move existing node to a non-existing preceding sibling
@@ -266,7 +252,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId                    | "sir-david-nodenborough"           |
       | newPrecedingSiblingNodeAggregateId | "i-do-not-exist"                   |
       | relationDistributionStrategy               | "scatter"                          |
-      | initiatingUserId                   | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to move a node to one of its children
@@ -277,5 +262,4 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | nodeAggregateId          | "sir-david-nodenborough"           |
       | newParentNodeAggregateId | "nodewyn-tetherton"                |
       | relationDistributionStrategy     | "scatter"                          |
-      | initiatingUserId         | "user"                             |
     Then the last command should have thrown an exception of type "NodeAggregateIsDescendant"

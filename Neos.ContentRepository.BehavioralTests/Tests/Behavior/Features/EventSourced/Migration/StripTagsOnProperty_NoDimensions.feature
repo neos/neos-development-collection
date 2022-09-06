@@ -30,7 +30,6 @@ Feature: Strip Tags on Property
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -38,7 +37,6 @@ Feature: Strip Tags on Property
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
@@ -48,7 +46,6 @@ Feature: Strip Tags on Property
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "Original <p>text</p>"}          |
     And the graph projection is fully up to date

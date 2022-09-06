@@ -132,7 +132,6 @@ final class EditorContentStreamZookeeper
                             $baseWorkspace->workspaceName,
                             new WorkspaceTitle((string) $user->getName()),
                             new WorkspaceDescription(''),
-                            $userIdentifier,
                             $editorsNewContentStreamIdentifier,
                             $userIdentifier
                         )

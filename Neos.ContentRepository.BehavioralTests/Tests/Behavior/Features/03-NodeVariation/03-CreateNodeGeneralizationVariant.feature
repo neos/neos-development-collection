@@ -24,39 +24,38 @@ Feature: Create node generalization
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "user-id"            |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"CH", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeName       | parentNodeAggregateId | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                 |
+      | nodeAggregateId        | nodeName       | parentNodeAggregateId  | nodeTypeName                                | tetheredDescendantNodeAggregateIds                                                         |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     # We add a tethered child node to provide for test cases for node aggregates of that classification
     # Node /document/tethered-node
     # We add a tethered grandchild node to provide for test cases that this works recursively
     # Node /document/tethered-node/tethered-leaf
-      | sir-david-nodenborough  | document       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
+      | sir-david-nodenborough | document       | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document     | {"tethered-node": "nodewyn-tetherton", "tethered-node/tethered-leaf": "nodimer-tetherton"} |
     # We also want to add a child node to make sure it is still reachable after creating a specialization of the parent
     # Node /document/child-document
-      | nody-mc-nodeface        | child-document | sir-david-nodenborough        | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
+      | nody-mc-nodeface       | child-document | sir-david-nodenborough | Neos.ContentRepository.Testing:LeafDocument | {}                                                                                         |
 
   Scenario: Create generalization of node to dimension space point without further generalizations
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"market":"DE", "language":"en"}  |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"en"}  |
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     # The event at index 0 was ContentStreamWasCreated for cs-identifier
     # The event at index 1 was RootNodeAggregateWithNodeWasCreated for lady-eleonode-rootford
@@ -65,26 +64,26 @@ Feature: Create node generalization
     # The event at index 4 was NodeAggregateWithNodeWasCreated for nodimer-tetherton
     # The event at index 5 was NodeAggregateWithNodeWasCreated for nody-mc-nodeface
     And event at index 6 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                                                                                                |
-      | contentStreamId | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateId | "sir-david-nodenborough"                                                                                                                                                |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                                                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateId        | "sir-david-nodenborough"                                                                                                                                                |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin   | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And event at index 7 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                                                                                                |
-      | contentStreamId | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateId | "nodewyn-tetherton"                                                                                                                                                     |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                                                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                                                                                                                     |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin   | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     And event at index 8 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                                                                                                |
-      | contentStreamId | "cs-identifier"                                                                                                                                                         |
-      | nodeAggregateId | "nodimer-tetherton"                                                                                                                                                     |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                                                                                       |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                                                                                                                        |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                                                                                                                                                                |
+      | contentStreamId        | "cs-identifier"                                                                                                                                                         |
+      | nodeAggregateId        | "nodimer-tetherton"                                                                                                                                                     |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                                                                                                                       |
+      | generalizationOrigin   | {"market":"DE", "language":"en"}                                                                                                                                        |
+      | generalizationCoverage | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"},{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 8 nodes
@@ -181,33 +180,33 @@ Feature: Create node generalization
 
   Scenario: Create generalization of node to dimension space point with further generalizations
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"market":"DE", "language":"gsw"} |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"gsw"} |
     Then I expect exactly 9 events to be published on stream "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                            |
-      | contentStreamId | "cs-identifier"                     |
-      | nodeAggregateId | "sir-david-nodenborough"            |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
-      | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
-      | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                            |
+      | contentStreamId        | "cs-identifier"                     |
+      | nodeAggregateId        | "sir-david-nodenborough"            |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}   |
+      | generalizationOrigin   | {"market":"DE", "language":"gsw"}   |
+      | generalizationCoverage | [{"market":"DE", "language":"gsw"}] |
     And event at index 7 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                            |
-      | contentStreamId | "cs-identifier"                     |
-      | nodeAggregateId | "nodewyn-tetherton"                 |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
-      | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
-      | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                            |
+      | contentStreamId        | "cs-identifier"                     |
+      | nodeAggregateId        | "nodewyn-tetherton"                 |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}   |
+      | generalizationOrigin   | {"market":"DE", "language":"gsw"}   |
+      | generalizationCoverage | [{"market":"DE", "language":"gsw"}] |
     And event at index 8 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                            |
-      | contentStreamId | "cs-identifier"                     |
-      | nodeAggregateId | "nodimer-tetherton"                 |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}   |
-      | generalizationOrigin    | {"market":"DE", "language":"gsw"}   |
-      | generalizationCoverage  | [{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                            |
+      | contentStreamId        | "cs-identifier"                     |
+      | nodeAggregateId        | "nodimer-tetherton"                 |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}   |
+      | generalizationOrigin   | {"market":"DE", "language":"gsw"}   |
+      | generalizationCoverage | [{"market":"DE", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 8 nodes
@@ -292,47 +291,47 @@ Feature: Create node generalization
 
   Scenario: Create generalization of node to dimension space point with specializations that are partially occupied and covered
     Given the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"market":"DE", "language":"de"}  |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"de"}  |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"market":"DE", "language":"en"}  |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"en"}  |
     Then I expect exactly 12 events to be published on stream "ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 9 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                            |
-      | contentStreamId | "cs-identifier"                                                     |
-      | nodeAggregateId | "sir-david-nodenborough"                                            |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                   |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | Key                    | Expected                                                            |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "sir-david-nodenborough"                                            |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                   |
+      | generalizationOrigin   | {"market":"DE", "language":"en"}                                    |
+      | generalizationCoverage | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 10 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                            |
-      | contentStreamId | "cs-identifier"                                                     |
-      | nodeAggregateId | "nodewyn-tetherton"                                                 |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                   |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | Key                    | Expected                                                            |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                 |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                   |
+      | generalizationOrigin   | {"market":"DE", "language":"en"}                                    |
+      | generalizationCoverage | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 11 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                            |
-      | contentStreamId | "cs-identifier"                                                     |
-      | nodeAggregateId | "nodimer-tetherton"                                                 |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                   |
-      | generalizationOrigin    | {"market":"DE", "language":"en"}                                    |
-      | generalizationCoverage  | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
+      | Key                    | Expected                                                            |
+      | contentStreamId        | "cs-identifier"                                                     |
+      | nodeAggregateId        | "nodimer-tetherton"                                                 |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                   |
+      | generalizationOrigin   | {"market":"DE", "language":"en"}                                    |
+      | generalizationCoverage | [{"market":"DE", "language":"en"},{"market":"CH", "language":"en"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes
@@ -432,47 +431,47 @@ Feature: Create node generalization
 
   Scenario: Create generalization of a node to a dimension space point that is already covered by a more general generalization
     Given the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"market":"DE", "language":"en"}  |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"en"}  |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                             |
+      | Key             | Value                             |
       | contentStreamId | "cs-identifier"                   |
       | nodeAggregateId | "sir-david-nodenborough"          |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"} |
-      | targetOrigin            | {"market":"DE", "language":"de"}  |
+      | sourceOrigin    | {"market":"CH", "language":"gsw"} |
+      | targetOrigin    | {"market":"DE", "language":"de"}  |
     Then I expect exactly 12 events to be published on stream "ContentStream:cs-identifier"
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 9 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                              |
-      | contentStreamId | "cs-identifier"                                                                                       |
-      | nodeAggregateId | "sir-david-nodenborough"                                                                              |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                                                                                              |
+      | contentStreamId        | "cs-identifier"                                                                                       |
+      | nodeAggregateId        | "sir-david-nodenborough"                                                                              |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin   | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 10 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                              |
-      | contentStreamId | "cs-identifier"                                                                                       |
-      | nodeAggregateId | "nodewyn-tetherton"                                                                                   |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                                                                                              |
+      | contentStreamId        | "cs-identifier"                                                                                       |
+      | nodeAggregateId        | "nodewyn-tetherton"                                                                                   |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin   | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
     # The first event is NodeAggregateWithNodeWasCreated
     # The second event is the above
     And event at index 11 is of type "NodeGeneralizationVariantWasCreated" with payload:
-      | Key                     | Expected                                                                                              |
-      | contentStreamId | "cs-identifier"                                                                                       |
-      | nodeAggregateId | "nodimer-tetherton"                                                                                   |
-      | sourceOrigin            | {"market":"CH", "language":"gsw"}                                                                     |
-      | generalizationOrigin    | {"market":"DE", "language":"de"}                                                                      |
-      | generalizationCoverage  | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
+      | Key                    | Expected                                                                                              |
+      | contentStreamId        | "cs-identifier"                                                                                       |
+      | nodeAggregateId        | "nodimer-tetherton"                                                                                   |
+      | sourceOrigin           | {"market":"CH", "language":"gsw"}                                                                     |
+      | generalizationOrigin   | {"market":"DE", "language":"de"}                                                                      |
+      | generalizationCoverage | [{"market":"DE", "language":"de"},{"market":"CH", "language":"de"},{"market":"DE", "language":"gsw"}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes

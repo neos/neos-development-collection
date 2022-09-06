@@ -56,16 +56,12 @@ trait NodeDisabling
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->getCurrentDimensionSpacePoint();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new DisableNodeAggregate(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -92,9 +88,6 @@ trait NodeDisabling
     public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
@@ -114,9 +107,6 @@ trait NodeDisabling
     public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
@@ -142,16 +132,12 @@ trait NodeDisabling
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->getCurrentDimensionSpacePoint();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new EnableNodeAggregate(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);

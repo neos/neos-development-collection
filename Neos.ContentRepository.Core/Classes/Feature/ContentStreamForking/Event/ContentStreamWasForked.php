@@ -44,6 +44,10 @@ final class ContentStreamWasForked implements EventInterface
 
     public function jsonSerialize(): array
     {
-        return get_object_vars($this);
+        return [
+            'newContentStreamId' => $this->newContentStreamId,
+            'sourceContentStreamId' => $this->sourceContentStreamId,
+            'versionOfSourceContentStream' => $this->versionOfSourceContentStream->value,
+        ];
     }
 }

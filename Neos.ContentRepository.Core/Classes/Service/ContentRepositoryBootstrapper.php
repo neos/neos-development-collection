@@ -50,7 +50,6 @@ final class ContentRepositoryBootstrapper
                 WorkspaceName::forLive(),
                 WorkspaceTitle::fromString('Live'),
                 WorkspaceDescription::fromString('Public live workspace'),
-                UserId::forSystemUser(),
                 $liveContentStreamId
             )
         )->block();
@@ -78,7 +77,6 @@ final class ContentRepositoryBootstrapper
                 $contentStreamId,
                 $rootNodeAggregateId,
                 $rootNodeTypeName,
-                UserId::forSystemUser()
             ))->block();
             return $rootNodeAggregateId;
         }

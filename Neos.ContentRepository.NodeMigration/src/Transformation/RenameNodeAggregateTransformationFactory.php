@@ -54,7 +54,6 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
                     $contentStreamForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeName::fromString($this->newNodeName),
-                    UserId::forSystemUser()
                 ));
             }
         };

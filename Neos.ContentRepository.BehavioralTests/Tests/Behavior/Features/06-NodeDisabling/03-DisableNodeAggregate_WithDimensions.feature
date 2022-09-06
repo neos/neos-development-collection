@@ -19,35 +19,35 @@ Feature: Disable a node aggregate
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName            |
-      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | preceding-document  |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document            |
-      | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | succeeding-document |
-      | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough        | child-document      |
+      | nodeAggregateId         | nodeTypeName                            | parentNodeAggregateId  | nodeName            |
+      | preceding-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | preceding-document  |
+      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document            |
+      | succeeding-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | succeeding-document |
+      | nody-mc-nodeface        | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | child-document      |
     And the command SetNodeReferences is executed with payload:
-      | Key                           | Value                                  |
+      | Key                   | Value                                  |
       | sourceNodeAggregateId | "preceding-nodenborough"               |
-      | referenceName                 | "references"                           |
-      | references                    | [{"target": "sir-david-nodenborough"}] |
+      | referenceName         | "references"                           |
+      | references            | [{"target": "sir-david-nodenborough"}] |
     # We need both a real and a virtual specialization to test the different selection strategies
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
+      | Key             | Value                    |
       | nodeAggregateId | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"mul"}       |
-      | targetOrigin            | {"language":"ltz"}       |
+      | sourceOrigin    | {"language":"mul"}       |
+      | targetOrigin    | {"language":"ltz"}       |
     And the graph projection is fully up to date
     # Set the DSP to the "central" variant having variants of all kind
     And I am in dimension space point {"language":"de"}
@@ -55,16 +55,15 @@ Feature: Disable a node aggregate
   Scenario: Disable node aggregate with strategy allSpecializations
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
       | Key                          | Expected                                                    |
-      | contentStreamId      | "cs-identifier"                                             |
-      | nodeAggregateId      | "sir-david-nodenborough"                                    |
+      | contentStreamId              | "cs-identifier"                                             |
+      | nodeAggregateId              | "sir-david-nodenborough"                                    |
       | affectedDimensionSpacePoints | [{"language":"de"}, {"language":"ltz"}, {"language":"gsw"}] |
-      | initiatingUserId     | "initiating-user-identifier"                                |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -89,7 +88,7 @@ Feature: Disable a node aggregate
       | document            | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | sir-david-nodenborough  |
@@ -133,7 +132,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -162,7 +161,7 @@ Feature: Disable a node aggregate
       | document            | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | sir-david-nodenborough  |
@@ -208,7 +207,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -237,7 +236,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -267,7 +266,7 @@ Feature: Disable a node aggregate
       | document            | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | sir-david-nodenborough  |
@@ -307,16 +306,15 @@ Feature: Disable a node aggregate
   Scenario: Disable node aggregate with strategy allVariants
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
-      | nodeAggregateId      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
       | Key                          | Expected                                                                                           |
-      | contentStreamId      | "cs-identifier"                                                                                    |
-      | nodeAggregateId      | "sir-david-nodenborough"                                                                           |
+      | contentStreamId              | "cs-identifier"                                                                                    |
+      | nodeAggregateId              | "sir-david-nodenborough"                                                                           |
       | affectedDimensionSpacePoints | [{"language":"ltz"}, {"language":"mul"}, {"language":"de"}, {"language":"en"}, {"language":"gsw"}] |
-      | initiatingUserId     | "initiating-user-identifier"                                                                       |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -341,7 +339,7 @@ Feature: Disable a node aggregate
       | document            | cs-identifier;sir-david-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | sir-david-nodenborough  |
@@ -385,7 +383,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -413,7 +411,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -442,7 +440,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -471,7 +469,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |
@@ -500,7 +498,7 @@ Feature: Disable a node aggregate
       | preceding-document  | cs-identifier;preceding-nodenborough;{"language":"mul"}  |
       | succeeding-document | cs-identifier;succeeding-nodenborough;{"language":"mul"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 2 levels deep should be:
-      | Level | nodeAggregateId |
+      | Level | nodeAggregateId         |
       | 0     | lady-eleonode-rootford  |
       | 1     | preceding-nodenborough  |
       | 1     | succeeding-nodenborough |

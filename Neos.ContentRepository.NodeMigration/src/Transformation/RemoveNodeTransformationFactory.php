@@ -91,7 +91,6 @@ class RemoveNodeTransformationFactory implements TransformationFactoryInterface
                     $node->nodeAggregateId,
                     $coveredDimensionSpacePoint,
                     $this->strategy,
-                    UserId::forSystemUser()
                 ));
             }
         };

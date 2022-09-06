@@ -96,7 +96,6 @@ trait NodeTypeChange
         NodeName $tetheredNodeName,
         NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events;
 
@@ -178,13 +177,11 @@ trait NodeTypeChange
             array_push($events, ...iterator_to_array($this->deleteDisallowedNodesWhenChangingNodeType(
                 $nodeAggregate,
                 $newNodeType,
-                $command->initiatingUserId,
                 $contentRepository
             )));
             array_push($events, ...iterator_to_array($this->deleteObsoleteTetheredNodesWhenChangingNodeType(
                 $nodeAggregate,
                 $newNodeType,
-                $command->initiatingUserId,
                 $contentRepository
             )));
         }
@@ -215,7 +212,6 @@ trait NodeTypeChange
                         $tetheredNodeName,
                         $tetheredNodeAggregateId,
                         $expectedTetheredNodeType,
-                        $command->initiatingUserId,
                         $contentRepository
                     )));
                 }
@@ -291,7 +287,6 @@ trait NodeTypeChange
     private function deleteDisallowedNodesWhenChangingNodeType(
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $events = [];
@@ -324,7 +319,6 @@ trait NodeTypeChange
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
                     $childNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
-                    $initiatingUserId
                 );
             }
 
@@ -361,7 +355,6 @@ trait NodeTypeChange
                     $events[] = $this->removeNodeInDimensionSpacePointSet(
                         $grandchildNodeAggregate,
                         $dimensionSpacePointsToBeRemoved,
-                        $initiatingUserId
                     );
                 }
             }
@@ -373,7 +366,6 @@ trait NodeTypeChange
     private function deleteObsoleteTetheredNodesWhenChangingNodeType(
         NodeAggregate $nodeAggregate,
         NodeType $newNodeType,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
@@ -399,7 +391,6 @@ trait NodeTypeChange
                 $events[] = $this->removeNodeInDimensionSpacePointSet(
                     $tetheredNodeAggregate,
                     $dimensionSpacePointsToBeRemoved,
-                    $initiatingUserId
                 );
             }
         }
@@ -457,7 +448,6 @@ trait NodeTypeChange
     private function removeNodeInDimensionSpacePointSet(
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $coveredDimensionSpacePointsToBeRemoved,
-        UserId $initiatingUserId
     ): NodeAggregateWasRemoved {
         return new NodeAggregateWasRemoved(
             $nodeAggregate->contentStreamId,
@@ -469,7 +459,6 @@ trait NodeTypeChange
                 $coveredDimensionSpacePointsToBeRemoved
             ),
             $coveredDimensionSpacePointsToBeRemoved,
-            $initiatingUserId
         );
     }
 }

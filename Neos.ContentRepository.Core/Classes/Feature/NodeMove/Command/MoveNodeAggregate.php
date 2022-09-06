@@ -33,7 +33,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * between `newPrecedingSiblingNodeAggregateId`
  * and `newSucceedingSiblingNodeAggregateId` (or as last of all siblings)
  * using `relationDistributionStrategy`
- * initiated by `initiatingUserId`
  *
  * Why can you specify **both** newPrecedingSiblingNodeAggregateId
  * and newSucceedingSiblingNodeAggregateId?

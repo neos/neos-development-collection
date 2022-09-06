@@ -19,7 +19,6 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier    | "system-user"                                                                                                                                                                                             |
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
@@ -125,7 +124,6 @@ Feature: Routing functionality with multiple content dimensions
     When the command PublishWorkspace is executed with payload:
       | Key                      | Value          |
       | workspaceName            | "migration-cs" |
-      | initiatingUserIdentifier | "user"         |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 
@@ -196,7 +194,6 @@ Feature: Routing functionality with multiple content dimensions
     When the command PublishWorkspace is executed with payload:
       | Key                      | Value          |
       | workspaceName            | "migration-cs" |
-      | initiatingUserIdentifier | "user"         |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 

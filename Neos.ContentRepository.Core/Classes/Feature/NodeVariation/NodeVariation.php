@@ -79,7 +79,6 @@ trait NodeVariation
             $command->sourceOrigin,
             $command->targetOrigin,
             $nodeAggregate,
-            $command->initiatingUserId,
             $contentRepository
         );
 

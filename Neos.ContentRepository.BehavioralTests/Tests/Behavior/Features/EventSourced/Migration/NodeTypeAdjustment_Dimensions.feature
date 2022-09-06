@@ -27,7 +27,6 @@ Feature: Adjust node types with a node migration
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                      |
@@ -35,7 +34,6 @@ Feature: Adjust node types with a node migration
       | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
-      | initiatingUserId    | "system-user"                                                              |
       | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
     # Node /document
@@ -45,7 +43,6 @@ Feature: Adjust node types with a node migration
       | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "de"}                        |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
     And the graph projection is fully up to date
 

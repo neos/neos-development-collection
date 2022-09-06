@@ -15,7 +15,6 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"     |
       | nodeTypeName                | "Neos.Neos:Sites"            |
       | coveredDimensionSpacePoints | [{}]                         |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
       | nodeAggregateClassification | "root"                       |
     And the graph projection is fully up to date
 

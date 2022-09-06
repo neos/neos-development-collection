@@ -27,7 +27,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"     |
       | nodeTypeName                | "Neos.Neos:Sites"            |
       | coveredDimensionSpacePoints | [{}]                         |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
       | nodeAggregateClassification | "root"                       |
     And the graph projection is fully up to date
 

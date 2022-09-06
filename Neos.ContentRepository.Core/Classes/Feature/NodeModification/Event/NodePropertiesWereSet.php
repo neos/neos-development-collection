@@ -59,7 +59,7 @@ final class NodePropertiesWereSet implements EventInterface, PublishableToOtherC
 
     public function mergeProperties(self $other): self
     {
-        return new self($this->contentStreamId, $this->nodeAggregateId, $this->originDimensionSpacePoint, $this->propertyValues->merge($other->propertyValues), $this->initiatingUserId);
+        return new self($this->contentStreamId, $this->nodeAggregateId, $this->originDimensionSpacePoint, $this->propertyValues->merge($other->propertyValues));
     }
 
     public static function fromArray(array $values): EventInterface

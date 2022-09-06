@@ -87,7 +87,7 @@ final class ContentRepository
         $eventsToPublish = new EventsToPublish(
             $eventsToPublish->streamName,
             Events::fromArray($eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) {
-                $metadata = $event->eventMetadata->value;
+                $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata->value : [];
                 $metadata['initiatingUserId'] = $this->initiatingUserId->value;
                 $metadata['initiatingTimestamp'] = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
                 return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
@@ -96,6 +96,21 @@ final class ContentRepository
         );
 
         return $this->eventPersister->publishEvents($eventsToPublish);
+    }
+
+    public function withInitiatingUserId(UserId $userId): self
+    {
+        if ($userId->equals($this->initiatingUserId)) {
+            return $this;
+        }
+        return new self(
+            $this->commandBus,
+            $this->eventStore,
+            $this->projections,
+            $this->eventPersister,
+            $this->nodeTypeManager,
+            $userId,
+        );
     }
 
     /**

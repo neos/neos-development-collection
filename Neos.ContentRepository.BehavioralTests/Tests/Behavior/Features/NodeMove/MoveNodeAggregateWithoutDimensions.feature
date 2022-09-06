@@ -21,7 +21,6 @@ Feature: Move a node without content dimensions
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -30,7 +29,6 @@ Feature: Move a node without content dimensions
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{}]                                   |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
@@ -72,7 +70,6 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | null                     |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | initiatingUserId                    | "user"                   |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
@@ -109,7 +106,6 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | null                         |
       | newSucceedingSiblingNodeAggregateId | "sir-david-nodenborough"     |
-      | initiatingUserId                    | "user"                       |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes
@@ -156,7 +152,6 @@ Feature: Move a node without content dimensions
       | nodeAggregateId          | "sir-david-nodenborough"     |
       | dimensionSpacePoint              | {}                           |
       | newParentNodeAggregateId | "sir-nodeward-nodington-iii" |
-      | initiatingUserId         | "user"                       |
 
     Then I expect exactly 7 events to be published on stream "ContentStream:cs-identifier"
     And event at index 6 is of type "NodeAggregateWasMoved" with payload:
@@ -205,7 +200,6 @@ Feature: Move a node without content dimensions
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "lady-eleonode-rootford"     |
       | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
-      | initiatingUserId                    | "user"                       |
     Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
     And event at index 5 is of type "NodeAggregateWasMoved" with payload:
       | Key                     | Expected                                                                                                                                                                                                                                                                                                                                |

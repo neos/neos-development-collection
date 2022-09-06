@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
@@ -51,7 +52,8 @@ final class ContentRepositoryFactory
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsFactory $projectionsFactory,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger
+        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
+        private readonly UserIdProviderInterface $userIdProvider,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -93,8 +95,7 @@ final class ContentRepositoryFactory
                 $this->projections,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
-                // TODO: determine user id from authenticated account
-                UserId::forSystemUser(),
+                $this->userIdProvider->getUserId(),
             );
         }
         return $this->contentRepository;

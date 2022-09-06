@@ -79,7 +79,6 @@ class WorkspaceCommandController extends CommandController
         if (!$dryRun) {
             $contentRepository->handle(new PublishWorkspace(
                 WorkspaceName::fromString($workspace),
-                UserId::forSystemUser()
             ))->block();
 
             $this->outputLine(
@@ -133,7 +132,6 @@ class WorkspaceCommandController extends CommandController
             WorkspaceName::fromString($name),
             WorkspaceTitle::fromString($name),
             WorkspaceDescription::fromString($name),
-            UserId::forSystemUser(),
             ContentStreamId::create()
         ))->block();
     }
@@ -177,7 +175,6 @@ class WorkspaceCommandController extends CommandController
                 WorkspaceName::fromString($baseWorkspace),
                 WorkspaceTitle::fromString($title ?: $workspace),
                 WorkspaceDescription::fromString($description ?: $workspace),
-                UserId::forSystemUser(),
                 ContentStreamId::create(),
                 $workspaceOwner
             ))->block();

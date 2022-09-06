@@ -32,42 +32,38 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     """
 
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                      |
-      | contentStreamId     | "cs-identifier"                                                            |
-      | nodeAggregateId     | "lady-eleonode-rootford"                                                   |
+      | contentStreamId             | "cs-identifier"                                                            |
+      | nodeAggregateId             | "lady-eleonode-rootford"                                                   |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                              |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"ch"}] |
-      | initiatingUserId    | "system-user"                                                              |
       | nodeAggregateClassification | "root"                                                                     |
     And the graph projection is fully up to date
     # Node /document (in "de")
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language": "de"}                        |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | initialPropertyValues         | {"text": "Original text"}                 |
+      | Key                       | Value                                     |
+      | contentStreamId           | "cs-identifier"                           |
+      | nodeAggregateId           | "sir-david-nodenborough"                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint | {"language": "de"}                        |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
+      | initialPropertyValues     | {"text": "Original text"}                 |
     And the graph projection is fully up to date
 
     # Node /document (in "en")
     When the command CreateNodeVariant is executed with payload:
-      | Key                      | Value                    |
-      | contentStreamId  | "cs-identifier"          |
-      | nodeAggregateId  | "sir-david-nodenborough" |
-      | sourceOrigin             | {"language":"de"}        |
-      | targetOrigin             | {"language":"en"}        |
-      | initiatingUserId | "user"                   |
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"en"}        |
     And the graph projection is fully up to date
 
 
@@ -137,12 +133,11 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
   Scenario: change materialized "de" node, should NOT shine through in "ch" (as it was materialized beforehand) (includeSpecializations = FALSE - default)
     # Node /document (in "ch")
     When the command CreateNodeVariant is executed with payload:
-      | Key                      | Value                    |
-      | contentStreamId  | "cs-identifier"          |
-      | nodeAggregateId  | "sir-david-nodenborough" |
-      | sourceOrigin             | {"language":"de"}        |
-      | targetOrigin             | {"language":"ch"}        |
-      | initiatingUserId | "system-user"            |
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"ch"}        |
     And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -185,12 +180,11 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
   Scenario: change materialized "de" node; and with includeSpecializations = TRUE, also the CH node is modified
     # Node /document (in "ch")
     When the command CreateNodeVariant is executed with payload:
-      | Key                      | Value                    |
-      | contentStreamId  | "cs-identifier"          |
-      | nodeAggregateId  | "sir-david-nodenborough" |
-      | sourceOrigin             | {"language":"de"}        |
-      | targetOrigin             | {"language":"ch"}        |
-      | initiatingUserId | "system-user"            |
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"de"}        |
+      | targetOrigin    | {"language":"ch"}        |
     And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
