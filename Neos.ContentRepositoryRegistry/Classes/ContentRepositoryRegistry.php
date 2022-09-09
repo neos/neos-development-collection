@@ -23,7 +23,7 @@ use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactor
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
-use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

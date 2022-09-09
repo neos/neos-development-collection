@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
@@ -95,7 +95,7 @@ final class ContentRepositoryFactory
                 $this->projections,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
-                $this->userIdProvider->getUserId(),
+                $this->userIdProvider,
             );
         }
         return $this->contentRepository;

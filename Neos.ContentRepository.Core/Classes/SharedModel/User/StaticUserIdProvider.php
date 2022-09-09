@@ -1,8 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Neos\ContentRepositoryRegistry\Factory\UserIdProvider;
-
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+namespace Neos\ContentRepository\Core\SharedModel\User;
 
 final class StaticUserIdProvider implements UserIdProviderInterface
 {
