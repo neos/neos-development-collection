@@ -1,0 +1,32 @@
+`8.1.1 (2022-09-12) <https://github.com/neos/neos-development-collection/releases/tag/8.1.1>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fusion Runtime lazy-props evaluation confuses `getLastEvaluat… <https://github.com/neos/neos-development-collection/pull/3677>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3469 <https://github.com/neos/neos-development-collection/issues/3469>`_
+
+doing the check if a render was successful cannot only happen via ``$this->getLastEvaluationStatus()``
+-> as the render path might contain a lazy-prop (closure) which, when evaluated uses the same runtime.
+-> if the last lazy-prop has an ``@if`` annotation its skipped, but the ``$lastEvaluationStatus`` is set on the same runtime.
+-> there might still be partial successful output (the first values of a lazy-prop eg.) so we need to check additionally if the return value is null.
+
+* Packages: ``Fusion``
+
+`BUGFIX: Add correct default value for sortBy parameter <https://github.com/neos/neos-development-collection/pull/3883>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When using the UserService in your code or via CLI ``./flow user:list`` you will get an exception caused by the incorrect default value. Only if you pass the correct value, e.g. ``accounts.accountIdentifier``, then it works.
+
+This fixes that by providing a (correct) default value of ``accounts.accountIdentifier``.
+
+* Fixes: `#3882 <https://github.com/neos/neos-development-collection/issues/3882>`_
+
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.1.0...8.1.1>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
