@@ -112,6 +112,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        /** @phpstan-ignore-next-line */
         return match ($command::class) {
             SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
             SetSerializedNodeProperties::class

@@ -56,6 +56,7 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        /** @phpstan-ignore-next-line */
         return match ($command::class) {
             MoveDimensionSpacePoint::class => $this->handleMoveDimensionSpacePoint($command, $contentRepository),
             AddDimensionShineThrough::class => $this->handleAddDimensionShineThrough($command, $contentRepository),

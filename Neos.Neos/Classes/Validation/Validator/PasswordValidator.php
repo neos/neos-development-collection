@@ -64,7 +64,7 @@ class PasswordValidator extends AbstractValidator
         ) {
             if (
                 !isset($this->options['allowEmpty'])
-                || isset($this->options['allowEmpty']) && intval($this->options['allowEmpty']) === 0
+                || intval($this->options['allowEmpty']) === 0
             ) {
                 $this->addError('The given password was empty.', 1324641097);
             }
