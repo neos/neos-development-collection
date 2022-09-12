@@ -187,7 +187,8 @@ trait NodeRemoval
                         relationanchorpoint, parentnodeanchor, name, position, childnodeanchor
                     ) AS (
                         /**
-                         * Iteration query: find all outgoing tethered child node relations from the parent node in its origin;
+                         * Iteration query: find all outgoing tethered child node relations
+                         * from the parent node in its origin;
                          * which ones are resolved depends on the recursion mode.
                          */
                         SELECT
@@ -207,7 +208,8 @@ trait NodeRemoval
 
                         UNION ALL
                             /**
-                             * Iteration query: find all outgoing tethered child node relations from the parent node in its origin;
+                             * Iteration query: find all outgoing tethered child node relations
+                             * from the parent node in its origin;
                              * which ones are resolved depends on the recursion mode.
                              */
                             SELECT

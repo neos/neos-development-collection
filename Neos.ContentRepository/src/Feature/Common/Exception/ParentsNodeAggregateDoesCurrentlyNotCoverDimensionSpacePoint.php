@@ -24,7 +24,7 @@ final class ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         ContentStreamIdentifier $contentStreamIdentifier
-    ): self{
+    ): self {
         return new self(
             'No parent node aggregate for ' . $childNodeAggregateIdentifier
             . ' does currently cover dimension space point ' . json_encode($dimensionSpacePoint)
