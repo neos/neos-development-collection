@@ -1,0 +1,144 @@
+========
+Neos 8.1
+========
+
+This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Refresh the rawContentMode
+-----------------------------------
+
+The raw content mode is implemented freshly and now only relies on the nodetype-configuration for rendering and not requiring a fusion integration. By default the raw mode will render all inline editable properties, previews of Images and all childnodes. This allows content first workflows with Neos or headless applications.
+
+!`Home_-_Neos_Demo_Site <https://user-images.githubusercontent.com/1309380/175993575-986fed63-9c9d-4a06-ac95-d51296b96530.png>`_
+
+It is possible to provide a special raw-mode rendering for nodetype by creating a prototype with the name of the nodetype + '.RawContentMode' as shown in the example below.
+
+```
+prototype(Neos.Demo:Content.Columns.Two.RawContentMode) < prototype(Neos.Neos:ContentComponent) {
+    renderer = afx`
+        <div style="display:grid; grid-template-columns: 1fr 1fr; grid-gap: 16px;">
+            <div><Neos.Neos:RawContent.NodeChildren @context.node={q(node).children('column0').get(0)} /></div>
+            <div><Neos.Neos:RawContent.NodeChildren @context.node={q(node).children('column1').get(0)} /></div>
+        </div>
+    `
+}
+```
+
+
+
+Related issue: `#3705 <https://github.com/neos/neos-development-collection/issues/3705>`_
+
+FEATURE: Introduce `Neos.Fusion:ActionUri` as replacement for `Neos.Fusion:UriBuilder`
+--------------------------------------------------------------------------------------
+
+The name  ``Neos.Fusion:UriBuilder`` stands out from other fusion prototypes because it describes what the prototype does
+instead of what will be the result. This contradicts the declarative nature of fusion. In addition it is not possible render links from a subrequests to other main-requests without manipulating the controllerContext. A common case for that is fusion-backend modules that want to render links to the content or other modules.
+
+This change adds the prototype ``Neos.Fusion:ActionUri`` as a 1:1 replacement that implements the same api but allows to configure the ``request`` the uri is to be built from. This allows to create links from subrequests into other contexts.
+
+``Neos.Fusion:ActionUri``:
+- ``request``: (ActionRequest, defaults to the the current ``request``) The action request the uri is built from.
+- ... all other attributes equal ``Neos.Fusion:UriBuilder``
+
+Examples: 
+
+```
+uri = Neos.Fusion:ActionUri {
+    package = 'My.Package'
+    controller = 'Registration'
+    action = 'new'
+}
+```
+
+This prototype allows to link between different backend modules like the content-module
+
+```
+cotentModuleUri = Neos.Fusion:ActionUri {
+    request = ${request.mainRequest}
+    package="Neos.Neos.Ui"
+    controller="Backend"
+    action = 'index'
+    arguments.node = ${documentNode}
+}
+```
+or the sites-module which uses a subrequest of the ``Backend\\\Module`` controller.
+```
+siteModuleUri = Neos.Fusion:ActionUri {
+    request = ${request.mainRequest}
+    action = "index"
+    package = "Neos.Neos"
+    controller = "Backend\\\Module"
+    arguments {
+        module = 'administration/sites'
+        moduleArguments {
+            @action = 'edit'
+            site = ${site}
+        }
+    }
+}
+```
+
+In addition:
+
+1. The prototype ``Neos.Fusion:Link.Action`` is adjusted to use ``Neos.Fusion:ActionUri`` instead of ``Neos.Fusion:UriBuilder`` for the ``href`` property.
+2. Documentation is added for ``Neos.Fusion:Link.Action`` and ``Neos.Fusion:Link.Resource``
+
+**Review instructions**
+
+The change adds a new implementation instead of modifying or extending the UriBuilderImplementation to avoid breakiness as the ``UriBuilder`` uses the UriBuilder from the controllerContext while ``ActionUri`` creates a new UriBuilder.
+
+
+FEATURE: Implement choice to sort properties for array objects
+--------------------------------------------------------------
+
+The new meta property ``@sortProperties`` can now be used to define
+if properties should adhere to the ``@sorting`` meta and general
+order of definition or if that is irrelevant.
+
+Sorting itself is time consuming, and while that does not matter
+for a single sort, a bigger site might have so many fusion objects
+to render that the sorting can have massive influence on the render
+performance. Therefore it's advisable to disable it whenever possible.
+
+Specifically ``Neos.Fusion:Component`` as well as attributes in
+``Neos.Fusion:Tag`` are now unsorted. Also http headers are unsorted.
+
+
+
+Related issue: `#3792 <https://github.com/neos/neos-development-collection/issues/3792>`_
+
+FEATURE: Display the rawContent-mode in the backend when neither documentType nor `/page` can be rendered
+---------------------------------------------------------------------------------------------------------
+
+The Neos backend will fallback to the RawContent mode as last resort if no other document rendering is possible. In the frontend a last try to render the via the ``documentType`` is done to create at least helpful error message that encourages good practices.
+
+To implement this the ``path`` option is added to the ``Neos.Fusion:CanRender`` prototype to check wether the ``/page`` is available.
+
+The whole feature is a building block to eventually allow content first workflows where no fusion rendering gas to be defined to edit content.
+
+
+FEATURE: allow sorting in user management backend module
+--------------------------------------------------------
+
+If you go to the User Management Backend Module: Administration -> User Management, it's now possible to sort by the Name, The Accounts, and the last login by clicking on the specific header.
+
+!`demo <https://user-images.githubusercontent.com/39345336/166480201-c1c43309-0c9d-453f-9722-aca812809b12.gif>`_
+
+********************
+Upgrade Instructions
+********************
+
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-8-0-8-1
+
+.. note::
+
+   Additionally all changes in Flow 8.1 apply, see the release notes to further information.
+   See https://flowframework.readthedocs.org/en/8.1/TheDefinitiveGuide/PartV/ReleaseNotes/810.html
