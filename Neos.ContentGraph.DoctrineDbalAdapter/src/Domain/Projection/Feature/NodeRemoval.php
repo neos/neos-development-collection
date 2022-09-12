@@ -124,7 +124,7 @@ trait NodeRemoval
                 $parentNodeRecord->relationAnchorPoint,
                 null,
                 null,
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 $coveredDimensionSpacePoint
             );
             $this->getDatabaseConnection()->executeStatement(

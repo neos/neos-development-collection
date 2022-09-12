@@ -14,14 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The collection of node records
  *
  * @implements \IteratorAggregate<int,NodeRecord>
+ * @internal
  */
-#[Flow\Proxy(false)]
 final class NodeRecords implements \IteratorAggregate
 {
     /**

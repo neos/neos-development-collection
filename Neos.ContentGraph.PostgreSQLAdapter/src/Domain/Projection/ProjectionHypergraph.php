@@ -20,6 +20,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query\ProjectionHyperg
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -398,10 +399,10 @@ final class ProjectionHypergraph
     }
 
     public function findParentHierarchyHyperrelationRecordByOriginInDimensionSpacePoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateId
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             '
@@ -426,10 +427,10 @@ final class ProjectionHypergraph
             )';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamId,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
             'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateId,
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -438,10 +439,10 @@ final class ProjectionHypergraph
     }
 
     public function findSucceedingSiblingRelationAnchorPointsByOriginInDimensionSpacePoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateId
     ): NodeRelationAnchorPoints {
         $query = /** @lang PostgreSQL */
             '
@@ -477,10 +478,10 @@ final class ProjectionHypergraph
                 )';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamId,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
             'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateId,
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -494,7 +495,7 @@ final class ProjectionHypergraph
     }
 
     public function findTetheredChildNodeRecordsInOrigin(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeRelationAnchorPoint $relationAnchorPoint
     ): NodeRecords {
@@ -510,7 +511,7 @@ final class ProjectionHypergraph
 
         $parameters = [
             'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamId,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
             'parentNodeAnchor' => $relationAnchorPoint->value,
         ];

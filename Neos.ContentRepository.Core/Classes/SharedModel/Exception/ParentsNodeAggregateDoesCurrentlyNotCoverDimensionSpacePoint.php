@@ -18,6 +18,12 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
+/**
+ * The exception to be thrown if a node's parent node aggregate does currently not cover a given dimension space point
+ * but is supposed to be
+ *
+ * @api because exception is thrown during invariant checks on command execution
+ */
 final class ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \DomainException
 {
     public static function butWasSupposedTo(

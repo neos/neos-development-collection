@@ -111,7 +111,7 @@ trait NodeRemoval
         RestoreNodeAggregateCoverage $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId);
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamId,
             $command->nodeAggregateId,
@@ -135,9 +135,10 @@ trait NodeRemoval
 
         $this->requireNodeAggregateToNotCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePointToCover);
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregateInDimensionSpacePoint(
-            $command->contentStreamIdentifier,
-            $command->nodeAggregateIdentifier,
-            $primaryGeneralization
+            $command->contentStreamId,
+            $command->nodeAggregateId,
+            $primaryGeneralization,
+            $contentRepository
         );
         if (!$parentNodeAggregate->coversDimensionSpacePoint($command->dimensionSpacePointToCover)) {
             throw ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(

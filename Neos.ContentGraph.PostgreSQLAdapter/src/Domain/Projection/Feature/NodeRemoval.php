@@ -22,6 +22,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -188,9 +189,9 @@ trait NodeRemoval
     public function whenNodeAggregateCoverageWasRestored(NodeAggregateCoverageWasRestored $event): void
     {
         $nodeRecord = $this->projectionHypergraph->findNodeRecordByOrigin(
-            $event->contentStreamIdentifier,
+            $event->contentStreamId,
             $event->sourceDimensionSpacePoint,
-            $event->nodeAggregateIdentifier
+            $event->nodeAggregateId
         );
         if (!$nodeRecord instanceof NodeRecord) {
             throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
@@ -200,44 +201,45 @@ trait NodeRemoval
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $hierarchyRelation
                 = $this->projectionHypergraph->findParentHierarchyHyperrelationRecordByOriginInDimensionSpacePoint(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $event->sourceDimensionSpacePoint,
                     $coveredDimensionSpacePoint,
-                    $event->nodeAggregateIdentifier
+                    $event->nodeAggregateId
                 );
 
             if ($hierarchyRelation instanceof HierarchyHyperrelationRecord) {
                 $succeedingSiblingCandidates = $this->projectionHypergraph
                     ->findSucceedingSiblingRelationAnchorPointsByOriginInDimensionSpacePoint(
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $event->sourceDimensionSpacePoint,
                         $coveredDimensionSpacePoint,
-                        $event->nodeAggregateIdentifier
+                        $event->nodeAggregateId
                     );
                 $hierarchyRelation->addChildNodeAnchorAfterFirstCandidate(
                     $nodeRecord->relationAnchorPoint,
                     $succeedingSiblingCandidates,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
             } else {
                 $parentNodeRecord = $this->projectionHypergraph->findParentNodeRecordByOriginInDimensionSpacePoint(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $event->sourceDimensionSpacePoint,
                     $coveredDimensionSpacePoint,
-                    $event->nodeAggregateIdentifier
+                    $event->nodeAggregateId
                 );
                 if (!$parentNodeRecord instanceof NodeRecord) {
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
                 }
 
                 (new HierarchyHyperrelationRecord(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $parentNodeRecord->relationAnchorPoint,
                     $coveredDimensionSpacePoint,
                     new NodeRelationAnchorPoints(
                         $nodeRecord->relationAnchorPoint
                     )
-                ))->addToDatabase($this->getDatabaseConnection());
+                ))->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         }
 
@@ -303,7 +305,7 @@ trait NodeRemoval
                 GROUP BY parentnodeanchor, dimensionspacepoint, dimensionspacepointhash
             ',
             [
-                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'contentStreamIdentifier' => (string)$event->contentStreamId,
                 'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
                 'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
                 'originDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash,
