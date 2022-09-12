@@ -169,3 +169,15 @@ prototype(Neos.Fusion:TestNestedPropsB) < prototype(Neos.Fusion:Component) {
     item_2 = '::'
   }
 }
+
+// https://github.com/neos/neos-development-collection/issues/3469
+apply.evaluateLazyPropsWithLastOneSkipped = Neos.Fusion:Component {
+  lazyPropValue = "foo"
+
+  lazyPropSkipped = "skip"
+  lazyPropSkipped.@if.1 = false
+
+  renderer = Neos.Fusion:DataStructure {
+    @apply.forceEvaluatedProps = ${Array.filter(props, prop => prop != null)}
+  }
+}
