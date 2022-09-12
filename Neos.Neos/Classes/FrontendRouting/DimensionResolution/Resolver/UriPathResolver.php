@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
@@ -83,7 +83,7 @@ final class UriPathResolver implements DimensionResolverInterface
                 if ($contentDimension->getValue($mappingElement->dimensionValue->value) === null) {
                     throw new UriPathResolverConfigurationException(
                         'Content Dimension Value "' . $mappingElement->dimensionValue->value
-                            . '" in dimension "' . $segment->dimensionIdentifier->identifier . '" does not exist.'
+                            . '" in dimension "' . $segment->dimensionIdentifier->id . '" does not exist.'
                     );
                 }
 
@@ -149,7 +149,7 @@ final class UriPathResolver implements DimensionResolverInterface
 
             foreach ($result as $product) {
                 foreach ($segment->uriPathSegmentMapping as $item) {
-                    $product[$segment->dimensionIdentifier->identifier] = $item;
+                    $product[$segment->dimensionIdentifier->id] = $item;
                     $append[] = $product;
                 }
             }
@@ -204,7 +204,7 @@ final class UriPathResolver implements DimensionResolverInterface
         foreach ($this->segments->segments as $segment) {
             $coordinateValue = $incoming->getCoordinate($segment->dimensionIdentifier);
             if ($coordinateValue !== null) {
-                $newCoordinates[$segment->dimensionIdentifier->identifier] = $coordinateValue;
+                $newCoordinates[$segment->dimensionIdentifier->id] = $coordinateValue;
             }
         }
         return DimensionSpacePoint::fromArray($newCoordinates);

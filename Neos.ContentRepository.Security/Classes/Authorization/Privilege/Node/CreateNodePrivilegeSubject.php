@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Aop\JoinPointInterface;
 
 /**
@@ -23,14 +23,14 @@ class CreateNodePrivilegeSubject extends NodePrivilegeSubject
     protected ?NodeType $creationNodeType;
 
     /**
-     * @param NodeInterface $node The parent node under which a new child shall be created
+     * @param Node $node The parent node under which a new child shall be created
      * @param ?NodeType $creationNodeType The node type of the new child node,
      * to check if this is type is allowed as new child node under the given parent node
      * @param ?JoinPointInterface $joinPoint Set, if created by a method interception.
      * Usually the interception of the createNode() method, where the creation of new child nodes takes place
      */
     public function __construct(
-        NodeInterface $node,
+        Node $node,
         ?NodeType $creationNodeType = null,
         ?JoinPointInterface $joinPoint = null
     ) {

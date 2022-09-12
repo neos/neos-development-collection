@@ -11,13 +11,14 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\Flow\Annotations as Flow;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -50,9 +51,9 @@ class PropertyOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -64,7 +65,7 @@ class PropertyOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -88,29 +89,25 @@ class PropertyOperation extends AbstractOperation
                 return null;
             }
 
-            /* @var $element NodeInterface */
+            /* @var $element Node */
             $element = $context[0];
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $element->getContentStreamIdentifier(),
-                $element->getDimensionSpacePoint(),
-                $element->getVisibilityConstraints()
-            );
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             if ($propertyPath === '_path') {
-                return (string)$nodeAccessor->findNodePath($element);
+                return (string)$subgraph->findNodePath($element->nodeAggregateId);
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
-                if ($element->getNodeType()->getPropertyType($propertyPath) === 'reference') {
+                if ($element->nodeType->getPropertyType($propertyPath) === 'reference') {
                     return (
-                        $nodeAccessor->findReferencedNodes(
-                            $element,
-                            PropertyName::fromString($propertyPath)
+                        $subgraph->findReferencedNodes(
+                            $element->nodeAggregateId,
+                            FindReferencedNodesFilter::referenceName($propertyPath)
                         )[0] ?? null
                     )?->node;
-                } elseif ($element->getNodeType()->getPropertyType($propertyPath) === 'references') {
-                    return $nodeAccessor->findReferencedNodes(
-                        $element,
-                        PropertyName::fromString($propertyPath)
+                } elseif ($element->nodeType->getPropertyType($propertyPath) === 'references') {
+                    return $subgraph->findReferencedNodes(
+                        $element->nodeAggregateId,
+                        FindReferencedNodesFilter::referenceName($propertyPath)
                     )->getNodes();
                 } else {
                     return $element->getProperty($propertyPath);

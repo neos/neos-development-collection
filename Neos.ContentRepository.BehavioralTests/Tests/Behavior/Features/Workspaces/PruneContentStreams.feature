@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: If content streams are not in use anymore by the workspace, they can be properly pruned - this is
   tested here.
 
@@ -11,15 +11,15 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "user-id"       |
+      | newContentStreamId | "cs-identifier" |
+      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
-      | contentStreamIdentifier  | "cs-identifier"                        |
-      | nodeAggregateIdentifier  | "root-node"                            |
+      | contentStreamId  | "cs-identifier"                        |
+      | nodeAggregateId  | "root-node"                            |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
-      | initiatingUserIdentifier | "00000000-0000-0000-0000-000000000000" |
+      | initiatingUserId | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
   Scenario: content streams are marked as IN_USE_BY_WORKSPACE properly after creation
@@ -31,8 +31,8 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
 
     Then the content stream "user-cs-identifier" has state "IN_USE_BY_WORKSPACE"
@@ -42,13 +42,13 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
     When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
-      | initiatingUserIdentifier | "initiating-user-identifier" |
+      | initiatingUserId | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
@@ -61,14 +61,14 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
     When the command RebaseWorkspace is executed with payload:
       | Key                            | Value                        |
       | workspaceName                  | "user-test"                  |
-      | initiatingUserIdentifier       | "initiating-user-identifier" |
-      | rebasedContentStreamIdentifier | "user-cs-identifier-rebased" |
+      | initiatingUserId       | "initiating-user-identifier" |
+      | rebasedContentStreamId | "user-cs-identifier-rebased" |
     And the graph projection is fully up to date
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
@@ -87,13 +87,13 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
     When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
-      | initiatingUserIdentifier | "initiating-user-identifier" |
+      | initiatingUserId | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # now, we have one unused content stream (the old content stream of the user-test workspace)
 
@@ -101,7 +101,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     And the graph projection is fully up to date
     And I prune removed content streams from the event stream
 
-    Then I expect exactly 0 events to be published on stream "Neos.ContentRepository:ContentStream:user-cs-identifier"
+    Then I expect exactly 0 events to be published on stream "ContentStream:user-cs-identifier"
 
 
   Scenario: NO_LONGER_IN_USE content streams are only cleaned up if no other content stream which is still in use depends on it
@@ -110,15 +110,15 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | Key                        | Value                  |
       | workspaceName              | "review"               |
       | baseWorkspaceName          | "live"                 |
-      | newContentStreamIdentifier | "review-cs-identifier" |
-      | initiatingUserIdentifier   | "user"                 |
+      | newContentStreamId | "review-cs-identifier" |
+      | initiatingUserId   | "user"                 |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "review"             |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
 
     # now, we rebase the "review" workspace, effectively marking the "review-cs-identifier" content stream as NO_LONGER_IN_USE.
@@ -127,7 +127,7 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "review"                     |
-      | initiatingUserIdentifier | "initiating-user-identifier" |
+      | initiatingUserId | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When I prune unused content streams
@@ -135,4 +135,4 @@ Feature: If content streams are not in use anymore by the workspace, they can be
     And I prune removed content streams from the event stream
 
     # the events should still exist
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:review-cs-identifier"
+    Then I expect exactly 2 events to be published on stream "ContentStream:review-cs-identifier"

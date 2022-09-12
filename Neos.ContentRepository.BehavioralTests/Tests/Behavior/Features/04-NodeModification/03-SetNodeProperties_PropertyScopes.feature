@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Set node properties with different scopes
 
   As a user of the CR I want to modify node properties with different scopes.
@@ -34,27 +34,28 @@ Feature: Set node properties with different scopes
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeName | parentNodeAggregateIdentifier | nodeTypeName                            |
+      | nodeAggregateId | nodeName | parentNodeAggregateId | nodeTypeName                            |
       | nody-mc-nodeface        | document | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document |
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
+      | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin            | {"language":"mul"} |
       | targetOrigin            | {"language":"de"}  |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "nody-mc-nodeface" |
+      | nodeAggregateId | "nody-mc-nodeface" |
       | sourceOrigin            | {"language":"mul"} |
       | targetOrigin            | {"language":"gsw"} |
     And the graph projection is fully up to date
@@ -62,8 +63,8 @@ Feature: Set node properties with different scopes
   Scenario: Set node properties
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                                                                                                                                                                      |
-      | contentStreamIdentifier   | "cs-identifier"                                                                                                                                                            |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"                                                                                                                                                         |
+      | contentStreamId   | "cs-identifier"                                                                                                                                                            |
+      | nodeAggregateId   | "nody-mc-nodeface"                                                                                                                                                         |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                         |
       | propertyValues            | {"unscopedProperty":"My new string", "nodeScopedProperty":"My new string", "specializationsScopedProperty":"My new string", "nodeAggregateScopedProperty":"My new string"} |
     And the graph projection is fully up to date

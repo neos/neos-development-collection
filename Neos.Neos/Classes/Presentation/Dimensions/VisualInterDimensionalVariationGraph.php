@@ -14,11 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionValue;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\Dimension\ContentDimension;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -48,7 +48,7 @@ final class VisualInterDimensionalVariationGraph
         $height = 0;
 
         foreach ($contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-            $identifier = (string)$contentDimension->identifier;
+            $identifier = (string)$contentDimension->id;
             $offsets[$identifier] = self::resolveOffsets($contentDimension);
         }
 

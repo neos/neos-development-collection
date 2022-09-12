@@ -15,16 +15,16 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class QueryUtility
 {
     public static function getRestrictionClause(
         VisibilityConstraints $visibilityConstraints,
+        string $tableNamePrefix,
         string $prefix = ''
     ): string {
         if ($visibilityConstraints->isDisabledContentShown()) {
@@ -34,7 +34,7 @@ final class QueryUtility
         return '
             AND NOT EXISTS (
                 SELECT 1
-                FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' rest
+                FROM ' . $tableNamePrefix . '_restrictionhyperrelation rest
                 WHERE rest.contentstreamidentifier = ' . $prefix . 'h.contentstreamidentifier
                     AND rest.dimensionspacepointhash = ' . $prefix . 'h.dimensionspacepointhash
                     AND ' . $prefix . 'n.nodeaggregateidentifier = ANY(rest.affectednodeaggregateidentifiers)

@@ -9,35 +9,39 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppli
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
-use Neos\ContentRepository\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
-use Neos\ContentRepository\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Psr\Log\LoggerInterface;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * The NodeVariation projection feature trait
+ *
+ * @internal
  */
 trait NodeVariation
 {
-    protected LoggerInterface $systemLogger;
+    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
+
+    abstract protected function getTableNamePrefix(): string;
 
     /**
      * @param NodeSpecializationVariantWasCreated $event
      * @throws \Exception
      * @throws \Throwable
      */
-    public function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
         $this->transactional(function () use ($event) {
             // Do the actual specialization
-            $sourceNode = $this->projectionContentGraph->findNodeInAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+            $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->sourceOrigin->toDimensionSpacePoint()
             );
             if (is_null($sourceNode)) {
@@ -51,22 +55,23 @@ trait NodeVariation
 
             $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
             foreach (
-                $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $sourceNode->nodeAggregateIdentifier,
+                $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamId,
+                    $sourceNode->nodeAggregateId,
                     $event->specializationCoverage
                 ) as $hierarchyRelation
             ) {
                 $hierarchyRelation->assignNewChildNode(
                     $specializedNode->relationAnchorPoint,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
                 unset($uncoveredDimensionSpacePoints[$hierarchyRelation->dimensionSpacePointHash]);
             }
             if (!empty($uncoveredDimensionSpacePoints)) {
                 $sourceParent = $this->projectionContentGraph->findParentNode(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier,
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
                     $event->sourceOrigin,
                 );
                 if (is_null($sourceParent)) {
@@ -74,8 +79,8 @@ trait NodeVariation
                 }
                 foreach ($uncoveredDimensionSpacePoints as $uncoveredDimensionSpacePoint) {
                     $parentNode = $this->projectionContentGraph->findNodeInAggregate(
-                        $event->contentStreamIdentifier,
-                        $sourceParent->nodeAggregateIdentifier,
+                        $event->contentStreamId,
+                        $sourceParent->nodeAggregateId,
                         $uncoveredDimensionSpacePoint
                     );
                     if (is_null($parentNode)) {
@@ -88,32 +93,33 @@ trait NodeVariation
                         $parentNode->relationAnchorPoint,
                         $specializedNode->relationAnchorPoint,
                         $sourceNode->nodeName,
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $uncoveredDimensionSpacePoint,
                         $uncoveredDimensionSpacePoint->hash,
                         $this->projectionContentGraph->determineHierarchyRelationPosition(
                             $parentNode->relationAnchorPoint,
                             $specializedNode->relationAnchorPoint,
                             null,
-                            $event->contentStreamIdentifier,
+                            $event->contentStreamId,
                             $uncoveredDimensionSpacePoint
                         )
                     );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->getTableNamePrefix());
                 }
             }
 
             foreach (
-                $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $sourceNode->nodeAggregateIdentifier,
+                $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamId,
+                    $sourceNode->nodeAggregateId,
                     $event->specializationCoverage
                 ) as $hierarchyRelation
             ) {
                 $hierarchyRelation->assignNewParentNode(
                     $specializedNode->relationAnchorPoint,
                     null,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->getTableNamePrefix()
                 );
             }
 
@@ -134,17 +140,17 @@ trait NodeVariation
     {
         $this->transactional(function () use ($event) {
             // do the generalization
-            $sourceNode = $this->projectionContentGraph->findNodeInAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+            $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->sourceOrigin->toDimensionSpacePoint()
             );
             if (is_null($sourceNode)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
-            $sourceParentNode = $this->projectionContentGraph->findParentNode(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->sourceOrigin
             );
             if (is_null($sourceParentNode)) {
@@ -157,15 +163,16 @@ trait NodeVariation
 
             $unassignedIngoingDimensionSpacePoints = $event->generalizationCoverage;
             foreach (
-                $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier,
+                $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
                     $event->generalizationCoverage
                 ) as $existingIngoingHierarchyRelation
             ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $generalizedNode->relationAnchorPoint,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
                 $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                     new DimensionSpacePointSet([
@@ -175,23 +182,25 @@ trait NodeVariation
             }
 
             foreach (
-                $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier,
+                $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
                     $event->generalizationCoverage
                 ) as $existingOutgoingHierarchyRelation
             ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
                     $generalizedNode->relationAnchorPoint,
                     null,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->getTableNamePrefix()
                 );
             }
 
             if (count($unassignedIngoingDimensionSpacePoints) > 0) {
-                $ingoingSourceHierarchyRelation = $this->projectionContentGraph->findIngoingHierarchyRelationsForNode(
+                $projectionContentGraph = $this->getProjectionContentGraph();
+                $ingoingSourceHierarchyRelation = $projectionContentGraph->findIngoingHierarchyRelationsForNode(
                     $sourceNode->relationAnchorPoint,
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     new DimensionSpacePointSet([$event->sourceOrigin->toDimensionSpacePoint()])
                 )[$event->sourceOrigin->hash] ?? null;
                 if (is_null($ingoingSourceHierarchyRelation)) {
@@ -203,9 +212,9 @@ trait NodeVariation
                 foreach ($unassignedIngoingDimensionSpacePoints as $unassignedDimensionSpacePoint) {
                     // The parent node aggregate might be varied as well,
                     // so we need to find a parent node for each covered dimension space point
-                    $generalizationParentNode = $this->projectionContentGraph->findNodeInAggregate(
-                        $event->contentStreamIdentifier,
-                        $sourceParentNode->nodeAggregateIdentifier,
+                    $generalizationParentNode = $this->getProjectionContentGraph()->findNodeInAggregate(
+                        $event->contentStreamId,
+                        $sourceParentNode->nodeAggregateId,
                         $unassignedDimensionSpacePoint
                     );
                     if (is_null($generalizationParentNode)) {
@@ -216,7 +225,7 @@ trait NodeVariation
 
                     $this->copyHierarchyRelationToDimensionSpacePoint(
                         $ingoingSourceHierarchyRelation,
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $unassignedDimensionSpacePoint,
                         $generalizationParentNode->relationAnchorPoint,
                         $generalizedNode->relationAnchorPoint
@@ -239,17 +248,17 @@ trait NodeVariation
     {
         $this->transactional(function () use ($event) {
             // Do the peer variant creation itself
-            $sourceNode = $this->projectionContentGraph->findNodeInAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+            $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->sourceOrigin->toDimensionSpacePoint()
             );
             if (is_null($sourceNode)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
-            $sourceParentNode = $this->projectionContentGraph->findParentNode(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+            $sourceParentNode = $this->getProjectionContentGraph()->findParentNode(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->sourceOrigin
             );
             if (is_null($sourceParentNode)) {
@@ -262,15 +271,16 @@ trait NodeVariation
 
             $unassignedIngoingDimensionSpacePoints = $event->peerCoverage;
             foreach (
-                $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier,
+                $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
                     $event->peerCoverage
                 ) as $existingIngoingHierarchyRelation
             ) {
                 $existingIngoingHierarchyRelation->assignNewChildNode(
                     $peerNode->relationAnchorPoint,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
                 $unassignedIngoingDimensionSpacePoints = $unassignedIngoingDimensionSpacePoints->getDifference(
                     new DimensionSpacePointSet([
@@ -280,25 +290,26 @@ trait NodeVariation
             }
 
             foreach (
-                $this->projectionContentGraph->findOutgoingHierarchyRelationsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier,
+                $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNodeAggregate(
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
                     $event->peerCoverage
                 ) as $existingOutgoingHierarchyRelation
             ) {
                 $existingOutgoingHierarchyRelation->assignNewParentNode(
                     $peerNode->relationAnchorPoint,
                     null,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->getTableNamePrefix()
                 );
             }
 
             foreach ($unassignedIngoingDimensionSpacePoints as $coveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well,
                 // so we need to find a parent node for each covered dimension space point
-                $peerParentNode = $this->projectionContentGraph->findNodeInAggregate(
-                    $event->contentStreamIdentifier,
-                    $sourceParentNode->nodeAggregateIdentifier,
+                $peerParentNode = $this->getProjectionContentGraph()->findNodeInAggregate(
+                    $event->contentStreamId,
+                    $sourceParentNode->nodeAggregateId,
                     $coveredDimensionSpacePoint
                 );
                 if (is_null($peerParentNode)) {
@@ -306,7 +317,7 @@ trait NodeVariation
                 }
 
                 $this->connectHierarchy(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $peerParentNode->relationAnchorPoint,
                     $peerNode->relationAnchorPoint,
                     new DimensionSpacePointSet([$coveredDimensionSpacePoint]),
@@ -330,14 +341,14 @@ trait NodeVariation
 
     abstract protected function copyHierarchyRelationToDimensionSpacePoint(
         HierarchyRelationRecord $sourceHierarchyRelation,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
     ): HierarchyRelationRecord;
 
     abstract protected function connectHierarchy(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeRelationAnchorPoint $parentNodeAnchorPoint,
         NodeRelationAnchorPoint $childNodeAnchorPoint,
         DimensionSpacePointSet $dimensionSpacePointSet,

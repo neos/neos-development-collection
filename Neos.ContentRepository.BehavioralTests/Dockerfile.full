@@ -1,0 +1,18 @@
+# Note: the context of this dockerfile is the ROOT directory of the Flow Distribution (FLOW_PATH_ROOT)
+FROM php:8.1-cli
+
+RUN apt-get update \
+	&& apt-get install -y \
+	  zlib1g-dev libicu-dev libpq-dev --no-install-recommends \
+	&& docker-php-ext-install pdo_mysql pdo_pgsql \
+	&& docker-php-ext-configure intl && docker-php-ext-install intl \
+	&& pecl install redis && docker-php-ext-enable redis \
+  && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN echo "memory_limit = 1024M" > /usr/local/etc/php/conf.d/memory_limit.ini
+
+WORKDIR /app/Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior
+
+# copy everything in the project into the container. This is what
+# makes this image so fast!
+COPY . /app

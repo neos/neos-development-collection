@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\ExceptionHandlers;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Utility\Environment;
@@ -50,9 +50,9 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
+    protected $contentRepositoryRegistry;
 
     /**
      * renders the exception to nice html content element to display, edit, remove, ...
@@ -70,10 +70,12 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
 
         $currentContext = $this->getRuntime()->getCurrentContext();
         if (isset($currentContext['node'])) {
-            /** @var NodeInterface $node */
+            /** @var Node $node */
             $node = $currentContext['node'];
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-                $node->getContentStreamIdentifier()
+            $contentRepositoryIdentifier = $node->subgraphIdentity->contentRepositoryId;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+                $node->subgraphIdentity->contentStreamId
             );
             $applicationContext = $this->environment->getContext();
 
@@ -81,7 +83,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
                 $applicationContext->isProduction()
                 && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
                 && !is_null($workspace)
-                && !$workspace->getWorkspaceName()->isLive()
+                && !$workspace->workspaceName->isLive()
             ) {
                 $output = '<div class="neos-rendering-exception">
     <div class="neos-rendering-exception-title">Failed to render element' . $output . '</div>

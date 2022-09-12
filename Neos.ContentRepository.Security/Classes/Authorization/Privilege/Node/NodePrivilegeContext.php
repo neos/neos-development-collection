@@ -11,13 +11,11 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
 
@@ -34,21 +32,15 @@ class NodePrivilegeContext
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
-    protected NodeInterface $node;
+    protected Node $node;
 
-    protected ?NodeAccessorInterface $nodeAccessor;
+    protected ?ContentSubgraphInterface $subgraph;
 
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -69,7 +61,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with($nodePathOrResult, (string)$this->getNodeAccessor()->findNodePath($this->node));
+        return str_starts_with($nodePathOrResult, (string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateId));
     }
 
     /**
@@ -88,7 +80,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with((string)$this->getNodeAccessor()->findNodePath($this->node), $nodePathOrResult);
+        return str_starts_with((string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateId), $nodePathOrResult);
     }
 
     /**
@@ -123,7 +115,7 @@ class NodePrivilegeContext
         }
 
         foreach ($nodeTypes as $nodeType) {
-            if ($this->node->getNodeType()->isOfType($nodeType)) {
+            if ($this->node->nodeType->isOfType($nodeType)) {
                 return true;
             }
         }
@@ -141,10 +133,12 @@ class NodePrivilegeContext
      */
     public function isInWorkspace(array $workspaceNames): bool
     {
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-            $this->node->getContentStreamIdentifier()
+        $contentRepository = $this->contentRepositoryRegistry->get($this->node->subgraphIdentity->contentRepositoryId);
+
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $this->node->subgraphIdentity->contentStreamId
         );
-        return !is_null($workspace) && in_array((string)$workspace->getWorkspaceName(), $workspaceNames);
+        return !is_null($workspace) && in_array((string)$workspace->workspaceName, $workspaceNames);
     }
 
     /**
@@ -166,8 +160,8 @@ class NodePrivilegeContext
         }
 
         return in_array(
-            $this->node->getDimensionSpacePoint()->getCoordinate(
-                new ContentDimensionIdentifier($dimensionName)
+            $this->node->subgraphIdentity->dimensionSpacePoint->getCoordinate(
+                new ContentDimensionId($dimensionName)
             ),
             $presets
         );
@@ -184,30 +178,26 @@ class NodePrivilegeContext
     protected function resolveNodePathOrResult(string $nodePathOrIdentifier): bool|string
     {
         try {
-            $nodeAggregateIdentifier = NodeAggregateIdentifier::fromString($nodePathOrIdentifier);
-            if ($nodeAggregateIdentifier->equals($this->node->getNodeAggregateIdentifier())) {
+            $nodeAggregateIdentifier = NodeAggregateId::fromString($nodePathOrIdentifier);
+            if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateId)) {
                 return true;
             }
-            $otherNode = $this->getNodeAccessor()->findByIdentifier($nodeAggregateIdentifier);
+            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateIdentifier);
             if (is_null($otherNode)) {
                 return false;
             }
-            return $this->getNodeAccessor()->findNodePath($otherNode) . '/';
+            return $this->getSubgraph()->findNodePath($otherNode->nodeAggregateId) . '/';
         } catch (\InvalidArgumentException $e) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }
     }
 
-    private function getNodeAccessor(): NodeAccessorInterface
+    private function getSubgraph(): ContentSubgraphInterface
     {
-        if (is_null($this->nodeAccessor)) {
-            $this->nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $this->node->getContentStreamIdentifier(),
-                $this->node->getDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
-            );
+        if (is_null($this->subgraph)) {
+            $this->subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->node);
         }
 
-        return $this->nodeAccessor;
+        return $this->subgraph;
     }
 }

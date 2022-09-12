@@ -41,11 +41,11 @@
 								</f:else>
 							</f:if>
 						</td>
-						<td><span title="{workspace.description}" data-neos-toggle="tooltip">{workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
+						<td><span title="{workspace.workspaceName}" data-neos-toggle="tooltip">{workspace.workspaceTitle -> f:format.crop(maxCharacters: 25, append: '…')}</span></td>
 						<td>
-							<f:if condition="{workspace.baseWorkspace}">
+							<f:if condition="{workspace.baseWorkspaceName}">
 								<f:then>
-									<span title="{workspace.baseWorkspace.description}" data-neos-toggle="tooltip">{workspace.baseWorkspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+									<span title="{workspace.baseWorkspaceName}" data-neos-toggle="tooltip">{workspace.baseWorkspaceName -> f:format.crop(maxCharacters: 25, append: '…')}</span>
 								</f:then>
 								<f:else>
 									<span>-</span>
@@ -55,15 +55,15 @@
 						<td>
 							<f:security.ifAccess privilegeTarget="Neos.Neos:Backend.Module.Administration.Users">
 								<f:then>
-									<neos:link.module path="administration/users" action="show" arguments="{user: workspace.owner}">{workspace.owner.label}</neos:link.module>
+									<neos:link.module path="administration/users" action="show" arguments="{user: workspace.owner}">{workspace.workspaceOwner}</neos:link.module>
 								</f:then>
 								<f:else>
-									{workspace.owner.label}
+									{workspace.workspaceOwner}
 								</f:else>
 							</f:security.ifAccess>
 						</td>
 						<td class="neos-changes">
-							<f:if condition="{workspace.baseWorkspace}">
+							<f:if condition="{workspace.baseWorkspaceName}">
 								<span title="{neos:backend.translate(id: 'workspaces.changesCounts', source: 'Modules', package: 'Neos.Neos', arguments: changesCounts)}" data-neos-toggle="tooltip">
 									<div class="neos-change-stats">
 										<f:if condition="{changesCounts.total} != 0">
@@ -79,7 +79,7 @@
 									</div>
 								</span>
 								<f:if condition="{changesCounts.total} != 0">
-									<f:link.action action="show" arguments="{workspace: workspace}" class="neos-button neos-button-primary">
+									<f:link.action action="show" arguments="{workspace: workspace.workspaceName.name}" class="neos-button neos-button-primary">
 									<i class="fas fa-review"></i>
 									{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'Neos.Neos')}
 									</f:link.action>
@@ -89,7 +89,7 @@
 						<td class="neos-action">
 							<div class="neos-pull-right">
 								<f:if condition="{canManage}">
-									<f:link.action action="edit" arguments="{workspace: workspace}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.title})}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+									<f:link.action action="edit" arguments="{workspace: workspace.workspaceName.name}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.workspaceTitle})}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 										<i class="fas fa-pencil-alt icon-white"></i>
 									</f:link.action>
 								</f:if>
@@ -118,7 +118,7 @@
 																	<div class="neos-modal-content">
 																		<div class="neos-modal-header">
 																			<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-																			<div class="neos-header">{neos:backend.translate(id: 'workspaces.dialog.confirmWorkspaceDeletion', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.title})}</div>
+																			<div class="neos-header">{neos:backend.translate(id: 'workspaces.dialog.confirmWorkspaceDeletion', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.workspaceTitle})}</div>
 																			<div>
 																				<div class="neos-subheader">
 																					<p>{neos:backend.translate(id: 'workspaces.dialog.thisWillDeleteTheWorkspace', source: 'Modules', package: 'Neos.Neos')}</p>
@@ -127,7 +127,7 @@
 																		</div>
 																		<div class="neos-modal-footer">
 																			<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'Neos.Neos')}</a>
-																			<f:form action="delete" arguments="{workspace: workspace}" class="neos-inline">
+																			<f:form action="delete" arguments="{workspace: workspace.workspaceName.name}" class="neos-inline">
 																				<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'Neos.Neos')}">
 																					{neos:backend.translate(id: 'workspaces.yesDeleteWorkspace', source: 'Modules', package: 'Neos.Neos')}
 																				</button>

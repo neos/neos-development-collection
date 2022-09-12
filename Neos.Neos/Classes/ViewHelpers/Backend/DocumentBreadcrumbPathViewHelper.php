@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -31,32 +31,29 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+        $this->registerArgument('node', Node::class, 'Node', true);
     }
 
     public function render(): mixed
     {
         $node = $this->arguments['node'];
-        assert($node instanceof NodeInterface);
+        assert($node instanceof Node);
         $documentNodes = [];
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+
         $currentNode = $node;
-        while ($currentNode instanceof NodeInterface) {
-            if ($currentNode->getNodeType()->isOfType('Neos.Neos:Document')) {
+        while ($currentNode instanceof Node) {
+            if ($currentNode->nodeType->isOfType('Neos.Neos:Document')) {
                 $documentNodes[] = $currentNode;
             }
-            $currentNode = $nodeAccessor->findParentNode($currentNode);
+            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);
         }
         $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);

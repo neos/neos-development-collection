@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName as ContentRepositoryWorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName as ContentRepositoryWorkspaceName;
 
 /**
  * The workspace name value for Neos contexts

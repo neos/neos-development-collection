@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Dto;
 
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -14,7 +14,7 @@ final class AssetUsageFilter
 
     private function __construct(
         public readonly ?string $assetIdentifier,
-        public readonly ?ContentStreamIdentifier $contentStreamIdentifier,
+        public readonly ?ContentStreamId $contentStreamIdentifier,
         public readonly bool $groupByAsset,
         public readonly bool $groupByNode,
     ) {
@@ -30,7 +30,7 @@ final class AssetUsageFilter
         return new self($assetIdentifier, $this->contentStreamIdentifier, $this->groupByAsset, $this->groupByNode);
     }
 
-    public function withContentStream(ContentStreamIdentifier $contentStreamIdentifier): self
+    public function withContentStream(ContentStreamId $contentStreamIdentifier): self
     {
         return new self($this->assetIdentifier, $contentStreamIdentifier, $this->groupByAsset, $this->groupByNode);
     }

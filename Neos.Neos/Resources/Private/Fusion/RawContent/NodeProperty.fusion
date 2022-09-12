@@ -1,0 +1,25 @@
+prototype(Neos.Neos:RawContent.NodeProperty) < prototype(Neos.Fusion:Component) {
+
+  propertyName = ''
+  propertyConfiguration = null
+  propertyNameParts = ${String.split(this.name, ':')}
+
+  renderer = afx`
+    <Neos.Fusion:Fragment @if.isInlineEditable={propertyConfiguration.ui.inlineEditable == true} class="property">
+      <dt>
+        <Neos.Neos:RawContent.NodePropertyName name={propertyConfiguration.ui.label || propertyName}/>
+      </dt>
+      <dd>
+        <Neos.Neos:Editable property={propertyName}/>
+      </dd>
+    </Neos.Fusion:Fragment>
+    <Neos.Fusion:Fragment @if.isImage={propertyConfiguration.type == 'Neos\Media\Domain\Model\ImageInterface' && q(node).property(propertyName)}>
+      <dt>
+        <Neos.Neos:RawContent.NodePropertyName name={propertyConfiguration.ui.label || propertyName}/>
+      </dt>
+      <dd>
+        <Neos.Neos:ImageTag asset={q(node).property(propertyName)} preset="Neos.Media.Browser:Thumbnail" />
+      </dd>
+    </Neos.Fusion:Fragment>
+  `
+}

@@ -4,24 +4,26 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Projection;
 
+use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
-#[Flow\Scope('singleton')]
-final class DocumentUriPathFinder
+/**
+ * @Flow\Proxy(false)
+ */
+final class DocumentUriPathFinder implements ProjectionStateInterface
 {
-    private Connection $dbal;
+    private ?ContentStreamId $liveContentStreamIdRuntimeCache = null;
 
-    private ?ContentStreamIdentifier $liveContentStreamIdentifierRuntimeCache = null;
-
-    public function __construct(Connection $dbal)
-    {
-        $this->dbal = $dbal;
+    public function __construct(
+        private readonly Connection $dbal,
+        private readonly string $tableNamePrefix
+    ) {
     }
 
     /**
@@ -49,24 +51,24 @@ final class DocumentUriPathFinder
     }
 
     /**
-     * Returns the DocumentNodeInfo of a node for the given $nodeAggregateIdentifier
+     * Returns the DocumentNodeInfo of a node for the given $nodeAggregateId
      * Note: This will not exclude *disabled* nodes in order to allow the calling side
      * to make a distinction (e.g. in order to display a custom error)
      *
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (node doesn't exist in live workspace, projection not up to date)
      */
     public function getByIdAndDimensionSpacePointHash(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
         return $this->fetchSingle(
-            'nodeAggregateIdentifier = :nodeAggregateIdentifier
+            'nodeAggregateId = :nodeAggregateId
                 AND dimensionSpacePointHash = :dimensionSpacePointHash',
-            compact('nodeAggregateIdentifier', 'dimensionSpacePointHash')
+            compact('nodeAggregateId', 'dimensionSpacePointHash')
         );
     }
 
@@ -83,99 +85,99 @@ final class DocumentUriPathFinder
     public function getParentNode(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
         return $this->getByIdAndDimensionSpacePointHash(
-            $nodeInfo->getParentNodeAggregateIdentifier(),
+            $nodeInfo->getParentNodeAggregateId(),
             $nodeInfo->getDimensionSpacePointHash()
         );
     }
 
     /**
-     * Returns the preceding DocumentNodeInfo for $succeedingNodeAggregateIdentifier
-     * and the $parentNodeAggregateIdentifier (= node on the same hierarchy level)
+     * Returns the preceding DocumentNodeInfo for $succeedingNodeAggregateId
+     * and the $parentNodeAggregateId (= node on the same hierarchy level)
      * Note: This will not exclude *disabled* nodes in order to allow the calling side
      * to make a distinction (e.g. in order to display a custom error)
      *
-     * @param NodeAggregateIdentifier $succeedingNodeAggregateIdentifier
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateId $succeedingNodeAggregateId
+     * @param NodeAggregateId $parentNodeAggregateId
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no preceding DocumentNodeInfo can be found
-     *  (given $succeedingNodeAggregateIdentifier doesn't exist or refers to the first/only node
-     *  with the given $parentNodeAggregateIdentifier)
+     *  (given $succeedingNodeAggregateId doesn't exist or refers to the first/only node
+     *  with the given $parentNodeAggregateId)
      */
     public function getPrecedingNode(
-        NodeAggregateIdentifier $succeedingNodeAggregateIdentifier,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $succeedingNodeAggregateId,
+        NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
-                AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
-                AND succeedingNodeAggregateIdentifier = :succeedingNodeAggregateIdentifier',
+                AND parentNodeAggregateId = :parentNodeAggregateId
+                AND succeedingNodeAggregateId = :succeedingNodeAggregateId',
             compact(
                 'dimensionSpacePointHash',
-                'parentNodeAggregateIdentifier',
-                'succeedingNodeAggregateIdentifier'
+                'parentNodeAggregateId',
+                'succeedingNodeAggregateId'
             )
         );
     }
 
     /**
-     * Returns the DocumentNodeInfo for the first *enabled* child node for the specified $parentNodeAggregateIdentifier
+     * Returns the DocumentNodeInfo for the first *enabled* child node for the specified $parentNodeAggregateId
      * Note: This will not exclude *disabled* nodes in order to allow the calling side to make a distinction
      * (e.g. in order to display a custom error)
      *
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateId $parentNodeAggregateId
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException
      */
     public function getFirstEnabledChildNode(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
-                AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
-                AND precedingNodeAggregateIdentifier IS NULL
+                AND parentNodeAggregateId = :parentNodeAggregateId
+                AND precedingNodeAggregateId IS NULL
                 AND disabled = 0',
-            compact('dimensionSpacePointHash', 'parentNodeAggregateIdentifier')
+            compact('dimensionSpacePointHash', 'parentNodeAggregateId')
         );
     }
 
     /**
-     * @param NodeAggregateIdentifier $parentNodeAggregateIdentifier
+     * @param NodeAggregateId $parentNodeAggregateId
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException
      */
     public function getLastChildNode(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
-                AND parentNodeAggregateIdentifier = :parentNodeAggregateIdentifier
-                AND succeedingNodeAggregateIdentifier IS NULL',
-            compact('dimensionSpacePointHash', 'parentNodeAggregateIdentifier')
+                AND parentNodeAggregateId = :parentNodeAggregateId
+                AND succeedingNodeAggregateId IS NULL',
+            compact('dimensionSpacePointHash', 'parentNodeAggregateId')
         );
     }
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @return \Iterator|DocumentNodeInfo[]
      */
-    public function getNodeVariantsById(NodeAggregateIdentifier $nodeAggregateIdentifier): \Iterator
+    public function getNodeVariantsById(NodeAggregateId $nodeAggregateId): \Iterator
     {
         try {
             $iterator = $this->dbal->executeQuery(
-                'SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS
-                    . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier',
-                ['nodeAggregateIdentifier' => $nodeAggregateIdentifier]
+                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
+                     WHERE nodeAggregateId = :nodeAggregateId',
+                ['nodeAggregateId' => $nodeAggregateId]
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to get node variants for id "%s": %s',
-                $nodeAggregateIdentifier,
+                $nodeAggregateId,
                 $e->getMessage()
             ), 1599665543, $e);
         }
@@ -184,31 +186,31 @@ final class DocumentUriPathFinder
         }
     }
 
-    public function getLiveContentStreamIdentifier(): ContentStreamIdentifier
+    public function getLiveContentStreamId(): ContentStreamId
     {
-        if ($this->liveContentStreamIdentifierRuntimeCache === null) {
+        if ($this->liveContentStreamIdRuntimeCache === null) {
             try {
-                $contentStreamIdentifier = $this->dbal->fetchColumn(
-                    'SELECT contentStreamIdentifier FROM '
-                        . DocumentUriPathProjector::TABLE_NAME_LIVE_CONTENT_STREAMS . ' LIMIT 1'
+                $contentStreamId = $this->dbal->fetchColumn(
+                    'SELECT contentStreamId FROM '
+                        . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
                 );
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf(
-                    'Failed to fetch contentStreamIdentifier for live workspace: %s',
+                    'Failed to fetch contentStreamId for live workspace: %s',
                     $e->getMessage()
                 ), 1599666764, $e);
             }
-            if (!is_string($contentStreamIdentifier)) {
+            if (!is_string($contentStreamId)) {
                 throw new \RuntimeException(
-                    'Failed to fetch contentStreamIdentifier for live workspace,'
+                    'Failed to fetch contentStreamId for live workspace,'
                         . ' probably you have to replay the "documenturipath" projection',
                     1599667894
                 );
             }
-            $this->liveContentStreamIdentifierRuntimeCache
-                = ContentStreamIdentifier::fromString($contentStreamIdentifier);
+            $this->liveContentStreamIdRuntimeCache
+                = ContentStreamId::fromString($contentStreamId);
         }
-        return $this->liveContentStreamIdentifierRuntimeCache;
+        return $this->liveContentStreamIdRuntimeCache;
     }
 
     /**
@@ -221,10 +223,10 @@ final class DocumentUriPathFinder
         # since Connection::fetchAssoc() only returns the first result anyways
         try {
             $row = $this->dbal->fetchAssoc(
-                'SELECT * FROM ' . DocumentUriPathProjector::TABLE_NAME_DOCUMENT_URIS
-                    . ' WHERE ' . $where . ' LIMIT 1',
+                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
+                     WHERE ' . $where . ' LIMIT 1',
                 $parameters,
-                DocumentUriPathProjector::COLUMN_TYPES_DOCUMENT_URIS
+                DocumentUriPathProjection::COLUMN_TYPES_DOCUMENT_URIS
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(

@@ -17,10 +17,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeTypeChange
 {
@@ -29,17 +31,17 @@ trait NodeTypeChange
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
+    private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             foreach (
                 $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
-                    $event->contentStreamIdentifier,
-                    $event->nodeAggregateIdentifier
+                    $event->contentStreamId,
+                    $event->nodeAggregateId
                 ) as $originNode
             ) {
                 $this->copyOnWrite(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $originNode,
                     function (NodeRecord $nodeRecord) use ($event) {
                         $nodeRecord->nodeTypeName = $event->newNodeTypeName;

@@ -4,7 +4,7 @@
     "description": "The PostgreSQL database backend for the Neos content graph",
     "license": "GPL-3.0+",
     "require": {
-        "neos/content-repository": "*",
+        "neos/contentrepository-core": "*",
         "doctrine/dbal": "*",
         "doctrine/migrations": "*"
     },

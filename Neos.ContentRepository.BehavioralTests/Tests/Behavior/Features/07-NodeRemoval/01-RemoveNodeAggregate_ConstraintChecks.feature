@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Remove NodeAggregate
 
   As a user of the CR I want to be able to remove a NodeAggregate or parts of it.
@@ -24,23 +24,23 @@ Feature: Remove NodeAggregate
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName | tetheredDescendantNodeAggregateIdentifiers |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName | tetheredDescendantNodeAggregateIds |
       | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document | {"tethered":"nodewyn-tetherton"}           |
 
   Scenario: Try to remove a node aggregate in a non-existing content stream
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "i-do-not-exist"         |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "i-do-not-exist"         |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
@@ -48,7 +48,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a non-existing node aggregate
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value             |
-      | nodeAggregateIdentifier      | "i-do-not-exist"  |
+      | nodeAggregateId      | "i-do-not-exist"  |
       | coveredDimensionSpacePoint   | {"language":"de"} |
       | nodeVariantSelectionStrategy | "allVariants"     |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
@@ -56,7 +56,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a tethered node aggregate
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value               |
-      | nodeAggregateIdentifier      | "nodewyn-tetherton" |
+      | nodeAggregateId      | "nodewyn-tetherton" |
       | nodeVariantSelectionStrategy | "allVariants"       |
       | coveredDimensionSpacePoint   | {"language":"de"}   |
     Then the last command should have thrown an exception of type "NodeAggregateIsTethered"
@@ -64,7 +64,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a node aggregate in a non-existing dimension space point
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                       |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"    |
+      | nodeAggregateId      | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
       | nodeVariantSelectionStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
@@ -72,7 +72,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a node aggregate in a dimension space point the node aggregate does not cover
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                       |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"    |
+      | nodeAggregateId      | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"language": "en"} |
       | nodeVariantSelectionStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
@@ -80,7 +80,7 @@ Feature: Remove NodeAggregate
   Scenario: Try to remove a node aggregate using a non-existent removalAttachmentPoint
     When the command RemoveNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
       | coveredDimensionSpacePoint   | {"language":"de"}        |
       | removalAttachmentPoint       | "i-do-not-exist"         |

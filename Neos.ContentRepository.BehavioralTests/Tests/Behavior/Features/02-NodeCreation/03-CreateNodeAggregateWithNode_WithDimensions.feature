@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create node aggregate with node
 
   As a user of the CR I want to create a new externally referencable node aggregate of a specific type with a node
@@ -19,12 +19,13 @@ Feature: Create node aggregate with node
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "user-id"            |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
@@ -42,42 +43,42 @@ Feature: Create node aggregate with node
           type: string
     """
     When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier    | originDimensionSpacePoint | nodeName   | parentNodeAggregateIdentifier | nodeTypeName                                                 | initialPropertyValues    |
+      | nodeAggregateId    | originDimensionSpacePoint | nodeName   | parentNodeAggregateId | nodeTypeName                                                 | initialPropertyValues    |
       | sir-david-nodenborough     | {"language":"mul"}        | node       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {"text": "initial text"} |
       | nody-mc-nodeface           | {"language":"de"}         | child-node | sir-david-nodenborough        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
       | sir-nodeward-nodington-iii | {"language":"en"}         | esquire    | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {}                       |
 
-    Then I expect exactly 5 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 5 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                                                                        |
-      | contentStreamIdentifier       | "cs-identifier"                                                                                                 |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                                                                        |
+      | contentStreamId       | "cs-identifier"                                                                                                 |
+      | nodeAggregateId       | "sir-david-nodenborough"                                                                                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes"                                                  |
       | originDimensionSpacePoint     | {"language":"mul"}                                                                                              |
       | coveredDimensionSpacePoints   | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}]                                     |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                        |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                        |
       | nodeName                      | "node"                                                                                                          |
       | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}, "text": {"value": "initial text", "type": "string"}} |
       | nodeAggregateClassification   | "regular"                                                                                                       |
     And event at index 3 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                       |
-      | contentStreamIdentifier       | "cs-identifier"                                                |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                             |
+      | contentStreamId       | "cs-identifier"                                                |
+      | nodeAggregateId       | "nody-mc-nodeface"                                             |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
       | originDimensionSpacePoint     | {"language":"de"}                                              |
       | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"}]                         |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                       |
+      | parentNodeAggregateId | "sir-david-nodenborough"                                       |
       | nodeName                      | "child-node"                                                   |
       | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}}     |
       | nodeAggregateClassification   | "regular"                                                      |
     And event at index 4 is of type "NodeAggregateWithNodeWasCreated" with payload:
       | Key                           | Expected                                                       |
-      | contentStreamIdentifier       | "cs-identifier"                                                |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                                   |
+      | contentStreamId       | "cs-identifier"                                                |
+      | nodeAggregateId       | "sir-nodeward-nodington-iii"                                   |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes" |
       | originDimensionSpacePoint     | {"language":"en"}                                              |
       | coveredDimensionSpacePoints   | [{"language":"en"}]                                            |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                       |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                       |
       | nodeName                      | "esquire"                                                      |
       | initialPropertyValues         | {"defaultText": {"value": "my default", "type": "string"}}     |
       | nodeAggregateClassification   | "regular"                                                      |
@@ -143,7 +144,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name | NodeDiscriminator                                       |
       | node | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -152,7 +152,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -172,7 +171,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name       | NodeDiscriminator                                |
       | child-node | cs-identifier;nody-mc-nodeface;{"language":"de"} |
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -181,7 +179,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -200,7 +197,6 @@ Feature: Create node aggregate with node
     And I expect this node to have the following child nodes:
       | Name       | NodeDiscriminator                                |
       | child-node | cs-identifier;nody-mc-nodeface;{"language":"de"} |
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -209,7 +205,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "node/child-node" to lead to node cs-identifier;nody-mc-nodeface;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -228,9 +223,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "node" to lead to node cs-identifier;sir-david-nodenborough;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                                          |
-      | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                                          |
@@ -243,9 +235,6 @@ Feature: Create node aggregate with node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                                       |
-      | cs-identifier;sir-david-nodenborough;{"language":"mul"} |
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                                       |
       | cs-identifier;sir-david-nodenborough;{"language":"mul"} |

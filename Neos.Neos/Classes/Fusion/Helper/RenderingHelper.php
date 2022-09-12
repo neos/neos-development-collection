@@ -14,12 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionIdentifier;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 /**
  * Render Content Dimension Names, Node Labels
@@ -29,32 +29,24 @@ use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
 class RenderingHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    #[Flow\Inject]
-    protected ContentDimensionSourceInterface $contentDimensionSource;
-
-    /**
      * Render a human-readable description for the passed $dimensions
      *
      * @param array<string,mixed> $dimensions
      */
     public function renderDimensions(array $dimensions): string
     {
-        $rendered = [];
-        foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
-            $dimension = $this->contentDimensionSource->getDimension(
-                new ContentDimensionIdentifier($dimensionIdentifier)
-            );
-            $value = $dimension?->getValue($dimensionValue);
-            $rendered[] = $dimension?->getConfigurationValue('label')
-                . ' ' . $value?->getConfigurationValue('label');
-        }
-
-        return implode(', ', $rendered);
+        throw new \RuntimeException('TODO FIX ME IF NEEDED');
+//        $rendered = [];
+//        foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
+//            $dimension = $this->contentDimensionSource->getDimension(
+//                new ContentDimensionIdentifier($dimensionIdentifier)
+//            );
+//            $value = $dimension?->getValue($dimensionValue);
+//            $rendered[] = $dimension?->getConfigurationValue('label')
+//                . ' ' . $value?->getConfigurationValue('label');
+//        }
+//
+//        return implode(', ', $rendered);
     }
 
     /**
@@ -66,15 +58,16 @@ class RenderingHelper implements ProtectedContextAwareInterface
      */
     public function labelForNodeType($nodeTypeName)
     {
-        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-            $explodedNodeTypeName = explode(':', $nodeTypeName);
-
-            return end($explodedNodeTypeName);
-        }
-
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        return $nodeType->getLabel();
+        throw new \RuntimeException('TODO RE-IMPLEMENT ME');
+//        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+//            $explodedNodeTypeName = explode(':', $nodeTypeName);
+//
+//            return end($explodedNodeTypeName);
+//        }
+//
+//        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+//
+//        return $nodeType->getLabel();
     }
 
     /**

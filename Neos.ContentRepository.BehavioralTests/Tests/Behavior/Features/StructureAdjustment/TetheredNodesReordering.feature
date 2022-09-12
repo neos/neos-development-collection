@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Tethered Nodes Reordering Structure changes
 
   As a user of the CR I want to be able to detect wrongly ordered tethered nodes, and fix them.
@@ -18,32 +18,33 @@ Feature: Tethered Nodes Reordering Structure changes
           type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Tethered': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "system-user"                 |
+      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                        | Value                                                                                                                                      |
-      | contentStreamIdentifier                    | "cs-identifier"                                                                                                                            |
-      | nodeAggregateIdentifier                    | "sir-david-nodenborough"                                                                                                                   |
+      | contentStreamId                    | "cs-identifier"                                                                                                                            |
+      | nodeAggregateId                    | "sir-david-nodenborough"                                                                                                                   |
       | nodeTypeName                               | "Neos.ContentRepository.Testing:Document"                                                                                                  |
       | originDimensionSpacePoint                  | {}                                                                                                                                         |
-      | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                                                                                                                   |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                                                                   |
       | nodeName                                   | "document"                                                                                                                                 |
-      | tetheredDescendantNodeAggregateIdentifiers | {"tethered-node": "tethered-node-agg", "other-tethered-node": "other-tethered-node-agg", "third-tethered-node": "third-tethered-node-agg"} |
-      | initiatingUserIdentifier                   | "user"                                                                                                                                     |
+      | tetheredDescendantNodeAggregateIds | {"tethered-node": "tethered-node-agg", "other-tethered-node": "other-tethered-node-agg", "third-tethered-node": "third-tethered-node-agg"} |
+      | initiatingUserId                   | "user"                                                                                                                                     |
     And the graph projection is fully up to date
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
@@ -65,7 +66,7 @@ Feature: Tethered Nodes Reordering Structure changes
           position: start
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                          | nodeAggregateIdentifier |
+      | Type                          | nodeAggregateId |
       | TETHERED_NODE_WRONGLY_ORDERED | sir-david-nodenborough  |
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"

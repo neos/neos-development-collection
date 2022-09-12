@@ -7,8 +7,7 @@
     ],
     "require": {
         "neos/neos": "*",
-        "neos/neos-ui": "*",
-        "neos/event-sourcing": "*"
+        "neos/neos-ui": "*"
     },
     "conflict": {
       "flowpack/nodetemplates": "*"

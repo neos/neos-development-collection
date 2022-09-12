@@ -12,8 +12,8 @@ namespace Neos\ContentRepositoryRegistry;
  */
 
 use Behat\Transliterator\Transliterator;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Domain\Model\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * A class holding utility methods.

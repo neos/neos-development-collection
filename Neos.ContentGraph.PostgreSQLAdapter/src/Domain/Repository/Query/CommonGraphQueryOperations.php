@@ -17,8 +17,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\ForwardCompatibility\Result as QueryResult;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 
+/**
+ * @internal
+ */
 trait CommonGraphQueryOperations
 {
     private string $query;
@@ -37,15 +41,21 @@ trait CommonGraphQueryOperations
      * @param array<string,mixed> $parameters
      * @param array<string,int|string> $types
      */
-    final protected function __construct(string $query, array $parameters, array $types = [])
-    {
+    final protected function __construct(
+        string $query,
+        array $parameters,
+        private readonly string $tableNamePrefix,
+        array $types = []
+    ) {
         $this->query = $query;
         $this->parameters = $parameters;
         $this->types = $types;
     }
 
-    final public function withNodeTypeConstraints(NodeTypeConstraints $nodeTypeConstraints, string $prefix): self
-    {
+    final public function withNodeTypeConstraints(
+        NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
+        string $prefix
+    ): self {
         $query = $this->query;
         $parameters = $this->parameters;
         $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames;
@@ -75,7 +85,7 @@ trait CommonGraphQueryOperations
             AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
         }
 
-        return new self($query, $parameters, $types);
+        return new self($query, $parameters, $this->tableNamePrefix, $types);
     }
 
     public function withLimit(int $limit): self
@@ -83,7 +93,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             LIMIT ' . $limit;
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function withOffset(int $offset): self
@@ -91,7 +101,7 @@ trait CommonGraphQueryOperations
         $query = $this->query . '
             OFFSET ' . $offset;
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 
     public function getQuery(): string

@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Command;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ESCR\AssetUsage\Dto\AssetUsage;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\Flow\Cli\CommandController;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -83,12 +83,12 @@ final class AssetUsageCommandController extends CommandController
         if ($dimensionSpacePoint === null) {
             return false;
         }
-        $subGraph = $this->contentGraph->getSubgraphByIdentifier(
+        $subGraph = $this->contentGraph->getSubgraph(
             $usage->contentStreamIdentifier,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $subGraph->findNodeByNodeAggregateIdentifier($usage->nodeAggregateIdentifier);
+        $node = $subGraph->findNodeById($usage->nodeAggregateIdentifier);
         return $node !== null;
     }
 

@@ -17,42 +17,44 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\ContentRepository\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 
 /**
  * The content stream forking feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait ContentStreamForking
 {
     /**
      * @throws \Throwable
      */
-    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
+    private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->transactional(function () use ($event) {
             $parameters = [
-                'sourceContentStreamIdentifier' => (string)$event->getSourceContentStreamIdentifier(),
-                'targetContentStreamIdentifier' => (string)$event->getContentStreamIdentifier()
+                'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamId,
+                'targetContentStreamIdentifier' => (string)$event->newContentStreamId
             ];
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-                'INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+                'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
                     (contentstreamidentifier, parentnodeanchor,
                      dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
                 SELECT :targetContentStreamIdentifier, parentnodeanchor,
                     dimensionspacepoint, dimensionspacepointhash, childnodeanchors
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' source
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation source
                 WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
                 $parameters
             );
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
-                'INSERT INTO ' . RestrictionHyperrelationRecord::TABLE_NAME . '
+                'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
                     (contentstreamidentifier, dimensionspacepointhash,
                      originnodeaggregateidentifier, affectednodeaggregateidentifiers)
                 SELECT :targetContentStreamIdentifier, dimensionspacepointhash,
                     originnodeaggregateidentifier, affectednodeaggregateidentifiers
-                FROM ' . RestrictionHyperrelationRecord::TABLE_NAME . ' source
+                FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
                 WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
                 $parameters
             );

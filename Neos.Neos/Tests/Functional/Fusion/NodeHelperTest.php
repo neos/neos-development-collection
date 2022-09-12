@@ -11,8 +11,18 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -22,7 +32,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class NodeHelperTest extends AbstractFusionObjectTest
 {
     /**
-     * @var NodeInterface|MockObject
+     * @var Node|MockObject
      */
     protected $textNode;
 
@@ -75,7 +85,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
         $view->assign('node', $this->textNode);
 
-        self::assertEquals($this->textNode->getNodeType()->getLabel(), (string)$view->render());
+        self::assertEquals($this->textNode->nodeType->getLabel(), (string)$view->render());
     }
 
     /**
@@ -118,17 +128,16 @@ class NodeHelperTest extends AbstractFusionObjectTest
             ->method('getLabel')
             ->willReturn('Content.Text');
 
-        $textNode = $this
-            ->getMockBuilder(NodeInterface::class)
-            ->disableOriginalConstructor()
+        $textNodeProperties = $this
+            ->getMockBuilder(PropertyCollectionInterface::class)
             ->getMock();
-        $textNode
-            ->method('hasProperty')
+        $textNodeProperties
+            ->method('offsetExists')
             ->willReturnCallback(function ($arg) {
                 return $arg === 'title' || $arg === 'text';
             });
-        $textNode
-            ->method('getProperty')
+        $textNodeProperties
+            ->method('offsetGet')
             ->willReturnCallback(function ($arg) {
                 if ($arg === 'title') {
                     return 'Some title';
@@ -138,10 +147,21 @@ class NodeHelperTest extends AbstractFusionObjectTest
                 }
                 return null;
             });
-        $textNode
-            ->method('getNodeType')
-            ->willReturn($nodeType);
 
-        $this->textNode = $textNode;
+        $this->textNode = new Node(
+            ContentSubgraphIdentity::create(
+                ContentRepositoryId::fromString("cr"),
+                ContentStreamId::fromString("cs"),
+                DimensionSpacePoint::fromArray([]),
+                VisibilityConstraints::withoutRestrictions()
+            ),
+            NodeAggregateId::fromString("na"),
+            OriginDimensionSpacePoint::fromArray([]),
+            NodeAggregateClassification::CLASSIFICATION_REGULAR,
+            NodeTypeName::fromString("nt"),
+            $nodeType,
+            $textNodeProperties,
+            null
+        );
     }
 }

@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Move dimension space point
 
   basically "renames" a dimension space point; needed if:
@@ -28,31 +28,32 @@ Feature: Move dimension space point
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | contentStreamId     | "cs-identifier"                                          |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"ch"},{"language":"de"}] |
-      | initiatingUserIdentifier    | "system-user"                                            |
+      | initiatingUserId    | "system-user"                                            |
       | nodeAggregateClassification | "root"                                                   |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language": "de"}                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
     And the graph projection is fully up to date
 
 
@@ -94,11 +95,11 @@ Feature: Move dimension space point
 
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
-      | contentStreamIdentifier      | "cs-identifier"                        |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"               |
+      | contentStreamId      | "cs-identifier"                        |
+      | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | initiatingUserIdentifier     | "00000000-0000-0000-0000-000000000000" |
+      | initiatingUserId     | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
 
     # ensure the node is disabled

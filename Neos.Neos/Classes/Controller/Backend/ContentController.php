@@ -14,14 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Backend;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
@@ -44,6 +43,7 @@ use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 
@@ -113,13 +113,7 @@ class ContentController extends ActionController
     protected $propertyMapper;
 
     #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
-
-    #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
-
-    #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -127,7 +121,8 @@ class ContentController extends ActionController
      */
     public function initializeUploadAssetAction(): void
     {
-        $propertyMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments->getArgument('asset')
+            ->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
         $propertyMappingConfiguration->setTypeConverterOption(
             PersistentObjectConverter::class,
@@ -153,21 +148,36 @@ class ContentController extends ActionController
      *
      * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
-     * @param NodeInterface $node The node the new asset should be assigned to
+     * @param string $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
      * @return string
      * @throws IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws ThumbnailServiceException
      */
-    public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
+    public function uploadAssetAction(Asset $asset, string $metadata, string $node, string $propertyName)
     {
+        $nodeAddressString = $node;
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
+
+        $node = $contentRepository->getContentGraph()
+            ->getSubgraph(
+                $nodeAddress->contentStreamId,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
+            ->findNodeById($nodeAddress->nodeAggregateId);
+
+
         $this->response->setContentType('application/json');
         if ($metadata !== 'Asset' && $metadata !== 'Image') {
             $this->response->setStatusCode(400);
             $result = ['error' => 'Invalid "metadata" type: ' . $metadata];
         } else {
-            if (($asset instanceof Image || $asset instanceof ImageVariant) && $metadata === 'Image') {
+            if ($asset instanceof ImageInterface && $metadata === 'Image') {
                 $result = $this->getImageInterfacePreviewData($asset);
             } else {
                 $result = $this->getAssetProperties($asset);
@@ -226,12 +236,12 @@ class ContentController extends ActionController
     /**
      * Fetch the metadata for a given image
      *
-     * @param Image $image
+     * @param ImageInterface $image
      *
      * @return string JSON encoded response
      * @throws ThumbnailServiceException
      */
-    public function imageWithMetadataAction(Image $image)
+    public function imageWithMetadataAction(ImageInterface $image)
     {
         $this->response->setContentType('application/json');
         $imageProperties = $this->getImageInterfacePreviewData($image);
@@ -250,17 +260,17 @@ class ContentController extends ActionController
      *   "previewDimensions": Dimensions for the preview image (width, height)
      *   "object": object properties like the __identity and __type of the object
      *
-     * @param Image|ImageVariant $image The image to retrieve meta data for
+     * @param ImageInterface $image The image to retrieve meta data for
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
-    protected function getImageInterfacePreviewData(Image|ImageVariant $image)
+    protected function getImageInterfacePreviewData(ImageInterface $image)
     {
         // TODO: Now that we try to support all ImageInterface implementations we should use a strategy here
         // to get the image properties for custom implementations
         if ($image instanceof ImageVariant) {
             $imageProperties = $this->getImageVariantPreviewData($image);
-        } else {
+        } elseif ($image instanceof Image) {
             $imageProperties = $this->getImagePreviewData($image);
         }
 
@@ -273,7 +283,7 @@ class ContentController extends ActionController
      * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
-    protected function getImagePreviewData(Image $image)
+    protected function getImagePreviewData(Image $image): array
     {
         $imageProperties = [
             'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
@@ -316,7 +326,8 @@ class ContentController extends ActionController
      */
     protected function initializeAssetsWithMetadataAction()
     {
-        $propertyMappingConfiguration = $this->arguments->getArgument('assets')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments->getArgument('assets')
+            ->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
         $propertyMappingConfiguration->setTypeConverterOption(
             AssetInterfaceConverter::class,
@@ -383,25 +394,30 @@ class ContentController extends ActionController
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
         $this->response->setContentType('application/json');
 
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if (is_null($workspace)) {
             throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
         }
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $workspace->getCurrentContentStreamIdentifier(),
-            DimensionSpacePoint::fromArray($dimensions),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        $subgraph = $contentRepository->getContentGraph()
+            ->getSubgraph(
+                $workspace->currentContentStreamId,
+                DimensionSpacePoint::fromArray($dimensions),
+                VisibilityConstraints::withoutRestrictions()
+            );
         $node = $identifier
-            ? $nodeAccessor->findByIdentifier(NodeAggregateIdentifier::fromString($identifier))
+            ? $subgraph->findNodeById(NodeAggregateId::fromString($identifier))
             : null;
 
         $views = [];
-        if ($node instanceof NodeInterface) {
+        if ($node instanceof Node) {
             $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->getNodeType()
+                $node->nodeType
             );
             foreach ($pluginViewDefinitions as $pluginViewDefinition) {
                 $label = $pluginViewDefinition->getLabel();
@@ -419,7 +435,10 @@ class ContentController extends ActionController
                 if ($documentNode === null) {
                     continue;
                 }
-                $documentAddress = $this->nodeAddressFactory->createFromNode($documentNode);
+                $contentRepository = $this->contentRepositoryRegistry->get(
+                    $documentNode->subgraphIdentity->contentRepositoryId
+                );
+                $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
                 $uri = $this->uriBuilder
                     ->reset()
                     ->uriFor('show', ['node' => $documentAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos');
@@ -432,7 +451,7 @@ class ContentController extends ActionController
                 ];
             }
         }
-        return json_encode((object) $views, JSON_THROW_ON_ERROR);
+        return json_encode((object)$views, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -447,11 +466,15 @@ class ContentController extends ActionController
      */
     public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+
         $this->response->setContentType('application/json');
 
         $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions(
             WorkspaceName::fromString($workspaceName),
-            DimensionSpacePoint::fromArray($dimensions)
+            DimensionSpacePoint::fromArray($dimensions),
+            $contentRepositoryIdentifier
         );
 
         $masterPlugins = [];
@@ -461,11 +484,11 @@ class ContentController extends ActionController
                 continue;
             }
             $translationHelper = new TranslationHelper();
-            $masterPlugins[(string)$pluginNode->getNodeAggregateIdentifier()] = $translationHelper->translate(
+            $masterPlugins[(string)$pluginNode->nodeAggregateId] = $translationHelper->translate(
                 'masterPlugins.nodeTypeOnPageLabel',
                 null,
                 [
-                    'nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()),
+                    'nodeTypeName' => $translationHelper->translate($pluginNode->nodeType->getLabel()),
                     'pageLabel' => $documentNode->getLabel()
                 ],
                 'Main',
@@ -473,40 +496,32 @@ class ContentController extends ActionController
             );
         }
 
-        return json_encode((object) $masterPlugins, JSON_THROW_ON_ERROR);
+        return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
     }
 
-    final protected function findClosestDocumentNode(NodeInterface $node): ?NodeInterface
+    final protected function findClosestDocumentNode(Node $node): ?Node
     {
-        while ($node instanceof NodeInterface) {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
+        while ($node instanceof Node) {
+            if ($node->nodeType->isOfType('Neos.Neos:Document')) {
                 return $node;
             }
-            $node = $this->findParentNode($node);
+            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
+                ->findParentNode($node->nodeAggregateId);
         }
 
         return null;
-    }
-
-    protected function findParentNode(NodeInterface $node): ?NodeInterface
-    {
-        return $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
-        )->findParentNode($node);
     }
 
     /**
      * Signals that a new asset has been uploaded through the Neos Backend
      *
      * @param Asset $asset The uploaded asset
-     * @param NodeInterface $node The node the asset belongs to
+     * @param Node|null $node The node the asset belongs to
      * @param string $propertyName The node property name the asset is assigned to
      * @return void
      * @Flow\Signal
      */
-    protected function emitAssetUploaded(Asset $asset, NodeInterface $node, string $propertyName)
+    protected function emitAssetUploaded(Asset $asset, ?Node $node, string $propertyName)
     {
     }
 }

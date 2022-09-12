@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Filter - Node Name
 
   Background:
@@ -24,57 +24,58 @@ Feature: Filter - Node Name
           type: string
     """
 
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "system-user"                 |
+      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /name1
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "na-name1"                                |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "na-name1"                                |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | nodeName                      | "name1"                                   |
       | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "Original name1"}                |
     And the graph projection is fully up to date
 
     # Node /name2
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "na-name2"                                |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "na-name2"                                |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | nodeName                      | "name2"                                   |
       | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "Original name2"}                |
     And the graph projection is fully up to date
 
     # no node name
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "na-without-name"                         |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "na-without-name"                         |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "no node name"}                  |
     And the graph projection is fully up to date
 

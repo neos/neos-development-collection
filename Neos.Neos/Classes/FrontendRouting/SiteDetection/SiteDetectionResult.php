@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -21,20 +21,20 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 final class SiteDetectionResult
 {
-    private const ROUTINGPARAMETER_SITEIDENTIFIER = 'siteIdentifier';
-    private const ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER = 'contentRepositoryIdentifier';
+    private const ROUTINGPARAMETER_SITENODENAME = 'siteNodeName';
+    private const ROUTINGPARAMETER_CONTENTREPOSITORYID = 'contentRepositoryId';
 
     private function __construct(
         public readonly SiteNodeName $siteNodeName,
-        public readonly ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        public readonly ContentRepositoryId $contentRepositoryId,
     ) {
     }
 
     public static function create(
-        SiteNodeName $siteIdentifier,
-        ContentRepositoryIdentifier $contentRepositoryIdentifier
+        SiteNodeName $siteNodeName,
+        ContentRepositoryId $contentRepositoryId
     ): self {
-        return new self($siteIdentifier, $contentRepositoryIdentifier);
+        return new self($siteNodeName, $contentRepositoryId);
     }
 
     /**
@@ -54,19 +54,21 @@ final class SiteDetectionResult
 
     public static function fromRouteParameters(RouteParameters $routeParameters): self
     {
-        $siteIdentifier = $routeParameters->getValue(self::ROUTINGPARAMETER_SITEIDENTIFIER);
-        $contentRepositoryIdentifier = $routeParameters->getValue(self::ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER);
+        $siteNodeName = $routeParameters->getValue(self::ROUTINGPARAMETER_SITENODENAME);
+        $contentRepositoryId = $routeParameters->getValue(self::ROUTINGPARAMETER_CONTENTREPOSITORYID);
 
-        if ($siteIdentifier === null || $contentRepositoryIdentifier === null) {
+        if ($siteNodeName === null || $contentRepositoryId === null) {
             throw new \RuntimeException(
                 'Current site and content repository could not be extracted from the Request.'
                     . ' SiteDetectionMiddleware must run before calling this method!'
             );
         }
-        assert($siteIdentifier instanceof SiteNodeName);
-        assert($contentRepositoryIdentifier instanceof ContentRepositoryIdentifier);
-
-        return new self($siteIdentifier, $contentRepositoryIdentifier);
+        assert(is_string($siteNodeName));
+        assert(is_string($contentRepositoryId));
+        return new self(
+            SiteNodeName::fromString($siteNodeName),
+            ContentRepositoryId::fromString($contentRepositoryId)
+        );
     }
 
     public function storeInRequest(ServerRequestInterface $request): ServerRequestInterface
@@ -80,7 +82,13 @@ final class SiteDetectionResult
     public function storeInRouteParameters(RouteParameters $routeParameters): RouteParameters
     {
         return $routeParameters
-            ->withParameter(self::ROUTINGPARAMETER_SITEIDENTIFIER, $this->siteNodeName)
-            ->withParameter(self::ROUTINGPARAMETER_CONTENTREPOSITORYIDENTIFIER, $this->contentRepositoryIdentifier);
+            ->withParameter(
+                self::ROUTINGPARAMETER_SITENODENAME,
+                $this->siteNodeName->value
+            )
+            ->withParameter(
+                self::ROUTINGPARAMETER_CONTENTREPOSITORYID,
+                $this->contentRepositoryId->value
+            );
     }
 }

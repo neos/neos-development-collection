@@ -14,11 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Scope('singleton')]
@@ -26,37 +27,36 @@ class NodeSiteResolvingService
 {
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
+    protected $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
-
-    public function findSiteNodeForNodeAddress(NodeAddress $nodeAddress): ?NodeInterface
-    {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $nodeAddress->contentStreamIdentifier,
+    public function findSiteNodeForNodeAddress(
+        NodeAddress $nodeAddress,
+        ContentRepositoryId $contentRepositoryIdentifier
+    ): ?Node {
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $contentRepositoryIdentifier
+        );
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,
             $nodeAddress->isInLiveWorkspace()
                 ? VisibilityConstraints::frontend()
                 : VisibilityConstraints::withoutRestrictions()
         );
-        $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+        $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
         if (is_null($node)) {
             return null;
         }
         $previousNode = null;
         do {
-            if ($node->getNodeType()->isOfType('Neos.Neos:Sites')) {
+            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
                 // the Site node is the one one level underneath the "Sites" node.
                 return $previousNode;
             }
             $previousNode = $node;
-        } while ($node = $nodeAccessor->findParentNode($node));
+        } while ($node = $subgraph->findParentNode($node->nodeAggregateId));
 
         // no Site node found at rootline
         return null;

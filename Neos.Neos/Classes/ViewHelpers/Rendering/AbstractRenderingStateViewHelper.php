@@ -14,9 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Exception;
@@ -37,24 +38,27 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * Get a node from the current Fusion context if available.
      *
-     * @param NodeInterface|null $node
-     * @return NodeAddress
+     * @param Node|null $node
+     * @return \Neos\Neos\FrontendRouting\NodeAddress
      *
      * @throws ViewHelperException
      * @TODO Refactor to a Fusion Context trait (in Neos.Fusion) that can be used inside ViewHelpers
      * to get variables from the Fusion context.
      */
-    protected function getNodeAddressOfContextNode(?NodeInterface $node): NodeAddress
+    protected function getNodeAddressOfContextNode(?Node $node): NodeAddress
     {
         if ($node !== null) {
-            return $this->nodeAddressFactory->createFromNode($node);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $node->subgraphIdentity->contentRepositoryId
+            );
+            return NodeAddressFactory::create($contentRepository)->createFromNode($node);
         }
 
         $baseNode = null;
@@ -75,7 +79,10 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
             );
         }
 
-        return $this->nodeAddressFactory->createFromNode($baseNode);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $baseNode->subgraphIdentity->contentRepositoryIdentifier
+        );
+        return NodeAddressFactory::create($contentRepository)->createFromNode($baseNode);
     }
 
 

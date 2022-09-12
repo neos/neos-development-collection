@@ -14,11 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -32,6 +31,7 @@ use Neos\Flow\Session\SessionInterface;
 use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\Arrays;
 
 #[Flow\Scope('singleton')]
@@ -42,12 +42,6 @@ class BackendRedirectionService
      * @var SessionInterface
      */
     protected $session;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceRepository;
 
     /**
      * @Flow\Inject
@@ -98,10 +92,7 @@ class BackendRedirectionService
     protected $preferedStartModules;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
-
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
@@ -158,7 +149,7 @@ class BackendRedirectionService
      */
     public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest): ?string
     {
-        $lastVisitedNode = $this->getLastVisitedNode('live');
+        $lastVisitedNode = $this->getLastVisitedNode('live', $actionRequest);
         if ($lastVisitedNode === null) {
             return null;
         }
@@ -170,24 +161,27 @@ class BackendRedirectionService
         return $uriBuilder->uriFor('show', ['node' => $lastVisitedNode], 'Frontend\\Node', 'Neos.Neos');
     }
 
-    protected function getLastVisitedNode(string $workspaceName): ?NodeInterface
+    protected function getLastVisitedNode(string $workspaceName, ActionRequest $actionRequest): ?Node
     {
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($actionRequest->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if (!$workspace || !$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;
         }
         try {
-            /** @var NodeInterface $lastVisitedNode */
+            /** @var Node $lastVisitedNode */
             $lastVisitedNode = $this->propertyMapper->convert(
                 $this->session->getData('lastVisitedNode'),
-                NodeInterface::class
+                Node::class
             );
 
-            return $this->nodeAccessorManager->accessorFor(
-                $workspace->getCurrentContentStreamIdentifier(),
-                $lastVisitedNode->getDimensionSpacePoint(),
+            return $contentRepository->getContentGraph()->getSubgraph(
+                $workspace->currentContentStreamId,
+                $lastVisitedNode->subgraphIdentity->dimensionSpacePoint,
                 VisibilityConstraints::withoutRestrictions()
-            )->findByIdentifier($lastVisitedNode->getNodeAggregateIdentifier());
+            )->findNodeById($lastVisitedNode->nodeAggregateId);
         } catch (\Exception $exception) {
             return null;
         }

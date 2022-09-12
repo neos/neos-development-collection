@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting;
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
@@ -34,6 +35,7 @@ use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
@@ -60,7 +62,7 @@ use Psr\Http\Message\UriInterface;
  * ┌──────────────┐                     │   EventSourcedFrontendNodeRoutePartHandler    │
  * │SiteDetection │                     │ ┌─────────────────────┐                       │
  * │Middleware (*)│────────────────────▶│ │DimensionResolver (*)│─────▶ Finding the    ─┼─▶NodeAddress
- * └──────────────┘ current site        │ └─────────────────────┘       NodeIdentifier  │
+ * └──────────────┘ current site        │ └─────────────────────┘       NodeId          │
  *                                      └───────────────────────────────────────────────┘
  *                  current Content                              current
  *                  Repository                                   DimensionSpacePoint
@@ -109,10 +111,10 @@ use Psr\Http\Message\UriInterface;
  * The **result** of the {@see EventSourcedFrontendNodeRoutePartHandler::matchWithParameters} call is a
  * {@see NodeAddress} (wrapped in a {@see MatchResult}); so to build the NodeAddress, we need:
  * - the {@see WorkspaceName} (which is always **live** in our case)
- * - the {@see ContentStreamIdentifier} of the Live workspace
+ * - the {@see ContentStreamId} of the Live workspace
  * - The {@see DimensionSpacePoint} we want to see the page in (i.e. in language=de)
  *   - resolved by {@see DimensionResolverInterface}
- * - The {@see NodeAggregateIdentifier} (of the Document Node we want to show)
+ * - The {@see NodeAggregateId} (of the Document Node we want to show)
  *   - resolved by {@see EventSourcedFrontendNodeRoutePartHandler}
  *
  *
@@ -146,9 +148,9 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     /**
      * @Flow\Inject
-     * @var DocumentUriPathFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $documentUriPathFinder;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -174,7 +176,6 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @param mixed $requestPath
      * @param RouteParameters $parameters
      * @return bool|MatchResult
-     * @throws NodeAddressCannotBeSerializedException
      */
     public function matchWithParameters(&$requestPath, RouteParameters $parameters)
     {
@@ -196,12 +197,14 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         // if incomplete -> no match + log
 
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 
         try {
             $matchResult = $this->matchUriPath(
                 $dimensionResolvingResult->remainingUriPath,
                 $dimensionSpacePoint,
-                $siteDetectionResult
+                $siteDetectionResult,
+                $contentRepository
             );
         } catch (NodeNotFoundException $exception) {
             // we silently swallow the Node Not Found case, as you'll see this in the server log if it interests you
@@ -218,23 +221,25 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      * @param string $uriPath
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return MatchResult
-     * @throws NodeNotFoundException | NodeAddressCannotBeSerializedException
+     * @throws NodeNotFoundException
      */
     private function matchUriPath(
         string $uriPath,
         DimensionSpacePoint $dimensionSpacePoint,
-        SiteDetectionResult $siteDetectionResult
+        SiteDetectionResult $siteDetectionResult,
+        ContentRepository $contentRepository
     ): MatchResult {
         $uriPath = trim($uriPath, '/');
-        $nodeInfo = $this->documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
+        $nodeInfo = $documentUriPathFinder->getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
             $siteDetectionResult->siteNodeName,
             $uriPath,
             $dimensionSpacePoint->hash
         );
         $nodeAddress = new NodeAddress(
-            $this->documentUriPathFinder->getLiveContentStreamIdentifier(),
+            $documentUriPathFinder->getLiveContentStreamId(),
             $dimensionSpacePoint,
-            $nodeInfo->getNodeAggregateIdentifier(),
+            $nodeInfo->getNodeAggregateId(),
             WorkspaceName::forLive()
         );
         return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
@@ -280,8 +285,13 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         NodeAddress $nodeAddress,
         SiteDetectionResult $currentRequestSiteDetectionResult
     ): ResolveResult {
-        $nodeInfo = $this->documentUriPathFinder->getByIdAndDimensionSpacePointHash(
-            $nodeAddress->nodeAggregateIdentifier,
+        // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $currentRequestSiteDetectionResult->contentRepositoryId
+        );
+        $documentUriPathFinder = $contentRepository->projectionState(DocumentUriPathFinder::class);
+        $nodeInfo = $documentUriPathFinder->getByIdAndDimensionSpacePointHash(
+            $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
         if ($nodeInfo->isDisabled()) {
@@ -291,7 +301,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             ), 1599668357);
         }
         if ($nodeInfo->isShortcut()) {
-            $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo);
+            $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo, $contentRepository);
             if ($nodeInfo instanceof UriInterface) {
                 return $this->buildResolveResultFromUri($nodeInfo);
             }

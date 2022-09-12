@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Functional\Fusion\Cache;
 
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Neos\Fusion\Helper\CachingHelper;

@@ -17,10 +17,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeRenaming
 {
@@ -29,20 +31,20 @@ trait NodeRenaming
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
+    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
     {
         $this->transactional(function () use ($event) {
             foreach (
                 $this->getProjectionHyperGraph()->findNodeRecordsForNodeAggregate(
-                    $event->getContentStreamIdentifier(),
-                    $event->getNodeAggregateIdentifier()
+                    $event->contentStreamId,
+                    $event->nodeAggregateId
                 ) as $originNode
             ) {
                 $this->copyOnWrite(
-                    $event->getContentStreamIdentifier(),
+                    $event->contentStreamId,
                     $originNode,
                     function (NodeRecord $nodeRecord) use ($event) {
-                        $nodeRecord->nodeName = $event->getNewNodeName();
+                        $nodeRecord->nodeName = $event->newNodeName;
                     }
                 );
             }

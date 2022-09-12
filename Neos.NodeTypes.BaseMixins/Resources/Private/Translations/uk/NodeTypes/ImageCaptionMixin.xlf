@@ -7,8 +7,8 @@
         <target state="translated">Увімкнути заголовок</target>
       </trans-unit>
       <trans-unit id="properties.caption.ui.inline.editorOptions.placeholder" xml:space="preserve">
-				<source><![CDATA[<p>Enter caption here</p>]]></source>
-        <target state="needs-translation"><![CDATA[<p>Enter caption here</p>]]></target>
+				<source>&lt;p&gt;Enter caption here&lt;/p&gt;</source>
+        <target state="translated">&lt;p&gt;Введіть тут підпис&lt;/p&gt;</target>
       </trans-unit>
     </body>
   </file>

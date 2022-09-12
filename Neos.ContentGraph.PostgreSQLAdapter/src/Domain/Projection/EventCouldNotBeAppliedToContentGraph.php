@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
+ * This file is part of the Neos.ContentGraph.PostgreSQLAdapter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -14,12 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\Flow\Annotations as Flow;
-
 /**
  * The exception to be thrown if an event could not be applied to the content graph
+ *
+ * @internal
  */
-#[Flow\Proxy(false)]
 final class EventCouldNotBeAppliedToContentGraph extends \DomainException
 {
     public static function becauseTheSourceNodeIsMissing(string $eventClassName): self

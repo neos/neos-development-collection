@@ -11,11 +11,11 @@
             </th>
             <f:if condition="{contentDimensions}">
                 <th>
-                    <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node}" />
+                    <f:render partial="Module/Shared/NodeContentDimensionsInformation.html" arguments="{contentDimensions: contentDimensions, node: change.node.nodeData}" />
                 </th>
             </f:if>
             <th>
-                <span title="{neos:backend.translate(id: 'lastModification')}: {change.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip"><i class="fas fa-time"></i> {change.node.lastModificationDateTime -> m:format.relativeDate()}</span>
+                <span title="{neos:backend.translate(id: 'lastModification')}: {change.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip"><i class="fas fa-time"></i> {change.node.lastModificationDateTime}</span>
             </th>
         </tr>
         <f:for each="{change.contentChanges}" key="propertyName" as="contentChanges">
@@ -64,12 +64,12 @@
                         <table>
                             <tr>
                                 <td>
-                                    <f:if condition="{contentChanges.original}">
+                                    <f:if condition="{contentChanges.original.resource}">
                                         <del><a href="{f:uri.resource(resource: contentChanges.original.resource)}">{contentChanges.original.resource.filename}</a></del>
                                     </f:if>
                                 </td>
                                 <td>
-                                    <f:if condition="{contentChanges.changed}">
+                                    <f:if condition="{contentChanges.changed.resource}">
                                         <ins><a href="{f:uri.resource(resource: contentChanges.changed.resource)}">{contentChanges.changed.resource.filename}</a></ins>
                                     </f:if>
                               </td>

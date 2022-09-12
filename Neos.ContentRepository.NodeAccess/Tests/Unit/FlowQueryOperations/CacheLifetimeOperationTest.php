@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Eel\FlowQueryOperations\CacheLifetimeOperation;
 use Neos\Eel\FlowQuery\FlowQuery;
 
@@ -149,7 +149,7 @@ class CacheLifetimeOperationTest extends AbstractQueryOperationsTest
     {
         $contextValues = [];
         foreach ($nodes as $nodeProperties) {
-            $mockNode = $this->createMock(NodeInterface::class);
+            $mockNode = $this->createMock(Node::class);
             $mockNode->expects(self::any())->method('getHiddenBeforeDateTime')->will(self::returnValue($nodeProperties['hiddenBeforeDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenBeforeDateTime']] : null));
             $mockNode->expects(self::any())->method('getHiddenAfterDateTime')->will(self::returnValue($nodeProperties['hiddenAfterDateTime'] !== null ? $this->dateFixtures[$nodeProperties['hiddenAfterDateTime']] : null));
 

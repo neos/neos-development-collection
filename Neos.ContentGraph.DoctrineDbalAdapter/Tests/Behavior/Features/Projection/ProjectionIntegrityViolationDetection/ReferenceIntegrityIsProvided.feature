@@ -1,4 +1,4 @@
-@fixtures
+@contentrepository
 Feature: Run integrity violation detection regarding reference relations
 
   As a user of the CR I want to know whether there are disconnected reference relations
@@ -15,16 +15,17 @@ Feature: Run integrity violation detection regarding reference relations
         referenceProperty:
           type: reference
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | newContentStreamId | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
+      | contentStreamId     | "cs-identifier"                                          |
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
@@ -32,7 +33,7 @@ Feature: Run integrity violation detection regarding reference relations
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "source-nodandaise"                                      |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -41,7 +42,7 @@ Feature: Run integrity violation detection regarding reference relations
       | nodeAggregateClassification   | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "anthony-destinode"                                      |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -53,7 +54,7 @@ Feature: Run integrity violation detection regarding reference relations
   Scenario: Detach a reference relation from its source
     When the command SetNodeReferences is executed with payload:
       | Key                                 | Value                                  |
-      | contentStreamIdentifier             | "cs-identifier"                        |
+      | contentStreamId             | "cs-identifier"                        |
       | sourceOriginDimensionSpacePoint     | {"language":"de"}                      |
       | sourceNodeAggregateIdentifier       | "source-nodandaise"                    |
       | referenceName                       | "referenceProperty"                    |
@@ -62,7 +63,7 @@ Feature: Run integrity violation detection regarding reference relations
     And the graph projection is fully up to date
     And I detach the following reference relation from its source:
       | Key                                | Value               |
-      | contentStreamIdentifier            | "cs-identifier"     |
+      | contentStreamId            | "cs-identifier"     |
       | sourceNodeAggregateIdentifier      | "source-nodandaise" |
       | dimensionSpacePoint                | {"language":"gsw"}  |
       | destinationNodeAggregateIdentifier | "anthony-destinode" |

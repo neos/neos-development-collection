@@ -1,4 +1,4 @@
-@fixtures
+@contentrepository
 Feature: Run integrity violation detection regarding sibling sorting
 
   As a user of the CR I want to know whether there are siblings with ambiguous sorting
@@ -12,16 +12,17 @@ Feature: Run integrity violation detection regarding sibling sorting
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | newContentStreamId | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
+      | contentStreamId     | "cs-identifier"                                          |
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
@@ -32,7 +33,7 @@ Feature: Run integrity violation detection regarding sibling sorting
   Scenario: Create two siblings and set the sorting to the same value
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -41,7 +42,7 @@ Feature: Run integrity violation detection regarding sibling sorting
       | nodeAggregateClassification   | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "noderella-mc-nodeface"                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -51,13 +52,13 @@ Feature: Run integrity violation detection regarding sibling sorting
     And the graph projection is fully up to date
     And I set the following position:
       | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
+      | contentStreamId      | "cs-identifier"    |
       | dimensionSpacePoint          | {"language":"de"}  |
       | childNodeAggregateIdentifier | "nody-mc-nodeface" |
       | newPosition                  | 128                |
     And I set the following position:
       | Key                          | Value                   |
-      | contentStreamIdentifier      | "cs-identifier"         |
+      | contentStreamId      | "cs-identifier"         |
       | dimensionSpacePoint          | {"language":"de"}       |
       | childNodeAggregateIdentifier | "noderella-mc-nodeface" |
       | newPosition                  | 128                     |

@@ -11,13 +11,13 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\NodeAccess\NodeAccessor\NodeAccessorInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "prevAll" operation working on ContentRepository nodes. It iterates over all
@@ -42,9 +42,9 @@ class PrevAllOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -54,7 +54,7 @@ class PrevAllOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -69,17 +69,11 @@ class PrevAllOperation extends AbstractOperation
         $output = [];
         $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-            // @todo: implement NodeAccessor::getPrecedingSiblings
-            foreach ($this->getPrevForNode($contextNode, $nodeAccessor) as $prevNode) {
+            foreach ($this->getPrevForNode($contextNode) as $prevNode) {
                 if ($prevNode !== null
-                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()])
+                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateId])
                 ) {
-                    $outputNodeAggregateIdentifiers[(string)$prevNode->getNodeAggregateIdentifier()] = true;
+                    $outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateId] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -92,17 +86,18 @@ class PrevAllOperation extends AbstractOperation
     }
 
     /**
-     * @param NodeInterface $contextNode The node for which the preceding node should be found
-     * @param NodeAccessorInterface $nodeAccessor
+     * @param Node $contextNode The node for which the preceding node should be found
      * @return Nodes The preceding nodes of $contextNode
      */
-    protected function getPrevForNode(NodeInterface $contextNode, NodeAccessorInterface $nodeAccessor): Nodes
+    protected function getPrevForNode(Node $contextNode): Nodes
     {
-        $parentNode = $nodeAccessor->findParentNode($contextNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+        $parentNode = $subgraph->findParentNode($contextNode->nodeAggregateId);
         if ($parentNode === null) {
             return Nodes::createEmpty();
         }
 
-        return $nodeAccessor->findChildNodes($parentNode)->previousAll($contextNode);
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all())
+            ->previousAll($contextNode);
     }
 }

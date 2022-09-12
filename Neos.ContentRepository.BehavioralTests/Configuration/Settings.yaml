@@ -1,0 +1,20 @@
+
+Neos:
+  # To detect race conditions, enable the code block below, and set raceConditionTracker.enabled to TRUE
+  # and then use ./flow raceConditionTracker:analyzeTrace
+  #ContentRepositoryRegistry:
+  #  presets:
+  #    'default':
+  #      projections:
+  #        'Neos.ContentRepository:ContentGraph':
+  #          catchUpHooks:
+  #            'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+  #              factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+
+  ContentRepository:
+    BehavioralTests:
+      raceConditionTracker:
+        enabled: false
+        redis:
+          host: 127.0.0.1
+          port: 6379

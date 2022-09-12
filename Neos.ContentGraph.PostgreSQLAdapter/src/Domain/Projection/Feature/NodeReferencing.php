@@ -19,10 +19,12 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeApplied
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
-use Neos\ContentRepository\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 
 /**
  * The node referencing feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeReferencing
 {
@@ -31,26 +33,26 @@ trait NodeReferencing
     /**
      * @throws \Throwable
      */
-    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
+    private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
             foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $originDimensionSpacePoint,
-                    $event->sourceNodeAggregateIdentifier
+                    $event->sourceNodeAggregateId
                 );
 
                 if ($nodeRecord) {
                     $anchorPoint = $this->copyOnWrite(
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $nodeRecord,
                         function (NodeRecord $node) {
                         }
                     );
 
                     // remove old
-                    $this->getDatabaseConnection()->delete(ReferenceRelationRecord::TABLE_NAME, [
+                    $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
                         'sourcenodeanchor' => $anchorPoint,
                         'name' => $event->referenceName
                     ]);
@@ -63,9 +65,9 @@ trait NodeReferencing
                             $event->referenceName,
                             $position,
                             $reference->properties,
-                            $reference->targetNodeAggregateIdentifier
+                            $reference->targetNodeAggregateId
                         );
-                        $referenceRecord->addToDatabase($this->getDatabaseConnection());
+                        $referenceRecord->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                         $position++;
                     }
                 } else {

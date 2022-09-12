@@ -15,14 +15,11 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Helper;
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -32,6 +29,7 @@ use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
@@ -61,15 +59,9 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @param string|Uri $uri
@@ -99,11 +91,11 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     public function resolveNodeUri(
         string|Uri $uri,
-        NodeInterface $contextNode,
+        Node $contextNode,
         ControllerContext $controllerContext
     ): ?string {
         $targetNode = $this->convertUriToObject($uri, $contextNode);
-        if (!$targetNode instanceof NodeInterface) {
+        if (!$targetNode instanceof Node) {
             $this->systemLogger->info(
                 sprintf(
                     'Could not resolve "%s" to an existing node; The node was probably deleted.',
@@ -113,19 +105,21 @@ class LinkHelper implements ProtectedContextAwareInterface
             );
             return null;
         }
-        $targetNodeAddress = $this->nodeAddressFactory->createFromNode($targetNode);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $targetNode->subgraphIdentity->contentRepositoryId
+        );
+        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
         try {
             $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
                 ->uriFor($targetNodeAddress);
         } catch (
-            NodeAddressCannotBeSerializedException
-            | HttpException
+            HttpException
             | NoMatchingRouteException
             | MissingActionNameException $e
         ) {
             $this->systemLogger->info(sprintf(
                 'Failed to build URI for node "%s": %e',
-                $targetNode->getNodeAggregateIdentifier(),
+                $targetNode->nodeAggregateId,
                 $e->getMessage()
             ), LogEnvironment::fromMethodName(__METHOD__));
             return null;
@@ -154,8 +148,8 @@ class LinkHelper implements ProtectedContextAwareInterface
 
     public function convertUriToObject(
         string|Uri $uri,
-        NodeInterface $contextNode = null
-    ): NodeInterface|AssetInterface|null {
+        Node $contextNode = null
+    ): Node|AssetInterface|null {
         if (empty($uri)) {
             return null;
         }
@@ -172,25 +166,8 @@ class LinkHelper implements ProtectedContextAwareInterface
                             1409734235
                         );
                     }
-                    $contextNodeAddress = $this->nodeAddressFactory->createFromNode($contextNode);
-                    if ($contextNodeAddress->workspaceName === null) {
-                        throw new \RuntimeException(sprintf(
-                            'Failed to create node address for context node "%s"',
-                            $contextNode->getNodeAggregateIdentifier()
-                        ));
-                    }
-                    $visibilityConstraints = $contextNodeAddress->workspaceName->isLive()
-                        ? VisibilityConstraints::frontend()
-                        : VisibilityConstraints::withoutRestrictions();
-                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $contextNode->getContentStreamIdentifier(),
-                        $contextNode->getDimensionSpacePoint(),
-                        $visibilityConstraints
-                    );
-
-                    return $nodeAccessor->findByIdentifier(
-                        NodeAggregateIdentifier::fromString($matches[2])
-                    );
+                    return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                        ->findNodeById(NodeAggregateId::fromString($matches[2]));
                 case 'asset':
                     /** @var AssetInterface|null $asset */
                     /** @noinspection OneTimeUseVariablesInspection */

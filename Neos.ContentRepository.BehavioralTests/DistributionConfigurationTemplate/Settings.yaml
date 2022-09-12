@@ -1,0 +1,30 @@
+#
+# Example Settings
+#
+# This file can contain settings for your Flow application that override
+# the various defaults defined by other packages.
+#
+# Copy this file to Settings.yaml, and adjust as necessary.
+#
+# For possible configuration options you may refer to the packages'
+# default settings file(s) in the corresponding package directories (for
+# example, Packages/Framework/Neos.Flow/Configuration/Settings.yaml)
+# or read the fine manuals.
+
+Neos:
+  Flow:
+    persistence:
+
+      # It is good practice to not specify user name and password of the database
+      # connection in this global Settings.yaml file. Rather specify them in the
+      # settings of the respective context (Production / Development ...).
+      # For a reference of the possible options, take a look at
+      # https://www.doctrine-project.org/projects/doctrine-dbal/en/latest/reference/configuration.html
+      backendOptions:
+        driver: 'pdo_mysql'  # use pdo_pgsql for PostgreSQL
+        charset: 'utf8mb4'   # change to utf8 when using PostgreSQL
+        host: '127.0.0.1'    # adjust to your database host
+        port: 13306
+        user: 'root'
+        password: db
+        dbname: 'neos'

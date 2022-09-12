@@ -11,9 +11,9 @@ namespace Neos\Neos\Tests\Unit\Fusion\Cache;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 
@@ -40,7 +40,7 @@ class ContentCacheFlusherTest extends UnitTestCase
 
         $nodeType = new NodeType('Some.Node:Type', [], []);
 
-        $nodeMock = $this->getMockBuilder(NodeInterface::class)->disableOriginalConstructor()->getMock();
+        $nodeMock = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
         $nodeMock->expects(self::any())->method('getWorkspace')->willReturn($workspace);
         $nodeMock->expects(self::any())->method('getNodeType')->willReturn($nodeType);
         $nodeMock->expects(self::any())->method('getIdentifier')->willReturn('some-node-identifier');

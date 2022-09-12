@@ -6,8 +6,9 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/neos": "*",
-        "neos/neos-ui": "*"
+        "neos/flow": "*",
+        "neos/contentrepository-core": "*",
+        "symfony/property-access": "*"
     },
     "autoload": {
         "psr-4": {
@@ -18,6 +19,10 @@
         "psr-4": {
             "Neos\\ContentRepositoryRegistry\\Tests\\": "Tests"
         }
+    },
+    "replace": {
+        "neos/content-repository": "self.version",
+        "neos/contentrepository": "self.version"
     },
     "extra": {
         "applied-flow-migrations": [

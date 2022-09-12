@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
-use Neos\Flow\Annotations as Flow;
-
-#[Flow\Proxy(false)]
+/**
+ * @internal
+ */
 enum HypergraphSiblingQueryMode: string
 {
     case MODE_ALL = 'all';

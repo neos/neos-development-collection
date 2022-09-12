@@ -16,23 +16,23 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 
 /**
  * The active record for reading and writing nodes from and to the database
+ *
+ * @internal
  */
 final class NodeRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_node';
-
     public function __construct(
         public NodeRelationAnchorPoint $relationAnchorPoint,
-        public NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public NodeAggregateId $nodeAggregateIdentifier,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
         public string $originDimensionSpacePointHash,
         public SerializedPropertyValues $properties,
@@ -50,7 +50,7 @@ final class NodeRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeaggregateidentifier']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['origindimensionspacepoint']),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),
@@ -63,9 +63,9 @@ final class NodeRecord
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
+        $databaseConnection->insert($tableNamePrefix . '_node', [
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
@@ -80,10 +80,10 @@ final class NodeRecord
     /**
      * @throws DBALException
      */
-    public function updateToDatabase(Connection $databaseConnection): void
+    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_node',
             [
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
@@ -102,9 +102,9 @@ final class NodeRecord
     /**
      * @throws DBALException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, [
+        $databaseConnection->delete($tableNamePrefix . '_node', [
             'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }

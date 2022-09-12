@@ -1,16 +1,3 @@
-Flowpack:
-  JobQueue:
-    Common:
-      queues:
-        # By default we use the Fake Queue that doesn't need a background process
-        # For better performance/scale you should consider using a proper job queue backend
-        # See https://github.com/Flowpack/jobqueue-common for more details
-        'neos-contentCacheFlusher':
-          className: 'Flowpack\JobQueue\Common\Queue\FakeQueue'
-          options:
-            async: true
-
-
 Neos:
   EventSourcedNeosAdjustments:
     # TODO: re-enable cache!!

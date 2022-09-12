@@ -15,18 +15,15 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\ServerRequest;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
-use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
@@ -38,6 +35,7 @@ use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 class FusionExceptionView extends AbstractView
 {
@@ -78,7 +76,7 @@ class FusionExceptionView extends AbstractView
     protected SiteNodeUtility $siteNodeUtility;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @return string
@@ -94,23 +92,25 @@ class FusionExceptionView extends AbstractView
             ? $requestHandler->getHttpRequest()
             : ServerRequest::fromGlobals();
 
-        $routingParameters = $httpRequest->getAttribute(ServerRequestAttributes::ROUTING_PARAMETERS);
-        assert($routingParameters instanceof RouteParameters);
-        $dimensionSpacePoint = $routingParameters->getValue('dimensionSpacePoint') ?? null;
+        $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
+        $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
+        $fusionExceptionViewInternals = $this->contentRepositoryRegistry->getService(
+            $siteDetectionResult->contentRepositoryId,
+            new FusionExceptionViewInternalsFactory()
+        );
+        $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
+
+        $contentStreamIdentifier = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive())
+            ?->currentContentStreamId;
 
         $currentSiteNode = null;
-        /** @phpstan-ignore-next-line */
-        if ($dimensionSpacePoint instanceof DimensionSpacePoint) {
-            $contentStreamIdentifier = $this->workspaceFinder->findOneByName(WorkspaceName::forLive())
-                ?->getCurrentContentStreamIdentifier();
-
-            if ($contentStreamIdentifier instanceof ContentStreamIdentifier) {
-                $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
-                    $contentStreamIdentifier,
-                    $dimensionSpacePoint,
-                    VisibilityConstraints::frontend()
-                );
-            }
+        if ($contentStreamIdentifier instanceof ContentStreamId) {
+            $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
+                $siteDetectionResult->contentRepositoryId,
+                $contentStreamIdentifier,
+                $dimensionSpacePoint,
+                VisibilityConstraints::frontend()
+            );
         }
 
         $request = ActionRequest::fromHttpRequest($httpRequest);
@@ -129,14 +129,10 @@ class FusionExceptionView extends AbstractView
         $securityContext = $this->objectManager->get(SecurityContext::class);
         $securityContext->setRequest($request);
 
-        /** @phpstan-ignore-next-line */
         if ($currentSiteNode) {
             $fusionRuntime = $this->getFusionRuntime($currentSiteNode, $controllerContext);
 
-            if ($dimensionSpacePoint) {
-                /** @phpstan-ignore-next-line */
-                $this->setFallbackRuleFromDimension($dimensionSpacePoint);
-            }
+            $this->setFallbackRuleFromDimension($dimensionSpacePoint);
 
             $fusionRuntime->pushContextArray(array_merge(
                 $this->variables,
@@ -178,14 +174,14 @@ class FusionExceptionView extends AbstractView
     }
 
     /**
-     * @param NodeInterface $currentSiteNode
+     * @param Node $currentSiteNode
      * @param ControllerContext $controllerContext
      * @return FusionRuntime
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
     protected function getFusionRuntime(
-        NodeInterface $currentSiteNode,
+        Node $currentSiteNode,
         ControllerContext $controllerContext
     ): FusionRuntime {
         if ($this->fusionRuntime === null) {

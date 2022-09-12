@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create a node aggregate with complex default values
 
   As a user of the CR I want default properties of complex types to be un/serialized
@@ -25,7 +25,7 @@ Feature: Create a node aggregate with complex default values
           type: GuzzleHttp\Psr7\Uri
           defaultValue: 'https://neos.io'
         postalAddress:
-          type: Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress
           defaultValue:
             streetAddress: '28 31st of February Street'
             postalCode: '12345'
@@ -38,22 +38,23 @@ Feature: Create a node aggregate with complex default values
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "user-id"            |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     And I am in dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
   Scenario: Create a node aggregate with complex default values
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                 |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                    |
+      | nodeAggregateId       | "nody-mc-nodeface"                    |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Node" |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"              |
+      | parentNodeAggregateId | "lady-eleonode-rootford"              |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
     And I expect this node to have the following properties:
@@ -67,9 +68,9 @@ Feature: Create a node aggregate with complex default values
   Scenario: Create a node aggregate with complex initial and default values
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                                                                                                    |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                                                                                       |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Node"                                                                                    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                                                                                 |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                 |
       | initialPropertyValues         | {"postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph

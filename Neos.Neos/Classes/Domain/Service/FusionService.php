@@ -14,15 +14,16 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\Files;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 
@@ -104,9 +105,9 @@ class FusionService
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -121,7 +122,7 @@ class FusionService
      * @throws \Neos\Fusion\Exception
      * @throws \Neos\Neos\Domain\Exception
      */
-    public function createRuntime(NodeInterface $currentSiteNode, ControllerContext $controllerContext)
+    public function createRuntime(Node $currentSiteNode, ControllerContext $controllerContext)
     {
         $fusionObjectTree = $this->getMergedFusionObjectTree($currentSiteNode);
         $fusionRuntime = new Runtime($fusionObjectTree, $controllerContext);
@@ -131,12 +132,12 @@ class FusionService
     /**
      * Returns a merged Fusion object tree in the context of the given nodes
      *
-     * @param NodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
+     * @param Node $startNode Node marking the starting point (i.e. the "Site" node)
      * @return array<mixed> The merged object tree as of the given node
      * @throws \Neos\Neos\Domain\Exception
      * @throws \Neos\Fusion\Exception
      */
-    public function getMergedFusionObjectTree(NodeInterface $startNode)
+    public function getMergedFusionObjectTree(Node $startNode)
     {
         $site = $this->getSiteForSiteNode($startNode);
         if (is_null($site)) {
@@ -151,7 +152,9 @@ class FusionService
         $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
 
         $mergedFusionCode = '';
-        $mergedFusionCode .= $this->generateNodeTypeDefinitions();
+        $mergedFusionCode .= $this->generateNodeTypeDefinitions(
+            $startNode->subgraphIdentity->contentRepositoryId
+        );
         $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
         $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
         $mergedFusionCode .= $siteRootFusionCode;
@@ -160,9 +163,9 @@ class FusionService
         return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
     }
 
-    protected function getSiteForSiteNode(NodeInterface $siteNode): ?Site
+    protected function getSiteForSiteNode(Node $siteNode): ?Site
     {
-        return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
+        return $this->siteRepository->findOneByNodeName((string)$siteNode->nodeName);
     }
 
     /**
@@ -185,11 +188,12 @@ class FusionService
      * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateNodeTypeDefinitions()
+    protected function generateNodeTypeDefinitions(ContentRepositoryId $contentRepositoryIdentifier)
     {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $code = '';
         /** @var NodeType $nodeType */
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
+        foreach ($contentRepository->getNodeTypeManager()->getNodeTypes(false) as $nodeType) {
             $code .= $this->generateFusionForNodeType($nodeType);
         }
         return $code;

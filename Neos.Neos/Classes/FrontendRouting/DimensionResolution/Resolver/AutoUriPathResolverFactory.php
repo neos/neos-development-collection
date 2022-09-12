@@ -14,20 +14,21 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimension;
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimension;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+
+/** @codingStandardsIgnoreStart */
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\AutoUriPathResolverConfigurationException;
+/** @codingStandardsIgnoreEnd */
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMapping;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
-/** @codingStandardsIgnoreStart */
-use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\AutoUriPathResolverConfigurationException;
-/** @codingStandardsIgnoreEnd */
 
 /**
  * @api
@@ -35,7 +36,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolver\A
 final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterface
 {
     public function __construct(
-        private readonly ContentDimensionSourceInterface $contentDimensionSource
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
     }
 
@@ -43,10 +44,17 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
      * @param array<string,mixed> $dimensionResolverOptions
      */
     public function create(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryIdentifier,
         array $dimensionResolverOptions
     ): DimensionResolverInterface {
-        $contentDimensions = $this->contentDimensionSource->getContentDimensionsOrderedByPriority();
+        $autoUriPathResolverFactoryInternals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new AutoUriPathResolverFactoryInternalsFactory()
+        );
+        $contentDimensions = $autoUriPathResolverFactoryInternals
+            ->contentDimensionSource
+            ->getContentDimensionsOrderedByPriority();
+
         if (count($contentDimensions) >= 2) {
             throw new AutoUriPathResolverConfigurationException(
                 'The AutoUriPathResolverFactory is only meant for single-dimension use cases.'
@@ -64,7 +72,7 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
 
         $segments = Segments::create(
             Segment::create(
-                $contentDimension->identifier,
+                $contentDimension->id,
                 SegmentMapping::create(...$mapping)
             )
         );
@@ -72,7 +80,7 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
         return UriPathResolver::create(
             $segments,
             Separator::fromString('-'),
-            $this->contentDimensionSource
+            $autoUriPathResolverFactoryInternals->contentDimensionSource
         );
     }
 }

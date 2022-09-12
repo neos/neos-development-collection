@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodes;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\SiblingsOperation;
@@ -29,22 +29,22 @@ class SiblingsOperationTest extends AbstractQueryOperationsTest
     protected $mockContext;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $siteNode;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $firstNodeInLevel;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $secondNodeInLevel;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $thirdNodeInLevel;
 

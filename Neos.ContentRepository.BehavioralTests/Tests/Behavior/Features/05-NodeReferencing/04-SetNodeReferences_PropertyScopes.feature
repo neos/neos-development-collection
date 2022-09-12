@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Set node properties with different scopes
 
   As a user of the CR I want to modify node references with different scopes.
@@ -41,28 +41,29 @@ Feature: Set node properties with different scopes
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                      |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                      |
       | source-nodandaise       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | anthony-destinode       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
-      | nodeAggregateIdentifier | "source-nodandaise" |
+      | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"mul"}  |
       | targetOrigin            | {"language":"de"}   |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
-      | nodeAggregateIdentifier | "source-nodandaise" |
+      | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"mul"}  |
       | targetOrigin            | {"language":"gsw"}  |
     And the graph projection is fully up to date
@@ -70,57 +71,57 @@ Feature: Set node properties with different scopes
   Scenario: Set node properties
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "unscopedReference"               |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "unscopedReferences"              |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeScopedReference"             |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeScopedReferences"            |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeAggregateScopedReference"    |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "nodeAggregateScopedReferences"   |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "specializationsScopedReference"  |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | contentStreamIdentifier         | "cs-identifier"                   |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | contentStreamId         | "cs-identifier"                   |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | referenceName                   | "specializationsScopedReferences" |
       | sourceOriginDimensionSpacePoint | {"language": "de"}                |
       | references                      | [{"target": "anthony-destinode"}] |

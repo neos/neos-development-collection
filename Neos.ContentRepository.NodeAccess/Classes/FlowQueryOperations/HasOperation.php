@@ -11,15 +11,15 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleException;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * "has" operation working on NodeInterface. Reduce the set of matched elements
+ * "has" operation working on Node. Reduce the set of matched elements
  * to those that have a child node that matches the selector or given subject.
  *
  * Accepts a selector, an array, an object, a traversable object & a FlowQuery
@@ -43,9 +43,9 @@ class HasOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -55,7 +55,7 @@ class HasOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -98,16 +98,12 @@ class HasOperation extends AbstractOperation
                 throw new FizzleException('supplied argument for has operation not supported', 1332489625);
             }
             foreach ($elements as $element) {
-                if ($element instanceof NodeInterface) {
-                    $accessor = $this->nodeAccessorManager->accessorFor(
-                        $element->getContentStreamIdentifier(),
-                        $element->getDimensionSpacePoint(),
-                        $element->getVisibilityConstraints()
-                    );
-                    $parent = $accessor->findParentNode($element);
+                if ($element instanceof Node) {
+                    $parent = $this->contentRepositoryRegistry->subgraphForNode($element)
+                        ->findParentNode($element->nodeAggregateId);
                     if (!is_null($parent)) {
                         foreach ($context as $contextElement) {
-                            /** @var NodeInterface $contextElement */
+                            /** @var Node $contextElement */
                             if ($contextElement === $parent) {
                                 $filteredContext[] = $contextElement;
                             }

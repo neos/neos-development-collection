@@ -17,16 +17,14 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
-use Neos\EventSourcing\EventListener\EventListenerInvoker;
-use Neos\EventSourcing\EventStore\EventStore;
-use Neos\EventSourcing\EventStore\EventStoreFactory;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -45,10 +43,11 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjector;
-use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Utility\ObjectAccess;
@@ -73,6 +72,8 @@ trait RoutingTrait
      * @return ObjectManagerInterface
      */
     abstract protected function getObjectManager();
+
+    abstract protected function getContentRepositoryId(): ContentRepositoryId;
 
     /**
      * @Given A site exists for node name :nodeName
@@ -159,20 +160,14 @@ trait RoutingTrait
         $persistenceManager->clearState();
     }
 
+    abstract protected function getContentRepository(): ContentRepository;
+
     /**
      * @When The documenturipath projection is up to date
      */
     public function theDocumenturipathProjectionIsUpToDate(): void
     {
-        /* @var $eventStoreFactory EventStoreFactory */
-        $eventStoreFactory = $this->getObjectManager()->get(EventStoreFactory::class);
-        /** @var EventStore $eventStore */
-        $eventStore = $eventStoreFactory->create('ContentRepository');
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $this->getObjectManager()->get(EntityManagerInterface::class);
-        /** @var DocumentUriPathProjector $projector */
-        $projector = $this->getObjectManager()->get(DocumentUriPathProjector::class);
-        (new EventListenerInvoker($eventStore, $projector, $entityManager->getConnection()))->catchUp();
+        $this->getContentRepository()->catchUpProjection(DocumentUriPathProjection::class);
     }
 
     /**
@@ -197,8 +192,8 @@ trait RoutingTrait
         $nodeAddress = $this->match($this->requestUrl);
         Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateIdentifier);
-        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamIdentifier);
+        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateId);
+        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamId);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             $nodeAddress->dimensionSpacePoint,
@@ -239,7 +234,7 @@ trait RoutingTrait
             return null;
         }
 
-        $nodeAddressFactory = $this->getObjectManager()->get(NodeAddressFactory::class);
+        $nodeAddressFactory = NodeAddressFactory::create($this->getContentRepository());
         return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }
 
@@ -277,7 +272,10 @@ trait RoutingTrait
         /** @var Connection $dbal */
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
-        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM neos_neos_projection_document_uri ORDER BY nodeaggregateidentifierpath');
+        $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
+            $this->getContentRepositoryId()
+        );
+        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidentifierpath');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);
@@ -293,9 +291,9 @@ trait RoutingTrait
         }
         putenv('FLOW_REWRITEURLS=1');
         $nodeAddress = new NodeAddress(
-            ContentStreamIdentifier::fromString($contentStreamIdentifier),
+            ContentStreamId::fromString($contentStreamIdentifier),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            NodeAggregateIdentifier::fromString($nodeAggregateIdentifier),
+            NodeAggregateId::fromString($nodeAggregateIdentifier),
             WorkspaceName::forLive()
         );
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
@@ -322,9 +320,9 @@ trait RoutingTrait
         $dimensionResolverFactory = $this->getObjectManager()->get($factoryClassName);
         assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
         $resolverOptions = Yaml::parse($resolverOptionsYaml->getRaw()) ?? [];
-        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryIdentifier::fromString('default'), $resolverOptions);
+        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryId::fromString('default'), $resolverOptions);
 
-        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryIdentifier::fromString("default"));
+        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryId::fromString("default"));
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
         $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);

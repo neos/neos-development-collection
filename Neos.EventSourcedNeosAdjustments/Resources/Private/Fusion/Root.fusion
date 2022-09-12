@@ -1,10 +1,3 @@
-prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-    workspaceChain = ${Array.join(Array.keys(Neos.Ui.Workspace.getWorkspaceChain(subgraph)), ',')}
-    editPreviewMode = ${editPreviewMode}
-    dimensionSpacePoint = ${subgraph.dimensionSpacePoint}
-}
-
-
 prototype(Neos.Neos:ContentCollection) {
     // TODO FIX ME HERE!!!
     @cache.maximumLifetime = ${null}

@@ -655,6 +655,63 @@ A helper object to render the head of an HTTP response
 :statusCode: (integer) The HTTP status code for the response, defaults to ``200``
 :headers.*: (string) An HTTP header that should be set on the response, the property name (e.g. ``headers.Content-Type``) will be used for the header name
 
+.. _Neos_Fusion__ActionUri:
+
+Neos.Fusion:ActionUri
+---------------------
+
+Built a URI to a controller action
+
+:request: (ActionRequest, defaults to the the current ``request``) The action request the uri is build from.
+:package: (string) The package key (e.g. ``'My.Package'``)
+:subpackage: (string) The subpackage, empty by default
+:controller: (string) The controller name (e.g. ``'Registration'``)
+:action: (string) The action name (e.g. ``'new'``)
+:arguments: (array) Arguments to the action by named key
+:format: (string) An optional request format (e.g. ``'html'``)
+:section: (string) An optional fragment (hash) for the URI
+:additionalParams: (array) Additional URI query parameters by named key
+:addQueryString: (boolean) Whether to keep the query parameters of the current URI
+:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
+:absolute: (boolean) Whether to create an absolute URI
+
+Example::
+
+	uri = Neos.Fusion:ActionUri {
+		package = 'My.Package'
+		controller = 'Registration'
+		action = 'new'
+	}
+
+A special case is generating URIs for links to Neos modules. In this case often the option `request = ${request.mainRequest}` is needed
+when linking to a controller outside of the context of the current subrequest.
+
+Link to the content module::
+
+	uri = Neos.Fusion:ActionUri {
+		request = ${request.mainRequest}
+		package="Neos.Neos.Ui"
+		controller="Backend"
+		action = 'index'
+		arguments.node = ${documentNode}
+	}
+
+Link to backend modules (other than `content`)::
+
+	uri = Neos.Fusion:ActionUri {
+		request = ${request.mainRequest}
+		action = "index"
+		package = "Neos.Neos"
+		controller = "Backend\\Module"
+		arguments {
+			module = 'administration/sites'
+			moduleArguments {
+				@action = 'edit'
+				site = ${site}
+			}
+		}
+	}
+
 .. _Neos_Fusion__UriBuilder:
 
 Neos.Fusion:UriBuilder
@@ -673,6 +730,8 @@ Built a URI to a controller action
 :addQueryString: (boolean) Whether to keep the query parameters of the current URI
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
+
+.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`_Neos_Fusion__ActionUri` instead.
 
 Example::
 
@@ -704,6 +763,77 @@ Example::
 			}
 		}
 	}
+
+.. _Neos_Fusion__Link_Action:
+
+Neos.Fusion:Link.Action
+-----------------------
+
+Renders a link pointing to a controller/action
+
+:content: (string) content of the link tag
+:href: (string, default :ref:`Neos_Fusion__ActionUri`) The href for the link tag
+:[key]: (string) Other attributes for the link tag
+
+Example::
+
+	link = Neos.Fusion:Link.Action {
+		content = "register"
+		class="action-link"
+		href.package = 'My.Package'
+		href.controller = 'Registration'
+		href.action = 'new'
+	}
+
+	link = afx`
+		<Neos.Fusion:Link.Action class="action-link" href.package="My.Package" href.controller="Registration" href.action="new">
+			register
+		</Neos.Fusion:Link.Action>
+	`
+
+Link to the content-module in afx::
+
+ <Neos.Fusion:Link.Action
+		href.request={request.mainRequest}
+		href.action="index"
+		href.package="Neos.Neos.Ui"
+		href.controller="Backend"
+		href.arguments.node={node}
+	>
+		to content module
+	</Neos.Fusion:Link.Action>
+
+Link to backend-modules other than the content-module::
+
+	<Neos.Fusion:Link.Action
+		href.request={request.mainRequest}
+		href.action="index"
+		href.package="Neos.Neos"
+		href.controller="Backend\\Module"
+		href.arguments.module='administration/sites'
+		href.arguments.moduleArguments.@action='index'
+	>
+		to site module
+	</Neos.Fusion:Link.Action>
+
+.. _Neos_Fusion__Link_Resource:
+
+Neos.Fusion:Link.Resource
+-------------------------
+
+Renders a link pointing to a resource
+
+:content: (string) content of the link tag
+:href: (string,  default :ref:`Neos_Fusion__ResouceUri`) The href for the link tag
+:[key]: (string) Other attributes for the link tag
+
+Example::
+
+	link = afx`
+		<Neos.Fusion:Link.Resource class="resource-link" href.path="resource://Some.Package/Public/Images/SomeImage.png">
+			Some Link
+		</Neos.Fusion:Link.Resource>
+	`
 
 Neos.Fusion:CanRender
 ---------------------

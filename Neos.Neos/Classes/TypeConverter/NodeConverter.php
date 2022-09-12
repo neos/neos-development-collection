@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\TypeConverter;
 
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
@@ -33,14 +34,14 @@ class NodeConverter extends AbstractTypeConverter
 {
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @var array<int,string>
      */
-    protected $sourceTypes = [NodeInterface::class];
+    protected $sourceTypes = [Node::class];
 
     /**
      * @var string
@@ -53,11 +54,10 @@ class NodeConverter extends AbstractTypeConverter
     protected $priority = 1;
 
     /**
-     * @param NodeInterface $source
+     * @param Node $source
      * @param string $targetType
      * @param array<string,mixed> $subProperties
      * @return mixed|\Neos\Error\Messages\Error|string|null
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
      */
     public function convertFrom(
         $source,
@@ -65,6 +65,9 @@ class NodeConverter extends AbstractTypeConverter
         array $subProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ) {
-        return $this->nodeAddressFactory->createFromNode($source)->serializeForUri();
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $source->subgraphIdentity->contentRepositoryId
+        );
+        return NodeAddressFactory::create($contentRepository)->createFromNode($source)->serializeForUri();
     }
 }

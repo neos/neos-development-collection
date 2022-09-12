@@ -14,14 +14,14 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\NodeHiddenState\NodeHiddenStateFinder;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder;
+use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
 use Neos\Flow\Http\Exception as HttpException;
@@ -34,8 +34,9 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\Exception as NeosException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -100,7 +101,7 @@ class LinkingService
      */
     protected $propertyMapper;
 
-    protected ?NodeInterface $lastLinkedNode;
+    protected ?Node $lastLinkedNode;
 
     /**
      * @Flow\Inject
@@ -121,16 +122,7 @@ class LinkingService
     protected $baseUriProvider;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
-
-    #[Flow\Inject]
-    protected NodeHiddenStateFinder $nodeHiddenStateFinder;
-
-    #[Flow\Inject]
-    protected NodeAddressFactory $nodeAddressFactory;
-
-    #[Flow\Inject]
-    protected NodeAccessorManager $nodeAccessorManager;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @param string|UriInterface $uri
@@ -166,7 +158,7 @@ class LinkingService
      * Resolves a given node:// URI to a "normal" HTTP(S) URI for the addressed node.
      *
      * @param string $uri
-     * @param NodeInterface $contextNode
+     * @param Node $contextNode
      * @param ControllerContext $controllerContext
      * @param bool $absolute
      * @return string|null If the node cannot be resolved, null is returned
@@ -177,7 +169,7 @@ class LinkingService
      */
     public function resolveNodeUri(
         string $uri,
-        NodeInterface $contextNode,
+        Node $contextNode,
         ControllerContext $controllerContext,
         bool $absolute = false
     ): ?string {
@@ -223,10 +215,10 @@ class LinkingService
      * Return the object the URI addresses or NULL.
      *
      * @param string|UriInterface $uri
-     * @param NodeInterface $contextNode
-     * @return NodeInterface|AssetInterface|NULL
+     * @param Node $contextNode
+     * @return Node|AssetInterface|NULL
      */
-    public function convertUriToObject($uri, NodeInterface $contextNode = null)
+    public function convertUriToObject($uri, Node $contextNode = null)
     {
         if ($uri instanceof UriInterface) {
             $uri = (string)$uri;
@@ -235,21 +227,16 @@ class LinkingService
         if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
             switch ($matches[1]) {
                 case 'node':
-                    if (!$contextNode instanceof NodeInterface) {
+                    if (!$contextNode instanceof Node) {
                         throw new \RuntimeException(
                             'node:// URI conversion requires a context node to be passed',
                             1409734235
                         );
                     }
-                    $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                        $contextNode->getContentStreamIdentifier(),
-                        $contextNode->getDimensionSpacePoint(),
-                        $contextNode->getVisibilityConstraints()
-                    );
-
-                    return $nodeAccessor->findByIdentifier(
-                        NodeAggregateIdentifier::fromString($matches[2])
-                    );
+                    return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                        ->findNodeById(
+                            NodeAggregateId::fromString($matches[2])
+                        );
                 case 'asset':
                     /** @var ?AssetInterface $asset */
                     $asset = $this->assetRepository->findByIdentifier($matches[2]);
@@ -268,7 +255,7 @@ class LinkingService
      * @param ControllerContext $controllerContext
      * @param mixed $node A node object or a string node path,
      *                    if a relative path is provided the baseNode argument is required
-     * @param NodeInterface $baseNode
+     * @param Node $baseNode
      * @param string $format Format to use for the URL, for example "html" or "json"
      * @param boolean $absolute If set, an absolute URI is rendered
      * @param array<string,mixed> $arguments Additional arguments to be passed to the UriBuilder
@@ -290,7 +277,7 @@ class LinkingService
     public function createNodeUri(
         ControllerContext $controllerContext,
         $node = null,
-        NodeInterface $baseNode = null,
+        Node $baseNode = null,
         $format = null,
         $absolute = false,
         array $arguments = [],
@@ -307,9 +294,9 @@ class LinkingService
                 __METHOD__
             ));
         }
-        if (!($node instanceof NodeInterface || is_string($node) || $baseNode instanceof NodeInterface)) {
+        if (!($node instanceof Node || is_string($node) || $baseNode instanceof Node)) {
             throw new \InvalidArgumentException(
-                'Expected an instance of NodeInterface or a string for the node argument,'
+                'Expected an instance of Node or a string for the node argument,'
                     . ' or alternatively a baseNode argument.',
                 1373101025
             );
@@ -321,18 +308,21 @@ class LinkingService
                 throw new NeosException(sprintf('Empty strings can not be resolved to nodes.'), 1415709942);
             }
             try {
-                $nodeAddress = $this->nodeAddressFactory->createFromUriString($node);
-                $workspace = $nodeAddress->workspaceName
-                    ? $this->workspaceFinder->findOneByName($nodeAddress->workspaceName)
-                    : null;
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $nodeAddress->contentStreamIdentifier,
+                // if we get a node string, we need to assume it links to the current site
+                $contentRepositoryIdentifier = SiteDetectionResult::fromRequest(
+                    $controllerContext->getRequest()->getHttpRequest()
+                )->contentRepositoryId;
+                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+                $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
+                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
+                $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                    $nodeAddress->contentStreamId,
                     $nodeAddress->dimensionSpacePoint,
                     $workspace && !$workspace->isPublicWorkspace()
                         ? VisibilityConstraints::withoutRestrictions()
                         : VisibilityConstraints::frontend()
                 );
-                $node = $nodeAccessor->findByIdentifier($nodeAddress->nodeAggregateIdentifier);
+                $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             } catch (\Throwable $exception) {
                 if ($baseNode === null) {
                     throw new NeosException(
@@ -340,45 +330,44 @@ class LinkingService
                         1407879905
                     );
                 }
-                $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                    $baseNode->getContentStreamIdentifier(),
-                    $baseNode->getDimensionSpacePoint(),
-                    $baseNode->getVisibilityConstraints()
-                );
-
-                $node = $nodeAccessor->findNodeByPath(NodePath::fromString($nodeString), $baseNode);
+                $node = $this->contentRepositoryRegistry->subgraphForNode($baseNode)
+                    ->findNodeByPath(NodePath::fromString($nodeString), $baseNode->nodeAggregateId);
             }
-            if (!$node instanceof NodeInterface) {
+            if (!$node instanceof Node) {
                 throw new NeosException(sprintf(
                     'The string "%s" could not be resolved to an existing node.',
                     $nodeString
                 ), 1415709674);
             }
-        } elseif (!$node instanceof NodeInterface) {
+        } elseif (!$node instanceof Node) {
             $node = $baseNode;
         }
 
-        if (!$node instanceof NodeInterface) {
+        if (!$node instanceof Node) {
             throw new NeosException(sprintf(
-                'Node must be an instance of NodeInterface or string, given "%s".',
+                'Node must be an instance of Node or string, given "%s".',
                 gettype($node)
             ), 1414772029);
         }
         $this->lastLinkedNode = $node;
 
-        $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-            $node->getContentStreamIdentifier()
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->subgraphIdentity->contentRepositoryId
         );
-        $hiddenState = $this->nodeHiddenStateFinder->findHiddenState(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getNodeAggregateIdentifier()
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $node->subgraphIdentity->contentStreamId
+        );
+        $nodeHiddenStateFinder = $contentRepository->projectionState(NodeHiddenStateFinder::class);
+        $hiddenState = $nodeHiddenStateFinder->findHiddenState(
+            $node->subgraphIdentity->contentStreamId,
+            $node->subgraphIdentity->dimensionSpacePoint,
+            $node->nodeAggregateId
         );
 
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden() ? 'show' : 'preview';
+        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
 
         return $uriBuilder
             ->reset()
@@ -426,9 +415,9 @@ class LinkingService
      * Returns the node that was last used to resolve a link to.
      * May return NULL in case no link has been generated or an error occurred on the last linking run.
      *
-     * @return NodeInterface
+     * @return Node
      */
-    public function getLastLinkedNode(): ?NodeInterface
+    public function getLastLinkedNode(): ?Node
     {
         return $this->lastLinkedNode;
     }

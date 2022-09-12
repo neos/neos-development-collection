@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
@@ -32,9 +32,9 @@ class EmulatedLegacySite
      */
     protected $siteNodeUtility;
 
-    private NodeInterface $contextNode;
+    private Node $contextNode;
 
-    public function __construct(NodeInterface $traversableNode)
+    public function __construct(Node $traversableNode)
     {
         $this->contextNode = $traversableNode;
     }
@@ -47,7 +47,7 @@ class EmulatedLegacySite
         );
 
         $siteNode = $this->siteNodeUtility->findSiteNode($this->contextNode);
-        $siteNodeName = $siteNode->getNodeName();
+        $siteNodeName = $siteNode->nodeName;
 
         /* @var ?Site $site */
         $site = $siteNodeName ? $this->siteRepository->findOneByNodeName((string)$siteNodeName) : null;

@@ -1,0 +1,37 @@
+{
+    "name": "neos/contentrepository-core",
+    "description": "Content repository based on Flow, specifically made for Neos, but also usable standalone.",
+    "type": "library",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/eventstore": "*",
+        "neos/eventstore-doctrineadapter": "*",
+        "php": "^8.1",
+        "neos/error-messages": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
+        "doctrine/dbal": "^2.6",
+        "symfony/serializer": "*"
+    },
+    "require-dev": {
+        "roave/security-advisories": "dev-latest",
+        "phpstan/phpstan": "^1.5",
+        "squizlabs/php_codesniffer": "^3.6",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepository\\Core\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentRepository\\Core\\Tests\\": "Tests"
+        }
+    },
+    "suggest": {
+        "neos/utility-schema": "Validate NodeType schema."
+    }
+}

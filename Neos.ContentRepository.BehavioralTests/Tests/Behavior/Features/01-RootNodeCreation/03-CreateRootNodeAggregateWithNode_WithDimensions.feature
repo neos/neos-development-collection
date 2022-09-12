@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Create a root node aggregate
 
   As a user of the CR I want to create a new root node aggregate with an initial node.
@@ -20,24 +20,25 @@ Feature: Create a root node aggregate
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "user-id"            |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "user-id"            |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
 
   Scenario: Create the initial root node aggregate using valid payload with dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
 
-    Then I expect exactly 2 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 2 events to be published on stream "ContentStream:cs-identifier"
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                                             |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                    |
+      | contentStreamId     | "cs-identifier"                                                             |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                                    |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier"                                                |
+      | initiatingUserId    | "initiating-user-identifier"                                                |
       | nodeAggregateClassification | "root"                                                                      |
 
     When the graph projection is fully up to date
@@ -64,7 +65,6 @@ Feature: Create a root node aggregate
     And I expect this node to be classified as "root"
     And I expect this node to have no parent node
     And I expect this node to have no child nodes
-    And I expect this node to have no siblings
     And I expect this node to have no preceding siblings
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
@@ -83,23 +83,23 @@ Feature: Create a root node aggregate
   Scenario: Create a root node aggregate using valid payload without dimensions
     Given the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "nody-mc-nodeface"            |
+      | nodeAggregateId | "nody-mc-nodeface"            |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
 
-    Then I expect exactly 3 events to be published on stream "Neos.ContentRepository:ContentStream:cs-identifier"
+    Then I expect exactly 3 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                                             |
-      | nodeAggregateIdentifier     | "nody-mc-nodeface"                                                          |
+      | contentStreamId     | "cs-identifier"                                                             |
+      | nodeAggregateId     | "nody-mc-nodeface"                                                          |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                               |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"}] |
-      | initiatingUserIdentifier    | "initiating-user-identifier"                                                |
+      | initiatingUserId    | "initiating-user-identifier"                                                |
       | nodeAggregateClassification | "root"                                                                      |
 
     When the graph projection is fully up to date
@@ -127,9 +127,6 @@ Feature: Create a root node aggregate
     When I am in dimension space point {"language":"mul"}
     Then I expect the subgraph projection to consist of exactly 2 nodes
     And I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                 |
-      | cs-identifier;nody-mc-nodeface;{} |
     And I expect this node to have no preceding siblings
     And I expect this node to have the following succeeding siblings:
       | NodeDiscriminator                 |
@@ -140,9 +137,6 @@ Feature: Create a root node aggregate
     And I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have no parent node
     And I expect this node to have no child nodes
-    And I expect this node to have the following siblings:
-      | NodeDiscriminator                       |
-      | cs-identifier;lady-eleonode-rootford;{} |
     And I expect this node to have the following preceding siblings:
       | NodeDiscriminator                       |
       | cs-identifier;lady-eleonode-rootford;{} |

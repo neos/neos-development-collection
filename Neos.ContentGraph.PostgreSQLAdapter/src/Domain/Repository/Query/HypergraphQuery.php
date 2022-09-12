@@ -17,22 +17,22 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class HypergraphQuery implements HypergraphQueryInterface
 {
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
+        string $tableNamePrefix,
         bool $joinRestrictionRelations = false
     ): self {
         $query = /** @lang PostgreSQL */
@@ -40,11 +40,11 @@ final class HypergraphQuery implements HypergraphQueryInterface
                 n.nodetypename, n.classification, n.properties, n.nodename,
                 h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
                 r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
+            FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinRestrictionRelations
                 ? '
-            LEFT JOIN ' . RestrictionHyperrelationRecord::TABLE_NAME . ' r
+            LEFT JOIN ' . $tableNamePrefix . '_restrictionhyperrelation r
                 ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
                 AND r.contentstreamidentifier = h.contentstreamidentifier
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
@@ -56,7 +56,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             'contentStreamIdentifier' => (string)$contentStreamIdentifier
         ];
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $tableNamePrefix);
     }
 
     public function withDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): self
@@ -67,7 +67,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
     public function withOriginDimensionSpacePoint(OriginDimensionSpacePoint $originDimensionSpacePoint): self
@@ -78,10 +78,10 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['originDimensionSpacePointHash'] = $originDimensionSpacePoint->hash;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
     {
         $query = $this->query .= '
             AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';
@@ -89,13 +89,13 @@ final class HypergraphQuery implements HypergraphQueryInterface
         $parameters = $this->parameters;
         $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
 
-        return new self($query, $parameters);
+        return new self($query, $parameters, $this->tableNamePrefix);
     }
 
     public function withRestriction(VisibilityConstraints $visibilityConstraints): self
     {
-        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, '');
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, '');
 
-        return new self($query, $this->parameters, $this->types);
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 }

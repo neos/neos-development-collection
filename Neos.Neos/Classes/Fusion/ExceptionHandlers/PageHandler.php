@@ -15,8 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\ExceptionHandlers;
 
 use GuzzleHttp\Psr7\Message;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Exception as FlowException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
@@ -52,7 +52,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
     protected $environment;
 
     #[Flow\Inject]
-    protected WorkspaceFinder $workspaceFinder;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Handle an exception by displaying an error message inside the Neos backend,
@@ -69,15 +69,15 @@ class PageHandler extends AbstractRenderingExceptionHandler
         $handler->setRuntime($this->runtime);
         $output = $handler->handleRenderingException($fusionPath, $exception);
         $currentContext = $this->runtime->getCurrentContext();
-        /** @var ?NodeInterface $documentNode */
+        /** @var ?Node $documentNode */
         $documentNode = $currentContext['documentNode'] ?? null;
 
-        /** @var ?NodeInterface $node */
+        /** @var ?Node $node */
         $node = $currentContext['node'] ?? null;
 
         $fluidView = $this->prepareFluidView();
         $isBackend = false;
-        /** @var ?NodeInterface $siteNode */
+        /** @var ?Node $siteNode */
         $siteNode = $currentContext['site'] ?? null;
 
         if ($documentNode === null) {
@@ -86,11 +86,13 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamIdentifier(
-                $documentNode->getContentStreamIdentifier()
+            $contentRepositoryIdentifier = $documentNode->subgraphIdentity->contentRepositoryId;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+                $documentNode->subgraphIdentity->contentStreamId
             );
             if (
-                $workspace && !$workspace->getWorkspaceName()->isLive()
+                $workspace && !$workspace->workspaceName->isLive()
                 && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
             ) {
                 $isBackend = true;

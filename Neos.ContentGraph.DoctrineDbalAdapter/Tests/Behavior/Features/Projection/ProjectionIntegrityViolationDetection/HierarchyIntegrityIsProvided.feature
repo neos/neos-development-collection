@@ -1,4 +1,4 @@
-@fixtures
+@contentrepository
 Feature: Run integrity violation detection regarding hierarchy relations and nodes
 
   As a user of the CR I want to know whether there are nodes or hierarchy relations with invalid hashes or parents / children
@@ -12,16 +12,17 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
       | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | newContentStreamId | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
+      | contentStreamId     | "cs-identifier"                                          |
       | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
@@ -29,7 +30,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                    |
-      | contentStreamIdentifier       | "cs-identifier"                                          |
+      | contentStreamId       | "cs-identifier"                                          |
       | nodeAggregateIdentifier       | "nody-mc-nodeface"                                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint     | {"language":"de"}                                        |
@@ -42,7 +43,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
   Scenario: Detach a hierarchy relation from its parent
     When I add the following hierarchy relation:
       | Key                           | Value             |
-      | contentStreamIdentifier       | "cs-identifier"   |
+      | contentStreamId       | "cs-identifier"   |
       | dimensionSpacePoint           | {"language":"de"} |
       | parentNodeAggregateIdentifier | "i-do-not-exist"  |
       | childNodeAggregateIdentifier  | "i-do-not-exist"  |
@@ -53,7 +54,7 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
   Scenario: Change a hierarchy relation's dimension space point hash
     When I change the following hierarchy relation's dimension space point hash:
       | Key                           | Value                    |
-      | contentStreamIdentifier       | "cs-identifier"          |
+      | contentStreamId       | "cs-identifier"          |
       | dimensionSpacePoint           | {"language":"gsw"}       |
       | parentNodeAggregateIdentifier | "lady-eleonode-rootford" |
       | childNodeAggregateIdentifier  | "nody-mc-nodeface"       |

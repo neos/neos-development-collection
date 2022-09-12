@@ -11,13 +11,16 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraintFactory;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -43,15 +46,9 @@ class ChildrenOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeTypeConstraintFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeConstraintFactory;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -61,7 +58,7 @@ class ChildrenOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return isset($context[0]) && ($context[0] instanceof NodeInterface);
+        return isset($context[0]) && ($context[0] instanceof Node);
     }
 
     /**
@@ -84,17 +81,14 @@ class ChildrenOperation extends AbstractOperation
             }
         }
 
-        /** @var NodeInterface $contextNode */
+        /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            $childNodes = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            )->findChildNodes($contextNode);
+            $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::all());
             foreach ($childNodes as $childNode) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()])) {
+                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
+                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId] = true;
                 }
             }
         }
@@ -144,26 +138,23 @@ class ChildrenOperation extends AbstractOperation
                 if (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                     $nodePath = $filter['PropertyNameFilter'] ?? $filter['PathFilter'];
                     $nodePathSegments = explode('/', $nodePath);
-                    /** @var NodeInterface $contextNode */
+                    /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
                         $currentPathSegments = $nodePathSegments;
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
-                            $resolvedNode = $this->nodeAccessorManager->accessorFor(
-                                $resolvedNode->getContentStreamIdentifier(),
-                                $resolvedNode->getDimensionSpacePoint(),
-                                $resolvedNode->getVisibilityConstraints()
-                            )->findChildNodeConnectedThroughEdgeName(
-                                $resolvedNode,
+                            $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($resolvedNode)
+                                ->findChildNodeConnectedThroughEdgeName(
+                                $resolvedNode->nodeAggregateId,
                                 NodeName::fromString($nodePathSegment)
                             );
                         }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
-                            (string)$resolvedNode->getNodeAggregateIdentifier()
+                            (string)$resolvedNode->nodeAggregateId
                         ])) {
                             $filteredOutput[] = $resolvedNode;
-                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->getNodeAggregateIdentifier()] = true;
+                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->nodeAggregateId] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -171,26 +162,26 @@ class ChildrenOperation extends AbstractOperation
                     $allowedNodeTypes = array_map(function ($instanceOfFilter) {
                         return $instanceOfFilter['Operand'];
                     }, $instanceOfFilters);
-                    /** @var NodeInterface $contextNode */
+                    /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        /** @var NodeInterface $childNode */
-                        $childNodes = $this->nodeAccessorManager->accessorFor(
-                            $contextNode->getContentStreamIdentifier(),
-                            $contextNode->getDimensionSpacePoint(),
-                            $contextNode->getVisibilityConstraints()
-                        )->findChildNodes(
-                            $contextNode,
-                            $this->nodeTypeConstraintFactory->parseFilterString(
-                                implode(',', $allowedNodeTypes)
+                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryId);
+                        $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                            ->findChildNodes(
+                            $contextNode->nodeAggregateId,
+                            FindChildNodesFilter::nodeTypeConstraints(
+                                NodeTypeConstraints::create(
+                                    NodeTypeNames::fromStringArray($allowedNodeTypes),
+                                    NodeTypeNames::createEmpty()
+                                )
                             )
                         );
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[
-                                (string)$childNode->getNodeAggregateIdentifier()
+                                (string)$childNode->nodeAggregateId
                             ])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodeIdentifiers[(string)$childNode->getNodeAggregateIdentifier()] = true;
+                                $filteredOutputNodeIdentifiers[(string)$childNode->nodeAggregateId] = true;
                             }
                         }
                     }
@@ -211,7 +202,7 @@ class ChildrenOperation extends AbstractOperation
 
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->getNodeAggregateIdentifier()])) {
+                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->nodeAggregateId])) {
                         $output[] = $filteredNode;
                     }
                 }

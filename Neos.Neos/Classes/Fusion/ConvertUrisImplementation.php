@@ -14,9 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\UriBuilder;
@@ -76,9 +77,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * Convert URIs matching a supported scheme with generated URIs
@@ -106,14 +107,18 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
         $node = $this->fusionValue('node');
 
-        if (!$node instanceof NodeInterface) {
+        if (!$node instanceof Node) {
             throw new NeosException(sprintf(
-                'The current node must be an instance of NodeInterface, given: "%s".',
+                'The current node must be an instance of Node, given: "%s".',
                 gettype($text)
             ), 1382624087);
         }
 
-        $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->subgraphIdentity->contentRepositoryId
+        );
+
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
 
         if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
             return $text;
@@ -128,8 +133,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 $resolvedUri = null;
                 switch ($matches[1]) {
                     case 'node':
-                        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
-                            NodeAggregateIdentifier::fromString($matches[2])
+                        $nodeAddress = $nodeAddress->withNodeAggregateId(
+                            NodeAggregateId::fromString($matches[2])
                         );
                         $uriBuilder = new UriBuilder();
                         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());

@@ -1,5 +1,0 @@
-
-Neos\ESCR\AssetUsage\Projector\AssetUsageProjector:
-  scope: singleton
-  factoryObjectName: Neos\ESCR\AssetUsage\Projector\AssetUsageProjectorFactory
-  factoryMethodName: build

@@ -14,24 +14,24 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds
     as NodeAggregateIdentifierCollection;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node aggregate identifier value object collection
+ *
+ * @internal
  */
-#[Flow\Proxy(false)]
 final class NodeAggregateIdentifiers
 {
     /**
-     * @var array<string,NodeAggregateIdentifier>
+     * @var array<string,NodeAggregateId>
      */
     private array $identifiers;
 
     /**
-     * @param array<string,NodeAggregateIdentifier> $identifiers
+     * @param array<string,NodeAggregateId> $identifiers
      */
     private function __construct(array $identifiers)
     {
@@ -39,20 +39,20 @@ final class NodeAggregateIdentifiers
     }
 
     /**
-     * @param array<int|string,string|NodeAggregateIdentifier> $array
+     * @param array<int|string,string|NodeAggregateId> $array
      */
     public static function fromArray(array $array): self
     {
         $values = [];
         foreach ($array as $item) {
             if (is_string($item)) {
-                $values[$item] = NodeAggregateIdentifier::fromString($item);
-            } elseif ($item instanceof NodeAggregateIdentifier) {
+                $values[$item] = NodeAggregateId::fromString($item);
+            } elseif ($item instanceof NodeAggregateId) {
                 $values[(string)$item] = $item;
             } else {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIdentifiers can only consist of '
-                        . NodeAggregateIdentifier::class . ' objects.',
+                        . NodeAggregateId::class . ' objects.',
                     1616841637
                 );
             }
@@ -80,8 +80,8 @@ final class NodeAggregateIdentifiers
     }
 
     public function add(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ?NodeAggregateIdentifier $succeedingSibling = null
+        NodeAggregateId $nodeAggregateIdentifier,
+        ?NodeAggregateId $succeedingSibling = null
     ): self {
         $nodeAggregateIdentifiers = $this->identifiers;
         if ($succeedingSibling) {
@@ -94,7 +94,7 @@ final class NodeAggregateIdentifiers
         return new self($nodeAggregateIdentifiers);
     }
 
-    public function remove(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function remove(NodeAggregateId $nodeAggregateIdentifier): self
     {
         $identifiers = $this->identifiers;
         if (isset($identifiers[(string) $nodeAggregateIdentifier])) {

@@ -4,7 +4,10 @@ parameters:
         - Neos.ContentGraph.DoctrineDbalAdapter/src
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
-        - Neos.ContentRepository/src
+        - Neos.ContentRepository.Core/Classes
         - Neos.EventSourcedContentRepository.LegacyApi/Classes
         - Neos.ContentRepository.Security/Classes
         - Neos.Neos/Classes
+rules:
+    - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
+#    - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule

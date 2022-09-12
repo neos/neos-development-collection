@@ -6,23 +6,28 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
+/**
+ * @internal
+ */
 trait RestrictionRelations
 {
-    protected ProjectionContentGraph $projectionContentGraph;
+    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
+
+    abstract protected function getTableNamePrefix(): string;
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $originNodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $originNodeAggregateId
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      * @throws \Doctrine\DBAL\DBALException
      */
     private function removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $originNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $originNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
         $this->getDatabaseConnection()->executeUpdate(
@@ -30,13 +35,13 @@ trait RestrictionRelations
 -- GraphProjector::removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints
 
 DELETE r.*
-FROM neos_contentgraph_restrictionrelation r
-WHERE r.contentstreamidentifier = :contentStreamIdentifier
-AND r.originnodeaggregateidentifier = :originNodeAggregateIdentifier
+FROM ' . $this->getTableNamePrefix() . '_restrictionrelation r
+WHERE r.contentstreamid = :contentStreamId
+AND r.originnodeaggregateid = :originNodeAggregateId
 AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'originNodeAggregateIdentifier' => (string)$originNodeAggregateIdentifier,
+                'contentStreamId' => (string)$contentStreamId,
+                'originNodeAggregateId' => (string)$originNodeAggregateId,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [
@@ -49,15 +54,15 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
      * @throws \Doctrine\DBAL\DBALException
      */
     private function removeAllRestrictionRelationsUnderneathNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId
     ): void {
         $this->getDatabaseConnection()->executeUpdate(
             '
                 -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
 
                 delete r.* from
-                    neos_contentgraph_restrictionrelation r
+                    ' . $this->getTableNamePrefix() . '_restrictionrelation r
                     join
                      (
                         -- we build a recursive tree
@@ -67,47 +72,47 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                              -- --------------------------------
                              select
                                 n.relationanchorpoint,
-                                n.nodeaggregateidentifier,
+                                n.nodeaggregateid,
                                 h.dimensionspacepointhash
                              from
-                                neos_contentgraph_node n
+                                ' . $this->getTableNamePrefix() . '_node n
                              -- we need to join with the hierarchy relation,
                              -- because we need the dimensionspacepointhash.
-                             inner join neos_contentgraph_hierarchyrelation h
+                             inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
                                 on h.childnodeanchor = n.relationanchorpoint
                              where
-                                n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
-                                and h.contentstreamidentifier = :contentStreamIdentifier
+                                n.nodeaggregateid = :entryNodeAggregateId
+                                and h.contentstreamid = :contentStreamId
                         union
                              -- --------------------------------
                              -- RECURSIVE query: do one "child" query step
                              -- --------------------------------
                              select
                                 c.relationanchorpoint,
-                                c.nodeaggregateidentifier,
+                                c.nodeaggregateid,
                                 h.dimensionspacepointhash
                              from
                                 tree p
-                             inner join neos_contentgraph_hierarchyrelation h
+                             inner join ' . $this->getTableNamePrefix() . '_hierarchyrelation h
                                 on h.parentnodeanchor = p.relationanchorpoint
-                             inner join neos_contentgraph_node c
+                             inner join ' . $this->getTableNamePrefix() . '_node c
                                 on h.childnodeanchor = c.relationanchorpoint
                              where
-                                h.contentstreamidentifier = :contentStreamIdentifier
+                                h.contentstreamid = :contentStreamId
                         )
                         select * from tree
                      ) as tree
 
-                -- the "tree" CTE now contains a list of tuples (nodeAggregateIdentifier,dimensionSpacePointHash)
-                -- which are *descendants* of the starting NodeAggregateIdentifier in ALL DimensionSpacePointHashes
+                -- the "tree" CTE now contains a list of tuples (nodeAggregateId,dimensionSpacePointHash)
+                -- which are *descendants* of the starting NodeAggregateId in ALL DimensionSpacePointHashes
                 where
-                    r.contentstreamidentifier = :contentStreamIdentifier
+                    r.contentstreamid = :contentStreamId
                     and r.dimensionspacepointhash = tree.dimensionspacepointhash
-                    and r.affectednodeaggregateidentifier = tree.nodeaggregateidentifier
+                    and r.affectednodeaggregateid = tree.nodeaggregateid
             ',
             [
-                'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'entryNodeAggregateId' => (string)$nodeAggregateId,
+                'contentStreamId' => (string)$contentStreamId,
             ]
         );
     }
@@ -116,13 +121,14 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
      * @throws \Doctrine\DBAL\DBALException
      */
     private function removeAllRestrictionRelationsInSubtreeImposedByAncestors(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $entryNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $entryNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
-        $descendantNodeAggregateIdentifiers = $this->projectionContentGraph->findDescendantNodeAggregateIdentifiers(
-            $contentStreamIdentifier,
-            $entryNodeAggregateIdentifier,
+        $projectionContentGraph = $this->getProjectionContentGraph();
+        $descendantNodeAggregateIds = $projectionContentGraph->findDescendantNodeAggregateIds(
+            $contentStreamId,
+            $entryNodeAggregateId,
             $affectedDimensionSpacePoints
         );
 
@@ -131,18 +137,18 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                 -- GraphProjector::removeAllRestrictionRelationsInSubtreeImposedByAncestors
 
                 DELETE r.*
-                    FROM neos_contentgraph_restrictionrelation r
-                    WHERE r.contentstreamidentifier = :contentStreamIdentifier
-                    AND r.originnodeaggregateidentifier NOT IN (:descendantNodeAggregateIdentifiers)
-                    AND r.affectednodeaggregateidentifier IN (:descendantNodeAggregateIdentifiers)
+                    FROM ' . $this->getTableNamePrefix() . '_restrictionrelation r
+                    WHERE r.contentstreamid = :contentStreamId
+                    AND r.originnodeaggregateid NOT IN (:descendantNodeAggregateIds)
+                    AND r.affectednodeaggregateid IN (:descendantNodeAggregateIds)
                     AND r.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'descendantNodeAggregateIdentifiers' => array_keys($descendantNodeAggregateIdentifiers),
+                'contentStreamId' => (string)$contentStreamId,
+                'descendantNodeAggregateIds' => array_keys($descendantNodeAggregateIds),
                 'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [
-                'descendantNodeAggregateIdentifiers' => Connection::PARAM_STR_ARRAY,
+                'descendantNodeAggregateIds' => Connection::PARAM_STR_ARRAY,
                 'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
             ]
         );

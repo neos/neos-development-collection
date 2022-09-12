@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Run integrity violation detection regarding reference relations
 
   As a user of the CR I want to know whether there are disconnected reference relations
@@ -12,40 +12,41 @@ Feature: Run integrity violation detection regarding reference relations
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamId | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamIdentifier     | "cs-identifier"                                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | contentStreamId     | "cs-identifier"                                          |
+      | nodeAggregateId     | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000"                   |
+      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"                   |
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "source-nodandaise"                       |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "source-nodandaise"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
       | coveredDimensionSpacePoints   | [{"language":"de"}]                       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
 
   Scenario: Reference a non-existing node aggregate
     When the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                                      |
-      | contentStreamIdentifier                  | "cs-identifier"                                                            |
-      | sourceNodeAggregateIdentifier            | "source-nodandaise"                                                        |
+      | contentStreamId                  | "cs-identifier"                                                            |
+      | sourceNodeAggregateId            | "source-nodandaise"                                                        |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
       | referenceName                            | "referenceProperty"                                                        |
-      | references                               | [{"targetNodeAggregateIdentifier":"anthony-destinode", "properties":null}] |
+      | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
@@ -54,20 +55,20 @@ Feature: Run integrity violation detection regarding reference relations
   Scenario: Reference a node aggregate not covering any of the DSPs the source does
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "anthony-destinode"                       |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "anthony-destinode"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"fr"}                         |
       | coveredDimensionSpacePoints   | [{"language":"fr"}]                       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeReferencesWereSet was published with payload:
       | Key                                      | Value                                                                      |
-      | contentStreamIdentifier                  | "cs-identifier"                                                            |
-      | sourceNodeAggregateIdentifier            | "source-nodandaise"                                                        |
+      | contentStreamId                  | "cs-identifier"                                                            |
+      | sourceNodeAggregateId            | "source-nodandaise"                                                        |
       | affectedSourceOriginDimensionSpacePoints | [{"language":"de"}]                                                        |
       | referenceName                            | "referenceProperty"                                                        |
-      | references                               | [{"targetNodeAggregateIdentifier":"anthony-destinode", "properties":null}] |
+      | references                               | [{"targetNodeAggregateId":"anthony-destinode", "properties":null}] |
     And the graph projection is fully up to date
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error

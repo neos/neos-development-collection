@@ -14,16 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-use Neos\ContentRepository\Feature\Common\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -40,10 +43,10 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
 use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
 use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
@@ -69,18 +72,6 @@ class SitesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
      * @var AssetCollectionRepository
      */
     protected $assetCollectionRepository;
@@ -90,12 +81,6 @@ class SitesController extends AbstractModuleController
      * @var PackageManager
      */
     protected $packageManager;
-
-    /**
-     * @Flow\Inject
-     * @var SiteImportService
-     */
-    protected $siteImportService;
 
     /**
      * @Flow\Inject
@@ -113,10 +98,7 @@ class SitesController extends AbstractModuleController
     protected UserService $domainUserService;
 
     #[Flow\Inject]
-    protected NodeAggregateCommandHandler $nodeAggregateCommandHandler;
-
-    #[Flow\Inject]
-    protected ContentGraphInterface $contentGraph;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @return void
@@ -199,8 +181,16 @@ class SitesController extends AbstractModuleController
         if ($site->getNodeName() !== $newSiteNodeName) {
             $this->redirect('index');
         }
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
+            $site->getConfiguration()['contentRepository']
+            ?? throw new \RuntimeException(
+                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
+                . ' Neos.Neos.sites.*.contentRepository'
+            )
+        );
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
-        $liveWorkspace = $this->workspaceFinder->findOneByName(WorkspaceName::forLive());
+        $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
         if (!$liveWorkspace instanceof Workspace) {
             throw new \InvalidArgumentException(
                 'Cannot update a site without the live workspace being present.',
@@ -209,8 +199,8 @@ class SitesController extends AbstractModuleController
         }
 
         try {
-            $sitesNode = $this->contentGraph->findRootNodeAggregateByType(
-                $liveWorkspace->getCurrentContentStreamIdentifier(),
+            $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
+                $liveWorkspace->currentContentStreamId,
                 NodeTypeName::fromString('Neos.Neos:Sites')
             );
         } catch (\Exception $exception) {
@@ -228,18 +218,20 @@ class SitesController extends AbstractModuleController
             );
         }
 
-        foreach ($this->workspaceFinder->findAll() as $workspace) {
+        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
             // technically, due to the name being the "identifier", there might be more than one :/
-            $siteNodeAggregates = $this->contentGraph->findChildNodeAggregatesByName(
-                $workspace->getCurrentContentStreamIdentifier(),
-                $sitesNode->getIdentifier(),
+            /** @var NodeAggregate[] $siteNodeAggregates */
+            /** @var Workspace $workspace */
+            $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+                $workspace->currentContentStreamId,
+                $sitesNode->nodeAggregateId,
                 $site->getNodeName()->toNodeName()
             );
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                $this->nodeAggregateCommandHandler->handleChangeNodeAggregateName(new ChangeNodeAggregateName(
-                    $workspace->getCurrentContentStreamIdentifier(),
-                    $siteNodeAggregate->getIdentifier(),
+                $contentRepository->handle(new ChangeNodeAggregateName(
+                    $workspace->currentContentStreamId,
+                    $siteNodeAggregate->nodeAggregateId,
                     NodeName::fromString($newSiteNodeName),
                     $this->persistenceManager->getIdentifierByObject($currentUser)
                 ));
@@ -268,8 +260,14 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(Site $site = null)
     {
+        // This is not 100% correct, but it is as good as we can get it to work right now
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
+
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
-        $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
+        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Document', false);
 
         $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
         $generatorServices = [];
