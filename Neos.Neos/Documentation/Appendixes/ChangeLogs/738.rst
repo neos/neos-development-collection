@@ -1,0 +1,28 @@
+`7.3.8 (2022-09-12) <https://github.com/neos/neos-development-collection/releases/tag/7.3.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Fusion Runtime lazy-props evaluation confuses `getLastEvaluat… <https://github.com/neos/neos-development-collection/pull/3677>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3469 <https://github.com/neos/neos-development-collection/issues/3469>`_
+
+doing the check if a render was successful cannot only happen via ``$this->getLastEvaluationStatus()``
+-> as the render path might contain a lazy-prop (closure) which, when evaluated uses the same runtime.
+-> if the last lazy-prop has an ``@if`` annotation its skipped, but the ``$lastEvaluationStatus`` is set on the same runtime.
+-> there might still be partial successful output (the first values of a lazy-prop eg.) so we need to check additionally if the return value is null.
+
+* Packages: ``Fusion``
+
+`TASK: Adjust Neos.DocTools settings <https://github.com/neos/neos-development-collection/pull/3877>`_
+------------------------------------------------------------------------------------------------------
+
+See https://github.com/neos/doctools/pull/4
+
+
+* Packages: ``Neos`` ``Media``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.7...7.3.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
