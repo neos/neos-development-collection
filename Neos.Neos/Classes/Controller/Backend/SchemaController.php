@@ -15,24 +15,27 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Backend;
 
 use Neos\Cache\Frontend\VariableFrontend;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
+use Neos\Neos\Service\NodeTypeSchemaBuilderFactory;
 
 #[Flow\Scope('singleton')]
 class SchemaController extends ActionController
 {
     /**
-     * @var NodeTypeSchemaBuilder
-     * @Flow\Inject
-     */
-    protected $nodeTypeSchemaBuilder;
-
-    /**
      * @Flow\Inject
      * @var VariableFrontend
      */
     protected $nodeTypeSchemaCache;
+
+    /**
+     * @var ContentRepositoryRegistry
+     * @Flow\Inject
+     */
+    protected $contentRepositoryRegistry;
 
     /**
      * Get the node type configuration schema for the Neos UI
@@ -41,20 +44,25 @@ class SchemaController extends ActionController
      */
     public function nodeTypeSchemaAction(): string
     {
+        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+
         if ($this->request->hasArgument('version')) {
             /** @var string $version */
             $version = $this->request->getArgument('version');
         } else {
             $version = '';
         }
-        $cacheIdentifier = 'nodeTypeSchema_' . $version;
+        $cacheIdentifier = $contentRepositoryIdentifier->value . '_nodeTypeSchema_' . $version;
 
         $this->response->setContentType('application/json');
         $this->response->setHttpHeader('Cache-Control', 'max-age=' . (3600 * 24 * 7));
 
         $nodeTypeSchema = $this->nodeTypeSchemaCache->get($cacheIdentifier);
         if (!$nodeTypeSchema) {
-            $nodeTypeSchema = json_encode($this->nodeTypeSchemaBuilder->generateNodeTypeSchema());
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $nodeTypeSchemaBuilder = NodeTypeSchemaBuilder::create($contentRepository->getNodeTypeManager());
+            $nodeTypeSchema = json_encode($nodeTypeSchemaBuilder->generateNodeTypeSchema());
             $this->nodeTypeSchemaCache->flushByTag('nodeType');
             $this->nodeTypeSchemaCache->set($cacheIdentifier, $nodeTypeSchema, ['nodeType']);
         }

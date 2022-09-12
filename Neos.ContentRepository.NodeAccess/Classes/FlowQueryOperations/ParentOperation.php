@@ -11,11 +11,11 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * "parent" operation working on ContentRepository nodes. It iterates over all
@@ -40,9 +40,9 @@ class ParentOperation extends AbstractOperation
 
     /**
      * @Flow\Inject
-     * @var NodeAccessorManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAccessorManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * {@inheritdoc}
@@ -52,7 +52,7 @@ class ParentOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof NodeInterface));
+        return count($context) === 0 || (isset($context[0]) && ($context[0] instanceof Node));
     }
 
     /**
@@ -67,21 +67,16 @@ class ParentOperation extends AbstractOperation
         $output = [];
         $outputNodeAggregateIdentifiers = [];
         foreach ($flowQuery->getContext() as $contextNode) {
-            /* @var $contextNode NodeInterface */
-            $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-                $contextNode->getContentStreamIdentifier(),
-                $contextNode->getDimensionSpacePoint(),
-                $contextNode->getVisibilityConstraints()
-            );
-
-            $parentNode = $nodeAccessor->findParentNode($contextNode);
+            /* @var $contextNode Node */
+            $parentNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                ->findParentNode($contextNode->nodeAggregateId);
             if ($parentNode === null) {
                 continue;
             }
 
-            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()])) {
+            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId])) {
                 $output[] = $parentNode;
-                $outputNodeAggregateIdentifiers[(string)$parentNode->getNodeAggregateIdentifier()] = true;
+                $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId] = true;
             }
         }
 

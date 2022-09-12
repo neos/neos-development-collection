@@ -159,7 +159,7 @@ To activate Postgres, right now, the following steps are needed **in your distri
 ```yaml
 # Configuration/Objects.yaml
 
-Neos\ContentRepository\Projection\Content\ContentGraphInterface:
+Neos\ContentRepository\Core\Projection\Content\ContentGraphInterface:
   className: 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
 ```
 
@@ -168,17 +168,7 @@ Neos\ContentRepository\Projection\Content\ContentGraphInterface:
 ```yaml
 # Configuration/Settings.yaml
 
-Neos:
-  EventSourcedContentRepository:
-    unstableInternalWillChangeLater:
-      testing:
-        projectorsToBeReset:
-          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
-        activeContentGraphs:
-          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
-      projection:
-        defaultProjectorsToBeBlocked:
-          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
+
 
 ```
 
@@ -187,20 +177,7 @@ Neos:
 ```yaml
 # Configuration/Settings.yaml
 
-Neos:
-  EventSourcedContentRepository:
-    unstableInternalWillChangeLater:
-      testing:
-        projectorsToBeReset:
-          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
-          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': false
-        activeContentGraphs:
-          'Postgres': 'Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph'
-          'DoctrineDBAL': false
-      projection:
-        defaultProjectorsToBeBlocked:
-          'Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjector': true
-          'Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector': false
+
 ```
 
 

@@ -22,32 +22,33 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 
 /**
  * The node removal feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeRemoval
 {
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
             $affectedRelationAnchorPoints = [];
             // first step: remove hierarchy relations
             foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
                 $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                    $event->getContentStreamIdentifier(),
+                    $event->getContentStreamId(),
                     $dimensionSpacePoint,
-                    $event->getNodeAggregateIdentifier()
+                    $event->getNodeAggregateId()
                 );
                 if (is_null($nodeRecord)) {
                     throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
@@ -56,24 +57,25 @@ trait NodeRemoval
                 /** @var HierarchyHyperrelationRecord $ingoingHierarchyRelation */
                 $ingoingHierarchyRelation = $this->getProjectionHypergraph()
                     ->findHierarchyHyperrelationRecordByChildNodeAnchor(
-                        $event->getContentStreamIdentifier(),
+                        $event->getContentStreamId(),
                         $dimensionSpacePoint,
                         $nodeRecord->relationAnchorPoint
                     );
                 $ingoingHierarchyRelation->removeChildNodeAnchor(
                     $nodeRecord->relationAnchorPoint,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
                 $this->removeFromRestrictions(
-                    $event->getContentStreamIdentifier(),
+                    $event->getContentStreamId(),
                     $dimensionSpacePoint,
-                    $event->getNodeAggregateIdentifier()
+                    $event->getNodeAggregateId()
                 );
 
                 $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
 
                 $this->cascadeHierarchy(
-                    $event->getContentStreamIdentifier(),
+                    $event->getContentStreamId(),
                     $dimensionSpacePoint,
                     $nodeRecord->relationAnchorPoint,
                     $affectedRelationAnchorPoints
@@ -85,17 +87,17 @@ trait NodeRemoval
                 /** @lang PostgreSQL */
                 '
                 WITH deletedNodes AS (
-                    DELETE FROM ' . NodeRecord::TABLE_NAME . ' n
+                    DELETE FROM ' . $this->tableNamePrefix . '_node n
                     WHERE n.relationanchorpoint IN (
-                        SELECT relationanchorpoint FROM ' . NodeRecord::TABLE_NAME . '
-                            LEFT JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                        SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node
+                            LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                                 ON n.relationanchorpoint = ANY(h.childnodeanchors)
                         WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
                             AND h.contentstreamidentifier IS NULL
                     )
                     RETURNING relationanchorpoint
                 )
-                DELETE FROM ' . ReferenceRelationRecord::TABLE_NAME . ' r
+                DELETE FROM ' . $this->tableNamePrefix . '_referencerelation r
                     WHERE sourcenodeanchor IN (SELECT relationanchorpoint FROM deletedNodes)
                 ',
                 [
@@ -114,7 +116,7 @@ trait NodeRemoval
      * @param array<int,NodeRelationAnchorPoint> &$affectedRelationAnchorPoints
      */
     private function cascadeHierarchy(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $nodeRelationAnchorPoint,
         array &$affectedRelationAnchorPoints
@@ -125,7 +127,7 @@ trait NodeRemoval
             $nodeRelationAnchorPoint
         );
         if ($childHierarchyRelation) {
-            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection());
+            $childHierarchyRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             foreach ($childHierarchyRelation->childNodeAnchors as $childNodeAnchor) {
                 /** @var NodeRecord $nodeRecord */
@@ -136,7 +138,8 @@ trait NodeRemoval
                 if (empty($ingoingHierarchyRelations)) {
                     ReferenceRelationRecord::removeFromDatabaseForSource(
                         $nodeRecord->relationAnchorPoint,
-                        $this->getDatabaseConnection()
+                        $this->getDatabaseConnection(),
+                        $this->tableNamePrefix
                     );
                     $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
                 }
@@ -156,16 +159,16 @@ trait NodeRemoval
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamIdentifier
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateIdentifier
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
     private function removeFromRestrictions(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateIdentifier
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
@@ -176,7 +179,8 @@ trait NodeRemoval
         ) {
             $restrictionRelation->removeAffectedNodeAggregateIdentifier(
                 $nodeAggregateIdentifier,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -254,8 +258,8 @@ trait NodeRemoval
                 SELECT
                     n.relationanchorpoint,
                     h.parentnodeanchor
-                FROM  ' . NodeRecord::TABLE_NAME . ' n
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                FROM ' . $this->tableNamePrefix . '_node n
+                    JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                         ON n.relationanchorpoint = ANY(h.childnodeanchors)
                 WHERE h.parentnodeanchor = :relationAnchorPoint
                   AND h.contentstreamidentifier = :contentStreamIdentifier
@@ -274,16 +278,16 @@ trait NodeRemoval
                     h.parentnodeanchor
                 FROM
                     descendantNodes p
-                    JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
+                    JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                         ON h.parentnodeanchor = p.relationanchorpoint
-                    JOIN ' . NodeRecord::TABLE_NAME . ' c ON c.relationanchorpoint = ANY(h.childnodeanchors)
+                    JOIN ' . $this->tableNamePrefix . '_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
                 WHERE h.contentstreamidentifier = :contentStreamIdentifier
                     AND h.dimensionspacepointhash = :originDimensionSpacePointHash
                     ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
                 ? ' AND c.classification = :classification'
                 : '') . '
             )
-            INSERT INTO ' . HierarchyHyperrelationRecord::TABLE_NAME . '
+            INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
                 SELECT
                     :contentStreamIdentifier AS contentstreamidentifier,
                     parentnodeanchor,

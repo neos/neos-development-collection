@@ -12,30 +12,32 @@
   "suggest": {
   },
   "scripts": {
-    "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/Classes ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+    "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
     "lint:phpstan": "../../bin/phpstan analyse",
     "lint": [
       "@lint:phpcs",
       "@lint:phpstan"
     ],
     "test:unit": [
-      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository/Tests/Unit",
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",
       "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
     ],
     "test:functional": [
-      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository/Tests/Functional"
+      "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
     ],
     "test:behavioral": [
-      "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
-      "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser",
+      "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
       "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-      "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+      "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+      "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
+      "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
     ],
     "test:behavioral:stop-on-failure": [
-      "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
-      "../../bin/behat --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser",
-      "../../bin/behat --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-      "../../bin/behat --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+      "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
+      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+      "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
+      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
     ],
     "test": [
       "@test:unit",

@@ -8,41 +8,47 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\ReferenceRelation;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Feature\Common\RecursionMode;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Psr\Log\LoggerInterface;
 
 /**
  * The NodeRemoval projection feature trait
  *
  * Requires RestrictionRelations to work
+ *
+ * @internal
  */
 trait NodeRemoval
 {
+    abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
+
+    abstract protected function getTableNamePrefix(): string;
+
     protected LoggerInterface $systemLogger;
 
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         // the focus here is to be correct; that's why the method is not overly performant (for now at least). We might
         // lateron find tricks to improve performance
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->affectedCoveredDimensionSpacePoints
             );
 
-            $ingoingRelations = $this->projectionContentGraph->findIngoingHierarchyRelationsForNodeAggregate(
-                $event->contentStreamIdentifier,
-                $event->nodeAggregateIdentifier,
+            $ingoingRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNodeAggregate(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
                 $event->affectedCoveredDimensionSpacePoints
             );
 
@@ -59,12 +65,12 @@ trait NodeRemoval
     protected function removeRelationRecursivelyFromDatabaseIncludingNonReferencedNodes(
         HierarchyRelationRecord $ingoingRelation
     ): void {
-        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection());
+        $ingoingRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         foreach (
-            $this->projectionContentGraph->findOutgoingHierarchyRelationsForNode(
+            $this->getProjectionContentGraph()->findOutgoingHierarchyRelationsForNode(
                 $ingoingRelation->childNodeAnchor,
-                $ingoingRelation->contentStreamIdentifier,
+                $ingoingRelation->contentStreamId,
                 new DimensionSpacePointSet([$ingoingRelation->dimensionSpacePoint])
             ) as $outgoingRelation
         ) {
@@ -75,13 +81,16 @@ trait NodeRemoval
         // also remove outbound reference relations
         $this->getDatabaseConnection()->executeStatement(
             '
-            DELETE n, r FROM neos_contentgraph_node n
-                LEFT JOIN ' . ReferenceRelation::TABLE_NAME . ' r ON r.nodeanchorpoint = n.relationanchorpoint
-                LEFT JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' h ON h.childnodeanchor = n.relationanchorpoint
+            DELETE n, r FROM ' . $this->getTableNamePrefix() . '_node n
+                LEFT JOIN ' . $this->getTableNamePrefix() . '_referencerelation r
+                    ON r.nodeanchorpoint = n.relationanchorpoint
+                LEFT JOIN
+                    ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                        ON h.childnodeanchor = n.relationanchorpoint
                 WHERE
                     n.relationanchorpoint = :anchorPointForNode
                     -- the following line means "left join leads to NO MATCHING hierarchyrelation"
-                    AND h.contentstreamidentifier IS NULL
+                    AND h.contentstreamid IS NULL
                 ',
             [
                 'anchorPointForNode' => (string)$ingoingRelation->childNodeAnchor,
@@ -91,9 +100,9 @@ trait NodeRemoval
 
     public function whenNodeAggregateCoverageWasRestored(NodeAggregateCoverageWasRestored $event): void
     {
-        $nodeRecord = $this->projectionContentGraph->findNodeByIdentifiers(
-            $event->contentStreamIdentifier,
-            $event->nodeAggregateIdentifier,
+        $nodeRecord = $this->projectionContentGraph->findNodeInAggregate(
+            $event->contentStreamId,
+            $event->nodeAggregateId,
             $event->sourceDimensionSpacePoint
         );
         if (!$nodeRecord instanceof NodeRecord) {
@@ -103,10 +112,10 @@ trait NodeRemoval
         // create a hierarchy relation to the restoration's parent
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $parentNodeRecord = $this->projectionContentGraph->findParentNodeRecordByOriginInDimensionSpacePoint(
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 $event->sourceDimensionSpacePoint,
                 $coveredDimensionSpacePoint,
-                $event->nodeAggregateIdentifier
+                $event->nodeAggregateId
             );
             if (!$parentNodeRecord instanceof NodeRecord) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(get_class($event));
@@ -120,7 +129,7 @@ trait NodeRemoval
             );
             $this->getDatabaseConnection()->executeStatement(
                 '
-            INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME . ' (
+            INSERT INTO ' . $this->getTableNamePrefix() . '_hierarchyrelation (
                   parentnodeanchor,
                   childnodeanchor,
                   `name`,
@@ -145,7 +154,7 @@ trait NodeRemoval
                     'position' => $position,
                     'dimensionSpacePoint' => json_encode($coveredDimensionSpacePoint),
                     'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-                    'contentStreamIdentifier' => (string)$event->contentStreamIdentifier
+                    'contentStreamIdentifier' => (string)$event->contentStreamId
                 ]
             );
         }
@@ -166,7 +175,7 @@ trait NodeRemoval
         $this->getDatabaseConnection()->executeStatement(
             /** @lang MariaDB */
             '
-            INSERT INTO ' . HierarchyRelationRecord::TABLE_NAME . ' (
+            INSERT INTO ' . $this->getTableNamePrefix() . '_hierarchyrelation (
                 name,
                 position,
                 contentstreamidentifier,
@@ -236,7 +245,7 @@ trait NodeRemoval
                     ) targetHierarchyRelation
             ',
             [
-                'contentStreamIdentifier' => (string)$event->contentStreamIdentifier,
+                'contentStreamIdentifier' => (string)$event->contentStreamId,
                 'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
                 'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
                 'originDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash

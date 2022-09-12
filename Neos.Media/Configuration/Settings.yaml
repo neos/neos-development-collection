@@ -75,6 +75,9 @@ Neos:
           - ai
         paginableDocuments:
           - pdf
+        # if set, the DocumentThumbnailGenerator will be used when possible, even if the
+        # used Imagine driver would usually prohibit it's use (because GD doesn't do PDF)
+        overrideImagineDriverCheck: false
       Neos\Media\Domain\Model\ThumbnailGenerator\FontDocumentThumbnailGenerator:
         supportedExtensions:
           - ttf
@@ -84,15 +87,15 @@ Neos:
     collections:
       Media:
         commandReferences:
-          - 'Media:Commands'
+          'Media:Commands': true
         references:
-          - 'Media:ViewHelpers'
-          - 'Media:Validators'
+          'Media:ViewHelpers': true
+          'Media:Validators': true
     commandReferences:
       'Media:Commands':
         title: 'Media Command Reference'
         packageKeys:
-          - Neos.Media
+          'Neos.Media': true
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Media/Documentation/References/Commands.rst'
     references:
       'Media:Validators':

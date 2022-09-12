@@ -11,11 +11,11 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 /** @codingStandardsIgnoreStart */
-use Neos\ContentRepository\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 /** @codingStandardsIgnoreEnd */
-use Neos\ContentRepository\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -67,7 +67,7 @@ class CreateNodePrivilege extends AbstractNodePrivilege
                 return false;
             }
 
-            /** @var NodeInterface $node */
+            /** @var Node $node */
             $node = $joinPoint->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);

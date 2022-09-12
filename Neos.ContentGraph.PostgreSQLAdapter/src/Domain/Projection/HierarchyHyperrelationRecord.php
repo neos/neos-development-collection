@@ -16,21 +16,18 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The active record for reading and writing hierarchy hyperrelations from and to the database
  *
- * @Flow\Proxy(false)
+ * @internal
  */
 final class HierarchyHyperrelationRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_hierarchyhyperrelation';
-
     public function __construct(
-        public ContentStreamIdentifier $contentStreamIdentifier,
+        public ContentStreamId $contentStreamIdentifier,
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public DimensionSpacePoint $dimensionSpacePoint,
         /** The child node relation anchor points, indexed by sorting position */
@@ -44,7 +41,7 @@ final class HierarchyHyperrelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
+            ContentStreamId::fromString($databaseRow['contentstreamidentifier']),
             NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
             DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
             NodeRelationAnchorPoints::fromDatabaseString(
@@ -55,11 +52,12 @@ final class HierarchyHyperrelationRecord
 
     public function replaceParentNodeAnchor(
         NodeRelationAnchorPoint $newParentNodeAnchor,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         /** @todo do this directly in the database */
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_hierarchyhyperrelation',
             [
                 'parentnodeanchor' => (string)$newParentNodeAnchor
             ],
@@ -71,27 +69,29 @@ final class HierarchyHyperrelationRecord
     public function replaceChildNodeAnchor(
         NodeRelationAnchorPoint $oldChildNodeAnchor,
         NodeRelationAnchorPoint $newChildNodeAnchor,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         /** @todo do this directly in the database */
         $childNodeAnchors = $this->childNodeAnchors->replace(
             $oldChildNodeAnchor,
             $newChildNodeAnchor
         );
-        $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+        $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection, $tableNamePrefix);
     }
 
     public function addChildNodeAnchor(
         NodeRelationAnchorPoint $childNodeAnchor,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchor,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         /** @todo do this directly in the database */
         $childNodeAnchors = $this->childNodeAnchors->add(
             $childNodeAnchor,
             $succeedingSiblingAnchor
         );
-        $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+        $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection, $tableNamePrefix);
     }
 
     /**
@@ -101,7 +101,8 @@ final class HierarchyHyperrelationRecord
     public function addChildNodeAnchorAfterFirstCandidate(
         NodeRelationAnchorPoint $childNodeAnchor,
         NodeRelationAnchorPoints $succeedingSiblingCandidates,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $succeedingSiblingAnchor = null;
         if (!$succeedingSiblingCandidates->isEmpty()) {
@@ -116,29 +117,32 @@ final class HierarchyHyperrelationRecord
         $this->addChildNodeAnchor(
             $childNodeAnchor,
             $succeedingSiblingAnchor,
-            $databaseConnection
+            $databaseConnection,
+            $tableNamePrefix
         );
     }
 
     public function removeChildNodeAnchor(
         NodeRelationAnchorPoint $childNodeAnchor,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         /** @todo do this directly in the database */
         $childNodeAnchors = $this->childNodeAnchors->remove($childNodeAnchor);
         if (count($childNodeAnchors) === 0) {
-            $this->removeFromDatabase($databaseConnection);
+            $this->removeFromDatabase($databaseConnection, $tableNamePrefix);
         } else {
-            $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection);
+            $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection, $tableNamePrefix);
         }
     }
 
     private function updateChildNodeAnchors(
         NodeRelationAnchorPoints $childNodeAnchors,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_hierarchyhyperrelation',
             [
                 'childnodeanchors' => $childNodeAnchors->toDatabaseString()
             ],
@@ -150,10 +154,10 @@ final class HierarchyHyperrelationRecord
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_hierarchyhyperrelation',
             [
                 'contentstreamidentifier' => $this->contentStreamIdentifier,
                 'parentnodeanchor' => $this->parentNodeAnchor,
@@ -167,9 +171,9 @@ final class HierarchyHyperrelationRecord
     /**
      * @throws DBALException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
+        $databaseConnection->delete($tableNamePrefix . '_hierarchyhyperrelation', $this->getDatabaseIdentifier());
     }
 
     /**

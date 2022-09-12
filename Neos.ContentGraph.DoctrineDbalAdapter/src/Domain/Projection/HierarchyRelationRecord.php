@@ -15,24 +15,24 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * The active record for reading and writing hierarchy relations from and to the database
+ *
+ * @internal
  */
-#[Flow\Proxy(false)]
 final class HierarchyRelationRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_hierarchyrelation';
+    public const TABLE_NAME_SUFFIX = '_hierarchyrelation';
 
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
         public ?NodeName $name,
-        public ContentStreamIdentifier $contentStreamIdentifier,
+        public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $dimensionSpacePoint,
         public string $dimensionSpacePointHash,
         public int $position
@@ -42,13 +42,13 @@ final class HierarchyRelationRecord
     /**
      * @param Connection $databaseConnection
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
+        $databaseConnection->insert($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
             'parentnodeanchor' => $this->parentNodeAnchor,
             'childnodeanchor' => $this->childNodeAnchor,
             'name' => $this->name,
-            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'contentstreamid' => $this->contentStreamId,
             'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'position' => $this->position
@@ -58,23 +58,26 @@ final class HierarchyRelationRecord
     /**
      * @param Connection $databaseConnection
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
+        $databaseConnection->delete($tableNamePrefix . self::TABLE_NAME_SUFFIX, $this->getDatabaseId());
     }
 
     /**
      * @param NodeRelationAnchorPoint $childAnchorPoint
      * @param Connection $databaseConnection
      */
-    public function assignNewChildNode(NodeRelationAnchorPoint $childAnchorPoint, Connection $databaseConnection): void
-    {
+    public function assignNewChildNode(
+        NodeRelationAnchorPoint $childAnchorPoint,
+        Connection $databaseConnection,
+        string $tableNamePrefix
+    ): void {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_hierarchyrelation',
             [
                 'childnodeanchor' => $childAnchorPoint
             ],
-            $this->getDatabaseIdentifier()
+            $this->getDatabaseId()
         );
     }
 
@@ -84,7 +87,8 @@ final class HierarchyRelationRecord
     public function assignNewParentNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
         ?int $position,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $data = [
             'parentnodeanchor' => $parentAnchorPoint
@@ -93,32 +97,32 @@ final class HierarchyRelationRecord
             $data['position'] = $position;
         }
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             $data,
-            $this->getDatabaseIdentifier()
+            $this->getDatabaseId()
         );
     }
 
-    public function assignNewPosition(int $position, Connection $databaseConnection): void
+    public function assignNewPosition(int $position, Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             [
                 'position' => $position
             ],
-            $this->getDatabaseIdentifier()
+            $this->getDatabaseId()
         );
     }
 
     /**
      * @return array<string,mixed>
      */
-    public function getDatabaseIdentifier(): array
+    public function getDatabaseId(): array
     {
         return [
             'parentnodeanchor' => $this->parentNodeAnchor,
             'childnodeanchor' => $this->childNodeAnchor,
-            'contentstreamidentifier' => $this->contentStreamIdentifier,
+            'contentstreamid' => $this->contentStreamId,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }

@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -40,7 +40,7 @@ final class VisualIntraDimensionalVariationGraph
         $height = 0;
 
         foreach ($contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-            $dimensions[(string)$contentDimension->identifier] = VisualContentDimension::fromContentDimension(
+            $dimensions[(string)$contentDimension->id] = VisualContentDimension::fromContentDimension(
                 $contentDimension,
                 $horizontalOffset,
                 $counter,

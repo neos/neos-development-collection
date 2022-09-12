@@ -14,38 +14,26 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Cache;
 
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Psr\Log\LoggerInterface;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
  *
- * It is called in two scenarios:
- *
- * - when the projection changes: In this case, it is triggered by {@see CacheAwareGraphProjectorFactory} which creates
- *   {@see CacheFlushJob} instances (which in turn flush the cache).
+ * It is called when the projection changes: In this case, it is triggered by
+ * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method..
  *   This is the relevant case if publishing a workspace
- *   - where we f.e. need to flush the cache for Live asynchronously.
- *
- * - explicitly through a Backend API request when we change the projection, block, and then render new content. In this
- *   scenario, it is important to flush the caches BETWEEN updating the projection and rendering the new content - this
- *   only works through an explicit call to {@see ContentCacheFlusher::flushNodeAggregate()}
- *   or {@see ContentCacheFlusher::scheduleFlushNodeAggregate()}.
- *
- * The method registerNodeChange() is triggered manually in the respective UI packages.
+ *   - where we f.e. need to flush the cache for Live.
  *
  * @Flow\Scope("singleton")
  */
@@ -64,73 +52,42 @@ class ContentCacheFlusher
     protected $systemLogger;
 
     /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
      * Main entry point to *directly* flush the caches of a given NodeAggregate
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return void
+     * @param ContentRepository $contentRepository
+     * @param ContentStreamId $contentStreamIdentifier
+     * @param NodeAggregateId $nodeAggregateIdentifier
      */
     public function flushNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        ContentRepository $contentRepository,
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier
     ): void {
-        $doFlushContentCache = $this->scheduleFlushNodeAggregate($contentStreamIdentifier, $nodeAggregateIdentifier);
-        $doFlushContentCache();
-    }
-
-    /**
-     * Sometimes, you need to defer figuring out what to flush and the actual flushing to a later point in time.
-     * For example, when removing a node, we need to figure out what to flush while the node still exists,
-     * but do the flushing later when the node was removed.
-     *
-     * This can be done with this method: When calling this method, it *directly* finds out what needs to be flushed.
-     * The flushing itself, however, must then be triggered by calling the returned function.
-     *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @return callable execute this function to actually trigger the content cache flushing
-     */
-    public function scheduleFlushNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
-    ): callable {
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
         $this->registerChangeOnNodeIdentifier($contentStreamIdentifier, $nodeAggregateIdentifier, $tagsToFlush);
-        $nodeAggregate = $this->contentGraph->findNodeAggregateByIdentifier(
+        $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
             $contentStreamIdentifier,
             $nodeAggregateIdentifier
         );
         if (!$nodeAggregate) {
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
-            return function () {
-            };
+            return;
         }
 
         $this->registerChangeOnNodeType(
-            $nodeAggregate->getNodeTypeName(),
+            $nodeAggregate->nodeTypeName,
             $contentStreamIdentifier,
             $nodeAggregateIdentifier,
-            $tagsToFlush
+            $tagsToFlush,
+            $contentRepository
         );
 
         $parentNodeAggregates = [];
         foreach (
-            $this->contentGraph->findParentNodeAggregates(
+            $contentRepository->getContentGraph()->findParentNodeAggregates(
                 $contentStreamIdentifier,
                 $nodeAggregateIdentifier
             ) as $parentNodeAggregate
@@ -140,36 +97,49 @@ class ContentCacheFlusher
         // we do not need these variables anymore here
         unset($contentStreamIdentifier, $nodeAggregateIdentifier);
 
+
+        // NOTE: Normally, the content graph cannot contain cycles. However, during the
+        // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
+        // and in case of bugs, it could have actually cycles.
+        // We still want the content cache flushing to work, without hanging up in an endless loop.
+        // That's why we track the seen NodeAggregateIdentifiers to be sure we don't travers them multiple times.
+        $processedNodeAggregateIdentifiers = [];
+
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
-            $tagName = 'DescendantOf_%' . $nodeAggregate->getContentStreamIdentifier()
-                . '%_' . $nodeAggregate->getIdentifier();
+            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->getValue()])) {
+                // we've already processed this NodeAggregateIdentifier (i.e. flushed the caches for it);
+                // thus we can skip this one, and thus break the cycle.
+                continue;
+            }
+            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->getValue()] = true;
+
+            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId
+                . '%_' . $nodeAggregate->nodeAggregateId;
             $tagsToFlush[$tagName] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateId
             );
 
             // Legacy
-            $legacyTagName = 'DescendantOf_' . $nodeAggregate->getIdentifier();
+            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateId;
             $tagsToFlush[$legacyTagName] = sprintf(
                 'which were tagged with legacy "%s" because node "%s" has changed.',
                 $legacyTagName,
-                $nodeAggregate->getIdentifier()
+                $nodeAggregate->nodeAggregateId
             );
 
             foreach (
-                $this->contentGraph->findParentNodeAggregates(
-                    $nodeAggregate->getContentStreamIdentifier(),
-                    $nodeAggregate->getIdentifier()
+                $contentRepository->getContentGraph()->findParentNodeAggregates(
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
                 ) as $parentNodeAggregate
             ) {
                 $parentNodeAggregates[] = $parentNodeAggregate;
             }
         }
-        return function () use ($tagsToFlush) {
-            $this->flushTags($tagsToFlush);
-        };
+        $this->flushTags($tagsToFlush);
     }
 
 
@@ -182,8 +152,8 @@ class ContentCacheFlusher
      * @param array<string,string> &$tagsToFlush
      */
     private function registerChangeOnNodeIdentifier(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $nodeAggregateIdentifier,
         array &$tagsToFlush
     ): void {
         $cacheIdentifier = '%' . $contentStreamIdentifier . '%_' . $nodeAggregateIdentifier;
@@ -221,13 +191,14 @@ class ContentCacheFlusher
      */
     private function registerChangeOnNodeType(
         NodeTypeName $nodeTypeName,
-        ContentStreamIdentifier $contentStreamIdentifier,
-        ?NodeAggregateIdentifier $referenceNodeIdentifier,
-        array &$tagsToFlush
+        ContentStreamId $contentStreamIdentifier,
+        ?NodeAggregateId $referenceNodeIdentifier,
+        array &$tagsToFlush,
+        ContentRepository $contentRepository
     ): void {
         try {
             $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
-                $this->nodeTypeManager->getNodeType((string)$nodeTypeName)
+                $contentRepository->getNodeTypeManager()->getNodeType((string)$nodeTypeName)
             );
         } catch (NodeTypeNotFoundException $e) {
             // as a fallback, we flush the single NodeType
@@ -326,7 +297,7 @@ class ContentCacheFlusher
                 $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
             });
 
-            if (!$node instanceof NodeInterface) {
+            if (!$node instanceof Node) {
                 $this->systemLogger->warning(sprintf(
                     'Found a node reference from node with identifier %s in workspace %s to asset %s,'
                         . ' but the node could not be fetched.',

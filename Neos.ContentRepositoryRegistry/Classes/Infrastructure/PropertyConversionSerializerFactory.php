@@ -33,23 +33,6 @@ final class PropertyConversionSerializerFactory
 
     public function buildSerializer(): Serializer
     {
-        $propertyConvertersConfiguration = (new PositionalArraySorter($this->propertyConvertersConfiguration))
-            ->toArray();
 
-        $normalizers = [];
-        foreach ($propertyConvertersConfiguration as $propertyConverterConfiguration) {
-            $normalizer = new $propertyConverterConfiguration['className'];
-            if (!$normalizer instanceof NormalizerInterface && !$normalizer instanceof DenormalizerInterface) {
-                throw new \InvalidArgumentException(
-                    'Serializers can only be created of ' . NormalizerInterface::class
-                        . ' and ' . DenormalizerInterface::class
-                        . ', ' . get_class($normalizer) . ' given.',
-                    1645386698
-                );
-            }
-            $normalizers[] = $normalizer;
-        }
-
-        return new Serializer($normalizers);
     }
 }

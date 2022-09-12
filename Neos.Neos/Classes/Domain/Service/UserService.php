@@ -14,9 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -61,12 +60,6 @@ class UserService
      * @var string
      */
     protected $defaultAuthenticationProviderName = 'Neos.Neos:Backend';
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceRepository;
 
     /**
      * @Flow\Inject
@@ -277,12 +270,12 @@ class UserService
         return $user;
     }
 
-    public function getCurrentUserIdentifier(): ?UserIdentifier
+    public function getCurrentUserIdentifier(): ?UserId
     {
         $currentUser = $this->getCurrentUser();
 
         return $currentUser
-            ? UserIdentifier::fromString($this->persistenceManager->getIdentifierByObject($currentUser))
+            ? UserId::fromString($this->persistenceManager->getIdentifierByObject($currentUser))
             : null;
     }
 
@@ -685,7 +678,7 @@ class UserService
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->getWorkspaceName()->jsonSerialize() === 'live') {
+        if ($workspace->workspaceName->jsonSerialize() === 'live') {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
@@ -694,7 +687,7 @@ class UserService
             ? $this->persistenceManager->getIdentifierByObject($currentUser)
             : null;
 
-        if ($workspace->getWorkspaceOwner() === $ownerIdentifier || $workspace->getWorkspaceOwner() === null) {
+        if ($workspace->workspaceOwner === null || $workspace->workspaceOwner === $ownerIdentifier) {
             return true;
         }
 
@@ -709,13 +702,13 @@ class UserService
      */
     public function currentUserCanReadWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->getWorkspaceName()->isLive() || $workspace->getWorkspaceOwner() === null) {
+        if ($workspace->workspaceName->isLive() || $workspace->workspaceOwner === null) {
             return true;
         }
 
         $currentUser = $this->getCurrentUser();
 
-        return $currentUser && $workspace->getWorkspaceOwner()
+        return $currentUser && $workspace->workspaceOwner
             === $this->persistenceManager->getIdentifierByObject($currentUser);
     }
 

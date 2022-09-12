@@ -16,10 +16,13 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Tests\Behavior\Features\Helper\TestingNodeAggregateIdentifier;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphSchemaBuilder;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\TestingNodeAggregateId;
 use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
 use Neos\Flow\Utility\Algorithms;
 
@@ -29,6 +32,13 @@ use Neos\Flow\Utility\Algorithms;
 trait ProjectionIntegrityViolationDetectionTrait
 {
     private DbalClient $dbalClient;
+
+    abstract protected function getContentRepositoryId(): ContentRepositoryId;
+
+    protected function getTableNamePrefix(): string
+    {
+        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix($this->getContentRepositoryId());
+    }
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
@@ -45,8 +55,9 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
+
         $this->dbalClient->getConnection()->delete(
-            'neos_contentgraph_restrictionrelation',
+            $this->getTableNamePrefix() . '_restrictionrelation',
             $record
         );
     }
@@ -61,9 +72,9 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_restrictionrelation',
+            $this->getTableNamePrefix() . '_restrictionrelation',
             [
-                'originnodeaggregateidentifier' => (string)TestingNodeAggregateIdentifier::nonExistent()
+                'originnodeaggregateid' => (string)TestingNodeAggregateId::nonExistent()
             ],
             $record
         );
@@ -79,9 +90,9 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_restrictionrelation',
+            $this->getTableNamePrefix() . '_restrictionrelation',
             [
-                'affectednodeaggregateidentifier' => (string)TestingNodeAggregateIdentifier::nonExistent()
+                'affectednodeaggregateid' => (string)TestingNodeAggregateId::nonExistent()
             ],
             $record
         );
@@ -97,7 +108,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToHierarchyRelationRecord($dataset);
         $this->dbalClient->getConnection()->insert(
-            'neos_contentgraph_hierarchyrelation',
+            $this->getTableNamePrefix() . '_hierarchyrelation',
             $record
         );
     }
@@ -114,7 +125,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         unset($record['position']);
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
+            $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'dimensionspacepointhash' => $dataset['newDimensionSpacePointHash']
             ],
@@ -132,13 +143,13 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
         $record = [
-            'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
+            'contentstreamid' => $dataset['contentStreamId'],
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'childnodeanchor' => $this->findRelationAnchorPointByDataset($dataset)
         ];
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_hierarchyrelation',
+            $this->getTableNamePrefix() . '_hierarchyrelation',
             [
                 'position' => $dataset['newPosition']
             ],
@@ -156,7 +167,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_referencerelation',
+            $this->getTableNamePrefix() . '_referencerelation',
             [
                 'nodeanchorpoint' => 'detached'
             ],
@@ -174,7 +185,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
 
         $this->dbalClient->getConnection()->update(
-            'neos_contentgraph_referencerelation',
+            $this->getTableNamePrefix() . '_referencerelation',
             [
                 'position' => $dataset['newPosition']
             ],
@@ -186,12 +197,12 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         return [
             'name' => $dataset['referenceName'],
-            'nodeanchorpoint' => $this->findRelationAnchorPointByIdentifiers(
-                ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
+            'nodeanchorpoint' => $this->findRelationAnchorPointByIds(
+                ContentStreamId::fromString($dataset['contentStreamId']),
                 DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']),
-                NodeAggregateIdentifier::fromString($dataset['sourceNodeAggregateIdentifier'])
+                NodeAggregateId::fromString($dataset['sourceNodeAggregateId'])
             ),
-            'destinationnodeaggregateidentifier' => $dataset['destinationNodeAggregateIdentifier']
+            'destinationnodeaggregateid' => $dataset['destinationNodeAggregateId']
         ];
     }
 
@@ -200,36 +211,36 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
 
         return [
-            'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
+            'contentstreamid' => $dataset['contentStreamId'],
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
-            'originnodeaggregateidentifier' => $dataset['originNodeAggregateIdentifier'],
-            'affectednodeaggregateidentifier' => $dataset['affectedNodeAggregateIdentifier'],
+            'originnodeaggregateid' => $dataset['originNodeAggregateId'],
+            'affectednodeaggregateid' => $dataset['affectedNodeAggregateId'],
         ];
     }
 
     private function transformDatasetToHierarchyRelationRecord(array $dataset): array
     {
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['dimensionSpacePoint']);
-        $parentNodeAggregateIdentifier = TestingNodeAggregateIdentifier::fromString($dataset['parentNodeAggregateIdentifier']);
-        $childAggregateIdentifier = TestingNodeAggregateIdentifier::fromString($dataset['childNodeAggregateIdentifier']);
+        $parentNodeAggregateId = TestingNodeAggregateId::fromString($dataset['parentNodeAggregateId']);
+        $childAggregateId = TestingNodeAggregateId::fromString($dataset['childNodeAggregateId']);
 
         return [
-            'contentstreamidentifier' => $dataset['contentStreamIdentifier'],
+            'contentstreamid' => $dataset['contentStreamId'],
             'dimensionspacepoint' => \json_encode($dimensionSpacePoint),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
-            'parentnodeanchor' => $parentNodeAggregateIdentifier->isNonExistent()
+            'parentnodeanchor' => $parentNodeAggregateId->isNonExistent()
                 ? Algorithms::generateUUID()
-                : $this->findRelationAnchorPointByIdentifiers(
-                    ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
+                : $this->findRelationAnchorPointByIds(
+                    ContentStreamId::fromString($dataset['contentStreamId']),
                     $dimensionSpacePoint,
-                    NodeAggregateIdentifier::fromString($dataset['parentNodeAggregateIdentifier'])
+                    NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
                 ),
-            'childnodeanchor' => $childAggregateIdentifier->isNonExistent()
+            'childnodeanchor' => $childAggregateId->isNonExistent()
                 ? Algorithms::generateUUID()
-                : $this->findRelationAnchorPointByIdentifiers(
-                    ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
+                : $this->findRelationAnchorPointByIds(
+                    ContentStreamId::fromString($dataset['contentStreamId']),
                     $dimensionSpacePoint,
-                    NodeAggregateIdentifier::fromString($dataset['childNodeAggregateIdentifier'])
+                    NodeAggregateId::fromString($dataset['childNodeAggregateId'])
                 ),
             'position' => $dataset['position'] ?? 0
         ];
@@ -239,30 +250,30 @@ trait ProjectionIntegrityViolationDetectionTrait
     {
         $dimensionSpacePoint = DimensionSpacePoint::fromArray($dataset['originDimensionSpacePoint'] ?? $dataset['dimensionSpacePoint']);
 
-        return $this->findRelationAnchorPointByIdentifiers(
-            ContentStreamIdentifier::fromString($dataset['contentStreamIdentifier']),
+        return $this->findRelationAnchorPointByIds(
+            ContentStreamId::fromString($dataset['contentStreamId']),
             $dimensionSpacePoint,
-            NodeAggregateIdentifier::fromString($dataset['nodeAggregateIdentifier'] ?? $dataset['childNodeAggregateIdentifier'])
+            NodeAggregateId::fromString($dataset['nodeAggregateId'] ?? $dataset['childNodeAggregateId'])
         );
     }
 
-    private function findRelationAnchorPointByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
+    private function findRelationAnchorPointByIds(
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): string {
         $nodeRecord = $this->dbalClient->getConnection()->executeQuery(
             'SELECT n.relationanchorpoint
-                            FROM neos_contentgraph_node n
-                            INNER JOIN neos_contentgraph_hierarchyrelation h
+                            FROM ' . $this->getTableNamePrefix() . '_node n
+                            INNER JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation h
                             ON n.relationanchorpoint = h.childnodeanchor
-                            WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-                            AND h.contentstreamidentifier = :contentStreamIdentifier
+                            WHERE n.nodeaggregateid = :nodeAggregateId
+                            AND h.contentstreamid = :contentStreamId
                             AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'contentStreamId' => (string)$contentStreamId,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+                'nodeAggregateId' => (string)$nodeAggregateId
             ]
         )->fetchAssociative();
 

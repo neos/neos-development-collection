@@ -22,31 +22,33 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoints;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 
 /**
  * The node creation feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeCreation
 {
     /**
      * @throws \Throwable
      */
-    public function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
+    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
 
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
-            $event->nodeAggregateIdentifier,
+            $event->nodeAggregateId,
             $originDimensionSpacePoint,
             $originDimensionSpacePoint->hash,
             SerializedPropertyValues::fromArray([]),
@@ -56,9 +58,9 @@ trait NodeCreation
         );
 
         $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection());
+            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             $this->connectToHierarchy(
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 NodeRelationAnchorPoint::forRootHierarchyRelation(),
                 $node->relationAnchorPoint,
                 $event->coveredDimensionSpacePoints,
@@ -76,7 +78,7 @@ trait NodeCreation
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
-            $event->nodeAggregateIdentifier,
+            $event->nodeAggregateId,
             $event->originDimensionSpacePoint,
             $event->originDimensionSpacePoint->hash,
             $event->initialPropertyValues,
@@ -86,33 +88,34 @@ trait NodeCreation
         );
 
         $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection());
+            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
                 $hierarchyRelation = $this->getProjectionHypergraph()->findChildHierarchyHyperrelationRecord(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $dimensionSpacePoint,
-                    $event->parentNodeAggregateIdentifier
+                    $event->parentNodeAggregateId
                 );
                 if ($hierarchyRelation) {
                     $succeedingSiblingNodeAnchor = null;
-                    if ($event->succeedingNodeAggregateIdentifier) {
+                    if ($event->succeedingNodeAggregateId) {
                         $succeedingSiblingNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                            $event->contentStreamIdentifier,
+                            $event->contentStreamId,
                             $dimensionSpacePoint,
-                            $event->succeedingNodeAggregateIdentifier
+                            $event->succeedingNodeAggregateId
                         );
                         $succeedingSiblingNodeAnchor = $succeedingSiblingNode?->relationAnchorPoint;
                     }
                     $hierarchyRelation->addChildNodeAnchor(
                         $node->relationAnchorPoint,
                         $succeedingSiblingNodeAnchor,
-                        $this->getDatabaseConnection()
+                        $this->getDatabaseConnection(),
+                        $this->tableNamePrefix
                     );
                 } else {
                     $parentNode = $this->getProjectionHypergraph()->findNodeRecordByCoverage(
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $dimensionSpacePoint,
-                        $event->parentNodeAggregateIdentifier
+                        $event->parentNodeAggregateId
                     );
                     if (is_null($parentNode)) {
                         throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
@@ -120,18 +123,18 @@ trait NodeCreation
                         );
                     }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
-                        $event->contentStreamIdentifier,
+                        $event->contentStreamId,
                         $parentNode->relationAnchorPoint,
                         $dimensionSpacePoint,
                         NodeRelationAnchorPoints::fromArray([$node->relationAnchorPoint])
                     );
-                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                    $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
                 }
                 $this->connectToRestrictionRelations(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $dimensionSpacePoint,
-                    $event->parentNodeAggregateIdentifier,
-                    $event->nodeAggregateIdentifier
+                    $event->parentNodeAggregateId,
+                    $event->nodeAggregateId
                 );
             }
         });
@@ -142,7 +145,7 @@ trait NodeCreation
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     protected function connectToHierarchy(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         NodeRelationAnchorPoint $parentNodeAnchor,
         NodeRelationAnchorPoint $childNodeAnchor,
         DimensionSpacePointSet $dimensionSpacePointSet,
@@ -158,7 +161,8 @@ trait NodeCreation
                 $hierarchyRelation->addChildNodeAnchor(
                     $childNodeAnchor,
                     $succeedingSiblingNodeAnchor,
-                    $this->getDatabaseConnection()
+                    $this->getDatabaseConnection(),
+                    $this->tableNamePrefix
                 );
             } else {
                 $hierarchyRelation = new HierarchyHyperrelationRecord(
@@ -167,7 +171,7 @@ trait NodeCreation
                     $dimensionSpacePoint,
                     NodeRelationAnchorPoints::fromArray([$childNodeAnchor])
                 );
-                $hierarchyRelation->addToDatabase($this->getDatabaseConnection());
+                $hierarchyRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         }
     }
@@ -177,10 +181,10 @@ trait NodeCreation
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     protected function connectToRestrictionRelations(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeAggregateIdentifier $affectedNodeAggregateIdentifier
+        NodeAggregateId $parentNodeAggregateIdentifier,
+        NodeAggregateId $affectedNodeAggregateIdentifier
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
@@ -191,7 +195,8 @@ trait NodeCreation
         ) {
             $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
                 $affectedNodeAggregateIdentifier,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }

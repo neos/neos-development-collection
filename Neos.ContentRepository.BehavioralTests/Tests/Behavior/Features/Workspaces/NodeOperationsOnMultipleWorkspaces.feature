@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Single Node operations on multiple workspaces/content streams; e.g. copy on write!
 
   Background:
@@ -14,71 +14,71 @@ Feature: Single Node operations on multiple workspaces/content streams; e.g. cop
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "user-id"       |
+      | newContentStreamId | "cs-identifier" |
+      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "user-identifier"             |
+      | initiatingUserId    | "user-identifier"             |
       | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
-      | contentStreamIdentifier       | "cs-identifier"                          |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                       |
+      | contentStreamId       | "cs-identifier"                          |
+      | nodeAggregateId       | "nody-mc-nodeface"                       |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
       | coveredDimensionSpacePoints   | [{}]                                     |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                 |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                 |
       | nodeName                      | "child"                                  |
       | nodeAggregateClassification   | "regular"                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
-      | contentStreamIdentifier       | "cs-identifier"                          |
-      | nodeAggregateIdentifier       | "nodingers-cat"                          |
+      | contentStreamId       | "cs-identifier"                          |
+      | nodeAggregateId       | "nodingers-cat"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | originDimensionSpacePoint     | {}                                       |
       | coveredDimensionSpacePoints   | [{}]                                     |
-      | parentNodeAggregateIdentifier | "nody-mc-nodeface"                       |
+      | parentNodeAggregateId | "nody-mc-nodeface"                       |
       | nodeName                      | "pet"                                    |
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamIdentifier   | "cs-identifier"              |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | contentStreamId   | "cs-identifier"              |
+      | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Original"}         |
-      | initiatingUserIdentifier  | "initiating-user-identifier" |
+      | initiatingUserId  | "initiating-user-identifier" |
     And the graph projection is fully up to date
     And the command CreateWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
-      | newContentStreamIdentifier | "user-cs-identifier" |
-      | initiatingUserIdentifier   | "user"               |
+      | newContentStreamId | "user-cs-identifier" |
+      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: Set property of a node
     Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamIdentifier   | "user-cs-identifier"         |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | contentStreamId   | "user-cs-identifier"         |
+      | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Changed"}          |
-      | initiatingUserIdentifier  | "initiating-user-identifier" |
+      | initiatingUserId  | "initiating-user-identifier" |
 
-    Then I expect exactly 2 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:user-cs-identifier"
+    Then I expect exactly 2 events to be published on stream with prefix "ContentStream:user-cs-identifier"
     And event at index 1 is of type "NodePropertiesWereSet" with payload:
       | Key                       | Expected                     |
-      | contentStreamIdentifier   | "user-cs-identifier"         |
-      | nodeAggregateIdentifier   | "nody-mc-nodeface"           |
+      | contentStreamId   | "user-cs-identifier"         |
+      | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | []                           |
       | propertyValues.text.value | "Changed"                    |
-      | initiatingUserIdentifier  | "initiating-user-identifier" |
+      | initiatingUserId  | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}

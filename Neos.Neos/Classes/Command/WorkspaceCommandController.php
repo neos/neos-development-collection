@@ -14,26 +14,26 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
-use Neos\ContentRepository\Feature\Common\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Feature\WorkspaceCommandHandler;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Command\CreateWorkspace;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
-use Neos\ContentRepository\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
-use Neos\ContentRepository\Feature\WorkspaceDiscarding\Command\DiscardWorkspace;
-use Neos\ContentRepository\Feature\WorkspacePublication\Command\PublishWorkspace;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\User\UserIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceDescription;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 /**
  * The Workspace Command Controller
@@ -44,21 +44,15 @@ class WorkspaceCommandController extends CommandController
 {
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
-     * @Flow\Inject
      * @var UserService
      */
     protected $userService;
 
     #[Flow\Inject]
-    protected WorkspaceCommandHandler $workspaceCommandHandler;
+    protected PersistenceManagerInterface $persistenceManager;
 
     #[Flow\Inject]
-    protected PersistenceManagerInterface $persistenceManager;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Publish changes of a workspace
@@ -67,90 +61,26 @@ class WorkspaceCommandController extends CommandController
      * If a target workspace is specified, the content is published to that workspace instead.
      *
      * @param string $workspace Name of the workspace containing the changes to publish, for example "user-john"
-     * @param string $targetWorkspace If specified, the content will be published to this workspace
-     *                                instead of the base workspace
+     * @param string $contentRepositoryIdentifier
      * @param boolean $verbose If enabled, some information about individual nodes will be displayed
      * @param boolean $dryRun If set, only displays which nodes would be published, no real changes are committed
      * @return void
+     * @throws ExceptionInterface
      */
-    public function publishCommand($workspace, $targetWorkspace = null, $verbose = false, $dryRun = false)
-    {
-        /* @todo how do we do this?
-        $workspaceName = $workspace;
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
-        if (!$workspace instanceof Workspace) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspaceName]);
-            $this->quit(1);
-        }
-
-        if ($targetWorkspace === null) {
-            $targetWorkspace = $workspace->getBaseWorkspace();
-            $targetWorkspaceName = $targetWorkspace->getName();
-        } else {
-            $targetWorkspaceName = $targetWorkspace;
-            $targetWorkspace = $this->workspaceFinder->findOneByName(
-                WorkspaceName::fromString($targetWorkspaceName)
-            );
-            if (!$targetWorkspace instanceof Workspace) {
-                $this->outputLine('Target workspace "%s" does not exist', [$targetWorkspaceName]);
-                $this->quit(2);
-            }
-
-            $possibleTargetWorkspaceNames = [];
-            $baseWorkspace = $workspace->getBaseWorkspace();
-            while ($targetWorkspace !== $baseWorkspace) {
-                if ($baseWorkspace === null) {
-                    $this->outputLine('The target workspace must be a base workspace of "%s".', [$targetWorkspaceName]);
-                    if (count($possibleTargetWorkspaceNames) > 1) {
-                        $this->outputLine(
-                            'For "%s" possible target workspaces currently are: %s',
-                            [$workspaceName, implode(', ', $possibleTargetWorkspaceNames)]
-                        );
-                    } else {
-                        $this->outputLine(
-                            'For "%s" the only possible target workspace currently is "%s".',
-                            [$workspaceName, reset($possibleTargetWorkspaceNames)]
-                        );
-                    }
-                    $this->quit(3);
-                }
-                $possibleTargetWorkspaceNames[] = $baseWorkspace->getName();
-                $baseWorkspace = $baseWorkspace->getBaseWorkspace();
-            }
-        }
-
-        try {
-            $nodes = $this->publishingService->getUnpublishedNodes($workspace);
-        } catch (\Exception $exception) {
-            $this->outputLine(
-                'An error occurred while fetching unpublished nodes from workspace %s, publish aborted.',
-                [$workspaceName]
-            );
-            $this->quit(1);
-        }
-
-        $amount = count($nodes);
-        $this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspaceName, $amount]);
-
-        foreach ($nodes as $index => $node) {
-            if ($verbose) {
-                $this->outputLine("[%s][%s/%u] %s", [
-                    date('H:i:s'),
-                    str_pad($index + 1, strlen($amount . ''), ' ', STR_PAD_LEFT),
-                    $amount,
-                    $node->getContextPath()
-                ]);
-            }
-            if (!$dryRun) {
-                $this->publishingService->publishNode($node, $targetWorkspace);
-            }
-        }*/
+    public function publishCommand(
+        $workspace,
+        string $contentRepositoryIdentifier = 'default',
+        $verbose = false,
+        $dryRun = false
+    ) {
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         if (!$dryRun) {
-            $this->workspaceCommandHandler->handlePublishWorkspace(new PublishWorkspace(
+            $contentRepository->handle(new PublishWorkspace(
                 WorkspaceName::fromString($workspace),
-                UserIdentifier::forSystemUser()
-            ));
+                UserId::forSystemUser()
+            ))->block();
 
             $this->outputLine(
                 'Published all nodes in workspace %s to its base workspace',
@@ -169,39 +99,23 @@ class WorkspaceCommandController extends CommandController
      * @param boolean $dryRun If set, only displays which nodes would be discarded, no real changes are committed
      * @return void
      */
-    public function discardCommand($workspace, $verbose = false, $dryRun = false)
-    {
-        /* @todo how do we check this?
-        try {
-            $nodes = $this->publishingService->getUnpublishedNodes($workspace);
-        } catch (\Exception $exception) {
-            $this->outputLine(
-                'An error occurred while fetching unpublished nodes from workspace %s, discard aborted.',
-                [$workspace]
-            );
-            $this->quit(1);
-        }*/
-
-        #$this->outputLine('The workspace %s contains %u unpublished nodes.', [$workspace, count($nodes)]);
-
-        /*
-        foreach ($nodes as $node) {
-            if ($node->getPath() !== '/') {
-                if ($verbose) {
-                    $this->outputLine('    ' . $node->getPath());
-                }
-                if (!$dryRun) {
-                    $this->publishingService->discardNode($node);
-                }
-            }
-        }*/
+    public function discardCommand(
+        $workspace,
+        string $contentRepositoryIdentifier = 'default',
+        $verbose = false,
+        $dryRun = false
+    ) {
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
 
         if (!$dryRun) {
             try {
-                $this->workspaceCommandHandler->handleDiscardWorkspace(DiscardWorkspace::create(
-                    WorkspaceName::fromString($workspace),
-                    UserIdentifier::forSystemUser()
-                ));
+                $contentRepository->handle(
+                    DiscardWorkspace::create(
+                        WorkspaceName::fromString($workspace),
+                        UserId::forSystemUser()
+                    )
+                )->block();
             } catch (WorkspaceDoesNotExist $exception) {
                 $this->outputLine('Workspace "%s" does not exist', [$workspace]);
                 $this->quit(1);
@@ -210,15 +124,18 @@ class WorkspaceCommandController extends CommandController
         }
     }
 
-    public function createRootCommand(string $name): void
+    public function createRootCommand(string $name, string $contentRepositoryIdentifier = 'default'): void
     {
-        $this->workspaceCommandHandler->handleCreateRootWorkspace(new CreateRootWorkspace(
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
+        $contentRepository->handle(new CreateRootWorkspace(
             WorkspaceName::fromString($name),
             WorkspaceTitle::fromString($name),
             WorkspaceDescription::fromString($name),
-            UserIdentifier::forSystemUser(),
-            ContentStreamIdentifier::create()
-        ));
+            UserId::forSystemUser(),
+            ContentStreamId::create()
+        ))->block();
     }
 
     /**
@@ -233,8 +150,17 @@ class WorkspaceCommandController extends CommandController
      * @param string $owner The identifier of a User to own the workspace
      * @return void
      */
-    public function createCommand($workspace, $baseWorkspace = 'live', $title = null, $description = null, $owner = '')
-    {
+    public function createCommand(
+        $workspace,
+        $baseWorkspace = 'live',
+        $title = null,
+        $description = null,
+        $owner = '',
+        string $contentRepositoryIdentifier = 'default'
+    ) {
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
         if ($owner === '') {
             $workspaceOwner = null;
         } else {
@@ -246,15 +172,15 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $this->workspaceCommandHandler->handleCreateWorkspace(new CreateWorkspace(
+            $contentRepository->handle(new CreateWorkspace(
                 WorkspaceName::fromString($workspace),
                 WorkspaceName::fromString($baseWorkspace),
                 WorkspaceTitle::fromString($title ?: $workspace),
                 WorkspaceDescription::fromString($description ?: $workspace),
-                UserIdentifier::forSystemUser(),
-                null,
+                UserId::forSystemUser(),
+                ContentStreamId::create(),
                 $workspaceOwner
-            ));
+            ))->block();
         } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
             $this->outputLine('Workspace "%s" already exists', [$workspace]);
             $this->quit(1);
@@ -263,7 +189,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        if ($workspaceOwner instanceof UserIdentifier) {
+        if ($workspaceOwner instanceof UserId) {
             $this->outputLine(
                 'Created a new workspace "%s", based on workspace "%s", owned by "%s".',
                 [$workspace, $baseWorkspace, $owner]
@@ -287,7 +213,7 @@ class WorkspaceCommandController extends CommandController
      * @return void
      * @see neos.neos:workspace:discard
      */
-    public function deleteCommand($workspace, $force = false)
+    public function deleteCommand($workspace, $force = false, string $contentRepositoryIdentifier = 'default')
     {
         throw new \BadMethodCallException(
             'Workspace removal is not supported yet',
@@ -378,11 +304,11 @@ class WorkspaceCommandController extends CommandController
      * @param string $baseWorkspace Name of the new base workspace
      * @return void
      */
-    public function rebaseCommand($workspace, $baseWorkspace)
+    public function rebaseCommand($workspace, $baseWorkspace, string $contentRepositoryIdentifier = 'default')
     {
         throw new \BadMethodCallException(
             'Workspace rebasing is now a different concept ("real", git-like rebase <3),'
-                . ' changing the base workspace is not yet supported',
+            . ' changing the base workspace is not yet supported',
             1651960852
         );
         /*
@@ -417,9 +343,12 @@ class WorkspaceCommandController extends CommandController
      *
      * @return void
      */
-    public function listCommand()
+    public function listCommand(string $contentRepositoryIdentifier = 'default')
     {
-        $workspaces = $this->workspaceFinder->findAll();
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+
+        $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
 
         if (count($workspaces) === 0) {
             $this->outputLine('No workspaces found.');
@@ -430,12 +359,13 @@ class WorkspaceCommandController extends CommandController
         $headerRow = ['Name', 'Base Workspace', 'Title', 'Owner', 'Description'];
 
         foreach ($workspaces as $workspace) {
+            /* @var Workspace $workspace */
             $tableRows[] = [
-                $workspace->getWorkspaceName(),
-                $workspace->getBaseWorkspaceName() ?: '',
-                $workspace->getWorkspaceTitle(),
-                $workspace->getWorkspaceOwner() ?: '',
-                $workspace->getWorkspaceDescription()
+                $workspace->workspaceName,
+                $workspace->baseWorkspaceName ?: '',
+                $workspace->workspaceTitle,
+                $workspace->workspaceOwner ?: '',
+                $workspace->workspaceDescription
             ];
         }
         $this->output->outputTable($tableRows, $headerRow);

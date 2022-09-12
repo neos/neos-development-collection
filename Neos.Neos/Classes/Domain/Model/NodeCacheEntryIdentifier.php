@@ -16,7 +16,7 @@ namespace Neos\Neos\Domain\Model;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
  * The cache entry identifier data transfer object for nodes
@@ -30,11 +30,11 @@ final class NodeCacheEntryIdentifier implements CacheAwareInterface
     ) {
     }
 
-    public static function fromNode(NodeInterface $node): self
+    public static function fromNode(Node $node): self
     {
-        return new self('Node_' . $node->getContentStreamIdentifier()->getValue()
-            . '_' . $node->getDimensionSpacePoint()->hash
-            . '_' .  $node->getNodeAggregateIdentifier()->getValue());
+        return new self('Node_' . $node->subgraphIdentity->contentStreamId->getValue()
+            . '_' . $node->subgraphIdentity->dimensionSpacePoint->hash
+            . '_' .  $node->nodeAggregateId->getValue());
     }
 
     public function getCacheEntryIdentifier(): string

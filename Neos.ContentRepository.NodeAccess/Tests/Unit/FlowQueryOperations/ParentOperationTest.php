@@ -11,8 +11,8 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Eel\FlowQueryOperations\ParentOperation;
 use Neos\ContentRepository\Exception\NodeException;
@@ -29,17 +29,17 @@ class ParentOperationTest extends AbstractQueryOperationsTest
     protected $mockContext;
 
     /**
-     * @var TraversableNodeInterface
+     * @var TraversableNode
      */
     protected $siteNode;
 
     /**
-     * @var TraversableNodeInterface
+     * @var TraversableNode
      */
     protected $firstLevelNode;
 
     /**
-     * @var TraversableNodeInterface
+     * @var TraversableNode
      */
     protected $secondLevelNode;
 

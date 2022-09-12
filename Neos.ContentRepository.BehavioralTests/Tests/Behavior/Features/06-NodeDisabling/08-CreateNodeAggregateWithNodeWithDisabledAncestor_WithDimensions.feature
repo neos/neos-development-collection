@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Creation of nodes underneath disabled nodes
 
   If we create new nodes underneath of disabled nodes, they must be marked as disabled as well;
@@ -21,20 +21,21 @@ Feature: Creation of nodes underneath disabled nodes
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
+    And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"mul"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
     # We need both a real and a virtual specialization to test the different selection strategies
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value              |
-      | nodeAggregateIdentifier | "the-great-nodini" |
+      | nodeAggregateId | "the-great-nodini" |
       | sourceOrigin            | {"language":"mul"} |
       | targetOrigin            | {"language":"ltz"} |
     And the graph projection is fully up to date
@@ -43,11 +44,11 @@ Feature: Creation of nodes underneath disabled nodes
   Scenario: Create a new node with parent disabled with strategy allSpecializations
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
+      | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName     |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
       | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
 
     Then I expect the node aggregate "nodingers-cat" to exist
@@ -72,7 +73,7 @@ Feature: Creation of nodes underneath disabled nodes
 
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
+      | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
@@ -92,11 +93,11 @@ Feature: Creation of nodes underneath disabled nodes
   Scenario: Create a new node with parent disabled with strategy allVariants
     Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
+      | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allVariants" |
     When the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                            | parentNodeAggregateIdentifier | nodeName     |
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
       | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
 
     Then I expect the node aggregate "nodingers-cat" to exist
@@ -119,7 +120,7 @@ Feature: Creation of nodes underneath disabled nodes
 
     And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | nodeAggregateIdentifier      | "the-great-nodini" |
+      | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date

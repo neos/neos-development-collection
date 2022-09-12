@@ -14,76 +14,69 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Node;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Projection\Content\Reference;
-use Neos\ContentRepository\Projection\Content\References;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\Feature\Common\NodeTypeNotFoundException;
-use Neos\ContentRepository\SharedModel\Node\CoverageByOrigin;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\SharedModel\Node\OriginByCoverage;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Projection\Content\Exception\NodeImplementationClassNameIsInvalid;
-use Neos\ContentRepository\Projection\Content\NodeAggregate;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Content\PropertyCollection;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\ContentRepository\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
+use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\Projection\ContentGraph\CoverageByOrigin;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\Projection\ContentGraph\OriginByCoverage;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 
 /**
  * Implementation detail of ContentGraph and ContentSubgraph
+ *
+ * @internal
  */
 final class NodeFactory
 {
-    private NodeTypeManager $nodeTypeManager;
-    private PropertyConverter $propertyConverter;
-
-    public function __construct(NodeTypeManager $nodeTypeManager, PropertyConverter $propertyConverter)
-    {
-        $this->nodeTypeManager = $nodeTypeManager;
-        $this->propertyConverter = $propertyConverter;
+    public function __construct(
+        private readonly ContentRepositoryId $contentRepositoryId,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly PropertyConverter $propertyConverter
+    ) {
     }
 
     /**
-     * @param array<string,string> $nodeRow Node Row from projection (neos_contentgraph_node table)
+     * @param array<string,string> $nodeRow Node Row from projection (<prefix>_node table)
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowToNode(
         array $nodeRow,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
-    ): NodeInterface {
+    ): Node {
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $nodeClassName = $nodeType->getConfiguration('class') ?: Node::class;
-        if (!class_exists($nodeClassName)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotExist($nodeClassName);
-        }
-        if (!is_subclass_of($nodeClassName, NodeInterface::class)) {
-            throw NodeImplementationClassNameIsInvalid::becauseTheClassDoesNotImplementTheRequiredInterface(
-                $nodeClassName
-            );
-        }
-        /** @var NodeInterface $node */
-        $node = new $nodeClassName(
-            ContentStreamIdentifier::fromString($nodeRow['contentstreamidentifier']),
-            NodeAggregateIdentifier::fromString($nodeRow['nodeaggregateidentifier']),
+        $node = new Node(
+            ContentSubgraphIdentity::create(
+                $this->contentRepositoryId,
+                ContentStreamId::fromString($nodeRow['contentstreamid']),
+                $dimensionSpacePoint,
+                $visibilityConstraints
+            ),
+            NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
+            NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
             $nodeType,
-            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
-            NodeAggregateClassification::from($nodeRow['classification']),
-            $dimensionSpacePoint,
-            $visibilityConstraints
+            isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
         );
 
         return $node;
@@ -136,7 +129,7 @@ final class NodeFactory
             return null;
         }
 
-        $rawNodeAggregateIdentifier = '';
+        $rawNodeAggregateId = '';
         $rawNodeTypeName = '';
         $rawNodeName = '';
         $rawNodeAggregateClassification = '';
@@ -161,7 +154,7 @@ final class NodeFactory
                     $visibilityConstraints
                 );
                 $occupiedDimensionSpacePoints[] = $occupiedDimensionSpacePoint;
-                $rawNodeAggregateIdentifier = $rawNodeAggregateIdentifier ?: $nodeRow['nodeaggregateidentifier'];
+                $rawNodeAggregateId = $rawNodeAggregateId ?: $nodeRow['nodeaggregateid'];
                 $rawNodeTypeName = $rawNodeTypeName ?: $nodeRow['nodetypename'];
                 $rawNodeName = $rawNodeName ?: $nodeRow['name'];
                 $rawNodeAggregateClassification = $rawNodeAggregateClassification ?: $nodeRow['classification'];
@@ -183,12 +176,12 @@ final class NodeFactory
             }
         }
 
-        /** @var NodeInterface $primaryNode  a nodeAggregate only exists if it at least contains one node. */
+        /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
 
-        return new \Neos\ContentRepository\Projection\Content\NodeAggregate(
-            $primaryNode->getContentStreamIdentifier(),
-            NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
+        return new NodeAggregate(
+            $primaryNode->subgraphIdentity->contentStreamId,
+            NodeAggregateId::fromString($rawNodeAggregateId),
             NodeAggregateClassification::from($rawNodeAggregateClassification),
             NodeTypeName::fromString($rawNodeTypeName),
             $rawNodeName ? NodeName::fromString($rawNodeName) : null,
@@ -204,7 +197,7 @@ final class NodeFactory
 
     /**
      * @param iterable<int,array<string,string>> $nodeRows
-     * @return iterable<int,\Neos\ContentRepository\Projection\Content\NodeAggregate>
+     * @return iterable<int,NodeAggregate>
      * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowsToNodeAggregates(
@@ -224,80 +217,80 @@ final class NodeFactory
 
         foreach ($nodeRows as $nodeRow) {
             // A node can occupy exactly one DSP and cover multiple ones...
-            $rawNodeAggregateIdentifier = $nodeRow['nodeaggregateidentifier'];
+            $rawNodeAggregateId = $nodeRow['nodeaggregateid'];
             $occupiedDimensionSpacePoint = OriginDimensionSpacePoint::fromJsonString(
                 $nodeRow['origindimensionspacepoint']
             );
             if (
                 !isset($nodesByOccupiedDimensionSpacePointsByNodeAggregate
-                [$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->hash])
+                [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash])
             ) {
                 // ... so we handle occupation exactly once ...
                 $nodesByOccupiedDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
+                    [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash] = $this->mapNodeRowToNode(
                         $nodeRow,
                         $occupiedDimensionSpacePoint->toDimensionSpacePoint(),
                         $visibilityConstraints
                     );
-                $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][]
+                $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][]
                     = $occupiedDimensionSpacePoint;
-                $nodeTypeNames[$rawNodeAggregateIdentifier] = $nodeTypeNames[$rawNodeAggregateIdentifier]
+                $nodeTypeNames[$rawNodeAggregateId] = $nodeTypeNames[$rawNodeAggregateId]
                     ?? NodeTypeName::fromString($nodeRow['nodetypename']);
-                $nodeNames[$rawNodeAggregateIdentifier] = $nodeNames[$rawNodeAggregateIdentifier]
+                $nodeNames[$rawNodeAggregateId] = $nodeNames[$rawNodeAggregateId]
                     ?? ($nodeRow['name'] ? NodeName::fromString($nodeRow['name']) : null);
-                $classificationByNodeAggregate[$rawNodeAggregateIdentifier]
-                    = $classificationByNodeAggregate[$rawNodeAggregateIdentifier]
+                $classificationByNodeAggregate[$rawNodeAggregateId]
+                    = $classificationByNodeAggregate[$rawNodeAggregateId]
                     ?? NodeAggregateClassification::from($nodeRow['classification']);
             }
             // ... and coverage always ...
             $coveredDimensionSpacePoint = DimensionSpacePoint::fromJsonString(
                 $nodeRow['covereddimensionspacepoint']
             );
-            $coverageByOccupantsByNodeAggregate[$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->hash]
+            $coverageByOccupantsByNodeAggregate[$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash]
                 [$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
-            $occupationByCoveringByNodeAggregate[$rawNodeAggregateIdentifier][$coveredDimensionSpacePoint->hash]
+            $occupationByCoveringByNodeAggregate[$rawNodeAggregateId][$coveredDimensionSpacePoint->hash]
                 = $occupiedDimensionSpacePoint;
 
-            $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier][$coveredDimensionSpacePoint->hash]
+            $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId][$coveredDimensionSpacePoint->hash]
                 = $coveredDimensionSpacePoint;
             $nodesByCoveredDimensionSpacePointsByNodeAggregate
-                [$rawNodeAggregateIdentifier][$coveredDimensionSpacePoint->hash]
+                [$rawNodeAggregateId][$coveredDimensionSpacePoint->hash]
                 = $nodesByOccupiedDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateIdentifier][$occupiedDimensionSpacePoint->hash];
+                    [$rawNodeAggregateId][$occupiedDimensionSpacePoint->hash];
 
             // ... as we do for disabling
             if (isset($nodeRow['disableddimensionspacepointhash'])) {
                 $disabledDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateIdentifier][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
+                    [$rawNodeAggregateId][$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
             }
         }
 
-        foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateIdentifier => $nodes) {
-            /** @var string $rawNodeAggregateIdentifier */
-            yield new \Neos\ContentRepository\Projection\Content\NodeAggregate(
+        foreach ($nodesByOccupiedDimensionSpacePointsByNodeAggregate as $rawNodeAggregateId => $nodes) {
+            /** @var string $rawNodeAggregateId */
+            yield new NodeAggregate(
                 // this line is safe because a nodeAggregate only exists if it at least contains one node.
-                current($nodes)->getContentStreamIdentifier(),
-                NodeAggregateIdentifier::fromString($rawNodeAggregateIdentifier),
-                $classificationByNodeAggregate[$rawNodeAggregateIdentifier],
-                $nodeTypeNames[$rawNodeAggregateIdentifier],
-                $nodeNames[$rawNodeAggregateIdentifier],
+                current($nodes)->subgraphIdentity->contentStreamId,
+                NodeAggregateId::fromString($rawNodeAggregateId),
+                $classificationByNodeAggregate[$rawNodeAggregateId],
+                $nodeTypeNames[$rawNodeAggregateId],
+                $nodeNames[$rawNodeAggregateId],
                 new OriginDimensionSpacePointSet(
-                    $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]
+                    $occupiedDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId]
                 ),
                 $nodes,
                 CoverageByOrigin::fromArray(
-                    $coverageByOccupantsByNodeAggregate[$rawNodeAggregateIdentifier]
+                    $coverageByOccupantsByNodeAggregate[$rawNodeAggregateId]
                 ),
                 new DimensionSpacePointSet(
-                    $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier]
+                    $coveredDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId]
                 ),
                 $nodesByCoveredDimensionSpacePointsByNodeAggregate
-                    [$rawNodeAggregateIdentifier],
+                    [$rawNodeAggregateId],
                 OriginByCoverage::fromArray(
-                    $occupationByCoveringByNodeAggregate[$rawNodeAggregateIdentifier]
+                    $occupationByCoveringByNodeAggregate[$rawNodeAggregateId]
                 ),
                 new DimensionSpacePointSet(
-                    $disabledDimensionSpacePointsByNodeAggregate[$rawNodeAggregateIdentifier] ?? []
+                    $disabledDimensionSpacePointsByNodeAggregate[$rawNodeAggregateId] ?? []
                 )
             );
         }

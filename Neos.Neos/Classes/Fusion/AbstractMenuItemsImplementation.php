@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\NodeAccess\NodeAccessorManager;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Flow\Annotations as Flow;
@@ -41,7 +41,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $items;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $currentNode;
 
@@ -62,15 +62,12 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Rootline of all nodes from the current node to the site root node, keys are depth of nodes.
      *
-     * @var array<NodeInterface>
+     * @var array<Node>
      */
     protected $currentNodeRootline;
 
-    /**
-     * @Flow\Inject
-     * @var NodeAccessorManager
-     */
-    protected $nodeAccessorManager;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.
@@ -130,10 +127,10 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      *
      * This method needs to be called inside buildItems() in the subclasses.
      *
-     * @param NodeInterface $node
+     * @param Node $node
      * @return boolean
      */
-    protected function isNodeHidden(NodeInterface $node)
+    protected function isNodeHidden(Node $node)
     {
         if ($this->getRenderHiddenInIndex() === true) {
             // Please show hiddenInIndex nodes
@@ -148,7 +145,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Get the rootline from the current node up to the site node.
      *
-     * @return array<int,NodeInterface>
+     * @return array<int,Node>
      */
     protected function getCurrentNodeRootline(): array
     {
@@ -174,14 +171,10 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      * Node Level relative to site root node.
      * 0 = Site root node
      */
-    protected function getNodeLevelInSite(NodeInterface $node): int
+    protected function getNodeLevelInSite(Node $node): int
     {
-        $nodeAccessor = $this->nodeAccessorManager->accessorFor(
-            $node->getContentStreamIdentifier(),
-            $node->getDimensionSpacePoint(),
-            $node->getVisibilityConstraints()
-        );
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-        return $nodeAccessor->findNodePath($node)->getDepth() - 2; // sites always are depth 2;
+        return $subgraph->findNodePath($node->nodeAggregateId)->getDepth() - 2; // sites always are depth 2;
     }
 }

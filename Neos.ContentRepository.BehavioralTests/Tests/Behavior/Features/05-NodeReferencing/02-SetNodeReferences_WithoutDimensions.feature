@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Node References without Dimensions
 
   As a user of the CR I want to be able to create, overwrite, reorder and delete reference between nodes
@@ -26,14 +26,14 @@ Feature: Node References without Dimensions
             text:
               type: string
             postalAddress:
-              type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
+              type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
         referencesPropertyWithProperty:
           type: references
           properties:
             text:
               type: string
             postalAddress:
-              type: 'Neos\ContentRepository\Tests\Behavior\Fixtures\PostalAddress'
+              type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -41,16 +41,16 @@ Feature: Node References without Dimensions
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                      |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                      |
       | source-nodandaise       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | anthony-destinode       | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
       | berta-destinode         | lady-eleonode-rootford        | Neos.ContentRepository.Testing:NodeWithReferences |
@@ -59,10 +59,10 @@ Feature: Node References without Dimensions
   Scenario: Ensure that a single reference between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
-      | initiatingUserIdentifier      | "user"                            |
+      | initiatingUserId      | "user"                            |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -78,10 +78,10 @@ Feature: Node References without Dimensions
   Scenario: Ensure that a single reference with properties between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                                                                     |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                                                                       |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                                       |
       | referenceName                 | "referencePropertyWithProperty"                                                                           |
       | references                    | [{"target": "anthony-destinode", "properties":{"text":"my text", "postalAddress":"PostalAddress:dummy"}}] |
-      | initiatingUserIdentifier      | "user"                                                                                                    |
+      | initiatingUserId      | "user"                                                                                                    |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -97,10 +97,10 @@ Feature: Node References without Dimensions
   Scenario: Ensure that multiple references between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                         |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
+      | sourceNodeAggregateId | "source-nodandaise"                                           |
       | referenceName                 | "referencesProperty"                                          |
       | references                    | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
-      | initiatingUserIdentifier      | "user"                                                        |
+      | initiatingUserId      | "user"                                                        |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -122,10 +122,10 @@ Feature: Node References without Dimensions
   Scenario: Ensure that multiple references with properties between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                                                                                                                                                                                    |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                                                                                                                                                                                      |
+      | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                                                                      |
       | referenceName                 | "referencesPropertyWithProperty"                                                                                                                                                                                                     |
       | references                    | [{"target":"berta-destinode", "properties":{"text":"my text", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"}}] |
-      | initiatingUserIdentifier      | "user"                                                                                                                                                                                                                   |
+      | initiatingUserId      | "user"                                                                                                                                                                                                                   |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -147,18 +147,18 @@ Feature: Node References without Dimensions
   Scenario: Ensure that references between nodes can be set and overwritten
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                         |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
+      | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references                    | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
       | referenceName                 | "referencesProperty"                                          |
-      | initiatingUserIdentifier      | "user"                                                        |
+      | initiatingUserId      | "user"                                                        |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | references                    | [{"target": "anthony-destinode"}] |
       | referenceName                 | "referencesProperty"              |
-      | initiatingUserIdentifier      | "user"                            |
+      | initiatingUserId      | "user"                            |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -181,18 +181,18 @@ Feature: Node References without Dimensions
 
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                         |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
+      | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references                    | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
       | referenceName                 | "referencesProperty"                                          |
-      | initiatingUserIdentifier      | "user"                                                        |
+      | initiatingUserId      | "user"                                                        |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                         |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
+      | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references                    | [{"target": "carl-destinode"}, {"target": "berta-destinode"}] |
       | referenceName                 | "referencesProperty"                                          |
-      | initiatingUserIdentifier      | "user"                                                        |
+      | initiatingUserId      | "user"                                                        |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
@@ -205,18 +205,18 @@ Feature: Node References without Dimensions
 
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                                                         |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"                                           |
+      | sourceNodeAggregateId | "source-nodandaise"                                           |
       | references                    | [{"target": "berta-destinode"}, {"target": "carl-destinode"}] |
       | referenceName                 | "referencesProperty"                                          |
-      | initiatingUserIdentifier      | "user"                                                        |
+      | initiatingUserId      | "user"                                                        |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                           | Value                |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"  |
+      | sourceNodeAggregateId | "source-nodandaise"  |
       | references                    | []                   |
       | referenceName                 | "referencesProperty" |
-      | initiatingUserIdentifier      | "user"               |
+      | initiatingUserId      | "user"               |
 
     And the graph projection is fully up to date
 
@@ -233,18 +233,18 @@ Feature: Node References without Dimensions
 
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | references                    | [{"target": "anthony-destinode"}] |
       | referenceName                 | "referenceProperty"               |
-      | initiatingUserIdentifier      | "user"                            |
+      | initiatingUserId      | "user"                            |
     And the graph projection is fully up to date
 
     And the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "berta-destinode"                 |
+      | sourceNodeAggregateId | "berta-destinode"                 |
       | references                    | [{"target": "anthony-destinode"}] |
       | referenceName                 | "referenceProperty"               |
-      | initiatingUserIdentifier      | "user"                            |
+      | initiatingUserId      | "user"                            |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
@@ -256,10 +256,10 @@ Feature: Node References without Dimensions
   Scenario: Ensure that a reference between nodes can be set and read when matching constraints
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | references                    | [{"target": "anthony-destinode"}] |
       | referenceName                 | "restrictedReferenceProperty"     |
-      | initiatingUserIdentifier      | "user"                            |
+      | initiatingUserId      | "user"                            |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}

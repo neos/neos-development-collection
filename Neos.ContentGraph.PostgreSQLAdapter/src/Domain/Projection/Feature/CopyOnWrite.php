@@ -18,10 +18,12 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The copy on write feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait CopyOnWrite
 {
@@ -29,7 +31,7 @@ trait CopyOnWrite
      * @throws \Throwable
      */
     public function copyOnWrite(
-        ContentStreamIdentifier $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamIdentifier,
         NodeRecord $originNode,
         callable $preprocessor
     ): NodeRelationAnchorPoint {
@@ -41,7 +43,7 @@ trait CopyOnWrite
             $copiedNode = clone $originNode;
             $copiedNode->relationAnchorPoint = $copiedNodeRelationAnchorPoint;
             $preprocessor($copiedNode);
-            $copiedNode->addToDatabase($this->getDatabaseConnection());
+            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             $this->reassignIngoingHierarchyRelations(
                 $originContentStreamIdentifier,
@@ -64,7 +66,7 @@ trait CopyOnWrite
         } else {
             // no reason to create a copy
             $preprocessor($originNode);
-            $originNode->updateToDatabase($this->getDatabaseConnection());
+            $originNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             return $originNode->relationAnchorPoint;
         }
@@ -74,7 +76,7 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function reassignIngoingHierarchyRelations(
-        ContentStreamIdentifier $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamIdentifier,
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
@@ -87,7 +89,8 @@ trait CopyOnWrite
             $ingoingHierarchyRelation->replaceChildNodeAnchor(
                 $originRelationAnchorPoint,
                 $targetRelationAnchorPoint,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -96,7 +99,7 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function reassignOutgoingHierarchyRelations(
-        ContentStreamIdentifier $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamIdentifier,
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
@@ -108,7 +111,8 @@ trait CopyOnWrite
         ) {
             $outgoingHierarchyRelation->replaceParentNodeAnchor(
                 $targetRelationAnchorPoint,
-                $this->getDatabaseConnection()
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix
             );
         }
     }
@@ -126,7 +130,7 @@ trait CopyOnWrite
             ) as $outgoingReferenceRelation
         ) {
             $copiedReferenceRelation = $outgoingReferenceRelation->withSourceNodeAnchor($newSourceNodeAnchor);
-            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection());
+            $copiedReferenceRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
         }
     }
 

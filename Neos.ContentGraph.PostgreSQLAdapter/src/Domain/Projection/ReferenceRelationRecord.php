@@ -16,23 +16,23 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * The active record for reading and writing reference relations from and to the database
+ *
+ * @internal
  */
 final class ReferenceRelationRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_referencerelation';
-
     public function __construct(
         public readonly NodeRelationAnchorPoint $sourceNodeAnchor,
-        public readonly PropertyName $name,
+        public readonly ReferenceName $name,
         public readonly int $position,
         public readonly ?SerializedPropertyValues $properties,
-        public readonly NodeAggregateIdentifier $targetNodeAggregateIdentifier
+        public readonly NodeAggregateId $targetNodeAggregateIdentifier
     ) {
     }
 
@@ -43,21 +43,21 @@ final class ReferenceRelationRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['sourcenodeanchor']),
-            PropertyName::fromString($databaseRow['name']),
+            ReferenceName::fromString($databaseRow['name']),
             $databaseRow['position'],
             $databaseRow['properties']
                 ? SerializedPropertyValues::fromJsonString($databaseRow['properties'])
                 : null,
-            NodeAggregateIdentifier::fromString($databaseRow['targetnodeaggregateidentifier'])
+            NodeAggregateId::fromString($databaseRow['targetnodeaggregateidentifier'])
         );
     }
 
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
+        $databaseConnection->insert($tableNamePrefix . '_referencerelation', [
             'sourcenodeanchor' => (string)$this->sourceNodeAnchor,
             'name' => (string)$this->name,
             'position' => $this->position,
@@ -81,9 +81,10 @@ final class ReferenceRelationRecord
 
     public static function removeFromDatabaseForSource(
         NodeRelationAnchorPoint $sourceNodeAnchor,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
-        $databaseConnection->delete(self::TABLE_NAME, [
+        $databaseConnection->delete($tableNamePrefix . '_referencerelation', [
             'sourcenodeanchor' => $sourceNodeAnchor
         ]);
     }

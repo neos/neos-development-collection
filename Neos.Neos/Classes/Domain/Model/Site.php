@@ -374,7 +374,7 @@ class Site
      */
     public function getConfiguration(): array
     {
-        // without recursive merge
+        // we DO NOT want recursive merge here
         return $this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*'];
     }
 }

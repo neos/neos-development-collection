@@ -16,58 +16,61 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\GraphProjector;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
-use Neos\ContentRepository\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * The read only content graph for use by the {@see GraphProjector}. This is the class for low-level operations
  * within the projector, where implementation details of the graph structure are known.
  *
  * This is NO PUBLIC API in any way.
+ *
+ * @internal
  */
 class ProjectionContentGraph
 {
     public function __construct(
-        private readonly DbalClientInterface $client
+        private readonly DbalClientInterface $client,
+        private readonly string $tableNamePrefix
     ) {
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $childNodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $childNodeAggregateId
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeRecord|null
      * @throws DBALException
      * @throws \Exception
      */
     public function findParentNode(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $params = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
+            'childNodeAggregateId' => (string)$childNodeAggregateId,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT p.*, ph.contentstreamidentifier, ph.name FROM neos_contentgraph_node p
- INNER JOIN neos_contentgraph_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
- INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
- WHERE c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+            'SELECT p.*, ph.contentstreamid, ph.name FROM ' . $this->tableNamePrefix . '_node p
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph ON ph.childnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch ON ch.parentnodeanchor = p.relationanchorpoint
+ INNER JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
+ WHERE c.nodeaggregateid = :childNodeAggregateId
  AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
- AND ph.contentstreamidentifier = :contentStreamIdentifier
- AND ch.contentstreamidentifier = :contentStreamIdentifier
+ AND ph.contentstreamid = :contentStreamId
+ AND ch.contentstreamid = :contentStreamId
  AND ph.dimensionspacepointhash = :originDimensionSpacePointHash
  AND ch.dimensionspacepointhash = :originDimensionSpacePointHash',
             $params
@@ -82,10 +85,10 @@ class ProjectionContentGraph
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     public function findParentNodeRecordByOriginInDimensionSpacePoint(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateIdentifier $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateId
     ): ?NodeRecord {
         $query = /** @lang MariaDB */
             '
@@ -93,28 +96,28 @@ class ProjectionContentGraph
              * Second, find the node record with the same node aggregate identifier in the selected DSP
              */
             SELECT p.*
-            FROM ' . NodeRecord::TABLE_NAME . ' p
-            JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' ph ON p.relationanchorpoint = ph.childnodeanchor
+            FROM ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' p
+            JOIN ' . $this->tableNamePrefix . HierarchyRelationRecord::TABLE_NAME_SUFFIX  . ' ph ON p.relationanchorpoint = ph.childnodeanchor
             WHERE ph.contentstreamidentifier = :contentStreamIdentifier
             AND ph.dimensionspacepointhash = :coveredDimensionSpacePointHash
             AND p.nodeaggregateidentifier = (
                 /**
                  * First, find the origin\'s parent node aggregate identifier
                  */
-                SELECT orgp.nodeaggregateidentifier FROM ' . NodeRecord::TABLE_NAME . ' orgp
-                    JOIN ' . HierarchyRelationRecord::TABLE_NAME . ' orgh
+                SELECT orgp.nodeaggregateidentifier FROM ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' orgp
+                    JOIN ' . $this->tableNamePrefix . HierarchyRelationRecord::TABLE_NAME_SUFFIX  . ' orgh
                         ON orgh.parentnodeanchor = orgp.relationanchorpoint
-                    JOIN ' . NodeRecord::TABLE_NAME . ' orgn ON orgn.relationanchorpoint = orgh.childnodeanchor
+                    JOIN ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' orgn ON orgn.relationanchorpoint = orgh.childnodeanchor
                 WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
                     AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
                     AND orgn.nodeaggregateidentifier = :childNodeAggregateIdentifier
             )';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamIdentifier' => (string)$contentStreamId,
             'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateId
         ];
 
         $result = $this->getDatabaseConnection()
@@ -125,27 +128,27 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $nodeAggregateId
      * @param DimensionSpacePoint $coveredDimensionSpacePoint
      * @return NodeRecord|null
      * @throws DBALException
      * @throws \Exception
      */
     public function findNodeInAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier
+            'SELECT n.*, h.name FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateid = :nodeAggregateId
+ AND h.contentstreamid = :contentStreamId
  AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamId' => (string)$contentStreamId,
+                'nodeAggregateId' => (string)$nodeAggregateId,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash
             ]
         )->fetchAssociative();
@@ -154,27 +157,27 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $nodeAggregateId
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @return NodeRecord|null
      * @throws \Exception
      */
-    public function findNodeByIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+    public function findNodeByIds(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?NodeRecord {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.*, h.name FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+            'SELECT n.*, h.name FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateid = :nodeAggregateId
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
- AND h.contentstreamidentifier = :contentStreamIdentifier
+ AND h.contentstreamid = :contentStreamId
  AND h.dimensionspacepointhash = :originDimensionSpacePointHash',
             [
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'contentStreamId' => (string)$contentStreamId,
+                'nodeAggregateId' => (string)$nodeAggregateId,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetchAssociative();
@@ -183,27 +186,27 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @return NodeRelationAnchorPoint|null
      * @throws DBALException
      */
     public function getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        ContentStreamIdentifier $contentStreamIdentifier
+        ContentStreamId $contentStreamId
     ): ?NodeRelationAnchorPoint {
         $rows = $this->getDatabaseConnection()->executeQuery(
-            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
+            'SELECT DISTINCT n.relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateid = :nodeAggregateId
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
- AND h.contentstreamidentifier = :contentStreamIdentifier',
+ AND h.contentstreamid = :contentStreamId',
             [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+                'nodeAggregateId' => (string)$nodeAggregateId,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'contentStreamId' => (string)$contentStreamId,
             ]
         )->fetchAllAssociative();
 
@@ -221,23 +224,23 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param NodeAggregateId $nodeAggregateId
+     * @param ContentStreamId $contentStreamId
      * @return NodeRelationAnchorPoint[]
      * @throws DBALException
      */
     public function getAnchorPointsForNodeAggregateInContentStream(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        ContentStreamIdentifier $contentStreamIdentifier
+        NodeAggregateId $nodeAggregateId,
+        ContentStreamId $contentStreamId
     ): iterable {
         $rows = $this->getDatabaseConnection()->executeQuery(
-            'SELECT DISTINCT n.relationanchorpoint FROM neos_contentgraph_node n
- INNER JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
- WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
- AND h.contentstreamidentifier = :contentStreamIdentifier',
+            'SELECT DISTINCT n.relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateid = :nodeAggregateId
+ AND h.contentstreamid = :contentStreamId',
             [
-                'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'nodeAggregateId' => (string)$nodeAggregateId,
+                'contentStreamId' => (string)$contentStreamId,
             ]
         )->fetchAllAssociative();
 
@@ -255,7 +258,7 @@ class ProjectionContentGraph
     public function getNodeByAnchorPoint(NodeRelationAnchorPoint $nodeRelationAnchorPoint): ?NodeRecord
     {
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
-            'SELECT n.* FROM neos_contentgraph_node n
+            'SELECT n.* FROM ' . $this->tableNamePrefix . '_node n
  WHERE n.relationanchorpoint = :relationAnchorPoint',
             [
                 'relationAnchorPoint' => (string)$nodeRelationAnchorPoint,
@@ -269,7 +272,7 @@ class ProjectionContentGraph
      * @param NodeRelationAnchorPoint|null $parentAnchorPoint
      * @param NodeRelationAnchorPoint|null $childAnchorPoint
      * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return int
      * @throws DBALException
@@ -278,7 +281,7 @@ class ProjectionContentGraph
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint
     ): int {
         if (!$parentAnchorPoint && !$childAnchorPoint) {
@@ -290,13 +293,13 @@ class ProjectionContentGraph
         if ($succeedingSiblingAnchorPoint) {
             /** @var array<string,mixed> $succeedingSiblingRelation */
             $succeedingSiblingRelation = $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :succeedingSiblingAnchorPoint
-                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
                     'succeedingSiblingAnchorPoint' => (string)$succeedingSiblingAnchorPoint,
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'contentStreamId' => (string)$contentStreamId,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAssociative();
@@ -305,14 +308,14 @@ class ProjectionContentGraph
             $parentAnchorPoint = $succeedingSiblingRelation['parentnodeanchor'];
 
             $precedingSiblingData = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
+                'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.parentnodeanchor = :anchorPoint
-                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.position < :position',
                 [
                     'anchorPoint' => $parentAnchorPoint,
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'contentStreamId' => (string)$contentStreamId,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     'position' => $succeedingSiblingPosition
                 ]
@@ -323,7 +326,7 @@ class ProjectionContentGraph
             }
 
             if (is_null($precedingSiblingPosition)) {
-                $position = $succeedingSiblingPosition - GraphProjector::RELATION_DEFAULT_OFFSET;
+                $position = $succeedingSiblingPosition - DoctrineDbalContentGraphProjection::RELATION_DEFAULT_OFFSET;
             } else {
                 $position = ($succeedingSiblingPosition + $precedingSiblingPosition) / 2;
             }
@@ -331,13 +334,13 @@ class ProjectionContentGraph
             if (!$parentAnchorPoint) {
                 /** @var array<string,mixed> $childHierarchyRelationData */
                 $childHierarchyRelationData = $this->getDatabaseConnection()->executeQuery(
-                    'SELECT h.parentnodeanchor FROM neos_contentgraph_hierarchyrelation h
+                    'SELECT h.parentnodeanchor FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       WHERE h.childnodeanchor = :childAnchorPoint
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                     [
                         'childAnchorPoint' => $childAnchorPoint,
-                        'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                        'contentStreamId' => (string)$contentStreamId,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAssociative();
@@ -346,20 +349,20 @@ class ProjectionContentGraph
                 );
             }
             $rightmostSucceedingSiblingRelationData = $this->getDatabaseConnection()->executeQuery(
-                'SELECT MAX(h.position) AS position FROM neos_contentgraph_hierarchyrelation h
+                'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       WHERE h.parentnodeanchor = :parentAnchorPoint
-                      AND h.contentstreamidentifier = :contentStreamIdentifier
+                      AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
                     'parentAnchorPoint' => $parentAnchorPoint,
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'contentStreamId' => (string)$contentStreamId,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAssociative();
 
             if ($rightmostSucceedingSiblingRelationData) {
                 $position = ((int)$rightmostSucceedingSiblingRelationData['position'])
-                    + GraphProjector::RELATION_DEFAULT_OFFSET;
+                    + DoctrineDbalContentGraphProjection::RELATION_DEFAULT_OFFSET;
             } else {
                 $position = 0;
             }
@@ -370,26 +373,26 @@ class ProjectionContentGraph
 
     /**
      * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function getOutgoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $parentAnchorPoint,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
         $relations = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.parentnodeanchor = :parentAnchorPoint
-                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
                     'parentAnchorPoint' => (string)$parentAnchorPoint,
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'contentStreamId' => (string)$contentStreamId,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAllAssociative() as $relationData
@@ -402,26 +405,26 @@ class ProjectionContentGraph
 
     /**
      * @param NodeRelationAnchorPoint $childAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function getIngoingHierarchyRelationsForNodeAndSubgraph(
         NodeRelationAnchorPoint $childAnchorPoint,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint
     ): array {
         $relations = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :childAnchorPoint
-                          AND h.contentstreamidentifier = :contentStreamIdentifier
+                          AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
                     'childAnchorPoint' => (string)$childAnchorPoint,
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'contentStreamId' => (string)$contentStreamId,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAllAssociative() as $relationData
@@ -434,23 +437,23 @@ class ProjectionContentGraph
 
     /**
      * @param NodeRelationAnchorPoint $childAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePointSet|null $restrictToSet
      * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findIngoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $childAnchorPoint,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePointSet $restrictToSet = null
     ): array {
         $relations = [];
-        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+        $query = 'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
     WHERE h.childnodeanchor = :childAnchorPoint
-    AND h.contentstreamidentifier = :contentStreamIdentifier';
+    AND h.contentstreamid = :contentStreamId';
         $parameters = [
             'childAnchorPoint' => (string)$childAnchorPoint,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamId' => (string)$contentStreamId
         ];
         $types = [];
 
@@ -472,23 +475,23 @@ class ProjectionContentGraph
 
     /**
      * @param NodeRelationAnchorPoint $parentAnchorPoint
-     * @param ContentStreamIdentifier $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePointSet|null $restrictToSet
      * @return HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findOutgoingHierarchyRelationsForNode(
         NodeRelationAnchorPoint $parentAnchorPoint,
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePointSet $restrictToSet = null
     ): array {
         $relations = [];
-        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
+        $query = 'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
     WHERE h.parentnodeanchor = :parentAnchorPoint
-    AND h.contentstreamidentifier = :contentStreamIdentifier';
+    AND h.contentstreamid = :contentStreamId';
         $parameters = [
             'parentAnchorPoint' => (string)$parentAnchorPoint,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamId' => (string)$contentStreamId
         ];
         $types = [];
 
@@ -509,28 +512,28 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $nodeAggregateId
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @return array|HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findOutgoingHierarchyRelationsForNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePointSet
     ): array {
         $relations = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-     INNER JOIN neos_contentgraph_node n ON h.parentnodeanchor = n.relationanchorpoint
-     WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-     AND h.contentstreamidentifier = :contentStreamIdentifier
+                'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+     INNER JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
+     WHERE n.nodeaggregateid = :nodeAggregateId
+     AND h.contentstreamid = :contentStreamId
      AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
                 [
-                    'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-                    'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                    'nodeAggregateId' => (string)$nodeAggregateId,
+                    'contentStreamId' => (string)$contentStreamId,
                     'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
                 ],
                 [
@@ -545,26 +548,26 @@ class ProjectionContentGraph
     }
 
     /**
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $nodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $nodeAggregateId
      * @param DimensionSpacePointSet|null $dimensionSpacePointSet
      * @return array|HierarchyRelationRecord[]
      * @throws DBALException
      */
     public function findIngoingHierarchyRelationsForNodeAggregate(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         DimensionSpacePointSet $dimensionSpacePointSet = null
     ): array {
         $relations = [];
 
-        $query = 'SELECT h.* FROM neos_contentgraph_hierarchyrelation h
-            INNER JOIN neos_contentgraph_node n ON h.childnodeanchor = n.relationanchorpoint
-            WHERE n.nodeaggregateidentifier = :nodeAggregateIdentifier
-            AND h.contentstreamidentifier = :contentStreamIdentifier';
+        $query = 'SELECT h.* FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+            INNER JOIN ' . $this->tableNamePrefix . '_node n ON h.childnodeanchor = n.relationanchorpoint
+            WHERE n.nodeaggregateid = :nodeAggregateId
+            AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'nodeAggregateId' => (string)$nodeAggregateId,
+            'contentStreamId' => (string)$contentStreamId,
         ];
         $types = [];
 
@@ -586,61 +589,61 @@ class ProjectionContentGraph
     }
 
     /**
-     * @return array<int,ContentStreamIdentifier>
+     * @return array<int,ContentStreamId>
      * @throws \Doctrine\DBAL\Driver\Exception|\Doctrine\DBAL\Exception
      */
-    public function getAllContentStreamIdentifiersAnchorPointIsContainedIn(
+    public function getAllContentStreamIdsAnchorPointIsContainedIn(
         NodeRelationAnchorPoint $nodeRelationAnchorPoint
     ): array {
-        $contentStreamIdentifiers = [];
+        $contentStreamIds = [];
         foreach (
             $this->getDatabaseConnection()->executeQuery(
-                'SELECT DISTINCT h.contentstreamidentifier
-                          FROM neos_contentgraph_hierarchyrelation h
+                'SELECT DISTINCT h.contentstreamid
+                          FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
                 [
                     'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
                 ]
             )->fetchAllAssociative() as $row
         ) {
-            $contentStreamIdentifiers[] = ContentStreamIdentifier::fromString($row['contentstreamidentifier']);
+            $contentStreamIds[] = ContentStreamId::fromString($row['contentstreamid']);
         }
 
-        return $contentStreamIdentifiers;
+        return $contentStreamIds;
     }
 
     /**
-     * Finds all descendant node aggregate identifiers, indexed by dimension space point hash
+     * Finds all descendant node aggregate ids, indexed by dimension space point hash
      *
-     * @param ContentStreamIdentifier $contentStreamIdentifier
-     * @param NodeAggregateIdentifier $entryNodeAggregateIdentifier
+     * @param ContentStreamId $contentStreamId
+     * @param NodeAggregateId $entryNodeAggregateId
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints
-     * @return array|NodeAggregateIdentifier[][]
+     * @return array|NodeAggregateId[][]
      * @throws DBALException
      */
-    public function findDescendantNodeAggregateIdentifiers(
-        ContentStreamIdentifier $contentStreamIdentifier,
-        NodeAggregateIdentifier $entryNodeAggregateIdentifier,
+    public function findDescendantNodeAggregateIds(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $entryNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): array {
         $rows = $this->getDatabaseConnection()->executeQuery(
             '
-            -- ProjectionContentGraph::findDescendantNodeAggregateIdentifiers
+            -- ProjectionContentGraph::findDescendantNodeAggregateIds
 
             WITH RECURSIVE nestedNodes AS (
                     -- --------------------------------
                     -- INITIAL query: select the root nodes
                     -- --------------------------------
                     SELECT
-                       n.nodeaggregateidentifier,
+                       n.nodeaggregateid,
                        n.relationanchorpoint,
                        h.dimensionspacepointhash
                     FROM
-                        neos_contentgraph_node n
-                    INNER JOIN neos_contentgraph_hierarchyrelation h
+                        ' . $this->tableNamePrefix . '_node n
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         on h.childnodeanchor = n.relationanchorpoint
-                    WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
-                    AND h.contentstreamidentifier = :contentStreamIdentifier
+                    WHERE n.nodeaggregateid = :entryNodeAggregateId
+                    AND h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
 
                 UNION
@@ -648,24 +651,24 @@ class ProjectionContentGraph
                     -- RECURSIVE query: do one "child" query step
                     -- --------------------------------
                     SELECT
-                        c.nodeaggregateidentifier,
+                        c.nodeaggregateid,
                         c.relationanchorpoint,
                        h.dimensionspacepointhash
                     FROM
                         nestedNodes p
-                    INNER JOIN neos_contentgraph_hierarchyrelation h
+                    INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         on h.parentnodeanchor = p.relationanchorpoint
-                    INNER JOIN neos_contentgraph_node c
+                    INNER JOIN ' . $this->tableNamePrefix . '_node c
                         on h.childnodeanchor = c.relationanchorpoint
                     WHERE
-                        h.contentstreamidentifier = :contentStreamIdentifier
+                        h.contentstreamid = :contentStreamId
                         AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
             )
-            select nodeaggregateidentifier, dimensionspacepointhash from nestedNodes
+            select nodeaggregateid, dimensionspacepointhash from nestedNodes
             ',
             [
-                'entryNodeAggregateIdentifier' => (string)$entryNodeAggregateIdentifier,
-                'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+                'entryNodeAggregateId' => (string)$entryNodeAggregateId,
+                'contentStreamId' => (string)$contentStreamId,
                 'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [
@@ -673,13 +676,13 @@ class ProjectionContentGraph
             ]
         )->fetchAllAssociative();
 
-        $nodeAggregateIdentifiers = [];
+        $nodeAggregateIds = [];
         foreach ($rows as $row) {
-            $nodeAggregateIdentifiers[$row['nodeaggregateidentifier']][$row['dimensionspacepointhash']]
-                = NodeAggregateIdentifier::fromString($row['nodeaggregateidentifier']);
+            $nodeAggregateIds[$row['nodeaggregateid']][$row['dimensionspacepointhash']]
+                = NodeAggregateId::fromString($row['nodeaggregateid']);
         }
 
-        return $nodeAggregateIdentifiers;
+        return $nodeAggregateIds;
     }
 
     /**
@@ -691,7 +694,7 @@ class ProjectionContentGraph
             NodeRelationAnchorPoint::fromString($rawData['parentnodeanchor']),
             NodeRelationAnchorPoint::fromString($rawData['childnodeanchor']),
             $rawData['name'] ? NodeName::fromString($rawData['name']) : null,
-            ContentStreamIdentifier::fromString($rawData['contentstreamidentifier']),
+            ContentStreamId::fromString($rawData['contentstreamid']),
             DimensionSpacePoint::fromJsonString($rawData['dimensionspacepoint']),
             $rawData['dimensionspacepointhash'],
             (int)$rawData['position']

@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilege;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\CreateNodePrivilegeSubject;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\EditNodePrivilege;
@@ -20,11 +20,11 @@ use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSu
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\PropertyAwareNodePrivilegeSubject;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\ReadNodePropertyPrivilege;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\RemoveNodePrivilege;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context;
-use Neos\ContentRepository\SharedModel\NodeType\NodeType;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
  * This service provides API methods to check for privileges
@@ -48,17 +48,17 @@ class AuthorizationService
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
+    protected $contentRepositoryRegistry;
 
     /**
      * Returns true if the currently authenticated user is allowed to edit the given $node, otherwise false
      *
-     * @param NodeInterface $node
+     * @param Node $node
      * @return boolean
      */
-    public function isGrantedToEditNode(NodeInterface $node)
+    public function isGrantedToEditNode(Node $node)
     {
         return $this->privilegeManager->isGranted(EditNodePrivilege::class, new NodePrivilegeSubject($node));
     }
@@ -66,11 +66,11 @@ class AuthorizationService
     /**
      * Returns true if the currently authenticated user is allowed to create a node of type $typeOfNewNode within the given $referenceNode
      *
-     * @param NodeInterface $referenceNode
+     * @param Node $referenceNode
      * @param NodeType $typeOfNewNode
      * @return boolean
      */
-    public function isGrantedToCreateNode(NodeInterface $referenceNode, NodeType $typeOfNewNode = null)
+    public function isGrantedToCreateNode(Node $referenceNode, NodeType $typeOfNewNode = null)
     {
         return $this->privilegeManager->isGranted(CreateNodePrivilege::class, new CreateNodePrivilegeSubject($referenceNode, $typeOfNewNode));
     }
@@ -78,14 +78,15 @@ class AuthorizationService
     /**
      * Returns the node types that the currently authenticated user is *denied* to create within the given $referenceNode
      *
-     * @param NodeInterface $referenceNode
+     * @param Node $referenceNode
      * @return string[] Array of granted node type names
      */
-    public function getNodeTypeNamesDeniedForCreation(NodeInterface $referenceNode)
+    public function getNodeTypeNamesDeniedForCreation(Node $referenceNode)
     {
         $privilegeSubject = new CreateNodePrivilegeSubject($referenceNode);
 
-        $allNodeTypes = $this->nodeTypeManager->getNodeTypes();
+        $contentRepository = $this->contentRepositoryRegistry->get($referenceNode->subgraphIdentity->contentRepositoryId);
+        $allNodeTypes = $contentRepository->getNodeTypeManager()->getNodeTypes();
 
         $deniedCreationNodeTypes = [];
         $grantedCreationNodeTypes = [];
@@ -115,42 +116,42 @@ class AuthorizationService
     /**
      * Returns true if the currently authenticated user is allowed to remove the given $node
      *
-     * @param NodeInterface $node
+     * @param Node $node
      * @return boolean
      */
-    public function isGrantedToRemoveNode(NodeInterface $node)
+    public function isGrantedToRemoveNode(Node $node)
     {
         $privilegeSubject = new NodePrivilegeSubject($node);
         return $this->privilegeManager->isGranted(RemoveNodePrivilege::class, $privilegeSubject);
     }
 
     /**
-     * @param NodeInterface $node
+     * @param Node $node
      * @param string $propertyName
      * @return boolean
      */
-    public function isGrantedToReadNodeProperty(NodeInterface $node, $propertyName)
+    public function isGrantedToReadNodeProperty(Node $node, $propertyName)
     {
         $privilegeSubject = new PropertyAwareNodePrivilegeSubject($node, null, $propertyName);
         return $this->privilegeManager->isGranted(ReadNodePropertyPrivilege::class, $privilegeSubject);
     }
 
     /**
-     * @param NodeInterface $node
+     * @param Node $node
      * @param string $propertyName
      * @return boolean
      */
-    public function isGrantedToEditNodeProperty(NodeInterface $node, $propertyName)
+    public function isGrantedToEditNodeProperty(Node $node, $propertyName)
     {
         $privilegeSubject = new PropertyAwareNodePrivilegeSubject($node, null, $propertyName);
         return $this->privilegeManager->isGranted(EditNodePropertyPrivilege::class, $privilegeSubject);
     }
 
     /**
-     * @param NodeInterface $node
+     * @param Node $node
      * @return string[] Array of granted node property names
      */
-    public function getDeniedNodePropertiesForEditing(NodeInterface $node)
+    public function getDeniedNodePropertiesForEditing(Node $node)
     {
         $privilegeSubject = new PropertyAwareNodePrivilegeSubject($node);
 

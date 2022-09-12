@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\EventSourcedContentRepository\LegacyApi\ContextInNodeBasedReadModel;
 
-use Neos\ContentRepository\SharedModel\NodeAddress;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\EventSourcedContentRepository\LegacyApi\Logging\LegacyLoggerInterface;
 use Neos\Flow\Log\Utility\LogEnvironment;
@@ -16,7 +17,7 @@ use Neos\Flow\Security\Exception;
 class EmulatedLegacyContext
 {
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $node;
 
@@ -28,9 +29,9 @@ class EmulatedLegacyContext
 
     /**
      * @Flow\Inject
-     * @var NodeAddressFactory
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeAddressFactory;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -38,7 +39,7 @@ class EmulatedLegacyContext
      */
     protected $privilegeManager;
 
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -74,14 +75,17 @@ class EmulatedLegacyContext
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return $this->getNodeAddressOfContextNode()->workspaceName?->name;
+        return $this->getNodeAddressOfContextNode()->workspaceName->name;
     }
 
     public function getWorkspace(): EmulatedLegacyWorkspace
     {
         $this->legacyLogger->info('context.workspace called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return new EmulatedLegacyWorkspace($this->getNodeAddressOfContextNode());
+        return new EmulatedLegacyWorkspace(
+            $this->node->subgraphIdentity->contentRepositoryId,
+            $this->getNodeAddressOfContextNode()
+        );
     }
 
     public function getCurrentSite(): EmulatedLegacySite
@@ -93,7 +97,10 @@ class EmulatedLegacyContext
 
     private function getNodeAddressOfContextNode(): NodeAddress
     {
-        return $this->nodeAddressFactory->createFromNode($this->node);
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $this->node->subgraphIdentity->contentRepositoryId
+        );
+        return NodeAddressFactory::create($contentRepository)->createFromNode($this->node);
     }
 
     private function hasAccessToBackend(): bool

@@ -14,9 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Utility\User as UserUtility;
@@ -41,12 +38,6 @@ class UserService
     protected $userDomainService;
 
     /**
-     * @Flow\Inject
-     * @var WorkspaceFinder
-     */
-    protected $workspaceFinder;
-
-    /**
      * @Flow\InjectConfiguration("userInterface.defaultLanguage")
      * @var string
      */
@@ -67,20 +58,6 @@ class UserService
     public function getBackendUser()
     {
         return $this->userDomainService->getCurrentUser();
-    }
-
-    /**
-     * Returns the current user's personal workspace or null if no user is logged in
-     * @api
-     */
-    public function getPersonalWorkspace(): ?Workspace
-    {
-        $workspaceName = $this->getPersonalWorkspaceName();
-        if ($workspaceName !== null) {
-            return $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
-        }
-
-        return null;
     }
 
     /**

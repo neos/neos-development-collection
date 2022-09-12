@@ -11,12 +11,10 @@ namespace Neos\Neos\Tests\Functional;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
-use Neos\Neos\Domain\Service\SiteImportService;
-use Neos\ContentRepository\Domain\Model\Node;
 
 /**
  * Base test case for nodes
@@ -44,7 +42,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
     protected $nodeContextPath = '/sites/example/home';
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $node;
 
@@ -67,7 +65,7 @@ abstract class AbstractNodeTest extends FunctionalTestCase
      * Retrieve a node through the property mapper
      *
      * @param $contextPath
-     * @return NodeInterface
+     * @return Node
      */
     protected function getNodeWithContextPath($contextPath)
     {

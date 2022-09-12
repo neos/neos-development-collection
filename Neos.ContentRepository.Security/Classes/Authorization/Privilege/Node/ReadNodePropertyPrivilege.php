@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
  * A privilege to restrict reading of node properties.
@@ -35,6 +35,6 @@ class ReadNodePropertyPrivilege extends AbstractNodePropertyPrivilege
 
     protected function buildMethodPrivilegeMatcher(): string
     {
-        return  'within(' . NodeInterface::class . ') && method(.*->(getProperty|getProperties)())';
+        return  'within(' . Node::class . ') && method(.*->(getProperty|getProperties)())';
     }
 }

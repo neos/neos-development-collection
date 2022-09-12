@@ -14,9 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -62,7 +62,7 @@ final class DelegatingResolver implements DimensionResolverInterface
         assert($factory instanceof DimensionResolverFactoryInterface);
         $resolverOptions = $siteConfiguration['contentDimensions']['resolver']['options'] ?? [];
         $context = $factory->create(
-            $siteDetectionResult->contentRepositoryIdentifier,
+            $siteDetectionResult->contentRepositoryId,
             $resolverOptions
         )->fromRequestToDimensionSpacePoint($context);
 
@@ -102,7 +102,7 @@ final class DelegatingResolver implements DimensionResolverInterface
             throw new \RuntimeException('Did not find site object for identifier ' . $targetSiteIdentifier->value);
         }
         $siteConfiguration = $targetSite->getConfiguration();
-        $contentRepositoryIdentifier = ContentRepositoryIdentifier::fromString(
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
             $siteConfiguration['contentRepository']
                 ?? throw new \RuntimeException(
                     'There is no content repository identifier configured in Sites configuration'

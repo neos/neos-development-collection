@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Move a node aggregate considering disable state but without content dimensions
 
   As a user of the CR I want to move a node that
@@ -21,59 +21,60 @@ Feature: Move a node aggregate considering disable state but without content dim
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                                  |
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserIdentifier   | "00000000-0000-0000-0000-000000000000" |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
+      | newContentStreamId | "cs-identifier"                        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                  |
-      | contentStreamIdentifier     | "cs-identifier"                        |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
+      | contentStreamId     | "cs-identifier"                        |
+      | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{}]                                   |
-      | initiatingUserIdentifier    | "00000000-0000-0000-0000-000000000000" |
+      | initiatingUserId    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "document"                                |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                        |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                  |
+      | parentNodeAggregateId | "sir-david-nodenborough"                  |
       | nodeName                      | "child-document"                          |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"              |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-nodeward-nodington-iii"              |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | nodeName                      | "esquire"                                 |
       | nodeAggregateClassification   | "regular"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "nodimus-prime"                           |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "nodimus-prime"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | coveredDimensionSpacePoints   | [{}]                                      |
-      | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"              |
+      | parentNodeAggregateId | "sir-nodeward-nodington-iii"              |
       | nodeName                      | "esquire-child"                           |
       | nodeAggregateClassification   | "regular"                                 |
     And the graph projection is fully up to date
@@ -81,19 +82,19 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node disabled by one of its ancestors to a new parent that is enabled
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "nody-mc-nodeface"           |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
@@ -106,19 +107,19 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node disabled by itself to a new parent that is enabled
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value              |
-      | contentStreamIdentifier      | "cs-identifier"    |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface" |
+      | contentStreamId      | "cs-identifier"    |
+      | nodeAggregateId      | "nody-mc-nodeface" |
       | affectedDimensionSpacePoints | [{}]               |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "nody-mc-nodeface"           |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -128,19 +129,19 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that disables one of its descendants to a new parent that is enabled
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "sir-david-nodenborough"     |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -151,24 +152,24 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that is disabled by one of its ancestors to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface"           |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "nody-mc-nodeface"           |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -178,23 +179,23 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that is disabled by itself to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "sir-david-nodenborough"     |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -204,18 +205,18 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that is enabled to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "sir-david-nodenborough"     |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -225,23 +226,23 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that disables any of its descendants to a new parent that disables itself
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                        |
-      | contentStreamIdentifier                     | "cs-identifier"              |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough"     |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "sir-david-nodenborough"     |
       | dimensionSpacePoint                         | {}                           |
-      | newParentNodeAggregateIdentifier            | "sir-nodeward-nodington-iii" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                         |
-      | initiatingUserIdentifier                    | "user"                       |
+      | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
+      | newSucceedingSiblingNodeAggregateId | null                         |
+      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -252,23 +253,23 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that is disabled by one of its ancestors to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value              |
-      | contentStreamIdentifier                     | "cs-identifier"    |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface" |
+      | contentStreamId                     | "cs-identifier"    |
+      | nodeAggregateId                     | "nody-mc-nodeface" |
       | dimensionSpacePoint                         | {}                 |
-      | newParentNodeAggregateIdentifier            | "nodimus-prime"    |
-      | newSucceedingSiblingNodeAggregateIdentifier | null               |
-      | initiatingUserIdentifier                    | "user"             |
+      | newParentNodeAggregateId            | "nodimus-prime"    |
+      | newSucceedingSiblingNodeAggregateId | null               |
+      | initiatingUserId                    | "user"             |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -278,23 +279,23 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that is disabled by itself to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
-      | contentStreamIdentifier                     | "cs-identifier"          |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
+      | contentStreamId                     | "cs-identifier"          |
+      | nodeAggregateId                     | "sir-david-nodenborough" |
       | dimensionSpacePoint                         | {}                       |
-      | newParentNodeAggregateIdentifier            | "nodimus-prime"          |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                     |
-      | initiatingUserIdentifier                    | "user"                   |
+      | newParentNodeAggregateId            | "nodimus-prime"          |
+      | newSucceedingSiblingNodeAggregateId | null                     |
+      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -304,23 +305,23 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that disables any of its descendants to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
-      | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | contentStreamId      | "cs-identifier"          |
+      | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
-      | contentStreamIdentifier                     | "cs-identifier"          |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
+      | contentStreamId                     | "cs-identifier"          |
+      | nodeAggregateId                     | "sir-david-nodenborough" |
       | dimensionSpacePoint                         | {}                       |
-      | newParentNodeAggregateIdentifier            | "nodimus-prime"          |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                     |
-      | initiatingUserIdentifier                    | "user"                   |
+      | newParentNodeAggregateId            | "nodimus-prime"          |
+      | newSucceedingSiblingNodeAggregateId | null                     |
+      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -331,18 +332,18 @@ Feature: Move a node aggregate considering disable state but without content dim
   Scenario: Move a node that is enabled to a new parent that is disabled by one of its ancestors
     Given the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                        |
-      | contentStreamIdentifier      | "cs-identifier"              |
-      | nodeAggregateIdentifier      | "sir-nodeward-nodington-iii" |
+      | contentStreamId      | "cs-identifier"              |
+      | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | affectedDimensionSpacePoints | [{}]                         |
 
     When the command MoveNodeAggregate is executed with payload:
       | Key                                         | Value                    |
-      | contentStreamIdentifier                     | "cs-identifier"          |
-      | nodeAggregateIdentifier                     | "sir-david-nodenborough" |
+      | contentStreamId                     | "cs-identifier"          |
+      | nodeAggregateId                     | "sir-david-nodenborough" |
       | dimensionSpacePoint                         | {}                       |
-      | newParentNodeAggregateIdentifier            | "nodimus-prime"          |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                     |
-      | initiatingUserIdentifier                    | "user"                   |
+      | newParentNodeAggregateId            | "nodimus-prime"          |
+      | newSucceedingSiblingNodeAggregateId | null                     |
+      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"

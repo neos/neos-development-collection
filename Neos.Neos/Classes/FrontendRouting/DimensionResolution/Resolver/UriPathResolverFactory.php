@@ -14,8 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
-use Neos\ContentRepository\DimensionSpace\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepositoryRegistry\ValueObject\ContentRepositoryIdentifier;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
@@ -29,7 +30,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separ
 final class UriPathResolverFactory implements DimensionResolverFactoryInterface
 {
     public function __construct(
-        private readonly ContentDimensionSourceInterface $contentDimensionSource
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
     }
 
@@ -37,13 +38,17 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
      * @param array<string,mixed> $dimensionResolverOptions
      */
     public function create(
-        ContentRepositoryIdentifier $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryIdentifier,
         array $dimensionResolverOptions
     ): DimensionResolverInterface {
+        $internals = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new AutoUriPathResolverFactoryInternalsFactory()
+        );
         return UriPathResolver::create(
             Segments::fromArray($dimensionResolverOptions['segments'] ?? []),
             Separator::fromString($dimensionResolverOptions['separator'] ?? '_'),
-            $this->contentDimensionSource
+            $internals->contentDimensionSource
         );
     }
 }

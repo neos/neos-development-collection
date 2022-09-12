@@ -15,24 +15,24 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeName;
-use Neos\ContentRepository\Feature\Common\SerializedPropertyValues;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 
 /**
  * The active record for reading and writing nodes from and to the database
+ *
+ * @internal
  */
-#[Flow\Proxy(false)]
 final class NodeRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_node';
+    public const TABLE_NAME_SUFFIX = '_node';
 
     public function __construct(
         public NodeRelationAnchorPoint $relationAnchorPoint,
-        public NodeAggregateIdentifier $nodeAggregateIdentifier,
+        public NodeAggregateId $nodeAggregateId,
         /** @var array<string,string> */
         public array $originDimensionSpacePoint,
         public string $originDimensionSpacePointHash,
@@ -48,11 +48,11 @@ final class NodeRecord
      * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert(self::TABLE_NAME, [
+        $databaseConnection->insert($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
             'relationanchorpoint' => (string)$this->relationAnchorPoint,
-            'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
+            'nodeaggregateid' => (string)$this->nodeAggregateId,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
@@ -65,12 +65,12 @@ final class NodeRecord
      * @param Connection $databaseConnection
      * @throws \Doctrine\DBAL\DBALException
      */
-    public function updateToDatabase(Connection $databaseConnection): void
+    public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             [
-                'nodeaggregateidentifier' => (string)$this->nodeAggregateIdentifier,
+                'nodeaggregateid' => (string)$this->nodeAggregateId,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
@@ -88,9 +88,9 @@ final class NodeRecord
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, [
+        $databaseConnection->delete($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
             'relationanchorpoint' => $this->relationAnchorPoint
         ]);
     }
@@ -103,7 +103,7 @@ final class NodeRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeAggregateIdentifier::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),

@@ -26,13 +26,13 @@
       defaultValue: 'default value 1'
   postprocessors:
     'processor1':
-      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessor: 'Neos\ContentRepository\Core\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
       postprocessorOptions:
         someOption: 'someOverriddenValue'
         someOtherOption: 'someOtherValue'
     'processor2':
       position: start
-      postprocessor: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
+      postprocessor: 'Neos\ContentRepository\Core\Tests\Functional\Domain\Fixtures\TestNodePostprocessor'
       postprocessorOptions:
         someOption: 'someValue'
 
@@ -58,12 +58,12 @@
     image:
       type: 'Neos\Flow\Tests\Functional\Persistence\Fixtures\Image'
     wrappedImage:
-      type: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
+      type: 'Neos\ContentRepository\Core\Tests\Functional\Domain\Fixtures\TestObjectForSerialization'
     images:
       type: 'array<Neos\Flow\Tests\Functional\Persistence\Fixtures\Image>'
 
 'Neos.ContentRepository.Testing:HappyTestingNode':
-  class: 'Neos\ContentRepository\Tests\Functional\Domain\Fixtures\HappyNode'
+  class: 'Neos\ContentRepository\Core\Tests\Functional\Domain\Fixtures\HappyNode'
 
 # Constraint behat test nodetypes
 'Neos.ContentRepository.Testing:Node':

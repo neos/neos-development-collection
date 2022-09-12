@@ -13,7 +13,7 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
@@ -41,8 +41,9 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
     protected $simpleTemplateRenderer;
 
     /**
-     * @Flow\Inject
-     * @var ContentDimensionZookeeper
+     * TODO: FIX ME ES CR
+     * __Flow\Inject
+     * __var ContentDimensionZookeeper
      */
     protected $contentDimensionZookeeper;
 

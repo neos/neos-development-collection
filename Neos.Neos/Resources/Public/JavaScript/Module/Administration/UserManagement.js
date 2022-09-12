@@ -45,7 +45,9 @@ export default class UserManagement {
             const isCurrentUser = !isNil(deleteButton) && deleteButton.classList.contains('neos-disabled')
 
             const impersonateButtonMarkup = ImpersonateButton(userIdentifier, isCurrentUser)
-            showButton.parentElement.innerHTML += impersonateButtonMarkup
+            const temporaryContainer = document.createElement('div');
+            temporaryContainer.innerHTML = impersonateButtonMarkup;
+            showButton.parentElement.appendChild(temporaryContainer.firstChild);
         })
     }
 

@@ -12,13 +12,11 @@ namespace Neos\Neos\LegacyFusionCompatibility\TypeConverter;
  * source code.
  */
 
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentGraphInterface;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
@@ -26,6 +24,7 @@ use Neos\ContentRepository\SharedModel\NodeAddressFactory;
  *
  * @Flow\Scope("singleton")
  * @deprecated
+ * TODO: TRY TO FIX IMPLEMENTATION // GET RID OF IT
  */
 class NewNodeConverter extends AbstractTypeConverter
 {
@@ -37,7 +36,7 @@ class NewNodeConverter extends AbstractTypeConverter
     /**
      * @var string
      */
-    protected $targetType = NodeInterface::class;
+    protected $targetType = Node::class;
 
     /**
      * @var integer
@@ -45,22 +44,10 @@ class NewNodeConverter extends AbstractTypeConverter
     protected $priority = 2;
 
     /**
-     * @Flow\Inject
-     * @var ContentGraphInterface
-     */
-    protected $contentGraph;
-
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
      * @param string $source
      * @param string $targetType
      * @param array<string,string> $subProperties
-     * @return ?NodeInterface
+     * @return ?Node
      */
     public function convertFrom(
         $source,
@@ -68,14 +55,7 @@ class NewNodeConverter extends AbstractTypeConverter
         array $subProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ) {
-        $nodeAddress = $this->nodeAddressFactory->createFromUriString($source);
+        throw new \RuntimeException('TODO FIX ME');
 
-        $subgraph = $this->contentGraph->getSubgraphByIdentifier(
-            $nodeAddress->contentStreamIdentifier,
-            $nodeAddress->dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-
-        return $subgraph->findNodeByNodeAggregateIdentifier($nodeAddress->nodeAggregateIdentifier);
     }
 }

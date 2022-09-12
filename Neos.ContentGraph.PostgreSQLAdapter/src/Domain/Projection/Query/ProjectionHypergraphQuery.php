@@ -17,17 +17,14 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\OriginDimensionSpacePoint;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * @Flow\Proxy(false)
+ * @internal
  */
 final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterface
 {
@@ -54,12 +51,12 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         $this->types = $types;
     }
 
-    public static function create(ContentStreamIdentifier $contentStreamIdentifier): self
+    public static function create(ContentStreamId $contentStreamIdentifier, string $tableNamePrefix): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier';
 
         $parameters = [
@@ -105,7 +102,7 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         return new self($query, $parameters, $this->types);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): self
+    public function withNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
     {
         $query = $this->query .= '
             AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';

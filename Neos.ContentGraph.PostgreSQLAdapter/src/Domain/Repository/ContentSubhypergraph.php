@@ -26,23 +26,31 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblingQueryMode;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
-use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Projection\Content\References;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodePath;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifiers;
-use Neos\ContentRepository\SharedModel\VisibilityConstraints;
-use Neos\ContentRepository\Projection\Content\ContentSubgraphInterface;
-use Neos\ContentRepository\Projection\Content\InMemoryCache;
-use Neos\ContentRepository\Projection\Content\Nodes;
-use Neos\ContentRepository\Projection\Content\SearchTerm;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Feature\SubtreeInterface;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeName;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeConstraints;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 
 /**
  * The content subgraph application repository
@@ -60,35 +68,26 @@ use Neos\Flow\Annotations as Flow;
  *   - h -> the hierarchy hyperrelation connecting parent and children
  *   - ph -> the hierarchy hyperrelation incoming to the parent (sometimes relevant)
  *
- * @api
+ * @internal but the public {@see ContentSubgraphInterface} is API
  */
-#[Flow\Proxy(false)]
 final class ContentSubhypergraph implements ContentSubgraphInterface
 {
     public function __construct(
-        private readonly ContentStreamIdentifier $contentStreamIdentifier,
+        private readonly ContentStreamId $contentStreamIdentifier,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly PostgresDbalClientInterface $databaseClient,
-        private readonly NodeFactory $nodeFactory
+        private readonly NodeFactory $nodeFactory,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly string $tableNamePrefix
     ) {
     }
 
-    public function getContentStreamIdentifier(): ContentStreamIdentifier
+    public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        return $this->contentStreamIdentifier;
-    }
-
-    public function getDimensionSpacePoint(): DimensionSpacePoint
-    {
-        return $this->dimensionSpacePoint;
-    }
-
-    public function findNodeByNodeAggregateIdentifier(NodeAggregateIdentifier $nodeAggregateIdentifier): ?NodeInterface
-    {
-        $query = HypergraphQuery::create($this->contentStreamIdentifier);
+        $query = HypergraphQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withNodeAggregateIdentifier($nodeAggregateIdentifier)
+            ->withNodeAggregateIdentifier($nodeAggregateId)
             ->withRestriction($this->visibilityConstraints);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
@@ -101,25 +100,28 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findChildNodes(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        NodeAggregateId $parentNodeAggregateId,
+        FindChildNodesFilter $filter
     ): Nodes {
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateId,
+            $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
-        if (!is_null($nodeTypeConstraints)) {
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
+        if (!is_null($filter->nodeTypeConstraints)) {
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $filter->nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'cn');
         }
-        if (!is_null($limit)) {
-            $query = $query->withLimit($limit);
+        if (!is_null($filter->limit)) {
+            $query = $query->withLimit($filter->limit);
         }
-        if (!is_null($offset)) {
-            $query = $query->withOffset($offset);
+        if (!is_null($filter->offset)) {
+            $query = $query->withOffset($filter->offset);
         }
 
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -130,41 +132,22 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
     }
 
-    public function countChildNodes(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
-        NodeTypeConstraints $nodeTypeConstraints = null
-    ): int {
-        $query = HypergraphChildQuery::create(
-            $this->contentStreamIdentifier,
-            $parentNodeAggregateIdentifier,
-            ['COUNT(*)']
-        );
-        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withRestriction($this->visibilityConstraints);
-        if (!is_null($nodeTypeConstraints)) {
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'cn');
-        }
-
-        $result = $query->execute($this->getDatabaseConnection())->fetchNumeric();
-
-        return $result ? $result[0] : 0;
-    }
-
     public function findReferencedNodes(
-        NodeAggregateIdentifier $nodeAggregateAggregateIdentifier,
-        PropertyName $name = null
+        NodeAggregateId $nodeAggregateId,
+        FindReferencedNodesFilter $filter
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
-            'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint'
+            'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint',
+            $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withSourceNodeAggregateIdentifier($nodeAggregateAggregateIdentifier)
+            ->withSourceNodeAggregateIdentifier($nodeAggregateId)
             ->withTargetRestriction($this->visibilityConstraints);
 
         $orderings = [];
-        if ($name) {
-            $query = $query->withReferenceName($name);
+        if ($filter->referenceName) {
+            $query = $query->withReferenceName($filter->referenceName);
         } else {
             $orderings[] = 'r.name';
         }
@@ -180,20 +163,21 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findReferencingNodes(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        PropertyName $name = null
+        NodeAggregateId $nodeAggregateId,
+        FindReferencingNodesFilter $filter
     ): References {
         $query = HypergraphReferenceQuery::create(
             $this->contentStreamIdentifier,
-            'srcn.*, srch.contentstreamidentifier, srch.dimensionspacepoint'
+            'srcn.*, srch.contentstreamidentifier, srch.dimensionspacepoint',
+            $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withTargetNodeAggregateIdentifier($nodeAggregateIdentifier)
+            ->withTargetNodeAggregateIdentifier($nodeAggregateId)
             ->withSourceRestriction($this->visibilityConstraints);
 
         $orderings = [];
-        if ($name) {
-            $query = $query->withReferenceName($name);
+        if ($filter->referenceName) {
+            $query = $query->withReferenceName($filter->referenceName);
         } else {
             $orderings[] = 'r.name';
         }
@@ -209,11 +193,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
     }
 
-    public function findParentNode(NodeAggregateIdentifier $childNodeAggregateIdentifier): ?NodeInterface
+    public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
-        $query = HypergraphParentQuery::create($this->contentStreamIdentifier);
+        $query = HypergraphParentQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withChildNodeAggregateIdentifier($childNodeAggregateIdentifier);
+            ->withChildNodeAggregateIdentifier($childNodeAggregateId);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -226,17 +210,17 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodeByPath(
         NodePath $path,
-        NodeAggregateIdentifier $startingNodeAggregateIdentifier
-    ): ?NodeInterface {
-        $currentNode = $this->findNodeByNodeAggregateIdentifier($startingNodeAggregateIdentifier);
+        NodeAggregateId $startingNodeAggregateId
+    ): ?Node {
+        $currentNode = $this->findNodeById($startingNodeAggregateId);
         if (!$currentNode) {
             throw new \RuntimeException(
-                'Starting Node (identified by ' . $startingNodeAggregateIdentifier . ') does not exist.'
+                'Starting Node (identified by ' . $startingNodeAggregateId . ') does not exist.'
             );
         }
         foreach ($path->getParts() as $edgeName) {
             $currentNode = $this->findChildNodeConnectedThroughEdgeName(
-                $currentNode->getNodeAggregateIdentifier(),
+                $currentNode->nodeAggregateId,
                 $edgeName
             );
             if (!$currentNode) {
@@ -248,12 +232,13 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findChildNodeConnectedThroughEdgeName(
-        NodeAggregateIdentifier $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         NodeName $edgeName
-    ): ?NodeInterface {
+    ): ?Node {
         $query = HypergraphChildQuery::create(
             $this->contentStreamIdentifier,
-            $parentNodeAggregateIdentifier
+            $parentNodeAggregateId,
+            $this->tableNamePrefix,
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
@@ -268,53 +253,34 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         ) : null;
     }
 
-    public function findSiblings(
-        NodeAggregateIdentifier $sibling,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
-    ): Nodes {
-        return $this->findAnySiblings(
-            $sibling,
-            HypergraphSiblingQueryMode::MODE_ALL,
-            $nodeTypeConstraints,
-            $limit,
-            $offset
-        );
-    }
-
     public function findSucceedingSiblings(
-        NodeAggregateIdentifier $sibling,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        NodeAggregateId $sibling,
+        FindSucceedingSiblingsFilter $filter
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
             HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
-            $nodeTypeConstraints,
-            $limit,
-            $offset
+            $filter->nodeTypeConstraints,
+            $filter->limit,
+            $filter->offset
         );
     }
 
     public function findPrecedingSiblings(
-        NodeAggregateIdentifier $sibling,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        NodeAggregateId $sibling,
+        FindPrecedingSiblingsFilter $filter
     ): Nodes {
         return $this->findAnySiblings(
             $sibling,
             HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
-            $nodeTypeConstraints,
-            $limit,
-            $offset
+            $filter->nodeTypeConstraints,
+            $filter->limit,
+            $filter->offset
         );
     }
 
     private function findAnySiblings(
-        NodeAggregateIdentifier $sibling,
+        NodeAggregateId $sibling,
         HypergraphSiblingQueryMode $mode,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
@@ -324,11 +290,16 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $this->contentStreamIdentifier,
             $this->dimensionSpacePoint,
             $sibling,
-            $mode
+            $mode,
+            $this->tableNamePrefix
         );
         $query = $query->withRestriction($this->visibilityConstraints);
         if (!is_null($nodeTypeConstraints)) {
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraints, 'sn');
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'sn');
         }
         if (!is_null($limit)) {
             $query = $query->withLimit($limit);
@@ -343,16 +314,15 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
     }
 
-    public function findNodePath(NodeAggregateIdentifier $nodeAggregateIdentifier): NodePath
+    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath
     {
         return NodePath::fromString('/');
     }
 
     public function findSubtrees(
-        NodeAggregateIdentifiers $entryNodeAggregateIdentifiers,
-        int $maximumLevels,
-        NodeTypeConstraints $nodeTypeConstraints
-    ): SubtreeInterface {
+        NodeAggregateIds $entryNodeAggregateIds,
+        FindSubtreesFilter $filter
+    ): Subtrees {
         $query = /** @lang PostgreSQL */ '-- ContentSubhypergraph::findSubtrees
     WITH RECURSIVE subtree AS (
         SELECT n.*, h.contentstreamidentifier,
@@ -360,10 +330,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
             0 as level,
             h.ordinality
-        FROM ' . NodeRecord::TABLE_NAME . ' n
+        FROM ' . $this->tableNamePrefix . '_node n
             INNER JOIN (
                 SELECT *
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ',
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation,
                      -- this creates a new generated column "ordinality" which contains the sorting
                      -- order of the childnodeanchor entries. We use this on the top level query to
                      -- ensure that we preserve sorting of child nodes.
@@ -372,7 +342,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         WHERE n.nodeaggregateidentifier IN (:entryNodeAggregateIdentifiers)
             AND h.contentstreamidentifier = :contentStreamIdentifier
 	    	AND h.dimensionspacepointhash = :dimensionSpacePointHash
-        ' . QueryUtility::getRestrictionClause($this->visibilityConstraints) . '
+        ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix) . '
     UNION ALL
          -- --------------------------------
          -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
@@ -385,18 +355,18 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FROM subtree p
             INNER JOIN (
                 SELECT *
-                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ',
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation,
                      -- this creates a new generated column "ordinality" which contains the sorting
                      -- order of the childnodeanchor entries. We use this on the top level query to
                      -- ensure that we preserve sorting of child nodes.
                      unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
             ) ch ON ch.parentnodeanchor = p.relationanchorpoint
-            INNER JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ch.childnodeanchor
+            INNER JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
 	    WHERE
 	 	    ch.contentstreamidentifier = :contentStreamIdentifier
 		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
 		    AND p.level + 1 <= :maximumLevels
-            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, 'c') . '
+            ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix, 'c') . '
 		    -- @todo node type constraints
     )
     SELECT * FROM subtree
@@ -406,10 +376,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ORDER BY level DESC, ordinality ASC';
 
         $parameters = [
-            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIdentifiers->toStringArray(),
+            'entryNodeAggregateIdentifiers' => $entryNodeAggregateIds->toStringArray(),
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
-            'maximumLevels' => $maximumLevels
+            'maximumLevels' => $filter->maximumLevels
         ];
 
         $types = [
@@ -423,9 +393,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     }
 
     public function findDescendants(
-        array $entryNodeAggregateIdentifiers,
-        NodeTypeConstraints $nodeTypeConstraints,
-        ?SearchTerm $searchTerm
+        NodeAggregateIds $entryNodeAggregateIds,
+        FindDescendantsFilter $filter
     ): Nodes {
         return Nodes::createEmpty();
     }
@@ -438,8 +407,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     {
         $query = /** @lang PostgreSQL */
         'SELECT COUNT(*)
-            FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' h
-            JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(h.childnodeanchors)
+            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+            JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamidentifier = :contentStreamIdentifier
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
@@ -451,11 +420,6 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchNumeric();
 
         return $result ? $result[0] : 0;
-    }
-
-    public function getInMemoryCache(): InMemoryCache
-    {
-        return new InMemoryCache();
     }
 
     private function getDatabaseConnection(): DatabaseConnection

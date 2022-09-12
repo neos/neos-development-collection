@@ -14,10 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\NodeAddressFactory;
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
@@ -52,22 +53,22 @@ class ContentElementEditableService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceFinder
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceFinder;
+    protected $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var NodeAddressFactory
-     */
-    protected $nodeAddressFactory;
-
-    /**
-     * @throws \Neos\ContentRepository\SharedModel\NodeAddressCannotBeSerializedException
-     */
-    public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
+    public function wrapContentProperty(Node $node, string $property, string $content): string
     {
-        if ($this->isContentStreamOfLiveWorkspace($node->getContentStreamIdentifier())) {
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->subgraphIdentity->contentRepositoryId
+        );
+
+        if (
+            $this->isContentStreamOfLiveWorkspace(
+                $node->subgraphIdentity->contentStreamId,
+                $contentRepository
+            )
+        ) {
             return $content;
         }
 
@@ -78,16 +79,20 @@ class ContentElementEditableService
 
         $attributes = [
             'data-__neos-property' => $property,
-            'data-__neos-editable-node-contextpath' => $this->nodeAddressFactory->createFromNode($node)
+            'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)
+                ->createFromNode($node)
                 ->serializeForUri()
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
     }
 
-    private function isContentStreamOfLiveWorkspace(ContentStreamIdentifier $contentStreamIdentifier): bool
-    {
-        return $this->workspaceFinder->findOneByCurrentContentStreamIdentifier($contentStreamIdentifier)
-            ?->getWorkspaceName()->isLive() ?: false;
+    private function isContentStreamOfLiveWorkspace(
+        ContentStreamId $contentStreamIdentifier,
+        ContentRepository $contentRepository
+    ): bool {
+        return $contentRepository->getWorkspaceFinder()
+            ->findOneByCurrentContentStreamId($contentStreamIdentifier)
+            ?->workspaceName->isLive() ?: false;
     }
 }

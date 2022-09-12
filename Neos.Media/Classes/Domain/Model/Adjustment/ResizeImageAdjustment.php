@@ -275,9 +275,9 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
      * @param boolean $allowUpScaling
      * @return void
      */
-    public function setAllowUpScaling(bool $allowUpScaling): void
+    public function setAllowUpScaling(bool|int $allowUpScaling): void
     {
-        $this->allowUpScaling = $allowUpScaling;
+        $this->allowUpScaling = (bool)$allowUpScaling;
     }
 
     /**
@@ -455,9 +455,6 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
         ) {
             throw new \InvalidArgumentException('Invalid mode specified', 1574686891);
         }
-
-        $autorotateFilter = new \Imagine\Filter\Basic\Autorotate();
-        $autorotateFilter->apply($image);
 
         $imageSize = $image->getSize();
         $requestedDimensions = $this->calculateDimensions($imageSize);

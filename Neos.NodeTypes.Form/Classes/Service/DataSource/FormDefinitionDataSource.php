@@ -11,7 +11,7 @@ namespace Neos\NodeTypes\Form\Service\DataSource;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Neos\Service\DataSource\AbstractDataSource;
 use Neos\Flow\Annotations as Flow;
 
@@ -30,11 +30,11 @@ class FormDefinitionDataSource extends AbstractDataSource
     protected $yamlPersistenceManager;
 
     /**
-     * @param NodeInterface|null $node
+     * @param Node|null $node
      * @param array $arguments
      * @return \Neos\Flow\Persistence\QueryResultInterface
      */
-    public function getData(NodeInterface $node = null, array $arguments = [])
+    public function getData(Node $node = null, array $arguments = [])
     {
         $formDefinitions['']['label'] = '';
         $forms = $this->yamlPersistenceManager->listForms();

@@ -11,33 +11,38 @@
         "php": "^8.1",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/cache": "*",
-        "neos/utility-arrays": "*",
-        "neos/neos-ui": "*",
-        "neos/event-sourcing": "*",
-        "neos/flow": "*",
-        "neos/eel": "*",
-        "neos/fluid-adaptor": "*",
-        "neos/utility-objecthandling": "*",
-        "neos/utility-files": "*",
-        "doctrine/orm": "^2.6",
-        "gedmo/doctrine-extensions": "^3.5",
-        "behat/transliterator": "~1.0",
-        "webmozart/assert": "^1.10",
-        "neos/utility-unicode": "*",
-        "neos/utility-mediatypes": "*",
+        "neos/eventstore": "*",
+        "neos/eventstore-doctrineadapter": "*",
         "neos/error-messages": "*",
+        "neos/utility-objecthandling": "*",
+        "neos/utility-arrays": "*",
+        "symfony/serializer": "*",
+        "league/flysystem": "^3",
+        "webmozart/assert": "^1.11",
+        "neos/neos-ui": "*",
+        "neos/flow": "*",
+        "symfony/property-access": "*",
+        "neos/fluid-adaptor": "*",
+        "neos/cache": "*",
+        "neos/eel": "*",
+        "neos/utility-unicode": "*",
+        "doctrine/orm": "^2.6",
+        "neos/utility-files": "*",
+        "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "*",
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
+        "behat/transliterator": "~1.0",
         "neos/form": "*",
         "neos/kickstarter": "*"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
+        "neos/content-repository": "self.version",
+        "neos/contentrepository": "self.version",
         "packagefactory/atomicfusion-afx": "*",
         "typo3/typoscript": "self.version",
         "typo3/media": "self.version",
@@ -48,15 +53,16 @@
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
-        "neos/content-repository-dimensionspace": "self.version",
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-export": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
-        "neos/content-repository-nodeaccess": "self.version",
+        "neos/contentrepository-nodeaccess": "self.version",
+        "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-security": "self.version",
-        "neos/content-repository": "self.version",
+        "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
-        "neos/escr-export": "self.version",
         "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version",
         "neos/fusion-afx": "self.version",
@@ -77,35 +83,40 @@
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
+        "league/flysystem-ziparchive": "to export zip archives",
+        "neos/media": "to import Assets",
+        "neos/escr-asset-usage": "to export used assets",
         "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.DimensionSpace/Classes ./Neos.ContentRepository/src ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpcs",
             "@lint:phpstan"
         ],
         "test:unit": [
-            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository/Tests/Unit",
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepositoryRegistry/Tests/Unit"
         ],
         "test:functional": [
-            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository/Tests/Functional"
+            "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
         "test:behavioral": [
-            "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
-            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser",
+            "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
             "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+            "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
+            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
         ],
         "test:behavioral:stop-on-failure": [
-            "../../flow behat:setup; ../../flow doctrine:migrate; ../../flow eventstore:setup ContentRepository; ../../flow eventstore:setup ContentRepository",
-            "../../bin/behat --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser",
-            "../../bin/behat --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
-            "../../bin/behat --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist"
+            "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
+            "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
         ],
         "test": [
             "@test:unit",
@@ -127,8 +138,11 @@
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
             ],
-            "Neos\\ContentRepository\\DimensionSpace\\": [
-                "Neos.ContentRepository.DimensionSpace/Classes"
+            "Neos\\ContentRepository\\Core\\": [
+                "Neos.ContentRepository.Core/Classes"
+            ],
+            "Neos\\ContentRepository\\Export\\": [
+                "Neos.ContentRepository.Export/src/"
             ],
             "Neos\\ContentRepository\\LegacyNodeMigration\\": [
                 "Neos.ContentRepository.LegacyNodeMigration/Classes"
@@ -136,11 +150,14 @@
             "Neos\\ContentRepository\\NodeAccess\\": [
                 "Neos.ContentRepository.NodeAccess/Classes"
             ],
+            "Neos\\ContentRepository\\NodeMigration\\": [
+                "Neos.ContentRepository.NodeMigration/src"
+            ],
             "Neos\\ContentRepository\\Security\\": [
                 "Neos.ContentRepository.Security/Classes"
             ],
-            "Neos\\ContentRepository\\": [
-                "Neos.ContentRepository/src"
+            "Neos\\ContentRepository\\StructureAdjustment\\": [
+                "Neos.ContentRepository.StructureAdjustment/src"
             ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
@@ -150,9 +167,6 @@
             ],
             "Neos\\ESCR\\AssetUsage\\": [
                 "Neos.ESCR.AssetUsage/Classes/"
-            ],
-            "Neos\\ESCR\\Export\\": [
-                "Neos.ESCR.Export/Classes/"
             ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
@@ -227,8 +241,8 @@
             "Neos\\ContentRepository\\BehavioralTests\\Tests\\": [
                 "Neos.ContentRepository.BehavioralTests/Tests"
             ],
-            "Neos\\ContentRepository\\DimensionSpace\\Tests\\": [
-                "Neos.ContentRepository.DimensionSpace/Tests"
+            "Neos\\ContentRepository\\Core\\Tests\\": [
+                "Neos.ContentRepository.Core/Tests"
             ],
             "Neos\\ContentRepository\\LegacyNodeMigration\\Tests\\": [
                 "Neos.ContentRepository.LegacyNodeMigration/Tests"
@@ -236,8 +250,11 @@
             "Neos\\ContentRepository\\NodeAccess\\Tests\\": [
                 "Neos.ContentRepository.NodeAccess/Tests"
             ],
-            "Neos\\ContentRepository\\Tests\\": [
-                "Neos.ContentRepository/Tests"
+            "Neos\\ContentRepository\\NodeMigration\\Tests\\": [
+                "Neos.ContentRepository.NodeMigration/Tests"
+            ],
+            "Neos\\ContentRepository\\StructureAdjustment\\Tests\\": [
+                "Neos.ContentRepository.StructureAdjustment/Tests"
             ],
             "Neos\\ContentRepositoryRegistry\\Tests\\": [
                 "Neos.ContentRepositoryRegistry/Tests"
@@ -267,8 +284,10 @@
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
-        "phpstan/phpstan": "^1.5",
+        "phpstan/phpstan": "^1.8",
         "squizlabs/php_codesniffer": "^3.6",
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.0",
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
     }
 }

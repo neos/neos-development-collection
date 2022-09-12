@@ -11,13 +11,14 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
  * source code.
  */
 
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Neos\Domain\Exception;
 use ReflectionMethod;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
-use Neos\ContentRepository\SharedModel\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 
 /**
  * Tests for the TypoFusionService
@@ -61,10 +62,14 @@ class FusionServiceTest extends FunctionalTestCase
         $this->fusionService = $this->objectManager->get(FusionService::class);
         $this->expectedPrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
         $this->yamlParser = $this->objectManager->get(YamlParser::class);
-        $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $configurationManager = $this->objectManager->get(ConfigurationManager::class);
+        $this->originalNodeTypeManager = new NodeTypeManager(
+            fn() => $configurationManager->getConfiguration('NodeTypes'),
+            $this->objectManager,
+            null
+        );
         $this->mockNodeTypeManager = clone ($this->originalNodeTypeManager);
         $this->mockNodeTypeManager->overrideNodeTypes($this->yamlParser->parse(file_get_contents(__DIR__ . '/' . self::FIXTURE_FILE_NAME)));
-        $this->objectManager->setInstance(NodeTypeManager::class, $this->mockNodeTypeManager);
     }
 
     /**
@@ -72,7 +77,6 @@ class FusionServiceTest extends FunctionalTestCase
      */
     public function tearDown(): void
     {
-        $this->objectManager->setInstance(NodeTypeManager::class, $this->originalNodeTypeManager);
         $this->expectedPrototypeGenerator->reset();
         parent::tearDown();
     }

@@ -18,10 +18,12 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
-use Neos\ContentRepository\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 
 /**
  * The node modification feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeModification
 {
@@ -30,19 +32,19 @@ trait NodeModification
     /**
      * @throws \Throwable
      */
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    private function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
     {
         $this->transactional(function () use ($event) {
             $nodeRecord = $this->getProjectionHypergraph()->findNodeRecordByOrigin(
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 $event->originDimensionSpacePoint,
-                $event->nodeAggregateIdentifier
+                $event->nodeAggregateId
             );
             if (is_null($nodeRecord)) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
             }
             $this->copyOnWrite(
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 $nodeRecord,
                 function (NodeRecord $node) use ($event) {
                     $node->properties = $node->properties->merge($event->propertyValues);

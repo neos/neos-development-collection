@@ -11,15 +11,15 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  * source code.
  */
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Feature\NodeMove\Command\MoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Feature\NodeReferencing\Command\SetNodeReferences;
-use Neos\ContentRepository\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
@@ -53,7 +53,7 @@ class EditNodePrivilege extends AbstractNodePrivilege
                 return false;
             }
 
-            /** @var NodeInterface $node */
+            /** @var Node $node */
             $node = $subject->getJoinPoint()->getProxy();
             $nodePrivilegeSubject = new NodePrivilegeSubject($node);
             return parent::matchesSubject($nodePrivilegeSubject);
@@ -65,7 +65,7 @@ class EditNodePrivilege extends AbstractNodePrivilege
     /**
      * This is the pointcut expression for all methods to intercept.
      * It targets all public methods that could change the outer state of a node.
-     * Note: NodeInterface::setIndex() is excluded because that might be called by the system
+     * Note: Node::setIndex() is excluded because that might be called by the system
      * when redistributing nodes on one level
      *
      * @return string

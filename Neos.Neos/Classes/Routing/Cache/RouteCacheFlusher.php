@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Routing\Cache;
 
-use Neos\ContentRepository\Projection\Content\NodeInterface;
-use Neos\ContentRepository\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 
@@ -41,16 +41,16 @@ class RouteCacheFlusher
      * Schedules flushing of the routing cache entries for the given $node
      * Note that child nodes are flushed automatically because they are tagged with all parents.
      *
-     * @param NodeInterface $node The node which has changed in some way
+     * @param Node $node The node which has changed in some way
      * @return void
      */
-    public function registerNodeChange(NodeInterface $node)
+    public function registerNodeChange(Node $node)
     {
-        $identifier = (string)$node->getNodeAggregateIdentifier();
+        $identifier = (string)$node->nodeAggregateId;
         if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
-        if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
+        if (!$node->nodeType->isOfType('Neos.Neos:Document')) {
             return;
         }
         $this->tagsToFlush[] = $identifier;
@@ -72,7 +72,7 @@ class RouteCacheFlusher
         Workspace $oldBaseWorkspace = null,
         Workspace $newBaseWorkspace = null
     ) {
-        $identifier = (string)$workspace->getWorkspaceName();
+        $identifier = (string)$workspace->workspaceName;
         if (!in_array($identifier, $this->tagsToFlush)) {
             $this->tagsToFlush[] = $identifier;
         }

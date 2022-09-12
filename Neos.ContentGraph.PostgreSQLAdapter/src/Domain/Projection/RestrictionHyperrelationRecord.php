@@ -16,31 +16,28 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DBALException;
-use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
-use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
  * The active record for reading and writing restriction hyperrelations from and to the database
  *
- * @Flow\Proxy(false)
+ * @internal
  */
 final class RestrictionHyperrelationRecord
 {
-    public const TABLE_NAME = 'neos_contentgraph_restrictionhyperrelation';
-
-    public ContentStreamIdentifier $contentStreamIdentifier;
+    public ContentStreamId $contentStreamIdentifier;
 
     public string $dimensionSpacePointHash;
 
-    public NodeAggregateIdentifier $originNodeAggregateIdentifier;
+    public NodeAggregateId $originNodeAggregateIdentifier;
 
     public NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers;
 
     public function __construct(
-        ContentStreamIdentifier $contentStreamIdentifier,
+        ContentStreamId $contentStreamIdentifier,
         string $dimensionSpacePointHash,
-        NodeAggregateIdentifier $originNodeAggregateIdentifier,
+        NodeAggregateId $originNodeAggregateIdentifier,
         NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers
     ) {
         $this->contentStreamIdentifier = $contentStreamIdentifier;
@@ -55,9 +52,9 @@ final class RestrictionHyperrelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamIdentifier::fromString($databaseRow['contentstreamidentifier']),
+            ContentStreamId::fromString($databaseRow['contentstreamidentifier']),
             $databaseRow['dimensionspacepointhash'],
-            NodeAggregateIdentifier::fromString($databaseRow['originnodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['originnodeaggregateidentifier']),
             NodeAggregateIdentifiers::fromDatabaseString($databaseRow['affectednodeaggregateidentifiers'])
         );
     }
@@ -66,36 +63,46 @@ final class RestrictionHyperrelationRecord
      * @throws DBALException
      */
     public function addAffectedNodeAggregateIdentifier(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Connection $databaseConnection
+        NodeAggregateId $nodeAggregateIdentifier,
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->add($nodeAggregateIdentifier);
 
-        $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
+        $this->updateAffectedNodeAggregateIdentifiers(
+            $affectedNodeAggregateIdentifiers,
+            $databaseConnection,
+            $tableNamePrefix
+        );
     }
 
     /**
      * @throws DBALException
      */
     public function removeAffectedNodeAggregateIdentifier(
-        NodeAggregateIdentifier $nodeAggregateIdentifier,
-        Connection $databaseConnection
+        NodeAggregateId $nodeAggregateIdentifier,
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->remove($nodeAggregateIdentifier);
         if ($affectedNodeAggregateIdentifiers->isEmpty()) {
-            $this->removeFromDatabase($databaseConnection);
+            $this->removeFromDatabase($databaseConnection, $tableNamePrefix);
         } else {
-            $this->updateAffectedNodeAggregateIdentifiers($affectedNodeAggregateIdentifiers, $databaseConnection);
+            $this->updateAffectedNodeAggregateIdentifiers(
+                $affectedNodeAggregateIdentifiers,
+                $databaseConnection,
+                $tableNamePrefix
+            );
         }
     }
 
     /**
      * @throws DBALException
      */
-    public function addToDatabase(Connection $databaseConnection): void
+    public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->executeStatement(
-            'INSERT INTO ' . self::TABLE_NAME . ' (
+            'INSERT INTO ' . $tableNamePrefix . '_restrictionhyperrelation (
                 contentstreamidentifier,
                 dimensionspacepointhash,
                 originnodeaggregateidentifier,
@@ -116,10 +123,11 @@ final class RestrictionHyperrelationRecord
      */
     private function updateAffectedNodeAggregateIdentifiers(
         NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers,
-        Connection $databaseConnection
+        Connection $databaseConnection,
+        string $tableNamePrefix
     ): void {
         $databaseConnection->update(
-            self::TABLE_NAME,
+            $tableNamePrefix . '_restrictionhyperrelation',
             [
                 'affectednodeaggregateidentifiers' => $affectedNodeAggregateIdentifiers->toDatabaseString()
             ],
@@ -131,9 +139,9 @@ final class RestrictionHyperrelationRecord
     /**
      * @throws DBALException
      */
-    public function removeFromDatabase(Connection $databaseConnection): void
+    public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete(self::TABLE_NAME, $this->getDatabaseIdentifier());
+        $databaseConnection->delete($tableNamePrefix . '_restrictionhyperrelation', $this->getDatabaseIdentifier());
     }
 
     /**

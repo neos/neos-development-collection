@@ -18,8 +18,8 @@ final class AssetUsageProjectorFactory
     ) {
     }
 
-    public function build(): AssetUsageProjector
+    public function build(): AssetUsageProjection
     {
-        return new AssetUsageProjector($this->repository);
+        return new AssetUsageProjection($this->repository);
     }
 }

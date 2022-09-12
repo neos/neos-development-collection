@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Node References with Dimensions
 
   As a user of the CR I want to be able to create, overwrite, reorder and delete reference between nodes
@@ -27,30 +27,30 @@ Feature: Node References with Dimensions
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName            | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                                      | parentNodeAggregateIdentifier |
+      | nodeAggregateId | nodeTypeName                                      | parentNodeAggregateId |
       | source-nodandaise       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
       | anthony-destinode       | Neos.ContentRepository.Testing:NodeWithReferences | lady-eleonode-rootford        |
 
   Scenario: Create a reference, then specialize the source node; and the references should exist on the specialization
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
-      | nodeAggregateIdentifier | "source-nodandaise" |
+      | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"ch"}   |
     And the graph projection is fully up to date
@@ -81,7 +81,7 @@ Feature: Node References with Dimensions
     # now, when modifying the specialization reference, only the specialization is changed.
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
@@ -111,14 +111,14 @@ Feature: Node References with Dimensions
   Scenario: specialize the source node, only set reference on the specialization. Then, the reference should only appear on the specialization
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
-      | nodeAggregateIdentifier | "source-nodandaise" |
+      | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"ch"}   |
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
@@ -149,21 +149,21 @@ Feature: Node References with Dimensions
     # prerequisite: "anthony-destinode" also exists in EN
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
-      | nodeAggregateIdentifier | "anthony-destinode" |
+      | nodeAggregateId | "anthony-destinode" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"en"}   |
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
-      | sourceNodeAggregateIdentifier | "source-nodandaise"               |
+      | sourceNodeAggregateId | "source-nodandaise"               |
       | referenceName                 | "referenceProperty"               |
       | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value               |
-      | nodeAggregateIdentifier | "source-nodandaise" |
+      | nodeAggregateId | "source-nodandaise" |
       | sourceOrigin            | {"language":"de"}   |
       | targetOrigin            | {"language":"en"}   |
     And the graph projection is fully up to date
@@ -204,7 +204,7 @@ Feature: Node References with Dimensions
     # now, when modifying the peer reference, only the peer is changed.
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | sourceNodeAggregateId   | "source-nodandaise"               |
       | sourceOriginDimensionSpacePoint | {"language": "en"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "source-nodandaise"}] |
@@ -245,15 +245,15 @@ Feature: Node References with Dimensions
     # We need to create a new ch-only node to test this; as by default, only a german node already exists shining through in ch
     And the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                               |
-      | nodeAggregateIdentifier       | "ch-only"                                           |
+      | nodeAggregateId       | "ch-only"                                           |
       | originDimensionSpacePoint     | {"language": "ch"}                                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeWithReferences" |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                            |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                            |
     And the graph projection is fully up to date
 
     When the command SetNodeReferences is executed with payload:
       | Key                             | Value                             |
-      | sourceNodeAggregateIdentifier   | "ch-only"                         |
+      | sourceNodeAggregateId   | "ch-only"                         |
       | sourceOriginDimensionSpacePoint | {"language": "ch"}                |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
@@ -262,7 +262,7 @@ Feature: Node References with Dimensions
     # here we generalize
     When the command CreateNodeVariant is executed with payload:
       | Key                     | Value             |
-      | nodeAggregateIdentifier | "ch-only"         |
+      | nodeAggregateId | "ch-only"         |
       | sourceOrigin            | {"language":"ch"} |
       | targetOrigin            | {"language":"de"} |
     And the graph projection is fully up to date

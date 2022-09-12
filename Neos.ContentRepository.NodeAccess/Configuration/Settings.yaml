@@ -40,8 +40,8 @@ Neos:
     unstableInternalWillChangeLater:
       projection:
         defaultProjectorsToBeBlocked:
-          'Neos\ContentRepository\Projection\ContentStream\ContentStreamProjector': true
-          'Neos\ContentRepository\Projection\Workspace\WorkspaceProjector': true
+          'Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjector': true
+          'Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjector': true
 
 
     NodeAccess:

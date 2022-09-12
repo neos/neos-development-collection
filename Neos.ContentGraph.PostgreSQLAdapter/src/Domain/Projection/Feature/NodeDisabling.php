@@ -17,38 +17,40 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 
 /**
  * The node disabling feature set for the hypergraph projector
+ *
+ * @internal
  */
 trait NodeDisabling
 {
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
             $descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint
                 = $this->getProjectionHypergraph()->findDescendantNodeAggregateIdentifiers(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $event->affectedDimensionSpacePoints,
-                    $event->nodeAggregateIdentifier
+                    $event->nodeAggregateId
                 );
 
             /** @codingStandardsIgnoreStart */
             foreach ($descendantNodeAggregateIdentifiersByAffectedDimensionSpacePoint as $dimensionSpacePointHash => $descendantNodeAggregateIdentifiers) {
             /** @codingStandardsIgnoreEnd */
                 $restrictionRelation = new RestrictionHyperrelationRecord(
-                    $event->contentStreamIdentifier,
+                    $event->contentStreamId,
                     $dimensionSpacePointHash,
-                    $event->nodeAggregateIdentifier,
+                    $event->nodeAggregateId,
                     $descendantNodeAggregateIdentifiers
                 );
 
-                $restrictionRelation->addToDatabase($this->getDatabaseConnection());
+                $restrictionRelation->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         });
     }
@@ -56,16 +58,16 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->transactional(function () use ($event) {
             $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(
-                $event->contentStreamIdentifier,
+                $event->contentStreamId,
                 $event->affectedDimensionSpacePoints,
-                $event->nodeAggregateIdentifier,
+                $event->nodeAggregateId,
             );
             foreach ($restrictionRelations as $restrictionRelation) {
-                $restrictionRelation->removeFromDatabase($this->getDatabaseConnection());
+                $restrictionRelation->removeFromDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         });
     }

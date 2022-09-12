@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL
+@contentrepository @adapters=DoctrineDBAL
 Feature: Remove Property
 
   Background:
@@ -24,31 +24,32 @@ Feature: Remove Property
           type: string
     """
 
-    And the event RootWorkspaceWasCreated was published with payload:
+    And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
-      | initiatingUserIdentifier   | "system-user"        |
+      | newContentStreamId | "cs-identifier"      |
+      | initiatingUserId   | "system-user"        |
+    And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"      |
+      | contentStreamId     | "cs-identifier"               |
+      | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserIdentifier    | "system-user"                 |
+      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                     |
-      | contentStreamIdentifier       | "cs-identifier"                           |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                  |
+      | contentStreamId       | "cs-identifier"                           |
+      | nodeAggregateId       | "sir-david-nodenborough"                  |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
-      | initiatingUserIdentifier      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                  |
+      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
       | initialPropertyValues         | {"text": "Original text"}                 |
     And the graph projection is fully up to date
 
