@@ -19,6 +19,7 @@ use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\DimensionSpace\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointHasNoPrimaryGeneralization;
+use Neos\ContentRepository\Feature\Common\Exception\ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Feature\Common\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
 use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
@@ -32,6 +33,7 @@ use Neos\ContentRepository\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Infrastructure\Projection\CommandResult;
 use Neos\ContentRepository\Infrastructure\Projection\RuntimeBlocker;
 use Neos\ContentRepository\Service\Infrastructure\ReadSideMemoryCacheManager;
+use Neos\ContentRepository\SharedModel\Node\ReadableNodeAggregateInterface;
 use Neos\EventSourcing\Event\DecoratedEvent;
 use Neos\EventSourcing\Event\DomainEvents;
 use Ramsey\Uuid\Uuid;
@@ -144,8 +146,15 @@ trait NodeRemoval
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregateInDimensionSpacePoint(
             $command->contentStreamIdentifier,
             $command->nodeAggregateIdentifier,
-            $command->dimensionSpacePointToCover
+            $primaryGeneralization
         );
+        if (!$parentNodeAggregate->coversDimensionSpacePoint($command->dimensionSpacePointToCover)) {
+            throw ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
+                $command->nodeAggregateIdentifier,
+                $command->dimensionSpacePointToCover,
+                $command->contentStreamIdentifier
+            );
+        }
 
         $events = null;
         $this->getNodeAggregateEventPublisher()->withCommand(

@@ -291,6 +291,48 @@ final class ContentGraph implements ContentGraphInterface
         );
     }
 
+    public function findParentNodeAggregateByChildDimensionSpacePoint(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $childDimensionSpacePoint
+    ): ?NodeAggregate {
+        $connection = $this->client->getConnection();
+
+        $query = 'SELECT n.*,
+                      h.name, h.contentstreamidentifier, h.dimensionspacepoint AS covereddimensionspacepoint,
+                      r.dimensionspacepointhash AS disableddimensionspacepointhash
+                      FROM neos_contentgraph_node n
+                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      LEFT JOIN neos_contentgraph_restrictionrelation r
+                          ON r.originnodeaggregateidentifier = n.nodeaggregateidentifier
+                          AND r.contentstreamidentifier = h.contentstreamidentifier
+                          AND r.affectednodeaggregateidentifier = n.nodeaggregateidentifier
+                          AND r.dimensionspacepointhash = h.dimensionspacepointhash
+                      WHERE n.nodeaggregateidentifier = (
+                          SELECT p.nodeaggregateidentifier FROM neos_contentgraph_node p
+                          INNER JOIN neos_contentgraph_hierarchyrelation ch
+                              ON ch.parentnodeanchor = p.relationanchorpoint
+                          INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
+                          WHERE ch.contentstreamidentifier = :contentStreamIdentifier
+                          AND ch.dimensionspacepointhash = :childDimensionSpacePointHash
+                          AND c.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                      )
+                      AND h.contentstreamidentifier = :contentStreamIdentifier';
+
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'childDimensionSpacePointHash' => $childDimensionSpacePoint->hash,
+        ];
+
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
+    }
+
     /**
      * @return iterable<NodeAggregate>
      * @throws DBALException|\Exception

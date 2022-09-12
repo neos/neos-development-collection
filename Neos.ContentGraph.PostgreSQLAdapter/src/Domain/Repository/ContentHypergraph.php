@@ -166,6 +166,45 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    public function findParentNodeAggregateByChildDimensionSpacePoint(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $childDimensionSpacePoint
+    ): ?NodeAggregate {
+        $query = /** @lang PostgreSQL */ '
+            SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename,
+                   n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
+                FROM ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ph
+                JOIN ' . NodeRecord::TABLE_NAME . ' n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
+            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
+                AND n.nodeaggregateidentifier = (
+                    SELECT pn.nodeaggregateidentifier
+                        FROM ' . NodeRecord::TABLE_NAME . ' pn
+                        JOIN ' . HierarchyHyperrelationRecord::TABLE_NAME . ' ch
+                            ON pn.relationanchorpoint = ch.parentnodeanchor
+                        JOIN ' . NodeRecord::TABLE_NAME . ' cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+                    WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                        AND ch.dimensionspacepointhash = :childDimensionSpacePointHash
+                        AND ch.contentstreamidentifier = :contentStreamIdentifier
+                )';
+        $parameters = [
+            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier,
+            'childDimensionSpacePointHash' => $childDimensionSpacePoint->hash
+        ];
+
+        $nodeRows = $this->getDatabaseConnection()->executeQuery(
+            $query,
+            $parameters
+        )->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
+    }
+
+
     /**
      * @return iterable<NodeAggregate>
      */

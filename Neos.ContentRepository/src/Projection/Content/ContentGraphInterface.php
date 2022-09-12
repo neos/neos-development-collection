@@ -69,13 +69,21 @@ interface ContentGraphInterface
     ): ?NodeAggregate;
 
     /**
-     *
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
         ContentStreamIdentifier $contentStreamIdentifier,
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
+    ): ?NodeAggregate;
+
+    /**
+     * @internal only for consumption inside the Command Handler
+     */
+    public function findParentNodeAggregateByChildDimensionSpacePoint(
+        ContentStreamIdentifier $contentStreamIdentifier,
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $childDimensionSpacePoint
     ): ?NodeAggregate;
 
     /**

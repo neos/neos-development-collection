@@ -14,9 +14,22 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Feature\Common\Exception;
 
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\DimensionSpace\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\SharedModel\Node\NodeAggregateIdentifier;
+use Neos\ContentRepository\SharedModel\Workspace\ContentStreamIdentifier;
 
-#[Flow\Proxy(false)]
 final class ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \DomainException
 {
+    public static function butWasSupposedTo(
+        NodeAggregateIdentifier $childNodeAggregateIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentStreamIdentifier $contentStreamIdentifier
+    ): self{
+        return new self(
+            'No parent node aggregate for ' . $childNodeAggregateIdentifier
+            . ' does currently cover dimension space point ' . json_encode($dimensionSpacePoint)
+            . ' in content stream ' . $contentStreamIdentifier,
+            1659906376
+        );
+    }
 }

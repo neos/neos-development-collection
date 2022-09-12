@@ -464,21 +464,21 @@ trait ConstraintChecks
         NodeAggregateIdentifier $childNodeAggregateIdentifier,
         DimensionSpacePoint $dimensionSpacePoint
     ): ReadableNodeAggregateInterface {
-        foreach ($this->getContentGraph()->findParentNodeAggregates(
+        $parentNodeAggregate = $this->contentGraph->findParentNodeAggregateByChildDimensionSpacePoint(
             $contentStreamIdentifier,
-             $childNodeAggregateIdentifier
-        ) as $parentNodeAggregate) {
-            if ($parentNodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
-                return $parentNodeAggregate;
-            }
+            $childNodeAggregateIdentifier,
+            $dimensionSpacePoint
+        );
+
+        if (!$parentNodeAggregate instanceof ReadableNodeAggregateInterface) {
+            throw ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
+                $childNodeAggregateIdentifier,
+                $dimensionSpacePoint,
+                $contentStreamIdentifier
+            );
         }
 
-        throw new ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-            'No parent node aggregate for ' . $childNodeAggregateIdentifier
-                . ' does currently cover dimension space point ' . json_encode($dimensionSpacePoint)
-                . ' in content stream ' . $contentStreamIdentifier,
-            1659906376
-        );
+        return $parentNodeAggregate;
     }
 
     /**
