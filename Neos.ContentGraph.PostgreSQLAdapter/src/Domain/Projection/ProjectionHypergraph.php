@@ -155,7 +155,8 @@ final class ProjectionHypergraph
                 SELECT orgp.nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_node orgp
                     JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation orgh
                         ON orgh.parentnodeanchor = orgp.relationanchorpoint
-                    JOIN ' . $this->tableNamePrefix . '_node orgn ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
+                    JOIN ' . $this->tableNamePrefix . '_node orgn
+                        ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors)
                 WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
                     AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
                     AND orgn.nodeaggregateidentifier = :childNodeAggregateIdentifier
@@ -459,7 +460,8 @@ final class ProjectionHypergraph
                          * First, find the node aggregate identifiers of the origin\'s succeeding siblings,
                          * ordered by distance to it, ascending
                          */
-                        SELECT sibn.nodeaggregateidentifier FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation orgh
+                        SELECT sibn.nodeaggregateidentifier
+                            FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation orgh
                             JOIN ' . $this->tableNamePrefix . '_node orgn
                                 ON orgn.relationanchorpoint = ANY(orgh.childnodeanchors),
                                 unnest(orgh.childnodeanchors) WITH ORDINALITY childnodeanchor

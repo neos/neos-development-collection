@@ -112,20 +112,25 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
-        // @phpstan-ignore-next-line
         return match ($command::class) {
             SetNodeProperties::class => $this->handleSetNodeProperties($command, $contentRepository),
-            SetSerializedNodeProperties::class => $this->handleSetSerializedNodeProperties($command, $contentRepository),
+            SetSerializedNodeProperties::class
+                => $this->handleSetSerializedNodeProperties($command, $contentRepository),
             SetNodeReferences::class => $this->handleSetNodeReferences($command, $contentRepository),
-            SetSerializedNodeReferences::class => $this->handleSetSerializedNodeReferences($command, $contentRepository),
+            SetSerializedNodeReferences::class
+                => $this->handleSetSerializedNodeReferences($command, $contentRepository),
             ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
             RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
-            RestoreNodeAggregateCoverage::class => $this->handleRestoreNodeAggregateCoverage($command, $contentRepository),
-            CreateNodeAggregateWithNode::class => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
-            CreateNodeAggregateWithNodeAndSerializedProperties::class => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
+            RestoreNodeAggregateCoverage::class
+                => $this->handleRestoreNodeAggregateCoverage($command, $contentRepository),
+            CreateNodeAggregateWithNode::class
+                => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
+            CreateNodeAggregateWithNodeAndSerializedProperties::class
+                => $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($command, $contentRepository),
             MoveNodeAggregate::class => $this->handleMoveNodeAggregate($command, $contentRepository),
             CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
-            CreateRootNodeAggregateWithNode::class => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            CreateRootNodeAggregateWithNode::class
+                => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
@@ -179,8 +184,10 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     /**
      * @todo perhaps reuse when ChangeNodeAggregateType is reimplemented
      */
-    protected function checkConstraintsImposedByAncestors(ChangeNodeAggregateType $command, ContentRepository $contentRepository): void
-    {
+    protected function checkConstraintsImposedByAncestors(
+        ChangeNodeAggregateType $command,
+        ContentRepository $contentRepository
+    ): void {
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamId,
             $command->nodeAggregateId,
@@ -240,5 +247,4 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             }
         }
     }
-
 }

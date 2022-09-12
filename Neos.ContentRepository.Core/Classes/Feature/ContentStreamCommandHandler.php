@@ -158,5 +158,4 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             );
         }
     }
-
 }

@@ -97,17 +97,20 @@ class ProjectionContentGraph
              */
             SELECT p.*
             FROM ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' p
-            JOIN ' . $this->tableNamePrefix . HierarchyRelationRecord::TABLE_NAME_SUFFIX  . ' ph ON p.relationanchorpoint = ph.childnodeanchor
+            JOIN ' . $this->tableNamePrefix . HierarchyRelationRecord::TABLE_NAME_SUFFIX  . ' ph
+                ON p.relationanchorpoint = ph.childnodeanchor
             WHERE ph.contentstreamidentifier = :contentStreamIdentifier
             AND ph.dimensionspacepointhash = :coveredDimensionSpacePointHash
             AND p.nodeaggregateidentifier = (
                 /**
                  * First, find the origin\'s parent node aggregate identifier
                  */
-                SELECT orgp.nodeaggregateidentifier FROM ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' orgp
+                SELECT orgp.nodeaggregateidentifier
+                    FROM ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' orgp
                     JOIN ' . $this->tableNamePrefix . HierarchyRelationRecord::TABLE_NAME_SUFFIX  . ' orgh
                         ON orgh.parentnodeanchor = orgp.relationanchorpoint
-                    JOIN ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' orgn ON orgn.relationanchorpoint = orgh.childnodeanchor
+                    JOIN ' . $this->tableNamePrefix . NodeRecord::TABLE_NAME_SUFFIX . ' orgn
+                        ON orgn.relationanchorpoint = orgh.childnodeanchor
                 WHERE orgh.contentstreamidentifier = :contentStreamIdentifier
                     AND orgh.dimensionspacepointhash = :originDimensionSpacePointHash
                     AND orgn.nodeaggregateidentifier = :childNodeAggregateIdentifier
