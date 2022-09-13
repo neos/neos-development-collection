@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeRemoval\Command;
+namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublish
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Feature\Common\RecursionMode;
+use Neos\ContentRepository\Core\SharedModel\RecursionMode;
 
 /**
  * The command to restore coverage of a node aggregate.

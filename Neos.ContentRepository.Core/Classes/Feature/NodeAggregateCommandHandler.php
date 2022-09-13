@@ -50,7 +50,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
-use Neos\ContentRepository\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands

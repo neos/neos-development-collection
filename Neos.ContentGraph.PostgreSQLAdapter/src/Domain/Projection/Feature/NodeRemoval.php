@@ -23,8 +23,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Feature\Common\RecursionMode;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
+use Neos\ContentRepository\Core\SharedModel\RecursionMode;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;

@@ -10,8 +10,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRec
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Feature\Common\RecursionMode;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
+use Neos\ContentRepository\Core\SharedModel\RecursionMode;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;

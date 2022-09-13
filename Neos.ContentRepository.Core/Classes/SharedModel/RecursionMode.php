@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\Common;
+namespace Neos\ContentRepository\Core\SharedModel;
 
 use Neos\Flow\Annotations as Flow;
 

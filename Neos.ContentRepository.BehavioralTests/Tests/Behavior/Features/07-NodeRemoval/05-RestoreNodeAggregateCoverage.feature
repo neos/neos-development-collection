@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @fixtures @adapters=DoctrineDBAL,Postgres
 Feature: Restore NodeAggregate coverage
 
   As a user of the CR I want to be able to restore coverage of a NodeAggregate or parts of it.
@@ -29,48 +29,48 @@ Feature: Restore NodeAggregate coverage
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier        | nodeTypeName                                                                | parentNodeAggregateIdentifier | nodeName   | tetheredDescendantNodeAggregateIdentifiers                                                                       |
-      | sir-david-nodenborough         | Neos.ContentRepository.Testing:Document                                     | lady-eleonode-rootford        | document   | {}                                                                                                               |
-      | preceding-mc-nodeface          | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough        | succeeding | {}                                                                                                               |
-      | nody-mc-nodeface               | Neos.ContentRepository.Testing:DocumentWithTetheredChildrenAndGrandChildren | sir-david-nodenborough        | document   | {"tethered":"nodewyn-tetherton", "tethered/tethered": "nodimus-mediocre", "anothertethered":"nodimer-tetherton"} |
-      | succeeding-mc-nodeface         | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough        | succeeding | {}                                                                                                               |
-      | another-succeeding-mc-nodeface | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough        | succeeding | {}                                                                                                               |
-      | sir-nodeward-nodington-iii     | Neos.ContentRepository.Testing:ReferencingDocument                          | nody-mc-nodeface              | esquire    | {}                                                                                                               |
-      | nodimus-prime                  | Neos.ContentRepository.Testing:ReferencingDocument                          | sir-nodeward-nodington-iii    | prime      | {}                                                                                                               |
+      | nodeAggregateId                | nodeTypeName                                                                | parentNodeAggregateId      | nodeName           | tetheredDescendantNodeAggregateIds                                                                               |
+      | sir-david-nodenborough         | Neos.ContentRepository.Testing:Document                                     | lady-eleonode-rootford     | document           | {}                                                                                                               |
+      | preceding-mc-nodeface          | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | preceding          | {}                                                                                                               |
+      | nody-mc-nodeface               | Neos.ContentRepository.Testing:DocumentWithTetheredChildrenAndGrandChildren | sir-david-nodenborough     | document           | {"tethered":"nodewyn-tetherton", "tethered/tethered": "nodimus-mediocre", "anothertethered":"nodimer-tetherton"} |
+      | succeeding-mc-nodeface         | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | succeeding         | {}                                                                                                               |
+      | another-succeeding-mc-nodeface | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | another-succeeding | {}                                                                                                               |
+      | sir-nodeward-nodington-iii     | Neos.ContentRepository.Testing:ReferencingDocument                          | nody-mc-nodeface           | esquire            | {}                                                                                                               |
+      | nodimus-prime                  | Neos.ContentRepository.Testing:ReferencingDocument                          | sir-nodeward-nodington-iii | prime              | {}                                                                                                               |
     And the command SetNodeReferences is executed with payload:
-      | Key                           | Value                                  |
-      | sourceNodeAggregateIdentifier | "sir-nodeward-nodington-iii"           |
-      | referenceName                 | "references"                           |
-      | references                    | [{"target": "sir-david-nodenborough"}] |
+      | Key                   | Value                                  |
+      | sourceNodeAggregateId | "sir-nodeward-nodington-iii"           |
+      | referenceName         | "references"                           |
+      | references            | [{"target": "sir-david-nodenborough"}] |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | nodeAggregateIdentifier | "sir-david-nodenborough" |
-      | sourceOrigin            | {"language":"en"}        |
-      | targetOrigin            | {"language":"de"}        |
+      | Key             | Value                    |
+      | nodeAggregateId | "sir-david-nodenborough" |
+      | sourceOrigin    | {"language":"en"}        |
+      | targetOrigin    | {"language":"de"}        |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                    |
-      | nodeAggregateIdentifier | "succeeding-mc-nodeface" |
-      | sourceOrigin            | {"language":"en"}        |
-      | targetOrigin            | {"language":"de"}        |
+      | Key             | Value                    |
+      | nodeAggregateId | "succeeding-mc-nodeface" |
+      | sourceOrigin    | {"language":"en"}        |
+      | targetOrigin    | {"language":"de"}        |
     And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface"   |
+      | nodeAggregateId              | "nody-mc-nodeface"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
@@ -78,19 +78,19 @@ Feature: Restore NodeAggregate coverage
   Scenario: Restore node aggregate coverage without specializations and not recursive
     When the command RestoreNodeAggregateCoverage is executed with payload:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface"        |
+      | nodeAggregateId            | "nody-mc-nodeface"        |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
     Then I expect exactly 15 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 14 is of type "NodeAggregateCoverageWasRestored" with payload:
       | Key                                 | Expected                     |
-      | contentStreamIdentifier             | "cs-identifier"              |
-      | nodeAggregateIdentifier             | "nody-mc-nodeface"           |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "nody-mc-nodeface"           |
       | sourceDimensionSpacePoint           | {"language":"en"}            |
       | affectedCoveredDimensionSpacePoints | [{"language":"de"}]          |
       | recursionMode                       | "onlyTetheredDescendants"    |
-      | initiatingUserIdentifier            | "initiating-user-identifier" |
+      | initiatingUserId                    | "initiating-user-identifier" |
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 11 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -128,14 +128,14 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
-      | 2     | nody-mc-nodeface        |
-      | 3     | nodewyn-tetherton       |
-      | 4     | nodimus-mediocre        |
-      | 3     | nodimer-tetherton       |
-      | 2     | succeeding-mc-nodeface  |
+      | Level | NodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+      | 2     | nody-mc-nodeface       |
+      | 3     | nodewyn-tetherton      |
+      | 4     | nodimus-mediocre       |
+      | 3     | nodimer-tetherton      |
+      | 2     | succeeding-mc-nodeface |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -191,9 +191,9 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
+      | Level | NodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -209,19 +209,19 @@ Feature: Restore NodeAggregate coverage
     # Additional test for restoring coverage on a non-occupied source
     When the command RestoreNodeAggregateCoverage is executed with payload:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface"        |
+      | nodeAggregateId            | "nody-mc-nodeface"        |
       | dimensionSpacePointToCover | {"language":"gsw"}        |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
     Then I expect exactly 14 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 13 is of type "NodeAggregateCoverageWasRestored" with payload:
       | Key                                 | Expected                     |
-      | contentStreamIdentifier             | "cs-identifier"              |
-      | nodeAggregateIdentifier             | "nody-mc-nodeface"           |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "nody-mc-nodeface"           |
       | sourceDimensionSpacePoint           | {"language":"de"}            |
       | affectedCoveredDimensionSpacePoints | [{"language":"gsw"}]         |
       | recursive                           | false                        |
-      | initiatingUserIdentifier            | "initiating-user-identifier" |
+      | initiatingUserId                    | "initiating-user-identifier" |
     When the graph projection is fully up to date
 
     # Re-check the specialization
@@ -231,13 +231,13 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
-      | 2     | nody-mc-nodeface        |
-      | 3     | nodewyn-tetherton       |
-      | 4     | nodimus-mediocre        |
-      | 3     | nodimer-tetherton       |
+      | Level | NodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+      | 2     | nody-mc-nodeface       |
+      | 3     | nodewyn-tetherton      |
+      | 4     | nodimus-mediocre       |
+      | 3     | nodimer-tetherton      |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -272,19 +272,19 @@ Feature: Restore NodeAggregate coverage
   Scenario: Restore node aggregate coverage with specializations but not recursive
     When the command RestoreNodeAggregateCoverage is executed with payload:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface"        |
+      | nodeAggregateId            | "nody-mc-nodeface"        |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | true                      |
       | recursive                  | "onlyTetheredDescendants" |
     Then I expect exactly 13 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateCoverageWasRestored" with payload:
       | Key                                 | Expected                               |
-      | contentStreamIdentifier             | "cs-identifier"                        |
-      | nodeAggregateIdentifier             | "nody-mc-nodeface"                     |
+      | contentStreamId                     | "cs-identifier"                        |
+      | nodeAggregateId                     | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint           | {"language":"en"}                      |
       | affectedCoveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
       | recursive                           | false                                  |
-      | initiatingUserIdentifier            | "initiating-user-identifier"           |
+      | initiatingUserId                    | "initiating-user-identifier"           |
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 9 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -318,13 +318,13 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
-      | 2     | nody-mc-nodeface        |
-      | 3     | nodewyn-tetherton       |
-      | 4     | nodimus-mediocre        |
-      | 3     | nodimer-tetherton       |
+      | Level | NodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+      | 2     | nody-mc-nodeface       |
+      | 3     | nodewyn-tetherton      |
+      | 4     | nodimus-mediocre       |
+      | 3     | nodimer-tetherton      |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -373,13 +373,13 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
-      | 2     | nody-mc-nodeface        |
-      | 3     | nodewyn-tetherton       |
-      | 4     | nodimus-mediocre        |
-      | 3     | nodimer-tetherton       |
+      | Level | NodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
+      | 2     | nody-mc-nodeface       |
+      | 3     | nodewyn-tetherton      |
+      | 4     | nodimus-mediocre       |
+      | 3     | nodimer-tetherton      |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -424,19 +424,19 @@ Feature: Restore NodeAggregate coverage
   Scenario: Restore node aggregate coverage without specializations but recursive
     When the command RestoreNodeAggregateCoverage is executed with payload:
       | Key                        | Value              |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface" |
+      | nodeAggregateId            | "nody-mc-nodeface" |
       | dimensionSpacePointToCover | {"language":"de"}  |
       | withSpecializations        | false              |
       | recursive                  | "allDescendants"   |
     Then I expect exactly 13 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateCoverageWasRestored" with payload:
       | Key                                 | Expected                     |
-      | contentStreamIdentifier             | "cs-identifier"              |
-      | nodeAggregateIdentifier             | "nody-mc-nodeface"           |
+      | contentStreamId                     | "cs-identifier"              |
+      | nodeAggregateId                     | "nody-mc-nodeface"           |
       | originDimensionSpacePoint           | {"language":"en"}            |
       | affectedCoveredDimensionSpacePoints | [{"language":"de"}]          |
       | recursive                           | true                         |
-      | initiatingUserIdentifier            | "initiating-user-identifier" |
+      | initiatingUserId                    | "initiating-user-identifier" |
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 9 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -470,7 +470,7 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier    |
+      | Level | NodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
       | 1     | sir-david-nodenborough     |
       | 2     | nody-mc-nodeface           |
@@ -543,9 +543,9 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier |
-      | 0     | lady-eleonode-rootford  |
-      | 1     | sir-david-nodenborough  |
+      | Level | NodeAggregateId        |
+      | 0     | lady-eleonode-rootford |
+      | 1     | sir-david-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
@@ -561,19 +561,19 @@ Feature: Restore NodeAggregate coverage
   Scenario: Restore node aggregate coverage with specializations and recursive
     When the command RestoreNodeAggregateCoverage is executed with payload:
       | Key                        | Value              |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface" |
+      | nodeAggregateId            | "nody-mc-nodeface" |
       | dimensionSpacePointToCover | {"language":"de"}  |
       | withSpecializations        | true               |
       | recursive                  | "allDescendants"   |
     Then I expect exactly 13 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
     And event at index 12 is of type "NodeAggregateCoverageWasRestored" with payload:
       | Key                                 | Expected                               |
-      | contentStreamIdentifier             | "cs-identifier"                        |
-      | nodeAggregateIdentifier             | "nody-mc-nodeface"                     |
+      | contentStreamId                     | "cs-identifier"                        |
+      | nodeAggregateId                     | "nody-mc-nodeface"                     |
       | originDimensionSpacePoint           | {"language":"en"}                      |
       | affectedCoveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
       | recursive                           | true                                   |
-      | initiatingUserIdentifier            | "initiating-user-identifier"           |
+      | initiatingUserId                    | "initiating-user-identifier"           |
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 9 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
@@ -607,7 +607,7 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier    |
+      | Level | NodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
       | 1     | sir-david-nodenborough     |
       | 2     | nody-mc-nodeface           |
@@ -680,7 +680,7 @@ Feature: Restore NodeAggregate coverage
       | Name     | NodeDiscriminator                                      |
       | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateIdentifier    |
+      | Level | NodeAggregateId            |
       | 0     | lady-eleonode-rootford     |
       | 1     | sir-david-nodenborough     |
       | 2     | nody-mc-nodeface           |

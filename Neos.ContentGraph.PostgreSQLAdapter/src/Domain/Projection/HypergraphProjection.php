@@ -49,7 +49,7 @@ use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;

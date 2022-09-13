@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Feature\NodeRemoval\Event;
+namespace Neos\ContentRepository\Core\Feature\NodeRemoval\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsI
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Feature\Common\RecursionMode;
+use Neos\ContentRepository\Core\SharedModel\RecursionMode;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
