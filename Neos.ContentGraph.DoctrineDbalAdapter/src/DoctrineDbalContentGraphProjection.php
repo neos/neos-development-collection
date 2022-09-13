@@ -53,6 +53,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
@@ -171,6 +172,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             DimensionSpacePointWasMoved::class,
             DimensionShineThroughWasAdded::class,
             NodeAggregateWasRemoved::class,
+            NodeAggregateCoverageWasRestored::class,
             NodeAggregateWasMoved::class,
             NodeSpecializationVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
@@ -226,6 +228,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->whenDimensionShineThroughWasAdded($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWasRemoved) {
             $this->whenNodeAggregateWasRemoved($eventInstance);
+        } elseif ($eventInstance instanceof NodeAggregateCoverageWasRestored) {
+            $this->whenNodeAggregateCoverageWasRestored($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWasMoved) {
             $this->whenNodeAggregateWasMoved($eventInstance);
         } elseif ($eventInstance instanceof NodeSpecializationVariantWasCreated) {

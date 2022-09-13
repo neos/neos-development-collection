@@ -49,6 +49,7 @@ use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
@@ -173,6 +174,7 @@ final class HypergraphProjection implements ProjectionInterface
             NodeReferencesWereSet::class,
             // NodeRemoval
             NodeAggregateWasRemoved::class,
+            NodeAggregateCoverageWasRestored::class,
             // NodeRenaming
             NodeAggregateNameWasChanged::class,
             // NodeTypeChange
@@ -228,6 +230,7 @@ final class HypergraphProjection implements ProjectionInterface
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($eventInstance),
             // NodeRemoval
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($eventInstance),
+            NodeAggregateCoverageWasRestored::class => $this->whenNodeAggregateCoverageWasRestored($eventInstance),
             // NodeRenaming
             NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($eventInstance),
             // NodeTypeChange
