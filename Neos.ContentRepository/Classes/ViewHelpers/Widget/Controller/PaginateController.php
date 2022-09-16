@@ -121,7 +121,7 @@ class PaginateController extends AbstractWidgetController
         }
         $offset = ($this->currentPage > 1) ? (integer)($itemsPerPage * ($this->currentPage - 1)) : null;
         if ($this->parentNode === null) {
-            $nodes = array_slice($this->nodes, $offset, $itemsPerPage);
+            $nodes = (array) array_slice($this->nodes, $offset, $itemsPerPage);
         } else {
             $nodes = $this->parentNode->getChildNodes($this->nodeTypeFilter, $itemsPerPage, $offset);
         }
