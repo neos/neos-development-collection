@@ -68,6 +68,7 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CopyNodesRecursively::class => $this->handleCopyNodesRecursively($command, $contentRepository),
         };

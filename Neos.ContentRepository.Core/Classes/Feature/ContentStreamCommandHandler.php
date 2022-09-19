@@ -44,6 +44,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateContentStream::class => $this->handleCreateContentStream($command, $contentRepository),
             ForkContentStream::class => $this->handleForkContentStream($command, $contentRepository),
@@ -155,5 +156,4 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             );
         }
     }
-
 }

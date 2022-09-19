@@ -82,13 +82,16 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
     public function handle(CommandInterface $command, ContentRepository $contentRepository): EventsToPublish
     {
+        /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
             CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
             PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
             RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
-            PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
-            DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
+            PublishIndividualNodesFromWorkspace::class
+                => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
+            DiscardIndividualNodesFromWorkspace::class
+                => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
         };
     }
