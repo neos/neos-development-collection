@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos;
 
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Monitor\FileMonitor;
@@ -141,7 +142,7 @@ class Package extends BasePackage
         $dispatcher->connect(
             DocumentUriPathProjection::class,
             'documentUriPathChanged',
-            function (string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event) use ($bootstrap) {
+            function (string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event, EventEnvelope $eventEnvelope) use ($bootstrap) {
                 /** @var RouterCachingService $routerCachingService */
                 $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
                 $routerCachingService->flushCachesForUriPath($oldUriPath);
@@ -158,7 +159,7 @@ class Package extends BasePackage
                         $newUriPath,
                         301,
                         [],
-                        (string)$event->initiatingUserId,
+                        (string)$eventEnvelope->event->metadata->get('initiatingUserId'),
                         'via DocumentUriPathProjector'
                     );
                 }

@@ -113,7 +113,6 @@ final class EditorContentStreamZookeeper
                     $workspaceName->toContentRepositoryWorkspaceName()
                 );
 
-                $userIdentifier = UserId::fromString($this->persistenceManager->getIdentifierByObject($user));
                 if (!$workspace) {
                     // @todo: find base workspace for user
                     /** @var Workspace $baseWorkspace */
@@ -133,7 +132,6 @@ final class EditorContentStreamZookeeper
                             new WorkspaceTitle((string) $user->getName()),
                             new WorkspaceDescription(''),
                             $editorsNewContentStreamIdentifier,
-                            $userIdentifier
                         )
                     )->block();
                 } else {
@@ -141,7 +139,6 @@ final class EditorContentStreamZookeeper
                         $contentRepository->handle(
                             RebaseWorkspace::create(
                                 $workspace->workspaceName,
-                                $userIdentifier
                             )
                         )->block());
                 }

@@ -112,7 +112,6 @@ class WorkspaceCommandController extends CommandController
                 $contentRepository->handle(
                     DiscardWorkspace::create(
                         WorkspaceName::fromString($workspace),
-                        UserId::forSystemUser()
                     )
                 )->block();
             } catch (WorkspaceDoesNotExist $exception) {

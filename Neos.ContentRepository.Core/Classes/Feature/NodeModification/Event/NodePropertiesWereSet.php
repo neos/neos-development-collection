@@ -35,7 +35,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class NodePropertiesWereSet implements EventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateId
 {
-    public function __construct(public readonly ContentStreamId $contentStreamId, public readonly NodeAggregateId $nodeAggregateId, public readonly OriginDimensionSpacePoint $originDimensionSpacePoint, public readonly SerializedPropertyValues $propertyValues,) {}
+    public function __construct(
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public readonly SerializedPropertyValues $propertyValues
+    ) {
+    }
 
     public function getContentStreamId(): ContentStreamId
     {
@@ -64,7 +70,12 @@ final class NodePropertiesWereSet implements EventInterface, PublishableToOtherC
 
     public static function fromArray(array $values): EventInterface
     {
-        return new self(ContentStreamId::fromString($values['contentStreamId']), NodeAggregateId::fromString($values['nodeAggregateId']), OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']), SerializedPropertyValues::fromArray($values['propertyValues']),);
+        return new self(
+            ContentStreamId::fromString($values['contentStreamId']),
+            NodeAggregateId::fromString($values['nodeAggregateId']),
+            OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
+            SerializedPropertyValues::fromArray($values['propertyValues']),
+        );
     }
 
     public function jsonSerialize(): array
