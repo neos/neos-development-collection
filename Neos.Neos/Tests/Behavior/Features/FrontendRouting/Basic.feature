@@ -22,12 +22,12 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                        |
-      | contentStreamIdentifier     | "cs-identifier"              |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"     |
-      | nodeTypeName                | "Neos.Neos:Sites"            |
-      | coveredDimensionSpacePoints | [{}]                         |
-      | nodeAggregateClassification | "root"                       |
+      | Key                         | Value                    |
+      | contentStreamIdentifier     | "cs-identifier"          |
+      | nodeAggregateId             | "lady-eleonode-rootford" |
+      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | coveredDimensionSpacePoints | [{}]                     |
+      | nodeAggregateClassification | "root"                   |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford
@@ -40,12 +40,12 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                          | initialPropertyValues                    | nodeName |
-      | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
-      | sir-david-nodenborough  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
-      | duke-of-contentshire    | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
-      | earl-o-documentbourgh   | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
-      | nody-mc-nodeface        | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node5    |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
+      | shernode-homes         | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
+      | sir-david-nodenborough | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
+      | duke-of-contentshire   | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
+      | earl-o-documentbourgh  | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
+      | nody-mc-nodeface       | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node5    |
     And A site exists for node name "node1"
     And the sites configuration is:
     """
@@ -84,7 +84,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                            |
       | contentStreamIdentifier   | "cs-identifier"                                  |
-      | nodeAggregateIdentifier   | "sir-david-nodenborough"                         |
+      | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
     And The documenturipath projection is up to date
@@ -94,12 +94,12 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
 
   Scenario: Move node upwards in the tree
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                   |
-      | contentStreamIdentifier                     | "cs-identifier"         |
-      | nodeAggregateIdentifier                     | "earl-o-documentbourgh" |
-      | dimensionSpacePoint                         | {}                      |
-      | newParentNodeAggregateIdentifier            | "shernode-homes"        |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                    |
+      | Key                                 | Value                   |
+      | contentStreamIdentifier             | "cs-identifier"         |
+      | nodeAggregateId                     | "earl-o-documentbourgh" |
+      | dimensionSpacePoint                 | {}                      |
+      | newParentNodeAggregateId            | "shernode-homes"        |
+      | newSucceedingSiblingNodeAggregateId | null                    |
     And The documenturipath projection is up to date
     And I am on URL "/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
@@ -107,12 +107,12 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
 
   Scenario: Move node downwards in the tree
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                   |
-      | contentStreamIdentifier                     | "cs-identifier"         |
-      | nodeAggregateIdentifier                     | "nody-mc-nodeface"      |
-      | dimensionSpacePoint                         | {}                      |
-      | newParentNodeAggregateIdentifier            | "earl-o-documentbourgh" |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                    |
+      | Key                                 | Value                   |
+      | contentStreamIdentifier             | "cs-identifier"         |
+      | nodeAggregateId                     | "nody-mc-nodeface"      |
+      | dimensionSpacePoint                 | {}                      |
+      | newParentNodeAggregateId            | "earl-o-documentbourgh" |
+      | newSucceedingSiblingNodeAggregateId | null                    |
     And The documenturipath projection is up to date
     And I am on URL "/david-nodenborough/earl-document/nody"
     Then the matched node should be "nody-mc-nodeface" in content stream "cs-identifier" and dimension "{}"

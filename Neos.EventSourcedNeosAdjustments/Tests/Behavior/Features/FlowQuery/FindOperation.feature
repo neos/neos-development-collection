@@ -16,29 +16,29 @@ Feature: The FlowQuery find operation
     'Neos.ContentRepository.Testing:Document': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | newContentStreamIdentifier | "cs-identifier"                        |
+      | Key                        | Value                |
+      | workspaceName              | "live"               |
+      | workspaceTitle             | "Live"               |
+      | workspaceDescription       | "The live workspace" |
+      | newContentStreamIdentifier | "cs-identifier"      |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                                  |
-      | contentStreamIdentifier     | "cs-identifier"                        |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"               |
-      | nodeTypeName                | "Neos.ContentRepository:Root"          |
-      | coveredDimensionSpacePoints | [{}]                                   |
-      | nodeAggregateClassification | "root"                                 |
+      | Key                         | Value                         |
+      | contentStreamIdentifier     | "cs-identifier"               |
+      | nodeAggregateId             | "lady-eleonode-rootford"      |
+      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | coveredDimensionSpacePoints | [{}]                          |
+      | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
 
   Scenario: Find a tethered child node, e.g. via q(node).find('tethered')
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                                        | Value                                                       |
-      | contentStreamIdentifier                    | "cs-identifier"                                             |
-      | nodeAggregateIdentifier                    | "sir-david-nodenborough"                                    |
-      | nodeTypeName                               | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
-      | originDimensionSpacePoint                  | {}                                                          |
-      | parentNodeAggregateIdentifier              | "lady-eleonode-rootford"                                    |
-      | tetheredDescendantNodeAggregateIdentifiers | {"tethered": "nodewyn-tetherton"}                           |
+      | Key                                | Value                                                       |
+      | contentStreamIdentifier            | "cs-identifier"                                             |
+      | nodeAggregateId                    | "sir-david-nodenborough"                                    |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
+      | originDimensionSpacePoint          | {}                                                          |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                                    |
+      | tetheredDescendantNodeAggregateIds | {"tethered": "nodewyn-tetherton"}                           |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
@@ -48,9 +48,9 @@ Feature: The FlowQuery find operation
 
   Scenario: Find named descendant, e.g. via q(node).find('parent/child')
     When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
-      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
-      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                            | nodeName |
+      | sir-david-nodenborough | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document | parent   |
+      | nody-mc-nodeface       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | child    |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And I have a FlowQuery with node "lady-eleonode-rootford"
@@ -59,9 +59,9 @@ Feature: The FlowQuery find operation
 
   Scenario: Find named node by absolute path, e.g. via q(node).find('/parent/child')
     When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
-      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
-      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                            | nodeName |
+      | sir-david-nodenborough | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document | parent   |
+      | nody-mc-nodeface       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | child    |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And I have a FlowQuery with node "sir-david-nodenborough"
@@ -70,9 +70,9 @@ Feature: The FlowQuery find operation
 
   Scenario: Find node by identifier, e.g. via q(node).find('#nody-mc-nodeface')
     When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                            | nodeName |
-      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document | parent   |
-      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document | child    |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                            | nodeName |
+      | sir-david-nodenborough | lady-eleonode-rootford | Neos.ContentRepository.Testing:Document | parent   |
+      | nody-mc-nodeface       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | child    |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
     And I have a FlowQuery with node "lady-eleonode-rootford"
@@ -82,12 +82,12 @@ Feature: The FlowQuery find operation
   Scenario: Find nodes by node type, e.g. via q(node).find('[instanceof Neos.ContentRepository.Testing:Document]')
 
     When the following intermediary CreateNodeAggregateWithNode commands are executed for content stream "cs-identifier" and origin "{}":
-      | nodeAggregateIdentifier    | parentNodeAggregateIdentifier | nodeTypeName                                              |
-      | sir-david-nodenborough     | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                   |
-      | sir-nodeward-nodington-iii | lady-eleonode-rootford        | Neos.ContentRepository.Testing:Document                   |
-      | albert-nodesworth          | sir-david-nodenborough        | Neos.ContentRepository.Testing:Document                   |
-      | berta-nodesworth           | sir-nodeward-nodington-iii    | Neos.ContentRepository.Testing:Document                   |
-      | carl-nodesworth            | sir-david-nodenborough        | Neos.ContentRepository.Testing:NodeWithTetheredChildNodes |
+      | nodeAggregateId            | parentNodeAggregateId      | nodeTypeName                                              |
+      | sir-david-nodenborough     | lady-eleonode-rootford     | Neos.ContentRepository.Testing:Document                   |
+      | sir-nodeward-nodington-iii | lady-eleonode-rootford     | Neos.ContentRepository.Testing:Document                   |
+      | albert-nodesworth          | sir-david-nodenborough     | Neos.ContentRepository.Testing:Document                   |
+      | berta-nodesworth           | sir-nodeward-nodington-iii | Neos.ContentRepository.Testing:Document                   |
+      | carl-nodesworth            | sir-david-nodenborough     | Neos.ContentRepository.Testing:NodeWithTetheredChildNodes |
 
     When I am in content stream "cs-identifier" and Dimension Space Point {}
 

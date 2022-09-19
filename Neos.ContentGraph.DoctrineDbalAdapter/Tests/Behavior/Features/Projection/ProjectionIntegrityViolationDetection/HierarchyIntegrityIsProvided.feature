@@ -22,41 +22,41 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                    |
-      | contentStreamId               | "cs-identifier"                                          |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint     | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                 |
-      | nodeName                      | "child-document"                                         |
-      | nodeAggregateClassification   | "regular"                                                |
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "nody-mc-nodeface"                                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
+      | nodeName                    | "child-document"                                         |
+      | nodeAggregateClassification | "regular"                                                |
     And the graph projection is fully up to date
 
   Scenario: Detach a hierarchy relation from its parent
     When I add the following hierarchy relation:
-      | Key                           | Value             |
-      | contentStreamId               | "cs-identifier"   |
-      | dimensionSpacePoint           | {"language":"de"} |
-      | parentNodeAggregateIdentifier | "i-do-not-exist"  |
-      | childNodeAggregateIdentifier  | "i-do-not-exist"  |
+      | Key                   | Value             |
+      | contentStreamId       | "cs-identifier"   |
+      | dimensionSpacePoint   | {"language":"de"} |
+      | parentNodeAggregateId | "i-do-not-exist"  |
+      | childNodeAggregateId  | "i-do-not-exist"  |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597909228
 
   Scenario: Change a hierarchy relation's dimension space point hash
     When I change the following hierarchy relation's dimension space point hash:
-      | Key                           | Value                    |
-      | contentStreamId               | "cs-identifier"          |
-      | dimensionSpacePoint           | {"language":"gsw"}       |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford" |
-      | childNodeAggregateIdentifier  | "nody-mc-nodeface"       |
-      | newDimensionSpacePointHash    | "invalidhash"            |
+      | Key                        | Value                    |
+      | contentStreamId            | "cs-identifier"          |
+      | dimensionSpacePoint        | {"language":"gsw"}       |
+      | parentNodeAggregateId      | "lady-eleonode-rootford" |
+      | childNodeAggregateId       | "nody-mc-nodeface"       |
+      | newDimensionSpacePointHash | "invalidhash"            |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597909228

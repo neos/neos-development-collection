@@ -25,28 +25,28 @@ Feature: Run integrity violation detection regarding reference relations
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | nodeAggregateClassification | "root"                                                   |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                    |
-      | contentStreamId               | "cs-identifier"                                          |
-      | nodeAggregateIdentifier       | "source-nodandaise"                                      |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint     | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                 |
-      | nodeAggregateClassification   | "regular"                                                |
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "source-nodandaise"                                      |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
+      | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                    |
-      | contentStreamId               | "cs-identifier"                                          |
-      | nodeAggregateIdentifier       | "anthony-destinode"                                      |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint     | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                 |
-      | nodeAggregateClassification   | "regular"                                                |
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "anthony-destinode"                                      |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
+      | nodeAggregateClassification | "regular"                                                |
     And the graph projection is fully up to date
 
   Scenario: Detach a reference relation from its source
@@ -54,17 +54,17 @@ Feature: Run integrity violation detection regarding reference relations
       | Key                             | Value                             |
       | contentStreamId                 | "cs-identifier"                   |
       | sourceOriginDimensionSpacePoint | {"language":"de"}                 |
-      | sourceNodeAggregateIdentifier   | "source-nodandaise"               |
+      | sourceNodeAggregateId           | "source-nodandaise"               |
       | referenceName                   | "referenceProperty"               |
       | references                      | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
     And I detach the following reference relation from its source:
-      | Key                                | Value               |
-      | contentStreamId                    | "cs-identifier"     |
-      | sourceNodeAggregateIdentifier      | "source-nodandaise" |
-      | dimensionSpacePoint                | {"language":"gsw"}  |
-      | destinationNodeAggregateIdentifier | "anthony-destinode" |
-      | referenceName                      | "referenceProperty" |
+      | Key                        | Value               |
+      | contentStreamId            | "cs-identifier"     |
+      | sourceNodeAggregateId      | "source-nodandaise" |
+      | dimensionSpacePoint        | {"language":"gsw"}  |
+      | destinationNodeAggregateId | "anthony-destinode" |
+      | referenceName              | "referenceProperty" |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597919585

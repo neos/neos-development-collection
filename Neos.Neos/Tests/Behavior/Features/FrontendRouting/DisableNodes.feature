@@ -22,12 +22,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                        |
-      | contentStreamIdentifier     | "cs-identifier"              |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"     |
-      | nodeTypeName                | "Neos.Neos:Sites"            |
-      | coveredDimensionSpacePoints | [{}]                         |
-      | nodeAggregateClassification | "root"                       |
+      | Key                         | Value                    |
+      | contentStreamIdentifier     | "cs-identifier"          |
+      | nodeAggregateId             | "lady-eleonode-rootford" |
+      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | coveredDimensionSpacePoints | [{}]                     |
+      | nodeAggregateClassification | "root"                   |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford
@@ -41,13 +41,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                          | initialPropertyValues                    | nodeName |
-      | shernode-homes          | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
-      | sir-david-nodenborough  | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
-      | duke-of-contentshire    | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
-      | earl-o-documentbourgh   | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
-      | leaf-mc-node            | earl-o-documentbourgh         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "leaf"}               | node5    |
-      | nody-mc-nodeface        | shernode-homes                | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node6    |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
+      | shernode-homes         | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
+      | sir-david-nodenborough | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
+      | duke-of-contentshire   | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
+      | earl-o-documentbourgh  | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
+      | leaf-mc-node           | earl-o-documentbourgh  | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "leaf"}               | node5    |
+      | nody-mc-nodeface       | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node6    |
     And A site exists for node name "node1"
     And the sites configuration is:
     """
@@ -67,7 +67,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value           |
       | contentStreamIdentifier      | "cs-identifier" |
-      | nodeAggregateIdentifier      | "leaf-mc-node"  |
+      | nodeAggregateId              | "leaf-mc-node"  |
       | coveredDimensionSpacePoint   | {}              |
       | nodeVariantSelectionStrategy | "allVariants"   |
     And The documenturipath projection is up to date
@@ -78,7 +78,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And The documenturipath projection is up to date
@@ -91,13 +91,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
-      | nodeAggregateIdentifier      | "earl-o-documentbourgh" |
+      | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
@@ -109,7 +109,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
@@ -124,13 +124,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
-      | nodeAggregateIdentifier      | "earl-o-documentbourgh" |
+      | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
@@ -142,7 +142,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
-      | nodeAggregateIdentifier      | "earl-o-documentbourgh" |
+      | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
@@ -156,13 +156,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
@@ -173,7 +173,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
@@ -187,13 +187,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
-      | nodeAggregateIdentifier      | "earl-o-documentbourgh" |
+      | nodeAggregateId              | "earl-o-documentbourgh" |
       | affectedDimensionSpacePoints | [{}]                    |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
@@ -204,13 +204,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "EnableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the event NodeAggregateWasEnabled was published with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
@@ -223,17 +223,17 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
       | contentStreamIdentifier      | "cs-identifier"          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough" |
+      | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                   |
-      | contentStreamIdentifier                     | "cs-identifier"         |
-      | nodeAggregateIdentifier                     | "earl-o-documentbourgh" |
-      | dimensionSpacePoint                         | {}                      |
-      | newParentNodeAggregateIdentifier            | "nody-mc-nodeface"      |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                    |
+      | Key                                 | Value                   |
+      | contentStreamIdentifier             | "cs-identifier"         |
+      | nodeAggregateId                     | "earl-o-documentbourgh" |
+      | dimensionSpacePoint                 | {}                      |
+      | newParentNodeAggregateId            | "nody-mc-nodeface"      |
+      | newSucceedingSiblingNodeAggregateId | null                    |
     And The documenturipath projection is up to date
     When I am on URL "/nody/earl-document"
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
@@ -242,17 +242,17 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                   |
       | contentStreamIdentifier      | "cs-identifier"         |
-      | nodeAggregateIdentifier      | "earl-o-documentbourgh" |
+      | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
     And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                   |
-      | contentStreamIdentifier                     | "cs-identifier"         |
-      | nodeAggregateIdentifier                     | "earl-o-documentbourgh" |
-      | dimensionSpacePoint                         | {}                      |
-      | newParentNodeAggregateIdentifier            | "nody-mc-nodeface"      |
-      | newSucceedingSiblingNodeAggregateIdentifier | null                    |
+      | Key                                 | Value                   |
+      | contentStreamIdentifier             | "cs-identifier"         |
+      | nodeAggregateId                     | "earl-o-documentbourgh" |
+      | dimensionSpacePoint                 | {}                      |
+      | newParentNodeAggregateId            | "nody-mc-nodeface"      |
+      | newSucceedingSiblingNodeAggregateId | null                    |
     And The documenturipath projection is up to date
     Then No node should match URL "/nody/earl-document"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should not resolve to an URL
