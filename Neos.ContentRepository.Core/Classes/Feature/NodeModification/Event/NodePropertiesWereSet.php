@@ -33,7 +33,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api events are the persistence-API of the content repository
  */
-final class NodePropertiesWereSet implements EventInterface, PublishableToOtherContentStreamsInterface, EmbedsContentStreamAndNodeAggregateId
+final class NodePropertiesWereSet implements
+    EventInterface,
+    PublishableToOtherContentStreamsInterface,
+    EmbedsContentStreamAndNodeAggregateId
 {
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
@@ -60,12 +63,22 @@ final class NodePropertiesWereSet implements EventInterface, PublishableToOtherC
 
     public function createCopyForContentStream(ContentStreamId $targetContentStreamId): self
     {
-        return new self($targetContentStreamId, $this->nodeAggregateId, $this->originDimensionSpacePoint, $this->propertyValues);
+        return new self(
+            $targetContentStreamId,
+            $this->nodeAggregateId,
+            $this->originDimensionSpacePoint,
+            $this->propertyValues
+        );
     }
 
     public function mergeProperties(self $other): self
     {
-        return new self($this->contentStreamId, $this->nodeAggregateId, $this->originDimensionSpacePoint, $this->propertyValues->merge($other->propertyValues));
+        return new self(
+            $this->contentStreamId,
+            $this->nodeAggregateId,
+            $this->originDimensionSpacePoint,
+            $this->propertyValues->merge($other->propertyValues)
+        );
     }
 
     public static function fromArray(array $values): EventInterface

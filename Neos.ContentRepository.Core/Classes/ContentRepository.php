@@ -85,20 +85,28 @@ final class ContentRepository
         $initiatingUserId = $this->userIdProvider->getUserId();
         $initiatingTimestamp = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
 
-        // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events
-        // This is done in order to keep information about the _original_ metadata when an event is re-applied during publishing/rebasing
-        // "initiatingUserId": The identifier of the user that originally triggered this event. This will never be overridden if it is set once.
-        // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be re-created and reflects the time an event was actually persisted in a stream,
+        // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
+        //                        This is done in order to keep information about the _original_ metadata when an
+        //                        event is re-applied during publishing/rebasing
+        // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
+        //                     be overridden if it is set once.
+        // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
+        //                        re-created and reflects the time an event was actually persisted in a stream,
         // the "initiatingTimestamp" will be kept and is never overridden again.
         // TODO: cleanup
         $eventsToPublish = new EventsToPublish(
             $eventsToPublish->streamName,
-            Events::fromArray($eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use ($initiatingUserId, $initiatingTimestamp) {
-                $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata->value : [];
-                $metadata['initiatingUserId'] ??= $initiatingUserId;
-                $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
-                return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
-            })),
+            Events::fromArray(
+                $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
+                    $initiatingUserId,
+                    $initiatingTimestamp
+                ) {
+                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata->value : [];
+                    $metadata['initiatingUserId'] ??= $initiatingUserId;
+                    $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
+                    return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
+                })
+            ),
             $eventsToPublish->expectedVersion,
         );
 

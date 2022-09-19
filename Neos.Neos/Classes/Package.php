@@ -142,7 +142,7 @@ class Package extends BasePackage
         $dispatcher->connect(
             DocumentUriPathProjection::class,
             'documentUriPathChanged',
-            function (string $oldUriPath, string $newUriPath, NodePropertiesWereSet $event, EventEnvelope $eventEnvelope) use ($bootstrap) {
+            function (string $oldUriPath, string $newUriPath, $_, EventEnvelope $eventEnvelope) use ($bootstrap) {
                 /** @var RouterCachingService $routerCachingService */
                 $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
                 $routerCachingService->flushCachesForUriPath($oldUriPath);
