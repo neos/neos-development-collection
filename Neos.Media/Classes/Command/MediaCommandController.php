@@ -31,8 +31,11 @@ use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\ImageVariantRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
+use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
+use Neos\Media\Domain\Service\ImageVariantService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
@@ -77,9 +80,27 @@ class MediaCommandController extends CommandController
 
     /**
      * @Flow\Inject
+     * @var ImageVariantRepository
+     */
+    protected $imageVariantRepository;
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
+
+    /**
+     * @Flow\Inject
      * @var ThumbnailService
      */
     protected $thumbnailService;
+
+    /**
+     * @Flow\Inject
+     * @var ImageVariantService
+     */
+    protected $imageVariantService;
 
     /**
      * @Flow\InjectConfiguration("asyncThumbnails")
@@ -276,7 +297,7 @@ class MediaCommandController extends CommandController
 
         if ($assumeYes === false) {
             if (!$this->output->askConfirmation(sprintf('Do you want to remove <b>%s</b> unused assets?', $unusedAssetCount))) {
-                exit(1);
+                exit;
             }
         }
 
@@ -385,6 +406,158 @@ class MediaCommandController extends CommandController
             if (++$iteration === $limit) {
                 break;
             }
+        }
+    }
+
+    /**
+     * Tidy up outdated imageVariants
+     *
+     * This command iterates over all existing asset variants with outdated preset.
+     * They can get filtered and deleted.
+     *
+     * @param string $assetSource If specified, only assets of this asset source are considered. For example "neos" or "my-asset-management-system".
+     * @param bool $quiet If set, only errors and questions will be displayed.
+     * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialog.
+     * @param bool $filterCroppedVariants Find custom crops but have to check if used (slow).
+     * @param int|null $limit Limit the result of unused assets displayed and removed for this run.
+     * @param string $presetIdentifier If specified, only presets with this identifier are observed.
+     */
+    public function removeOutdatedVariantsCommand(bool $quiet = false, bool $assumeYes = false, bool $filterCroppedVariants = false, int $limit = null, string $assetSource = '', string $presetIdentifier = '')
+    {
+        // will read all presets defined in 'Settings.Neos.Media.yaml'
+        $variantPresetConfigs = $this->assetVariantGenerator->getVariantPresets();
+
+        $filterByAssetSourceIdentifier = $assetSource;
+
+        // is --preset-identifier used
+        $currentPresets = $this->imageVariantService->getAllPresetsByConfigs($variantPresetConfigs, $presetIdentifier);
+        if (empty($currentPresets)) {
+            !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No presets found.</em>');
+            exit;
+        }
+
+        // is --asset-source-filter used
+        if (empty($filterByAssetSourceIdentifier)) {
+            !$quiet && $this->outputLine(PHP_EOL . '<b>Searching for assets in all sources:</b>');
+        } else {
+            !$quiet && $this->outputLine(PHP_EOL . '<b>Searching for assets in "%s" source:</b>', [$filterByAssetSourceIdentifier]);
+        }
+
+        $variants = $this->imageVariantRepository->findAllWithOutdatedPresets($currentPresets, !empty($presetIdentifier), $filterCroppedVariants, $limit);
+        if (empty($variants)) {
+            !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No variants found.</em>');
+            exit;
+        }
+
+        $outdatedVariants = [];
+        $outdatedPresetsCount = [];
+        $variantCount = 0;
+
+        !$quiet && $this->outputLine(PHP_EOL . 'Received response...');
+        !$quiet && $this->outputLine(PHP_EOL . 'Filtering for deletable ImageVariants...');
+        !$quiet && $this->output->progressStart(sizeof($variants));
+
+        foreach ($variants as $variant) {
+            // check if necessary for current configuration
+            if (!empty($filterByAssetSourceIdentifier) && $variant->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
+                continue;
+            }
+
+            // to see how many variants have been found with given configuration
+            $variantCount += 1;
+
+            // prettify for user experience
+            if ($variant->getPresetIdentifier() && $variant->getPresetVariantName()) {
+                $outdatedPresetKey = sprintf('%s:%s', $variant->getPresetIdentifier(), $variant->getPresetVariantName());
+            } else {
+                // for mapping errors of the variant and better user experience
+                $outdatedPresetKey = 'none';
+            }
+            if (!array_key_exists($outdatedPresetKey, $outdatedPresetsCount)) {
+                $outdatedPresetsCount[$outdatedPresetKey] = 0;
+            }
+            $outdatedPresetsCount[$outdatedPresetKey] += 1;
+            $outdatedVariants[] = $variant;
+
+            !$quiet && $this->output->progressAdvance();
+        }
+        !$quiet && $this->output->progressFinish();
+
+        if (empty($outdatedVariants)) {
+            !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No outdated variants found.</em>');
+            exit;
+        }
+
+        if (!$quiet) {
+            $this->outputLine(PHP_EOL . 'Outdated presets:', [$variantCount]);
+
+            // display all outdated presets to user - nice structured
+            for ($i = 0; $i < count($outdatedPresetsCount); $i++) {
+                $preset = array_keys($outdatedPresetsCount)[$i];
+                $count = $outdatedPresetsCount[$preset];
+                $this->outputLine(PHP_EOL . '  [%s] - %s (found: %s)', [$i + 1, $preset, $count]);
+            }
+
+            $notLimitedDeletableOutput = PHP_EOL . '<b>There are %s asset variants ready to be deleted.</b>';
+            $this->outputLine($notLimitedDeletableOutput, [sizeof($outdatedVariants)]);
+            if ($limit) {
+                $this->outputLine(' find more by running without the "--limit" parameter');
+            }
+        }
+
+        // if --assume-yes not used: user decision to delete variants
+        if (!$assumeYes) {
+            if (empty($variantPresetConfigs)) {
+                $this->output->outputLine(PHP_EOL . '<em>No preset configuration found.</em>');
+                $this->output->outputLine('<em>You are about to delete all Variants!</em>');
+            }
+            if (!$this->output->askConfirmation(PHP_EOL . 'Do you want to remove all variants with outdated presets? [Y,n] ')) {
+                $this->output->outputLine(PHP_EOL . '<em>No variants have been deleted...</em>');
+                exit;
+            }
+        }
+
+        !$quiet && $this->outputLine(PHP_EOL . PHP_EOL . '<b>Removing selected:</b>');
+        !$quiet && $this->output->progressStart(sizeof($outdatedVariants));
+
+        $outdatedVariantSize = 0;
+        $stillUsedVariants = 0;
+        foreach ($outdatedVariants as $variantToRemove) {
+            !$quiet && $this->output->progressAdvance();
+            $variantSize = $variantToRemove->getResource()->getFileSize();
+
+            try {
+                $variantToRemove->getResource()->disableLifecycleEvents();
+                if (!$variantToRemove->getPresetIdentifier() && !$variantToRemove->getPresetVariantName() && $filterCroppedVariants) {
+                    // customized variants don't have presetIdentifier or presetVariantName
+                    if ($this->assetService->isInUse($variantToRemove)) {
+                        // if the variant is customized and in use
+                        // it will not be deleted but counted for user notification
+                        $stillUsedVariants += 1;
+                        continue;
+                    }
+                }
+
+                $this->assetRepository->removeWithoutUsageChecks($variantToRemove);
+                $this->persistenceManager->persistAll();
+            } catch (IllegalObjectTypeException $e) {
+                $this->output->outputLine(PHP_EOL . 'Unable to remove %s: "%s"', [get_class($variantToRemove), $variantToRemove->getTitle()]);
+                $this->output->outputLine(PHP_EOL . $e->getMessage());
+                exit;
+            }
+
+            $outdatedVariantSize += $variantSize;
+        }
+        !$quiet && $this->output->progressFinish();
+
+        if (!$quiet) {
+            if ($stillUsedVariants > 0) {
+                $this->outputLine(PHP_EOL . '<b>Found ' . $stillUsedVariants . ' still used asset variants.</b>');
+                $this->outputLine('Those have not been deleted.');
+            }
+
+            $readableStorageSize = str_pad(Files::bytesToSizeString($outdatedVariantSize), 9, ' ', STR_PAD_LEFT);
+            $this->outputLine(PHP_EOL . PHP_EOL . '<success>Removed ' . $readableStorageSize . '</success>');
         }
     }
 
