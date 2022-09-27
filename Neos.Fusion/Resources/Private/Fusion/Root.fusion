@@ -61,6 +61,21 @@ prototype(Neos.Fusion:Map) {
   itemKey = 'itemKey'
   iterationName = 'iterator'
 }
+prototype(Neos.Fusion:FlashMessages) < prototype(Neos.Fusion:Map) {
+  @propTypes {
+    # to filter the messages to return by severity (One of the Neos\Error\Messages\Message::SEVERITY_* constants)
+    severity = ${PropTypes.oneOf(["Notice", "Warning", "Error", "OK"])}
+
+    # whether the messages should be flushed after reading them, default is true
+    flushMessages = ${PropTypes.boolean}
+  }
+  @class = 'Neos\\Fusion\\FusionObjects\\FlashMessagesImplementation'
+  @sortProperties = false
+  flushMessages = true
+  itemName = 'message'
+  itemKey = 'messageIndex'
+  iterationName = 'iterator'
+}
 prototype(Neos.Fusion:Reduce) {
   @class = 'Neos\\Fusion\\FusionObjects\\ReduceImplementation'
   itemName = 'item'
