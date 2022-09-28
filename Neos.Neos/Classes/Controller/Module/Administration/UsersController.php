@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
@@ -169,8 +170,13 @@ class UsersController extends AbstractModuleController
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
-            $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
-            $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
+            try {
+                $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
+                $this->addFlashMessage('The user "%s" has been created.', 'User created', Message::SEVERITY_OK, [htmlspecialchars($username)], 1416225561);
+            } catch (\Exception $e) {
+                $this->addFlashMessage($e->getMessage(), 'User not created', Message::SEVERITY_ERROR, [], 1647335912);
+                $this->forward('new', null, null, ['user' => $user]);
+            }
         } else {
             $this->addFlashMessage('You are not allowed to create a user with roles "%s".', 'User creation denied', Message::SEVERITY_ERROR, [implode(', ', $roleIdentifiers)], 1416225562);
         }
@@ -294,7 +300,12 @@ class UsersController extends AbstractModuleController
         }
         $password = array_shift($password);
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
+            try {
+                $this->userService->setUserPassword($user, $password);
+            } catch (\Exception $e) {
+                $this->addFlashMessage($e->getMessage(), 'Password could not be saved', Message::SEVERITY_ERROR, [], 1647335912);
+                $this->forward('editAccount', null, null, ['account' => $account]);
+            }
         }
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
@@ -392,7 +403,7 @@ class UsersController extends AbstractModuleController
     {
         $providers = array_keys($this->tokenAndProviderFactory->getProviders());
 
-        $providerNames =[];
+        $providerNames = [];
         foreach ($providers as $authenticationProviderName) {
             $providerNames[$authenticationProviderName] = [
                 'label' => ($this->authenticationProviderSettings[$authenticationProviderName]['label'] ?? $authenticationProviderName),

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Controller\Module\User;
 
 /*
@@ -131,8 +132,13 @@ class UserSettingsController extends AbstractModuleController
         $user = $this->currentUser;
         $password = array_shift($password);
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
-            $this->addFlashMessage('The password has been updated.', 'Password updated', Message::SEVERITY_OK);
+            try {
+                $this->userService->setUserPassword($user, $password);
+                $this->addFlashMessage('The password has been updated.', 'Password updated', Message::SEVERITY_OK);
+            } catch (\Exception $e) {
+                $this->addFlashMessage($e->getMessage(), 'Password could not be saved', Message::SEVERITY_ERROR, [], 1647335912);
+                $this->forward('edit', null, null, ['user' => $user]);
+            }
         }
         $this->redirect('index');
     }
