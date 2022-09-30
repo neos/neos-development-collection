@@ -11,29 +11,26 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Error\Messages\Message;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Notice;
 use Neos\Error\Messages\Warning;
-
 
 /**
  * A Fusion object to return the flashmessages from the current controller context
  *
  * //fusionPath renderer a Fusion object to render the flashMessage collection
  */
-class FlashMessagesImplementation  extends AbstractFusionObject
+class FlashMessagesImplementation extends AbstractFusionObject
 {
     /**
      * @return Message[]
      */
     protected function getFlashMessages()
     {
-        if($this->getFlushMessages()){
+        if ($this->getFlushMessages()){
             $messages = $this->getRuntime()->getControllerContext()->getFlashMessageContainer()->getMessagesAndFlush($this->getSeverity());
-        }else{
+        } else {
             $messages = $this->getRuntime()->getControllerContext()->getFlashMessageContainer()->getMessages($this->getSeverity());
         }
 
@@ -111,7 +108,7 @@ class FlashMessagesImplementation  extends AbstractFusionObject
         if ($this->runtime->canRender($rendererPath) === false){
             if ($this->runtime->canRender($contentPath) === false){
                 return $this->getFlashMessages();
-            }else{
+            } else {
                 $rendererPath = $contentPath;
             }
         }
@@ -127,5 +124,4 @@ class FlashMessagesImplementation  extends AbstractFusionObject
 
         return $renderedMessages;
     }
-
 }
