@@ -301,18 +301,18 @@ prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStruct
 #   </Neos.Fusion:Loop>
 # `
 #
-# Usage:
+# Usage with renderer:
 # renderedFlashMessages = Neos.Fusion:FlashMessages {
 #   renderer = My.Package:FlashMessageRenderer
 # }
 # renderer = afx`
-#   {props.flashMessages}
+#   {props.renderedFlashMessages}
 # `
 #
 # AFX only:
 # renderer = afx`
 #   <Neos.Fusion:FlashMessages>
-#     <Neos.Fusion:Loop items={props.flashMessages}>
+#     <Neos.Fusion:Loop items={flashMessages}>
 #       {item.message}
 #     </Neos.Fusion:Loop>
 #   </Neos.Fusion:FlashMessages>
