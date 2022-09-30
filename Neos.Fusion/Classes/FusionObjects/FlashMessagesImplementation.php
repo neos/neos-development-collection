@@ -28,13 +28,13 @@ class FlashMessagesImplementation extends AbstractFusionObject
      */
     protected function getFlashMessages()
     {
-        if ($this->getFlushMessages()){
+        if ($this->getFlushMessages()) {
             $messages = $this->getRuntime()->getControllerContext()->getFlashMessageContainer()->getMessagesAndFlush($this->getSeverity());
         } else {
             $messages = $this->getRuntime()->getControllerContext()->getFlashMessageContainer()->getMessages($this->getSeverity());
         }
 
-        foreach ($this->getAdditionalMessages() as $additionalMessage){
+        foreach ($this->getAdditionalMessages() as $additionalMessage) {
             switch ($additionalMessage['severity']) {
                 case Message::SEVERITY_ERROR:
                     $messages[] = new Error($additionalMessage['message'], $additionalMessage['code'], $additionalMessage['arguments'], $additionalMessage['title']);
@@ -105,8 +105,8 @@ class FlashMessagesImplementation extends AbstractFusionObject
         $rendererPath = $this->path . '/renderer';
         $contentPath = $this->path . '/content';
 
-        if ($this->runtime->canRender($rendererPath) === false){
-            if ($this->runtime->canRender($contentPath) === false){
+        if ($this->runtime->canRender($rendererPath) === false) {
+            if ($this->runtime->canRender($contentPath) === false) {
                 return $this->getFlashMessages();
             } else {
                 $rendererPath = $contentPath;
