@@ -61,21 +61,7 @@ prototype(Neos.Fusion:Map) {
   itemKey = 'itemKey'
   iterationName = 'iterator'
 }
-prototype(Neos.Fusion:FlashMessages) < prototype(Neos.Fusion:Map) {
-  @propTypes {
-    # to filter the messages to return by severity (One of the Neos\Error\Messages\Message::SEVERITY_* constants)
-    severity = ${PropTypes.oneOf(["Notice", "Warning", "Error", "OK"])}
 
-    # whether the messages should be flushed after reading them, default is true
-    flushMessages = ${PropTypes.boolean}
-  }
-  @class = 'Neos\\Fusion\\FusionObjects\\FlashMessagesImplementation'
-  @sortProperties = false
-  flushMessages = true
-  itemName = 'message'
-  itemKey = 'messageIndex'
-  iterationName = 'iterator'
-}
 prototype(Neos.Fusion:Reduce) {
   @class = 'Neos\\Fusion\\FusionObjects\\ReduceImplementation'
   itemName = 'item'
@@ -304,3 +290,76 @@ prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStruct
   format = ${request.format}
   baseUri = ${String.toString(BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(request.httpRequest))}
 }
+
+# returns the current flashMessages as array, passes then to the renderer or to the content
+#
+# Usage:
+# flashMessages = Neos.Fusion:FlashMessages
+# renderer = afx`
+#   <Neos.Fusion:Loop items={props.flashMessages}>
+#     {item.message}
+#   </Neos.Fusion:Loop>
+# `
+#
+# Usage:
+# renderedFlashMessages = Neos.Fusion:FlashMessages {
+#   renderer = My.Package:FlashMessageRenderer
+# }
+# renderer = afx`
+#   {props.flashMessages}
+# `
+#
+# AFX only:
+# renderer = afx`
+#   <Neos.Fusion:FlashMessages>
+#     <Neos.Fusion:Loop items={props.flashMessages}>
+#       {item.message}
+#     </Neos.Fusion:Loop>
+#   </Neos.Fusion:FlashMessages>
+# `
+prototype(Neos.Fusion:FlashMessages) {
+  @class = 'Neos\\Fusion\\FusionObjects\\FlashMessagesImplementation'
+  @sortProperties = false
+
+  # severity of the messages to return (One of the Neos\Error\Messages\Message::SEVERITY_* constants)
+  severity = null
+
+  # whether the messages should be flushed after reading them, default is true
+  flushMessages = true
+
+  # name of the property that contains the flashMessages inside the prototype
+  collectionName = 'flashMessages'
+
+  # add flashMessages in the fusion code, expects an array of Neos.Fusion:FlashMessages.Message elements
+  additionalMessages = Neos.Fusion:DataStructure
+}
+
+# to pass additional flashMessages to Neos.Fusion:FlashMessages within the fusion code
+#
+# Usage:
+# flashMessages = Neos.Fusion:FlashMessages {
+#   additionalMessages {
+#     testCase1 = Neos.Fusion:FlashMessages.Message {
+#       message = 'Test'
+#     }
+#   }
+# }
+prototype(Neos.Fusion:FlashMessages.Message) < prototype(Neos.Fusion:DataStructure) {
+  @sortProperties = false
+
+  # severity of the messages to return (One of the Neos\Error\Messages\Message::SEVERITY_* constants)
+  severity = 'OK'
+
+  # An english error message which is used if no other error message can be resolved
+  message = ''
+
+  # A unique error code
+  code = 0
+
+  # Array of arguments to be replaced in message
+  arguments = Neos.Fusion:DataStructure
+
+  # optional title for the message
+  title = ''
+}
+

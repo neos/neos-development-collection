@@ -11,32 +11,53 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
-use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
-use Neos\Fusion\FusionObjects\MapImplementation;
+use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Error\Messages\Message;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Notice;
+use Neos\Error\Messages\Warning;
+
 
 /**
  * A Fusion object to return the flashmessages from the current controller context
- * //fusionPath itemRenderer the Fusion object which is triggered for each flashMessage
- * //fusionPath severity to filter the messages to return by severity (One of the Neos\Error\Messages\Message::SEVERITY_* constants)
- * //fusionPath flushMessages whether the messages should be flushed after reading them, default is true
+ *
+ * //fusionPath renderer a Fusion object to render the flashMessage collection
  */
-class FlashMessagesImplementation extends MapImplementation
+class FlashMessagesImplementation  extends AbstractFusionObject
 {
     /**
      * @return Message[]
      */
-    public function getItems()
+    protected function getFlashMessages()
     {
         if($this->getFlushMessages()){
             $messages = $this->getRuntime()->getControllerContext()->getFlashMessageContainer()->getMessagesAndFlush($this->getSeverity());
         }else{
             $messages = $this->getRuntime()->getControllerContext()->getFlashMessageContainer()->getMessages($this->getSeverity());
         }
+
+        foreach ($this->getAdditionalMessages() as $additionalMessage){
+            switch ($additionalMessage['severity']) {
+                case Message::SEVERITY_ERROR:
+                    $messages[] = new Error($additionalMessage['message'], $additionalMessage['code'], $additionalMessage['arguments'], $additionalMessage['title']);
+                    break;
+                case Message::SEVERITY_WARNING:
+                    $messages[] = new Warning($additionalMessage['message'], $additionalMessage['code'], $additionalMessage['arguments'], $additionalMessage['title']);
+                    break;
+                case Message::SEVERITY_NOTICE:
+                    $messages[] = new Notice($additionalMessage['message'], $additionalMessage['code'], $additionalMessage['arguments'], $additionalMessage['title']);
+                    break;
+                default:
+                    $messages[] = new Message($additionalMessage['message'], $additionalMessage['code'], $additionalMessage['arguments'], $additionalMessage['title']);
+            }
+        }
         return $messages;
     }
 
     /**
+     * severity of the messages to return (One of the Message::SEVERITY_* constants)
+     *
      * @return string
      */
     public function getSeverity()
@@ -45,6 +66,8 @@ class FlashMessagesImplementation extends MapImplementation
     }
 
     /**
+     * whether the messages should be flushed after reading them, default is true
+     *
      * @return string
      */
     public function getFlushMessages()
@@ -53,29 +76,56 @@ class FlashMessagesImplementation extends MapImplementation
     }
 
     /**
-     * Get the glue to insert between items
+     * name of the property that contains the flashMessages inside the prototype
      *
      * @return string
      */
-    public function getGlue()
+    public function getCollectionName()
     {
-        return $this->fusionValue('__meta/glue') ?? '';
+        return $this->fusionValue('collectionName');
     }
 
     /**
-     * Evaluate the collection nodes
+     * additional messages that were added in the fusion code
+     *
+     * @return array
+     */
+    public function getAdditionalMessages()
+    {
+        return $this->fusionValue('additionalMessages');
+    }
+
+
+    /**
+     * Returns the rendered flashMessages or if there is no rendering defined as array
      *
      * @return string|Message[]
+     * @throws \Neos\Flow\Security\Exception
      * @throws \Neos\Fusion\Exception
      */
     public function evaluate()
     {
-        if($this->runtime->canRender($this->path . '/content')) {
-            $glue = $this->getGlue();
-            return implode($glue, parent::evaluate());
-        }else{
-            return $this->getItems();
+        $rendererPath = $this->path . '/renderer';
+        $contentPath = $this->path . '/content';
+
+        if ($this->runtime->canRender($rendererPath) === false){
+            if ($this->runtime->canRender($contentPath) === false){
+                return $this->getFlashMessages();
+            }else{
+                $rendererPath = $contentPath;
+            }
         }
+        $flashMessages = $this->getFlashMessages();
+
+        $context = $this->runtime->getCurrentContext();
+        $context[$this->getCollectionName()] = $flashMessages;
+        $context['hasFlashMessages'] = count($flashMessages) > 0;
+        $this->runtime->pushContextArray($context);
+
+        $renderedMessages = $this->runtime->render($rendererPath);
+        $this->runtime->popContext();
+
+        return $renderedMessages;
     }
 
 }
