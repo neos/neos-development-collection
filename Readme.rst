@@ -59,6 +59,7 @@ To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.x
 To switch the branch you intend to work on:
 ``git checkout 8.0 && composer update``
 
-.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
+.. note:: We use an upmerging strategy: create all bugfixes to the lowest maintained branch that contains the issue. Typically, this is the second last LTS release - see the diagram at https://www.neos.io/features/release-process.html.
+For new features, pull requests should be made against the branch for the next minor version (named like ``x.y``). Breaking changes must only go into the branch for the next major version.
 
 For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
