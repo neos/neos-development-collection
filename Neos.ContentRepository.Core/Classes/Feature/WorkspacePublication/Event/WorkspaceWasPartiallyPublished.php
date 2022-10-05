@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -43,7 +42,6 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
          */
         public readonly ContentStreamId $previousSourceContentStreamId,
         public readonly NodeIdsToPublishOrDiscard $publishedNodes,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -55,19 +53,11 @@ final class WorkspaceWasPartiallyPublished implements EventInterface
             ContentStreamId::fromString($values['newSourceContentStreamId']),
             ContentStreamId::fromString($values['previousSourceContentStreamId']),
             NodeIdsToPublishOrDiscard::fromArray($values['publishedNodes']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'sourceWorkspaceName' => $this->sourceWorkspaceName,
-            'targetWorkspaceName' => $this->targetWorkspaceName,
-            'newSourceContentStreamId' => $this->newSourceContentStreamId,
-            'previousSourceContentStreamId' => $this->previousSourceContentStreamId,
-            'publishedNodes' => $this->publishedNodes,
-            'initiatingUserId' => $this->initiatingUserId,
-        ];
+        return get_object_vars($this);
     }
 }

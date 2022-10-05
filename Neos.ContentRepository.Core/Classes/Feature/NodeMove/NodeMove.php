@@ -184,7 +184,6 @@ trait NodeMove
                 && !$command->newPrecedingSiblingNodeAggregateId
                     ? $affectedDimensionSpacePoints
                     : new DimensionSpacePointSet([]),
-                $command->initiatingUserId
             )
         );
 

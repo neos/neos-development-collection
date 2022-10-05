@@ -62,7 +62,6 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => null
                             ]),
-                            UserId::forSystemUser()
                         )
                     );
                 }

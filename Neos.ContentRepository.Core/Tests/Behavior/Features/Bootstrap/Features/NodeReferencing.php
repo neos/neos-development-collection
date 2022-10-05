@@ -60,9 +60,6 @@ trait NodeReferencing
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->getCurrentContentStreamId();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $sourceOriginDimensionSpacePoint = isset($commandArguments['sourceOriginDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['sourceOriginDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
@@ -84,7 +81,6 @@ trait NodeReferencing
             $sourceOriginDimensionSpacePoint,
             ReferenceName::fromString($commandArguments['referenceName']),
             $references,
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -114,9 +110,6 @@ trait NodeReferencing
         $eventPayload = $this->readPayloadTable($payloadTable);
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
-        }
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(

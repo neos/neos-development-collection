@@ -141,7 +141,6 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                                     $currentProperty->getType()
                                 )
                             ]),
-                            UserId::forSystemUser()
                         )
                     );
                 }

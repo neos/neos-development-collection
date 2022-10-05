@@ -67,9 +67,6 @@ trait NodeMove
         $relationDistributionStrategy = RelationDistributionStrategy::fromString(
             $commandArguments['relationDistributionStrategy'] ?? null
         );
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new MoveNodeAggregate(
             $contentStreamId,
@@ -79,7 +76,6 @@ trait NodeMove
             $newPrecedingSiblingNodeAggregateId,
             $newSucceedingSiblingNodeAggregateId,
             $relationDistributionStrategy,
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -106,9 +102,6 @@ trait NodeMove
     public function theEventNodeAggregateWasMovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }

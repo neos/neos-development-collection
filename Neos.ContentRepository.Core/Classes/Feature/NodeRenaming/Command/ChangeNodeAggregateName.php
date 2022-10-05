@@ -15,13 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * All variants in a NodeAggregate have the same NodeName - and this can be changed here.
@@ -40,7 +39,6 @@ final class ChangeNodeAggregateName implements
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeName $newNodeName,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -53,7 +51,6 @@ final class ChangeNodeAggregateName implements
             ContentStreamId::fromString($array['contentStreamId']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeName::fromString($array['newNodeName']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -62,12 +59,7 @@ final class ChangeNodeAggregateName implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'newNodeName' => $this->newNodeName,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -76,7 +68,6 @@ final class ChangeNodeAggregateName implements
             $target,
             $this->nodeAggregateId,
             $this->newNodeName,
-            $this->initiatingUserId
         );
     }
 

@@ -15,14 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Set property values for a given node (internal implementation).
@@ -42,7 +41,6 @@ final class SetSerializedNodeProperties implements
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly SerializedPropertyValues $propertyValues,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -56,7 +54,6 @@ final class SetSerializedNodeProperties implements
             NodeAggregateId::fromString($array['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($array['propertyValues']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -66,13 +63,7 @@ final class SetSerializedNodeProperties implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
-            'propertyValues' => $this->propertyValues,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -82,7 +73,6 @@ final class SetSerializedNodeProperties implements
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
             $this->propertyValues,
-            $this->initiatingUserId
         );
     }
 

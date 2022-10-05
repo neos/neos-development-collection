@@ -111,7 +111,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             if ($nodeDataRow['path'] === '/sites') {
                 $sitesNodeAggregateIdentifier = NodeAggregateId::fromString($nodeDataRow['identifier']);
                 $this->visitedNodes->addRootNode($sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, NodePath::fromString('/sites'), $this->interDimensionalVariationGraph->getDimensionSpacePoints());
-                $this->exportEvent(new RootNodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, $this->interDimensionalVariationGraph->getDimensionSpacePoints(), NodeAggregateClassification::CLASSIFICATION_ROOT, UserId::forSystemUser()));
+                $this->exportEvent(new RootNodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $sitesNodeAggregateIdentifier, $this->sitesNodeTypeName, $this->interDimensionalVariationGraph->getDimensionSpacePoints(), NodeAggregateClassification::CLASSIFICATION_ROOT));
                 continue;
             }
             if ($this->metaDataExported === false && $nodeDataRow['parentpath'] === '/sites') {
@@ -209,14 +209,14 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->createNodeVariant($nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
         } else {
             // create node aggregate
-            $this->exportEvent( new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, UserId::forSystemUser(), null));
+            $this->exportEvent( new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, null));
         }
         // nodes are hidden via NodeAggregateWasDisabled event
         if ($nodeDataRow['hidden']) {
-            $this->exportEvent( new NodeAggregateWasDisabled($this->contentStreamIdentifier, $nodeAggregateIdentifier, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet()), UserId::forSystemUser()));
+            $this->exportEvent( new NodeAggregateWasDisabled($this->contentStreamIdentifier, $nodeAggregateIdentifier, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet())));
         }
         foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIdentifiers) {
-            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), PropertyName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIdentifiers), UserId::forSystemUser());
+            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), PropertyName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIdentifiers));
         }
 
         $this->visitedNodes->add($nodeAggregateIdentifier, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateIdentifier);
@@ -279,9 +279,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         foreach ($alreadyVisitedOriginDimensionSpacePoints as $alreadyVisitedOriginDimensionSpacePoint) {
             $variantType = $this->interDimensionalVariationGraph->getVariantType($originDimensionSpacePoint->toDimensionSpacePoint(), $alreadyVisitedOriginDimensionSpacePoint->toDimensionSpacePoint());
             $variantCreatedEvent = match ($variantType) {
-                VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserId::forSystemUser()),
-                VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserId::forSystemUser()),
-                VariantType::TYPE_PEER => new NodePeerVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints, UserId::forSystemUser()),
+                VariantType::TYPE_SPECIALIZATION => new NodeSpecializationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
+                VariantType::TYPE_GENERALIZATION => new NodeGeneralizationVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
+                VariantType::TYPE_PEER => new NodePeerVariantWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $alreadyVisitedOriginDimensionSpacePoint, $originDimensionSpacePoint, $coveredDimensionSpacePoints),
                 VariantType::TYPE_SAME => null,
             };
             $variantSourceOriginDimensionSpacePoint = $alreadyVisitedOriginDimensionSpacePoint;
@@ -294,7 +294,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         $this->exportEvent($variantCreatedEvent);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0) {
-            $this->exportEvent(new NodePropertiesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences->serializedPropertyValues, UserId::forSystemUser()));
+            $this->exportEvent(new NodePropertiesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences->serializedPropertyValues));
         }
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location

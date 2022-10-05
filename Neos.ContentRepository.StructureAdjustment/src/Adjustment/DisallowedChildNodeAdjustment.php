@@ -140,7 +140,6 @@ class DisallowedChildNodeAdjustment
                     ? new OriginDimensionSpacePointSet([$referenceOrigin])
                     : new OriginDimensionSpacePointSet([]),
                 new DimensionSpacePointSet([$dimensionSpacePoint]),
-                UserId::forSystemUser()
             )
         );
 

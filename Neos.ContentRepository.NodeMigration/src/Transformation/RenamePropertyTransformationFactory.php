@@ -76,7 +76,6 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                                     ->getProperty($this->from),
                                 $this->from => null
                             ]),
-                            UserId::forSystemUser()
                         )
                     );
                 }

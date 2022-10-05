@@ -15,13 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeVariation\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * A node specialization variant was created
@@ -39,7 +38,6 @@ final class NodeSpecializationVariantWasCreated implements
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $specializationOrigin,
         public readonly DimensionSpacePointSet $specializationCoverage,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -60,7 +58,6 @@ final class NodeSpecializationVariantWasCreated implements
             $this->sourceOrigin,
             $this->specializationOrigin,
             $this->specializationCoverage,
-            $this->initiatingUserId
         );
     }
 
@@ -72,19 +69,11 @@ final class NodeSpecializationVariantWasCreated implements
             OriginDimensionSpacePoint::fromArray($values['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($values['specializationOrigin']),
             DimensionSpacePointSet::fromArray($values['specializationCoverage']),
-            UserId::fromString($values['initiatingUserId']),
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'sourceOrigin' => $this->sourceOrigin,
-            'specializationOrigin' => $this->specializationOrigin,
-            'specializationCoverage' => $this->specializationCoverage,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 }

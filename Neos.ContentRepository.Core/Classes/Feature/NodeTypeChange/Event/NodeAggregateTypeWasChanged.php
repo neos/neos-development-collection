@@ -66,10 +66,6 @@ final class NodeAggregateTypeWasChanged implements
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'newNodeTypeName' => $this->newNodeTypeName
-        ];
+        return get_object_vars($this);
     }
 }

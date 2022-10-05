@@ -15,14 +15,13 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The "Move node aggregate" command
@@ -34,7 +33,6 @@ use Neos\ContentRepository\Core\SharedModel\User\UserId;
  * between `newPrecedingSiblingNodeAggregateId`
  * and `newSucceedingSiblingNodeAggregateId` (or as last of all siblings)
  * using `relationDistributionStrategy`
- * initiated by `initiatingUserId`
  *
  * Why can you specify **both** newPrecedingSiblingNodeAggregateId
  * and newSucceedingSiblingNodeAggregateId?
@@ -88,7 +86,6 @@ final class MoveNodeAggregate implements
          * The relation distribution strategy to be used
          */
         public readonly RelationDistributionStrategy $relationDistributionStrategy,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -111,7 +108,6 @@ final class MoveNodeAggregate implements
                 ? NodeAggregateId::fromString($array['newSucceedingSiblingNodeAggregateId'])
                 : null,
             RelationDistributionStrategy::fromString($array['relationDistributionStrategy']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -120,16 +116,7 @@ final class MoveNodeAggregate implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'dimensionSpacePoint' => $this->dimensionSpacePoint,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'newParentNodeAggregateId' => $this->newParentNodeAggregateId,
-            'newPrecedingSiblingNodeAggregateId' => $this->newPrecedingSiblingNodeAggregateId,
-            'newSucceedingSiblingNodeAggregateId' => $this->newSucceedingSiblingNodeAggregateId,
-            'relationDistributionStrategy' => $this->relationDistributionStrategy,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -142,7 +129,6 @@ final class MoveNodeAggregate implements
             $this->newPrecedingSiblingNodeAggregateId,
             $this->newSucceedingSiblingNodeAggregateId,
             $this->relationDistributionStrategy,
-            $this->initiatingUserId
         );
     }
 

@@ -15,18 +15,17 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * CopyNodesRecursively command
@@ -62,7 +61,6 @@ final class CopyNodesRecursively implements
          * @var OriginDimensionSpacePoint
          */
         public readonly OriginDimensionSpacePoint $targetDimensionSpacePoint,
-        public readonly UserId $initiatingUserId,
         /**
          * Node aggregate id of the target node's parent (optional)
          *
@@ -96,7 +94,6 @@ final class CopyNodesRecursively implements
         ContentSubgraphInterface $subgraph,
         Node $startNode,
         OriginDimensionSpacePoint $dimensionSpacePoint,
-        UserId $initiatingUserId,
         NodeAggregateId $targetParentNodeAggregateId,
         ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
         ?NodeName $targetNodeName
@@ -107,7 +104,6 @@ final class CopyNodesRecursively implements
             $startNode->subgraphIdentity->contentStreamId,
             $nodeSubtreeSnapshot,
             $dimensionSpacePoint,
-            $initiatingUserId,
             $targetParentNodeAggregateId,
             $targetSucceedingSiblingNodeAggregateId,
             $targetNodeName,
@@ -124,7 +120,6 @@ final class CopyNodesRecursively implements
             ContentStreamId::fromString($array['contentStreamId']),
             NodeSubtreeSnapshot::fromArray($array['nodeTreeToInsert']),
             OriginDimensionSpacePoint::fromArray($array['targetDimensionSpacePoint']),
-            UserId::fromString($array['initiatingUserId']),
             NodeAggregateId::fromString($array['targetParentNodeAggregateId']),
             isset($array['targetSucceedingSiblingNodeAggregateId'])
                 ? NodeAggregateId::fromString($array['targetSucceedingSiblingNodeAggregateId'])
@@ -139,16 +134,7 @@ final class CopyNodesRecursively implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeTreeToInsert' => $this->nodeTreeToInsert,
-            'targetDimensionSpacePoint' => $this->targetDimensionSpacePoint,
-            'initiatingUserId' => $this->initiatingUserId,
-            'targetParentNodeAggregateId' => $this->targetParentNodeAggregateId,
-            'targetSucceedingSiblingNodeAggregateId' => $this->targetSucceedingSiblingNodeAggregateId,
-            'targetNodeName' => $this->targetNodeName,
-            'nodeAggregateIdMapping' => $this->nodeAggregateIdMapping,
-        ];
+        return get_object_vars($this);
     }
 
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
@@ -170,7 +156,6 @@ final class CopyNodesRecursively implements
             $target,
             $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
-            $this->initiatingUserId,
             $this->targetParentNodeAggregateId,
             $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
@@ -185,7 +170,6 @@ final class CopyNodesRecursively implements
             $this->contentStreamId,
             $this->nodeTreeToInsert,
             $this->targetDimensionSpacePoint,
-            $this->initiatingUserId,
             $this->targetParentNodeAggregateId,
             $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,

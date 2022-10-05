@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -30,7 +29,6 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
     private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly NodeIdsToPublishOrDiscard $nodesToPublish,
-        public readonly UserId $initiatingUserId,
         /**
          * during the publish process, we sort the events so that the events we want to publish
          * come first. In this process, two new content streams are generated:
@@ -55,12 +53,10 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
     public static function create(
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodesToPublish,
-        UserId $initiatingUserId
     ): self {
         return new self(
             $workspaceName,
             $nodesToPublish,
-            $initiatingUserId,
             ContentStreamId::create(),
             ContentStreamId::create()
         );
@@ -72,14 +68,12 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodesToPublish,
-        UserId $initiatingUserId,
         ContentStreamId $contentStreamIdForMatchingPart,
         ContentStreamId $contentStreamIdForRemainingPart
     ): self {
         return new self(
             $workspaceName,
             $nodesToPublish,
-            $initiatingUserId,
             $contentStreamIdForMatchingPart,
             $contentStreamIdForRemainingPart
         );

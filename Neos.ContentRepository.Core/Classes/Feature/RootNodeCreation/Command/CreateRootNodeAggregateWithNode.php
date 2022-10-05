@@ -15,11 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Create root node aggregate with node command
@@ -38,7 +37,6 @@ final class CreateRootNodeAggregateWithNode implements
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -51,7 +49,6 @@ final class CreateRootNodeAggregateWithNode implements
             ContentStreamId::fromString($array['contentStreamId']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['nodeTypeName']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -60,12 +57,7 @@ final class CreateRootNodeAggregateWithNode implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'nodeTypeName' => $this->nodeTypeName,
-            'initiatingUserId' => $this->initiatingUserId,
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -74,7 +66,6 @@ final class CreateRootNodeAggregateWithNode implements
             $target,
             $this->nodeAggregateId,
             $this->nodeTypeName,
-            $this->initiatingUserId
         );
     }
 }

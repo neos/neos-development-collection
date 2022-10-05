@@ -33,7 +33,6 @@ final class ForkContentStream implements CommandInterface
          */
         public readonly ContentStreamId $newContentStreamId,
         public readonly ContentStreamId $sourceContentStreamId,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -46,7 +45,6 @@ final class ForkContentStream implements CommandInterface
         return new self(
             ContentStreamId::fromString($array['contentStreamId']),
             ContentStreamId::fromString($array['sourceContentStreamId']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 }

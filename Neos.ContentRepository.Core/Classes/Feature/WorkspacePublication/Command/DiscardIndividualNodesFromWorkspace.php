@@ -30,7 +30,6 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
     private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly NodeIdsToPublishOrDiscard $nodesToDiscard,
-        public readonly UserId $initiatingUserId,
         /**
          * Content Stream Id of the newly created fork, which contains the remaining changes which were
          * not removed
@@ -42,12 +41,10 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
     public static function create(
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodesToDiscard,
-        UserId $initiatingUserId
     ): self {
         return new self(
             $workspaceName,
             $nodesToDiscard,
-            $initiatingUserId,
             ContentStreamId::create()
         );
     }
@@ -58,9 +55,8 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
     public static function createFullyDeterministic(
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodesToDiscard,
-        UserId $initiatingUserId,
         ContentStreamId $newContentStreamId
     ): self {
-        return new self($workspaceName, $nodesToDiscard, $initiatingUserId, $newContentStreamId);
+        return new self($workspaceName, $nodesToDiscard, $newContentStreamId);
     }
 }

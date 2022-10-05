@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Event;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
@@ -34,7 +33,6 @@ final class WorkspaceWasDiscarded implements EventInterface
          * The old content stream (which contains the discarded data)
          */
         public readonly ContentStreamId $previousContentStreamId,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -44,7 +42,6 @@ final class WorkspaceWasDiscarded implements EventInterface
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['newContentStreamId']),
             ContentStreamId::fromString($values['previousContentStreamId']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
@@ -54,7 +51,6 @@ final class WorkspaceWasDiscarded implements EventInterface
             'workspaceName' => $this->workspaceName,
             'newContentStreamId' => $this->newContentStreamId,
             'previousContentStreamId' => $this->previousContentStreamId,
-            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

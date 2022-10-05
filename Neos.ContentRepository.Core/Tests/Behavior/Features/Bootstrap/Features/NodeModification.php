@@ -50,9 +50,6 @@ trait NodeModification
     public function theCommandSetPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        if (!isset($commandArguments['initiatingUserId'])) {
-            $commandArguments['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         if (!isset($commandArguments['contentStreamId'])) {
             $commandArguments['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
@@ -65,7 +62,6 @@ trait NodeModification
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint']),
             $this->deserializeProperties($commandArguments['propertyValues']),
-            UserId::fromString($commandArguments['initiatingUserId'])
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
@@ -92,9 +88,6 @@ trait NodeModification
     public function theEventNodePropertiesWereSetWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }

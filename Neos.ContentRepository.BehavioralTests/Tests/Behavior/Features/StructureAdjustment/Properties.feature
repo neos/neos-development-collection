@@ -23,7 +23,6 @@ Feature: Properties
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -31,7 +30,6 @@ Feature: Properties
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
@@ -42,7 +40,6 @@ Feature: Properties
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {}                                        |
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
-      | initiatingUserId      | "user"                                    |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -106,7 +103,6 @@ Feature: Properties
       | nodeAggregateId   | "sir-david-nodenborough"     |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"otherProp": ""}            |
-      | initiatingUserId  | "initiating-user-identifier" |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -127,7 +123,6 @@ Feature: Properties
       | nodeAggregateId   | "sir-david-nodenborough"                                                    |
       | originDimensionSpacePoint | {}                                                                          |
       | propertyValues            | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
-      | initiatingUserId  | "initiating-user-identifier"                                                |
     And the graph projection is fully up to date
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                        | nodeAggregateId |

@@ -39,16 +39,12 @@ trait WorkspaceDiscarding
     public function theCommandDiscardWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $newContentStreamId = isset($commandArguments['newContentStreamId'])
             ? ContentStreamId::fromString($commandArguments['newContentStreamId'])
             : ContentStreamId::create();
 
         $command = DiscardWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $initiatingUserId,
             $newContentStreamId
         );
 
@@ -65,9 +61,6 @@ trait WorkspaceDiscarding
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $nodesToDiscard = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToDiscard']);
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
         $newContentStreamId = isset($commandArguments['newContentStreamId'])
             ? ContentStreamId::fromString($commandArguments['newContentStreamId'])
             : ContentStreamId::create();
@@ -75,7 +68,6 @@ trait WorkspaceDiscarding
         $command = DiscardIndividualNodesFromWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             $nodesToDiscard,
-            $initiatingUserId,
             $newContentStreamId
         );
 

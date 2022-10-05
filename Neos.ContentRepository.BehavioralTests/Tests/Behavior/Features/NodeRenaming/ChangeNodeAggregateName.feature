@@ -11,7 +11,6 @@ Feature: Change node name
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system"             |
     And the graph projection is fully up to date
 
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -20,7 +19,6 @@ Feature: Change node name
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "system"                      |
       | nodeAggregateClassification | "root"                        |
     And I have the following NodeTypes configuration:
     """
@@ -46,7 +44,6 @@ Feature: Change node name
       | contentStreamId  | "cs-identifier"              |
       | nodeAggregateId  | "nody-mc-nodeface"           |
       | newNodeName              | "cat"                        |
-      | initiatingUserId | "initiating-user-identifier" |
 
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 3 is of type "NodeAggregateNameWasChanged" with payload:
@@ -79,7 +76,6 @@ Feature: Change node name
       | contentStreamId  | "cs-identifier"              |
       | nodeAggregateId  | "nody-mc-nodeface"           |
       | newNodeName              | "cat"                        |
-      | initiatingUserId | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}

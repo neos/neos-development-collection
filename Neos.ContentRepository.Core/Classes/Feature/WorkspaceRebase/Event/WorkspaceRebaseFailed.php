@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @api events are the persistence-API of the content repository
@@ -38,7 +37,6 @@ final class WorkspaceRebaseFailed implements EventInterface
          * The content stream which we tried to rebase
          */
         public readonly ContentStreamId $sourceContentStreamId,
-        public readonly UserId $initiatingUserId,
         public readonly array $errors
     ) {
     }
@@ -49,19 +47,12 @@ final class WorkspaceRebaseFailed implements EventInterface
             WorkspaceName::fromString($values['workspaceName']),
             ContentStreamId::fromString($values['candidateContentStreamId']),
             ContentStreamId::fromString($values['sourceContentStreamId']),
-            UserId::fromString($values['initiatingUserId']),
             $values['errors']
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'workspaceName' => $this->workspaceName,
-            'candidateContentStreamId' => $this->candidateContentStreamId,
-            'sourceContentStreamId' => $this->sourceContentStreamId,
-            'initiatingUserId' => $this->initiatingUserId,
-            'errors' => $this->errors
-        ];
+        return get_object_vars($this);
     }
 }

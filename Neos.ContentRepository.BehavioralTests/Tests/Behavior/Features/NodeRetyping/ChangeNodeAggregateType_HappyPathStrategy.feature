@@ -37,7 +37,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
@@ -45,7 +44,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"             |
       | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "gsw"}] |
-      | initiatingUserId    | "system-user"                             |
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
@@ -58,7 +56,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | parentNodeAggregateId | "lady-eleonode-rootford"                        |
       | nodeName                      | "parent"                                        |
       | initialPropertyValues         | {}                                              |
-      | initiatingUserId      | "user"                                          |
 
     And the graph projection is fully up to date
 
@@ -78,7 +75,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeTypeName                  | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateId | "sir-david-nodenborough"                   |
-      | initiatingUserId      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -87,7 +83,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeAggregateId  | "sir-david-nodenborough"                         |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy                 | "happypath"                                      |
-      | initiatingUserId | "user"                                           |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that disallows already present grandchildren with the HAPPYPATH conflict resolution strategy
@@ -120,7 +115,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | parentNodeAggregateId              | "lady-eleonode-rootford"                        |
       | nodeName                                   | "parent2"                                       |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "autocreated-child"}            |
-      | initiatingUserId                   | "user"                                          |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -131,7 +125,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateId | "autocreated-child"                        |
       | initialPropertyValues         | {}                                         |
-      | initiatingUserId      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -140,7 +133,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeAggregateId  | "parent2-na"                                     |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy                 | "happypath"                                      |
-      | initiatingUserId | "user"                                           |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Change node type successfully
@@ -152,7 +144,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | originDimensionSpacePoint                  | {"language":"de"}                          |
       | parentNodeAggregateId              | "lady-eleonode-rootford"                   |
       | initialPropertyValues                      | {}                                         |
-      | initiatingUserId                   | "user"                                     |
       | tetheredDescendantNodeAggregateIds | { "child-of-type-a": "child-of-type-a-id"} |
     And the graph projection is fully up to date
 
@@ -162,7 +153,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeAggregateId  | "nodea-identifier-de" |
       | sourceOrigin             | {"language":"de"}     |
       | targetOrigin             | {"language":"gsw"}    |
-      | initiatingUserId | "user"                |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload:
@@ -171,7 +161,6 @@ Feature: Change node aggregate type - behavior of HAPPYPATH strategy
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                            | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                                   | "happypath"                                |
-      | initiatingUserId                   | "user"                                     |
       | tetheredDescendantNodeAggregateIds | { "child-of-type-b": "child-of-type-b-id"} |
     And the graph projection is fully up to date
 

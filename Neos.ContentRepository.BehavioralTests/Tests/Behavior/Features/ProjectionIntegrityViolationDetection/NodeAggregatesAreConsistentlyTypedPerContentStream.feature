@@ -19,7 +19,6 @@ Feature: Run projection integrity violation detection regarding node aggregate t
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -28,7 +27,6 @@ Feature: Run projection integrity violation detection regarding node aggregate t
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"    |
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 

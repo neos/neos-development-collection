@@ -33,7 +33,6 @@ final class CreateWorkspace implements CommandInterface
         public readonly WorkspaceName $baseWorkspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
-        public readonly UserId $initiatingUserId,
         /**
          * the content stream identifier for the content stream which is created together with the to-be-created
          * workspace

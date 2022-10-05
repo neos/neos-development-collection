@@ -16,30 +16,29 @@ Feature: Routing functionality with multiple content dimensions
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |
       | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                                                                                                                                                                  |
+      | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserIdentifier    | "system-user"                                                                                                                                                                                             |
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues           | nodeName |
-      | sir-david-nodenborough  | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
-      | nody-mc-nodeface        | sir-david-nodenborough        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
-      | carl-destinode          | nody-mc-nodeface              | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues           | nodeName |
+      | sir-david-nodenborough | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
+      | nody-mc-nodeface       | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
+      | carl-destinode         | nody-mc-nodeface       | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
     And the command CreateNodeVariant is executed with payload:
       | Key                     | Value                            |
       | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateIdentifier | "carl-destinode"                 |
+      | nodeAggregateId         | "carl-destinode"                 |
       | sourceOrigin            | {"market":"DE", "language":"en"} |
       | targetOrigin            | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
       | contentStreamIdentifier   | "cs-identifier"                  |
-      | nodeAggregateIdentifier   | "carl-destinode"                 |
+      | nodeAggregateId           | "carl-destinode"                 |
       | originDimensionSpacePoint | {"market":"DE", "language":"de"} |
       | propertyValues            | {"uriPathSegment": "karl-de"}    |
     And A site exists for node name "node1"
@@ -123,9 +122,8 @@ Feature: Routing functionality with multiple content dimensions
               to: {"market":"CH", "language":"de_DE"}
     """
     When the command PublishWorkspace is executed with payload:
-      | Key                      | Value          |
-      | workspaceName            | "migration-cs" |
-      | initiatingUserIdentifier | "user"         |
+      | Key           | Value          |
+      | workspaceName | "migration-cs" |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 
@@ -194,9 +192,8 @@ Feature: Routing functionality with multiple content dimensions
               to: {"market":"CH", "language":"at"}
     """
     When the command PublishWorkspace is executed with payload:
-      | Key                      | Value          |
-      | workspaceName            | "migration-cs" |
-      | initiatingUserIdentifier | "user"         |
+      | Key           | Value          |
+      | workspaceName | "migration-cs" |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
 

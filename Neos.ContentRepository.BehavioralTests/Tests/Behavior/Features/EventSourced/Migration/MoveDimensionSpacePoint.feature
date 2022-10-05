@@ -29,31 +29,28 @@ Feature: Move dimension space point
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
-      | contentStreamId     | "cs-identifier"                                          |
-      | nodeAggregateId     | "lady-eleonode-rootford"                                 |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"mul"},{"language":"ch"},{"language":"de"}] |
-      | initiatingUserId    | "system-user"                                            |
       | nodeAggregateClassification | "root"                                                   |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {"language": "de"}                        |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
+      | Key                       | Value                                     |
+      | contentStreamId           | "cs-identifier"                           |
+      | nodeAggregateId           | "sir-david-nodenborough"                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint | {"language": "de"}                        |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
     And the graph projection is fully up to date
 
 
@@ -94,12 +91,11 @@ Feature: Move dimension space point
   Scenario: Success Case - disabled nodes stay disabled
 
     When the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value                                  |
-      | contentStreamId      | "cs-identifier"                        |
-      | nodeAggregateId      | "sir-david-nodenborough"               |
-      | coveredDimensionSpacePoint   | {"language": "de"}                     |
-      | nodeVariantSelectionStrategy | "allVariants"                          |
-      | initiatingUserId     | "00000000-0000-0000-0000-000000000000" |
+      | Key                          | Value                    |
+      | contentStreamId              | "cs-identifier"          |
+      | nodeAggregateId              | "sir-david-nodenborough" |
+      | coveredDimensionSpacePoint   | {"language": "de"}       |
+      | nodeVariantSelectionStrategy | "allVariants"            |
     And the graph projection is fully up to date
 
     # ensure the node is disabled

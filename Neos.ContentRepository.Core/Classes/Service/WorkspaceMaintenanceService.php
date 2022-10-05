@@ -37,7 +37,6 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
             /* @var Workspace $workspace */
             $this->contentRepository->handle(RebaseWorkspace::create(
                 $workspace->workspaceName,
-                UserId::forSystemUser()
             ))->block();
         }
 

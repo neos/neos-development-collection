@@ -17,7 +17,6 @@ Feature: Single Node operations on live workspace
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -25,7 +24,6 @@ Feature: Single Node operations on live workspace
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "user-identifier"             |
       | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                    |
@@ -46,7 +44,6 @@ Feature: Single Node operations on live workspace
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Hello"}            |
-      | initiatingUserId  | "initiating-user-identifier" |
 
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 3 is of type "NodePropertiesWereSet" with payload:
@@ -55,7 +52,6 @@ Feature: Single Node operations on live workspace
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | []                           |
       | propertyValues.text.value | "Hello"                      |
-      | initiatingUserId  | "initiating-user-identifier" |
 
     When the graph projection is fully up to date
     And I am in the active content stream of workspace "live" and dimension space point {}

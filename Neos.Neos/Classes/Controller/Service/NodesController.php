@@ -411,7 +411,6 @@ class NodesController extends ActionController
                     $identifier,
                     $sourceNode->originDimensionSpacePoint,
                     OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
-                    UserId::forSystemUser() // TODO: USE THE CORRECT USER HERE
                 )
             )->block();
 
@@ -454,7 +453,6 @@ class NodesController extends ActionController
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,
                         OriginDimensionSpacePoint::fromDimensionSpacePoint($targetDimensionSpacePoint),
-                        UserId::forSystemUser() // TODO: USE THE CORRECT USER HERE
                     )
                 )->block();
             }

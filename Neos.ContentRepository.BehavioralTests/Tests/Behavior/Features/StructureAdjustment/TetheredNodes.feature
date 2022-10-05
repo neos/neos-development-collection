@@ -31,7 +31,6 @@ Feature: Tethered Nodes integrity violations
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |
@@ -39,7 +38,6 @@ Feature: Tethered Nodes integrity violations
       | nodeAggregateId     | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                                                                                             |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | initiatingUserId    | "system-user"                                                                                                                                                                                             |
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document

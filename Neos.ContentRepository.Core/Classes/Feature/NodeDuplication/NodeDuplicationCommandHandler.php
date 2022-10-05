@@ -157,7 +157,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $command->targetNodeName,
             $command->nodeTreeToInsert,
             $command->nodeAggregateIdMapping,
-            $command->initiatingUserId,
             $events
         );
 
@@ -199,7 +198,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
         ?NodeName $targetNodeName,
         NodeSubtreeSnapshot $nodeToInsert,
         Dto\NodeAggregateIdMapping $nodeAggregateIdMapping,
-        UserId $initiatingUserId,
         array &$events
     ): void {
         $events[] = new NodeAggregateWithNodeWasCreated(
@@ -214,7 +212,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
             $targetNodeName,
             $nodeToInsert->propertyValues,
             $nodeToInsert->nodeAggregateClassification,
-            $initiatingUserId,
             $targetSucceedingSiblingNodeAggregateId
         );
 
@@ -232,7 +229,6 @@ final class NodeDuplicationCommandHandler implements CommandHandlerInterface
                 $childNodeToInsert->nodeName,
                 $childNodeToInsert,
                 $nodeAggregateIdMapping,
-                $initiatingUserId,
                 $events
             );
         }

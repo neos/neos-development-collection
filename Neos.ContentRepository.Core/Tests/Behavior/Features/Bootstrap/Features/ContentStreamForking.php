@@ -43,14 +43,10 @@ trait ContentStreamForking
         $sourceContentStreamId = isset($commandArguments['sourceContentStreamId'])
             ? ContentStreamId::fromString($commandArguments['sourceContentStreamId'])
             : $this->getCurrentContentStreamId();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new ForkContentStream(
             ContentStreamId::fromString($commandArguments['contentStreamId']),
             $sourceContentStreamId,
-            $initiatingUserId
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);

@@ -70,7 +70,6 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
                                     $this->type
                                 )
                             ]),
-                            UserId::forSystemUser()
                         )
                     );
                 }

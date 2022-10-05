@@ -22,7 +22,6 @@ Feature: Move a node with content dimensions
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -31,7 +30,6 @@ Feature: Move a node with content dimensions
       | nodeAggregateId     | "lady-eleonode-rootford"                                                           |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                      |
       | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"                                             |
       | nodeAggregateClassification | "root"                                                                             |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                              |
@@ -113,7 +111,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -143,7 +140,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
       | relationDistributionStrategy                | "gatherAll"              |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -173,7 +169,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -203,7 +198,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -243,7 +237,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                        | {"language": "mul"}      |
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "berta-destinode"        |
-      | initiatingUserId                   | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -282,7 +275,6 @@ Feature: Move a node with content dimensions
       | dimensionSpacePoint                         | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -313,7 +305,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy                | "scatter"                |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -341,7 +332,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
       | relationDistributionStrategy                | "gatherSpecializations"  |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -379,7 +369,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                        |
       | relationDistributionStrategy                | "scatter"                   |
-      | initiatingUserId                    | "user"                      |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
@@ -391,7 +380,6 @@ Feature: Move a node with content dimensions
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode"      |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
       | relationDistributionStrategy                | "gatherAll"              |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -425,7 +413,6 @@ Feature: Move a node with content dimensions
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                        |
       | relationDistributionStrategy                | "scatter"                   |
-      | initiatingUserId                    | "user"                      |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
@@ -436,7 +423,6 @@ Feature: Move a node with content dimensions
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"   |
       | relationDistributionStrategy                | "gatherAll"         |
-      | initiatingUserId                    | "user"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}

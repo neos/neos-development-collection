@@ -17,21 +17,26 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
+use Neos\ContentRepository\Core\EventStore\Events;
+use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\User\StaticUserIdProvider;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\EventStore\ProvidesSetupInterface;
@@ -59,7 +64,8 @@ final class ContentRepository
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
-        private readonly ContentDimensionSourceInterface $contentDimensionSource
+        private readonly ContentDimensionSourceInterface $contentDimensionSource,
+        private readonly UserIdProviderInterface $userIdProvider
     ) {
     }
 
@@ -79,7 +85,50 @@ final class ContentRepository
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this);
 
+        // TODO meaningful exception message
+        $initiatingUserId = $this->userIdProvider->getUserId();
+        $initiatingTimestamp = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
+
+        // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
+        //                        This is done in order to keep information about the _original_ metadata when an
+        //                        event is re-applied during publishing/rebasing
+        // "initiatingUserId": The identifier of the user that originally triggered this event. This will never
+        //                     be overridden if it is set once.
+        // "initiatingTimestamp": The timestamp of the original event. The "recordedAt" timestamp will always be
+        //                        re-created and reflects the time an event was actually persisted in a stream,
+        // the "initiatingTimestamp" will be kept and is never overridden again.
+        // TODO: cleanup
+        $eventsToPublish = new EventsToPublish(
+            $eventsToPublish->streamName,
+            Events::fromArray(
+                $eventsToPublish->events->map(function (EventInterface|DecoratedEvent $event) use (
+                    $initiatingUserId,
+                    $initiatingTimestamp
+                ) {
+                    $metadata = $event instanceof DecoratedEvent ? $event->eventMetadata->value : [];
+                    $metadata['initiatingUserId'] ??= $initiatingUserId;
+                    $metadata['initiatingTimestamp'] ??= $initiatingTimestamp;
+                    return DecoratedEvent::withMetadata($event, EventMetadata::fromArray($metadata));
+                })
+            ),
+            $eventsToPublish->expectedVersion,
+        );
+
         return $this->eventPersister->publishEvents($eventsToPublish);
+    }
+
+    public function withInitiatingUserId(UserId $userId): self
+    {
+        return new self(
+            $this->commandBus,
+            $this->eventStore,
+            $this->projections,
+            $this->eventPersister,
+            $this->nodeTypeManager,
+            $this->variationGraph,
+            $this->contentDimensionSource,
+            new StaticUserIdProvider($userId),
+        );
     }
 
     /**

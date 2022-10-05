@@ -15,17 +15,16 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The properties of {@see CreateNodeAggregateWithNode} are directly serialized; and then this command
@@ -75,7 +74,6 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
          * from the configured specializations.
          */
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly UserId $initiatingUserId,
         public readonly NodeAggregateId $parentNodeAggregateId,
         ?NodeAggregateId $succeedingSiblingNodeAggregateId = null,
         ?NodeName $nodeName = null,
@@ -99,7 +97,6 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
             NodeAggregateId::fromString($array['nodeAggregateId']),
             NodeTypeName::fromString($array['nodeTypeName']),
             OriginDimensionSpacePoint::fromArray($array['originDimensionSpacePoint']),
-            UserId::fromString($array['initiatingUserId']),
             NodeAggregateId::fromString($array['parentNodeAggregateId']),
             isset($array['succeedingSiblingNodeAggregateId'])
                 ? NodeAggregateId::fromString($array['succeedingSiblingNodeAggregateId'])
@@ -131,7 +128,6 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->initiatingUserId,
             $this->parentNodeAggregateId,
             $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,
@@ -145,18 +141,7 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'nodeTypeName' => $this->nodeTypeName,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
-            'initiatingUserId' => $this->initiatingUserId,
-            'parentNodeAggregateId' => $this->parentNodeAggregateId,
-            'succeedingSiblingNodeAggregateId' => $this->succeedingSiblingNodeAggregateId,
-            'nodeName' => $this->nodeName,
-            'initialPropertyValues' => $this->initialPropertyValues,
-            'tetheredDescendantNodeAggregateIds' => $this->tetheredDescendantNodeAggregateIds
-        ];
+        return get_object_vars($this);
     }
 
     public function createCopyForContentStream(ContentStreamId $target): self
@@ -166,7 +151,6 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
-            $this->initiatingUserId,
             $this->parentNodeAggregateId,
             $this->succeedingSiblingNodeAggregateId,
             $this->nodeName,

@@ -49,16 +49,12 @@ trait NodeVariation
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->getCurrentContentStreamId();
-        $initiatingUserId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new CreateNodeVariant(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($commandArguments['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($commandArguments['targetOrigin']),
-            $initiatingUserId
         );
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
@@ -88,9 +84,6 @@ trait NodeVariation
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             $contentStreamId
@@ -110,9 +103,6 @@ trait NodeVariation
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
         }
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
             $contentStreamId
@@ -131,9 +121,6 @@ trait NodeVariation
         $eventPayload = $this->readPayloadTable($payloadTable);
         if (!isset($eventPayload['contentStreamId'])) {
             $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
-        }
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
         }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(

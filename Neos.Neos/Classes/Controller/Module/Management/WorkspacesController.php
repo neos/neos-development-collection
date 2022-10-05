@@ -239,7 +239,6 @@ class WorkspacesController extends AbstractModuleController
                     $baseWorkspace,
                     $title,
                     $description,
-                    $currentUserIdentifier,
                     ContentStreamId::create(),
                     $visibility === 'private' ? $currentUserIdentifier : null
                 )
@@ -487,7 +486,6 @@ class WorkspacesController extends AbstractModuleController
                     $node->dimensionSpacePoint
                 )
             ),
-            UserId::fromString($this->securityContext->getAccount()->getAccountIdentifier())
         );
         $contentRepository->handle($command)
             ->block();
@@ -524,7 +522,6 @@ class WorkspacesController extends AbstractModuleController
                     $node->dimensionSpacePoint
                 )
             ),
-            UserId::fromString($this->securityContext->getAccount()->getAccountIdentifier())
         );
         $contentRepository->handle($command)
             ->block();
@@ -571,7 +568,6 @@ class WorkspacesController extends AbstractModuleController
                 $command = PublishIndividualNodesFromWorkspace::create(
                     $selectedWorkspace,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
-                    UserId::fromString($this->securityContext->getAccount()->getAccountIdentifier())
                 );
                 $contentRepository->handle($command)
                     ->block();
@@ -588,7 +584,6 @@ class WorkspacesController extends AbstractModuleController
                 $command = DiscardIndividualNodesFromWorkspace::create(
                     $selectedWorkspace,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
-                    UserId::fromString($this->securityContext->getAccount()->getAccountIdentifier())
                 );
                 $contentRepository->handle($command)
                     ->block();
@@ -616,15 +611,9 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-
-        $initiatingUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
-        if (is_null($initiatingUserIdentifier)) {
-            throw new \InvalidArgumentException('Cannot publish workspace without an initiating user', 1652154772);
-        }
         $contentRepository->handle(
             new PublishWorkspace(
-                $workspace,
-                $initiatingUserIdentifier
+                $workspace
             )
         )->block();
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
@@ -655,15 +644,9 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-
-        $initiatingUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
-        if (is_null($initiatingUserIdentifier)) {
-            throw new \InvalidArgumentException('Cannot discard workspace without an initiating user', 1652154743);
-        }
         $contentRepository->handle(
             DiscardWorkspace::create(
                 $workspace,
-                $initiatingUserIdentifier
             )
         )->block();
 

@@ -18,7 +18,6 @@ Feature: Run projection integrity violation detection regarding root connection
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
 
@@ -29,7 +28,6 @@ Feature: Run projection integrity violation detection regarding root connection
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000"    |
       | nodeAggregateClassification | "root"                                    |
     When the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |

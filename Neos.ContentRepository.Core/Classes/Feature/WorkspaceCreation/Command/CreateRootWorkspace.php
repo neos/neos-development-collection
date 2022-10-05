@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -34,7 +33,6 @@ final class CreateRootWorkspace implements CommandInterface
         public readonly WorkspaceName $workspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
-        public readonly UserId $initiatingUserId,
         public readonly ContentStreamId $newContentStreamId
     ) {
     }

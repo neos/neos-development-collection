@@ -9,15 +9,13 @@ Feature: Linking between multiple websites
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamIdentifier | "cs-identifier" |
-      | initiatingUserIdentifier   | "u"             |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
-      | Key                         | Value                        |
-      | contentStreamIdentifier     | "cs-identifier"              |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"     |
-      | nodeTypeName                | "Neos.Neos:Sites"            |
-      | coveredDimensionSpacePoints | [{}]                         |
-      | initiatingUserIdentifier    | "initiating-user-identifier" |
-      | nodeAggregateClassification | "root"                       |
+      | Key                         | Value                    |
+      | contentStreamIdentifier     | "cs-identifier"          |
+      | nodeAggregateId             | "lady-eleonode-rootford" |
+      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | coveredDimensionSpacePoints | [{}]                     |
+      | nodeAggregateClassification | "root"                   |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford
@@ -29,11 +27,11 @@ Feature: Linking between multiple websites
     # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | parentNodeAggregateIdentifier | nodeTypeName                                       | initialPropertyValues                    | nodeName |
-      | homepage1               | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
-      | sir-david-nodenborough  | homepage1                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
-      | homepage2               | lady-eleonode-rootford        | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-2   |
-      | sir-david-nodenborough2 | homepage2                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node3    |
+      | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues                    | nodeName |
+      | homepage1               | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
+      | sir-david-nodenborough  | homepage1              | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
+      | homepage2               | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-2   |
+      | sir-david-nodenborough2 | homepage2              | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node3    |
     And A site exists for node name "site-1" and domain "http://domain1.tld"
     And A site exists for node name "site-2" and domain "http://domain2.tld"
     And the sites configuration is:

@@ -68,7 +68,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             Events::with(
                 new ContentStreamWasCreated(
                     $command->contentStreamId,
-                    $command->initiatingUserId
                 )
             ),
             ExpectedVersion::NO_STREAM()
@@ -99,7 +98,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $command->newContentStreamId,
                     $command->sourceContentStreamId,
                     $sourceContentStreamVersion->unwrap(),
-                    $command->initiatingUserId
                 ),
             ),
             ExpectedVersion::ANY()
@@ -121,7 +119,6 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
             Events::with(
                 new ContentStreamWasRemoved(
                     $command->contentStreamId,
-                    $command->initiatingUserId
                 ),
             ),
             ExpectedVersion::ANY()

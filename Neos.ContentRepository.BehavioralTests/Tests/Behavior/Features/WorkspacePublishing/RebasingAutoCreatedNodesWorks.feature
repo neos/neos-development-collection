@@ -32,7 +32,6 @@ Feature: Rebasing auto-created nodes works
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -40,7 +39,6 @@ Feature: Rebasing auto-created nodes works
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "initiating-user-identifier"  |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
 
@@ -49,7 +47,6 @@ Feature: Rebasing auto-created nodes works
       | workspaceName              | "user-test"          |
       | baseWorkspaceName          | "live"               |
       | newContentStreamId | "user-cs-identifier" |
-      | initiatingUserId   | "user"               |
     And the graph projection is fully up to date
 
   Scenario: complex scenario (to reproduce the bug) -- see the feature description
@@ -61,7 +58,6 @@ Feature: Rebasing auto-created nodes works
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content" |
       | nodeName                      | "mcnodeface"                             |
       | originDimensionSpacePoint     | {}                                       |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"   |
       | parentNodeAggregateId | "lady-eleonode-rootford"                 |
     And the graph projection is fully up to date
     And I am in content stream "user-cs-identifier" and dimension space point {}
@@ -76,13 +72,11 @@ Feature: Rebasing auto-created nodes works
       | nodeAggregateId   | $this->currentnodeAggregateId          |
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
-      | initiatingUserId  | "initiating-user-identifier"                   |
     And the graph projection is fully up to date
 
     When the command RebaseWorkspace is executed with payload:
       | Key                      | Value                        |
       | workspaceName            | "user-test"                  |
-      | initiatingUserId | "initiating-user-identifier" |
     And the graph projection is fully up to date
     # This should properly work; no error.
 

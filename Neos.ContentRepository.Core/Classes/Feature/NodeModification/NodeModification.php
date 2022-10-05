@@ -67,7 +67,6 @@ trait NodeModification
                 $command->propertyValues,
                 $this->requireNodeType($nodeTypeName)
             ),
-            $command->initiatingUserId
         );
 
         return $this->handleSetSerializedNodeProperties($lowLevelCommand, $contentRepository);
@@ -100,7 +99,6 @@ trait NodeModification
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $propertyValues,
-                    $command->initiatingUserId
                 );
             }
         }

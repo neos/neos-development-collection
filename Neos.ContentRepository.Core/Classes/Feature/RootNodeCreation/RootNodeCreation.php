@@ -98,7 +98,6 @@ trait RootNodeCreation
             $command->nodeTypeName,
             $coveredDimensionSpacePoints,
             NodeAggregateClassification::CLASSIFICATION_ROOT,
-            $command->initiatingUserId
         );
     }
 }
