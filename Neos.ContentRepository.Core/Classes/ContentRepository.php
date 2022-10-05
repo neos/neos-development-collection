@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -56,6 +58,8 @@ final class ContentRepository
         private readonly Projections $projections,
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly InterDimensionalVariationGraph $variationGraph,
+        private readonly ContentDimensionSourceInterface $contentDimensionSource
     ) {
     }
 
@@ -149,5 +153,15 @@ final class ContentRepository
     public function getContentStreamFinder(): ContentStreamFinder
     {
         return $this->projectionState(ContentStreamFinder::class);
+    }
+
+    public function getVariationGraph(): InterDimensionalVariationGraph
+    {
+        return $this->variationGraph;
+    }
+
+    public function getContentDimensionSource(): ContentDimensionSourceInterface
+    {
+        return $this->contentDimensionSource;
     }
 }
