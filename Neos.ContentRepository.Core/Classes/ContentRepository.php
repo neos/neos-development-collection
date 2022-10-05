@@ -125,6 +125,8 @@ final class ContentRepository
             $this->projections,
             $this->eventPersister,
             $this->nodeTypeManager,
+            $this->variationGraph,
+            $this->contentDimensionSource,
             new StaticUserIdProvider($userId),
         );
     }
