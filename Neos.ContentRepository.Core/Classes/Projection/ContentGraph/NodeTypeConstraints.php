@@ -27,7 +27,7 @@ use Neos\Utility\Arrays;
  * - Foo.Bar,Baz,!Other: `allowed: [Foo.Bar, Baz]; disallowed: [Other]`
  * - (empty): `allowed: []; disallowed: []`.
  *
- * This is usually created by the factory method {@see fromFilterString}.
+ * This is usually created by the factory method {@see self::fromFilterString}.
  *
  *
  * ## Semantics

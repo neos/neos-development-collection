@@ -95,7 +95,9 @@ final class ContentRepositoryFactory
                 $this->projections,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
-                $this->userIdProvider,
+                $this->projectionFactoryDependencies->interDimensionalVariationGraph,
+                $this->projectionFactoryDependencies->contentDimensionSource,
+                $this->userIdProvider
             );
         }
         return $this->contentRepository;
