@@ -33,7 +33,7 @@ Feature: Run integrity violation detection regarding parent relations
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentnodeAggregateId       | "lady-eleonode-rootford"                                 |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeName                    | "document"                                               |
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -43,7 +43,7 @@ Feature: Run integrity violation detection regarding parent relations
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentnodeAggregateId       | "lady-eleonode-rootford"                                 |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
       | nodeName                    | "esquire"                                                |
       | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -53,7 +53,7 @@ Feature: Run integrity violation detection regarding parent relations
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
       | originDimensionSpacePoint   | {"language":"de"}                                        |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentnodeAggregateId       | "sir-david-nodenborough"                                 |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
     And the graph projection is fully up to date
@@ -63,8 +63,8 @@ Feature: Run integrity violation detection regarding parent relations
       | Key                   | Value                        |
       | contentStreamId       | "cs-identifier"              |
       | dimensionSpacePoint   | {"language":"de"}            |
-      | parentnodeAggregateId | "sir-nodeward-nodington-iii" |
-      | childnodeAggregateId  | "nody-mc-nodeface"           |
+      | parentNodeAggregateId | "sir-nodeward-nodington-iii" |
+      | childNodeAggregateId  | "nody-mc-nodeface"           |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597925698

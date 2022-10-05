@@ -22,7 +22,7 @@ Feature: Run integrity violation detection regarding restriction relations
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                    |
       | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateIdentifier     | "lady-eleonode-rootford"                                 |
+      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
       | nodeTypeName                | "Neos.ContentRepository:Root"                            |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
       | nodeAggregateClassification | "root"                                                   |
@@ -30,47 +30,47 @@ Feature: Run integrity violation detection regarding restriction relations
 
   Scenario: Create nodes, disable the topmost and remove some restriction edges manually
     When the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                    |
-      | contentStreamId               | "cs-identifier"                                          |
-      | nodeAggregateIdentifier       | "sir-david-nodenborough"                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint     | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateIdentifier | "lady-eleonode-rootford"                                 |
-      | nodeName                      | "document"                                               |
-      | nodeAggregateClassification   | "regular"                                                |
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "sir-david-nodenborough"                                 |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                 |
+      | nodeName                    | "document"                                               |
+      | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                    |
-      | contentStreamId               | "cs-identifier"                                          |
-      | nodeAggregateIdentifier       | "sir-nodeward-nodington-iii"                             |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint     | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateIdentifier | "sir-david-nodenborough"                                 |
-      | nodeName                      | "esquire"                                                |
-      | nodeAggregateClassification   | "regular"                                                |
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "sir-nodeward-nodington-iii"                             |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
+      | nodeName                    | "esquire"                                                |
+      | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                    |
-      | contentStreamId               | "cs-identifier"                                          |
-      | nodeAggregateIdentifier       | "nody-mc-nodeface"                                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                |
-      | originDimensionSpacePoint     | {"language":"de"}                                        |
-      | coveredDimensionSpacePoints   | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
-      | parentNodeAggregateIdentifier | "sir-nodeward-nodington-iii"                             |
-      | nodeName                      | "child-document"                                         |
-      | nodeAggregateClassification   | "regular"                                                |
+      | Key                         | Value                                                    |
+      | contentStreamId             | "cs-identifier"                                          |
+      | nodeAggregateId             | "nody-mc-nodeface"                                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                |
+      | originDimensionSpacePoint   | {"language":"de"}                                        |
+      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | parentNodeAggregateId       | "sir-nodeward-nodington-iii"                             |
+      | nodeName                    | "child-document"                                         |
+      | nodeAggregateClassification | "regular"                                                |
     And the event NodeAggregateWasDisabled was published with payload:
       | Key                          | Value                                                    |
       | contentStreamId              | "cs-identifier"                                          |
-      | nodeAggregateIdentifier      | "sir-david-nodenborough"                                 |
+      | nodeAggregateId              | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
     And the graph projection is fully up to date
     And I remove the following restriction relation:
-      | Key                             | Value                    |
-      | contentStreamId                 | "cs-identifier"          |
-      | dimensionSpacePoint             | {"language":"de"}        |
-      | originNodeAggregateIdentifier   | "sir-david-nodenborough" |
-      | affectedNodeAggregateIdentifier | "nody-mc-nodeface"       |
+      | Key                     | Value                    |
+      | contentStreamId         | "cs-identifier"          |
+      | dimensionSpacePoint     | {"language":"de"}        |
+      | originNodeAggregateId   | "sir-david-nodenborough" |
+      | affectedNodeAggregateId | "nody-mc-nodeface"       |
     And I run integrity violation detection
     Then I expect the integrity violation detection result to contain exactly 1 error
     And I expect integrity violation detection result error number 1 to have code 1597837797
