@@ -319,8 +319,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->getDatabaseConnection()->executeUpdate('
             UPDATE ' . $this->tableName . '
             SET
-                status = :outdatedConflict,
-                foo = bar
+                status = :outdatedConflict
             WHERE
                 workspacename = :workspaceName
         ', [
