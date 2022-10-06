@@ -13,7 +13,6 @@ Feature: Copy nodes (without dimensions)
       | workspaceName                  | "live"                                 |
       | workspaceTitle                 | "Live"                                 |
       | workspaceDescription           | "The live workspace"                   |
-      | initiatingUserId       | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId     | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -22,7 +21,6 @@ Feature: Copy nodes (without dimensions)
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{}]                                   |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
@@ -64,7 +62,6 @@ Feature: Copy nodes (without dimensions)
       | Key                                            | Value                                                             |
       | contentStreamId                        | "cs-identifier"                                                   |
       | targetDimensionSpacePoint                      | {}                                                                |
-      | initiatingUserId                       | "00000000-0000-0000-0000-000000000000"                            |
       | targetParentNodeAggregateId            | "nody-mc-nodeface"                                                |
       | targetNodeName                                 | "target-nn"                                                       |
       | targetSucceedingSiblingnodeAggregateId | null                                                              |

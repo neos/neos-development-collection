@@ -21,7 +21,7 @@ use Neos\Flow\Utility\Algorithms;
  */
 final class UserId implements \JsonSerializable, \Stringable
 {
-    public const SYSTEM_USER_ID = 'system';
+    private const SYSTEM_USER_ID = 'system';
 
     /**
      * @var array<string,self>
@@ -59,6 +59,11 @@ final class UserId implements \JsonSerializable, \Stringable
     public function isSystemUser(): bool
     {
         return $this->value === self::SYSTEM_USER_ID;
+    }
+
+    public function equals(UserId $other): bool
+    {
+        return $other->value === $this->value;
     }
 
     public function jsonSerialize(): string

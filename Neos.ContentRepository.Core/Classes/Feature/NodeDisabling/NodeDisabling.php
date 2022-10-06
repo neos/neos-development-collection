@@ -77,7 +77,6 @@ trait NodeDisabling
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
-                $command->initiatingUserId
             ),
         );
 
@@ -131,7 +130,6 @@ trait NodeDisabling
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
-                $command->initiatingUserId
             )
         );
 

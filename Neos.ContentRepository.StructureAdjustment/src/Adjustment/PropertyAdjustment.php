@@ -128,7 +128,6 @@ class PropertyAdjustment
                 $node->nodeAggregateId,
                 $node->originDimensionSpacePoint,
                 $serializedPropertyValues,
-                UserId::forSystemUser()
             )
         );
 

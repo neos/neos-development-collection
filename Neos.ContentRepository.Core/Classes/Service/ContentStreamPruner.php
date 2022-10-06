@@ -45,7 +45,6 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
             $this->lastCommandResult = $this->contentRepository->handle(
                 new RemoveContentStream(
                     $contentStream,
-                    UserId::forSystemUser()
                 )
             );
         }

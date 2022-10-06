@@ -256,4 +256,30 @@ trait GenericCommandExecutionAndEventPublication
             }
         }
     }
+
+    /**
+     * @Then /^event metadata at index (\d+) is:/
+     * @param int $eventNumber
+     * @param TableNode $metadataTable
+     */
+    public function eventMetadataAtNumberIs(int $eventNumber, TableNode $metadataTable)
+    {
+        if ($this->currentEventStreamAsArray === null) {
+            Assert::fail('Step \'I expect exactly ? events to be published on stream "?"\' was not executed');
+        }
+
+        Assert::assertArrayHasKey($eventNumber, $this->currentEventStreamAsArray, 'Event at index does not exist');
+
+        $actualEvent = $this->currentEventStreamAsArray[$eventNumber];
+        assert($actualEvent instanceof EventEnvelope);
+
+        Assert::assertNotNull($actualEvent, sprintf('Event with number %d not found', $eventNumber));
+
+        $actualEventMetadata = $actualEvent->event->metadata->value;
+        foreach ($metadataTable->getHash() as $assertionTableRow) {
+            $key = $assertionTableRow['Key'];
+            $actualValue = Arrays::getValueByPath($actualEventMetadata, $key);
+            Assert::assertJsonStringEqualsJsonString($assertionTableRow['Expected'], json_encode($actualValue));
+        }
+    }
 }

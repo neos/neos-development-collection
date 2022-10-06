@@ -87,7 +87,6 @@ class TetheredNodeAdjustments
                                     $tetheredNodeName,
                                     null,
                                     $expectedTetheredNodeType,
-                                    UserId::forSystemUser(),
                                     $this->contentRepository
                                 );
 

@@ -26,7 +26,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
@@ -35,7 +34,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{}]                                   |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                     |
@@ -94,7 +92,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
@@ -119,7 +116,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -141,7 +137,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -169,7 +164,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -195,7 +189,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -216,7 +209,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -242,7 +234,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                           |
       | newParentNodeAggregateId            | "sir-nodeward-nodington-iii" |
       | newSucceedingSiblingNodeAggregateId | null                         |
-      | initiatingUserId                    | "user"                       |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -269,7 +260,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                 |
       | newParentNodeAggregateId            | "nodimus-prime"    |
       | newSucceedingSiblingNodeAggregateId | null               |
-      | initiatingUserId                    | "user"             |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -295,7 +285,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -321,7 +310,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"
@@ -343,7 +331,6 @@ Feature: Move a node aggregate considering disable state but without content dim
       | dimensionSpacePoint                         | {}                       |
       | newParentNodeAggregateId            | "nodimus-prime"          |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | initiatingUserId                    | "user"                   |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "frontend"

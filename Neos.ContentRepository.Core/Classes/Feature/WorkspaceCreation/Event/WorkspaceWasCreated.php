@@ -37,7 +37,6 @@ final class WorkspaceWasCreated implements EventInterface
         public readonly WorkspaceName $baseWorkspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
-        public readonly UserId $initiatingUserId,
         public readonly ContentStreamId $newContentStreamId,
         public readonly ?UserId $workspaceOwner = null
     ) {
@@ -50,7 +49,6 @@ final class WorkspaceWasCreated implements EventInterface
             WorkspaceName::fromString($values['baseWorkspaceName']),
             WorkspaceTitle::fromString($values['workspaceTitle']),
             WorkspaceDescription::fromString($values['workspaceDescription']),
-            UserId::fromString($values['initiatingUserId']),
             ContentStreamId::fromString($values['newContentStreamId']),
             $values['workspaceOwner'] ? UserId::fromString($values['workspaceOwner']) : null
         );
@@ -58,14 +56,6 @@ final class WorkspaceWasCreated implements EventInterface
 
     public function jsonSerialize(): array
     {
-        return [
-            'workspaceName' => $this->workspaceName,
-            'baseWorkspaceName' => $this->baseWorkspaceName,
-            'workspaceTitle' => $this->workspaceTitle,
-            'workspaceDescription' => $this->workspaceDescription,
-            'initiatingUserId' => $this->initiatingUserId,
-            'newContentStreamId' => $this->newContentStreamId,
-            'workspaceOwner' => $this->workspaceOwner
-        ];
+        return get_object_vars($this);
     }
 }

@@ -15,29 +15,27 @@ Feature: Create a root node aggregate
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "user-id"            |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier"
 
   Scenario: Create the initial root node aggregate using valid payload without dimensions
     When the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     Then I expect exactly 2 events to be published on stream "ContentStream:cs-identifier"
     And event at index 1 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                      |
-      | contentStreamId     | "cs-identifier"               |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
+      | contentStreamId             | "cs-identifier"               |
+      | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [[]]                          |
-      | initiatingUserId    | "initiating-user-identifier"  |
       | nodeAggregateClassification | "root"                        |
 
     When the graph projection is fully up to date
@@ -70,24 +68,23 @@ Feature: Create a root node aggregate
 
   Scenario: Create a root node aggregate using valid payload without dimensions
     Given the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     When the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
+      | Key             | Value                         |
       | nodeAggregateId | "nody-mc-nodeface"            |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
 
     Then I expect exactly 3 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                      |
-      | contentStreamId     | "cs-identifier"               |
-      | nodeAggregateId     | "nody-mc-nodeface"            |
+      | contentStreamId             | "cs-identifier"               |
+      | nodeAggregateId             | "nody-mc-nodeface"            |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [[]]                          |
-      | initiatingUserId    | "initiating-user-identifier"  |
       | nodeAggregateClassification | "root"                        |
 
     When the graph projection is fully up to date

@@ -15,7 +15,6 @@ Feature: Node Property Conversion
       | Key                        | Value           |
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
-      | initiatingUserId   | "user-id"       |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -23,7 +22,6 @@ Feature: Node Property Conversion
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "initiating-user-identifier"  |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
 
@@ -34,7 +32,6 @@ Feature: Node Property Conversion
       | nodeAggregateId       | "nody-mc-nodeface"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
       | originDimensionSpacePoint     | {}                                                 |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"             |
       | parentNodeAggregateId | "lady-eleonode-rootford"                           |
       | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
 
@@ -53,7 +50,6 @@ Feature: Node Property Conversion
       | nodeAggregateId       | "nody-mc-nodeface"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
       | originDimensionSpacePoint     | {}                                                 |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"             |
       | parentNodeAggregateId | "lady-eleonode-rootford"                           |
       | initialPropertyValues         | {"dateProperty": "Date:1997-07-16T19:20:30+05:00"} |
     And the graph projection is fully up to date
@@ -64,7 +60,6 @@ Feature: Node Property Conversion
       | nodeAggregateId   | "nody-mc-nodeface"                                 |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"dateProperty": "Date:1997-07-19T19:20:30+05:00"} |
-      | initiatingUserId  | "initiating-user-identifier"                       |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}

@@ -17,7 +17,6 @@ Feature: Create an intact content graph and run integrity violation detection
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "cs-identifier"                        |
 
   Scenario: Create an intact content graph
@@ -27,7 +26,6 @@ Feature: Create an intact content graph and run integrity violation detection
       | nodeAggregateId     | "lady-eleonode-rootford"               |
       | nodeTypeName                | "Neos.ContentRepository:Root"          |
       | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
-      | initiatingUserId    | "00000000-0000-0000-0000-000000000000" |
       | nodeAggregateClassification | "root"                                 |
     And the graph projection is fully up to date
     And the event NodeAggregateWithNodeWasCreated was published with payload:

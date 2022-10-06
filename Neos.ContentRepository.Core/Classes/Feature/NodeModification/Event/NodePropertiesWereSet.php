@@ -14,14 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Event;
 
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * When a node property is changed, this event is triggered.
@@ -43,8 +42,7 @@ final class NodePropertiesWereSet implements
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly SerializedPropertyValues $propertyValues,
-        public readonly UserId $initiatingUserId
+        public readonly SerializedPropertyValues $propertyValues
     ) {
     }
 
@@ -69,8 +67,7 @@ final class NodePropertiesWereSet implements
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
-            $this->propertyValues,
-            $this->initiatingUserId
+            $this->propertyValues
         );
     }
 
@@ -80,8 +77,7 @@ final class NodePropertiesWereSet implements
             $this->contentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
-            $this->propertyValues->merge($other->propertyValues),
-            $this->initiatingUserId
+            $this->propertyValues->merge($other->propertyValues)
         );
     }
 
@@ -92,18 +88,11 @@ final class NodePropertiesWereSet implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
             SerializedPropertyValues::fromArray($values['propertyValues']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
-            'propertyValues' => $this->propertyValues,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 }

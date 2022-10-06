@@ -17,7 +17,6 @@ Feature: Remove NodeAggregate
       | workspaceName              | "live"                                 |
       | workspaceTitle             | "Live"                                 |
       | workspaceDescription       | "The live workspace"                   |
-      | initiatingUserId   | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId | "live-cs-identifier"                   |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -25,7 +24,6 @@ Feature: Remove NodeAggregate
       | contentStreamId  | "live-cs-identifier"                   |
       | nodeAggregateId  | "lady-eleonode-nodesworth"             |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
-      | initiatingUserId | "00000000-0000-0000-0000-000000000000" |
     And the graph projection is fully up to date
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
@@ -35,7 +33,6 @@ Feature: Remove NodeAggregate
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "lady-eleonode-nodesworth"                |
       | nodeName                      | "document"                                |
     And the graph projection is fully up to date
@@ -47,7 +44,6 @@ Feature: Remove NodeAggregate
       | nodeAggregateId       | "nodimus-prime"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
     And the graph projection is fully up to date
@@ -57,7 +53,6 @@ Feature: Remove NodeAggregate
       | nodeAggregateId  | "nody-mc-nodeface"   |
       | sourceOrigin             | {"language":"de"}    |
       | targetOrigin             | {"language":"gsw"}   |
-      | initiatingUserId | "user"               |
     And the graph projection is fully up to date
 
   ########################
@@ -70,7 +65,6 @@ Feature: Remove NodeAggregate
       | nodeAggregateId      | "nody-mc-nodeface"   |
       | nodeVariantSelectionStrategy | "allVariants"        |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
-      | initiatingUserId     | "user"               |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 1 node
@@ -90,7 +84,6 @@ Feature: Remove NodeAggregate
       | Key                           | Value                        |
       | contentStreamId       | "user-cs-identifier"         |
       | sourceContentStreamId | "live-cs-identifier"         |
-      | initiatingUserId      | "initiating-user-identifier" |
     And the graph projection is fully up to date
 
     When the command RemoveNodeAggregate is executed with payload:
@@ -99,7 +92,6 @@ Feature: Remove NodeAggregate
       | nodeAggregateId      | "nody-mc-nodeface"   |
       | nodeVariantSelectionStrategy | "allVariants"        |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
-      | initiatingUserId     | "user"               |
     And the graph projection is fully up to date
 
     Then I expect the graph projection to consist of exactly 4 nodes

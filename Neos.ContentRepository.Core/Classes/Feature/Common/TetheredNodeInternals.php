@@ -41,7 +41,6 @@ trait TetheredNodeInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events;
 
@@ -59,7 +58,6 @@ trait TetheredNodeInternals
         NodeName $tetheredNodeName,
         ?NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
@@ -88,7 +86,6 @@ trait TetheredNodeInternals
                     $tetheredNodeName,
                     SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
                     NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                    $initiatingUserId
                 )
             );
         } elseif (count($childNodeAggregates) === 1) {
@@ -113,7 +110,6 @@ trait TetheredNodeInternals
                 $childNodeSource->originDimensionSpacePoint,
                 $parentNode->originDimensionSpacePoint,
                 $parentNodeAggregate,
-                $initiatingUserId,
                 $contentRepository
             );
         } else {

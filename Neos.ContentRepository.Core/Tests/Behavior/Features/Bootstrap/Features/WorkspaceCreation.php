@@ -47,15 +47,10 @@ trait WorkspaceCreation
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $userId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
-
         $command = new CreateRootWorkspace(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
-            $userId,
             ContentStreamId::fromString($commandArguments['newContentStreamId'])
         );
 
@@ -69,9 +64,6 @@ trait WorkspaceCreation
     public function theEventRootWorkspaceWasCreatedWasPublishedToStreamWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['initiatingUserId'])) {
-            $eventPayload['initiatingUserId'] = (string)$this->getCurrentUserId();
-        }
         $newContentStreamId = ContentStreamId::fromString($eventPayload['newContentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($newContentStreamId);
         $this->publishEvent('RootWorkspaceWasCreated', $streamName->getEventStreamName(), $eventPayload);
@@ -85,16 +77,12 @@ trait WorkspaceCreation
     public function theCommandCreateWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $userId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $command = new CreateWorkspace(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             WorkspaceName::fromString($commandArguments['baseWorkspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
-            $userId,
             ContentStreamId::fromString($commandArguments['newContentStreamId']),
             isset($commandArguments['workspaceOwner']) ? UserId::fromString($commandArguments['workspaceOwner']) : null
         );
@@ -111,9 +99,6 @@ trait WorkspaceCreation
     public function theCommandRebaseWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $userId = isset($commandArguments['initiatingUserId'])
-            ? UserId::fromString($commandArguments['initiatingUserId'])
-            : $this->getCurrentUserId();
 
         $rebasedContentStreamId = isset($commandArguments['rebasedContentStreamId'])
             ? ContentStreamId::fromString($commandArguments['rebasedContentStreamId'])
@@ -121,7 +106,6 @@ trait WorkspaceCreation
 
         $command = RebaseWorkspace::createFullyDeterministic(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $userId,
             $rebasedContentStreamId,
         );
 

@@ -177,12 +177,6 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        //return $site; // TODO: FIX ME (CODE BELOW)
-        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
-        if (is_null($currentUserIdentifier)) {
-            $currentUserIdentifier = UserId::forSystemUser();
-        }
-
         $contentRepositoryIdentifier = ContentRepositoryId::fromString(
             $site->getConfiguration()['contentRepository']
             ?? throw new \RuntimeException(
@@ -194,7 +188,7 @@ class SiteService
             $contentRepositoryIdentifier,
             new SiteServiceInternalsFactory()
         );
-        $siteServiceInternals->createSiteNode($site, $nodeTypeName, $currentUserIdentifier);
+        $siteServiceInternals->createSiteNode($site, $nodeTypeName);
 
         return $site;
     }

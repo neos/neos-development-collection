@@ -22,10 +22,11 @@ use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -133,6 +134,7 @@ final class ContentRepositoryRegistry
                 $this->buildPropertySerializer($contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildProjectionsFactory($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
+                $this->buildUserIdProvider($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryIdentifier, $exception);
@@ -226,5 +228,15 @@ final class ContentRepositoryRegistry
             throw new \RuntimeException(sprintf('projectionCatchUpTrigger.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ProjectionCatchUpTriggerFactoryInterface::class, get_debug_type($projectionCatchUpTriggerFactory)));
         }
         return $projectionCatchUpTriggerFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset['projectionCatchUpTrigger'] ?? []);
+    }
+
+    private function buildUserIdProvider(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): UserIdProviderInterface
+    {
+        assert(isset($contentRepositoryPreset['userIdProvider']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have userIdProvider.factoryObjectName configured.', $contentRepositorySettings['preset']));
+        $userIdProviderFactory = $this->objectManager->get($contentRepositoryPreset['userIdProvider']['factoryObjectName']);
+        if (!$userIdProviderFactory instanceof UserIdProviderFactoryInterface) {
+            throw new \RuntimeException(sprintf('userIdProvider.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, UserIdProviderFactoryInterface::class, get_debug_type($userIdProviderFactory)));
+        }
+        return $userIdProviderFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset);
     }
 }

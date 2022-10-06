@@ -30,7 +30,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -38,7 +37,6 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -121,14 +119,12 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
       | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:

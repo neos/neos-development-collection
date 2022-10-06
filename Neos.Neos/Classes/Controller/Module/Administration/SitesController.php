@@ -233,7 +233,6 @@ class SitesController extends AbstractModuleController
                     $workspace->currentContentStreamId,
                     $siteNodeAggregate->nodeAggregateId,
                     NodeName::fromString($newSiteNodeName),
-                    $this->persistenceManager->getIdentifierByObject($currentUser)
                 ));
             }
         }

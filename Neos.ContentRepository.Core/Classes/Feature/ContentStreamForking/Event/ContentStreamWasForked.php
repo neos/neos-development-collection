@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Feature\ContentStreamForking\Event;
 
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\Event\Version;
 
 /**
@@ -31,7 +30,6 @@ final class ContentStreamWasForked implements EventInterface
         public readonly ContentStreamId $newContentStreamId,
         public readonly ContentStreamId $sourceContentStreamId,
         public readonly Version $versionOfSourceContentStream,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -41,7 +39,6 @@ final class ContentStreamWasForked implements EventInterface
             ContentStreamId::fromString($values['newContentStreamId']),
             ContentStreamId::fromString($values['sourceContentStreamId']),
             Version::fromInteger($values['versionOfSourceContentStream']),
-            UserId::fromString($values['initiatingUserId']),
         );
     }
 
@@ -51,7 +48,6 @@ final class ContentStreamWasForked implements EventInterface
             'newContentStreamId' => $this->newContentStreamId,
             'sourceContentStreamId' => $this->sourceContentStreamId,
             'versionOfSourceContentStream' => $this->versionOfSourceContentStream->value,
-            'initiatingUserId' => $this->initiatingUserId,
         ];
     }
 }

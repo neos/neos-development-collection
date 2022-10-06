@@ -39,7 +39,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         return match (
@@ -53,7 +52,6 @@ trait NodeVariationInternals
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate,
-                $initiatingUserId,
                 $contentRepository
             ),
             DimensionSpace\VariantType::TYPE_GENERALIZATION => $this->handleCreateNodeGeneralizationVariant(
@@ -61,7 +59,6 @@ trait NodeVariationInternals
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate,
-                $initiatingUserId,
                 $contentRepository
             ),
             default => $this->handleCreateNodePeerVariant(
@@ -69,7 +66,6 @@ trait NodeVariationInternals
                 $sourceOrigin,
                 $targetOrigin,
                 $nodeAggregate,
-                $initiatingUserId,
                 $contentRepository
             ),
         };
@@ -80,7 +76,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $specializationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
@@ -90,7 +85,6 @@ trait NodeVariationInternals
             $targetOrigin,
             $nodeAggregate,
             $specializationVisibility,
-            $initiatingUserId,
             [],
             $contentRepository
         );
@@ -108,7 +102,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $specializationVisibility,
-        UserId $initiatingUserId,
         array $events,
         ContentRepository $contentRepository
     ): array {
@@ -118,7 +111,6 @@ trait NodeVariationInternals
             $sourceOrigin,
             $targetOrigin,
             $specializationVisibility,
-            $initiatingUserId
         );
 
         foreach (
@@ -133,7 +125,6 @@ trait NodeVariationInternals
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
                 $specializationVisibility,
-                $initiatingUserId,
                 $events,
                 $contentRepository
             );
@@ -147,7 +138,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $generalizationVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
@@ -157,7 +147,6 @@ trait NodeVariationInternals
             $targetOrigin,
             $nodeAggregate,
             $generalizationVisibility,
-            $initiatingUserId,
             [],
             $contentRepository
         );
@@ -175,7 +164,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $generalizationVisibility,
-        UserId $initiatingUserId,
         array $events,
         ContentRepository $contentRepository
     ): array {
@@ -185,7 +173,6 @@ trait NodeVariationInternals
             $sourceOrigin,
             $targetOrigin,
             $generalizationVisibility,
-            $initiatingUserId
         );
 
         foreach (
@@ -200,7 +187,6 @@ trait NodeVariationInternals
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
                 $generalizationVisibility,
-                $initiatingUserId,
                 $events,
                 $contentRepository
             );
@@ -214,7 +200,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
-        UserId $initiatingUserId,
         ContentRepository $contentRepository
     ): Events {
         $peerVisibility = $this->calculateEffectiveVisibility($targetOrigin, $nodeAggregate);
@@ -224,7 +209,6 @@ trait NodeVariationInternals
             $targetOrigin,
             $nodeAggregate,
             $peerVisibility,
-            $initiatingUserId,
             [],
             $contentRepository
         );
@@ -242,7 +226,6 @@ trait NodeVariationInternals
         OriginDimensionSpacePoint $targetOrigin,
         NodeAggregate $nodeAggregate,
         DimensionSpacePointSet $peerVisibility,
-        UserId $initiatingUserId,
         array $events,
         ContentRepository $contentRepository
     ): array {
@@ -252,7 +235,6 @@ trait NodeVariationInternals
             $sourceOrigin,
             $targetOrigin,
             $peerVisibility,
-            $initiatingUserId
         );
 
         foreach (
@@ -267,7 +249,6 @@ trait NodeVariationInternals
                 $targetOrigin,
                 $tetheredChildNodeAggregate,
                 $peerVisibility,
-                $initiatingUserId,
                 $events,
                 $contentRepository
             );

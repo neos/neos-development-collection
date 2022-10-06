@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 /**
  * Create a named reference from source to destination node
@@ -25,7 +24,6 @@ final class SetNodeReferences implements CommandInterface
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly ReferenceName $referenceName,
         public readonly NodeReferencesToWrite $references,
-        public readonly UserId $initiatingUserId
     ) {
     }
 }

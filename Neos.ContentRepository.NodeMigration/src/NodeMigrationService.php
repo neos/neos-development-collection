@@ -76,7 +76,6 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                     $workspace->workspaceName,
                     WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
                     WorkspaceDescription::fromString(''),
-                    UserId::forSystemUser(),
                     $contentStreamForWriting,
                 )
             )->block();

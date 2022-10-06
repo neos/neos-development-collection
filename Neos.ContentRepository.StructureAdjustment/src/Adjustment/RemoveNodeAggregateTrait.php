@@ -22,7 +22,6 @@ trait RemoveNodeAggregateTrait
                 $tetheredNodeAggregate->nodeAggregateId,
                 $tetheredNodeAggregate->occupiedDimensionSpacePoints,
                 $tetheredNodeAggregate->coveredDimensionSpacePoints,
-                UserId::forSystemUser()
             )
         );
 

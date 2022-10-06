@@ -61,10 +61,6 @@ final class DimensionShineThroughWasAdded implements EventInterface, Publishable
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'source' => $this->source,
-            'target' => $this->target,
-        ];
+        return get_object_vars($this);
     }
 }

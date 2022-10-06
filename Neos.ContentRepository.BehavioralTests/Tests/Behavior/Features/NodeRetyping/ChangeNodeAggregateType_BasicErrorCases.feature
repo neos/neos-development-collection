@@ -36,7 +36,6 @@ Feature: Change node aggregate type - basic error cases
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
@@ -44,7 +43,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"             |
       | coveredDimensionSpacePoints | [{"language": "de"}, {"language": "gsw"}] |
-      | initiatingUserId    | "system-user"                             |
       | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
@@ -57,7 +55,6 @@ Feature: Change node aggregate type - basic error cases
       | parentNodeAggregateId | "lady-eleonode-rootford"                        |
       | nodeName                      | "parent"                                        |
       | initialPropertyValues         | {}                                              |
-      | initiatingUserId      | "user"                                          |
 
     And the graph projection is fully up to date
 
@@ -68,7 +65,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId  | "sir-david-nodenborough"                          |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
       | strategy                 | "happypath"                                       |
-      | initiatingUserId | "user"                                            |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to change the type on a non-existing node aggregate
@@ -78,7 +74,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId  | "nody-mc-nodeface"                                |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ChildOfNodeTypeA" |
       | strategy                 | "happypath"                                       |
-      | initiatingUserId | "user"                                            |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to change a node aggregate to a non existing type
@@ -88,7 +83,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId  | "sir-david-nodenborough"                   |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:Undefined" |
       | strategy                 | "happypath"                                |
-      | initiatingUserId | "user"                                     |
     Then the last command should have thrown an exception of type "NodeTypeNotFound"
 
   Scenario: Try to change to a node type disallowed by the parent node
@@ -109,7 +103,6 @@ Feature: Change node aggregate type - basic error cases
       | parentNodeAggregateId | "sir-david-nodenborough"                   |
       | nodeName                      | "parent"                                   |
       | initialPropertyValues         | {}                                         |
-      | initiatingUserId      | "user"                                     |
     And the graph projection is fully up to date
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
       | Key                      | Value                                      |
@@ -117,7 +110,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId  | "nody-mc-nodeface"                         |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                 | "happypath"                                |
-      | initiatingUserId | "user"                                     |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change to a node type that is not allowed by the grand parent aggregate inside an autocreated parent aggregate
@@ -144,7 +136,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeName                                   | "parent2"                                       |
       | initialPropertyValues                      | {}                                              |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "autocreated-child"}            |
-      | initiatingUserId                   | "user"                                          |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -155,7 +146,6 @@ Feature: Change node aggregate type - basic error cases
       | originDimensionSpacePoint     | {"language":"de"}                          |
       | parentNodeAggregateId | "autocreated-child"                        |
       | initialPropertyValues         | {}                                         |
-      | initiatingUserId      | "user"                                     |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -164,7 +154,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId  | "nody-mc-nodeface"                         |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                 | "happypath"                                |
-      | initiatingUserId | "user"                                     |
     Then the last command should have thrown an exception of type "NodeConstraintException"
 
   Scenario: Try to change the node type of an auto created child node to anything other than defined:
@@ -187,7 +176,6 @@ Feature: Change node aggregate type - basic error cases
       | nodeName                                   | "parent2"                                       |
       | initialPropertyValues                      | {}                                              |
       | tetheredDescendantNodeAggregateIds | {"autocreated": "nody-mc-nodeface"}             |
-      | initiatingUserId                   | "user"                                          |
     And the graph projection is fully up to date
 
     When the command ChangeNodeAggregateType was published with payload and exceptions are caught:
@@ -196,5 +184,4 @@ Feature: Change node aggregate type - basic error cases
       | nodeAggregateId  | "nody-mc-nodeface"                              |
       | newNodeTypeName          | "Neos.ContentRepository.Testing:ParentNodeType" |
       | strategy                 | "happypath"                                     |
-      | initiatingUserId | "user"                                          |
     Then the last command should have thrown an exception of type "NodeConstraintException"

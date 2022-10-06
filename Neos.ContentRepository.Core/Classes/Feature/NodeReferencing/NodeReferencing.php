@@ -88,7 +88,6 @@ trait NodeReferencing
                 ),
                 $command->references->references
             )),
-            $command->initiatingUserId
         );
 
         return $this->handleSetSerializedNodeReferences($lowLevelCommand, $contentRepository);
@@ -155,7 +154,6 @@ trait NodeReferencing
                 $affectedOrigins,
                 $command->referenceName,
                 $command->references,
-                $command->initiatingUserId
             )
         );
 

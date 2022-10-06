@@ -30,6 +30,8 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
@@ -50,7 +52,8 @@ final class ContentRepositoryFactory
         ContentDimensionSourceInterface $contentDimensionSource,
         Serializer $propertySerializer,
         ProjectionsFactory $projectionsFactory,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger
+        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
+        private readonly UserIdProviderInterface $userIdProvider,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -91,7 +94,10 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projections,
                 $this->buildEventPersister(),
-                $this->projectionFactoryDependencies->nodeTypeManager
+                $this->projectionFactoryDependencies->nodeTypeManager,
+                $this->projectionFactoryDependencies->interDimensionalVariationGraph,
+                $this->projectionFactoryDependencies->contentDimensionSource,
+                $this->userIdProvider
             );
         }
         return $this->contentRepository;

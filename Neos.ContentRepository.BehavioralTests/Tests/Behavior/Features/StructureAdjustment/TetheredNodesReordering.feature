@@ -24,7 +24,6 @@ Feature: Tethered Nodes Reordering Structure changes
       | workspaceTitle             | "Live"               |
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
-      | initiatingUserId   | "system-user"        |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
@@ -32,7 +31,6 @@ Feature: Tethered Nodes Reordering Structure changes
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
-      | initiatingUserId    | "system-user"                 |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -44,7 +42,6 @@ Feature: Tethered Nodes Reordering Structure changes
       | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                                                                   |
       | nodeName                                   | "document"                                                                                                                                 |
       | tetheredDescendantNodeAggregateIds | {"tethered-node": "tethered-node-agg", "other-tethered-node": "other-tethered-node-agg", "third-tethered-node": "third-tethered-node-agg"} |
-      | initiatingUserId                   | "user"                                                                                                                                     |
     And the graph projection is fully up to date
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"

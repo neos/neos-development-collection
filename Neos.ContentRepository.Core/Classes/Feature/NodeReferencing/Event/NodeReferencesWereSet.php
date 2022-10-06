@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Event;
 
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Named references with optional properties were created from source node to destination node(s)
@@ -38,7 +37,6 @@ final class NodeReferencesWereSet implements
         public readonly OriginDimensionSpacePointSet $affectedSourceOriginDimensionSpacePoints,
         public readonly ReferenceName $referenceName,
         public readonly SerializedNodeReferences $references,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -50,7 +48,6 @@ final class NodeReferencesWereSet implements
             $this->affectedSourceOriginDimensionSpacePoints,
             $this->referenceName,
             $this->references,
-            $this->initiatingUserId
         );
     }
 
@@ -78,19 +75,11 @@ final class NodeReferencesWereSet implements
             OriginDimensionSpacePointSet::fromArray($values['affectedSourceOriginDimensionSpacePoints']),
             ReferenceName::fromString($values['referenceName']),
             SerializedNodeReferences::fromArray($values['references']),
-            UserId::fromString($values['initiatingUserId'])
         );
     }
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'sourceNodeAggregateId' => $this->sourceNodeAggregateId,
-            'affectedSourceOriginDimensionSpacePoints' => $this->affectedSourceOriginDimensionSpacePoints,
-            'referenceName' => $this->referenceName,
-            'references' => $this->references,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 }

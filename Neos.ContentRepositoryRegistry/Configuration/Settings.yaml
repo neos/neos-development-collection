@@ -30,6 +30,9 @@ Neos:
         projectionCatchUpTrigger:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
 
+        userIdProvider:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\UserIdProvider\StaticUserIdProviderFactory
+
         propertyConverters:
           DateTimeNormalizer:
             className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer

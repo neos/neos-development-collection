@@ -15,13 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeVariation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Create a variant of a node in a content stream
@@ -41,7 +40,6 @@ final class CreateNodeVariant implements
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $targetOrigin,
-        public readonly UserId $initiatingUserId
     ) {
     }
 
@@ -55,7 +53,6 @@ final class CreateNodeVariant implements
             NodeAggregateId::fromString($array['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($array['sourceOrigin']),
             OriginDimensionSpacePoint::fromArray($array['targetOrigin']),
-            UserId::fromString($array['initiatingUserId'])
         );
     }
 
@@ -64,13 +61,7 @@ final class CreateNodeVariant implements
      */
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'sourceOrigin' => $this->sourceOrigin,
-            'targetOrigin' => $this->targetOrigin,
-            'initiatingUserId' => $this->initiatingUserId
-        ];
+        return get_object_vars($this);
     }
 
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
@@ -87,7 +78,6 @@ final class CreateNodeVariant implements
             $this->nodeAggregateId,
             $this->sourceOrigin,
             $this->targetOrigin,
-            $this->initiatingUserId
         );
     }
 }

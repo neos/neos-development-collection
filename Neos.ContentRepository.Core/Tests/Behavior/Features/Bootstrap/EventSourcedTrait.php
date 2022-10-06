@@ -138,7 +138,8 @@ trait EventSourcedTrait
 
     protected function getContentRepository(): ContentRepository
     {
-        return $this->contentRepository;
+        $currentUserId = $this->getCurrentUserId();
+        return $currentUserId === null ? $this->contentRepository : $this->contentRepository->withInitiatingUserId($currentUserId);
     }
 
     /**

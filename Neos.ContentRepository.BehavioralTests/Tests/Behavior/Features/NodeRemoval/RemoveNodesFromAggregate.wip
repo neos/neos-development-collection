@@ -28,7 +28,6 @@ Feature: Remove Nodes from Aggregate
       | workspaceName            | "live"                                 |
       | workspaceTitle           | "Live"                                 |
       | workspaceDescription     | "The live workspace"                   |
-      | initiatingUserId | "00000000-0000-0000-0000-000000000000" |
       | newContentStreamId  | "live-cs-identifier"                   |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
@@ -36,7 +35,6 @@ Feature: Remove Nodes from Aggregate
       | contentStreamId  | "live-cs-identifier"                   |
       | nodeAggregateId  | "lady-eleonode-nodesworth"             |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
-      | initiatingUserId | "00000000-0000-0000-0000-000000000000" |
     # We have to add another node since root nodes are in all dimension space points and thus cannot be varied
     # Node /document
     And the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
@@ -45,7 +43,6 @@ Feature: Remove Nodes from Aggregate
       | nodeAggregateId       | "nody-mc-nodeface"                        |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "lady-eleonode-nodesworth"                |
       | nodeName                      | "document"                                |
     # We also want to add a child node to make sure it is correctly removed when the parent is removed
@@ -56,7 +53,6 @@ Feature: Remove Nodes from Aggregate
       | nodeAggregateId       | "nodimus-prime"                           |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "nody-mc-nodeface"                        |
       | nodeName                      | "child-document"                          |
     # We also want to add a grandchild node to make sure it is correctly removed when the parent is removed
@@ -67,7 +63,6 @@ Feature: Remove Nodes from Aggregate
       | nodeAggregateId       | "nodasaurus-rex"                          |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
       | originDimensionSpacePoint     | {"language":"de"}                         |
-      | initiatingUserId      | "00000000-0000-0000-0000-000000000000"    |
       | parentNodeAggregateId | "nodimus-prime"                           |
       | nodeName                      | "grandchild-document"                     |
     And the graph projection is fully up to date

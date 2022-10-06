@@ -77,7 +77,6 @@ trait NodeCreation
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $command->originDimensionSpacePoint,
-            $command->initiatingUserId,
             $command->parentNodeAggregateId,
             $command->succeedingSiblingNodeAggregateId,
             $command->nodeName,
@@ -275,7 +274,6 @@ trait NodeCreation
             $command->nodeName,
             $initialPropertyValues,
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
-            $command->initiatingUserId,
             $command->succeedingSiblingNodeAggregateId
         );
     }
@@ -355,7 +353,6 @@ trait NodeCreation
             $nodeName,
             $initialPropertyValues,
             NodeAggregateClassification::CLASSIFICATION_TETHERED,
-            $command->initiatingUserId,
             $precedingNodeAggregateId
         );
     }

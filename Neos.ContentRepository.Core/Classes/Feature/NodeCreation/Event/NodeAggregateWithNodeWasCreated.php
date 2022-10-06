@@ -47,7 +47,6 @@ final class NodeAggregateWithNodeWasCreated implements
         public readonly ?NodeName $nodeName,
         public readonly SerializedPropertyValues $initialPropertyValues,
         public readonly NodeAggregateClassification $nodeAggregateClassification,
-        public readonly UserId $initiatingUserId,
         public readonly ?NodeAggregateId $succeedingNodeAggregateId = null
     ) {
     }
@@ -79,7 +78,6 @@ final class NodeAggregateWithNodeWasCreated implements
             $this->nodeName,
             $this->initialPropertyValues,
             $this->nodeAggregateClassification,
-            $this->initiatingUserId,
             $this->succeedingNodeAggregateId
         );
     }
@@ -96,7 +94,6 @@ final class NodeAggregateWithNodeWasCreated implements
             isset($values['nodeName']) ? NodeName::fromString($values['nodeName']) : null,
             SerializedPropertyValues::fromArray($values['initialPropertyValues']),
             NodeAggregateClassification::from($values['nodeAggregateClassification']),
-            UserId::fromString($values['initiatingUserId']),
             isset($values['succeedingNodeAggregateId'])
                 ? NodeAggregateId::fromString($values['succeedingNodeAggregateId'])
                 : null,
@@ -105,18 +102,6 @@ final class NodeAggregateWithNodeWasCreated implements
 
     public function jsonSerialize(): array
     {
-        return [
-            'contentStreamId' => $this->contentStreamId,
-            'nodeAggregateId' => $this->nodeAggregateId,
-            'nodeTypeName' => $this->nodeTypeName,
-            'originDimensionSpacePoint' => $this->originDimensionSpacePoint,
-            'coveredDimensionSpacePoints' => $this->coveredDimensionSpacePoints,
-            'parentNodeAggregateId' => $this->parentNodeAggregateId,
-            'nodeName' => $this->nodeName,
-            'initialPropertyValues' => $this->initialPropertyValues,
-            'nodeAggregateClassification' => $this->nodeAggregateClassification,
-            'initiatingUserId' => $this->initiatingUserId,
-            'succeedingNodeAggregateId' => $this->succeedingNodeAggregateId
-        ];
+        return get_object_vars($this);
     }
 }

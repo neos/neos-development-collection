@@ -128,7 +128,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -138,7 +137,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->baseWorkspaceName,
                 $command->workspaceTitle,
                 $command->workspaceDescription,
-                $command->initiatingUserId,
                 $command->newContentStreamId,
                 $command->workspaceOwner
             )
@@ -173,7 +171,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $contentRepository->handle(
             new CreateContentStream(
                 $newContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -182,7 +179,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName,
                 $command->workspaceTitle,
                 $command->workspaceDescription,
-                $command->initiatingUserId,
                 $newContentStreamId
             )
         );
@@ -221,7 +217,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -232,7 +227,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $baseWorkspace->workspaceName,
                 $newContentStream,
                 $workspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         );
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
@@ -343,7 +337,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $rebasedContentStream,
                 $baseWorkspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -400,7 +393,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     $command->workspaceName,
                     $rebasedContentStream,
                     $workspace->currentContentStreamId,
-                    $command->initiatingUserId
                 ),
             );
 
@@ -417,7 +409,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     $command->workspaceName,
                     $rebasedContentStream,
                     $workspace->currentContentStreamId,
-                    $command->initiatingUserId,
                     $rebaseStatistics->getErrors()
                 )
             );
@@ -508,7 +499,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $matchingContentStream,
                 $baseWorkspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -529,7 +519,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $remainingContentStream,
                 $matchingContentStream,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -563,7 +552,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $remainingContentStream,
                 $workspace->currentContentStreamId,
                 $command->nodesToPublish,
-                $command->initiatingUserId
             ),
         );
 
@@ -621,7 +609,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -646,7 +633,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $newContentStream,
                 $workspace->currentContentStreamId,
                 $command->nodesToDiscard,
-                $command->initiatingUserId
             )
         );
 
@@ -689,7 +675,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             new ForkContentStream(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         )->block();
 
@@ -700,7 +685,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->workspaceName,
                 $newContentStream,
                 $workspace->currentContentStreamId,
-                $command->initiatingUserId
             )
         );
 
