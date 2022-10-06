@@ -265,7 +265,7 @@ class ParserExceptionTest extends UnitTestCase
     {
         self::expectException(ParserException::class);
         self::expectExceptionMessage($expectedMessage);
-        $this->parser->parse($fusion);
+        $this->parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
     }
 
     /**
@@ -280,7 +280,7 @@ class ParserExceptionTest extends UnitTestCase
     public function itMatchesThePartialExceptionMessage($fusion, $expectedMessage): void
     {
         try {
-            $this->parser->parse($fusion);
+            $this->parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
             self::fail('No exception was thrown. Expected message: ' . $expectedMessage);
         } catch (ParserException $e) {
             self::assertSame($expectedMessage, $e->getHelperMessagePart());

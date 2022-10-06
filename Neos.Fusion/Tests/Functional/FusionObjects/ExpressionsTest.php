@@ -12,6 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 
@@ -52,8 +53,7 @@ class ExpressionsTest extends AbstractFusionObjectTest
      */
     public function usingEelWorksWithoutSetCurrentContextInRuntime()
     {
-        $fusion = 'root = ${"foo"}';
-        $fusionAst = (new Parser())->parse($fusion);
+        $fusionAst = (new Parser())->parseFrom(FusionSourceCode::fromString('root = ${"foo"}'));
 
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtime = new Runtime($fusionAst, $controllerContext);

@@ -1028,7 +1028,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesToExpectedAst($fusion, $expectedAst): void
     {
-        $parsedFusionAst = $this->parser->parse($fusion);
+        $parsedFusionAst = $this->parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
         self::assertSame($expectedAst, $parsedFusionAst);
     }
 
@@ -1042,7 +1042,7 @@ class ParserTest extends UnitTestCase
     public function itThrowsWhileParsing($fusion): void
     {
         self::expectException(Fusion\Exception::class);
-        $this->parser->parse($fusion);
+        $this->parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
     }
 
     /**
@@ -1052,7 +1052,7 @@ class ParserTest extends UnitTestCase
      */
     public function itParsesWithoutError($fusion): void
     {
-        $this->parser->parse($fusion);
+        $this->parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
         self::assertTrue(true);
     }
 
@@ -1071,6 +1071,6 @@ class ParserTest extends UnitTestCase
             ->method('handleDslTranspile')
             ->with($expectedDslName, $expectedDslContent);
 
-        $parser->parse($sourceCode);
+        $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($sourceCode));
     }
 }
