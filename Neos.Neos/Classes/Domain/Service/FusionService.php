@@ -16,8 +16,8 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Fusion\Core\FusionCode;
-use Neos\Fusion\Core\FusionCodeCollection;
+use Neos\Fusion\Core\FusionSourceCode;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\ContentRepository\Domain\Model\NodeType;
@@ -137,26 +137,22 @@ class FusionService
     public function getMergedFusionObjectTree(TraversableNodeInterface $startNode)
     {
         $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
-
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
-        $nodeTypeDefinitions = $this->generateNodeTypeDefinitions();
 
-        return $this->fusionParser->parse(
-            FusionCodeCollection::fromArray(array_filter([
-                $nodeTypeDefinitions ? FusionCode::fromString($nodeTypeDefinitions) : null,
+        return $this->fusionParser->parseFrom(
+            FusionSourceCodeCollection::fromArray(array_filter([
+                ...$this->generateNodeTypeDefinitions(),
                 ...$this->prepareAutoIncludeFusion(),
                 ...$this->prepareFusionIncludes($this->prependFusionIncludes, $siteRootFusionPathAndFilename),
-                is_readable($siteRootFusionPathAndFilename) ? FusionCode::fromFile($siteRootFusionPathAndFilename) : null,
+                is_readable($siteRootFusionPathAndFilename)
+                    ? FusionSourceCode::fromFile($siteRootFusionPathAndFilename)
+                    : null,
                 ...$this->prepareFusionIncludes($this->appendFusionIncludes, $siteRootFusionPathAndFilename),
             ]))
         );
     }
 
-    /**
-     * @param TraversableNodeInterface $siteNode
-     * @return Site
-     */
-    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode)
+    protected function getSiteForSiteNode(TraversableNodeInterface $siteNode): Site
     {
         return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName());
     }
@@ -168,17 +164,13 @@ class FusionService
      *
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateNodeTypeDefinitions(): ?string
+    protected function generateNodeTypeDefinitions(): FusionSourceCodeCollection
     {
-        $code = '';
-        /** @var NodeType $nodeType */
+        $sourceCodeCollection = [];
         foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
-            $code .= $this->generateFusionForNodeType($nodeType);
+            $sourceCodeCollection[] = $this->generateFusionForNodeType($nodeType);
         }
-        if (trim($code) === '') {
-            return null;
-        }
-        return $code;
+        return FusionSourceCodeCollection::fromArray(array_filter($sourceCodeCollection));
     }
 
     /**
@@ -187,11 +179,9 @@ class FusionService
      * A prototype will be rendererd with the generator-class defined in the
      * nodeType-configuration 'fusion.prototypeGenerator'
      *
-     * @param NodeType $nodeType
-     * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateFusionForNodeType(NodeType $nodeType)
+    protected function generateFusionForNodeType(NodeType $nodeType): ?FusionSourceCode
     {
         if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
             $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
@@ -202,26 +192,26 @@ class FusionService
             if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
                 throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
             }
-            return $generator->generate($nodeType);
+            return FusionSourceCode::fromString($generator->generate($nodeType));
         }
-        return '';
+        return null;
     }
 
     /**
      * Prepares an array with Fusion paths to auto include before the Site Fusion.
      */
-    protected function prepareAutoIncludeFusion(): FusionCodeCollection
+    protected function prepareAutoIncludeFusion(): FusionSourceCodeCollection
     {
         $autoIncludeFusion = [];
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $autoIncludeFusionFile = sprintf($this->autoIncludeFusionPattern, $packageKey);
                 if (is_file($autoIncludeFusionFile)) {
-                    $autoIncludeFusion[] = FusionCode::fromFile($autoIncludeFusionFile);
+                    $autoIncludeFusion[] = FusionSourceCode::fromFile($autoIncludeFusionFile);
                 }
             }
         }
-        return FusionCodeCollection::fromArray($autoIncludeFusion);
+        return FusionSourceCodeCollection::fromArray($autoIncludeFusion);
     }
 
     /**
@@ -279,15 +269,15 @@ class FusionService
         $this->appendFusionIncludes = $appendFusionIncludes;
     }
 
-    private function prepareFusionIncludes(array $fusionIncludes, string $filePathForRelativeResolves): FusionCodeCollection
+    private function prepareFusionIncludes(array $fusionIncludes, string $filePathForRelativeResolves): FusionSourceCodeCollection
     {
-        return FusionCodeCollection::fromArray(array_map(
+        return FusionSourceCodeCollection::fromArray(array_map(
             function (string $fusionFile) use ($filePathForRelativeResolves) {
                 if (str_starts_with($fusionFile, "resource://") === false) {
                     // legacy relative includes
                     $fusionFile = dirname($filePathForRelativeResolves) . '/' . $fusionFile;
                 }
-                return FusionCode::fromFile($fusionFile);
+                return FusionSourceCode::fromFile($fusionFile);
             },
             $fusionIncludes
         ));

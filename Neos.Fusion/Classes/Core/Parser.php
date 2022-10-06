@@ -50,31 +50,56 @@ class Parser
      * Parses the given Fusion source code, resolves includes and returns a merged array tree
      * as the result.
      *
-     * @param string|FusionCodeCollection $sourceCode string is DEPRECATED - The Fusion source code to parse
-     * @param string|null $contextPathAndFilename DEPRECATED - An optional path and filename used for relative Fusion file includes
-     * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
+     * @param FusionSourceCode|FusionSourceCodeCollection $sourceCode The Fusion source code to parse
      * @return array The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
      * @api
      */
-    public function parse(string|FusionCodeCollection $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
+    public function parseFrom(FusionSourceCode|FusionSourceCodeCollection $sourceCode): array
     {
-        if ($sourceCode instanceof FusionCodeCollection) {
-            $fusionCodeCollection = $sourceCode;
-        } else {
-            // legacy handling
-            $fusionCodeCollection = new FusionCodeCollection(
-                $contextPathAndFilename === null
-                    ? FusionCode::fromString($sourceCode)
-                    : FusionCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $contextPathAndFilename)
+        $fusionSourceCodeCollection = $sourceCode;
+        if ($sourceCode instanceof FusionSourceCode) {
+            $fusionSourceCodeCollection = new FusionSourceCodeCollection($sourceCode);
+        }
+
+        $mergedArrayTree = new MergedArrayTree();
+
+        foreach ($fusionSourceCodeCollection as $fusionSourceCode) {
+            $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile(
+                $this->getFusionFile($fusionSourceCode)
             );
         }
 
+        $mergedArrayTree->buildPrototypeHierarchy();
+        return $mergedArrayTree->getTree();
+    }
+
+    /**
+     * Parses the given Fusion source code, resolves includes and returns a merged array tree
+     * as the result.
+     *
+     * @param string $sourceCode The Fusion source code to parse
+     * @param string|null $contextPathAndFilename An optional path and filename used for relative Fusion file includes
+     * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
+     * @return array The merged array tree for the Fusion runtime, generated from the source code
+     * @throws Fusion\Exception
+     * @deprecated with Neos 8.0
+     * @api
+     */
+    public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
+    {
+        // legacy mapping
+        $fusionSourceCodeCollection = new FusionSourceCodeCollection(
+            $contextPathAndFilename === null
+                ? FusionSourceCode::fromString($sourceCode)
+                : FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $contextPathAndFilename)
+        );
+
         $mergedArrayTree = new MergedArrayTree($mergedArrayTreeUntilNow);
 
-        foreach ($fusionCodeCollection as $fusionCode) {
+        foreach ($fusionSourceCodeCollection as $fusionSourceCode) {
             $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile(
-                $this->getFusionFile($fusionCode)
+                $this->getFusionFile($fusionSourceCode)
             );
         }
 
@@ -92,7 +117,7 @@ class Parser
             // Check if not trying to recursively include the current file via globbing
             if ($contextPathAndFilename === null
                 || stat($contextPathAndFilename) !== stat($file)) {
-                $fusionFile = $this->getFusionFile(FusionCode::fromFile($file));
+                $fusionFile = $this->getFusionFile(FusionSourceCode::fromFile($file));
                 $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile($fusionFile);
             }
         }
@@ -108,7 +133,7 @@ class Parser
 
                 $transpiledFusion = $dslObject->transpile($code);
 
-                $fusionFile = ObjectTreeParser::parse(FusionCode::fromString('value = ' . $transpiledFusion));
+                $fusionFile = ObjectTreeParser::parse(FusionSourceCode::fromString('value = ' . $transpiledFusion));
 
                 $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
 
@@ -130,7 +155,7 @@ class Parser
         );
     }
 
-    protected function getFusionFile(FusionCode $fusionCode): FusionFile
+    protected function getFusionFile(FusionSourceCode $fusionCode): FusionFile
     {
         return $this->parserCache->cacheForFusionFile(
             $fusionCode->getContextPathAndFilename(),

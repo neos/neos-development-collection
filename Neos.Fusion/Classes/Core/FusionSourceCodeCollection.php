@@ -16,22 +16,22 @@ namespace Neos\Fusion\Core;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class FusionCodeCollection implements \IteratorAggregate, \Countable
+class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 {
     private array $fusionCodeCollection;
 
-    public function __construct(FusionCode ...$fusionCodeCollection)
+    public function __construct(FusionSourceCode ...$fusionCodeCollection)
     {
         $this->fusionCodeCollection = $fusionCodeCollection;
     }
 
-    /** @param FusionCode[] $fusionCodeCollection */
+    /** @param FusionSourceCode[] $fusionCodeCollection */
     public static function fromArray(array $fusionCodeCollection): self
     {
         return new self(...$fusionCodeCollection);
     }
 
-    /** @return \ArrayIterator<int,FusionCode>|FusionCode[] */
+    /** @return \ArrayIterator<int,FusionSourceCode>|FusionSourceCode[] */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->fusionCodeCollection);

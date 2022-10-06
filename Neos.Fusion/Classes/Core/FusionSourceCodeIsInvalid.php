@@ -17,11 +17,11 @@ use Neos\Fusion\Exception;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class FusionCodeIsInvalid extends Exception
+class FusionSourceCodeIsInvalid extends Exception
 {
     public static function becauseTheSourceCodeIsEmpty(?string $contextPathAndFileName): self
     {
-        return new self("The sourcecode of the Fusioncode must not be empty. $contextPathAndFileName", 1657963664);
+        return new self("The sourcecode of the FusionSourceCode must not be empty. $contextPathAndFileName", 1657963664);
     }
 
     public static function becauseTheFileNameIsNotReadable(string $attemptedFileName): self

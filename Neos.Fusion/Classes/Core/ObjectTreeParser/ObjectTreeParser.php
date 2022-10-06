@@ -15,7 +15,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
 
 use Neos\Fusion;
 
-use Neos\Fusion\Core\FusionCode;
+use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\FusionFile;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\StatementList;
 use Neos\Fusion\Core\ObjectTreeParser\Ast\AbstractStatement;
@@ -60,7 +60,7 @@ class ObjectTreeParser
         $this->contextPathAndFilename = $contextPathAndFilename;
     }
 
-    public static function parse(FusionCode $fusionCode): FusionFile
+    public static function parse(FusionSourceCode $fusionCode): FusionFile
     {
         $lexer = new Lexer($fusionCode->getSourceCode());
         $parser = new self($lexer, $fusionCode->getContextPathAndFilename());

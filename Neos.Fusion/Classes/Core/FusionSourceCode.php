@@ -16,14 +16,14 @@ namespace Neos\Fusion\Core;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
-class FusionCode
+class FusionSourceCode
 {
     private function __construct(
         private string $sourceCode,
         private ?string $contextPathAndFilename
     ) {
         if (trim($sourceCode) === '') {
-            throw FusionCodeIsInvalid::becauseTheSourceCodeIsEmpty($this->contextPathAndFilename);
+            throw FusionSourceCodeIsInvalid::becauseTheSourceCodeIsEmpty($this->contextPathAndFilename);
         }
     }
 
@@ -36,7 +36,7 @@ class FusionCode
     {
         $sourceCode = file_get_contents($fileName);
         if ($sourceCode === false) {
-            throw FusionCodeIsInvalid::becauseTheFileNameIsNotReadable($fileName);
+            throw FusionSourceCodeIsInvalid::becauseTheFileNameIsNotReadable($fileName);
         }
         return new self($sourceCode, $fileName);
     }
