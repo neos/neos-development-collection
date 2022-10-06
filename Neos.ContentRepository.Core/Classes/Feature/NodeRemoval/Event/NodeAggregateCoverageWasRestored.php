@@ -19,10 +19,9 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Dto\DescendantAssignments;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\RecursionMode;
 use Neos\Flow\Annotations as Flow;
 
 #[Flow\Proxy(false)]
@@ -38,9 +37,8 @@ final class NodeAggregateCoverageWasRestored implements
         public readonly DimensionSpacePoint $sourceDimensionSpacePoint,
         /** The affected dimension space points to restore the coverage to */
         public readonly DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
-        /** The mode to determine which descendants to affect as well. {@see RecursionMode} */
-        public readonly RecursionMode $recursionMode,
-        public readonly UserId $initiatingUserId
+        /** The descendant assignments to be restored */
+        public readonly DescendantAssignments $descendantAssignments
     ) {
     }
 
@@ -51,8 +49,7 @@ final class NodeAggregateCoverageWasRestored implements
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePoint::fromArray($values['sourceDimensionSpacePoint']),
             DimensionSpacePointSet::fromArray($values['affectedCoveredDimensionSpacePoints']),
-            RecursionMode::from($values['recursionMode']),
-            UserId::fromString($values['initiatingUserId'])
+            DescendantAssignments::fromArray($values['descendantAssignments'])
         );
     }
 
@@ -73,8 +70,7 @@ final class NodeAggregateCoverageWasRestored implements
             $this->nodeAggregateId,
             $this->sourceDimensionSpacePoint,
             $this->affectedCoveredDimensionSpacePoints,
-            $this->recursionMode,
-            $this->initiatingUserId
+            $this->descendantAssignments
         );
     }
 
@@ -88,8 +84,7 @@ final class NodeAggregateCoverageWasRestored implements
             'nodeAggregateId' => $this->nodeAggregateId,
             'sourceDimensionSpacePoint' => $this->sourceDimensionSpacePoint,
             'affectedCoveredDimensionSpacePoints' => $this->affectedCoveredDimensionSpacePoints,
-            'recursionMode' => $this->recursionMode,
-            'initiatingUserId' => $this->initiatingUserId
+            'descendantAssignments' => $this->descendantAssignments
         ];
     }
 }

@@ -147,21 +147,27 @@ trait NodeRemoval
             );
         }
 
+        $affectedDimensionSpacePoints = $command->withSpecializations
+            ? NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                ->resolveAffectedDimensionSpacePoints(
+                    $command->dimensionSpacePointToCover,
+                    $parentNodeAggregate,
+                    $this->interDimensionalVariationGraph
+                )
+            : new DimensionSpacePointSet([$command->dimensionSpacePointToCover]);
+
         $events = Events::with(
             new NodeAggregateCoverageWasRestored(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $primaryGeneralization,
-                $command->withSpecializations
-                    ? NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
-                    ->resolveAffectedDimensionSpacePoints(
-                        $command->dimensionSpacePointToCover,
-                        $parentNodeAggregate,
-                        $this->interDimensionalVariationGraph
-                    )
-                    : new DimensionSpacePointSet([$command->dimensionSpacePointToCover]),
-                $command->recursionMode,
-                $command->initiatingUserId
+                $affectedDimensionSpacePoints,
+                $contentRepository->getContentGraph()->findDescendantAssignmentsForCoverageIncrease(
+                    $command->contentStreamId,
+                    $command->dimensionSpacePointToCover,
+                    $command->nodeAggregateId,
+                    $affectedDimensionSpacePoints
+                )
             )
         );
 
