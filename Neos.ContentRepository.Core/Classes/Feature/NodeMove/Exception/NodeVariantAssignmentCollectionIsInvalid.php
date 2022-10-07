@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Exception;
 
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveTarget;
 
 /**
  * The exception to be thrown if an invalid node variant assignment is to be used
@@ -27,7 +27,7 @@ final class NodeVariantAssignmentCollectionIsInvalid extends \DomainException
     {
         return new self(
             'Given node variant assignment collection is invalid because it contains an item of another type than '
-                . NodeVariantAssignment::class,
+                . NodeMoveTarget::class,
             1571045106
         );
     }

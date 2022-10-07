@@ -13,7 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -570,7 +570,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         }
         if (!is_null($event->nodeMoveMappings)) {
             foreach ($event->nodeMoveMappings as $moveMapping) {
-                /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping $moveMapping */
+                /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
                 foreach (
                     $this->getState()->getNodeVariantsById(
                         $event->getNodeAggregateId()

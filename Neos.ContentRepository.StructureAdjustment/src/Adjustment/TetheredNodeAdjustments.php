@@ -12,10 +12,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveTarget;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\DimensionSpace;
@@ -233,12 +233,12 @@ class TetheredNodeAdjustments
             $events[] = new NodeAggregateWasMoved(
                 $contentStreamIdentifier,
                 $nodeToMove->nodeAggregateId,
-                NodeMoveMappings::fromArray([
-                    new NodeMoveMapping(
+                OriginNodeMoveMappings::fromArray([
+                    new OriginNodeMoveMapping(
                         $nodeToMove->originDimensionSpacePoint,
                         NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
                         NodeVariantAssignments::createFromArray([
-                            $nodeToMove->originDimensionSpacePoint->hash => new NodeVariantAssignment(
+                            $nodeToMove->originDimensionSpacePoint->hash => new NodeMoveTarget(
                                 $succeedingNode->nodeAggregateId,
                                 $succeedingNode->originDimensionSpacePoint
                             )

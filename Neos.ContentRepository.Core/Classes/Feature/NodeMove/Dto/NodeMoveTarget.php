@@ -18,16 +18,11 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
- * A node variant assignment, identifying a node variant by node aggregate id and origin dimension space point.
- *
- * This is used in structural operations like node move to assign a new node within the same content stream
- * as a new parent, sibling etc.
- *
- * In case of move, this is the "target node" underneath which or next to which we want to move our source.
+ * See the docs of {@see NodeAggregateWasMoved} for a full description.
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class NodeVariantAssignment implements \JsonSerializable
+final class NodeMoveTarget implements \JsonSerializable
 {
     public function __construct(
         public readonly NodeAggregateId $nodeAggregateId,
@@ -38,7 +33,7 @@ final class NodeVariantAssignment implements \JsonSerializable
     /**
      * @param array<string,mixed> $array
      */
-    public static function createFromArray(array $array): self
+    public static function fromArray(array $array): self
     {
         return new self(
             NodeAggregateId::fromString($array['nodeAggregateId']),

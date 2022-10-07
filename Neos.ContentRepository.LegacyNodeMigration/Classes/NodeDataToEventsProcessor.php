@@ -21,9 +21,9 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveTarget;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -303,10 +303,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->contentStreamIdentifier,
                 $nodeAggregateIdentifier,
-                NodeMoveMappings::fromArray([
-                    new NodeMoveMapping(
+                OriginNodeMoveMappings::fromArray([
+                    new OriginNodeMoveMapping(
                         $originDimensionSpacePoint,
-                        NodeVariantAssignments::create()->add(new NodeVariantAssignment($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint), $originDimensionSpacePoint->toDimensionSpacePoint()),
+                        NodeVariantAssignments::create()->add(new NodeMoveTarget($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint), $originDimensionSpacePoint->toDimensionSpacePoint()),
                         NodeVariantAssignments::create()
                     )
                 ]),

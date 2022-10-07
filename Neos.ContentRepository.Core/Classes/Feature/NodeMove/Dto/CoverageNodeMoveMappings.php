@@ -15,23 +15,23 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeMove\Dto;
 
 /**
- * @implements \IteratorAggregate<int,NodeMoveMapping>
+ * @implements \IteratorAggregate<int,CoverageNodeMoveMapping>
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
+final class CoverageNodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<int,NodeMoveMapping>
+     * @var array<int,CoverageNodeMoveMapping>
      */
     private array $mappings;
 
     /**
-     * @var \ArrayIterator<int,NodeMoveMapping>
+     * @var \ArrayIterator<int,CoverageNodeMoveMapping>
      */
     private \ArrayIterator $iterator;
 
     /**
-     * @param array<int,NodeMoveMapping> $values
+     * @param array<int,CoverageNodeMoveMapping> $values
      */
     private function __construct(array $values)
     {
@@ -40,30 +40,38 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
     }
 
     /**
-     * @param array<int|string,array<string,mixed>|NodeMoveMapping> $mappings
+     * @param array<int|string,array<string,mixed>|CoverageNodeMoveMapping> $mappings
      */
     public static function fromArray(array $mappings): self
     {
         $processedMappings = [];
         foreach ($mappings as $mapping) {
             if (is_array($mapping)) {
-                $processedMappings[] = NodeMoveMapping::fromArray($mapping);
-            } elseif ($mapping instanceof NodeMoveMapping) {
+                $processedMappings[] = CoverageNodeMoveMapping::fromArray($mapping);
+            } elseif ($mapping instanceof CoverageNodeMoveMapping) {
                 $processedMappings[] = $mapping;
             } else {
                 /** @var mixed $mapping */
-                throw new \InvalidArgumentException(sprintf(
-                    'Invalid NodeMoveMapping. Expected instance of %s, got: %s',
-                    NodeMoveMapping::class,
-                    is_object($mapping) ? get_class($mapping) : gettype($mapping)
-                ), 1547811318);
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Invalid NodeMoveMapping. Expected instance of %s, got: %s',
+                        CoverageNodeMoveMapping::class,
+                        is_object($mapping) ? get_class($mapping) : gettype($mapping)
+                    ), 1547811318
+                );
             }
         }
         return new self($processedMappings);
     }
 
+    public static function create(CoverageNodeMoveMapping ...$coverageNodeMoveMappings): self
+    {
+        return new self($coverageNodeMoveMappings);
+    }
+
+
     /**
-     * @return \ArrayIterator<int,NodeMoveMapping>
+     * @return \ArrayIterator<int,CoverageNodeMoveMapping>
      */
     public function getIterator(): \ArrayIterator
     {
@@ -76,7 +84,7 @@ final class NodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSer
     }
 
     /**
-     * @return array<int,NodeMoveMapping>
+     * @return array<int,CoverageNodeMoveMapping>
      */
     public function jsonSerialize(): array
     {
