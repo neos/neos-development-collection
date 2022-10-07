@@ -667,12 +667,14 @@ Built a URI to a controller action
 :subpackage: (string) The subpackage, empty by default
 :controller: (string) The controller name (e.g. ``'Registration'``)
 :action: (string) The action name (e.g. ``'new'``)
-:arguments: (array) Arguments to the action by named key
+:routingArguments: (array) Arguments that are handled by the router
+:arguments: (@deprecated, array) Arguments to the action by named key. ```routingArguments``` and ```arguments``` must not be combined !!!
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
-:additionalParams: (array) Additional URI query parameters by named key
-:addQueryString: (boolean) Whether to keep the query parameters of the current URI
-:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
+:additionalParams: (@deprecated, array) Additional URI query parameters by named key
+:queryParameters: (array) Query parameters that are appended after routing
+:addQueryString: (@deprecated, boolean) Whether to keep the query parameters of the current URI
+:argumentsToBeExcludedFromQueryString: (@deprecated, array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
 
 Example::
@@ -693,7 +695,7 @@ Link to the content module::
 		package="Neos.Neos.Ui"
 		controller="Backend"
 		action = 'index'
-		arguments.node = ${documentNode}
+		routingArguments.node = ${documentNode}
 	}
 
 Link to backend modules (other than `content`)::
@@ -703,7 +705,7 @@ Link to backend modules (other than `content`)::
 		action = "index"
 		package = "Neos.Neos"
 		controller = "Backend\\Module"
-		arguments {
+		routingArguments {
 			module = 'administration/sites'
 			moduleArguments {
 				@action = 'edit'
@@ -1422,9 +1424,10 @@ Build a URI to a node. Accepts the same arguments as the node link/uri view help
 :node: (string/Node) A node object or a node path (relative or absolute) or empty to resolve the current document node
 :format: (string) An optional request format (e.g. ``'html'``)
 :section: (string) An optional fragment (hash) for the URI
-:additionalParams: (array) Additional URI query parameters.
-:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
-:addQueryString: (boolean) Whether to keep current query parameters, defaults to ``FALSE``
+:queryParameters: (array) Query parameters that are appended after routing
+:additionalParams: (@deprecated, array) Additional URI query parameters.
+:argumentsToBeExcludedFromQueryString: (@deprecated, array) Query parameters to exclude for ``addQueryString``
+:addQueryString: (@deprecated, boolean) Whether to keep current query parameters, defaults to ``FALSE``
 :absolute: (boolean) Whether to create an absolute URI, defaults to ``FALSE``
 :baseNodeName: (string) Base node context variable name (for relative paths), defaults to ``'documentNode'``
 
