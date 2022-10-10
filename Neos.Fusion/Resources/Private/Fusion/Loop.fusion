@@ -1,0 +1,6 @@
+prototype(Neos.Fusion:Loop) {
+  @class = 'Neos\\Fusion\\FusionObjects\\LoopImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+}

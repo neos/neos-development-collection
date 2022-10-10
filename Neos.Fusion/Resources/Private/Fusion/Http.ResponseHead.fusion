@@ -1,0 +1,8 @@
+# Render an HTTP response header
+#
+prototype(Neos.Fusion:Http.ResponseHead) {
+  @class = 'Neos\\Fusion\\FusionObjects\\Http\\ResponseHeadImplementation'
+  headers = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
+}

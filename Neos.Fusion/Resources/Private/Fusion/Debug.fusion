@@ -1,0 +1,4 @@
+prototype(Neos.Fusion:Debug) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DebugImplementation'
+  value = ${value}
+}

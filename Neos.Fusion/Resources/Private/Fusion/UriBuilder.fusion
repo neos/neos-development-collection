@@ -1,0 +1,21 @@
+# Renders an URI pointing to a controller/action
+#
+# Usage:
+# uri = Neos.Fusion:UriBuilder {
+#   package = 'Some.Package'
+#   controller = 'Standard'
+#   action = 'index'
+# }
+#
+prototype(Neos.Fusion:UriBuilder) {
+  @class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
+  additionalParams = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
+  arguments = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}

@@ -1,0 +1,8 @@
+prototype(Neos.Fusion:Reduce) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ReduceImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  carryName = 'carry'
+  iterationName = 'iterator'
+  initialValue = null
+}

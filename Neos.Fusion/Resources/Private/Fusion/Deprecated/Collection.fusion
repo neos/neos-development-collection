@@ -1,0 +1,7 @@
+# @deprecated since Neos 4.2 in favor of Neos.Fusion:Loop
+prototype(Neos.Fusion:Collection) {
+  @class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+}
