@@ -9,13 +9,21 @@
 #
 prototype(Neos.Fusion:UriBuilder) {
   @class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
+  package = null
+  subpackage = null
+  controller = null
+  action = null
+  format = null
+  section = null
   additionalParams = Neos.Fusion:DataStructure {
     @sortProperties = false
   }
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
   arguments = Neos.Fusion:DataStructure {
     @sortProperties = false
   }
-  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+  addQueryString = false
+  absolute = false
 
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }

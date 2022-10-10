@@ -1,1 +1,7 @@
-prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Template) {
+  @class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
+  templatePath = null
+  partialRootPath = null
+  layoutRootPath = null
+  sectionName = null
+}

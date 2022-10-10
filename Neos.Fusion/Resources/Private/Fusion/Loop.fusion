@@ -3,4 +3,5 @@ prototype(Neos.Fusion:Loop) {
   itemName = 'item'
   itemKey = 'itemKey'
   iterationName = 'iterator'
+  @glue = ''
 }

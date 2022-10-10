@@ -1,1 +1,4 @@
-prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+prototype(Neos.Fusion:Value) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
+  value = null
+}

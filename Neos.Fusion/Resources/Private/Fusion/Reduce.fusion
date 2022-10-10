@@ -1,8 +1,10 @@
 prototype(Neos.Fusion:Reduce) {
   @class = 'Neos\\Fusion\\FusionObjects\\ReduceImplementation'
+  items = ${[]}
   itemName = 'item'
   itemKey = 'itemKey'
   carryName = 'carry'
   iterationName = 'iterator'
   initialValue = null
+  itemReducer = null
 }

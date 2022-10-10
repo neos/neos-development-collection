@@ -1,1 +1,5 @@
-prototype(Neos.Fusion:CanRender).@class = 'Neos\\Fusion\\FusionObjects\\CanRenderImplementation'
+prototype(Neos.Fusion:CanRender) {
+  @class = 'Neos\\Fusion\\FusionObjects\\CanRenderImplementation'
+  type = null
+  path = null
+}

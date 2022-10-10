@@ -7,6 +7,9 @@
 #
 prototype(Neos.Fusion:ResourceUri) {
   @class = 'Neos\\Fusion\\FusionObjects\\ResourceUriImplementation'
+  path = null
+  package = null
+  resource = null
   localize = true
 
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'

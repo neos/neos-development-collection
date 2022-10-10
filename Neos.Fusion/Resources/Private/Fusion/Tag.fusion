@@ -15,4 +15,5 @@ prototype(Neos.Fusion:Tag) {
   }
   omitClosingTag = false
   selfClosingTag = false
+  allowEmptyAttributes = true
 }

@@ -1,1 +1,6 @@
-prototype(Neos.Fusion:Renderer).@class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
+prototype(Neos.Fusion:Renderer) {
+  @class = 'Neos\\Fusion\\FusionObjects\\RendererImplementation'
+  type = null
+  renderPath = null
+  renderer = null
+}
