@@ -1270,6 +1270,7 @@ Create a list of menu-items items for nodes.
 :filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
+:itemUriRenderer: (:ref:`Neos_Neos__NodeUri`) prototype to use for rendering the URI of each item
 
 MenuItems item properties:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1278,7 +1279,8 @@ MenuItems item properties:
 :originalNode: (Node) Original node for the item
 :state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
 :label: (string) Full label of the node
-:menuLevel: (integer) Men^u level the item is rendered on
+:menuLevel: (integer) Menu level the item is rendered on
+:uri: (string) Frontend URI of the node
 
 Examples:
 ^^^^^^^^^
@@ -1308,6 +1310,17 @@ Menu with custom starting point:
 		entryLevel = 2
 		maximumLevels = 1
 		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
+	}
+
+Menu with absolute uris:
+""""""""""""""""""""""""
+
+::
+
+	menuItems = Neos.Neos:MenuItems {
+		itemUriRenderer {
+			absolute = true
+		}
 	}
 
 .. _Neos_Neos__BreadcrumbMenuItems:
