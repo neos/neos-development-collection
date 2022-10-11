@@ -1,5 +1,3 @@
-include: Prototypes/*.fusion
-
 # The root matcher used to start rendering in Neos
 #
 # The default is to use a render path of "page", unless the requested format is not "html"

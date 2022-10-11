@@ -1,3 +1,4 @@
+include: Prototypes/*.fusion
 include: RootCase.fusion
 include: RawContentMode.fusion
 include: Override/*.fusion
