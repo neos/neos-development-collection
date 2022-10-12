@@ -62,4 +62,6 @@ To switch the branch you intend to work on:
 .. note:: We use an upmerging strategy: create all bugfixes to the lowest maintained branch that contains the issue. Typically, this is the second last LTS release - see the diagram at https://www.neos.io/features/release-process.html.
 For new features, pull requests should be made against the branch for the next minor version (named like ``x.y``). Breaking changes must only go into the branch for the next major version.
 
-For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
+For more detailed information, see https://discuss.neos.io/t/development-setup/504,
+https://discuss.neos.io/t/creating-a-pull-request/506 and
+https://discuss.neos.io/t/git-branch-handling-in-the-neos-project/6013
