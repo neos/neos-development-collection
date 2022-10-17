@@ -191,12 +191,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $item = [
             'node' => $currentNode,
-            'state' => self::STATE_NORMAL,
+            'state' => $this->calculateItemState($currentNode),
             'label' => $currentNode->getLabel(),
-            'menuLevel' => $this->currentLevel
+            'menuLevel' => $this->currentLevel,
+            'uri' => $this->buildUri($currentNode),
         ];
 
-        $item['state'] = $this->calculateItemState($currentNode);
         if (!$this->isOnLastLevelOfMenu($currentNode)) {
             $this->currentLevel++;
             $item['subItems'] = $this->buildMenuLevelRecursive($currentNode->getChildNodes($this->getFilter()));
@@ -302,5 +302,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
 
         return $depth;
+    }
+
+    protected function buildUri(NodeInterface $currentNode): string
+    {
+        $this->runtime->pushContextArray([
+            'itemNode' => $currentNode,
+            'documentNode' => $currentNode,
+        ]);
+        $uri = $this->runtime->render($this->path . '/itemUriRenderer');
+        $this->runtime->popContext();
+        return $uri;
     }
 }
