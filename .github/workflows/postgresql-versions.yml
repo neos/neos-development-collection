@@ -5,6 +5,9 @@ on:
   schedule:
     - cron:  '0 0 * * *' # Runs every day at midnight
 
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
 jobs:
   build:
     name: "Experimental PostgreSQL ${{ matrix.postgresql-versions }} Test (PHP: ${{ matrix.php-versions }}, deps: ${{ matrix.dependencies }})"

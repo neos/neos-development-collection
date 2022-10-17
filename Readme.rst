@@ -1,7 +1,5 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
+|Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
-   :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |StyleCI| image:: https://styleci.io/repos/40964014/shield?style=flat
@@ -11,7 +9,7 @@
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://raw.githubusercontent.com/neos/neos-development-collection/4.3/LICENSE
 .. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
-   :target: https://neos.readthedocs.org/en/8.0/
+   :target: https://neos.readthedocs.org/en/8.2/
    :alt: Documentation
 .. |Slack| image:: http://slack.neos.io/badge.svg
    :target: http://slack.neos.io
@@ -22,8 +20,8 @@
 .. |Issues| image:: https://img.shields.io/github/issues/neos/neos-development-collection.svg
    :target: https://github.com/neos/neos-development-collection/issues
    :alt: Issues
-.. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
-   :target: http://translate.neos.io/
+.. |Translate| image:: https://img.shields.io/badge/translate-weblate-85ae52.svg
+   :target: https://hosted.weblate.org/projects/neos/
    :alt: Translation
 .. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
    :target: https://twitter.com/NeosCMS
