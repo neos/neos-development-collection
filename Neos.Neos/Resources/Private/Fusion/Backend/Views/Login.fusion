@@ -11,23 +11,11 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
     content = Neos.Fusion:Component {
       @apply.props = ${props}
 
-      backgroundImageSource = Neos.Fusion:Component {
-        @if.set = ${this.path}
-        path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
-
-        renderer = Neos.Fusion:Case {
-          resourcePath {
-            condition = ${String.indexOf(props.path, 'resource://') == 0}
-            renderer = Neos.Fusion:ResourceUri {
-              path = ${props.path}
-            }
-          }
-
-          default {
-            condition = true
-            renderer = ${props.path}
-          }
-        }
+      logoImageSource = Neos.Neos:Component.Login.ImageSource {
+          path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.logoImage')}
+      }
+      backgroundImageSource = Neos.Neos:Component.Login.ImageSource {
+          path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
       }
       backgroundImageSourceIsWebp = ${this.backgroundImageSource ? String.endsWith(this.backgroundImageSource, '.webp') : null}
 
@@ -66,7 +54,7 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
                         <div class={['neos-login-box', props.backgroundImageSource ? 'background-image-active' : null]}>
                             <figure class="neos-login-box-logo">
                                 <img class="neos-login-box-logo-resource" @children="attributes.src" width="200px" height="200px" alt="Neos Logo">
-                                    <Neos.Fusion:ResourceUri path="resource://Neos.Neos/Public/Images/Login/Logo.svg" />
+                                    {props.logoImageSource}
                                 </img>
                             </figure>
 
@@ -172,4 +160,22 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
         </fieldset>
     </Neos.Fusion.Form:Form>
   `
+}
+
+prototype(Neos.Neos:Component.Login.ImageSource) < prototype(Neos.Fusion:Component) {
+    path = ''
+    @if.set = ${this.path}
+    renderer = Neos.Fusion:Case {
+        resourcePath {
+            condition = ${String.indexOf(props.path, 'resource://') == 0}
+            renderer = Neos.Fusion:ResourceUri {
+                path = ${props.path}
+            }
+        }
+
+        default {
+            condition = true
+            renderer = ${props.path}
+        }
+    }
 }
