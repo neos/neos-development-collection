@@ -424,17 +424,20 @@ class MediaCommandController extends CommandController
      */
     public function removeOutdatedVariantsCommand(bool $quiet = false, bool $assumeYes = false, bool $filterCroppedVariants = false, int $limit = null, string $assetSource = '', string $presetIdentifier = '')
     {
-        // will read all presets defined in 'Settings.Neos.Media.yaml'
-        $variantPresetConfigs = $this->assetVariantGenerator->getVariantPresets();
+        if (empty($presetIdentifier)) {
+            // will read all presets defined in 'Settings.Neos.Media.yaml'
+            $currentPresets = $this->imageVariantService->getAllPresetsByConfiguration();
+        } else {
+            // is --preset-identifier used
+            $currentPresets = $this->imageVariantService->getAllPresetsOfIdentifier($presetIdentifier);
+        }
 
-        $filterByAssetSourceIdentifier = $assetSource;
-
-        // is --preset-identifier used
-        $currentPresets = $this->imageVariantService->getAllPresetsByConfigs($variantPresetConfigs, $presetIdentifier);
         if (empty($currentPresets)) {
             !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No presets found.</em>');
             exit;
         }
+
+        $filterByAssetSourceIdentifier = $assetSource;
 
         // is --asset-source-filter used
         if (empty($filterByAssetSourceIdentifier)) {

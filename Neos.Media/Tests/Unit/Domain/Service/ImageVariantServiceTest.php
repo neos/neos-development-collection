@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\Tests\Unit\Domain\Service;
 
 /*
@@ -12,11 +13,13 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
  */
 
 use Neos\Flow\Tests\UnitTestCase;
+use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Domain\Service\ImageVariantService;
 use Neos\Media\Domain\ValueObject\Configuration\Label;
 use Neos\Media\Domain\ValueObject\Configuration\Variant;
 use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use ReflectionClass;
+use ReflectionException;
 
 /**
  * Test case for the ImageVariant Service
@@ -36,7 +39,7 @@ class ImageVariantServiceTest extends UnitTestCase
     /**
      * @return array
      */
-    public function getAllPresetsByConfigsProvider(): array
+    public function getAllPresetsByConfigurationsProvider(): array
     {
         $neosPreset = new VariantPreset(new Label('neosTestImageVariants'));
         $flowPreset = new VariantPreset(new Label('flowTestImageVariants'));
@@ -58,30 +61,42 @@ class ImageVariantServiceTest extends UnitTestCase
         $variantPresetReflectionVariants->setValue($flowPreset, $flowPresetConfiguration);
 
         return [
-            [['neos' => $neosPreset, 'flow' => $flowPreset], null],
-            [['neos' => $neosPreset, 'flow' => $flowPreset], ''],
-            [['neos' => $neosPreset, 'flow' => $flowPreset], 'neos']
+            'empty' => [['neos' => $neosPreset, 'flow' => $flowPreset], '', true],
+            'known preset' => [['neos' => $neosPreset, 'flow' => $flowPreset], 'neos', false],
+            'unknown preset' => [['neos' => $neosPreset, 'flow' => $flowPreset], 'imageVariant', true],
         ];
     }
 
     /**
      * @test
-     * @param array $variantPresetConfigs
+     * @dataProvider getAllPresetsByConfigurationsProvider
+     *
+     * @param VariantPreset[] $variantPresets
      * @param string|null $presetIdentifier
-     * @dataProvider getAllPresetsByConfigsProvider
+     * @param bool $emptyResult
+     *
+     * @throws ReflectionException
      */
-    public function getAllPresetsByConfigs(array $variantPresetConfigs, ?string $presetIdentifier): void
+    public function getAllPresetsByConfigurations(array $variantPresets, ?string $presetIdentifier, bool $emptyResult): void
     {
-        if (is_null($presetIdentifier)) {
-            $presetsConfig = $this->imageVariantService->getAllPresetsByConfigs($variantPresetConfigs);
-        } else {
-            $presetsConfig = $this->imageVariantService->getAllPresetsByConfigs($variantPresetConfigs, $presetIdentifier);
-        }
+        $assetVariantGeneratorMock = $this->getMockBuilder(AssetVariantGenerator::class)->getMock();
+        $assetVariantGeneratorMock->expects($this->once())->method('getVariantPresets')->willReturn($variantPresets);
 
-        if (!$presetIdentifier) {
-            self::assertEquals(['neos' => ['square', 'portrait'], 'flow' => ['panorama']], $presetsConfig);
+        $imageVariantService = new ImageVariantService();
+
+        $imageVariantServiceReflection = new ReflectionClass(ImageVariantService::class);
+        $reflectionProperty = $imageVariantServiceReflection->getProperty('assetVariantGenerator');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($imageVariantService, $assetVariantGeneratorMock);
+
+        $reflectionMethod = $imageVariantServiceReflection->getMethod('getAllPresetsOfIdentifier');
+        $reflectionMethod->setAccessible(true);
+        $presetsConfig = $reflectionMethod->invokeArgs($imageVariantService, [$presetIdentifier]);
+
+        if ($emptyResult) {
+            self::assertEquals([], $presetsConfig);
         } else {
-            self::assertEquals(['neos' => ['square', 'portrait']], $presetsConfig);
+            self::assertEquals([$variantPresets['neos']], $presetsConfig);
         }
     }
 }

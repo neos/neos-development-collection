@@ -23,35 +23,38 @@ use Neos\Flow\Annotations as Flow;
 class ImageVariantService
 {
     /**
+     * @Flow\Inject
+     * @var AssetVariantGenerator
+     */
+    protected $assetVariantGenerator;
+
+    /**
      * Return all presets defined in 'Settings.Neos.Media.yaml' with presetName as key
      *
-     * @param array $variantPresetConfigs
      * @param string $presetIdentifier
-     * @return array
+     * @return VariantPreset[]
      */
-    public function getAllPresetsByConfigs(array $variantPresetConfigs, string $presetIdentifier = ''): array
+    public function getAllPresetsOfIdentifier(string $presetIdentifier): array
     {
-        $presets = [];
+        $variantPresetConfigurations = $this->getAllPresetsByConfiguration();
 
-        if (!empty($presetIdentifier) && !key_exists($presetIdentifier, $variantPresetConfigs)) {
-            return $presets;
+        $variantPresetName = array_key_exists($presetIdentifier, $variantPresetConfigurations);
+
+        if (!$variantPresetName) {
+            // the given presetIdentifier ist not included in variantPresetConfigurations
+            return [];
         }
 
-        /** @var VariantPreset[] $variantPresetConfigs */
-        if (!empty($presetIdentifier)) {
-            foreach ($variantPresetConfigs[$presetIdentifier]->variants() as $presetVariant) {
-                $presets[$presetIdentifier][] = $presetVariant->identifier();
-            }
-        } else {
-            foreach ($variantPresetConfigs as $presetsConfig) {
-                $variantPresetName = array_search($presetsConfig, $variantPresetConfigs);
-                $presetKeys = array_keys($presetsConfig->variants());
-                foreach ($presetKeys as $preset) {
-                    $presets[(string)$variantPresetName][] = $preset;
-                }
-            }
-        }
+        return [$variantPresetConfigurations[$presetIdentifier]];
+    }
 
-        return $presets;
+    /**
+     * Return presets from 'Settings.Neos.Media.yaml'
+     *
+     * @return VariantPreset[]
+     */
+    public function getAllPresetsByConfiguration(): array
+    {
+        return $this->assetVariantGenerator->getVariantPresets();
     }
 }

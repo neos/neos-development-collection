@@ -15,6 +15,7 @@ namespace Neos\Media\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ImageVariant;
+use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 
 /**
  * A repository for ImageVariants
@@ -26,10 +27,13 @@ class ImageVariantRepository extends AssetRepository
     /**
      * Returns array of ImageVariants with outdated presets
      *
-     * @param String[] $configuredPresets
+     * @param VariantPreset[] $configuredPresets
+     * @param bool $deleteOnlyFromGivenPresets
+     * @param bool $filterCroppedVariants
+     * @param int|null $limit
      * @return ImageVariant[]
      */
-    public function findAllWithOutdatedPresets(array $configuredPresets, bool $isCliPresetFilter, bool $filterCroppedVariants, int $limit = null): array
+    public function findAllWithOutdatedPresets(array $configuredPresets, bool $deleteOnlyFromGivenPresets, bool $filterCroppedVariants, int $limit = null): array
     {
         $configuredIdentifiers = array_keys($configuredPresets);
         $queryBuilder = $this->entityManager->createQueryBuilder()
@@ -37,14 +41,26 @@ class ImageVariantRepository extends AssetRepository
             ->from(ImageVariant::class, 'iv')
             ->setMaxResults($limit);
 
-        if (!$isCliPresetFilter) {
+        if (!$deleteOnlyFromGivenPresets) {
+            /**
+             * for completely outdated preset configurations
+             *
+             * EXAMPLE:
+             *  - you have the identifiers Neos.Cool, Neos.Yeah (and there was a Neos.Awesome previously)
+             * case 1:
+             *  - the user want to delete variants from Neos.Yeah
+             *  - condition will not be executed - deleteFromGivenPresets is true
+             * case 2:
+             *  - no preset to delete from configured
+             *  - condition will be executed - whole Neos.Awesome will be added to query
+             */
             $queryBuilder
                 ->where('iv.presetIdentifier NOT IN (:configuredIdentifiers)')
                 ->setParameter('configuredIdentifiers', $configuredIdentifiers);
         }
 
         if ($filterCroppedVariants) {
-            // custom crops will be saved with null value as presetIdentifier and presetVariantName
+            // custom cropped variants will be saved with null value as presetIdentifier and presetVariantName
             $queryBuilder
                 ->orWhere('iv.presetIdentifier IS NULL AND iv.presetVariantName IS NULL');
         }
