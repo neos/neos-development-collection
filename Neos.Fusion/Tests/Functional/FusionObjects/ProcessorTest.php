@@ -74,4 +74,14 @@ class ProcessorTest extends AbstractFusionObjectTest
     {
         $this->assertFusionPath('my value append', 'processors/newSyntax/usingThisInProcessor');
     }
+
+    /**
+     * @test
+     */
+    public function skippedLazyPropsInProcessor()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('processors/newSyntax/skippedLazyPropsInProcessor');
+        self::assertSame(['buz' => 'bar', 'lazyPropValue' => 'foo'], $view->render());
+    }
 }

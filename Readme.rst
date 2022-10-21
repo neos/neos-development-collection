@@ -1,7 +1,5 @@
-|Travis Build Status| |Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |API| |Slack| |Forum| |Issues| |Translate| |Twitter| |Pull Reminders|
+|Code Climate| |StyleCI| |Latest Stable Version| |License| |Docs| |Slack| |Forum| |Issues| |Translate| |Twitter|
 
-.. |Travis Build Status| image:: https://travis-ci.org/neos/neos-development-collection.svg?branch=master
-   :target: https://travis-ci.org/neos/neos-development-collection
 .. |Code Climate| image:: https://codeclimate.com/github/neos/neos-development-collection/badges/gpa.svg
    :target: https://codeclimate.com/github/neos/neos-development-collection
 .. |StyleCI| image:: https://styleci.io/repos/40964014/shield?style=flat
@@ -11,11 +9,8 @@
 .. |License| image:: https://poser.pugx.org/neos/neos-development-collection/license
    :target: https://raw.githubusercontent.com/neos/neos-development-collection/4.3/LICENSE
 .. |Docs| image:: https://img.shields.io/badge/documentation-master-blue.svg
-   :target: https://neos.readthedocs.org/en/4.3/
+   :target: https://neos.readthedocs.org/en/8.2/
    :alt: Documentation
-.. |API| image:: https://img.shields.io/badge/API%20docs-master-blue.svg
-   :target: http://neos.github.io/neos/4.3/
-   :alt: API Docs
 .. |Slack| image:: http://slack.neos.io/badge.svg
    :target: http://slack.neos.io
    :alt: Slack
@@ -25,15 +20,12 @@
 .. |Issues| image:: https://img.shields.io/github/issues/neos/neos-development-collection.svg
    :target: https://github.com/neos/neos-development-collection/issues
    :alt: Issues
-.. |Translate| image:: https://img.shields.io/badge/translate-Crowdin-85ae52.svg
-   :target: http://translate.neos.io/
+.. |Translate| image:: https://img.shields.io/badge/translate-weblate-85ae52.svg
+   :target: https://hosted.weblate.org/projects/neos/
    :alt: Translation
 .. |Twitter| image:: https://img.shields.io/twitter/follow/neoscms.svg?style=social
    :target: https://twitter.com/NeosCMS
    :alt: Twitter
-.. |Pull Reminders| image:: https://pullreminders.com/badge.svg
-   :target: https://pullreminders.com?ref=badge
-   :alt: Pull Reminders
 
 ---------------------------
 Neos development collection
@@ -63,8 +55,11 @@ In the root directory of the development distribution, you can do the following 
 To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests.
 
 To switch the branch you intend to work on:
-``git checkout 7.1 && composer update``
+``git checkout 8.2 && composer update``
 
-.. note:: We use an upmerging strategy, so create all bugfixes to lowest maintained branch that contains the issue (typically the second last LTS release, which is 5.3 currently), or master for new features.
+.. note:: We use an upmerging strategy: create all bugfixes to the lowest maintained branch that contains the issue. Typically, this is the second last LTS release - see the diagram at https://www.neos.io/features/release-process.html.
+For new features, pull requests should be made against the branch for the next minor version (named like ``x.y``). Breaking changes must only go into the branch for the next major version.
 
-For more detailed information, see https://discuss.neos.io/t/development-setup/504 and https://discuss.neos.io/t/creating-a-pull-request/506
+For more detailed information, see https://discuss.neos.io/t/development-setup/504,
+https://discuss.neos.io/t/creating-a-pull-request/506 and
+https://discuss.neos.io/t/git-branch-handling-in-the-neos-project/6013

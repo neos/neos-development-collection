@@ -45,7 +45,7 @@ class AugmenterImplementation extends AbstractArrayFusionObject
         $content = $this->fusionValue('content');
         $fallbackTagName = $this->fusionValue('fallbackTagName');
 
-        $attributes = $this->evaluateNestedProperties();
+        $attributes = array_filter($this->evaluateNestedProperties());
 
         if ($attributes && is_array($attributes) && count($attributes) > 0) {
             return $this->htmlAugmenter->addAttributes($content, $attributes, $fallbackTagName);

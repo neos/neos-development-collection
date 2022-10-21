@@ -57,12 +57,12 @@ final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
         $this->effectiveContext = $effectiveContext;
     }
 
-    public function offsetExists($path)
+    public function offsetExists($path): bool
     {
         return array_key_exists($path, $this->keys);
     }
 
-    public function offsetGet($path)
+    public function offsetGet($path): mixed
     {
         if (!array_key_exists($path, $this->valueCache)) {
             $this->runtime->pushContextArray($this->effectiveContext);
@@ -75,17 +75,17 @@ final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
         return $this->valueCache[$path];
     }
 
-    public function offsetSet($path, $value)
+    public function offsetSet($path, $value): void
     {
         throw new BadMethodCallException('Lazy props can not be set.', 1588182804);
     }
 
-    public function offsetUnset($path)
+    public function offsetUnset($path): void
     {
         throw new BadMethodCallException('Lazy props can not be unset.', 1588182805);
     }
 
-    public function current()
+    public function current(): mixed
     {
         $path = key($this->keys);
         if ($path === null) {
@@ -94,27 +94,27 @@ final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
         return $this->offsetGet($path);
     }
 
-    public function next()
+    public function next(): void
     {
         next($this->keys);
     }
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->keys);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return current($this->keys) !== false;
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->keys);
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return iterator_to_array($this);
     }

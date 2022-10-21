@@ -20,8 +20,6 @@ Configuration.init();
 Notification.init();
 Localization.init();
 
-// preload vieSchema
-const vieSchema = cachedFetch(Configuration.get("VieSchemaUri"));
 cachedFetch(Configuration.get("XliffUri")).then((xliffData) => {
   if (xliffData) {
     Localization.initTranslations(xliffData);

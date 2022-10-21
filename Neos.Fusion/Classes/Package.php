@@ -18,7 +18,7 @@ use Neos\Flow\Monitor\FileMonitor;
 use Neos\Flow\Package\Package as BasePackage;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\Cache\FileMonitorListener;
-use Neos\Fusion\Core\Cache\ParserCache;
+use Neos\Fusion\Core\Cache\ParserCacheFlusher;
 
 /**
  * The Neos Fusion Package
@@ -66,27 +66,8 @@ class Package extends BasePackage
                     $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
                     $listener = new FileMonitorListener($cacheManager);
                     $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $listener, 'flushContentCacheOnFileChanges');
-                    // Use a closure to invoke the FusionParserCache, so the object is not instantiated during compiletime and has working DI
-                    $flushParsePartialsCache = function ($identifier, $changedFilesAndStatus) use ($bootstrap) {
-                        if ($identifier !== 'Fusion_Files') {
-                            return;
-                        }
-                        $objectManager = $bootstrap->getObjectManager();
-                        if ($objectManager->isRegistered(ParserCache::class) === false) {
-                            // if we make a total `rm -rf Data/Temporary` all monitored `*.fusion` files will be seen as newly created.
-                            // this triggers pretty early this `filesHaveChanged` and we still have the CompileTimeObjectManager
-                            // we would get an exception like:
-                            // Cannot build object "FusionParserCache" because it is unknown to the compile time Object Manager.
-                            // so instead we will just make sure the cache is totally flushed.
-                            $cacheManager = $bootstrap->getEarlyInstance(CacheManager::class);
-                            $fusionParsePartialsCache = $cacheManager->getCache('Neos_Fusion_ParsePartials');
-                            $fusionParsePartialsCache->flush();
-                            return;
-                        }
-                        $fusionParserCache = $objectManager->get(ParserCache::class);
-                        $fusionParserCache->flushFileAstCacheOnFileChanges($changedFilesAndStatus);
-                    };
-                    $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $flushParsePartialsCache);
+                    $parsePartialCacheFlusher = new ParserCacheFlusher($cacheManager);
+                    $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', $parsePartialCacheFlusher, 'flushPartialCacheOnFileChanges');
                 }
             });
         }

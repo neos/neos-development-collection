@@ -29,6 +29,8 @@ namespace Neos\Fusion\FusionObjects;
  *  * absolute
  *
  * See respective getters for descriptions
+ *
+ * @deprecated in favor of ActionUriImplementation
  */
 class UriBuilderImplementation extends AbstractFusionObject
 {

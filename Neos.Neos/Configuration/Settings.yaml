@@ -559,42 +559,43 @@ Neos:
     collections:
       Neos:
         commandReferences:
-          - 'Neos:NeosCommands'
+          'Neos:NeosCommands': true
         references:
-          - 'TYPO3Fluid:ViewHelpers'
-          - 'Neos:FluidAdaptorViewHelpers'
-          - 'Neos:MediaViewHelpers'
-          - 'Neos:FormViewHelpers'
-          - 'Neos:NeosViewHelpers'
-          - 'Neos:ContentRepositoryViewHelpers'
-          - 'Neos:FusionViewHelpers'
-          - 'Neos:FlowValidators'
-          - 'Neos:PartyValidators'
-          - 'Neos:MediaValidators'
-          - 'Neos:FlowSignals'
-          - 'Neos:NeosSignals'
-          - 'Neos:MediaSignals'
-          - 'Neos:ContentRepositorySignals'
-          - 'Neos:FlowQueryOperations'
-          - 'Neos:EelHelpers'
+          'TYPO3Fluid:ViewHelpers': true
+          'Neos:FluidAdaptorViewHelpers': true
+          'Neos:MediaViewHelpers': true
+          'Neos:FormViewHelpers': true
+          'Neos:NeosViewHelpers': true
+          'Neos:ContentRepositoryViewHelpers': true
+          'Neos:FusionViewHelpers': true
+          'Neos:FlowValidators': true
+          'Neos:PartyValidators': true
+          'Neos:MediaValidators': true
+          'Neos:FlowSignals': true
+          'Neos:NeosSignals': true
+          'Neos:MediaSignals': true
+          'Neos:ContentRepositorySignals': true
+          'Neos:FlowQueryOperations': true
+          'Neos:EelHelpers': true
     commandReferences:
       'Neos:NeosCommands':
         title: 'Neos Command Reference'
         packageKeys:
-          - Neos.Flow
-          - Neos.Party
-          - Neos.FluidAdaptor
-          - Neos.Kickstarter
-          - Neos.Welcome
-          - Neos.Media
-          - Neos.ContentRepository
-          - Neos.SiteKickstarter
-          - Neos.Neos
+          'Neos.Flow': true
+          'Neos.Party': true
+          'Neos.FluidAdaptor': true
+          'Neos.Kickstarter': true
+          'Neos.Welcome': true
+          'Neos.Media': true
+          'Neos.ContentRepository': true
+          'Neos.SiteKickstarter': true
+          'Neos.Neos': true
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/CommandReference.rst'
     references:
       'TYPO3Fluid:ViewHelpers':
         title: 'TYPO3 Fluid ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/TYPO3Fluid.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^TYPO3Fluid\\Fluid\\ViewHelpers\\.*$/i'
@@ -606,6 +607,7 @@ Neos:
       'Neos:FluidAdaptorViewHelpers':
         title: 'FluidAdaptor ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/FluidAdaptor.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^Neos\\FluidAdaptor\\ViewHelpers\\.*$/i'
@@ -617,6 +619,7 @@ Neos:
       'Neos:MediaViewHelpers':
         title: 'Media ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Media.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^Neos\\Media\\ViewHelpers\\.*$/i'
@@ -628,6 +631,7 @@ Neos:
       'Neos:FormViewHelpers':
         title: 'Form ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Form.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^Neos\\Form\\ViewHelpers\\.*$/i'
@@ -639,6 +643,7 @@ Neos:
       'Neos:NeosViewHelpers':
         title: 'Neos ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Neos.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^Neos\\Neos\\ViewHelpers\\.*$/i'
@@ -651,6 +656,7 @@ Neos:
       'Neos:ContentRepositoryViewHelpers':
         title: 'Content Repository ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/ContentRepository.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^Neos\\ContentRepository\\ViewHelpers\\.*$/i'
@@ -663,6 +669,7 @@ Neos:
       'Neos:FusionViewHelpers':
         title: 'Fusion ViewHelper Reference'
         savePathAndFilename: '%FLOW_PATH_PACKAGES%Neos/Neos.Neos/Documentation/References/ViewHelpers/Fusion.rst'
+        templatePathAndFilename: 'resource://Neos.DocTools/Private/Templates/ViewHelperReferenceTemplate.txt'
         affectedClasses:
           parentClassName: Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper
           classNamePattern: '/^Neos\\Fusion\\ViewHelpers\\.*$/i'
