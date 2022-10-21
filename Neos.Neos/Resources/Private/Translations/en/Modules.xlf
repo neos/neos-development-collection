@@ -199,6 +199,9 @@
 			<trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
 				<source>All changes from workspace "{0}" have been discarded.</source>
 			</trans-unit>
+			<trans-unit id="workspaces.checkbox.label">
+				<source>Select all current changes</source>
+			</trans-unit>
 
 			<trans-unit id="history.label" xml:space="preserve">
 				<source>History</source>
