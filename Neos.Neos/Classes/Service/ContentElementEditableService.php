@@ -11,8 +11,8 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * The content element editable service adds the necessary markup around
@@ -25,7 +25,7 @@ class ContentElementEditableService
 {
     /**
      * Wrap the $content identified by $node with the needed markup for the backend.
-     * This method is extended by the Neos.Ui package via an aspect to add the needed markup for inline editing.
+     * This method is replaced by the Neos.Ui package via an aspect to add the needed markup for inline editing.
      */
     public function wrapContentProperty(NodeInterface $node, string $property, string $content): string
     {

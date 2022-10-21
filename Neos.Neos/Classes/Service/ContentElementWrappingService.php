@@ -47,22 +47,14 @@ class ContentElementWrappingService
     protected $htmlAugmenter;
 
     /**
-     * Wrap the $content identified by $node with the needed markup for the backend.
+     * This is an extensibility point for other packages to add additional attributes to the wrapping tag.
+     * This method is replaced by the Neos.Ui package via an aspect to add the needed markup for selection.
      *
      * @param array $additionalAttributes additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...] to be rendered in the element wrapping
      */
     public function wrapContentObject(NodeInterface $node, string $content, string $fusionPath, array $additionalAttributes = []): string
     {
-        if ($this->needsMetadata($node, false) === false) {
-            return $content;
-        }
-
-        $attributes = $additionalAttributes;
-        $attributes['data-node-__fusion-path'] = $fusionPath;
-        $attributes['tabindex'] = 0;
-        $attributes = $this->addCssClasses($attributes, $node, $this->collectEditingClassNames($node));
-
-        return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
+        return $content;
     }
 
     /**
