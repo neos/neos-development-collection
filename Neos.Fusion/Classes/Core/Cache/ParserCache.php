@@ -55,8 +55,11 @@ class ParserCache
         if ($contextPathAndFilename === null) {
             return $generateValueToCache();
         }
-        if (str_contains($contextPathAndFilename, '://')) {
+        if (str_contains($contextPathAndFilename, 'resource://')) {
             $contextPathAndFilename = $this->getAbsolutePathForPackageRessourceUri($contextPathAndFilename);
+        }
+        if (str_contains($contextPathAndFilename, 'nodetypes://')) {
+            $contextPathAndFilename = $this->getAbsolutePathForNodeTypesUri($contextPathAndFilename);
         }
         $identifier = $this->getCacheIdentifierForFile($contextPathAndFilename);
         return $this->cacheForIdentifier($identifier, $generateValueToCache);
@@ -104,5 +107,29 @@ class ParserCache
 
         $package = $this->packageManager->getPackage($resourceUriParts['host']);
         return Files::concatenatePaths([$package->getResourcesPath(), $resourceUriParts['path']]);
+    }
+
+    /**
+     * Uses the same technique to resolve a package nodetypes URI like Neos.
+     *
+     * nodetypes://My.Site/Foo/Bar.fusion
+     * ->
+     * FLOW_PATH_ROOT/Packages/Sites/My.Package/NodeTypes/Foo/Bar.fusion
+     *
+     * {@see \Neos\Neos\ResourceManagement\NodeTypesStreamWrapper::evaluateNodeTypesPath}
+     *
+     * @throws \InvalidArgumentException
+     */
+    private function getAbsolutePathForNodeTypesUri(string $requestedPath): string
+    {
+        $nodeTypeUriParts = UnicodeFunctions::parse_url($requestedPath);
+
+        if ((isset($nodeTypeUriParts['scheme']) === false
+            || $nodeTypeUriParts['scheme'] !== 'nodetypes')) {
+            throw new \InvalidArgumentException("Unsupported stream wrapper: '$requestedPath'");
+        }
+
+        $package = $this->packageManager->getPackage($nodeTypeUriParts['host']);
+        return Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes', $nodeTypeUriParts['path']]);
     }
 }
