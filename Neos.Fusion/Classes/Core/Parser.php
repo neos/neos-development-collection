@@ -83,7 +83,7 @@ class Parser
      * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
      * @return array The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
-     * @deprecated with Neos 8.0
+     * @deprecated with Neos 8.0 – will be removed with Neos 9.0, use {@link parseFrom} instead
      * @api
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
