@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion;
 
 #[Flow\Proxy(false)]
 class FusionSourceCode
@@ -23,7 +24,7 @@ class FusionSourceCode
         private ?string $contextPathAndFilename
     ) {
         if (trim($sourceCode) === '') {
-            throw FusionSourceCodeIsInvalid::becauseTheSourceCodeIsEmpty($this->contextPathAndFilename);
+            throw new Fusion\Exception("The sourcecode of the FusionSourceCode must not be empty. $this->contextPathAndFilename", 1657963664);
         }
     }
 
@@ -36,7 +37,7 @@ class FusionSourceCode
     {
         $sourceCode = file_get_contents($fileName);
         if ($sourceCode === false) {
-            throw FusionSourceCodeIsInvalid::becauseTheFileNameIsNotReadable($fileName);
+            throw new Fusion\Exception("Trying to read Fusion source code from file, but '$fileName' is not readable.", 1657963790);
         }
         return new self($sourceCode, $fileName);
     }
