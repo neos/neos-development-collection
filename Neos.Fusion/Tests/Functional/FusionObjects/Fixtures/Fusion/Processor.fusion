@@ -24,6 +24,8 @@ processors.newSyntax.basicProcessor {
 
   plainValueOverriddenByPlainValue = "bar"
   plainValueOverriddenByPlainValue.@process.replace = "foo"
+  // https://github.com/neos/neos-development-collection/pull/3847#issuecomment-1192941620
+  plainValueOverriddenByPlainValue.@process.replace.@if.1 = true
 }
 
 processors.newSyntax.processorBeforeValue {
