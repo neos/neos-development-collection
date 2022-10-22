@@ -23,9 +23,6 @@ class FusionSourceCode
         private string $sourceCode,
         private ?string $contextPathAndFilename
     ) {
-        if (trim($sourceCode) === '') {
-            throw new Fusion\Exception("The sourcecode of the FusionSourceCode must not be empty. $this->contextPathAndFilename", 1657963664);
-        }
     }
 
     public static function fromString(string $string): self
