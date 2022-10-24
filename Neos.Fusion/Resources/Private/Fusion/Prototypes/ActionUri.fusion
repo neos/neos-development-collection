@@ -1,0 +1,26 @@
+# Renders an URI pointing to a controller/action
+#
+# Usage:
+# uri = Neos.Fusion:ActionUri {
+#   package = 'Some.Package'
+#   controller = 'Standard'
+#   action = 'index'
+# }
+#
+prototype(Neos.Fusion:ActionUri) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ActionUriImplementation'
+  request = ${request}
+  package = null
+  subpackage = null
+  controller = null
+  action = null
+  format = null
+  section = null
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
+  addQueryString = false
+  absolute = false
+
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
