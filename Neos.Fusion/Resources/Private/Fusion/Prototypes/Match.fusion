@@ -9,4 +9,6 @@
 # }
 prototype(Neos.Fusion:Match) {
   @class = 'Neos\\Fusion\\FusionObjects\\MatchImplementation'
+  @default = null
+  @subject = ''
 }

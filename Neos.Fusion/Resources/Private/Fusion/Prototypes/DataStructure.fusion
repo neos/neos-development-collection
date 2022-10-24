@@ -1,0 +1,4 @@
+prototype(Neos.Fusion:DataStructure) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
+  @sortProperties = true
+}

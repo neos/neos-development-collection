@@ -1,0 +1,4 @@
+prototype(Neos.Fusion:Case) {
+  @class = 'Neos\\Fusion\\FusionObjects\\CaseImplementation'
+  @sortProperties = true
+}
