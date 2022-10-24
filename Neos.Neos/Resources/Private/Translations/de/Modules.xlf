@@ -265,7 +265,7 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="final">Alle Änderungen aus dem Arbeitsbereich "{0}" wurden verworfen.</target>
       </trans-unit>
-      <trans-unit id="workspaces.checkbox.label" approved="yes">
+      <trans-unit id="workspaces.selectAllCurrentChanges" approved="yes">
         <source>Select all current changes</source>
         <target state="final">Alle aktuellen Änderungen auswählen</target>
       </trans-unit>
