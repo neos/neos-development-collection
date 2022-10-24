@@ -9,7 +9,7 @@
 #   }
 # }
 #
-# @deprecated since Neos 5.0 in favor of Neos.Fusion:Tag or Neos.Fusion:Join
+# @deprecated since Neos 5.0 in favor of Neos.Fusion:Tag internal attributes handling when a datastructure is passed
 prototype(Neos.Fusion:Attributes) {
   @class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 }
