@@ -61,7 +61,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the Neos team members responsible for enforcement reported by
-opening an issue or contacting them azt hello@neos.io.
+opening an issue or contacting them at hello@neos.io.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All Neos team members are obligated to respect the privacy and security of the
