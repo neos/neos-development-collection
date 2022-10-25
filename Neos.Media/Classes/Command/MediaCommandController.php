@@ -123,15 +123,14 @@ class MediaCommandController extends CommandController
         $this->initializeConnection();
 
         $sql = '
-			SELECT
-				r.persistence_object_identifier, r.filename, r.mediatype
-			FROM neos_flow_resourcemanagement_persistentresource r
-			LEFT JOIN neos_media_domain_model_asset a
-			ON a.resource = r.persistence_object_identifier
-			LEFT JOIN neos_media_domain_model_thumbnail t
-			ON t.resource = r.persistence_object_identifier
-			WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
-		';
+            SELECT r.persistence_object_identifier, r.filename, r.mediatype
+            FROM neos_flow_resourcemanagement_persistentresource r
+            LEFT JOIN neos_media_domain_model_asset a
+            ON a.resource = r.persistence_object_identifier
+            LEFT JOIN neos_media_domain_model_thumbnail t
+            ON t.resource = r.persistence_object_identifier
+            WHERE a.persistence_object_identifier IS NULL AND t.persistence_object_identifier IS NULL
+        ';
         $statement = $this->dbalConnection->prepare($sql);
         $statement->execute();
         $resourceInfos = $statement->fetchAll();
@@ -175,7 +174,7 @@ class MediaCommandController extends CommandController
      * @param bool $quiet If set, only errors will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialogs
      * @param string $onlyTags Comma-separated list of asset tag labels, that should be taken into account
-     * @param int $limit Limit the result of unused assets displayed and removed for this run.
+     * @param int|null $limit Limit the result of unused assets displayed and removed for this run.
      * @param string $onlyCollections Comma-separated list of asset collection titles, that should be taken into account
      * @return void
      * @throws IllegalObjectTypeException
@@ -297,7 +296,7 @@ class MediaCommandController extends CommandController
      *
      * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
-     * @param string $preset Preset name, if not provided thumbnails are created for all presets
+     * @param string|null $preset Preset name, if not provided thumbnails are created for all presets
      * @param bool $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
      * @param bool $quiet If set, only errors will be displayed.
      * @return void
@@ -308,8 +307,8 @@ class MediaCommandController extends CommandController
         $async = $async ?? $this->asyncThumbnails;
         $presets = $preset !== null ? [$preset] : array_keys($this->thumbnailService->getPresets());
         $presetThumbnailConfigurations = [];
-        foreach ($presets as $preset) {
-            $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($preset, $async);
+        foreach ($presets as $presetName) {
+            $presetThumbnailConfigurations[] = $this->thumbnailService->getThumbnailConfigurationForPreset($presetName, $async);
         }
         $iterator = $this->assetRepository->findAllIterator();
         $imageCount = $this->assetRepository->countAll();
@@ -330,13 +329,13 @@ class MediaCommandController extends CommandController
      * Removes all thumbnail objects and their resources. Optional ``preset`` parameter to only remove thumbnails
      * matching a specific thumbnail preset configuration.
      *
-     * @param string $preset Preset name, if provided only thumbnails matching that preset are cleared
+     * @param string|null $preset Preset name, if provided only thumbnails matching that preset are cleared
      * @param bool $quiet If set, only errors will be displayed.
      * @return void
      * @throws IllegalObjectTypeException
      * @throws ThumbnailServiceException
      */
-    public function clearThumbnailsCommand(string $preset = null, bool $quiet = false)
+    public function clearThumbnailsCommand(string $preset = null, bool $quiet = false): void
     {
         if ($preset !== null) {
             $thumbnailConfiguration = $this->thumbnailService->getThumbnailConfigurationForPreset($preset);
@@ -349,7 +348,9 @@ class MediaCommandController extends CommandController
         }
 
         !$quiet && $this->output->progressStart($thumbnailCount);
-        foreach ($this->thumbnailRepository->iterate($iterator) as $thumbnail) {
+        foreach ($this->thumbnailRepository->iterate($iterator, function ($iteration) {
+            $this->persistAll($iteration);
+        }) as $thumbnail) {
             $this->thumbnailRepository->remove($thumbnail);
             !$quiet && $this->output->progressAdvance(1);
         }
@@ -362,7 +363,7 @@ class MediaCommandController extends CommandController
      * Loops over ungenerated thumbnails and renders them. Optional ``limit`` parameter to limit the amount of
      * thumbnails to be rendered to avoid memory exhaustion.
      *
-     * @param integer $limit Limit the amount of thumbnails to be rendered to avoid memory exhaustion
+     * @param int|null $limit Limit the amount of thumbnails to be rendered to avoid memory exhaustion
      * @param bool $quiet If set, only errors will be displayed.
      * @return void
      */
@@ -392,14 +393,14 @@ class MediaCommandController extends CommandController
      *
      * If the re-render parameter is given, any existing variants will be rendered again, too.
      *
-     * @param integer $limit Limit the amount of variants to be rendered to avoid memory exhaustion
+     * @param int|null $limit Limit the amount of variants to be rendered to avoid memory exhaustion
      * @param bool $quiet If set, only errors will be displayed.
      * @param bool $recreate If set, existing asset variants will be re-generated and replaced
      * @return void
      * @throws AssetVariantGeneratorException
      * @throws IllegalObjectTypeException
      */
-    public function renderVariantsCommand($limit = null, bool $quiet = false, bool $recreate = false): void
+    public function renderVariantsCommand(int $limit = null, bool $quiet = false, bool $recreate = false): void
     {
         $resultMessage = null;
         $generatedVariants = 0;
@@ -462,15 +463,23 @@ class MediaCommandController extends CommandController
     }
 
     /**
+     * Used as a callback when iterating large results sets
+     */
+    protected function persistAll(int $iteration): void
+    {
+        if ($iteration % 1000 === 0) {
+            $this->persistenceManager->persistAll();
+        }
+    }
+
+    /**
      * Initializes the DBAL connection which is currently bound to the Doctrine Entity Manager
-     *
-     * @return void
      */
     protected function initializeConnection(): void
     {
         if (!$this->entityManager instanceof EntityManager) {
             $this->outputLine('This command only supports database connections provided by the Doctrine ORM Entity Manager.
-				However, the current entity manager is an instance of %s.', [get_class($this->entityManager)]);
+However, the current entity manager is an instance of %s.', [get_class($this->entityManager)]);
             $this->quit(1);
         }
 
