@@ -39,7 +39,7 @@ abstract class AbstractServiceController extends ActionController
      * @Flow\Inject
      * @var ThrowableStorageInterface
      */
-    protected $throwableStorageLogger;
+    protected $throwableStorage2;
 
     /**
      * A preliminary error action for handling validation errors
@@ -100,7 +100,7 @@ abstract class AbstractServiceController extends ActionController
                 $response->setStatusCode(500);
             }
             $response->setContent(json_encode(['error' => $exceptionData]));
-            $this->logger->error($this->throwableStorageLogger->logThrowable($exception), LogEnvironment::fromMethodName(__METHOD__));
+            $this->logger->error($this->throwableStorage2->logThrowable($exception), LogEnvironment::fromMethodName(__METHOD__));
         }
     }
 
