@@ -605,37 +605,31 @@ class Runtime
 
         /** @var $fusionObject AbstractFusionObject */
         $fusionObject = new $fusionObjectClassName($this, $fusionPath, $fusionObjectType);
-        if ($this->isArrayFusionObject($fusionObject)) {
+        if ($this->shouldAssignPropertiesToFusionObject($fusionObject)) {
             /** @var $fusionObject AbstractArrayFusionObject */
             if (isset($fusionConfiguration['__meta']['ignoreProperties'])) {
                 $evaluatedIgnores = $this->evaluate($fusionPath . '/__meta/ignoreProperties', $fusionObject);
                 $fusionObject->setIgnoreProperties(is_array($evaluatedIgnores) ? $evaluatedIgnores : []);
             }
-            $this->setPropertiesOnFusionObject($fusionObject, $fusionConfiguration, $applyValuePaths);
+            $this->assignPropertiesToFusionObject($fusionObject, $fusionConfiguration, $applyValuePaths);
         }
         return $fusionObject;
     }
 
     /**
-     * Check if the given object is an array like object that should get all properties set to iterate or process internally.
+     * Is the given object an array like object that should get all properties assigned to iterate or process internally
      *
-     * @param AbstractFusionObject $fusionObject
-     * @return boolean
+     * @psalm-assert-if-true AbstractArrayFusionObject $fusionObject
      */
-    protected function isArrayFusionObject(AbstractFusionObject $fusionObject)
+    protected function shouldAssignPropertiesToFusionObject(AbstractFusionObject $fusionObject): bool
     {
-        return ($fusionObject instanceof AbstractArrayFusionObject);
+        return $fusionObject instanceof AbstractArrayFusionObject;
     }
 
     /**
-     * Set options on the given (AbstractArray)Fusion object
-     *
-     * @param AbstractArrayFusionObject $fusionObject
-     * @param array $fusionConfiguration
-     * @param array $applyValuePaths
-     * @return void
+     * Assigns paths to the Array-Fusion object
      */
-    protected function setPropertiesOnFusionObject(AbstractArrayFusionObject $fusionObject, array $fusionConfiguration, array $applyValuePaths)
+    protected function assignPropertiesToFusionObject(AbstractArrayFusionObject $fusionObject, array $fusionConfiguration, array $applyValuePaths): void
     {
         foreach ($fusionConfiguration as $key => $value) {
             // skip keys which start with __, as they are purely internal.
