@@ -371,6 +371,7 @@ class NodeExportService
      * @param array $data The data as an array, the given property name is looked up there
      * @param string $propertyName The name of the property
      * @param string $elementName an optional name to use, defaults to $propertyName
+     * @param string $declaredPropertyType
      * @return void
      */
     protected function writeConvertedElement(array &$data, $propertyName, $elementName = null, $declaredPropertyType = null)
