@@ -287,6 +287,7 @@ class MediaCommandController extends CommandController
             $this->assetRepository->remove($asset);
         }
         !$quiet && $this->output->progressFinish();
+        !$quiet && $this->output->outputLine();
     }
 
     /**
@@ -322,6 +323,7 @@ class MediaCommandController extends CommandController
             }
         }
         !$quiet && $this->output->progressFinish();
+        !$quiet && $this->output->outputLine();
     }
 
     /**
@@ -354,6 +356,7 @@ class MediaCommandController extends CommandController
             !$quiet && $this->output->progressAdvance(1);
         }
         !$quiet && $this->output->progressFinish();
+        !$quiet && $this->output->outputLine();
     }
 
     /**

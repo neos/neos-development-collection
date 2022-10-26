@@ -50,7 +50,7 @@ class PropertyOperation extends AbstractOperation
      *
      * We can only handle ContentRepository Nodes.
      *
-     * @param mixed $context
+     * @param array $context $context onto which this operation should be applied (array or array-like object)
      * @return boolean
      */
     public function canEvaluate($context)
