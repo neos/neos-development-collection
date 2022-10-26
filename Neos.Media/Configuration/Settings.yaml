@@ -37,6 +37,8 @@ Neos:
       modelMappingStrategy:
         default: Neos\Media\Domain\Model\Document
         patterns:
+          '[image/x-icon]':
+            className: Neos\Media\Domain\Model\Document
           '[image/.*]':
             className: Neos\Media\Domain\Model\Image
           '[audio/.*]':
@@ -117,4 +119,3 @@ Neos:
           options:
             namespaces:
               neos.media: Neos\Media\ViewHelpers
-
