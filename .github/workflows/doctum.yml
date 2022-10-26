@@ -1,0 +1,49 @@
+name: Build API documentation
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ '[0-9]+.[0-9]' ]
+
+jobs:
+  build-api-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build API documentation
+        uses: sudo-bot/action-doctum@v5
+        with:
+          config-file: .doctum.php
+          method: "update"
+          # use of --only-version fixes branch name in "View source" links to GitHub
+          cli-args: "--output-format=github --no-ansi --no-progress --ignore-parse-errors --only-version=${{ github.ref_name }}"
+
+      - name: Check out documentation site
+        uses: actions/checkout@v3
+        with:
+          repository: neos/neos.github.io
+          path: docs-site
+
+      - name: Move rendered docs to site
+        run: |
+          rm -rf docs-site/neos/${{ github.ref_name }}
+          mkdir -p docs-site/neos/${{ github.ref_name }}
+          mv build/* docs-site/neos/${{ github.ref_name }}/
+
+      - name: Commit update
+        run: |
+          cd docs-site
+          git config --local --unset-all "http.https://github.com/.extraheader"
+          git config --global user.email "ops@neos.io"
+          git config --global user.name "Neos Bot"
+          git add .
+          git commit -m "TASK: Update API docs from ${{ github.ref_name }}"
+
+      - name: Push to git
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.NEOS_BOT_TOKEN }}
+          repository: neos/neos.github.io
+          directory: docs-site
+          branch: main
