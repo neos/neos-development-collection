@@ -1,0 +1,5 @@
+prototype(Neos.Fusion:Join) {
+  @class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
+  @sortProperties = true
+  @glue = ''
+}

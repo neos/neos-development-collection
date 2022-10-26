@@ -1,0 +1,12 @@
+# These are globally applied cache identifiers.
+# If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:DataStructure)
+# they will be rendered as this prototype, which means everything in here is added to ALL cached
+# Fusion parts.
+# The baseUri contains the protocol (http/https), domain and port.
+#
+# WARNING: Do not delete this prototype, it is used inside of \Neos\Fusion\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.
+#
+prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStructure) {
+  format = ${request.format}
+  baseUri = ${String.toString(BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(request.httpRequest))}
+}

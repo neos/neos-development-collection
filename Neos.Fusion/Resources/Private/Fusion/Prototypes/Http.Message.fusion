@@ -1,0 +1,19 @@
+# Render an HTTP message (response)
+#
+# This is a convenient base prototype for rendering documents.
+#
+# Usage:
+# page = Neos.Fusion:Http.Message {
+#   httpResponseHead {
+#     statusCode = 404
+#     headers.Content-Type = 'application/json'
+#   }
+# }
+#
+#
+prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Join) {
+  @class = 'Neos\\Fusion\\FusionObjects\\HttpResponseImplementation'
+  @sortProperties = true
+  httpResponseHead = Neos.Fusion:Http.ResponseHead
+  httpResponseHead.@position = 'start 1000'
+}

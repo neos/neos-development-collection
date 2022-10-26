@@ -27,7 +27,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @api
  */
-class Parser implements ParserInterface
+class Parser
 {
     /**
      * Reserved parse tree keys for internal usage.

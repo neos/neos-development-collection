@@ -24,6 +24,8 @@ final class MenuItem
      */
     protected array $children;
 
+    protected ?string $uri;
+
     /**
      * @param array<int,MenuItem> $children
      */
@@ -32,13 +34,15 @@ final class MenuItem
         ?MenuItemState $state = null,
         ?string $label = null,
         int $menuLevel = 1,
-        array $children = []
+        array $children = [],
+        string $uri = null
     ) {
         $this->node = $node;
         $this->state = $state;
         $this->label = $label;
         $this->menuLevel = $menuLevel;
         $this->children = $children;
+        $this->uri = $uri;
     }
 
     public function getNode(): Node
@@ -76,5 +80,10 @@ final class MenuItem
     public function getSubItems(): array
     {
         return $this->getChildren();
+    }
+
+    public function getUri(): ?string
+    {
+        return $this->uri;
     }
 }

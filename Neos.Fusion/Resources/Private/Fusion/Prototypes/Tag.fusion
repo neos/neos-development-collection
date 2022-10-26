@@ -1,0 +1,19 @@
+# Renders an HTML tag
+#
+# Usage:
+# tag = Neos.Fusion:Tag {
+#   tagName = 'h1'
+#   attributes = {
+#     class = 'some-class'
+#   }
+# }
+#
+prototype(Neos.Fusion:Tag) {
+  @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
+  attributes = Neos.Fusion:DataStructure {
+    @sortProperties = false
+  }
+  omitClosingTag = false
+  selfClosingTag = false
+  allowEmptyAttributes = true
+}

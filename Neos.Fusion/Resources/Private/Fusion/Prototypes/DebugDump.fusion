@@ -1,0 +1,5 @@
+prototype(Neos.Fusion:DebugDump) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DebugDumpImplementation'
+  value = ${value}
+  enabled = true
+}

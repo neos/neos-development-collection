@@ -42,6 +42,15 @@ class ProcessorTest extends AbstractFusionObjectTest
     }
 
     /**
+     * https://github.com/neos/neos-development-collection/pull/3847
+     * @test
+     */
+    public function plainValueOverriddenByPlainValueWorks()
+    {
+        $this->assertFusionPath('foo', 'processors/newSyntax/basicProcessor/plainValueOverriddenByPlainValue');
+    }
+
+    /**
      * Data Provider for processorsCanBeUnset
      *
      * @return array
