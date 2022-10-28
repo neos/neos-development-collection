@@ -1425,6 +1425,28 @@ Render a human-readable description for the passed $dimensions
 
 
 
+.. _`Eel Helpers Reference: Neos.BackendUser`:
+
+Neos.BackendUser
+--------------
+
+BackendUser helper for translations in the backend
+
+Implemented in: ``Neos\Neos\Fusion\Helper\BackendUserHelper``
+
+Neos.BackendUser.interfaceLanguage()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The interface language the user selected
+Falls back to the default language defined in the settings
+
+**Return** (string)
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Neos.Seo.Image`:
 
 Neos.Seo.Image

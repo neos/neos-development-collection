@@ -16,28 +16,29 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Service\UserService;
 
 /**
- * BackendUser helper for translations in backend.
+ * BackendUser helper for translations in the backend
  */
 class BackendUserHelper implements ProtectedContextAwareInterface
 {
-    private const FROM_EEL_DIRECTLY_CALLABLE_METHODS = [];
-
     #[Flow\Inject(lazy: false)]
     protected UserService $userService;
 
     /**
-     * Returns the interface language the user selected. Will fall back to the default language defined in settings.
+     * The interface language the user selected
+     * Falls back to the default language defined in the settings
      *
-     * @example Neos.BackendUser.interfaceLanguage
+     * Example::
+     *
+     *     Translation.id("mh").locale(Neos.BackendUser.interfaceLanguage()).translate()
+     *
      */
-    public function getInterfaceLanguage(): string
+    public function interfaceLanguage(): string
     {
         return $this->userService->getInterfaceLanguage();
     }
 
     public function allowsCallOfMethod($methodName)
     {
-        // checks if method is allowed to be called from EEL directly or should use property access notation
-        return in_array($methodName, self::FROM_EEL_DIRECTLY_CALLABLE_METHODS, true);
+        return true;
     }
 }
