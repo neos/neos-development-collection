@@ -72,7 +72,7 @@ class AssetCollectionController extends ActionController
     public function createAction($title)
     {
         $this->assetCollectionRepository->add(new AssetCollection($title));
-        $this->addFlashMessage('collectionHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($title)]);
+        $this->addFlashMessage('collectionHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($title, '%', '%%'))]);
         $this->redirectToAssetIndex();
     }
 
@@ -95,7 +95,7 @@ class AssetCollectionController extends ActionController
     public function updateAction(AssetCollection $assetCollection)
     {
         $this->assetCollectionRepository->update($assetCollection);
-        $this->addFlashMessage('collectionHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
+        $this->addFlashMessage('collectionHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($assetCollection->getTitle(), '%', '%%'))]);
         $this->redirectToAssetIndex();
     }
 
@@ -114,7 +114,7 @@ class AssetCollectionController extends ActionController
             $this->browserState->set('activeAssetCollection', null);
         }
         $this->assetCollectionRepository->remove($assetCollection);
-        $this->addFlashMessage('collectionHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
+        $this->addFlashMessage('collectionHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($assetCollection->getTitle(), '%', '%%'))]);
         $this->redirectToAssetIndex();
     }
 

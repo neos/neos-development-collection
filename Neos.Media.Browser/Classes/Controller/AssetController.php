@@ -490,7 +490,7 @@ class AssetController extends ActionController
     public function updateAction(Asset $asset): void
     {
         $this->assetRepository->update($asset);
-        $this->addFlashMessage('assetHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addFlashMessage('assetHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($asset->getLabel(), '%', '%%'))]);
         $this->redirectToIndex();
     }
 
@@ -521,7 +521,7 @@ class AssetController extends ActionController
         if ($this->persistenceManager->isNewObject($asset)) {
             $this->assetRepository->add($asset);
         }
-        $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($asset->getLabel(), '%', '%%'))]);
         $this->redirectToIndex();
     }
 
@@ -562,7 +562,7 @@ class AssetController extends ActionController
             $this->assetCollectionRepository->update($assetCollection);
         }
 
-        $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($asset->getLabel(), '%', '%%'))]);
         $this->response->setStatusCode(201);
         return '';
     }
@@ -623,7 +623,7 @@ class AssetController extends ActionController
         }
 
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
+        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($asset->getLabel(), '%', '%%'))], 1412375050);
         $this->redirectToIndex();
     }
 
@@ -663,7 +663,7 @@ class AssetController extends ActionController
         }
 
         $assetLabel = (method_exists($asset, 'getLabel') ? $asset->getLabel() : $resource->getFilename());
-        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($assetLabel)]);
+        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($assetLabel, '%', '%%'))]);
         $this->redirectToIndex();
     }
 

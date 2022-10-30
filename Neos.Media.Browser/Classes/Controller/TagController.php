@@ -83,7 +83,7 @@ class TagController extends ActionController
             if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($tag)) {
                 $this->assetCollectionRepository->update($assetCollection);
             }
-            $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
+            $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($label, '%', '%%'))]);
         }
         $this->redirectToAssetIndex();
     }
@@ -107,7 +107,7 @@ class TagController extends ActionController
     public function updateAction(Tag $tag)
     {
         $this->tagRepository->update($tag);
-        $this->addFlashMessage('tagHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
+        $this->addFlashMessage('tagHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($tag->getLabel(), '%', '%%'))]);
         $this->redirectToAssetIndex();
     }
 
@@ -123,7 +123,7 @@ class TagController extends ActionController
             $this->assetRepository->update($asset);
         }
         $this->tagRepository->remove($tag);
-        $this->addFlashMessage('tagHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
+        $this->addFlashMessage('tagHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars(str_replace($tag->getLabel(), '%', '%%'))]);
         $this->redirectToAssetIndex();
     }
 
