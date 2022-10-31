@@ -552,7 +552,7 @@ Neos:
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
-      Neos.BackendUser: Neos\Neos\Fusion\Helper\BackendUserHelper
+      Neos.Backend: Neos\Neos\Fusion\Helper\BackendHelper
 
   # DocTools is a tool used by Neos Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.

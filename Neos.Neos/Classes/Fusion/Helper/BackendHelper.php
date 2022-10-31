@@ -18,18 +18,18 @@ use Neos\Neos\Service\UserService;
 /**
  * BackendUser helper for translations in the backend
  */
-class BackendUserHelper implements ProtectedContextAwareInterface
+class BackendHelper implements ProtectedContextAwareInterface
 {
     #[Flow\Inject(lazy: false)]
     protected UserService $userService;
 
     /**
-     * The interface language the user selected
-     * Falls back to the default language defined in the settings
+     * The interface language the user selected or the default language defined in the settings
+     * Formatted as {@see \Neos\Flow\I18n\Locale} identifier, eg "de", "en", ...
      *
      * Example::
      *
-     *     Translation.id("mh").locale(Neos.BackendUser.interfaceLanguage()).translate()
+     *     Translation.id("mh").locale(Neos.Backend.interfaceLanguage()).translate()
      *
      */
     public function interfaceLanguage(): string
