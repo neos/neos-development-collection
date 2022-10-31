@@ -69,7 +69,7 @@ class AssetController extends ActionController
 {
     use CreateContentContextTrait;
     use BackendUserTranslationTrait;
-    use AddFlashMessageTrait;
+    use AddTranslatedFlashMessageTrait;
 
     protected const TAG_GIVEN = 0;
     protected const TAG_ALL = 1;
@@ -490,7 +490,7 @@ class AssetController extends ActionController
     public function updateAction(Asset $asset): void
     {
         $this->assetRepository->update($asset);
-        $this->addFlashMessage('assetHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addTranslatedFlashMessage('assetHasBeenUpdated', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
         $this->redirectToIndex();
     }
 
@@ -521,7 +521,7 @@ class AssetController extends ActionController
         if ($this->persistenceManager->isNewObject($asset)) {
             $this->assetRepository->add($asset);
         }
-        $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addTranslatedFlashMessage('assetHasBeenAdded', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
         $this->redirectToIndex();
     }
 
@@ -562,7 +562,7 @@ class AssetController extends ActionController
             $this->assetCollectionRepository->update($assetCollection);
         }
 
-        $this->addFlashMessage('assetHasBeenAdded', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
+        $this->addTranslatedFlashMessage('assetHasBeenAdded', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())]);
         $this->response->setStatusCode(201);
         return '';
     }
@@ -618,12 +618,17 @@ class AssetController extends ActionController
     {
         $usageReferences = $this->assetService->getUsageReferences($asset);
         if (count($usageReferences) > 0) {
-            $this->addFlashMessage('deleteRelatedNodes', '', Message::SEVERITY_WARNING, [], 1412422767);
+            $this->addTranslatedFlashMessage('deleteRelatedNodes', Message::SEVERITY_WARNING, [], 1412422767);
             $this->redirectToIndex();
         }
 
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1412375050);
+        $this->addTranslatedFlashMessage(
+            'assetHasBeenDeleted',
+            Message::SEVERITY_OK,
+            [htmlspecialchars($asset->getLabel())],
+            1412375050
+        );
         $this->redirectToIndex();
     }
 
@@ -644,9 +649,8 @@ class AssetController extends ActionController
 
         // Prevent replacement of image, audio and video by a different mimetype because of possible rendering issues.
         if ($sourceMediaType['type'] !== $replacementMediaType['type'] && in_array($sourceMediaType['type'], ['image', 'audio', 'video'])) {
-            $this->addFlashMessage(
+            $this->addTranslatedFlashMessage(
                 'resourceCanOnlyBeReplacedBySimilarResource',
-                '',
                 Message::SEVERITY_WARNING,
                 [$sourceMediaType['type'], $resource->getMediaType()],
                 1462308179
@@ -657,13 +661,13 @@ class AssetController extends ActionController
         try {
             $this->assetService->replaceAssetResource($asset, $resource, $options);
         } catch (\Exception $exception) {
-            $this->addFlashMessage('couldNotReplaceAsset', '', Message::SEVERITY_OK, [], 1463472606);
+            $this->addTranslatedFlashMessage('couldNotReplaceAsset', Message::SEVERITY_OK, [], 1463472606);
             $this->forwardToReferringRequest();
             return;
         }
 
         $assetLabel = (method_exists($asset, 'getLabel') ? $asset->getLabel() : $resource->getFilename());
-        $this->addFlashMessage('assetHasBeenReplaced', '', Message::SEVERITY_OK, [htmlspecialchars($assetLabel)]);
+        $this->addTranslatedFlashMessage('assetHasBeenReplaced', Message::SEVERITY_OK, [htmlspecialchars($assetLabel)]);
         $this->redirectToIndex();
     }
 
