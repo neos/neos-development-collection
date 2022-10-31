@@ -623,7 +623,7 @@ class AssetController extends ActionController
         }
 
         $this->assetRepository->remove($asset);
-        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [$asset->getLabel()], 1412375050);
+        $this->addFlashMessage('assetHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($asset->getLabel())], 1412375050);
         $this->redirectToIndex();
     }
 
