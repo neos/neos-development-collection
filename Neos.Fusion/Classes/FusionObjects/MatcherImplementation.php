@@ -17,45 +17,16 @@ namespace Neos\Fusion\FusionObjects;
  */
 class MatcherImplementation extends RendererImplementation
 {
-    /**
-     * @return boolean
-     */
-    public function getCondition()
+    public function getCondition(): bool
     {
         return (boolean)$this->fusionValue('condition');
     }
 
-    /**
-     * The type to render if condition is true
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->fusionValue('type');
-    }
-
-    /**
-     * A path to a Fusion configuration
-     *
-     * @return string
-     */
-    public function getRenderPath()
-    {
-        return $this->fusionValue('renderPath');
-    }
-
-    /**
-     * If $condition matches, render $type and return it. Else, return MATCH_NORESULT.
-     *
-     * @return mixed
-     */
     public function evaluate()
     {
-        if ($this->getCondition()) {
-            return parent::evaluate();
-        } else {
+        if ($this->getCondition() === false) {
             return CaseImplementation::MATCH_NORESULT;
         }
+        return parent::evaluate();
     }
 }

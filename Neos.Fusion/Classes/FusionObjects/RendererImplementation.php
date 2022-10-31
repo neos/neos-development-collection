@@ -20,51 +20,45 @@ namespace Neos\Fusion\FusionObjects;
  */
 class RendererImplementation extends AbstractFusionObject
 {
-
-    /**
-     * The type to render if condition is true
-     *
-     * @return string
-     */
-    public function getType()
+    public function getRenderer(): mixed
     {
-        return $this->fusionValue('type');
+        return $this->fusionValue('renderer');
     }
 
-    /**
-     * A path to a Fusion configuration
-     *
-     * @return string
-     */
-    public function getRenderPath()
+    public function getRenderPath(): ?string
     {
         return $this->fusionValue('renderPath');
     }
 
-    /**
-     * Render $type and return it.
-     *
-     * @return mixed
-     */
+    public function getType(): ?string
+    {
+        return $this->fusionValue('type');
+    }
+
+    private function canRenderWithRenderer()
+    {
+        return $this->runtime->canRender($this->path . '/renderer');
+    }
+
     public function evaluate()
     {
-        $rendererPath = sprintf('%s/renderer', $this->path);
-        $canRenderWithRenderer = $this->runtime->canRender($rendererPath);
-        $renderPath = $this->getRenderPath();
+        if ($this->canRenderWithRenderer()) {
+            return $this->getRenderer();
+        }
 
-        if ($canRenderWithRenderer) {
-            $renderedElement = $this->runtime->evaluate($rendererPath, $this);
-        } elseif ($renderPath !== null) {
-            if (substr($renderPath, 0, 1) === '/') {
-                $renderedElement = $this->runtime->render(substr($renderPath, 1));
-            } else {
-                $renderedElement = $this->runtime->render($this->path . '/' . str_replace('.', '/', $renderPath));
+        if ($this->getRenderPath() !== null) {
+            if (str_starts_with($this->getRenderPath(), '/')) {
+                // absolute path
+                return $this->runtime->render(substr($this->getRenderPath(), 1));
             }
-        } else {
-            $renderedElement = $this->runtime->render(
-                sprintf('%s/element<%s>', $this->path, $this->getType())
+            // relative path
+            return $this->runtime->render(
+                $this->path . '/' . str_replace('.', '/', $this->getRenderPath())
             );
         }
-        return $renderedElement;
+
+        return $this->runtime->render(
+            $this->path . '/element<' . $this->getType() . '>'
+        );
     }
 }
