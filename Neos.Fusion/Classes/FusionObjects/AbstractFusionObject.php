@@ -85,10 +85,7 @@ abstract class AbstractFusionObject implements \ArrayAccess
     protected function fusionValue($path)
     {
         $fullPath = $this->path . '/' . $path;
-        if (!isset($this->fusionValueCache[$fullPath])) {
-            $this->fusionValueCache[$fullPath] = $this->runtime->evaluate($fullPath, $this);
-        }
-        return $this->fusionValueCache[$fullPath];
+        return $this->fusionValueCache[$fullPath] ??= $this->runtime->evaluate($fullPath, $this);
     }
 
     /**
