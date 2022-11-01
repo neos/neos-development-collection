@@ -55,6 +55,7 @@ class ComponentImplementation extends AbstractArrayFusionObject
     protected function prepare(array $context): array
     {
         $context['props'] = $this->getProps($context);
+        $context['computed'] = $this->getComputedProps($context);
         return $context;
     }
 
@@ -69,6 +70,17 @@ class ComponentImplementation extends AbstractArrayFusionObject
         $sortedChildFusionKeys = $this->preparePropertyKeys($this->properties, $this->ignoreProperties);
         $props = new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $context);
         return $props;
+    }
+
+    protected function getComputedProps(array $context): ?\ArrayAccess
+    {
+        $this->runtime->pushContextArray($context);
+
+        $computed = $this->runtime->evaluate($this->path . '/__meta/computed<Neos.Fusion:ComponentComputedProps>');
+
+        $this->runtime->popContext();
+
+        return $computed;
     }
 
     /**
