@@ -1,5 +1,10 @@
 prototype(Neos.Fusion:Component) {
   @class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
   @sortProperties = false
+  @computed {
+  }
   renderer = null
 }
+
+// internal
+prototype(Neos.Fusion:ComponentComputedProps).@class = 'Neos\\Fusion\\FusionObjects\\ComponentComputedPropsImplementation'

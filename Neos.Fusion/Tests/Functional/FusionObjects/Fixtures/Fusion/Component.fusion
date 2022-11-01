@@ -1,4 +1,6 @@
 prototype(Neos.Fusion:Component).@class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+prototype(Neos.Fusion:ComponentComputedProps).@class = 'Neos\\Fusion\\FusionObjects\\ComponentComputedPropsImplementation'
+
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
@@ -68,4 +70,30 @@ component.wrapperRenderer = Neos.Fusion:Component {
 
     renderer = ${props.content}
   }
+}
+
+
+component.computed = Neos.Fusion:Component {
+  a = 'Moin'
+
+  @computed {
+    b = ${props.a + '!'}
+    c = Neos.Fusion:Tag {
+      content = ${props.a}
+    }
+  }
+
+  renderer = ${props.a + computed.b + computed.c}
+}
+
+component.computedLazy = Neos.Fusion:Component {
+  a = 'Moin'
+  x = Neos.Fusion:NotImplemented
+
+  @computed {
+    b = ${props.a + '!'}
+    y = Neos.Fusion:NotImplemented
+  }
+
+  renderer = ${props.a + computed.b}
 }
