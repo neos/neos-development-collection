@@ -44,7 +44,7 @@ use Neos\ContentRepository\Utility;
  *      @ORM\Index(name="parentpath",columns={"parentpath"},options={"lengths": {255}}),
  *      @ORM\Index(name="identifierindex",columns={"identifier"}),
  *      @ORM\Index(name="nodetypeindex",columns={"nodetype"}),
- *      @ORM\Index(name="pathindex",columns={"path"},options={"lengths": {255}})
+ *      @ORM\Index(name="path",columns={"path"},options={"lengths": {255}})
  *    }
  * )
  */

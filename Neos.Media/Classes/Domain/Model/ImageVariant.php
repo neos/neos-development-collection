@@ -88,6 +88,7 @@ class ImageVariant extends Asset implements AssetVariantInterface, ImageInterfac
         $this->thumbnails = new ArrayCollection();
         $this->adjustments = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->assetCollections = new ArrayCollection();
         try {
             $this->lastModified = new \DateTime();
         } catch (\Exception $e) {

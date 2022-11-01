@@ -20,7 +20,7 @@ namespace Neos\Fusion\FusionObjects;
  * //fusionPath content When used as process the console script will be appended to it.
  * @api
  */
-class DebugConsoleImplementation extends DataStructureImplementation
+class DebugConsoleImplementation extends AbstractArrayFusionObject
 {
     protected $ignoreProperties = ['__meta', 'title', 'method', 'value', 'content'];
 
@@ -56,7 +56,7 @@ class DebugConsoleImplementation extends DataStructureImplementation
         $method = $this->getMethod();
         $content = $this->getContent();
 
-        $arguments = parent::evaluate();
+        $arguments = $this->evaluateNestedProperties();
         array_unshift($arguments, $this->getValue());
 
         if ($title) {

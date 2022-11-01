@@ -59,7 +59,6 @@ class NodeTypeSchemaBuilder
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
-                $this->flattenAlohaFormatOptions($configuration);
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
             }
@@ -72,39 +71,6 @@ class NodeTypeSchemaBuilder
         }
 
         return $schema;
-    }
-
-    /**
-     * In order to allow unsetting options via the YAML settings merging, the
-     * formatting options can be set via 'option': true, however, the frontend
-     * schema expects a flattened plain numeric array. This methods adjust the setting
-     * accordingly.
-     *
-     * @param array $options The options array, passed by reference
-     * @return void
-     */
-    protected function flattenAlohaFormatOptions(array &$options)
-    {
-        if (isset($options['properties'])) {
-            foreach (array_keys($options['properties']) as $propertyName) {
-                if (isset($options['properties'][$propertyName]['ui']['aloha'])) {
-                    foreach ($options['properties'][$propertyName]['ui']['aloha'] as $formatGroup => $settings) {
-                        if (!is_array($settings) || in_array($formatGroup, ['formatlesspaste'])) {
-                            continue;
-                        }
-                        $flattenedSettings = [];
-                        foreach ($settings as $key => $option) {
-                            if (is_numeric($key) && is_string($option)) {
-                                $flattenedSettings[] = $option;
-                            } elseif ($option === true) {
-                                $flattenedSettings[] = $key;
-                            }
-                        }
-                        $options['properties'][$propertyName]['ui']['aloha'][$formatGroup] = $flattenedSettings;
-                    }
-                }
-            }
-        }
     }
 
     /**

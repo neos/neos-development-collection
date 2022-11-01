@@ -575,18 +575,19 @@ class FrontendNodeRoutePartHandlerTest extends UnitTestCase
 
         $mockSubNode = $this->buildSubNode($mockContext->mockSiteNode, 'home');
         $mockSubNode->mockProperties['uriPathSegment'] = 'home';
+        $mockSubNode->method('getContextPath')->willReturn('/sites/examplecom/home@user-johndoe');
 
         // resolveValue() will use $contentContext to retrieve the resolved node:
-        $mockContext->expects(self::any())->method('getNode')->will(self::returnCallback(function ($nodePath) use ($mockSubNode) {
+        $mockContext->method('getNode')->willReturnCallback(function ($nodePath) use ($mockSubNode) {
             return ($nodePath === '/sites/examplecom/home') ? $mockSubNode : null;
-        }));
+        });
 
         $that = $this;
-        $this->mockContextFactory->expects(self::atLeastOnce())->method('create')->will(self::returnCallback(function ($contextProperties) use ($that, $mockContext) {
+        $this->mockContextFactory->expects(self::atLeastOnce())->method('create')->willReturnCallback(function ($contextProperties) use ($that, $mockContext) {
             // The important assertion:
             $that->assertSame('user-johndoe', $contextProperties['workspaceName']);
             return $mockContext;
-        }));
+        });
 
         $routeValues = ['node' => '/sites/examplecom/home@user-johndoe'];
         $resolveResult = $this->resolveForHost($routeValues, 'localhost');

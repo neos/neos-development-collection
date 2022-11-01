@@ -1,6 +1,6 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
 
-Neos.Neos.Module.Management.HistoryController.index = Template {
+Neos.Neos.Module.Management.HistoryController.index = Neos.Fusion:Template {
   templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
   eventsByDate = ${eventsByDate}
   nextPage = ${nextPage}
@@ -8,7 +8,7 @@ Neos.Neos.Module.Management.HistoryController.index = Template {
   eventRenderer = Neos.Neos:History.EventRenderer
 }
 
-prototype(Neos.Neos:History.EventRenderer) < prototype(Case) {
+prototype(Neos.Neos:History.EventRenderer) < prototype(Neos.Fusion:Case) {
   nodeEvent {
     condition = ${event.eventType == 'Node.Published'}
     type = 'Neos.Neos:History.NodeEventRenderer'
@@ -28,15 +28,15 @@ prototype(Neos.Neos:History.EventRenderer) < prototype(Case) {
 # Node events
 #
 
-prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Array) {
+prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Neos.Fusion:Array) {
   @context.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
   @context.contentEventsByType = ${Neos.Array.groupBy(Neos.Array.filterNegated(event.childEvents, 'documentEvent'), 'eventType')}
 
-  documentEvents = Collection {
+  documentEvents = Neos.Fusion:Collection {
     collection = ${documentEventsByType}
     itemName = 'eventsOfMatchedType'
 
-    itemRenderer = Case {
+    itemRenderer = Neos.Fusion:Case {
       default {
         condition = true
         type = ${'Neos.Neos:History.PublishedNode.' + Array.first(eventsOfMatchedType).eventType}
@@ -50,18 +50,18 @@ prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Array) {
   }
 }
 
-prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) < prototype(Template) {
+prototype(Neos.Neos:History.PublishedNode.AbstractSubEvent) < prototype(Neos.Fusion:Template) {
   templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
   sectionName = 'eventElement'
 
   subEventType = ${Array.first(eventsOfMatchedType).eventType}
   event = ${event}
-  linkedNode = Template {
+  linkedNode = Neos.Fusion:Template {
     templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/NodeLink.html'
     event = ${event}
     @process.trim = ${String.trim(value)}
   }
-  user = Template {
+  user = Neos.Fusion:Template {
     templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
     event = ${event}
     @process.trim = ${String.trim(value)}
@@ -117,11 +117,11 @@ prototype(Neos.Neos:History.PublishedNode.MissingEvent) < prototype(Neos.Neos:Hi
 # Account events
 #
 
-prototype(Neos.Neos:History.AbstractAccountEvent) < prototype(Template) {
+prototype(Neos.Neos:History.AbstractAccountEvent) < prototype(Neos.Fusion:Template) {
   templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/Index.html'
   sectionName = 'eventElement'
 
-  user = Template {
+  user = Neos.Fusion:Template {
     templatePath = 'resource://Neos.Neos/Private/Templates/Module/Management/History/User.html'
     event = ${event}
   }

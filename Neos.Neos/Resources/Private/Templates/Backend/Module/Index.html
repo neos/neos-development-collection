@@ -37,10 +37,6 @@
 	</script>
 
 	<link
-		rel="neos-vieschema"
-		href="{f:uri.action(action: 'vieSchema', controller: 'Backend\Schema', package: 'Neos.Neos', absolute: true, arguments: {version: '{neos:backend.configurationCacheVersion()}'})}"
-	/>
-	<link
 		rel="neos-xliff"
 		href="{f:uri.action(action: 'xliffAsJson', arguments: {locale: '{neos:backend.interfaceLanguage()}', version: '{neos:backend.xliffCacheVersion()}'}, controller: 'Backend\Backend', package: 'Neos.Neos', absolute: true) -> f:format.raw()}"
 	/>

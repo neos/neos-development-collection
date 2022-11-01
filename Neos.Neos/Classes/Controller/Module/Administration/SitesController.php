@@ -139,7 +139,7 @@ class SitesController extends AbstractModuleController
     public function indexAction()
     {
         $sitePackagesAndSites = [];
-        foreach ($this->packageManager->getFilteredPackages('available', null, 'neos-site') as $sitePackageKey => $sitePackage) {
+        foreach ($this->packageManager->getFilteredPackages('available', 'neos-site') as $sitePackageKey => $sitePackage) {
             /** @var PackageInterface $sitePackage */
             $sitePackagesAndSites[strtolower(str_replace('.', '_', $sitePackageKey))] = ['package' => $sitePackage, 'packageKey' => $sitePackage->getPackageKey()];
         }
@@ -233,7 +233,7 @@ class SitesController extends AbstractModuleController
      */
     public function newSiteAction(Site $site = null)
     {
-        $sitePackages = $this->packageManager->getFilteredPackages('available', null, 'neos-site');
+        $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
         $documentNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.Neos:Document', false);
 
         $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');

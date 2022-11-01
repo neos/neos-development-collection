@@ -109,7 +109,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $this->convertUrisImplementation->_set('runtime', $this->mockRuntime);
     }
 
-    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false, $setNoOpener = true)
+    protected function addValueExpectation($value, $node = null, $forceConversion = false, $externalLinkTarget = null, $resourceLinkTarget = null, $absolute = false, $setNoOpener = true, $setExternal = true)
     {
         $this->convertUrisImplementation
             ->expects(self::atLeastOnce())
@@ -121,7 +121,8 @@ class ConvertUrisImplementationTest extends UnitTestCase
                 ['externalLinkTarget', $externalLinkTarget],
                 ['resourceLinkTarget', $resourceLinkTarget],
                 ['absolute', $absolute],
-                ['setNoOpener', $setNoOpener]
+                ['setNoOpener', $setNoOpener],
+                ['setExternal', $setExternal]
             ]));
     }
 
@@ -275,7 +276,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             }
         }));
 
-        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a rel="noopener" target="top" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
+        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a rel="noopener external" target="top" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener external" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }
@@ -303,7 +304,7 @@ class ConvertUrisImplementationTest extends UnitTestCase
             return 'http://localhost/_Resources/01';
         }));
 
-        $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="top" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example2</a> and an external link <a rel="noopener" href="http://www.example.org">example3</a>';
+        $expectedResult = 'This string contains two asset links and an external link: one with a target set <a target="top" href="http://localhost/_Resources/01">example</a> and one without a target <a target="' . $resourceLinkTarget . '" href="http://localhost/_Resources/01">example2</a> and an external link <a rel="noopener external" href="http://www.example.org">example3</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }
@@ -316,6 +317,33 @@ class ConvertUrisImplementationTest extends UnitTestCase
         $value = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
         $this->addValueExpectation($value, null, false, '_blank', null, false, false);
         $expectedResult = 'This string contains an external link: <a href="http://www.example.org">example3</a>';
+        $actualResult = $this->convertUrisImplementation->evaluate();
+        self::assertSame($expectedResult, $actualResult);
+    }
+
+    /**
+     * @test
+     */
+    public function disablingSetExternalWorks()
+    {
+        $nodeIdentifier = 'aeabe76a-551a-495f-a324-ad9a86b2aff7';
+        $externalLinkTarget = '_blank';
+
+        $value = 'This string contains a link to a node: <a href="node://' . $nodeIdentifier . '">node</a> and one to an external url with a target set <a target="top" href="http://www.example.org">example</a> and one without a target <a href="http://www.example.org">example2</a>';
+        $this->addValueExpectation($value, null, false, $externalLinkTarget, null, false, true, false);
+
+        $this->mockWorkspace->expects(self::any())->method('getName')->will(self::returnValue('live'));
+
+        $self = $this;
+        $this->mockLinkingService->expects(self::atLeastOnce())->method('resolveNodeUri')->will(self::returnCallback(function ($nodeUri) use ($self, $nodeIdentifier) {
+            if ($nodeUri === 'node://' . $nodeIdentifier) {
+                return 'http://localhost/uri/01';
+            } else {
+                $self->fail('Unexpected node URI "' . $nodeUri . '"');
+            }
+        }));
+
+        $expectedResult = 'This string contains a link to a node: <a href="http://localhost/uri/01">node</a> and one to an external url with a target set <a rel="noopener" target="top" href="http://www.example.org">example</a> and one without a target <a target="' . $externalLinkTarget . '" rel="noopener" href="http://www.example.org">example2</a>';
         $actualResult = $this->convertUrisImplementation->evaluate();
         self::assertSame($expectedResult, $actualResult);
     }

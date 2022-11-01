@@ -5,31 +5,31 @@
  *
  */
 
-firstObject = Text
+firstObject = Neos.Fusion:Text
 firstObject {
   value = "Go outside. The graphics are AMAZING!"
 }
 
 # The "condensed confinement" syntax is also supported:
-firstObject2 = Text {
+firstObject2 = Neos.Fusion:Text {
   value = "Go outside. The graphics are AMAZING!"
 }
 firstObject3 < firstObject2 {
   value = "Overridden value"
 }
-firstObject4 = Text{
+firstObject4 = Neos.Fusion:Text{
   value = "Ugly syntax with no space works!"
 }
 
 secondObject {
-  subObject = Text
+  subObject = Neos.Fusion:Text
   subObject.value = "27°C and a blue sky."
 }
 
 thirdObject {
   subObject {
     subSubObject {
-      someMessage = Text
+      someMessage = Neos.Fusion:Text
       someMessage.value = "Fully or hard tail?"
     }
     anotherSubSubObject < .subSubObject {

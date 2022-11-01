@@ -128,7 +128,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
     /**
      * Replace the target attribute of link tags in processedContent with the target
      * specified by externalLinkTarget and resourceLinkTarget options.
-     * Additionally set rel="noopener" for external links.
+     * Additionally set rel="noopener external" for external links.
      *
      * @param string $processedContent
      * @return string
@@ -136,13 +136,14 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected function replaceLinkTargets($processedContent)
     {
         $setNoOpener = $this->fusionValue('setNoOpener');
-        $externalLinkTarget = \trim($this->fusionValue('externalLinkTarget'));
-        $resourceLinkTarget = \trim($this->fusionValue('resourceLinkTarget'));
+        $setExternal = $this->fusionValue('setExternal');
+        $externalLinkTarget = \trim((string)$this->fusionValue('externalLinkTarget'));
+        $resourceLinkTarget = \trim((string)$this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = \preg_replace_callback(
             '~<a\s+.*?href="(.*?)".*?>~i',
-            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener) {
+            static function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $setNoOpener, $setExternal) {
                 [$linkText, $linkHref] = $matches;
                 $uriHost = \parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
@@ -151,13 +152,16 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 if ($externalLinkTarget && $externalLinkTarget !== '' && $isExternalLink) {
                     $target = $externalLinkTarget;
                 }
-                if ($resourceLinkTarget && $resourceLinkTarget !== '' && \strpos($linkHref, '_Resources') !== false) {
+                if ($resourceLinkTarget && $resourceLinkTarget !== '' && str_contains($linkHref, '_Resources')) {
                     $target = $resourceLinkTarget;
                 }
                 if ($isExternalLink && $setNoOpener) {
                     $linkText = self::setAttribute('rel', 'noopener', $linkText);
                 }
-                if (is_string($target) && strlen($target) !== 0) {
+                if ($isExternalLink && $setExternal) {
+                    $linkText = self::setAttribute('rel', 'external', $linkText);
+                }
+                if (is_string($target) && $target !== '') {
                     return self::setAttribute('target', $target, $linkText);
                 }
                 return $linkText;

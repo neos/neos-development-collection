@@ -3,7 +3,7 @@
 //
 // Override behavior
 
-foo = Text
+foo = Neos.Fusion:Text
 foo.prop = 'myValue'
 
-foo = Bar
+foo = Neos.Fusion:Bar

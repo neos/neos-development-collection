@@ -2,44 +2,49 @@ prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImpleme
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 processors.newSyntax.basicProcessor {
-  valueWithNestedPlainValue = Value {
+  valueWithNestedPlainValue = Neos.Fusion:Value {
     value = 'Hello'
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
   }
 
-  valueWithNestedEel = Value {
+  valueWithNestedEel = Neos.Fusion:Value {
     value = ${'Hello'}
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
   }
 
-  valueWithNestedFusion = Value {
-    value = Value {
+  valueWithNestedFusion = Neos.Fusion:Value {
+    value = Neos.Fusion:Value {
       value = 'Hello'
     }
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
   }
+
+  plainValueOverriddenByPlainValue = "bar"
+  plainValueOverriddenByPlainValue.@process.replace = "foo"
+  // https://github.com/neos/neos-development-collection/pull/3847#issuecomment-1192941620
+  plainValueOverriddenByPlainValue.@process.replace.@if.1 = true
 }
 
 processors.newSyntax.processorBeforeValue {
-  valueWithNestedPlainValue = Value {
+  valueWithNestedPlainValue = Neos.Fusion:Value {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
     value = 'Hello'
   }
 
-  valueWithNestedEel = Value {
+  valueWithNestedEel = Neos.Fusion:Value {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
     value = ${'Hello'}
   }
 
-  valueWithNestedFusion = Value {
+  valueWithNestedFusion = Neos.Fusion:Value {
     value.@process.2 = ${value + ' foo'}
     value.@process.1 = ${value + ' World'}
-    value = Value {
+    value = Neos.Fusion:Value {
       value = 'Hello'
     }
   }
@@ -48,7 +53,7 @@ processors.newSyntax.processorBeforeValue {
 
 
 processors.newSyntax.extendedSyntaxProcessor {
-  valueWithNestedPlainValue = Value {
+  valueWithNestedPlainValue = Neos.Fusion:Value {
     value = 'Hello'
     value.@process.1 = ${value + ' foo'}
     value.@process.default {
@@ -57,7 +62,7 @@ processors.newSyntax.extendedSyntaxProcessor {
     }
   }
 
-  valueWithNestedEel = Value {
+  valueWithNestedEel = Neos.Fusion:Value {
     value = ${'Hello'}
     value.@process.1 = ${value + ' foo'}
     value.@process.default {
@@ -66,8 +71,8 @@ processors.newSyntax.extendedSyntaxProcessor {
     }
   }
 
-  valueWithNestedFusion = Value {
-    value = Value {
+  valueWithNestedFusion = Neos.Fusion:Value {
+    value = Neos.Fusion:Value {
       value = 'Hello'
     }
     value.@process.1 = ${value + ' foo'}
@@ -109,8 +114,21 @@ processors.newSyntax.unset {
 
 }
 
-processors.newSyntax.usingThisInProcessor = Value {
+processors.newSyntax.usingThisInProcessor = Neos.Fusion:Value {
   value = "my value"
   @process.1 = ${value + this.append}
   append = " append"
+}
+
+// https://github.com/neos/neos-development-collection/issues/3469
+processors.newSyntax.skippedLazyPropsInProcessor = Neos.Fusion:Component {
+  lazyPropValue = "foo"
+
+  lazyPropSkipped = "skip"
+  lazyPropSkipped.@if.1 = false
+
+  renderer = Neos.Fusion:DataStructure {
+    buz = "bar"
+    @process.combine = ${Array.concat(value, Array.filter(props, prop => prop != null))}
+  }
 }

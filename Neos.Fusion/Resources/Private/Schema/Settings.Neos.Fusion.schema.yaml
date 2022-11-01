@@ -17,6 +17,8 @@ properties:
     type: boolean
   enableContentCache:
     type: boolean
+  enableParsePartialsCache:
+    type: boolean
   defaultContext:
     type: dictionary
     additionalProperties:

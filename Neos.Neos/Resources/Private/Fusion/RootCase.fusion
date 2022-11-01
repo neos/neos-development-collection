@@ -1,0 +1,76 @@
+# The root matcher used to start rendering in Neos
+#
+# The default is to use a render path of "page", unless the requested format is not "html"
+# in which case the format string will be used as the render path (with dots replaced by slashes)
+#
+root = Neos.Fusion:Case
+root {
+  shortcut {
+    prototype(Neos.Neos:Page) {
+      body = Neos.Neos:Shortcut
+    }
+
+    @position = 'start'
+    condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
+    type = 'Neos.Neos:Page'
+  }
+
+  editPreviewMode {
+    @position = 'end 9996'
+    possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}
+    condition = ${documentNode.context.inBackend && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
+    renderPath = ${'/' + this.possibleEditPreviewModePath}
+  }
+
+  format {
+    @position = 'end 9997'
+    condition = ${request.format != 'html'}
+    renderPath = ${'/' + String.replace(request.format, '.', '/')}
+  }
+
+  documentType {
+    @position = 'end 9998'
+    condition = Neos.Fusion:CanRender {
+      type = ${documentNode.nodeType.name}
+    }
+    type = ${documentNode.nodeType.name}
+  }
+
+  default {
+    @position = 'end 9999'
+    condition = Neos.Fusion:CanRender {
+      path = '/page'
+    }
+    renderPath = '/page'
+  }
+
+  rawContent {
+    @position = 'end 10000'
+    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.edit}
+    renderPath = '/rawContent'
+  }
+
+  # Fail but create a helpful error message
+  error {
+    @position = 'end 10001'
+    condition = true
+    type = ${documentNode.nodeType.name}
+  }
+
+  @cache {
+    mode = 'cached'
+
+    entryIdentifier {
+      node = ${node}
+    }
+    entryTags {
+      # Whenever the node changes the matched condition could change
+      1 = ${Neos.Caching.nodeTag(documentNode)}
+      # Whenever one of the parent nodes changes the layout could change
+      2 = ${Neos.Caching.nodeTag(q(documentNode).parents())}
+    }
+  }
+
+  # Catch all unhandled exceptions at the root
+  @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\PageHandler'
+}

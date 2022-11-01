@@ -8,12 +8,12 @@
 //  - quote escaping in literals
 
 
-myObject = Text
+myObject = Neos.Fusion:Text
 myObject.value = 'Sorry, we\'re closed -- double quotes like " do not need to be escaped.'
 
 /* A block comment starts here.
 myObject.value = "This should not be parsed."
-*/anotherObject = Text
+*/anotherObject = Neos.Fusion:Text
 anotherObject.value = "And I said: \"Hooray\" -- single quotes like ' do not need to be escaped"
 
 /**
@@ -25,6 +25,6 @@ anotherObject.value = "And I said: \"Hooray\" -- single quotes like ' do not nee
     before and after the comment sign.
  */
 
- kaspersObject = Text
+ kaspersObject = Neos.Fusion:Text
  kaspersObject.value = "The end of this line is a backslash\\"
  kaspersObject.bar = "Here comes \\ a backslash in the middle"

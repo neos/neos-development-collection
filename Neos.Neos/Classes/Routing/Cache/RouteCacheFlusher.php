@@ -77,9 +77,7 @@ class RouteCacheFlusher
      */
     public function commit()
     {
-        foreach ($this->tagsToFlush as $tag) {
-            $this->routeCachingService->flushCachesByTag($tag);
-        }
+        $this->routeCachingService->flushCachesByTags($this->tagsToFlush);
         $this->tagsToFlush = [];
     }
 

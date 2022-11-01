@@ -1,0 +1,9 @@
+prototype(Neos.Fusion:Map) {
+  @class = 'Neos\\Fusion\\FusionObjects\\MapImplementation'
+  items = ${[]}
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+  keyRenderer = null
+  itemRenderer = null
+}

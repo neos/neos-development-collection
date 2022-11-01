@@ -1,9 +1,9 @@
 .. _`Media ViewHelper Reference`:
 
 Media ViewHelper Reference
-==========================
+##########################
 
-This reference was automatically generated from code on 2022-02-06
+This reference was automatically generated from code on 2022-10-27
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -572,6 +572,7 @@ Expected result::
 
 	(depending on the asset; has scaled keeping the aspect ratio)
 	_Resources/Persistent/b29[...]95d.jpeg
+
 
 
 

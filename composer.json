@@ -6,9 +6,9 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "dev-master",
+        "neos/flow-development-collection": "8.2.x-dev",
         "neos/neos-setup": "^1.0",
-        "php": "^7.3 || ^8.0",
+        "php": "^8.0",
         "neos/flow": "*",
         "neos/cache": "*",
         "neos/eel": "*",
@@ -17,7 +17,7 @@
         "neos/utility-files": "*",
         "neos/utility-arrays": "*",
         "doctrine/orm": "^2.6",
-        "gedmo/doctrine-extensions": "^3.0",
+        "gedmo/doctrine-extensions": "^3.5",
         "behat/transliterator": "~1.0",
         "neos/utility-unicode": "*",
         "neos/utility-mediatypes": "*",
@@ -30,7 +30,7 @@
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "dev-master"
+        "neos/kickstarter": "8.2.x-dev"
     },
     "replace": {
         "typo3/typo3cr": "self.version",
@@ -40,6 +40,7 @@
         "typo3/neos": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
+        "neos/cli-setup": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
@@ -55,8 +56,7 @@
         "neos/nodetypes-html": "self.version",
         "neos/nodetypes-navigation": "self.version",
         "neos/nodetypes": "self.version",
-        "neos/site-kickstarter": "self.version",
-        "neos/cli-setup": "self.version"
+        "neos/site-kickstarter": "self.version"
     },
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
@@ -66,6 +66,9 @@
     },
     "autoload": {
         "psr-4": {
+            "Neos\\CliSetup\\": [
+                "Neos.CliSetup/Classes"
+            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/Classes"
             ],
@@ -113,9 +116,6 @@
             ],
             "Neos\\SiteKickstarter\\": [
                 "Neos.SiteKickstarter/Classes"
-            ],
-            "Neos\\CliSetup\\\\": [
-                "Neos.CliSetup/Classes"
             ]
         }
     },

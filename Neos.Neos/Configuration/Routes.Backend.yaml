@@ -56,14 +56,6 @@
     '@action':     'masterPlugins'
 
 -
-  name: 'Schema - VIE'
-  uriPattern: 'schema/vie'
-  defaults:
-    '@controller': 'Backend\Schema'
-    '@action':     'vieSchema'
-  appendExceedingArguments: true
-
--
   name: 'Schema - NodeType'
   uriPattern: 'schema/node-type'
   defaults:
@@ -109,3 +101,33 @@
     '@controller': 'Backend\Backend'
     '@action': 'xliffAsJson'
   appendExceedingArguments: true
+
+-
+  name: 'Impersonate User'
+  uriPattern: 'impersonate/user-change'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@controller': 'Backend\Impersonate'
+    '@action': 'impersonateUserWithResponse'
+    '@format': 'json'
+  httpMethods: ['POST']
+
+-
+  name: 'Impersonate User restore admin'
+  uriPattern: 'impersonate/restore'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@controller': 'Backend\Impersonate'
+    '@action': 'restoreWithResponse'
+    '@format': 'json'
+  httpMethods: ['POST']
+
+-
+  name: 'Impersonate User status'
+  uriPattern: 'impersonate/status'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@controller': 'Backend\Impersonate'
+    '@action': 'status'
+    '@format': 'json'
+  httpMethods: ['GET']

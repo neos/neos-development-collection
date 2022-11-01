@@ -8,7 +8,7 @@ prototype(Neos.Fusion:Tag) {
   selfClosingTag = false
 }
 
-tag.plainAttributes = Tag {
+tag.plainAttributes = Neos.Fusion:Tag {
   tagName = 'link'
   selfClosingTag = true
   attributes {
@@ -17,7 +17,7 @@ tag.plainAttributes = Tag {
   }
 }
 
-tag.objectAttributes = Tag {
+tag.objectAttributes = Neos.Fusion:Tag {
   tagName = 'test'
   selfClosingTag = true
   attributes {
@@ -25,29 +25,29 @@ tag.objectAttributes = Tag {
   }
 }
 
-tag.arrayAttributes = Tag {
+tag.arrayAttributes = Neos.Fusion:Tag {
   attributes {
-    class = DataStructure
+    class = Neos.Fusion:DataStructure
     class.a = 'a'
     class.b = 'b'
   }
 }
 
-tag.fusionAttributes = Tag {
+tag.fusionAttributes = Neos.Fusion:Tag {
   attributes = Neos.Fusion:Attributes {
     key = 'value'
     list = ${['foo', 'bar']}
   }
 }
 
-tag.dataStructureAttributes = Tag {
+tag.dataStructureAttributes = Neos.Fusion:Tag {
   attributes = Neos.Fusion:DataStructure {
     key = 'value'
     list = ${['foo', 'bar']}
   }
 }
 
-tag.booleanAttributes = Tag {
+tag.booleanAttributes = Neos.Fusion:Tag {
   attributes = Neos.Fusion:DataStructure {
     foo = true
     bar = false
@@ -55,7 +55,7 @@ tag.booleanAttributes = Tag {
   }
 }
 
-tag.booleanAttributesAndForbiddenEmptyAttributes = Tag {
+tag.booleanAttributesAndForbiddenEmptyAttributes = Neos.Fusion:Tag {
   allowEmptyAttributes = false
   attributes = Neos.Fusion:DataStructure {
     foo = true
@@ -64,7 +64,7 @@ tag.booleanAttributesAndForbiddenEmptyAttributes = Tag {
   }
 }
 
-tag.booleanAttributesAndAllowEmptyAttributes = Tag {
+tag.booleanAttributesAndAllowEmptyAttributes = Neos.Fusion:Tag {
   allowEmptyAttributes = true
   attributes = Neos.Fusion:DataStructure {
     foo = true
@@ -73,26 +73,26 @@ tag.booleanAttributesAndAllowEmptyAttributes = Tag {
   }
 }
 
-tag.plainContent = Tag {
+tag.plainContent = Neos.Fusion:Tag {
   tagName = 'span'
   content = 'test'
 }
 
-tag.objectContent = Tag {
+tag.objectContent = Neos.Fusion:Tag {
   tagName = 'span'
   content = ${2 + 2}
 }
 
-tag.registeredSelfClosingTag = Tag {
+tag.registeredSelfClosingTag = Neos.Fusion:Tag {
   tagName = 'br'
 }
 
-tag.omitClosingTag = Tag {
+tag.omitClosingTag = Neos.Fusion:Tag {
   tagName = 'test'
   omitClosingTag = true
 }
 
-tag.withThis = Tag {
+tag.withThis = Neos.Fusion:Tag {
   tagName = 'title'
   attributes {
     databar = 'baz'
@@ -101,7 +101,7 @@ tag.withThis = Tag {
   content = 'foo'
 }
 
-tag.withIgnorePropertiesInAttributes = Tag {
+tag.withIgnorePropertiesInAttributes = Neos.Fusion:Tag {
   tagName = 'title'
   attributes {
     @ignoreProperties = ${['databar']}

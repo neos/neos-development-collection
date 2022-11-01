@@ -7,7 +7,7 @@
 test = Neos.Fusion:Text
    test.value= "Hello world!"
 
-secondTest = Text
+secondTest = Neos.Fusion:Text
 secondTest.value = 23
 secondTest.value-with-dash = 42
 secondTest.value:with:colon = 59

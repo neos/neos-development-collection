@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Fusion\Core;
 
 /*
@@ -12,7 +14,6 @@ namespace Neos\Fusion\Core;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Fusion;
 
 /**
@@ -29,17 +30,11 @@ class DslFactory
     protected $dslSettings;
 
     /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManger;
-
-    /**
      * @param string $identifier
      * @return DslInterface
-     * @throws Fusion/Exception
+     * @throws Fusion\Exception
      */
-    public function create($identifier)
+    public function create(string $identifier): DslInterface
     {
         if (isset($this->dslSettings) && is_array($this->dslSettings) && isset($this->dslSettings[$identifier])) {
             $dslObjectName = $this->dslSettings[$identifier];
