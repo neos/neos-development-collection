@@ -1,15 +1,104 @@
 # Neos.Neos.Shortcut is given a representation for editing purposes
 #
-prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Template) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/Shortcut.html'
-
+prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
   targetMode = ${q(node).property('targetMode')}
   firstChildNode = ${q(node).children('[instanceof Neos.Neos:Document]').get(0)}
   target = ${q(node).property('target')}
   targetConverted = ${Neos.Link.hasSupportedScheme(this.target) ? Neos.Link.convertUriToObject(this.target, node) : null}
   targetSchema = ${Neos.Link.getScheme(this.target)}
 
-  node = ${node}
+  i18n = ${I18n.id(null).package('Neos.Neos').source('Main').locale(Neos.Backend.interfaceLanguage())}
+
+  renderer = Neos.Fusion:Match {
+    @subject = ${props.targetMode}
+
+    selectedTarget = Neos.Fusion:Join {
+      @glue = '<br/>'
+      mainMessage = Neos.Fusion:Value {
+        fallback = 'This is a shortcut to a specific target:'
+        value = ${props.i18n.id('shortcut.toSpecificTarget').value(this.fallback).translate()}
+      }
+      targetMessage = Neos.Fusion:Case {
+        targetSelected {
+          condition = ${props.target}
+          renderer = Neos.Fusion:Match {
+            @subject = ${props.targetSchema}
+
+            node = Neos.Fusion:Value {
+              targetUriTag = Neos.Neos:NodeLink {
+                node = ${props.targetConverted}
+              }
+              fallback = afx`
+                Click {this.targetUriTag} to continue to the page.
+              `
+              value = ${props.i18n.id('shortcut.clickToContinueToPage').arguments([this.targetUriTag]).value(this.fallback).translate()}
+            }
+
+            asset = Neos.Fusion:Value {
+              targetUriTag = afx`
+                <a target='_blank'>
+                  <Neos.Fusion:ResourceUri @path='attributes.href' resource={props.targetConverted.resource} />
+                  {props.targetConverted.label}
+                </a>
+              `
+              fallback = afx`
+                Click {this.targetUriTag} to see the file.
+              `
+              value = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).value(this.fallback).translate()}
+            }
+
+            @default = Neos.Fusion:Value {
+              targetUriTag = afx`
+                <a href={props.target} target='_blank'>{props.target}</a>
+              `
+              fallback = afx`
+                Click {this.targetUriTag} to open the link.
+              `
+              value = ${props.i18n.id('shortcut.clickToContinueToExternalUrl').arguments([this.targetUriTag]).value(this.fallback).translate()}
+            }
+          }
+        }
+        noTargetSelected {
+          @position = 'end'
+          condition = true
+          renderer = Neos.Fusion:Value {
+            fallback = 'no target has been selected'
+            value = ${props.i18n.id('shortcut.noTargetSelected').value(this.fallback).translate()}
+          }
+        }
+      }
+    }
+
+    firstChildNode = Neos.Fusion:Value {
+      targetUriTag = Neos.Neos:NodeLink {
+        node = ${props.firstChildNode}
+      }
+      fallback = afx`
+        This is a shortcut to the first child page.<br/>
+        Click {this.targetUriTag} to continue to the page.
+      `
+      value = ${props.i18n.id('shortcut.clickToContinueToFirstChildNode').arguments([this.targetUriTag]).value(this.fallback).translate()}
+    }
+
+    parentNode = Neos.Fusion:Value {
+      targetUriTag = Neos.Neos:NodeLink {
+        node = ${props.node.parent}
+      }
+      fallback = afx`
+        This is a shortcut to the parent page.<br/>
+        Click {this.targetUriTag} to continue to the page.
+      `
+      value = ${props.i18n.id('shortcut.clickToContinueToParentNode').arguments([this.targetUriTag]).value(this.fallback).translate()}
+    }
+  }
+
+  renderer.@process.contentWrap = afx`
+    <div id="neos-shortcut">
+      <p>
+        {value}
+      </p>
+    </div>
+  `
 
   @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
