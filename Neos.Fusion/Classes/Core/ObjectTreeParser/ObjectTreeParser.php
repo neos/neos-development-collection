@@ -63,7 +63,7 @@ class ObjectTreeParser
     public static function parse(FusionSourceCode $fusionCode): FusionFile
     {
         $lexer = new Lexer($fusionCode->getSourceCode());
-        $parser = new self($lexer, $fusionCode->getContextPathAndFilename());
+        $parser = new static($lexer, $fusionCode->getContextPathAndFilename());
         return $parser->parseFusionFile();
     }
 

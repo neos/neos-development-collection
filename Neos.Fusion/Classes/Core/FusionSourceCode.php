@@ -13,13 +13,11 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Fusion;
 
-#[Flow\Proxy(false)]
 class FusionSourceCode
 {
-    private function __construct(
+    protected function __construct(
         private string $sourceCode,
         private ?string $contextPathAndFilename
     ) {
@@ -27,7 +25,7 @@ class FusionSourceCode
 
     public static function fromString(string $string): self
     {
-        return new self($string, null);
+        return new static($string, null);
     }
 
     public static function fromFile(string $fileName): self
@@ -36,7 +34,7 @@ class FusionSourceCode
         if ($sourceCode === false) {
             throw new Fusion\Exception("Trying to read Fusion source code from file, but '$fileName' is not readable.", 1657963790);
         }
-        return new self($sourceCode, $fileName);
+        return new static($sourceCode, $fileName);
     }
 
     /**
@@ -44,7 +42,7 @@ class FusionSourceCode
      */
     public static function fromDangerousPotentiallyDifferingSourceCodeAndContextPath(string $sourceCode, string $contextPathAndFilename): self
     {
-        return new self($sourceCode, $contextPathAndFilename);
+        return new static($sourceCode, $contextPathAndFilename);
     }
 
     public function getSourceCode(): string

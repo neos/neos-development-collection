@@ -13,9 +13,6 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
-
-#[Flow\Proxy(false)]
 class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 {
     private array $fusionCodeCollection;
@@ -28,7 +25,7 @@ class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     /** @param FusionSourceCode[] $fusionCodeCollection */
     public static function fromArray(array $fusionCodeCollection): self
     {
-        return new self(...$fusionCodeCollection);
+        return new static(...$fusionCodeCollection);
     }
 
     /** @return \ArrayIterator<int,FusionSourceCode>|FusionSourceCode[] */
