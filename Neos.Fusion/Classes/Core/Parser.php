@@ -89,19 +89,15 @@ class Parser
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
     {
         // legacy mapping
-        $fusionSourceCodeCollection = new FusionSourceCodeCollection(
-            $contextPathAndFilename === null
-                ? FusionSourceCode::fromString($sourceCode)
-                : FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $contextPathAndFilename)
-        );
+        $fusionSourceCode = $contextPathAndFilename === null
+            ? FusionSourceCode::fromString($sourceCode)
+            : FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $contextPathAndFilename);
 
         $mergedArrayTree = new MergedArrayTree($mergedArrayTreeUntilNow);
 
-        foreach ($fusionSourceCodeCollection as $fusionSourceCode) {
-            $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile(
-                $this->getFusionFile($fusionSourceCode)
-            );
-        }
+        $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile(
+            $this->getFusionFile($fusionSourceCode)
+        );
 
         $mergedArrayTree->buildPrototypeHierarchy();
         return $mergedArrayTree->getTree();
