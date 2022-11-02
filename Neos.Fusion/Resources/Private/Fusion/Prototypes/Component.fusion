@@ -1,5 +1,5 @@
 prototype(Neos.Fusion:Component) {
   @class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
   @sortProperties = false
-  renderer = ''
+  renderer = null
 }
