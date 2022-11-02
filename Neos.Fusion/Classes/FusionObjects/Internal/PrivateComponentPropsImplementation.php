@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\FusionObjects;
+namespace Neos\Fusion\FusionObjects\Internal;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -11,20 +11,16 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 
 /**
  * @internal
  */
-class ComponentComputedPropsImplementation extends AbstractArrayFusionObject
+class PrivateComponentPropsImplementation extends AbstractArrayFusionObject
 {
     /**
-     * @var array
-     */
-    protected $ignoreProperties = ['__meta'];
-
-    /**
-     * @return ?LazyProps
+     * @return ?\ArrayAccess
      */
     public function evaluate()
     {

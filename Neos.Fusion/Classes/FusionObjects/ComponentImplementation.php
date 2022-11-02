@@ -55,7 +55,10 @@ class ComponentImplementation extends AbstractArrayFusionObject
     protected function prepare(array $context): array
     {
         $context['props'] = $this->getProps($context);
-        $context['computed'] = $this->getComputedProps($context);
+        $private = $this->getPrivateProps($context);
+        if ($private !== null) {
+            $context['private'] = $private;
+        }
         return $context;
     }
 
@@ -72,15 +75,15 @@ class ComponentImplementation extends AbstractArrayFusionObject
         return $props;
     }
 
-    protected function getComputedProps(array $context): ?\ArrayAccess
+    protected function getPrivateProps(array $context): ?\ArrayAccess
     {
         $this->runtime->pushContextArray($context);
 
-        $computed = $this->runtime->evaluate($this->path . '/__meta/computed<Neos.Fusion:ComponentComputedProps>');
+        $private = $this->runtime->evaluate($this->path . '/__meta/private<Neos.Fusion:Internal.PrivateComponentProps>');
 
         $this->runtime->popContext();
 
-        return $computed;
+        return $private;
     }
 
     /**
