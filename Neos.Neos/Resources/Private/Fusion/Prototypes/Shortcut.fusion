@@ -72,5 +72,12 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
     </div>
   `
 
+  @cache {
+    mode = "uncached"
+    context {
+      0 = "node"
+    }
+  }
+
   @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }
