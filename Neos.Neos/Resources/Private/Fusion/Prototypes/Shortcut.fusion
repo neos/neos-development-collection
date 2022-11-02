@@ -15,43 +15,38 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
     selectedTarget = Neos.Fusion:Join {
       @glue = '<br/>'
       mainMessage = ${props.i18n.id('shortcut.toSpecificTarget').translate()}
-      targetMessage = Neos.Fusion:Case {
-        targetSelected {
-          condition = ${props.target}
-          renderer = Neos.Fusion:Match {
-            @subject = ${props.targetSchema}
+      targetSelected = Neos.Fusion:Match {
+        @if.isTarget = ${props.target}
 
-            node = Neos.Fusion:Value {
-              targetUriTag = Neos.Neos:NodeLink {
-                node = ${props.targetConverted}
-              }
-              value = ${props.i18n.id('shortcut.clickToContinueToPage').arguments([this.targetUriTag]).translate()}
-            }
+        @subject = ${props.targetSchema}
 
-            asset = Neos.Fusion:Value {
-              targetUriTag = afx`
-                <a target='_blank'>
-                  <Neos.Fusion:ResourceUri @path='attributes.href' resource={props.targetConverted.resource} />
-                  {props.targetConverted.label}
-                </a>
-              `
-              value = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).translate()}
-            }
-
-            @default = Neos.Fusion:Value {
-              targetUriTag = afx`
-                <a href={props.target} target='_blank'>{props.target}</a>
-              `
-              value = ${props.i18n.id('shortcut.clickToContinueToExternalUrl').arguments([this.targetUriTag]).translate()}
-            }
+        node = Neos.Fusion:Value {
+          targetUriTag = Neos.Neos:NodeLink {
+            node = ${props.targetConverted}
           }
+          value = ${props.i18n.id('shortcut.clickToContinueToPage').arguments([this.targetUriTag]).translate()}
         }
-        noTargetSelected {
-          @position = 'end'
-          condition = true
-          renderer = ${props.i18n.id('shortcut.noTargetSelected').translate()}
+
+        asset = Neos.Fusion:Value {
+          targetUriTag = afx`
+            <a target='_blank'>
+              <Neos.Fusion:ResourceUri @path='attributes.href' resource={props.targetConverted.resource} />
+              {props.targetConverted.label}
+            </a>
+          `
+          value = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).translate()}
+        }
+
+        @default = Neos.Fusion:Value {
+          targetUriTag = afx`
+            <a href={props.target} target='_blank'>{props.target}</a>
+          `
+          value = ${props.i18n.id('shortcut.clickToContinueToExternalUrl').arguments([this.targetUriTag]).translate()}
         }
       }
+
+      noTargetSelected = ${props.i18n.id('shortcut.noTargetSelected').translate()}
+      noTargetSelected.@if.isNotTarget = ${!props.target}
     }
 
     firstChildNode = Neos.Fusion:Value {
