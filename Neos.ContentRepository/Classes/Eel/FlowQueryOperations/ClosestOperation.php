@@ -42,7 +42,7 @@ class ClosestOperation extends AbstractOperation
     /**
      * {@inheritdoc}
      *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
+     * @param array $context onto which this operation should be applied (array or array-like object)
      * @return boolean true if the operation can be applied onto the $context, false otherwise
      */
     public function canEvaluate($context)

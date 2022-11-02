@@ -29,7 +29,7 @@ trait CanEvaluateNodeContextTrait
     /**
      * {@inheritdoc}
      *
-     * @param array|\Traversable (or array-like object) $context onto which this operation should be applied
+     * @param array|\Traversable $context onto which this operation should be applied
      */
     public function checkContextForTraversableNodeInterface($context): bool
     {
