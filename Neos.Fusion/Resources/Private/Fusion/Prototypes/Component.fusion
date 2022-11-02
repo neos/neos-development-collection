@@ -3,7 +3,7 @@ prototype(Neos.Fusion:Component) {
   @sortProperties = false
   @private {
   }
-  renderer = ''
+  renderer = null
 }
 
 prototype(Neos.Fusion:Internal.PrivateComponentProps) {

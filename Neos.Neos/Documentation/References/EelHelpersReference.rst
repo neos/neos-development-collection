@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2022-10-27
+This reference was automatically generated from code on 2022-11-02
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1213,6 +1213,30 @@ The input is assumed to be an array or Collection of objects. Groups this input 
 * ``groupingKey`` (string)
 
 **Return** (array)
+
+
+
+
+
+
+.. _`Eel Helpers Reference: Neos.Backend`:
+
+Neos.Backend
+------------
+
+BackendUser helper for translations in the backend
+
+Implemented in: ``Neos\Neos\Fusion\Helper\BackendHelper``
+
+Neos.Backend.interfaceLanguage()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The interface language the user selected or the default language defined in the settings
+Formatted as {@see \Neos\Flow\I18n\Locale} identifier, eg "de", "en", ...
+
+Example::
+
+    Translation.id("mh").locale(Neos.Backend.interfaceLanguage()).translate()
 
 
 
