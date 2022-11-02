@@ -37,26 +37,19 @@ class AfxService
     {
         $parser = new AfxParser(trim($afxCode));
         $ast = $parser->parse();
-        $fusion = self::astNodeListToFusion($ast, $indentation);
-        return $fusion;
+        return self::astNodeListToFusion($ast, $indentation);
     }
 
     protected static function astToFusion(array $ast, string $indentation = ''): string
     {
-        switch ($ast['type']) {
-            case 'expression':
-                return self::astExpressionToFusion($ast['payload']);
-            case 'string':
-                return self::astStringToFusion($ast['payload']);
-            case 'text':
-                return self::astTextToFusion($ast['payload']);
-            case 'boolean':
-                return self::astBooleanToFusion($ast['payload']);
-            case 'node':
-                return self::astNodeToFusion($ast['payload'], $indentation);
-            default:
-                throw new AfxException(sprintf('ast type %s is unknown', $ast['type']));
-        }
+        return match ($ast['type']) {
+            'expression' => self::astExpressionToFusion($ast['payload']),
+            'string' => self::astStringToFusion($ast['payload']),
+            'text' => self::astTextToFusion($ast['payload']),
+            'boolean' => self::astBooleanToFusion($ast['payload']),
+            'node' => self::astNodeToFusion($ast['payload'], $indentation),
+            default => throw new AfxException(sprintf('ast type %s is unknown', $ast['type'])),
+        };
     }
 
     protected static function astBooleanToFusion(bool $payload): string
@@ -101,11 +94,10 @@ class AfxService
     protected static function astNodeToFusion(array $payload, string $indentation = ''): string
     {
         $tagName = $payload['identifier'];
-        $childrenPropertyName = 'content';
         $attributes = $payload['attributes'];
 
         // Tag
-        if (strpos($tagName, ':') !== false) {
+        if (str_contains($tagName, ':')) {
             // Named fusion-object
             $fusion = $tagName . ' {' . PHP_EOL;
             // Attributes are not prefixed
@@ -122,6 +114,7 @@ class AfxService
             }
         }
 
+        $childrenPropertyName = 'content';
         $attributes =
             self::attributesSortPropsAndGeneratePropLists(
                 self::attributesGeneratePathForShorthandFusionMetaPath(
@@ -324,7 +317,7 @@ class AfxService
     protected static function attributesGeneratePathForShorthandFusionMetaPath(iterable $attributes): \Generator
     {
         // holds the incrementing index per attribute path
-        $indexes = [];
+        $indexPerAttributePath = [];
 
         foreach ($attributes as $attribute) {
             if ($attribute['type'] !== 'prop') {
@@ -338,10 +331,12 @@ class AfxService
             $lastPathSegment = end($fusionPropertyPathSegments);
 
             if (in_array($lastPathSegment, self::SHORTHAND_META_PATHS, true)) {
-                isset($indexes[$path]) ?: $indexes[$path] = 0;
+                if (isset($indexPerAttributePath[$path]) === false) {
+                    $indexPerAttributePath[$path] = 0;
+                }
 
                 // add f.x. '.if_1'
-                $path .= '.' . substr($lastPathSegment, 1) . '_' . ++$indexes[$path];
+                $path .= '.' . substr($lastPathSegment, 1) . '_' . ++$indexPerAttributePath[$path];
             }
             yield $attribute;
         }
