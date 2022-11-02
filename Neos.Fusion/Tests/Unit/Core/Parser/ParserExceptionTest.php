@@ -222,12 +222,12 @@ class ParserExceptionTest extends UnitTestCase
 
         yield 'unexpected block start' => [
             '{',
-            "Unexpected block start out of context. Check your number of curly braces."
+            "Unexpected block start. The opening brace must be on the same line with its declaration, like: 'path {' or 'prototype(Foo:Bar) {'."
         ];
 
         yield 'unexpected block end' => [
             '}',
-            "Unexpected block end out of context. Check your number of curly braces."
+            "Unexpected block end. Check your number of curly braces."
         ];
     }
 
