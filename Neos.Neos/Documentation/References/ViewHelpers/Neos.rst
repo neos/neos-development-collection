@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2022-10-05
+This reference was automatically generated from code on 2022-10-27
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -133,7 +133,7 @@ Render a bread crumb path by using the labels of documents leading to the given 
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node): Node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): Node
 
 
 
@@ -145,8 +145,7 @@ neos:backend.ifModuleAccessible
 
 Condition ViewHelper that can evaluate whether the currently authenticated user can access a given Backend module
 
-Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854
-that will be obsolete once the whole Backend module logic is rewritten
+Note: This is a quick fix for https://github.com/neos/neos-development-collection/issues/2854 that will be obsolete once the whole Backend module logic is rewritten
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\IfModuleAccessibleViewHelper
 
@@ -295,9 +294,7 @@ Expected result::
 
 **Arguments**::
 
-	<neos:backend.translate arguments="{0: 'foo', 1: '99.9'}">
-	     <![CDATA[Untranslated {0} and {1,number}]]>
-	</neos:backend.translate>
+	<neos:backend.translate arguments="{0: 'foo', 1: '99.9'}"><![CDATA[Untranslated {0} and {1,number}]]></neos:backend.translate>
 
 
 Expected result::
@@ -403,7 +400,7 @@ Arguments
 
 * ``tag`` (string, *optional*): The name of the tag that should be wrapped around the property. By default this is a <div>
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): The node of the content element. Optional, will be resolved from the Fusion context by default
 
 
 
@@ -430,7 +427,7 @@ templates. This is useful if you want to make properties of a custom document no
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Node
 
 
 
@@ -645,6 +642,8 @@ Arguments
 
 * ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
+* ``resolveShortcuts`` (boolean, *optional*): DEPRECATED Parameter - ignored
+
 
 
 
@@ -745,7 +744,7 @@ ViewHelper to find the closest document node to a given node
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node): Node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): Node
 
 
 
@@ -765,7 +764,7 @@ ViewHelper to find out if Neos is rendering the backend.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Node
 
 
 
@@ -807,7 +806,7 @@ ViewHelper to find out if Neos is rendering an edit mode.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Optional Node to use context from
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
 
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
@@ -868,7 +867,7 @@ ViewHelper to find out if Neos is rendering a preview mode.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Optional Node to use context from
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Optional Node to use context from
 
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
@@ -931,7 +930,7 @@ the ViewHelper or have "node" set as template variable at least.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
+* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface, *optional*): Node
 
 
 
@@ -1102,9 +1101,7 @@ Arguments
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
-* ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
-
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself
+* ``resolveShortcuts`` (boolean, *optional*): DEPRECATED Parameter - ignored
 
 
 
