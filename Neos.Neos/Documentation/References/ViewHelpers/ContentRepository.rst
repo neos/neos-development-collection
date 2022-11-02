@@ -33,6 +33,3 @@ Arguments
 
 * ``configuration`` (array, *optional*): Widget configuration
 
-
-
-
