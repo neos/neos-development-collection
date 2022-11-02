@@ -20,45 +20,10 @@ namespace Neos\Fusion\FusionObjects;
  */
 class RendererImplementation extends AbstractFusionObject
 {
-    public function getRenderer(): mixed
-    {
-        return $this->fusionValue('renderer');
-    }
-
-    public function getRenderPath(): ?string
-    {
-        return $this->fusionValue('renderPath');
-    }
-
-    public function getType(): ?string
-    {
-        return $this->fusionValue('type');
-    }
-
-    private function canRenderWithRenderer()
-    {
-        return $this->runtime->canRender($this->path . '/renderer');
-    }
+    use RendererTrait;
 
     public function evaluate()
     {
-        if ($this->canRenderWithRenderer()) {
-            return $this->getRenderer();
-        }
-
-        if ($this->getRenderPath() !== null) {
-            if (str_starts_with($this->getRenderPath(), '/')) {
-                // absolute path
-                return $this->runtime->render(substr($this->getRenderPath(), 1));
-            }
-            // relative path
-            return $this->runtime->render(
-                $this->path . '/' . str_replace('.', '/', $this->getRenderPath())
-            );
-        }
-
-        return $this->runtime->render(
-            $this->path . '/element<' . $this->getType() . '>'
-        );
+        return $this->evaluateRenderer();
     }
 }

@@ -15,18 +15,15 @@ namespace Neos\Fusion\FusionObjects;
 /**
  * Matcher object for use inside a "Case" statement
  */
-class MatcherImplementation extends RendererImplementation
+class MatcherImplementation extends AbstractFusionObject
 {
-    public function getCondition(): bool
-    {
-        return (boolean)$this->fusionValue('condition');
-    }
+    use RendererTrait;
 
     public function evaluate()
     {
-        if ($this->getCondition() === false) {
+        if (!$this->fusionValue('condition')) {
             return CaseImplementation::MATCH_NORESULT;
         }
-        return parent::evaluate();
+        return $this->evaluateRenderer();
     }
 }
