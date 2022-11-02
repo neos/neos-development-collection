@@ -269,48 +269,59 @@ class AfxService
         $currentPropListAfterSpread = null;
 
         foreach ($attributes as $attribute) {
+            // <div @if={true} />
+            // meta attributes are rendered last
             if ($attribute['type'] === 'prop'
                 && $attribute['payload']['identifier'][0] === '@') {
                 $delayedMetaAttributes[] = $attribute;
                 continue;
             }
 
-            // starting with the first spread we render spreads as @apply expressions
-            // and attributes as @apply of the respective propList
+            // <div a b />
+            // attributes before the first spread are render as fusion keys
+            if ($spreadIsPresent === false && $attribute['type'] === 'prop') {
+                yield $attribute;
+                continue;
+            }
+
+            // <div {...spread1} {...spread2} />
+            // a spread and directly following spreads without attributes in between
+            // are rendered as @apply
+            if ($currentPropListAfterSpread === null && $attribute['type'] === 'spread') {
+                $spreadIsPresent = true;
+                yield $attribute;
+                continue;
+            }
+
+            // <div {...spread1} a />
+            // attributes after a spread are rendered also as @apply, so they can override the spread
+            // (collect them and render them grouped in a Neos.Fusion:DataStructure)
             if ($spreadIsPresent && $attribute['type'] === 'prop') {
-                if ($currentPropListAfterSpread === null) {
-                    $currentPropListAfterSpread = [
-                        'type' => 'propList',
-                        'payload' => [$attribute]
-                    ];
-                    continue;
-                }
+                $currentPropListAfterSpread ??= [
+                    'type' => 'propList',
+                    'payload' => []
+                ];
                 $currentPropListAfterSpread['payload'][] = $attribute;
                 continue;
             }
 
-            if ($attribute['type'] === 'spread') {
-                $spreadIsPresent = true;
-                if ($currentPropListAfterSpread !== null) {
-                    yield $currentPropListAfterSpread;
-                    $currentPropListAfterSpread = null;
-                }
-                yield $attribute;
-                continue;
-            }
-
-            // attributes before the first spread render as fusion keys
-            if ($attribute['type'] === 'prop') {
+            // <div {...spread1} a b {...spread2} />
+            // collected attributes after a spread are rendered as @apply and then the next spread itself
+            if ($currentPropListAfterSpread !== null && $attribute['type'] === 'spread') {
+                yield $currentPropListAfterSpread;
+                $currentPropListAfterSpread = null;
                 yield $attribute;
                 continue;
             }
         }
 
+        // <div {...spread1} a b />
+        // collected attributes when there is no spread after them
         if ($currentPropListAfterSpread !== null) {
             yield $currentPropListAfterSpread;
+            $currentPropListAfterSpread = null;
         }
 
-        // meta attributes are rendered last
         yield from $delayedMetaAttributes;
     }
 
