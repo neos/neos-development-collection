@@ -198,7 +198,7 @@ trait NodeMove
     private function resolveNewParentAssignments(
         /** The content stream the move operation is performed in */
         ContentStreamId $contentStreamId,
-        /** The parent node aggregate's id */
+        /** The parent node aggregate's id*/
         NodeAggregateId $parentId,
         DimensionSpace\DimensionSpacePoint $coveredDimensionSpacePoint,
         ContentRepository $contentRepository
@@ -399,7 +399,8 @@ trait NodeMove
                 // -> Fall back to resolving based on the parent
                 $coverageNodeMoveMappings[] =  $this->resolveNewParentAssignments(
                     $contentStreamId,
-                    $parentId,
+                    // if parent ID is not given, use the parent of the original node.
+                    $parentId ?? $contentSubgraph->findParentNode($nodeAggregate->nodeAggregateId)->nodeAggregateId,
                     $dimensionSpacePoint,
                     $contentRepository
                 );

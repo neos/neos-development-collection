@@ -133,8 +133,7 @@ class ProjectionContentGraph
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateid = :nodeAggregateId
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
- AND h.contentstreamid = :contentStreamId
- AND h.dimensionspacepointhash = :originDimensionSpacePointHash',
+ AND h.contentstreamid = :contentStreamId',
             [
                 'contentStreamId' => (string)$contentStreamId,
                 'nodeAggregateId' => (string)$nodeAggregateId,

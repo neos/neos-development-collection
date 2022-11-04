@@ -62,9 +62,9 @@ trait NodeMove
                     $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
                         $event->contentStreamId,
                         $event->nodeAggregateId,
-                        new DimensionSpacePointSet(
+                        new DimensionSpacePointSet([
                             $newLocation->coveredDimensionSpacePoint
-                        )
+                        ])
                     );
 
                     // do the move (depending on how the move target is specified)
