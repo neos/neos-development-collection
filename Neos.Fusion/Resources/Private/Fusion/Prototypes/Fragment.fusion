@@ -1,0 +1,13 @@
+# Render a content fragment without any additional markup
+# to allow placing conditions for multiple tags at once.
+#
+# Usage:
+# renderer = afx`
+#    <Neos.Fusion:Fragment @if.isEnabled={props.enable}>
+#       <h1>Example</h1>
+#       <h2>Content</h2>
+#    </Neos.Fusion:Fragment>
+# `
+prototype(Neos.Fusion:Fragment) < prototype(Neos.Fusion:Component) {
+  renderer = ${props.content}
+}

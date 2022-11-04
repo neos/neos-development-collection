@@ -39,10 +39,12 @@ abstract class AbstractServiceController extends ActionController
     protected $supportedMediaTypes = ['application/json'];
 
     /**
+     * Cant be named here $throwableStorage see https://github.com/neos/neos-development-collection/issues/3858
+     *
      * @Flow\Inject
      * @var ThrowableStorageInterface
      */
-    protected $throwableStorage;
+    protected $throwableStorage2;
 
     #[Flow\Inject]
     protected UserService $domainUserService;
@@ -109,7 +111,7 @@ abstract class AbstractServiceController extends ActionController
             }
             $response->setContent(json_encode(['error' => $exceptionData], JSON_THROW_ON_ERROR));
             $this->logger->error(
-                $this->throwableStorage->logThrowable($exception),
+                $this->throwableStorage2->logThrowable($exception),
                 LogEnvironment::fromMethodName(__METHOD__)
             );
         }

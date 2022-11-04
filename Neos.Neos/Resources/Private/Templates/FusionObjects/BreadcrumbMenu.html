@@ -9,7 +9,7 @@
 					{item.label}
 				</f:then>
 				<f:else>
-					<neos:link.node node="{item.node}" />
+					<a href="{item.uri}" title="{item.label}">{item.label}</a>
 				</f:else>
 			</f:if>
 		</li>

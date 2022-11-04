@@ -230,12 +230,10 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="final">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Element enthält.</target>
-        </trans-unit>
+          <target state="final">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Element enthält.</target> </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]" approved="yes">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="final">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Elemente enthält.</target>
-        </trans-unit>
+          <target state="final">Arbeitsbereich "{0}" wurde nicht gelöscht, da er derzeit {1} Elemente enthält.</target> </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved" approved="yes">
         <source>The workspace "{0}" has been removed.</source>
@@ -264,6 +262,10 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded" approved="yes">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="final">Alle Änderungen aus dem Arbeitsbereich "{0}" wurden verworfen.</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectAllCurrentChanges" approved="yes">
+        <source>Select all current changes</source>
+        <target state="final">Alle aktuellen Änderungen auswählen</target>
       </trans-unit>
       <trans-unit id="history.label" xml:space="preserve" approved="yes">
 				<source>History</source>
@@ -1108,7 +1110,7 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
         <target state="translated">Domain erstellt</target>
       </trans-unit>
       <trans-unit id="sites.domainCreated.body" xml:space="preserve">
-				<source>'The domain "{0}" has been created.'</source>
+				<source>The domain "{0}" has been created.</source>
         <target state="translated">Die Domain "{0}" wurde erstellt.</target>
       </trans-unit>
       <trans-unit id="sites.domainDeleted.title" xml:space="preserve">

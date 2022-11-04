@@ -202,7 +202,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             MenuItemState::normal(),
             $node->getLabel(),
             $subtree->level,
-            $children
+            $children,
+            $this->buildUri($node)
         );
     }
 
@@ -308,5 +309,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $shouldContinueTraversal = $callback($node);
             $node = $subgraph->findParentNode($node->nodeAggregateId);
         } while ($shouldContinueTraversal !== false && $node !== null);
+    }
+
+    protected function buildUri(Node $node): string
+    {
+        $this->runtime->pushContextArray([
+            'itemNode' => $node,
+            'documentNode' => $node,
+        ]);
+        $uri = $this->runtime->render($this->path . '/itemUriRenderer');
+        $this->runtime->popContext();
+        return $uri;
     }
 }
