@@ -165,12 +165,7 @@ trait NodeMove
             new NodeAggregateWasMoved(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
-                OriginNodeMoveMappings::create(...$originNodeMoveMappings),
-            // TODO !$command->newParentNodeAggregateId
-            // TODO && !$command->newSucceedingSiblingNodeAggregateId
-            // TODO && !$command->newPrecedingSiblingNodeAggregateId
-            // TODO ? $affectedDimensionSpacePoints
-            // TODO : new DimensionSpacePointSet([]),
+                OriginNodeMoveMappings::create(...$originNodeMoveMappings)
             )
         );
 

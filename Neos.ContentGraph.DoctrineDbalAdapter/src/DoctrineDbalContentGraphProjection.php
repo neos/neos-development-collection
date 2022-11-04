@@ -505,7 +505,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      */
     protected function getRelationPosition(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
-        ?NodeRelationAnchorPoint $childAnchorPoint, // TODO what is this doing?
+        ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint

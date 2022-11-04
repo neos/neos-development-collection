@@ -7,13 +7,14 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveTarget;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveTarget;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
@@ -236,17 +237,19 @@ class TetheredNodeAdjustments
                 OriginNodeMoveMappings::fromArray([
                     new OriginNodeMoveMapping(
                         $nodeToMove->originDimensionSpacePoint,
-                        NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
-                        NodeVariantAssignments::createFromArray([
-                            $nodeToMove->originDimensionSpacePoint->hash => new NodeMoveTarget(
-                                $succeedingNode->nodeAggregateId,
-                                $succeedingNode->originDimensionSpacePoint
+                        CoverageNodeMoveMappings::create(
+                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
+                                // TODO: I am not sure the next line is 100% correct. IMHO this must be the COVERED
+                                // TODO: DimensionSpacePoint (though I am not sure whether we have that one now)
+                                $nodeToMove->originDimensionSpacePoint->toDimensionSpacePoint(),
+                                SucceedingSiblingNodeMoveTarget::create(
+                                    $succeedingNode->nodeAggregateId,
+                                    $succeedingNode->originDimensionSpacePoint
+                                )
                             )
-                        ])
+                        )
                     )
                 ]),
-                new DimensionSpace\DimensionSpacePointSet([]),
-                UserId::forSystemUser()
             );
 
             // now, go one step left.

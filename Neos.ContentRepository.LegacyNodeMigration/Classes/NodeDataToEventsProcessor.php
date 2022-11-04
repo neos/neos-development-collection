@@ -12,6 +12,8 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
@@ -23,7 +25,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWer
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveTarget;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveTarget;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
@@ -306,12 +308,14 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 OriginNodeMoveMappings::fromArray([
                     new OriginNodeMoveMapping(
                         $originDimensionSpacePoint,
-                        NodeVariantAssignments::create()->add(new NodeMoveTarget($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint), $originDimensionSpacePoint->toDimensionSpacePoint()),
-                        NodeVariantAssignments::create()
+                        CoverageNodeMoveMappings::create(
+                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
+                                $originDimensionSpacePoint->toDimensionSpacePoint(),
+                                SucceedingSiblingNodeMoveTarget::create($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint)
+                            )
+                        )
                     )
-                ]),
-                new DimensionSpacePointSet([]),
-                UserId::forSystemUser()
+                ])
             ));
         }
     }
