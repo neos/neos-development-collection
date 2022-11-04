@@ -22,12 +22,19 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class NodeMoveTarget implements \JsonSerializable
+final class SucceedingSiblingNodeMoveTarget implements \JsonSerializable
 {
-    public function __construct(
+    private function __construct(
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
+    }
+
+    public static function create(
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint
+    ): self {
+        return new self($nodeAggregateId, $originDimensionSpacePoint);
     }
 
     /**

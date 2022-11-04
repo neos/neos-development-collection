@@ -30,7 +30,6 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  *          │  *│     -> contains OriginDimensionSpacePoint      │
  *          └───▶                                                │
  *              │ (1 per OriginDimensionSpacePoint to be moved)  │
- *              │                                                │
  *              └──────┬─────────────────────────────────────────┘
  *                     │
  *                     │   ┌───────────────────────────────────┐
@@ -59,7 +58,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
  *   because the parent node of the `newSucceedingSibling` will be used. This means the `newParent`
  *   will be NULL in this case.
  * - If you want to move something at the END of a children list (or as the first child, when no child
- *   exists yet), you speficy `newParent`, but in this case, `newSucceedingSibling` will be NULL.
+ *   exists yet), you specify `newParent`, but in this case, `newSucceedingSibling` will be NULL.
  *
  * ## Rabbit Holes
  *

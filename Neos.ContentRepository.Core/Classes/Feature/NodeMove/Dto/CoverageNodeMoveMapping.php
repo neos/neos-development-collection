@@ -17,33 +17,20 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         public readonly SucceedingSiblingNodeMoveTarget|ParentNodeMoveTarget $target,
     ) {
-        if ($this->newSucceedingSibling === null && $this->newParent === null) {
-            throw new \InvalidArgumentException(
-                'CoverageNodeMoveMapping needs either newSucceedingSibling or newParent set; '
-                . 'but you did not set any of them.', 1664964290
-            );
-        }
-
-        if ($this->newSucceedingSibling !== null && $this->newParent !== null) {
-            throw new \InvalidArgumentException(
-                'CoverageNodeMoveMapping needs either newSucceedingSibling or newParent set; '
-                . 'but you set both of them.', 1664964333
-            );
-        }
     }
 
     public static function createForNewSucceedingSibling(
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeMoveTarget $newSucceedingSibling
+        SucceedingSiblingNodeMoveTarget $newSucceedingSibling
     ): self {
-        return new self($coveredDimensionSpacePoint, $newSucceedingSibling, null);
+        return new self($coveredDimensionSpacePoint, $newSucceedingSibling);
     }
 
     public static function createForNewParent(
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeMoveTarget $newParent
+        ParentNodeMoveTarget $newParent
     ): self {
-        return new self($coveredDimensionSpacePoint, null, $newParent);
+        return new self($coveredDimensionSpacePoint, $newParent);
     }
 
     /**
@@ -51,11 +38,19 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
      */
     public static function fromArray(array $array): self
     {
-        return new self(
-            DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-            NodeMoveTarget::fromArray($array['newSucceedingSibling']),
-            NodeMoveTarget::fromArray($array['newParent'])
-        );
+        if (!empty($array['newSucceedingSibling'])) {
+            return new self(
+                DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
+                SucceedingSiblingNodeMoveTarget::fromArray($array['newSucceedingSibling']),
+            );
+        } elseif (!empty($array['newParent'])) {
+            return new self(
+                DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
+                ParentNodeMoveTarget::fromArray($array['newParent']),
+            );
+        } else {
+            throw new \RuntimeException('!!!');
+        }
     }
 
     /**
@@ -63,10 +58,19 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        return [
-            'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-            'newSucceedingSibling' => $this->newSucceedingSibling,
-            'newParent' => $this->newParent
-        ];
+        if ($this->target instanceof SucceedingSiblingNodeMoveTarget) {
+            return [
+                'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
+                'newSucceedingSibling' => $this->target
+            ];
+        } elseif ($this->target instanceof ParentNodeMoveTarget) {
+            return [
+                'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
+                'newParent' => $this->target
+            ];
+        } else {
+            throw new \RuntimeException('!!!');
+        }
+
     }
 }
