@@ -171,7 +171,8 @@ trait NodeMove
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $command->contentStreamId
-        );;
+        );
+        ;
 
         return new EventsToPublish(
             $contentStreamEventStreamName->getEventStreamName(),
@@ -204,6 +205,12 @@ trait NodeMove
             VisibilityConstraints::withoutRestrictions()
         );
         $parentNode = $contentSubgraph->findNodeById($parentId);
+        if ($parentNode === null) {
+            throw new \InvalidArgumentException(
+                'Parent ' . $parentId . ' not found in subgraph ' . json_encode($contentSubgraph),
+                1667596931
+            );
+        }
 
         return CoverageNodeMoveMapping::createForNewParent(
             $coveredDimensionSpacePoint,
@@ -392,10 +399,20 @@ trait NodeMove
             } else {
                 // preceeding / succeeding siblings could not be resolved for a given covered DSP
                 // -> Fall back to resolving based on the parent
+
+                if ($parentId === null) {
+                    // if parent ID is not given, use the parent of the original node.
+                    $parentId = $contentSubgraph->findParentNode($nodeAggregate->nodeAggregateId)?->nodeAggregateId;
+                    if ($parentId === null) {
+                        throw new \InvalidArgumentException(
+                            'Parent ' . $parentId . ' not found in subgraph ' . json_encode($contentSubgraph),
+                            1667597013
+                        );
+                    }
+                }
                 $coverageNodeMoveMappings[] =  $this->resolveNewParentAssignments(
                     $contentStreamId,
-                    // if parent ID is not given, use the parent of the original node.
-                    $parentId ?? $contentSubgraph->findParentNode($nodeAggregate->nodeAggregateId)->nodeAggregateId,
+                    $parentId,
                     $dimensionSpacePoint,
                     $contentRepository
                 );

@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeMove\Dto;
 /**
  * See the docs of {@see NodeAggregateWasMoved} for a full description.
  *
- * @implements \IteratorAggregate<int,NodeMoveMapping>
+ * @implements \IteratorAggregate<int,OriginNodeMoveMapping>
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
 final class OriginNodeMoveMappings implements \IteratorAggregate, \Countable, \JsonSerializable
@@ -59,7 +59,8 @@ final class OriginNodeMoveMappings implements \IteratorAggregate, \Countable, \J
                         'Invalid NodeMoveMapping. Expected instance of %s, got: %s',
                         OriginNodeMoveMapping::class,
                         is_object($mapping) ? get_class($mapping) : gettype($mapping)
-                    ), 1547811318
+                    ),
+                    1547811318
                 );
             }
         }
@@ -68,7 +69,7 @@ final class OriginNodeMoveMappings implements \IteratorAggregate, \Countable, \J
 
     public static function create(OriginNodeMoveMapping ...$originNodeMoveMappings): self
     {
-        return new self($originNodeMoveMappings);
+        return new self(array_values($originNodeMoveMappings));
     }
 
     /**

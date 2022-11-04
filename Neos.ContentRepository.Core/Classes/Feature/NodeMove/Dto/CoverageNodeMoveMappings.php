@@ -57,7 +57,8 @@ final class CoverageNodeMoveMappings implements \IteratorAggregate, \Countable, 
                         'Invalid NodeMoveMapping. Expected instance of %s, got: %s',
                         CoverageNodeMoveMapping::class,
                         is_object($mapping) ? get_class($mapping) : gettype($mapping)
-                    ), 1547811318
+                    ),
+                    1547811318
                 );
             }
         }
@@ -66,7 +67,7 @@ final class CoverageNodeMoveMappings implements \IteratorAggregate, \Countable, 
 
     public static function create(CoverageNodeMoveMapping ...$coverageNodeMoveMappings): self
     {
-        return new self($coverageNodeMoveMappings);
+        return new self(array_values($coverageNodeMoveMappings));
     }
 
 

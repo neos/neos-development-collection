@@ -71,6 +71,5 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
         } else {
             throw new \RuntimeException('!!!');
         }
-
     }
 }
