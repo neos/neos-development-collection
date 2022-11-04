@@ -373,10 +373,10 @@
 			<target state="final">(geen doel geselecteerd)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="final">Dit is een snelkoppeling naar het eerste onderliggende pagina. &lt; br / &gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
+			<target state="final">Dit is een snelkoppeling naar het eerste onderliggende pagina. &lt;br /&gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="final">Dit is een snelkoppeling naar de bovenliggende pagina. &lt; br / &gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
+			<target state="final">Dit is een snelkoppeling naar de bovenliggende pagina. &lt;br /&gt; Klik op {0} om door te gaan naar de pagina.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
 				<source>Full Screen</source>
