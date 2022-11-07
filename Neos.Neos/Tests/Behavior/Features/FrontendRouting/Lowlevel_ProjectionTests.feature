@@ -6,12 +6,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
     Given I have no content dimensions
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                    |
-      | contentStreamIdentifier     | "cs-identifier"          |
+      | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
       | coveredDimensionSpacePoints | [{}]                     |
@@ -40,7 +40,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => acb (moving b)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -57,7 +57,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => acb (moving c)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "c"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -74,7 +74,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => bac (moving b)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -91,7 +91,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => bac (moving a)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "a"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -108,7 +108,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => bca (moving a)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "a"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -125,7 +125,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => bca (moving b and c)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -133,7 +133,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
     And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "c"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | null            |
@@ -150,7 +150,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: abc => a(> b)c (moving b below a)
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
@@ -167,7 +167,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: ab(> b1)c => a(> b > b1)c (moving b & b1 below a)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                                |
-      | contentStreamIdentifier          | "cs-identifier"                                      |
+      | contentStreamId                  | "cs-identifier"                                      |
       | nodeAggregateId                  | "b1"                                                 |
       | nodeTypeName                     | "Neos.EventSourcedNeosAdjustments:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                                                   |
@@ -177,7 +177,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
     And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
@@ -195,7 +195,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
   Scenario: ab(> b1)c => a(> b1)bc (moving b1 below a)
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                              | Value                                                |
-      | contentStreamIdentifier          | "cs-identifier"                                      |
+      | contentStreamId                  | "cs-identifier"                                      |
       | nodeAggregateId                  | "b1"                                                 |
       | nodeTypeName                     | "Neos.EventSourcedNeosAdjustments:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                                                   |
@@ -205,7 +205,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
     And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b1"            |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
@@ -229,7 +229,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | b2a             | b2                    | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "b2"            |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "a"             |
@@ -255,7 +255,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | b2a             | b2                    | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
-      | contentStreamIdentifier             | "cs-identifier" |
+      | contentStreamId                     | "cs-identifier" |
       | nodeAggregateId                     | "a"             |
       | dimensionSpacePoint                 | {}              |
       | newParentNodeAggregateId            | "b"             |

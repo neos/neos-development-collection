@@ -41,7 +41,7 @@ final class NodePropertiesWereSet implements
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint, // TODO
         public readonly SerializedPropertyValues $propertyValues
     ) {
     }

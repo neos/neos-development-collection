@@ -5,12 +5,21 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The NodeMove projection feature trait
@@ -32,159 +41,225 @@ trait NodeMove
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
-            $projectionContentGraph = $this->getProjectionContentGraph();
+            foreach ($event->nodeMoveMappings as $moveNodeMapping) {
+                // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
+                /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveNodeMapping */
+                $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIds(
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
+                    $moveNodeMapping->movedNodeOrigin
+                );
 
-            if ($event->nodeMoveMappings) {
-                foreach ($event->nodeMoveMappings as $moveNodeMapping) {
-                    // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
-                    /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping $moveNodeMapping */
-                    $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIds(
-                        $event->getContentStreamId(),
-                        $event->getNodeAggregateId(),
-                        $moveNodeMapping->movedNodeOrigin
-                    );
-                    if (is_null($nodeToBeMoved)) {
-                        throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
-                    }
-
-                    // we build up the $coveredDimensionSpacePoints (i.e. the incoming edges)
-                    // for the node which we want to move
-
-                    $ingoingHierarchyRelations = $projectionContentGraph->findIngoingHierarchyRelationsForNode(
-                        $nodeToBeMoved->relationAnchorPoint,
-                        $event->getContentStreamId()
-                    );
-                    $coveredDimensionSpacePoints = [];
-                    foreach ($ingoingHierarchyRelations as $ingoingHierarchyRelation) {
-                        $coveredDimensionSpacePoints[] = $ingoingHierarchyRelation->dimensionSpacePoint;
-                    }
-                    $coveredDimensionSpacePoints = new DimensionSpacePointSet($coveredDimensionSpacePoints);
-
-
-                    // these are the DimensionSpacePoints for the node which will get new parents assigned.
-                    $affectedHierarchyDimensionSpacePoints = [];
-                    /** @var array|NodeRecord[] $newParentNodes */
-                    $newParentNodes = [];
-                    foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-                        // if we want to change the parent for this DimensionSpacePoint, then we find the
-                        // corresponding new parent node (because we lateron need its relationAnchorPoint)
-                        $newParentAssignment = $moveNodeMapping->newParentAssignments->get(
-                            $coveredDimensionSpacePoint
-                        );
-                        if ($newParentAssignment) {
-                            // $newParentNodes[$coveredDimensionSpacePoint->hash] might be null
-                            // (if the parent is not visible in this DimensionSpacePoint)
-                            $newParentNodes[$coveredDimensionSpacePoint->hash] = $this->getProjectionContentGraph()
-                                ->findNodeInAggregate(
-                                    $event->getContentStreamId(),
-                                    $newParentAssignment->nodeAggregateId,
-                                    $coveredDimensionSpacePoint
-                                );
-                            $affectedHierarchyDimensionSpacePoints[] = $coveredDimensionSpacePoint;
-                        }
-                    }
-
-                    // because we will reassign the parent relations,
-                    // we have to clear the restiction relations for these.
-                    $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
-                        $event->getContentStreamId(),
-                        $event->getNodeAggregateId(),
-                        new DimensionSpacePointSet(
-                            $affectedHierarchyDimensionSpacePoints
-                        )
-                    );
-
-                    // if we want to change the succeeding siblings for this DimensionSpacePoint, we find the
-                    // corresponding succeeding sibling node (because we lateron need its relationAnchorPoint)
-                    $newSucceedingSiblingNodes = [];
-                    $assignments = $moveNodeMapping->newSucceedingSiblingAssignments;
-                    foreach ($assignments as $coveredDimensionSpacePointHash => $newSucceedingSiblingAssignment) {
-                        $newSucceedingSiblingNodes[$coveredDimensionSpacePointHash]
-                            = $this->getProjectionContentGraph()->findNodeByIds(
-                                $event->getContentStreamId(),
-                                $newSucceedingSiblingAssignment->nodeAggregateId,
-                                $newSucceedingSiblingAssignment->originDimensionSpacePoint
-                            );
-                    }
-
-                    foreach ($coveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
-                        $ingoingHierarchyRelation = $ingoingHierarchyRelations[$coveredDimensionSpacePoint->hash];
-                        if (isset($newParentNodes[$coveredDimensionSpacePoint->hash])) {
-                            // CASE: we want to connect this hierarchy relation to a new parent.
-                            $newParentNode = $newParentNodes[$coveredDimensionSpacePoint->hash];
-                            $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash]
-                                ?? null;
-                            $newPosition = $this->getRelationPosition(
-                                $newParentNode->relationAnchorPoint,
-                                null,
-                                $newSucceedingSibling?->relationAnchorPoint,
-                                $event->getContentStreamId(),
-                                $coveredDimensionSpacePoint
-                            );
-
-                            // this is the actual move
-                            $ingoingHierarchyRelation->assignNewParentNode(
-                                $newParentNodes[$coveredDimensionSpacePoint->hash]->relationAnchorPoint,
-                                $newPosition,
-                                $this->getDatabaseConnection(),
-                                $this->getTableNamePrefix()
-                            );
-
-                            // re-build restriction relations
-                            $this->cascadeRestrictionRelations(
-                                $event->getContentStreamId(),
-                                $newParentNode->nodeAggregateId,
-                                $event->getNodeAggregateId(),
-                                new DimensionSpacePointSet([
-                                    $coveredDimensionSpacePoint
-                                ])
-                            );
-                        } elseif (isset($newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash])) {
-                            // CASE: there is no new parent node,
-                            // so we want to move within the EXISTING parent node (sorting)
-
-                            $newSucceedingSibling = $newSucceedingSiblingNodes[$coveredDimensionSpacePoint->hash];
-                            $newPosition = $this->getRelationPosition(
-                                null,
-                                $nodeToBeMoved->relationAnchorPoint,
-                                $newSucceedingSibling->relationAnchorPoint,
-                                $event->getContentStreamId(),
-                                $coveredDimensionSpacePoint
-                            );
-
-                            // this is the actual move
-                            $ingoingHierarchyRelation->assignNewPosition(
-                                $newPosition,
-                                $this->getDatabaseConnection(),
-                                $this->getTableNamePrefix()
-                            );
-
-                        // NOTE: we do not need to re-build restriction relations because the hierarchy does not change.
-                        } elseif (
-                            $event->repositionNodesWithoutAssignments->contains($coveredDimensionSpacePoint)
-                        ) {
-                            // CASE: we move to the end of all its siblings.
-
-                            $newPosition = $this->getRelationPosition(
-                                null,
-                                $nodeToBeMoved->relationAnchorPoint,
-                                null,
-                                $event->getContentStreamId(),
-                                $coveredDimensionSpacePoint
-                            );
-                            $ingoingHierarchyRelation->assignNewPosition(
-                                $newPosition,
-                                $this->getDatabaseConnection(),
-                                $this->getTableNamePrefix()
-                            );
-                        }
-                    }
+                if (is_null($nodeToBeMoved)) {
+                    throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceNodeIsMissing(get_class($event));
                 }
-            } else {
-                // @todo handle getRepositionNodesWithoutAssignments anyway
+
+                foreach ($moveNodeMapping->newLocations as $newLocation) {
+                    assert($newLocation instanceof CoverageNodeMoveMapping);
+
+                    // remove restriction relations by ancestors. We will reconnect them back after the move.
+                    $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
+                        $event->contentStreamId,
+                        $event->nodeAggregateId,
+                        new DimensionSpacePointSet([
+                            $newLocation->coveredDimensionSpacePoint
+                        ])
+                    );
+
+                    // do the move (depending on how the move target is specified)
+                    switch (true) {
+                        case $newLocation->destination instanceof SucceedingSiblingNodeMoveDestination:
+                            $newParentNodeAggregateId = $this->moveNodeBeforeSucceedingSibling(
+                                $event->contentStreamId,
+                                $nodeToBeMoved,
+                                $newLocation->coveredDimensionSpacePoint,
+                                $newLocation->destination
+                            );
+                            break;
+                        case $newLocation->destination instanceof ParentNodeMoveDestination:
+                            $newParentNodeAggregateId = $newLocation->destination->nodeAggregateId;
+                            $this->moveNodeIntoParent(
+                                $event->contentStreamId,
+                                $nodeToBeMoved,
+                                $newLocation->coveredDimensionSpacePoint,
+                                $newLocation->destination
+                            );
+                            break;
+                        default:
+                            throw new \RuntimeException('TODO');
+                    }
+
+                    // re-build restriction relations
+                    $this->cascadeRestrictionRelations(
+                        $event->contentStreamId,
+                        $newParentNodeAggregateId,
+                        $event->nodeAggregateId,
+                        new DimensionSpacePointSet([
+                            $newLocation->coveredDimensionSpacePoint
+                        ])
+                    );
+                }
             }
         });
     }
+
+    /**
+     * This helper is responsible for moving a single incoming HierarchyRelation of $nodeToBeMoved
+     * to a new location. $coveredDimensionSpacePointWhereMoveShouldHappen specifies which incoming HierarchyRelation
+     * should be moved.
+     *
+     * The move target is given as $succeedingSiblingNodeMoveTarget. This also specifies the new parent node.
+     * @throws \Exception
+     * @throws Exception
+     * @return NodeAggregateId the PARENT's NodeAggregateId
+     */
+    private function moveNodeBeforeSucceedingSibling(
+        ContentStreamId $contentStreamId,
+        NodeRecord $nodeToBeMoved,
+        DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen,
+        SucceedingSiblingNodeMoveDestination $succeedingSiblingNodeMoveDestination,
+    ): NodeAggregateId {
+        $projectionContentGraph = $this->getProjectionContentGraph();
+
+        // find the single ingoing hierarchy relation which we want to move
+        $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
+            $nodeToBeMoved,
+            $contentStreamId,
+            $coveredDimensionSpacePointWhereMoveShouldHappen
+        );
+
+        // find the new succeeding sibling NodeRecord; and the new parent NodeRecord (which is the
+        // succeeding sibling's parent). We need these records because we'll use their RelationAnchorPoints
+        // later.
+        $newSucceedingSibling = $projectionContentGraph->findNodeByIds(
+            $contentStreamId,
+            $succeedingSiblingNodeMoveDestination->nodeAggregateId,
+            $succeedingSiblingNodeMoveDestination->originDimensionSpacePoint
+        );
+        if ($newSucceedingSibling === null) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetSucceedingSiblingNodeIsMissing(
+                MoveNodeAggregate::class
+            );
+        }
+
+        $newParent = $projectionContentGraph->findNodeByIds(
+            $contentStreamId,
+            $succeedingSiblingNodeMoveDestination->parentNodeAggregateId,
+            $succeedingSiblingNodeMoveDestination->parentOriginDimensionSpacePoint,
+        );
+        if ($newParent === null) {
+            // this should NEVER happen; because this would mean $newSucceedingSibling
+            // wouldn't have a parent => invariant violation.
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetSucceedingSiblingNodesParentIsMissing(
+                MoveNodeAggregate::class
+            );
+        }
+
+        // assign new position
+        $newPosition = $this->getRelationPosition(
+            $newParent->relationAnchorPoint,
+            null,
+            $newSucceedingSibling->relationAnchorPoint,
+            $contentStreamId,
+            $coveredDimensionSpacePointWhereMoveShouldHappen
+        );
+
+        // this is the actual move
+        $ingoingHierarchyRelation->assignNewParentNode(
+            $newParent->relationAnchorPoint,
+            $newPosition,
+            $this->getDatabaseConnection(),
+            $this->getTableNamePrefix()
+        );
+
+        return $newParent->nodeAggregateId;
+    }
+
+    /**
+     * This helper is responsible for moving a single incoming HierarchyRelation of $nodeToBeMoved
+     * to a new location. $coveredDimensionSpacePointWhereMoveShouldHappen specifies which incoming HierarchyRelation
+     * should be moved.
+     *
+     * The move target is given as $parentNodeMoveTarget. We always move to the END of the children list of the
+     * given parent.
+     * @throws DBALException
+     */
+    private function moveNodeIntoParent(
+        ContentStreamId $contentStreamId,
+        NodeRecord $nodeToBeMoved,
+        DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen,
+        ParentNodeMoveDestination $parentNodeMoveDestination
+    ): void {
+        $projectionContentGraph = $this->getProjectionContentGraph();
+
+        // find the single ingoing hierarchy relation which we want to move
+        $ingoingHierarchyRelation = $this->findIngoingHierarchyRelationToBeMoved(
+            $nodeToBeMoved,
+            $contentStreamId,
+            $coveredDimensionSpacePointWhereMoveShouldHappen
+        );
+
+        // find the new parent NodeRecord (specified by $parentNodeMoveTarget).
+        // We need this record because we'll use its RelationAnchorPoints later.
+        $newParent = $projectionContentGraph->findNodeByIds(
+            $contentStreamId,
+            $parentNodeMoveDestination->nodeAggregateId,
+            $parentNodeMoveDestination->originDimensionSpacePoint
+        );
+        if ($newParent === null) {
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
+                MoveNodeAggregate::class
+            );
+        }
+
+        // assign new position
+        $newPosition = $this->getRelationPosition(
+            $newParent->relationAnchorPoint,
+            null,
+            // move to end of children
+            null,
+            $contentStreamId,
+            $coveredDimensionSpacePointWhereMoveShouldHappen
+        );
+
+        // this is the actual move
+        $ingoingHierarchyRelation->assignNewParentNode(
+            $newParent->relationAnchorPoint,
+            $newPosition,
+            $this->getDatabaseConnection(),
+            $this->getTableNamePrefix()
+        );
+    }
+
+    /**
+     * Helper for the move methods.
+     *
+     * @param NodeRecord $nodeToBeMoved
+     * @param ContentStreamId $contentStreamId
+     * @param DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen
+     * @return HierarchyRelation
+     * @throws DBALException
+     */
+    private function findIngoingHierarchyRelationToBeMoved(
+        NodeRecord $nodeToBeMoved,
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen
+    ): HierarchyRelation {
+        $ingoingHierarchyRelations = $this->getProjectionContentGraph()->findIngoingHierarchyRelationsForNode(
+            $nodeToBeMoved->relationAnchorPoint,
+            $contentStreamId,
+            DimensionSpacePointSet::fromArray([$coveredDimensionSpacePointWhereMoveShouldHappen])
+        );
+        if (count($ingoingHierarchyRelations) !== 1) {
+            // there should always be exactly one incoming relation in the given DimensionSpacePoint; everything
+            // else would be a totally wrong behavior of findIngoingHierarchyRelationsForNode().
+            throw EventCouldNotBeAppliedToContentGraph::becauseTheIngoingSourceHierarchyRelationIsMissing(
+                MoveNodeAggregate::class
+            );
+        }
+        return reset($ingoingHierarchyRelations);
+    }
+
 
     abstract protected function getDatabaseConnection(): Connection;
 

@@ -6,12 +6,12 @@ Feature: Linking between multiple websites
     Given I have no content dimensions
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                    |
-      | contentStreamIdentifier     | "cs-identifier"          |
+      | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
       | coveredDimensionSpacePoints | [{}]                     |

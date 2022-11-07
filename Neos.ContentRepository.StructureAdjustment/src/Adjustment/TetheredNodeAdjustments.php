@@ -7,16 +7,16 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -159,6 +159,7 @@ class TetheredNodeAdjustments
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 return $this->reorderNodes(
                                     $node->subgraphIdentity->contentStreamId,
+                                    $node,
                                     $actualTetheredChildNodes,
                                     array_keys($expectedTetheredNodes)
                                 );
@@ -216,6 +217,7 @@ class TetheredNodeAdjustments
      */
     private function reorderNodes(
         ContentStreamId $contentStreamIdentifier,
+        Node $parentNode,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
     ): EventsToPublish {
@@ -233,20 +235,25 @@ class TetheredNodeAdjustments
             $events[] = new NodeAggregateWasMoved(
                 $contentStreamIdentifier,
                 $nodeToMove->nodeAggregateId,
-                NodeMoveMappings::fromArray([
-                    new NodeMoveMapping(
+                OriginNodeMoveMappings::fromArray([
+                    new OriginNodeMoveMapping(
                         $nodeToMove->originDimensionSpacePoint,
-                        NodeVariantAssignments::createFromArray([]), // we do not want to assign new parents
-                        NodeVariantAssignments::createFromArray([
-                            $nodeToMove->originDimensionSpacePoint->hash => new NodeVariantAssignment(
-                                $succeedingNode->nodeAggregateId,
-                                $succeedingNode->originDimensionSpacePoint
+                        CoverageNodeMoveMappings::create(
+                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
+                                // TODO: I am not sure the next line is 100% correct. IMHO this must be the COVERED
+                                // TODO: DimensionSpacePoint (though I am not sure whether we have that one now)
+                                $nodeToMove->originDimensionSpacePoint->toDimensionSpacePoint(),
+                                SucceedingSiblingNodeMoveDestination::create(
+                                    $succeedingNode->nodeAggregateId,
+                                    $succeedingNode->originDimensionSpacePoint,
+                                    // we only change the order, not the parent -> so we can simply use the parent here.
+                                    $parentNode->nodeAggregateId,
+                                    $parentNode->originDimensionSpacePoint
+                                )
                             )
-                        ])
+                        )
                     )
                 ]),
-                new DimensionSpace\DimensionSpacePointSet([]),
-                UserId::forSystemUser()
             );
 
             // now, go one step left.

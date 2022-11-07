@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\ResourceManagement;
@@ -144,7 +145,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     {
         $resourceUriOrStream = $this->evaluateNodeTypesPath($path, false);
         if (is_string($resourceUriOrStream)) {
-            mkdir($resourceUriOrStream, $mode, $options&STREAM_MKDIR_RECURSIVE);
+            mkdir($resourceUriOrStream, $mode, $options & STREAM_MKDIR_RECURSIVE);
         }
     }
 

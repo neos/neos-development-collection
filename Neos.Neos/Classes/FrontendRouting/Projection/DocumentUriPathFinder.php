@@ -35,6 +35,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      * (node is disabled, node doesn't exist in live workspace, projection not up to date)
+     * @api
      */
     public function getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
         SiteNodeName $siteNodeName,
@@ -60,6 +61,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (node doesn't exist in live workspace, projection not up to date)
+     * @api
      */
     public function getByIdAndDimensionSpacePointHash(
         NodeAggregateId $nodeAggregateId,
@@ -81,6 +83,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException if no matching DocumentNodeInfo can be found
      *  (given $nodeInfo belongs to a site root node, projection not up to date)
+     * @api
      */
     public function getParentNode(DocumentNodeInfo $nodeInfo): DocumentNodeInfo
     {
@@ -103,6 +106,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @throws NodeNotFoundException if no preceding DocumentNodeInfo can be found
      *  (given $succeedingNodeAggregateId doesn't exist or refers to the first/only node
      *  with the given $parentNodeAggregateId)
+     * @internal
      */
     public function getPrecedingNode(
         NodeAggregateId $succeedingNodeAggregateId,
@@ -130,6 +134,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException
+     * @api
      */
     public function getFirstEnabledChildNode(
         NodeAggregateId $parentNodeAggregateId,
@@ -149,6 +154,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      * @param string $dimensionSpacePointHash
      * @return DocumentNodeInfo
      * @throws NodeNotFoundException
+     * @internal
      */
     public function getLastChildNode(
         NodeAggregateId $parentNodeAggregateId,
@@ -163,29 +169,8 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     }
 
     /**
-     * @param NodeAggregateId $nodeAggregateId
-     * @return \Iterator|DocumentNodeInfo[]
+     * @api
      */
-    public function getNodeVariantsById(NodeAggregateId $nodeAggregateId): \Iterator
-    {
-        try {
-            $iterator = $this->dbal->executeQuery(
-                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
-                     WHERE nodeAggregateId = :nodeAggregateId',
-                ['nodeAggregateId' => $nodeAggregateId]
-            );
-        } catch (DBALException $e) {
-            throw new \RuntimeException(sprintf(
-                'Failed to get node variants for id "%s": %s',
-                $nodeAggregateId,
-                $e->getMessage()
-            ), 1599665543, $e);
-        }
-        foreach ($iterator as $nodeSource) {
-            yield DocumentNodeInfo::fromDatabaseRow($nodeSource);
-        }
-    }
-
     public function getLiveContentStreamId(): ContentStreamId
     {
         if ($this->liveContentStreamIdRuntimeCache === null) {
@@ -236,7 +221,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             ), 1599664746, $e);
         }
         if ($row === false) {
-            throw new NodeNotFoundException(sprintf('No matching node found for query "%s"', $where), 1599667143);
+            throw new NodeNotFoundException(sprintf('No matching node found for query "%s" with params %s', $where, json_encode($parameters)), 1599667143);
         }
         return DocumentNodeInfo::fromDatabaseRow($row);
     }

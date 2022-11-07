@@ -91,7 +91,7 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+        "lint:phpcs": "../../bin/phpcs --config-set ignore_warnings_on_exit 1; ../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
             "@lint:phpcs",

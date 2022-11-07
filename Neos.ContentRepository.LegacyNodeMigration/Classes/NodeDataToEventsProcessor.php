@@ -12,6 +12,8 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
@@ -22,10 +24,9 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
@@ -304,15 +305,23 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->contentStreamIdentifier,
                 $nodeAggregateIdentifier,
-                NodeMoveMappings::fromArray([
-                    new NodeMoveMapping(
+                OriginNodeMoveMappings::fromArray([
+                    new OriginNodeMoveMapping(
                         $originDimensionSpacePoint,
-                        NodeVariantAssignments::create()->add(new NodeVariantAssignment($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint), $originDimensionSpacePoint->toDimensionSpacePoint()),
-                        NodeVariantAssignments::create()
+                        CoverageNodeMoveMappings::create(
+                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
+                                $originDimensionSpacePoint->toDimensionSpacePoint(),
+                                SucceedingSiblingNodeMoveDestination::create(
+                                    $parentNodeAggregate->nodeAggregateIdentifier,
+                                    $variantSourceOriginDimensionSpacePoint,
+
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateIdentifier,
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint
+                                )
+                            )
+                        )
                     )
-                ]),
-                new DimensionSpacePointSet([]),
-                UserId::forSystemUser()
+                ])
             ));
         }
     }
