@@ -275,7 +275,7 @@ trait RoutingTrait
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
             $this->getContentRepositoryId()
         );
-        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidentifierpath');
+        $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath');
         $expectedResult = array_map(static function (array $row) {
             return array_map(static function (string $cell) {
                 return json_decode($cell, true, 512, JSON_THROW_ON_ERROR);

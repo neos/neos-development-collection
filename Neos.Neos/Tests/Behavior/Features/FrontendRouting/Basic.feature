@@ -18,12 +18,12 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
           type: string
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                    |
-      | contentStreamIdentifier     | "cs-identifier"          |
+      | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
       | coveredDimensionSpacePoints | [{}]                     |
@@ -83,7 +83,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Change uri path segment
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                            |
-      | contentStreamIdentifier   | "cs-identifier"                                  |
+      | contentStreamId           | "cs-identifier"                                  |
       | nodeAggregateId           | "sir-david-nodenborough"                         |
       | originDimensionSpacePoint | {}                                               |
       | propertyValues            | {"uriPathSegment": "david-nodenborough-updated"} |
@@ -95,7 +95,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Move node upwards in the tree
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamIdentifier             | "cs-identifier"         |
+      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "earl-o-documentbourgh" |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "shernode-homes"        |
@@ -108,7 +108,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Move node downwards in the tree
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
-      | contentStreamIdentifier             | "cs-identifier"         |
+      | contentStreamId                     | "cs-identifier"         |
       | nodeAggregateId                     | "nody-mc-nodeface"      |
       | dimensionSpacePoint                 | {}                      |
       | newParentNodeAggregateId            | "earl-o-documentbourgh" |
