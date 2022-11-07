@@ -108,8 +108,7 @@ trait NodeMove
      * to a new location. $coveredDimensionSpacePointWhereMoveShouldHappen specifies which incoming HierarchyRelation
      * should be moved.
      *
-     * The move target is given as $succeedingSiblingNodeMoveTarget. This implicitly specifies the new parent node
-     * as well.
+     * The move target is given as $succeedingSiblingNodeMoveTarget. This also specifies the new parent node.
      * @throws \Exception
      * @throws Exception
      * @return NodeAggregateId the PARENT's NodeAggregateId
@@ -143,13 +142,10 @@ trait NodeMove
             );
         }
 
-        $newParent = $projectionContentGraph->findParentNode(
+        $newParent = $projectionContentGraph->findNodeByIds(
             $contentStreamId,
-            // this uniquely identifies the materialized node where we want to know the parent for
-            $succeedingSiblingNodeMoveDestination->nodeAggregateId,
-            $succeedingSiblingNodeMoveDestination->originDimensionSpacePoint,
-            // ... and we want to know the parent in the to-be-moved DimensionSpacePoint.
-            $coveredDimensionSpacePointWhereMoveShouldHappen
+            $succeedingSiblingNodeMoveDestination->parentNodeAggregateId,
+            $succeedingSiblingNodeMoveDestination->parentOriginDimensionSpacePoint,
         );
         if ($newParent === null) {
             // this should NEVER happen; because this would mean $newSucceedingSibling
@@ -186,7 +182,6 @@ trait NodeMove
      *
      * The move target is given as $parentNodeMoveTarget. We always move to the END of the children list of the
      * given parent.
-     * as well.
      * @throws DBALException
      */
     private function moveNodeIntoParent(
