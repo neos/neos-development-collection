@@ -15,8 +15,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveTarget;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveTarget;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -68,21 +68,21 @@ trait NodeMove
 
                     // do the move (depending on how the move target is specified)
                     switch (true) {
-                        case $newLocation->target instanceof SucceedingSiblingNodeMoveTarget:
+                        case $newLocation->destination instanceof SucceedingSiblingNodeMoveDestination:
                             $newParentNodeAggregateId = $this->moveNodeBeforeSucceedingSibling(
                                 $event->contentStreamId,
                                 $nodeToBeMoved,
                                 $newLocation->coveredDimensionSpacePoint,
-                                $newLocation->target
+                                $newLocation->destination
                             );
                             break;
-                        case $newLocation->target instanceof ParentNodeMoveTarget:
-                            $newParentNodeAggregateId = $newLocation->target->nodeAggregateId;
+                        case $newLocation->destination instanceof ParentNodeMoveDestination:
+                            $newParentNodeAggregateId = $newLocation->destination->nodeAggregateId;
                             $this->moveNodeIntoParent(
                                 $event->contentStreamId,
                                 $nodeToBeMoved,
                                 $newLocation->coveredDimensionSpacePoint,
-                                $newLocation->target
+                                $newLocation->destination
                             );
                             break;
                         default:
@@ -118,7 +118,7 @@ trait NodeMove
         ContentStreamId $contentStreamId,
         NodeRecord $nodeToBeMoved,
         DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen,
-        SucceedingSiblingNodeMoveTarget $succeedingSiblingNodeMoveTarget,
+        SucceedingSiblingNodeMoveDestination $succeedingSiblingNodeMoveDestination,
     ): NodeAggregateId {
         $projectionContentGraph = $this->getProjectionContentGraph();
 
@@ -134,8 +134,8 @@ trait NodeMove
         // later.
         $newSucceedingSibling = $projectionContentGraph->findNodeByIds(
             $contentStreamId,
-            $succeedingSiblingNodeMoveTarget->nodeAggregateId,
-            $succeedingSiblingNodeMoveTarget->originDimensionSpacePoint
+            $succeedingSiblingNodeMoveDestination->nodeAggregateId,
+            $succeedingSiblingNodeMoveDestination->originDimensionSpacePoint
         );
         if ($newSucceedingSibling === null) {
             throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetSucceedingSiblingNodeIsMissing(
@@ -146,8 +146,8 @@ trait NodeMove
         $newParent = $projectionContentGraph->findParentNode(
             $contentStreamId,
             // this uniquely identifies the materialized node where we want to know the parent for
-            $succeedingSiblingNodeMoveTarget->nodeAggregateId,
-            $succeedingSiblingNodeMoveTarget->originDimensionSpacePoint,
+            $succeedingSiblingNodeMoveDestination->nodeAggregateId,
+            $succeedingSiblingNodeMoveDestination->originDimensionSpacePoint,
             // ... and we want to know the parent in the to-be-moved DimensionSpacePoint.
             $coveredDimensionSpacePointWhereMoveShouldHappen
         );
@@ -193,7 +193,7 @@ trait NodeMove
         ContentStreamId $contentStreamId,
         NodeRecord $nodeToBeMoved,
         DimensionSpacePoint $coveredDimensionSpacePointWhereMoveShouldHappen,
-        ParentNodeMoveTarget $parentNodeMoveTarget
+        ParentNodeMoveDestination $parentNodeMoveDestination
     ): void {
         $projectionContentGraph = $this->getProjectionContentGraph();
 
@@ -208,8 +208,8 @@ trait NodeMove
         // We need this record because we'll use its RelationAnchorPoints later.
         $newParent = $projectionContentGraph->findNodeByIds(
             $contentStreamId,
-            $parentNodeMoveTarget->nodeAggregateId,
-            $parentNodeMoveTarget->originDimensionSpacePoint
+            $parentNodeMoveDestination->nodeAggregateId,
+            $parentNodeMoveDestination->originDimensionSpacePoint
         );
         if ($newParent === null) {
             throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(

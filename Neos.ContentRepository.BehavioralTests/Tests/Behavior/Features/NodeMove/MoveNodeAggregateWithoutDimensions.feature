@@ -202,10 +202,10 @@ Feature: Move a node without content dimensions
       | newSucceedingSiblingNodeAggregateId | "sir-nodeward-nodington-iii" |
     Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
     And event at index 5 is of type "NodeAggregateWasMoved" with payload:
-      | Key              | Expected                                                                                                                                                                            |
-      | contentStreamId  | "cs-identifier"                                                                                                                                                                     |
-      | nodeAggregateId  | "nody-mc-nodeface"                                                                                                                                                                  |
-      | nodeMoveMappings | [{"movedNodeOrigin":[],"newLocations":[{"coveredDimensionSpacePoint": [],"newSucceedingSibling":{"nodeAggregateId":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[]}}]}] |
+      | Key              | Expected                                                                                                                                                                                                                                                                      |
+      | contentStreamId  | "cs-identifier"                                                                                                                                                                                                                                                               |
+      | nodeAggregateId  | "nody-mc-nodeface"                                                                                                                                                                                                                                                            |
+      | nodeMoveMappings | [{"movedNodeOrigin":[],"newLocations":[{"coveredDimensionSpacePoint": [],"newSucceedingSibling":{"nodeAggregateId":"sir-nodeward-nodington-iii","originDimensionSpacePoint":[], "parentNodeAggregateId": "lady-eleonode-rootford", "parentOriginDimensionSpacePoint": []}}]}] |
 
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 4 nodes

@@ -207,12 +207,6 @@ class ChangeProjection implements ProjectionInterface
     {
         // WORKAROUND: we simply use the first MoveNodeMapping here to find the dimension space point
         // @todo properly handle this
-        if (is_null($event->nodeMoveMappings)) {
-            throw new \Exception(
-                'Could not apply NodeAggregateWasMoved to change projection due to missing nodeMoveMappings.',
-                1645382694
-            );
-        }
         /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping[] $mapping */
         $mapping = iterator_to_array($event->nodeMoveMappings);
 
@@ -412,29 +406,29 @@ class ChangeProjection implements ProjectionInterface
     }
 
     private function markAsMoved(
-        ContentStreamId $contentStreamIdentifier,
-        NodeAggregateId $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
         $this->transactional(function () use (
-            $contentStreamIdentifier,
-            $nodeAggregateIdentifier,
+            $contentStreamId,
+            $nodeAggregateId,
             $originDimensionSpacePoint
         ) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamIdentifier);
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
             if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
             $change = $this->getChange(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier,
+                $contentStreamId,
+                $nodeAggregateId,
                 $originDimensionSpacePoint
             );
             if ($change === null) {
                 $change = new Change(
-                    $contentStreamIdentifier,
-                    $nodeAggregateIdentifier,
+                    $contentStreamId,
+                    $nodeAggregateId,
                     $originDimensionSpacePoint,
                     false,
                     true,

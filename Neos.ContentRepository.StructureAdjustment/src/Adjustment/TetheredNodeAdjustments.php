@@ -14,10 +14,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveTarget;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -160,6 +159,7 @@ class TetheredNodeAdjustments
                             function () use ($node, $actualTetheredChildNodes, $expectedTetheredNodes) {
                                 return $this->reorderNodes(
                                     $node->subgraphIdentity->contentStreamId,
+                                    $node,
                                     $actualTetheredChildNodes,
                                     array_keys($expectedTetheredNodes)
                                 );
@@ -217,6 +217,7 @@ class TetheredNodeAdjustments
      */
     private function reorderNodes(
         ContentStreamId $contentStreamIdentifier,
+        Node $parentNode,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
     ): EventsToPublish {
@@ -242,9 +243,12 @@ class TetheredNodeAdjustments
                                 // TODO: I am not sure the next line is 100% correct. IMHO this must be the COVERED
                                 // TODO: DimensionSpacePoint (though I am not sure whether we have that one now)
                                 $nodeToMove->originDimensionSpacePoint->toDimensionSpacePoint(),
-                                SucceedingSiblingNodeMoveTarget::create(
+                                SucceedingSiblingNodeMoveDestination::create(
                                     $succeedingNode->nodeAggregateId,
-                                    $succeedingNode->originDimensionSpacePoint
+                                    $succeedingNode->originDimensionSpacePoint,
+                                    // we only change the order, not the parent -> so we can simply use the parent here.
+                                    $parentNode->nodeAggregateId,
+                                    $parentNode->originDimensionSpacePoint
                                 )
                             )
                         )

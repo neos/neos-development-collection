@@ -26,8 +26,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWer
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveTarget;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
@@ -312,7 +311,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                         CoverageNodeMoveMappings::create(
                             CoverageNodeMoveMapping::createForNewSucceedingSibling(
                                 $originDimensionSpacePoint->toDimensionSpacePoint(),
-                                SucceedingSiblingNodeMoveTarget::create($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint)
+                                SucceedingSiblingNodeMoveDestination::create(
+                                    $parentNodeAggregate->nodeAggregateIdentifier,
+                                    $variantSourceOriginDimensionSpacePoint,
+
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateIdentifier,
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint
+                                )
                             )
                         )
                     )

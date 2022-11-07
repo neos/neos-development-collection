@@ -15,20 +15,20 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
 {
     private function __construct(
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
-        public readonly SucceedingSiblingNodeMoveTarget|ParentNodeMoveTarget $target,
+        public readonly SucceedingSiblingNodeMoveDestination|ParentNodeMoveDestination $destination,
     ) {
     }
 
     public static function createForNewSucceedingSibling(
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        SucceedingSiblingNodeMoveTarget $newSucceedingSibling
+        SucceedingSiblingNodeMoveDestination $newSucceedingSibling
     ): self {
         return new self($coveredDimensionSpacePoint, $newSucceedingSibling);
     }
 
     public static function createForNewParent(
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        ParentNodeMoveTarget $newParent
+        ParentNodeMoveDestination $newParent
     ): self {
         return new self($coveredDimensionSpacePoint, $newParent);
     }
@@ -41,12 +41,12 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
         if (!empty($array['newSucceedingSibling'])) {
             return new self(
                 DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-                SucceedingSiblingNodeMoveTarget::fromArray($array['newSucceedingSibling']),
+                SucceedingSiblingNodeMoveDestination::fromArray($array['newSucceedingSibling']),
             );
         } elseif (!empty($array['newParent'])) {
             return new self(
                 DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
-                ParentNodeMoveTarget::fromArray($array['newParent']),
+                ParentNodeMoveDestination::fromArray($array['newParent']),
             );
         } else {
             throw new \RuntimeException('!!!');
@@ -58,15 +58,15 @@ final class CoverageNodeMoveMapping implements \JsonSerializable
      */
     public function jsonSerialize(): array
     {
-        if ($this->target instanceof SucceedingSiblingNodeMoveTarget) {
+        if ($this->destination instanceof SucceedingSiblingNodeMoveDestination) {
             return [
                 'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-                'newSucceedingSibling' => $this->target
+                'newSucceedingSibling' => $this->destination
             ];
-        } elseif ($this->target instanceof ParentNodeMoveTarget) {
+        } elseif ($this->destination instanceof ParentNodeMoveDestination) {
             return [
                 'coveredDimensionSpacePoint' => $this->coveredDimensionSpacePoint,
-                'newParent' => $this->target
+                'newParent' => $this->destination
             ];
         } else {
             throw new \RuntimeException('!!!');

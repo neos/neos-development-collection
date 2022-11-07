@@ -20,9 +20,30 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 /**
  * See the docs of {@see NodeAggregateWasMoved} for a full description.
  *
+ * This case is used if:
+ * - you want to move the node at the END of a sibling list.
+ *   ```
+ *   - node1
+ *      - node2 <-- source: we want to move this node
+ *      - node3
+ *      - <-- destination
+ *   ```
+ *   => `ParentNodeMoveDestination(node1)`
+ *
+ * - you want to move the node INTO another node.
+ *   ```
+ *   - node1
+ *   - node2 <-- source: we want to move this node
+ *   - node3
+ *      - <-- destination
+ *   ```
+ *   => `ParentNodeMoveDestination(node3)`
+ *
+ * For all other cases, use {@see SucceedingSiblingNodeMoveDestination}.
+ *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class SucceedingSiblingNodeMoveTarget implements \JsonSerializable
+final class ParentNodeMoveDestination implements \JsonSerializable
 {
     private function __construct(
         public readonly NodeAggregateId $nodeAggregateId,

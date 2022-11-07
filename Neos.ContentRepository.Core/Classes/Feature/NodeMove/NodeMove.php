@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveTarget;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -37,7 +37,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsDescendant;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveTarget;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -172,7 +172,6 @@ trait NodeMove
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
             $command->contentStreamId
         );
-        ;
 
         return new EventsToPublish(
             $contentStreamEventStreamName->getEventStreamName(),
@@ -214,7 +213,7 @@ trait NodeMove
 
         return CoverageNodeMoveMapping::createForNewParent(
             $coveredDimensionSpacePoint,
-            ParentNodeMoveTarget::create(
+            ParentNodeMoveDestination::create(
                 $parentId,
                 $parentNode->originDimensionSpacePoint
             )
@@ -389,19 +388,32 @@ trait NodeMove
             }
 
             if ($succeedingSibling) {
+                // for the event payload, we additionally need the parent of the succeeding sibling
+                $parentOfSucceedingSibling = $contentSubgraph->findParentNode($succeedingSibling->nodeAggregateId);
+                if ($parentOfSucceedingSibling === null) {
+                    throw new \InvalidArgumentException(
+                        'Parent of succeeding sibling ' . $succeedingSibling->nodeAggregateId
+                        . ' not found in subgraph ' . json_encode($contentSubgraph),
+                        1667817639
+                    );
+                }
+
                 $coverageNodeMoveMappings[] = CoverageNodeMoveMapping::createForNewSucceedingSibling(
                     $dimensionSpacePoint,
-                    SucceedingSiblingNodeMoveTarget::create(
+                    SucceedingSiblingNodeMoveDestination::create(
                         $succeedingSibling->nodeAggregateId,
-                        $succeedingSibling->originDimensionSpacePoint
+                        $succeedingSibling->originDimensionSpacePoint,
+                        $parentOfSucceedingSibling->nodeAggregateId,
+                        $parentOfSucceedingSibling->originDimensionSpacePoint,
                     )
                 );
             } else {
-                // preceeding / succeeding siblings could not be resolved for a given covered DSP
+                // preceding / succeeding siblings could not be resolved for a given covered DSP
                 // -> Fall back to resolving based on the parent
 
                 if ($parentId === null) {
-                    // if parent ID is not given, use the parent of the original node.
+                    // if parent ID is not given, use the parent of the original node, because we want to move
+                    // to the end of the sibling list.
                     $parentId = $contentSubgraph->findParentNode($nodeAggregate->nodeAggregateId)?->nodeAggregateId;
                     if ($parentId === null) {
                         throw new \InvalidArgumentException(
@@ -410,7 +422,7 @@ trait NodeMove
                         );
                     }
                 }
-                $coverageNodeMoveMappings[] =  $this->resolveNewParentAssignments(
+                $coverageNodeMoveMappings[] = $this->resolveNewParentAssignments(
                     $contentStreamId,
                     $parentId,
                     $dimensionSpacePoint,
