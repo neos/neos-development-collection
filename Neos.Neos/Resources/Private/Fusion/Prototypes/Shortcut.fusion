@@ -28,12 +28,16 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
         }
 
         asset = Neos.Fusion:Value {
-          targetUriTag = afx`
-            <a target='_blank'>
-              <Neos.Fusion:ResourceUri @path='attributes.href' resource={props.targetConverted.resource} />
-              {props.targetConverted.label}
-            </a>
-          `
+          targetUriTag = Neos.Fusion:Tag {
+            tagName = 'a'
+            attributes {
+              target = '_blank'
+              href = Neos.Fusion:ResourceUri {
+                resource = ${props.targetConverted.resource}
+              }
+            }
+            content = ${props.targetConverted.label}
+          }
           value = ${props.i18n.id('shortcut.clickToContinueToAsset').arguments([this.targetUriTag]).translate()}
         }
 
