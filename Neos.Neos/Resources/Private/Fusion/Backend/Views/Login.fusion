@@ -11,10 +11,10 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
     content = Neos.Fusion:Component {
       @apply.props = ${props}
 
-      logoImageSource = Neos.Neos:Component.Login.ImageSource {
+      logoImageSource = Neos.Neos:Component.ImageSource {
           path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.logoImage')}
       }
-      backgroundImageSource = Neos.Neos:Component.Login.ImageSource {
+      backgroundImageSource = Neos.Neos:Component.ImageSource {
           path = ${Configuration.setting('Neos.Neos.userInterface.backendLoginForm.backgroundImage')}
       }
       backgroundImageSourceIsWebp = ${this.backgroundImageSource ? String.endsWith(this.backgroundImageSource, '.webp') : null}
@@ -160,22 +160,4 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
         </fieldset>
     </Neos.Fusion.Form:Form>
   `
-}
-
-prototype(Neos.Neos:Component.Login.ImageSource) < prototype(Neos.Fusion:Component) {
-    path = ''
-    @if.set = ${this.path}
-    renderer = Neos.Fusion:Case {
-        resourcePath {
-            condition = ${String.indexOf(props.path, 'resource://') == 0}
-            renderer = Neos.Fusion:ResourceUri {
-                path = ${props.path}
-            }
-        }
-
-        default {
-            condition = true
-            renderer = ${props.path}
-        }
-    }
 }
