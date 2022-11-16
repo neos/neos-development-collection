@@ -41,24 +41,27 @@ Contributing
 
 If you want to contribute to Neos and want to set up a development environment, then follow these steps:
 
-``composer create-project neos/neos-development-distribution neos-development dev-master --keep-vcs --prefer-install=auto``
+``composer create-project neos/neos-development-distribution neos-development 8.2.x-dev --keep-vcs``
 
-Note the **-distribution** package you create a project from, instead of just checking out this repository.
+Note the **-distribution** repository you create a project from, instead of just checking out this repository.
 
-The code of the CMS can then be found inside ``Packages/Neos``, which itself is the neos-development-collection Git repository (due to the ``--prefer-install`` option above). You commit changes and create pull requests from this repository.
-To commit changes to Neos switch into the ``Neos`` directory (``cd Packages/Neos``) and do all Git-related work (``git add .``, ``git commit``, etc) there.
-If you want to contribute to the Neos UI, please take a look at the explanations at https://github.com/neos/neos-ui#contributing on how to work with that.
-If you want to contribute to the Flow Framework, you find that inside the ``Packages/Framework`` folder. See https://github.com/neos/flow-development-collection
+If you need a different branch, you can either use it from the start (replace the ``8.2.x-dev`` by ``9.0.x-dev`` or whatever you need), or switch after checkout (just make sure to run composer update afterwards to get matching dependencies installed.) In a nutshell, to switch the branch you intend to work on, run:
+
+``git checkout 9.0 && composer update``
+
+The code of the CMS can then be found inside ``Packages/Neos``, which itself is the neos-development-collection Git repository. You commit changes and create pull requests from this repository.
+
+- To commit changes to Neos switch into the ``Neos`` directory (``cd Packages/Neos``) and do all Git-related work (``git add .``, ``git commit``, etc) there.
+- If you want to contribute to the Neos UI, please take a look at the explanations at https://github.com/neos/neos-ui#contributing on how to work with that.
+- If you want to contribute to the Flow Framework, you find that inside the ``Packages/Framework`` folder. See https://github.com/neos/flow-development-collection
 
 In the root directory of the development distribution, you can do the following things:
 
-To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests.
-
-To switch the branch you intend to work on:
-``git checkout 8.2 && composer update``
+To run tests, run ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/UnitTests.xml`` for unit tests or ``./bin/phpunit -c ./Build/BuildEssentials/PhpUnit/FunctionalTests.xml`` for functional/integration tests.
 
 .. note:: We use an upmerging strategy: create all bugfixes to the lowest maintained branch that contains the issue. Typically, this is the second last LTS release - see the diagram at https://www.neos.io/features/release-process.html.
-For new features, pull requests should be made against the branch for the next minor version (named like ``x.y``). Breaking changes must only go into the branch for the next major version.
+
+  For new features, pull requests should be made against the branch for the next minor version (named like ``x.y``). Breaking changes must only go into the branch for the next major version.
 
 For more detailed information, see https://discuss.neos.io/t/development-setup/504,
 https://discuss.neos.io/t/creating-a-pull-request/506 and
