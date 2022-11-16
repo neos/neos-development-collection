@@ -16175,9 +16175,6 @@ body.neos-preview-mode .neos .neos-handle-container,
 body.neos-preview-mode .neos .neos-modal-backdrop {
   display: none;
 }
-.neos-nprogress-busy body {
-  cursor: wait !important;
-}
 
 #neos-document-metadata {
   display: none;

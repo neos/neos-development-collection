@@ -393,7 +393,7 @@ class FeatureContext extends MinkContext
      */
     public function iSetTheContentTo($content)
     {
-        $editable = $this->assertSession()->elementExists('css', '.neos-inline-editable', $this->selectedContentElement);
+        $editable = $this->assertSession()->elementExists('css', '[data-neos-editable-node-contextpath]', $this->selectedContentElement);
 
         $this->spinWait(function () use ($editable) {
             return $editable->hasAttribute('contenteditable');
