@@ -12,7 +12,6 @@ namespace Neos\Fusion\FusionObjects\Internal;
  */
 
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
-use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 
 /**
  * @internal
