@@ -12,6 +12,8 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Fusion\FusionObjects\Helpers\LazyProps;
+use Neos\Fusion\FusionObjects\Helpers\LazySelfReferentialProps;
+use Neos\Fusion\FusionObjects\Internal\DataStructureKeys;
 
 /**
  * A Fusion Component-Object
@@ -77,13 +79,26 @@ class ComponentImplementation extends AbstractArrayFusionObject
 
     protected function getPrivateProps(array $context): ?\ArrayAccess
     {
-        $this->runtime->pushContextArray($context);
+        $privatePath = $this->path . '/__meta/private<Neos.Fusion:Internal.DataStructureKeys>';
 
-        $private = $this->runtime->evaluate($this->path . '/__meta/private<Neos.Fusion:Internal.PrivateComponentProps>');
+        /** @var DataStructureKeys $privateKeys */
+        $privateKeys = $this->runtime->evaluate($privatePath);
 
-        $this->runtime->popContext();
+        if ($privateKeys === null) {
+            return null;
+        }
 
-        return $private;
+        if ($privateKeys instanceof DataStructureKeys === false) {
+            throw new \RuntimeException('Expected @private to evaluate into ?DataStructureKeys, got: ' . get_debug_type($privateKeys));
+        }
+
+        return new LazySelfReferentialProps(
+            $privatePath,
+            $privateKeys->getKeys(),
+            $this->runtime,
+            $context,
+            "private"
+        );
     }
 
     /**

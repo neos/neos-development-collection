@@ -80,20 +80,42 @@ class ComponentTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function componentComputed()
+    public function componentPrivate()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/computed');
+        $view->setFusionPath('component/private');
         self::assertEquals('MoinMoin!<div>Moin</div>', $view->render());
     }
 
     /**
      * @test
      */
-    public function componentComputedLazy()
+    public function componentPrivateLazy()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/computedLazy');
+        $view->setFusionPath('component/privateLazy');
         self::assertEquals('MoinMoin!', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateSelfReferencing()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateSelfReferencing');
+        self::assertEquals('Moin!Moin!', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateSelfReferencingInfiniteLoop()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionCode(1669654158);
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateSelfReferencingInfiniteLoop');
+        self::assertEquals('Moin!Moin!', $view->render());
     }
 }

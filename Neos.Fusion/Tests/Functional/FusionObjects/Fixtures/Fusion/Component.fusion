@@ -2,8 +2,8 @@ prototype(Neos.Fusion:Component) {
   @class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
   @sortProperties = false
 }
-prototype(Neos.Fusion:Internal.PrivateComponentProps) {
-  @class = 'Neos\\Fusion\\FusionObjects\\Internal\\PrivateComponentPropsImplementation'
+prototype(Neos.Fusion:Internal.DataStructureKeys) {
+  @class = 'Neos\\Fusion\\FusionObjects\\Internal\\DataStructureKeysImplementation'
   @sortProperties = false
 }
 
@@ -79,7 +79,7 @@ component.wrapperRenderer = Neos.Fusion:Component {
 }
 
 
-component.computed = Neos.Fusion:Component {
+component.private = Neos.Fusion:Component {
   a = 'Moin'
 
   @private {
@@ -92,7 +92,7 @@ component.computed = Neos.Fusion:Component {
   renderer = ${props.a + private.b + private.c}
 }
 
-component.computedLazy = Neos.Fusion:Component {
+component.privateLazy = Neos.Fusion:Component {
   a = 'Moin'
   x = Neos.Fusion:NotImplemented
 
@@ -102,4 +102,26 @@ component.computedLazy = Neos.Fusion:Component {
   }
 
   renderer = ${props.a + private.b}
+}
+
+component.privateSelfReferencing = Neos.Fusion:Component {
+  a = 'Moin'
+
+  @private {
+    b = ${props.a + '!'}
+    c = ${private.b}
+    d = Neos.Fusion:Value {
+      value = ${private.c}
+    }
+  }
+
+  renderer = ${private.c + private.d}
+}
+
+component.privateSelfReferencingInfiniteLoop = Neos.Fusion:Component {
+  @private {
+    b = ${private.c}
+    c = ${private.b}
+  }
+  renderer = ${private.b}
 }

@@ -12,22 +12,17 @@ namespace Neos\Fusion\FusionObjects\Internal;
  */
 
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
-use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 
-/**
- * @internal
- */
-class PrivateComponentPropsImplementation extends AbstractArrayFusionObject
+/** @internal */
+class DataStructureKeysImplementation extends AbstractArrayFusionObject
 {
-    /**
-     * @return ?\ArrayAccess
-     */
+    /** @return ?DataStructureKeys */
     public function evaluate()
     {
         $sortedChildFusionKeys = $this->preparePropertyKeys($this->properties, $this->ignoreProperties);
         if ($sortedChildFusionKeys === []) {
             return null;
         }
-        return new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $this->runtime->getCurrentContext());
+        return new DataStructureKeys($sortedChildFusionKeys);
     }
 }
