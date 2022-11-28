@@ -20,7 +20,7 @@ use Neos\Fusion\FusionObjects\Helpers\LazyProps;
 class PrivateComponentPropsImplementation extends AbstractArrayFusionObject
 {
     /**
-     * @return ?\ArrayAccess
+     * @return ?PrivateComponentPropsDto
      */
     public function evaluate()
     {
@@ -28,6 +28,6 @@ class PrivateComponentPropsImplementation extends AbstractArrayFusionObject
         if ($sortedChildFusionKeys === []) {
             return null;
         }
-        return new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $this->runtime->getCurrentContext());
+        return new PrivateComponentPropsDto($this->path, $sortedChildFusionKeys);
     }
 }
