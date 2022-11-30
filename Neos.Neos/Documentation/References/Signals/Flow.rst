@@ -3,7 +3,7 @@
 Flow Signals Reference
 ======================
 
-This reference was automatically generated from code on 2022-11-11
+This reference was automatically generated from code on 2022-11-22
 
 
 .. _`Flow Signals Reference: AbstractAdvice (``Neos\Flow\Aop\Advice\AbstractAdvice``)`:
@@ -495,8 +495,8 @@ before passing it on to further rendering
 
 .. _`Flow Signals Reference: SlaveRequestHandler (``Neos\Flow\Cli\SlaveRequestHandler``)`:
 
-SlaveRequestHandler (``Neos\Flow\Cli\SlaveRequestHandler``) (deprecated)
-------------------------------------------------------------------------
+SlaveRequestHandler (``Neos\Flow\Cli\SlaveRequestHandler``)
+-----------------------------------------------------------
 
 This class contains the following signals.
 
@@ -506,9 +506,6 @@ dispatchedCommandLineSlaveRequest
 Emits a signal that a CLI slave request was dispatched.
 
 
-
-
-**DEPRECATED** This will probably move to a separate package and be renamed in a future version, you should not rely on it.
 
 
 

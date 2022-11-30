@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2022-11-11
+This reference was automatically generated from code on 2022-11-22
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1166,7 +1166,7 @@ on the sign of the number.
 
 * ``x`` (float) A number
 
-**Return** (int|float) The integral part of the given number or NAN if the given value was not numeric
+**Return** (integer) The integral part of the given number
 
 
 
@@ -1800,7 +1800,7 @@ Example::
 
 * ``string`` (string) The string
 * ``search`` (string) A string to search
-* ``position`` (int|null, *optional*) Optional position for limiting the string
+* ``position`` (integer, *optional*) Optional position for limiting the string
 
 **Return** (boolean) true if the string ends with the given search
 
@@ -2071,8 +2071,8 @@ Example::
 Node: This implementation follows JavaScript semantics without support of regular expressions.
 
 * ``string`` (string) The string to split
-* ``separator`` (string|null, *optional*) The separator where the string should be splitted
-* ``limit`` (int|null, *optional*) The maximum amount of items to split (exceeding items will be discarded)
+* ``separator`` (string, *optional*) The separator where the string should be splitted
+* ``limit`` (integer, *optional*) The maximum amount of items to split (exceeding items will be discarded)
 
 **Return** (array) An array of the splitted parts, excluding the separators
 
@@ -2105,7 +2105,7 @@ Example::
 This is a wrapper for the strip_tags() PHP function.
 
 * ``string`` (string) The string to strip
-* ``allowableTags`` (string|null, *optional*) Specify tags which should not be stripped
+* ``allowableTags`` (string, *optional*) Specify tags which should not be stripped
 
 **Return** (string) The string with tags stripped
 
@@ -2151,7 +2151,7 @@ String.toBoolean(string)
 
 Convert a string to boolean
 
-A value is ``true``, if it is either the string ``"true"`` or ``"TRUE"`` or the number ``1``.
+A value is ``true``, if it is either the string ``"true"`` or ``"true"`` or the number ``1``.
 
 * ``string`` (string) The string to convert
 
