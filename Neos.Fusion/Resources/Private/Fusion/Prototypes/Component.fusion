@@ -5,8 +5,3 @@ prototype(Neos.Fusion:Component) {
   }
   renderer = null
 }
-
-prototype(Neos.Fusion:Internal.DataStructureKeys) {
-  @class = 'Neos\\Fusion\\FusionObjects\\Internal\\DataStructureKeysImplementation'
-  @sortProperties = false
-}

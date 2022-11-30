@@ -2,10 +2,6 @@ prototype(Neos.Fusion:Component) {
   @class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
   @sortProperties = false
 }
-prototype(Neos.Fusion:Internal.DataStructureKeys) {
-  @class = 'Neos\\Fusion\\FusionObjects\\Internal\\DataStructureKeysImplementation'
-  @sortProperties = false
-}
 
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
@@ -124,4 +120,20 @@ component.privateSelfReferencingInfiniteLoop = Neos.Fusion:Component {
     c = ${private.b}
   }
   renderer = ${private.b}
+}
+
+component.privateCannotBeApplied = Neos.Fusion:Component {
+  @private {
+    b = "Hello"
+  }
+  renderer = Neos.Fusion:Join {
+    @apply.it = ${private}
+  }
+}
+
+component.privateCannotBeLooped = Neos.Fusion:Component {
+  @private {
+    b = "Hello"
+  }
+  renderer = ${Array.join(private)}
 }

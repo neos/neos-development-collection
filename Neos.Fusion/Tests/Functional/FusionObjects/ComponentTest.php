@@ -118,4 +118,25 @@ class ComponentTest extends AbstractFusionObjectTest
         $view->setFusionPath('component/privateSelfReferencingInfiniteLoop');
         self::assertEquals('Moin!Moin!', $view->render());
     }
+
+    /**
+     * @test
+     */
+    public function componentPrivateCannotBeApplied()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateCannotBeApplied');
+        self::assertEquals('', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateCannotBeLooped()
+    {
+        $this->expectException(\TypeError::class);
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateCannotBeLooped');
+        $view->render();
+    }
 }

@@ -6,7 +6,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Runtime;
 
 /** @Flow\Proxy(false) */
-final class LazySelfReferentialProps extends AbstractLazyProps
+final class LazySelfReferentialProps implements \ArrayAccess
 {
     private array $valueCache = [];
 
@@ -14,12 +14,10 @@ final class LazySelfReferentialProps extends AbstractLazyProps
 
     public function __construct(
         private string $parentPath,
-        array $keys,
         private Runtime $runtime,
         private array $effectiveContext,
         private string $selfReferentialId
     ) {
-        parent::__construct($keys);
         $this->effectiveContext[$this->selfReferentialId] = $this;
     }
 
@@ -39,5 +37,20 @@ final class LazySelfReferentialProps extends AbstractLazyProps
             }
         }
         return $this->valueCache[$path];
+    }
+
+    public function offsetExists($offset)
+    {
+        return $this->offsetGet($offset) !== null;
+    }
+
+    public function offsetSet($path, $value): void
+    {
+        throw new \BadMethodCallException('Lazy props can not be set.', 1669821835);
+    }
+
+    public function offsetUnset($path): void
+    {
+        throw new \BadMethodCallException('Lazy props can not be unset.', 1669821836);
     }
 }
