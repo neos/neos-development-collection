@@ -1,0 +1,249 @@
+`8.0.7 (2022-11-03) <https://github.com/neos/neos-development-collection/releases/tag/8.0.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: 3371 shortcut translations <https://github.com/neos/neos-development-collection/pull/3937>`_
+-----------------------------------------------------------------------------------------------------
+
+closes: `#3371 <https://github.com/neos/neos-development-collection/issues/3371>`_
+
+## 1
+
+
+> the dutch translation f.x. doesnt have correctly formatted ``<br/>`` tags. See f.x.: ``'shortcut.clickToContinueToParentNode'`` and compare the spanish ``&lt; br / &gt;`` to the english source ``&lt;br /&gt;``. A search for ``&lt; br / &gt;`` reveals multiple cases. The problem is, that this invalid html (due to the space) and will be rendered as text (``< br / >``).
+
+
+before in NL:
+!`image <https://user-images.githubusercontent.com/85400359/198111355-d5a4d9f5-f1b5-4b83-8f4a-1f3c914b4955.png>`_
+
+
+after:
+!`image <https://user-images.githubusercontent.com/85400359/198111385-575bd6b0-4044-436d-a145-e14d4934c778.png>`_
+
+## 2
+
+> this translation id doesnt exist: ``'shortcut.toSpecificTarget'`` so the value / fallback ``This is a shortcut to a specific target:`` is always used.
+
+It has been missed in 2014 (since Neos 2) ^^ https://github.com/neos/neos-development-collection/commit/`02f8ff96e1ecd3dfbd9a356c4c6f55bb565916c7 <https://github.com/neos/neos-development-collection/commit/02f8ff96e1ecd3dfbd9a356c4c6f55bb565916c7>``_#diff-``d1bec08a4f5050d463e4f7af3d61b767974d858d <https://github.com/neos/neos-development-collection/commit/d1bec08a4f5050d463e4f7af3d61b767974d858d>`_3d56ced85581ca55c27126dcR6
+
+before in DE (or any other language):
+!`image <https://user-images.githubusercontent.com/85400359/198111487-39e7c03c-c132-4896-a12d-f25da087e07b.png>`_
+
+after:
+nothing to see here yet - but now we can translate via weblate :D
+
+**Upgrade instructions**
+
+**Review instructions**
+
+Check the shortcode rendering in the backend.
+If you switch your user language - flush the fusion cache - as this is not calculated into the shortcut cache:
+ ``./flow cache:flushone Neos_Fusion_Content``
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: fix typos in privilegeTargets <https://github.com/neos/neos-development-collection/pull/3938>`_
+--------------------------------------------------------------------------------------------------------
+
+
+**Review instructions**
+
+Fixes small spelling errors in the priviligeTargets
+
+
+* Packages: ``Neos``
+
+`BUGFIX: DI conflict in DataSource `Call to a member function log Throwable() on null` <https://github.com/neos/neos-development-collection/pull/3931>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3858 <https://github.com/neos/neos-development-collection/issues/3858>`_
+
+when one throws an exception in a datasource, it fails logging it and an uncaught error is thrown, because the ``ThrowableStorage`` is not injected:
+
+``Call to a member function log Throwable() on null``
+
+this seems due to a dependency injection conflict with inheritance.
+
+this pr only prevents this conflict from happening
+
+the controller that handles datasources extends the ``AbstractServiceController``
+which injects the ``throwableStorage``
+
+```php
+  /**
+   * @Flow\\Inject
+   * @var ThrowableStorageInterface
+   */
+  protected $throwableStorage;
+```
+
+but the  ``AbstractServiceController`` also extends the ``ActionController`` which injects the ``throwableStorage`` via an inject method into a private property
+
+```php
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * Injects the throwable storage.
+     *
+     * @param ThrowableStorageInterface $throwableStorage
+     * @return void
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
+
+```
+
+this combined doesnt work and results in the ``@Flow\\Inject`` in the ``AbstractServiceController`` not working
+
+solutions are:
+
+- fix the flow DI? (assuming this is a issue)
+- rename the variable (what id did now)
+- use also ``AbstractServiceController::injectThrowableStorage`` and call parent / not the ``@Flow\\Inject`` annotation
+- use a protected property in ``ActionController`` and reuse it
+
+
+## update 1
+this is indeed defined behaviour from flow: https://flowframework.readthedocs.io/en/8.1/TheDefinitiveGuide/PartIII/ObjectManagement.html#property-injection
+> If a setter method exists for the same property, it has precedence.
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Node::countChildNodes($nodeTypeConstraints) filter doesn't work <https://github.com/neos/neos-development-collection/pull/3930>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3885 <https://github.com/neos/neos-development-collection/issues/3885>`_
+
+``findChildNodes`` is corrently implemented, but ``countChildNodes`` doesnt transform the argument $nodeTypeConstraints NodeTypeConstraints to a string for the legacy api:
+
+either this snipped must be included:
+```php
+$filter = $nodeTypeConstraints !== null ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : null;
+```
+
+or we must use ``$this->findChildNodes``
+
+without that, the ``NodeTypeConstraints`` is passed further down, and due to lack of typesafety it fails at the last moment:
+```php
+Argument 2 passed to Neos\\Utility\\Arrays::trimExplode() must be of the type string, object given, called in /tmp/neos/Development/SubContextddev/Cache/Code/Flow_Object_Classes/Neos_ContentRepository_Domain_Repository_NodeDataRepository.php on line 1127
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Fusion Runtime @process with simple string <https://github.com/neos/neos-development-collection/pull/3847>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This makes it possible to use ``@process`` with a regular string.
+
+Closes `#3846 <https://github.com/neos/neos-development-collection/issues/3846>`_
+
+**Review instructions**
+try the fusion code from the issue.
+
+it now works as we switched a condition (the count will only happen if it is an array and not possibly a simple value)
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Make import of .ico files possible <https://github.com/neos/neos-development-collection/pull/3923>`_
+-------------------------------------------------------------------------------------------------------------
+
+This enables the possibility of uploading ``.ico`` files.
+
+Closes `#3922 <https://github.com/neos/neos-development-collection/issues/3922>`_
+
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Fix media commands output <https://github.com/neos/neos-development-collection/pull/3902>`_
+----------------------------------------------------------------------------------------------------
+
+Fix Neos.Media commands ``media:clearthumbnails``, ``media:createthumbnails`` and ``media:removeunused`` to properly print a final newline.
+
+Output before:
+```
+user $ ./flow media:clearthumbnails
+0 [->--------------------------]user $
+                                ^-- next prompt
+```
+Output after:
+```
+user $ ./flow media:clearthumbnails
+0 [->--------------------------]
+user $
+```
+Resolved: `#3894 <https://github.com/neos/neos-development-collection/issues/3894>`_
+
+**Upgrade instructions**
+
+None.
+
+**Review instructions**
+
+in ``bash``, execute
+``./flow media:clearthumbnails``
+(by default, ``zsh`` is less affected, it recovers but shows a percent sign)
+
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Render API docs (again) <https://github.com/neos/neos-development-collection/pull/3934>`_
+------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``.github``
+
+`TASK: Use local fonts instead of from Google <https://github.com/neos/neos-development-collection/pull/3919>`_
+---------------------------------------------------------------------------------------------------------------
+
+Removes the use of remote fonts from Google in favor of local font files.
+Additionally ``node-sass`` was updated to allow compilation on M1 Macs.
+
+Replaces `#3873 <https://github.com/neos/neos-development-collection/issues/3873>`_
+
+**Review instructions**
+
+Noto should still be the font used on error pages.
+
+
+* Packages: ``Neos``
+
+`TASK: Rename index to match name in database <https://github.com/neos/neos-development-collection/pull/3889>`_
+---------------------------------------------------------------------------------------------------------------
+
+Renames the index in the NodeData model to match the index name in migration and database.
+
+* Fixes: `#3888 <https://github.com/neos/neos-development-collection/issues/3888>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Add PHP 8.1 to build matrix <https://github.com/neos/neos-development-collection/pull/3884>`_
+----------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+The build on PHP 8.1 should succeed.
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.6...8.0.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
