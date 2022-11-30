@@ -6,7 +6,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Runtime;
 
 /** @Flow\Proxy(false) */
-final class LazySelfReferentialProps implements \ArrayAccess
+final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
 {
     private array $valueCache = [];
 
@@ -52,5 +52,10 @@ final class LazySelfReferentialProps implements \ArrayAccess
     public function offsetUnset($path): void
     {
         throw new \BadMethodCallException('Lazy props can not be unset.', 1669821836);
+    }
+
+    public function __toString(): string
+    {
+        return "$this->selfReferentialId props [$this->parentPath]";
     }
 }

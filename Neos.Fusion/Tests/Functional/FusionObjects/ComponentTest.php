@@ -116,7 +116,19 @@ class ComponentTest extends AbstractFusionObjectTest
         $this->expectExceptionCode(1669654158);
         $view = $this->buildView();
         $view->setFusionPath('component/privateSelfReferencingInfiniteLoop');
-        self::assertEquals('Moin!Moin!', $view->render());
+        $view->render();
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateSelfReferencingInfiniteLoopComplex()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionCode(1669654158);
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateSelfReferencingInfiniteLoopComplex');
+        $view->render();
     }
 
     /**
@@ -138,5 +150,55 @@ class ComponentTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('component/privateCannotBeLooped');
         $view->render();
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateScopeIsIsolatedFromOtherPrivate()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateScopeIsIsolatedFromOtherPrivate');
+        self::assertEquals(null, $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateScopeIsIsolatedInRenderer()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateScopeIsIsolatedInRenderer');
+        self::assertEquals(null, $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateScopeIsReachableInProps()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateScopeIsReachableInProps');
+        self::assertEquals("Moin", $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateLegacyPatternWorks()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateLegacyPatternWorks');
+        self::assertEquals('Moin', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function componentPrivateOuterContextIsOverridden()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('component/privateOuterContextIsOverridden');
+        self::assertStringStartsWith("private props [component/privateOuterContextIsOverridden", $view->render());
     }
 }

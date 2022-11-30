@@ -122,6 +122,17 @@ component.privateSelfReferencingInfiniteLoop = Neos.Fusion:Component {
   renderer = ${private.b}
 }
 
+component.privateSelfReferencingInfiniteLoopComplex = Neos.Fusion:Component {
+  @private {
+    b = ${private.c}
+    c = Neos.Fusion:Value {
+      d = ${private.b}
+      value = ${this.d}
+    }
+  }
+  renderer = ${private.c}
+}
+
 component.privateCannotBeApplied = Neos.Fusion:Component {
   @private {
     b = "Hello"
@@ -136,4 +147,52 @@ component.privateCannotBeLooped = Neos.Fusion:Component {
     b = "Hello"
   }
   renderer = ${Array.join(private)}
+}
+
+component.privateScopeIsIsolatedFromOtherPrivate = Neos.Fusion:Component {
+  @private {
+    outer = "Will not be reachable in inner"
+  }
+  renderer = Neos.Fusion:Component {
+    @private {
+      inner = ${private.outer}
+    }
+    renderer = ${private.inner}
+  }
+}
+
+component.privateScopeIsIsolatedInRenderer = Neos.Fusion:Component {
+  @private {
+    outer = "Will not be reachable"
+  }
+  renderer = Neos.Fusion:Component {
+    renderer = Neos.Fusion:Component {
+      prop1 = ${private.outer}
+      renderer = ${props.prop1}
+    }
+  }
+}
+
+component.privateScopeIsReachableInProps = Neos.Fusion:Component {
+  @private {
+    outer = "Moin"
+  }
+  renderer = Neos.Fusion:Component {
+    prop1 = ${private.outer}
+    renderer = ${props.prop1}
+  }
+}
+
+component.privateLegacyPatternWorks = Neos.Fusion:Component {
+  renderer.@context.private = Neos.Fusion:DataStructure {
+    a = 'Moin'
+  }
+  renderer = Neos.Fusion:Value {
+    value = ${private.a}
+  }
+}
+
+component.privateOuterContextIsOverridden = Neos.Fusion:Component {
+  @context.private = 'Will not be rendered'
+  renderer = ${String.toString(private)}
 }
