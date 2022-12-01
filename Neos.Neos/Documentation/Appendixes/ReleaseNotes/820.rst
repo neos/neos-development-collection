@@ -1,0 +1,128 @@
+========
+Neos 8.2
+========
+
+This release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+
+
+************
+New Features
+************
+
+FEATURE: Make login logo configurable
+-------------------------------------
+
+Since ages, we are able to configure the background of the login to customize. The logo was often replaced by CSS. With this change, we are able to configure a logo as well.
+
+The new setting is  'Neos.Neos.userInterface.backendLoginForm.logoImage'
+
+**Review instructions**
+
+Configure a new logo and check the login screen.
+
+<img width="1688" alt="Screenshot 2022-10-18 at 10 39 31" src="https://user-images.githubusercontent.com/1014126/196380887-4d52a85a-61d0-4f1b-b24a-e8d070845acb.png">
+
+FEATURE: Add Fusion EEL Helper `${Neos.Backend.interfaceLanguage()}`
+--------------------------------------------------------------------
+
+closes `#3638 <https://github.com/neos/neos-development-collection/issues/3638>`_
+implemented as discussed in `#3638 <https://github.com/neos/neos-development-collection/issues/3638>`_
+
+```
+Neos.Backend
+------------
+
+Backend helper eg. for translations in the backend
+
+Implemented in: ``Neos\\Neos\\Fusion\\Helper\\BackendHelper``
+
+Neos.Backend.interfaceLanguage()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The interface language the user selected or the default language defined in the settings
+Formatted as {@see \\Neos\\Flow\\I18n\\Locale} identifier, eg "de", "en", ...
+
+**Return** (string)
+```
+
+
+If no user is available. ``assert`` https://www.php.net/manual/de/function.assert.php will fail and depending on you php config - throw an error 
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+use this helper in your fusion and check if it correctly reflects you backend user language.
+Try to switch your language via user-settings (possibly flush the fusion cache) and see it correctly reflected
+
+```
+root >
+root = ${Neos.Backend.interfaceLanguage()}
+``` 
+
+
+
+FEATURE: implement checkbox label in workspace module
+-----------------------------------------------------
+
+**Review instructions**
+
+Currently, in the Workspace module, in the overview, we have a checkbox for selecting all changes. But this checkbox is not marked with a label. For clarity (and looks), it is better if it is clearly marked what this checkbox does.
+
+## Screenshots
+
+### Before
+!`neos-backend-workspace-module-checkbox-without-label <https://user-images.githubusercontent.com/39345336/197170837-7b4e5878-0f76-4ebc-baeb-62320d4522f9.png>`_
+
+### After
+!`neos-backend-workspace-module-checkbox-with-label <https://user-images.githubusercontent.com/39345336/197170857-b111a761-037a-4fb7-af02-8bb47380447d.png>`_
+
+
+
+FEATURE: Add `nodetypes://` stream wrapper to support including fusion from NodeTypes folder
+--------------------------------------------------------------------------------------------
+
+To support colocation of NodeTypes and Fusion Files the ``nodetypes://`` stream wrapper is added that allows to access files from the NodeTypes folder.
+
+The following line in the ``Root.fusion`` will load all fusion files from the ``NodeTypes`` folder of package ``Vendor.Site``
+```
+include: nodetypes://Vendor.Site/**/*.fusion 
+```
+
+**Review instructions**
+
+Basically the stream wrapper is a copy of the resource stream wrapper from flow (https://github.com/neos/flow-development-collection/blob/8.2/Neos.Flow/Classes/ResourceManagement/Streams/ResourceStreamWrapper.php) with the following adjustments. 
+- Added protection against traversal out of the path via multiple ``..`` in the path
+- Support an empty path as this is needed in the most likely globbing pattern ``nodetypes://Vendor.Site/**/*.fusion``
+
+The explicit filter for ``..`` in the filePatternResolver is needed as otherwise the traversal protection will throw a valid exception because of boundary violation when calling isDir on the path ``NodeTypes/..``. 
+
+
+FEATURE: Provide Uris in MenuItemsImplementation
+------------------------------------------------
+
+With this change the uris for nodes are included in menuitems. This makes it easier to use them in presentational components as no further processing is needed to turn nodes into uris.
+
+
+
+**Review instructions**
+
+Debugdump the output of a ``Neos.Neos:MenuItems`` instance. It should include ``uri`` fields for all items.
+
+
+Related issue: `#3907 <https://github.com/neos/neos-development-collection/issues/3907>`_
+
+********************
+Upgrade Instructions
+********************
+
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-8-1-8-2
+
+.. note::
+
+   Additionally all changes in Flow 8.2 apply, see the release notes to further information.
+   See https://flowframework.readthedocs.org/en/8.2/TheDefinitiveGuide/PartV/ReleaseNotes/820.html
