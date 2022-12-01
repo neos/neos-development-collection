@@ -42,7 +42,7 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
      */
     public function getValue()
     {
-        return $this->fusionValue('value');
+        return (string)$this->fusionValue('value');
     }
 
     /**
