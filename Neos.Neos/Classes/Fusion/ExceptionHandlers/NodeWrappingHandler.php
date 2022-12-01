@@ -56,7 +56,7 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
     {
         $handler = new ContextDependentHandler();
         $handler->setRuntime($this->runtime);
-        $output = $handler->handleRenderingException($fusionPath, $exception);
+        $output = (string)$handler->handleRenderingException($fusionPath, $exception);
 
         $currentContext = $this->getRuntime()->getCurrentContext();
         if (isset($currentContext['node'])) {
