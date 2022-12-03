@@ -11,12 +11,16 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
+use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
@@ -59,6 +63,24 @@ class MenuHelper
     protected $iconMapper;
 
     /**
+     * @var \Neos\Flow\Security\Context
+     * @Flow\Inject
+     */
+    protected $securityContext;
+
+    /**
+     * @Flow\Inject
+     * @var \Neos\Neos\Domain\Service\ContentContextFactory
+     */
+    protected $contextFactory;
+
+    /**
+     * @var ObjectManagerInterface
+     * @Flow\Inject
+     */
+    protected $objectManager;
+
+    /**
      * @param array $settings
      */
     public function injectSettings(array $settings)
@@ -81,34 +103,40 @@ class MenuHelper
             return [];
         }
 
+        $context = $this->contextFactory->create();
+        $privilegeManager = new PrivilegeManager($this->objectManager, $this->securityContext);
+
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $uri = null;
-            $active = false;
-            /** @var $site Site */
-            if ($site->hasActiveDomains()) {
-                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
-                    return $domain->getHostname();
-                })->toArray();
+            $node = $context->getNode("/sites/" . $site->getNodeName());
+            if ($privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+                $uri = null;
+                $active = false;
+                /** @var $site Site */
+                if ($site->hasActiveDomains()) {
+                    $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
+                        return $domain->getHostname();
+                    })->toArray();
 
-                $active = in_array($requestUriHost, $activeHostPatterns, true);
+                    $active = in_array($requestUriHost, $activeHostPatterns, true);
 
-                if ($active) {
-                    $uri = $contentModule['uri'];
-                } else {
-                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    if ($active) {
+                        $uri = $contentModule['uri'];
+                    } else {
+                        $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    }
+
+                    $domainsFound = true;
                 }
 
-                $domainsFound = true;
+                $sites[] = [
+                    'name' => $site->getName(),
+                    'nodeName' => $site->getNodeName(),
+                    'uri' => $uri,
+                    'active' => $active
+                ];
             }
-
-            $sites[] = [
-                'name' => $site->getName(),
-                'nodeName' => $site->getNodeName(),
-                'uri' => $uri,
-                'active' => $active
-            ];
         }
 
         if ($domainsFound === false) {
