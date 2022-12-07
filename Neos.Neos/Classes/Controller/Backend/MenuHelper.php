@@ -104,13 +104,11 @@ class MenuHelper
         }
 
         $context = $this->contextFactory->create();
-        $privilegeManager = new PrivilegeManager($this->objectManager, $this->securityContext);
-
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
             $node = $context->getNode("/sites/" . $site->getNodeName());
-            if ($privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
                 $uri = null;
                 $active = false;
                 /** @var $site Site */
