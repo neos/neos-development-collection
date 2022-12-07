@@ -48,7 +48,7 @@ class PropertyValue implements DoctrineFilterInterface
      * @param string|bool|int $propertyValue
      * @return void
      */
-    public function setPropertyValue(string $propertyValue): void
+    public function setPropertyValue($propertyValue): void
     {
         $this->propertyValue = $propertyValue;
     }
