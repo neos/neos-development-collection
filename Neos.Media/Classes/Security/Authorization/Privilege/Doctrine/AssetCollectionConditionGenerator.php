@@ -57,4 +57,15 @@ class AssetCollectionConditionGenerator extends EntityConditionGenerator
 
         return $propertyConditionGenerator->equals($collectionIdentifier);
     }
+
+    /**
+     * @param string $collectionTitle
+     * @return PropertyConditionGenerator
+     */
+    public function titleStartsWith($collectionTitle)
+    {
+        $propertyConditionGenerator = new PropertyConditionGenerator('title');
+
+        return $propertyConditionGenerator->like($collectionTitle . '%');
+    }
 }
