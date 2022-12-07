@@ -15,8 +15,6 @@ use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSu
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Security\Authorization\PrivilegeManager;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
@@ -63,22 +61,10 @@ class MenuHelper
     protected $iconMapper;
 
     /**
-     * @var \Neos\Flow\Security\Context
-     * @Flow\Inject
-     */
-    protected $securityContext;
-
-    /**
      * @Flow\Inject
      * @var \Neos\Neos\Domain\Service\ContentContextFactory
      */
     protected $contextFactory;
-
-    /**
-     * @var ObjectManagerInterface
-     * @Flow\Inject
-     */
-    protected $objectManager;
 
     /**
      * @param array $settings
