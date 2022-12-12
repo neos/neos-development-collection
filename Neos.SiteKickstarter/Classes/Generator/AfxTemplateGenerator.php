@@ -19,7 +19,7 @@ use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
-use Neos\ContentRepository\Utility;
+use Neos\ContentRepositoryRegistry\Utility;
 use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
 
 /**
