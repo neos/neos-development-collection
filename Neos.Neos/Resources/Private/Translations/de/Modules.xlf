@@ -1151,6 +1151,10 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
 				<source>You are not allowed to create a user with roles "{0}".</source>
         <target state="final">Sie dürfen keinen Benutzer mit den Rollen "{0}" erstellen.</target>
       </trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+        <target state="needs-translation">Unable to create user.</target>
+      </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
         <target state="final">Bearbeitung des Benutzers verweigert</target>
@@ -1254,6 +1258,14 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       <trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
 				<source>Your user has been updated.</source>
         <target state="final">Ihr Benutzer wurde aktualisiert.</target>
+      </trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>
