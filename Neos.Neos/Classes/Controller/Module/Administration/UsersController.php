@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
@@ -176,14 +177,26 @@ class UsersController extends AbstractModuleController
         $currentUserRoles = $this->userService->getAllRoles($this->currentUser);
         $isCreationAllowed = $this->userService->currentUserIsAdministrator() || count(array_diff($roleIdentifiers, $currentUserRoles)) === 0;
         if ($isCreationAllowed) {
-            $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
-            $this->addFlashMessage(
-                $this->translator->translateById('users.userCreated.body', [htmlspecialchars($username)], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('users.userCreated.title', [], null, null, 'Modules', 'Neos.Neos'),
-                Message::SEVERITY_OK,
-                [],
-                1416225561
-            );
+            try {
+                $this->userService->addUser($username, $password[0], $user, $roleIdentifiers, $authenticationProviderName);
+                $this->addFlashMessage(
+                    $this->translator->translateById('users.userCreated.body', [htmlspecialchars($username)], null, null, 'Modules', 'Neos.Neos'),
+                    $this->translator->translateById('users.userCreated.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_OK,
+                    [],
+                    1416225561
+                );
+            } catch (\Exception $e) {
+                $this->addFlashMessage(
+                    // The shown message must be translated when throwing the actual exception.
+                    $e->getMessage(),
+                    $this->translator->translateById('users.userCreationError.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_ERROR,
+                    [],
+                    1665491339
+                );
+                $this->forward('new', null, null, ['user' => $user]);
+            }
         } else {
             $this->addFlashMessage(
                 $this->translator->translateById('users.userCreationDenied.body', [implode(', ', $roleIdentifiers)], null, null, 'Modules', 'Neos.Neos'),
@@ -367,7 +380,19 @@ class UsersController extends AbstractModuleController
         }
         $password = array_shift($password);
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
+            try {
+                $this->userService->setUserPassword($user, $password);
+            } catch (\Exception $e) {
+                $this->addFlashMessage(
+                    // The shown message must be translated when throwing the actual exception.
+                    $e->getMessage(),
+                    $this->translator->translateById('userAccount.passwordUpdateFailed.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_ERROR,
+                    [],
+                    1665490884
+                );
+                $this->forward('editAccount', null, null, ['account' => $account]);
+            }
         }
 
         $this->userService->setRolesForAccount($account, $roleIdentifiers);
@@ -493,7 +518,7 @@ class UsersController extends AbstractModuleController
     {
         $providers = array_keys($this->tokenAndProviderFactory->getProviders());
 
-        $providerNames =[];
+        $providerNames = [];
         foreach ($providers as $authenticationProviderName) {
             $providerNames[$authenticationProviderName] = [
                 'label' => ($this->authenticationProviderSettings[$authenticationProviderName]['label'] ?? $authenticationProviderName),
