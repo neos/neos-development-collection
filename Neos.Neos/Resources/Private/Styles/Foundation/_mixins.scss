@@ -254,11 +254,11 @@
 }
 @mixin border-bottom-radius($radius) {
   border-bottom-right-radius: $radius;
-  bborder-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
 }
 @mixin border-left-radius($radius) {
   border-top-left-radius: $radius;
-  bborder-bottom-left-radius: $radius;
+  border-bottom-left-radius: $radius;
 }
 
 // Drop shadows

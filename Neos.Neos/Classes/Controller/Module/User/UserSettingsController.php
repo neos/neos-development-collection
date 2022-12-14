@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Controller\Module\User;
 
 /*
@@ -143,12 +144,24 @@ class UserSettingsController extends AbstractModuleController
         $user = $this->currentUser;
         $password = array_shift($password);
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
-            $this->addFlashMessage(
-                $this->translator->translateById('userSettings.passwordUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
-                $this->translator->translateById('userSettings.passwordUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
-                Message::SEVERITY_OK
-            );
+            try {
+                $this->userService->setUserPassword($user, $password);
+                $this->addFlashMessage(
+                    $this->translator->translateById('userSettings.passwordUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
+                    $this->translator->translateById('userSettings.passwordUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_OK
+                );
+            } catch (\Exception $e) {
+                $this->addFlashMessage(
+                    // The shown message must be translated when throwing the actual exception.
+                    $e->getMessage(),
+                    $this->translator->translateById('userSettings.passwordUpdateFailed.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_ERROR,
+                    [],
+                    1647335912
+                );
+                $this->forward('edit', null, null, ['user' => $user]);
+            }
         }
         $this->redirect('index');
     }

@@ -31,7 +31,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
  */
 class AssetCollectionController extends ActionController
 {
-    use AddFlashMessageTrait;
+    use AddTranslatedFlashMessageTrait;
 
     /**
      * @Flow\Inject
@@ -72,7 +72,7 @@ class AssetCollectionController extends ActionController
     public function createAction($title)
     {
         $this->assetCollectionRepository->add(new AssetCollection($title));
-        $this->addFlashMessage('collectionHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($title)]);
+        $this->addTranslatedFlashMessage('collectionHasBeenCreated', Message::SEVERITY_OK, [htmlspecialchars($title)]);
         $this->redirectToAssetIndex();
     }
 
@@ -95,7 +95,7 @@ class AssetCollectionController extends ActionController
     public function updateAction(AssetCollection $assetCollection)
     {
         $this->assetCollectionRepository->update($assetCollection);
-        $this->addFlashMessage('collectionHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
+        $this->addTranslatedFlashMessage('collectionHasBeenUpdated', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
         $this->redirectToAssetIndex();
     }
 
@@ -114,7 +114,7 @@ class AssetCollectionController extends ActionController
             $this->browserState->set('activeAssetCollection', null);
         }
         $this->assetCollectionRepository->remove($assetCollection);
-        $this->addFlashMessage('collectionHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
+        $this->addTranslatedFlashMessage('collectionHasBeenDeleted', Message::SEVERITY_OK, [htmlspecialchars($assetCollection->getTitle())]);
         $this->redirectToAssetIndex();
     }
 
