@@ -6,6 +6,9 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
+ * Internal helper class for running *multiple* CatchUpHooks inside
+ * a Projection update cycle.
+ *
  * @internal
  */
 class DelegatingCatchUpHook implements CatchUpHookInterface

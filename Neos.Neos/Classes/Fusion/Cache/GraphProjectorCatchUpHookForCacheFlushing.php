@@ -22,8 +22,35 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\EventEnvelope;
 
+/**
+ * Also contains a pragmatic performance booster for some "batch" operations, where the cache flushing
+ * is not needed:
+ *
+ * By calling {@see self::disabled(\Closure)} in your code, all projection updates
+ * will never trigger catch up hooks.
+ *
+ * NOTE: This will only work when {@see CatchUpTriggerWithSynchronousOption::synchronously()} is called,
+ * as otherwise this subprocess won't be called.
+ *
+ * @internal
+ */
 class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 {
+    private static bool $enabled = true;
+
+
+    public static function disabled(\Closure $fn): void
+    {
+        $previousValue = self::$enabled;
+        self::$enabled = false;
+        try {
+            $fn();
+        } finally {
+            self::$enabled = $previousValue;
+        }
+    }
+
+
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly ContentCacheFlusher $contentCacheFlusher
@@ -37,11 +64,12 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        //if ($doingFullReplayOfProjection) {
-        // performance optimization: on full replay, we assume all caches to be flushed anyways
-        // - so we do not need to do it individually here.
-        //     return;
-        //}
+        if (!self::$enabled) {
+            // performance optimization: on full replay, we assume all caches to be flushed anyways
+            // - so we do not need to do it individually here.
+            return;
+        }
+
         if ($eventInstance instanceof NodeAggregateWasRemoved) {
             $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
                 $eventInstance->getContentStreamId(),
@@ -66,11 +94,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
-        // TODO if ($doingFullReplayOfProjection) {
+        if (!self::$enabled) {
             // performance optimization: on full replay, we assume all caches to be flushed anyways
             // - so we do not need to do it individually here.
-        //    return;
-        //}
+            return;
+        }
 
         if (
             !($eventInstance instanceof NodeAggregateWasRemoved)
