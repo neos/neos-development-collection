@@ -32,7 +32,7 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Feature\Common\Exception\DimensionSpacePointHasNoPrimaryGeneralization;
+use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointHasNoPrimaryGeneralization;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;

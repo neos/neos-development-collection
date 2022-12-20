@@ -1,4 +1,4 @@
-@fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @adapters=DoctrineDBAL,Postgres
 Feature: Restore NodeAggregate coverage
 
   As a user of the CR I want to be able to restore coverage of a NodeAggregate or parts of it.
@@ -21,26 +21,26 @@ Feature: Restore NodeAggregate coverage
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"language":"en"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                     | Value                         |
-      | nodeAggregateIdentifier | "lady-eleonode-rootford"      |
-      | nodeTypeName            | "Neos.ContentRepository:Root" |
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateIdentifier | nodeTypeName                                | parentNodeAggregateIdentifier | nodeName | tetheredDescendantNodeAggregateIdentifiers |
-      | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document     | lady-eleonode-rootford        | document | {"tethered":"nodewyn-tetherton"}           |
-      | nody-mc-nodeface        | Neos.ContentRepository.Testing:LeafDocument | lady-eleonode-rootford        | document | []                                         |
-      | nodimus-mediocre        | Neos.ContentRepository.Testing:LeafDocument | nody-mc-nodeface              | document | []                                         |
+      | nodeAggregateId        | nodeTypeName                                | parentNodeAggregateId  | nodeName | tetheredDescendantNodeAggregateIds |
+      | sir-david-nodenborough | Neos.ContentRepository.Testing:Document     | lady-eleonode-rootford | document | {"tethered":"nodewyn-tetherton"}   |
+      | nody-mc-nodeface       | Neos.ContentRepository.Testing:LeafDocument | lady-eleonode-rootford | document | []                                 |
+      | nodimus-mediocre       | Neos.ContentRepository.Testing:LeafDocument | nody-mc-nodeface       | document | []                                 |
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |
-      | nodeAggregateIdentifier      | "nody-mc-nodeface"   |
+      | nodeAggregateId              | "nody-mc-nodeface"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
     And the graph projection is fully up to date
@@ -49,8 +49,8 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a node aggregate in a non-existing content stream
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | contentStreamIdentifier    | "i-do-not-exist"          |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough"  |
+      | contentStreamId            | "i-do-not-exist"          |
+      | nodeAggregateId            | "sir-david-nodenborough"  |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -59,7 +59,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a non-existing node aggregate
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "i-do-not-exist"          |
+      | nodeAggregateId            | "i-do-not-exist"          |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -68,7 +68,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a tethered node aggregate
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "nodewyn-tetherton"       |
+      | nodeAggregateId            | "nodewyn-tetherton"       |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -77,7 +77,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a root node aggregate
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "lady-eleonode-rootford"  |
+      | nodeAggregateId            | "lady-eleonode-rootford"  |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -86,7 +86,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a node aggregate in a non-existing dimension space point
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                       |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough"    |
+      | nodeAggregateId            | "sir-david-nodenborough"    |
       | dimensionSpacePointToCover | {"undeclared": "undefined"} |
       | withSpecializations        | false                       |
       | recursionMode              | "onlyTetheredDescendants"   |
@@ -95,7 +95,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a node aggregate in a dimension space point that has no (primary) generalization to restore coverage from
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough"  |
+      | nodeAggregateId            | "sir-david-nodenborough"  |
       | dimensionSpacePointToCover | {"language": "fr"}        |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -104,7 +104,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a node aggregate in a dimension space point whose primary generalization is not covered by the node aggregate
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "nody-mc-nodeface"        |
+      | nodeAggregateId            | "nody-mc-nodeface"        |
       | dimensionSpacePointToCover | {"language":"gsw"}        |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -113,7 +113,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a node aggregate in a dimension space point the node aggregate already covers
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "sir-david-nodenborough"  |
+      | nodeAggregateId            | "sir-david-nodenborough"  |
       | dimensionSpacePointToCover | {"language":"gsw"}        |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
@@ -122,7 +122,7 @@ Feature: Restore NodeAggregate coverage
   Scenario: Try to restore coverage of a node aggregate in a dimension space point the node aggregate's parent does not cover
     When the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:
       | Key                        | Value                     |
-      | nodeAggregateIdentifier    | "nodimus-mediocre"        |
+      | nodeAggregateId            | "nodimus-mediocre"        |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |

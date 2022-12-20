@@ -54,7 +54,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithS
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Feature\Common\Exception\NodeAggregateAlreadyCoversDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateAlreadyCoversDimensionSpacePoint;
 
 /**
  * @internal implementation details of command handlers

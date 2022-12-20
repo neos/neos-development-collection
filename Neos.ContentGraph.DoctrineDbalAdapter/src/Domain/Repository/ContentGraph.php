@@ -19,6 +19,7 @@ use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Dto\DescendantAssignments;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -309,25 +310,25 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*,
-                      h.name, h.contentstreamidentifier, h.dimensionspacepoint AS covereddimensionspacepoint,
+                      h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
-                      FROM neos_contentgraph_node n
-                      JOIN neos_contentgraph_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
-                      LEFT JOIN neos_contentgraph_restrictionrelation r
-                          ON r.originnodeaggregateidentifier = n.nodeaggregateidentifier
-                          AND r.contentstreamidentifier = h.contentstreamidentifier
-                          AND r.affectednodeaggregateidentifier = n.nodeaggregateidentifier
+                      FROM ' . $this->tableNamePrefix . '_node n
+                      JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+                      LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
+                          ON r.originnodeaggregateid = n.nodeaggregateid
+                          AND r.contentstreamid = h.contentstreamid
+                          AND r.affectednodeaggregateid = n.nodeaggregateid
                           AND r.dimensionspacepointhash = h.dimensionspacepointhash
-                      WHERE n.nodeaggregateidentifier = (
-                          SELECT p.nodeaggregateidentifier FROM neos_contentgraph_node p
-                          INNER JOIN neos_contentgraph_hierarchyrelation ch
+                      WHERE n.nodeaggregateid = (
+                          SELECT p.nodeaggregateid FROM ' . $this->tableNamePrefix . '_node p
+                          INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
                               ON ch.parentnodeanchor = p.relationanchorpoint
-                          INNER JOIN neos_contentgraph_node c ON ch.childnodeanchor = c.relationanchorpoint
-                          WHERE ch.contentstreamidentifier = :contentStreamId
+                          INNER JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
+                          WHERE ch.contentstreamid = :contentStreamId
                           AND ch.dimensionspacepointhash = :childDimensionSpacePointHash
-                          AND c.nodeaggregateidentifier = :childNodeAggregateId
+                          AND c.nodeaggregateid = :childNodeAggregateId
                       )
-                      AND h.contentstreamidentifier = :contentStreamId';
+                      AND h.contentstreamid = :contentStreamId';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
@@ -526,5 +527,14 @@ final class ContentGraph implements ContentGraphInterface
     public function getSubgraphs(): array
     {
         return $this->subgraphs;
+    }
+
+    public function findDescendantAssignmentsForCoverageIncrease(
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        NodeAggregateId $nodeAggregateId,
+        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints
+    ): DescendantAssignments {
+        return new DescendantAssignments();
     }
 }
