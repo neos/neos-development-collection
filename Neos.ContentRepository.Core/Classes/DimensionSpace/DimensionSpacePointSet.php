@@ -61,7 +61,7 @@ final class DimensionSpacePointSet implements
     }
 
     /**
-     * @param array<string,DimensionSpacePoint|array<string,string>> $array
+     * @param array<string|int,DimensionSpacePoint|array<string,string>> $array
      */
     public static function fromArray(array $array): self
     {

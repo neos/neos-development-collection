@@ -18,27 +18,50 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
 /**
- * A node variant assignment, identifying a node variant by node aggregate id and origin dimension space point.
+ * See the docs of {@see NodeAggregateWasMoved} for a full description.
  *
- * This is used in structural operations like node move to assign a new node within the same content stream
- * as a new parent, sibling etc.
+ * This case is used if:
+ * - you want to move the node at the END of a sibling list.
+ *   ```
+ *   - node1
+ *      - node2 <-- source: we want to move this node
+ *      - node3
+ *      - <-- destination
+ *   ```
+ *   => `ParentNodeMoveDestination(node1)`
  *
- * In case of move, this is the "target node" underneath which or next to which we want to move our source.
+ * - you want to move the node INTO another node.
+ *   ```
+ *   - node1
+ *   - node2 <-- source: we want to move this node
+ *   - node3
+ *      - <-- destination
+ *   ```
+ *   => `ParentNodeMoveDestination(node3)`
+ *
+ * For all other cases, use {@see SucceedingSiblingNodeMoveDestination}.
  *
  * @api DTO of {@see NodeAggregateWasMoved} event
  */
-final class NodeVariantAssignment implements \JsonSerializable
+final class ParentNodeMoveDestination implements \JsonSerializable
 {
-    public function __construct(
+    private function __construct(
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
     }
 
+    public static function create(
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint
+    ): self {
+        return new self($nodeAggregateId, $originDimensionSpacePoint);
+    }
+
     /**
      * @param array<string,mixed> $array
      */
-    public static function createFromArray(array $array): self
+    public static function fromArray(array $array): self
     {
         return new self(
             NodeAggregateId::fromString($array['nodeAggregateId']),

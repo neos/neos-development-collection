@@ -1,0 +1,7 @@
+# @deprecated since Neos 4.2 in favor of Neos.Fusion:Map
+prototype(Neos.Fusion:RawCollection) {
+  @class = 'Neos\\Fusion\\FusionObjects\\RawCollectionImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
+}

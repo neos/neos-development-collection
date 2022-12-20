@@ -13,7 +13,9 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -568,29 +570,25 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if (!$this->isLiveContentStream($event->getContentStreamId())) {
             return;
         }
-        if (!is_null($event->nodeMoveMappings)) {
-            foreach ($event->nodeMoveMappings as $moveMapping) {
-                /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping $moveMapping */
-                foreach (
-                    $this->getState()->getNodeVariantsById(
-                        $event->getNodeAggregateId()
-                    ) as $node
-                ) {
-                    $parentAssignment = $moveMapping->newParentAssignments
-                            ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
-                    $newParentNodeAggregateId = $parentAssignment !== null
-                        ? $parentAssignment->nodeAggregateId
-                        : $node->getParentNodeAggregateId();
 
-                    $succeedingSiblingAssignment = $moveMapping->newSucceedingSiblingAssignments
-                            ->getAssignments()[$node->getDimensionSpacePointHash()] ?? null;
-                    $newSucceedingNodeAggregateId = $succeedingSiblingAssignment?->nodeAggregateId;
-
-                    $this->moveNode($node, $newParentNodeAggregateId, $newSucceedingNodeAggregateId);
+        foreach ($event->nodeMoveMappings as $moveMapping) {
+            /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
+            foreach ($moveMapping->newLocations as $newLocation) {
+                /* @var $newLocation CoverageNodeMoveMapping */
+                $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                    $event->nodeAggregateId,
+                    $newLocation->coveredDimensionSpacePoint->hash
+                ));
+                if (!$node) {
+                    // node probably no document node, skip
+                    continue;
                 }
+
+                match ($newLocation->destination::class) {
+                    SucceedingSiblingNodeMoveDestination::class => $this->moveNode($node, $newLocation->destination->parentNodeAggregateId, $newLocation->destination->nodeAggregateId),
+                    ParentNodeMoveDestination::class => $this->moveNode($node, $newLocation->destination->nodeAggregateId, null),
+                };
             }
-        } else {
-            // @todo do something else
         }
     }
 

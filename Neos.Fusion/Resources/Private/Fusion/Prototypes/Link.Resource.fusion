@@ -1,0 +1,24 @@
+# Renders a link pointing to a resource
+#
+# Usage:
+# link = afx`
+#    <Neos.Fusion:Link.Resource class="resource-link" href.path="resource://Some.Package/Public/Images/SomeImage.png">
+#        Some Link
+#    </Neos.Fusion:Link.Resource>
+# `
+#
+prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Component) {
+  href = Neos.Fusion:ResourceUri {
+    localize = true
+  }
+  content = ''
+
+  renderer = Neos.Fusion:Tag {
+    tagName = 'a'
+    attributes {
+      @ignoreProperties = ${['content']}
+      @apply.props = ${props}
+    }
+    content = ${props.content}
+  }
+}

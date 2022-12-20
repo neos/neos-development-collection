@@ -12,6 +12,9 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
@@ -21,10 +24,9 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNode
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMapping;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeMoveMappings;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignment;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\NodeVariantAssignments;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMappings;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
@@ -203,7 +205,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             // Create tethered node if the node was not found before.
             // If the node was already visited, we want to create a node variant (and keep the tethering status)
             $specializations = $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet());
-            $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, UserId::forSystemUser(), null));
+            $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamIdentifier, $nodeAggregateIdentifier, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateIdentifier, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, null));
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
             // Create node variant, BOTH for tethered and regular nodes
             $this->createNodeVariant($nodeAggregateIdentifier, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
@@ -216,7 +218,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent( new NodeAggregateWasDisabled($this->contentStreamIdentifier, $nodeAggregateIdentifier, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateIdentifier)->toDimensionSpacePointSet())));
         }
         foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIdentifiers) {
-            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), PropertyName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIdentifiers));
+            $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamIdentifier, $nodeAggregateIdentifier, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), ReferenceName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIdentifiers));
         }
 
         $this->visitedNodes->add($nodeAggregateIdentifier, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateIdentifier);
@@ -303,15 +305,23 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->contentStreamIdentifier,
                 $nodeAggregateIdentifier,
-                NodeMoveMappings::fromArray([
-                    new NodeMoveMapping(
+                OriginNodeMoveMappings::fromArray([
+                    new OriginNodeMoveMapping(
                         $originDimensionSpacePoint,
-                        NodeVariantAssignments::create()->add(new NodeVariantAssignment($parentNodeAggregate->nodeAggregateIdentifier, $variantSourceOriginDimensionSpacePoint), $originDimensionSpacePoint->toDimensionSpacePoint()),
-                        NodeVariantAssignments::create()
+                        CoverageNodeMoveMappings::create(
+                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
+                                $originDimensionSpacePoint->toDimensionSpacePoint(),
+                                SucceedingSiblingNodeMoveDestination::create(
+                                    $parentNodeAggregate->nodeAggregateIdentifier,
+                                    $variantSourceOriginDimensionSpacePoint,
+
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateIdentifier,
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint
+                                )
+                            )
+                        )
                     )
-                ]),
-                new DimensionSpacePointSet([]),
-                UserId::forSystemUser()
+                ])
             ));
         }
     }

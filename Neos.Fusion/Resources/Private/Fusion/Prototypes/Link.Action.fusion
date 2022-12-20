@@ -1,0 +1,22 @@
+# Renders a link pointing to a controller/action
+#
+# Usage:
+# link = afx`
+#    <Neos.Fusion:Link.Action class="action-link" href.package="Some.Package" href.controller="Standard" href.action="index">
+#        Some Link
+#    </Neos.Fusion:Link.Action>
+# `
+#
+prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
+  href = Neos.Fusion:ActionUri
+  content = ''
+
+  renderer = Neos.Fusion:Tag {
+    tagName = 'a'
+    attributes {
+      @ignoreProperties = ${['content']}
+      @apply.props = ${props}
+    }
+    content = ${props.content}
+  }
+}

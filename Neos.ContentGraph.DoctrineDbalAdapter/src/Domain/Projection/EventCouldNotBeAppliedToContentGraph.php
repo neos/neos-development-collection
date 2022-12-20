@@ -44,6 +44,24 @@ final class EventCouldNotBeAppliedToContentGraph extends \DomainException
         );
     }
 
+    public static function becauseTheTargetSucceedingSiblingNodeIsMissing(string $eventClassName): self
+    {
+        return new self(
+            'Event ' . $eventClassName . ' could not be applied: Target succeeding sibling node not found.',
+            1667590141
+        );
+    }
+
+    public static function becauseTheTargetSucceedingSiblingNodesParentIsMissing(string $eventClassName): self
+    {
+        return new self(
+            'Event ' . $eventClassName . ' could not be applied: Target succeeding sibling node\'s parent not found.',
+            1667590141
+        );
+    }
+
+
+
     public static function becauseTheIngoingSourceHierarchyRelationIsMissing(string $eventClassName): self
     {
         return new self(

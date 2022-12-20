@@ -10,12 +10,12 @@ Feature: Routing functionality with multiple content dimensions
     And I am user identified by "initiating-user-identifier"
 
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
-      | newContentStreamIdentifier | "cs-identifier" |
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                                                                                                                                                     |
-      | contentStreamIdentifier     | "cs-identifier"                                                                                                                                                                                           |
+      | contentStreamId             | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
@@ -29,15 +29,15 @@ Feature: Routing functionality with multiple content dimensions
       | nody-mc-nodeface       | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
       | carl-destinode         | nody-mc-nodeface       | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
     And the command CreateNodeVariant is executed with payload:
-      | Key                     | Value                            |
-      | contentStreamIdentifier | "cs-identifier"                  |
-      | nodeAggregateId         | "carl-destinode"                 |
-      | sourceOrigin            | {"market":"DE", "language":"en"} |
-      | targetOrigin            | {"market":"DE", "language":"de"} |
+      | Key             | Value                            |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "carl-destinode"                 |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"de"} |
     And the graph projection is fully up to date
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                            |
-      | contentStreamIdentifier   | "cs-identifier"                  |
+      | contentStreamId           | "cs-identifier"                  |
       | nodeAggregateId           | "carl-destinode"                 |
       | originDimensionSpacePoint | {"market":"DE", "language":"de"} |
       | propertyValues            | {"uriPathSegment": "karl-de"}    |

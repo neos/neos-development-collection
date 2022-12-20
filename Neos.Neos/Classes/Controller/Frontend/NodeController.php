@@ -254,10 +254,12 @@ class NodeController extends ActionController
     protected function overrideViewVariablesFromInternalArguments()
     {
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
+            // @phpstan-ignore-next-line
             $node = $this->propertyMapper->convert((string)$nodeContextPath, Node::class);
             if (!$node instanceof Node) {
                 throw new NodeNotFoundException(sprintf(
                     'The node with context path "%s" could not be resolved',
+                    // @phpstan-ignore-next-line
                     (string)$nodeContextPath
                 ), 1437051934);
             }
@@ -265,10 +267,12 @@ class NodeController extends ActionController
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
+            // @phpstan-ignore-next-line
             $this->response->setHttpHeader('X-Neos-AffectedNodePath', (string)$affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
+            // @phpstan-ignore-next-line
             $this->view->setFusionPath((string)$fusionPath);
         }
     }

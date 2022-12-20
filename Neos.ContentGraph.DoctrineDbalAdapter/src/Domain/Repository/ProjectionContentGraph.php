@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
+use Doctrine\DBAL\Driver\Exception;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -47,20 +48,27 @@ class ProjectionContentGraph
     /**
      * @param ContentStreamId $contentStreamId
      * @param NodeAggregateId $childNodeAggregateId
-     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint of $childNodeAggregateId
+     * @param DimensionSpacePoint|null $coveredDimensionSpacePoint the dimension space point of which relation we want
+     *     to travel upwards. If not given, $originDimensionSpacePoint is used (though I am not fully sure this is
+     *     correct)
      * @return NodeRecord|null
-     * @throws DBALException
-     * @throws \Exception
+     * @throws Exception
+     * @throws \Doctrine\DBAL\Exception
      */
     public function findParentNode(
         ContentStreamId $contentStreamId,
         NodeAggregateId $childNodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        ?DimensionSpacePoint $coveredDimensionSpacePoint = null
     ): ?NodeRecord {
         $params = [
             'contentStreamId' => (string)$contentStreamId,
             'childNodeAggregateId' => (string)$childNodeAggregateId,
-            'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
+            'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
+            'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint
+                ? $coveredDimensionSpacePoint->hash
+                : $originDimensionSpacePoint->hash
         ];
         $nodeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT p.*, ph.contentstreamid, ph.name FROM ' . $this->tableNamePrefix . '_node p
@@ -71,8 +79,8 @@ class ProjectionContentGraph
  AND c.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND ph.contentstreamid = :contentStreamId
  AND ch.contentstreamid = :contentStreamId
- AND ph.dimensionspacepointhash = :originDimensionSpacePointHash
- AND ch.dimensionspacepointhash = :originDimensionSpacePointHash',
+ AND ph.dimensionspacepointhash = :coveredDimensionSpacePointHash
+ AND ch.dimensionspacepointhash = :coveredDimensionSpacePointHash',
             $params
         )->fetchAssociative();
 
@@ -176,8 +184,7 @@ class ProjectionContentGraph
  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
  WHERE n.nodeaggregateid = :nodeAggregateId
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
- AND h.contentstreamid = :contentStreamId
- AND h.dimensionspacepointhash = :originDimensionSpacePointHash',
+ AND h.contentstreamid = :contentStreamId',
             [
                 'contentStreamId' => (string)$contentStreamId,
                 'nodeAggregateId' => (string)$nodeAggregateId,
@@ -248,7 +255,7 @@ class ProjectionContentGraph
         )->fetchAllAssociative();
 
         return array_map(
-            fn ($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']),
+            fn($row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']),
             $rows
         );
     }
@@ -325,7 +332,7 @@ class ProjectionContentGraph
             )->fetchAssociative();
             $precedingSiblingPosition = $precedingSiblingData ? ($precedingSiblingData['position'] ?? null) : null;
             if (!is_null($precedingSiblingPosition)) {
-                $precedingSiblingPosition = (int) $precedingSiblingPosition;
+                $precedingSiblingPosition = (int)$precedingSiblingPosition;
             }
 
             if (is_null($precedingSiblingPosition)) {
@@ -506,7 +513,7 @@ class ProjectionContentGraph
         }
         foreach (
             $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
-                 ->fetchAllAssociative() as $relationData
+                ->fetchAllAssociative() as $relationData
         ) {
             $relations[] = $this->mapRawDataToHierarchyRelation($relationData);
         }

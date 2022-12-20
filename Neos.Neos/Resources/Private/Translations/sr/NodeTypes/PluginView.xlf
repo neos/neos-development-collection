@@ -4,16 +4,20 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin View</source>
-			<target state="translated">Приказ додатне компоненте</target></trans-unit>
+        <target state="translated">Приказ додатне компоненте</target>
+      </trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target state="translated">Приказ додатних компоненти</target></trans-unit>
+        <target state="translated">Перегляди плагінів</target>
+      </trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target state="translated">Главни поглед</target></trans-unit>
+        <target state="translated">Главни поглед</target>
+      </trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target state="translated">Приказ додатне компоненте</target></trans-unit>
+        <target state="translated">Приказ додатне компоненте</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -122,6 +122,7 @@ It takes all the same configuration options as the inline rich text editor under
                 title: true
                 relNofollow: true
                 targetBlank: true
+                download: true
               formatting:
                 strong: true
                 em: true
