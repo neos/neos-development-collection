@@ -484,7 +484,6 @@ class WorkspacesController extends AbstractModuleController
                         $changesCount['total']++;
                     }
                 }
-
             }
         }
 
@@ -557,7 +556,6 @@ class WorkspacesController extends AbstractModuleController
             foreach ($siteChanges[$siteKey]['documents'] as $key => $document) {
                 ksort($siteChanges[$siteKey]['documents'][$key]);
             }
-
         }
         return $siteChanges;
     }
