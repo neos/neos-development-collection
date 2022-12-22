@@ -513,7 +513,7 @@ class WorkspacesController extends AbstractModuleController
                     if ($document !== null) {
                         $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
                         $documentDimension = '';
-                        foreach($document->getDimensions() as $dimension){
+                        foreach ($document->getDimensions() as $dimension) {
                             $documentDimension .= $dimension[0];
                         }
                         $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
