@@ -30,7 +30,8 @@
         }
     },
     "suggest": {
-        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime"
+        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
+        "ext-dom": "Neos.Fusion needs DOMDocument and this requires the PHP dom extension"
     },
     "extra": {
         "applied-flow-migrations": [

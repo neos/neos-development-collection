@@ -61,6 +61,7 @@
     "suggest": {
         "neos/utility-schema": "Validate NodeType schema.",
         "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
+        "ext-dom": "Neos.Fusion needs DOMDocument and this requires the PHP dom extension",
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
