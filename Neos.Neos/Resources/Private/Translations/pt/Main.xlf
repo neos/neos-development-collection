@@ -29,7 +29,7 @@
       </trans-unit>
       <trans-unit id="back" xml:space="preserve">
 				<source>Back</source>
-        <target state="needs-translation">Back</target>
+        <target state="translated">Voltar</target>
       </trans-unit>
       <trans-unit id="choose" xml:space="preserve">
 				<source>Choose</source>
