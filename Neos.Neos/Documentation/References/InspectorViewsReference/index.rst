@@ -238,3 +238,134 @@ Example ``viewOptions``:
 
   ``suffix`` (optional string)
     A brief description of the value provided through ``data``
+
+``Data/TimeSeriesView``
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: Images/Data.TimeSeriesView.png
+  :alt: A screenshot showcasing the TimeSeriesView. It shows a line graph illustrating fictional page visitor numbers accumulated over time. On its y-axis the graph scales from 400 visitors at the bottom to 1000 visitors at the top. In the top right corner it reads "last month" to signify that the displayed data shows the figures over the last month.
+
+The ``TimeSeriesView`` displays data accumulated over time from a data source as a line chart.
+
+A data source is a PHP class implementing ``Neos\Neos\Service\DataSource\DataSourceInterface`` (which is best achieved by extending ``Neos\Neos\Service\DataSource\AbstractDataSource``). The example displayed above uses the following data source implementation:
+
+.. code-block:: php
+
+  <?php
+
+  /*
+   * This script belongs to the package "Vendor.Site".
+   */
+
+  declare(strict_types=1);
+
+  namespace Vendor\Site\Application\Neos\DataSource;
+
+  use Neos\Neos\Service\DataSource\AbstractDataSource;
+  use Neos\ContentRepository\Domain\Model\NodeInterface;
+
+  final class TimeSeriesViewDataSource extends AbstractDataSource
+  {
+      /**
+      * @var string
+      */
+      static protected $identifier = 'vendor-site-time-series-view';
+
+      /**
+      * Get data
+      *
+      * {@inheritdoc}
+      */
+      public function getData(NodeInterface $node = NULL, array $arguments = [])
+      {
+          return [
+              'data' => [
+                  'rows' => [
+                      [
+                          'date' => new \DateTimeImmutable('2022-09-01'),
+                          'uniqueVisitors' => 503
+                      ],
+                      [
+                          'date' => new \DateTimeImmutable('2022-10-01'),
+                          'uniqueVisitors' => 708
+                      ],
+                      [
+                          'date' => new \DateTimeImmutable('2022-11-01'),
+                          'uniqueVisitors' => 389
+                      ],
+                      [
+                          'date' => new \DateTimeImmutable('2022-12-01'),
+                          'uniqueVisitors' => 1027
+                      ],
+                  ],
+              ]
+          ];
+      }
+  }
+
+.. note:: The data returned from a data source that is used for a ``TimeSeriesView`` need not adhere to a specific shape (as long as it includes a list of data associated with a time and date). The ``viewOptions`` configuration is used to extract data from arbitrary data shapes as you'll see below.
+
+Example ``viewOptions``:
+
+.. code-block:: yaml
+
+  'Vendor.Site:MyCustomNodeType':
+    # ...
+    ui:
+      inspector:
+        views:
+          timeSeriesViewExample:
+            label: 'TimeSeriesView Example'
+            group: examples
+            view: 'Neos.Neos/Inspector/Views/Data/TimeSeriesView'
+            viewOptions:
+              subtitle: 'last month'
+              dataSource: vendor-site-time-series-view
+              collection: rows
+              series:
+                timeData: date
+                valueData: uniqueVisitors
+              chart:
+                selectedInterval: weeks
+                yAxisFromZero: false
+    # ...
+
+``viewOptions`` Reference:
+
+``dataSource`` (required string)
+  Class name of class implementing ``Neos\Neos\Service\DataSource\DataSourceInterface``
+
+``arguments`` (optional array)
+  If provided, the ``arguments`` will be passed as the second parameter to the data source's ``getData`` method.
+
+``subtitle`` (optional string)
+  A brief description for the time series chart that will be displayed in the top right corner
+
+``collection`` (optional array or string)
+  A path to access the collection of interest from the data provided by the data source. If given a string, the path will be split by ``.``. The data this path points to should be a numerically indexed array.
+
+``series`` (required object)
+  This object configures each data point that will be used to draw the chart.
+
+  ``timeData`` (required array or string)
+    A path to access the data of an item of the list described by ``collection``. If given a string, the path will be split by ``.``. The data this path points to should represent a time and date (e.g. an ``integer``-typed unix timestamp or a ``\DateTimeInterface``).
+
+  ``valueData`` (required array or string)
+    A path to access the data of an item of the list described by ``collection``. If given a string, the path will be split by ``.``. The data this path points to should be numeric.
+
+``chart`` (optional object)
+  This object configures the chart itself.
+
+  ``selectedInterval`` (optional, default="years")
+    This field configures the scale of the x-axis.
+    Possible values are:
+
+    - ``years`` (or ``Y``)
+    - ``quarters`` (or ``Q``)
+    - ``months`` (or ``M``)
+    - ``weeks`` (or ``W``)
+    - ``days`` (or ``D``)
+    - ``seconds`` (or ``S``)
+
+  ``yAxisFromZero`` (optional boolean, default=false)
+    If set to ``true`` the y-axis will start from ``0``. Otherwise the y-axis will start from the lowest available value.
