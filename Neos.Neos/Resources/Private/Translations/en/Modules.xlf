@@ -883,6 +883,9 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="users.userCreationDenied.body" xml:space="preserve">
 				<source>You are not allowed to create a user with roles "{0}".</source>
 			</trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+      </trans-unit>
 			<trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
 			</trans-unit>
@@ -962,6 +965,12 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
 				<source>Your user has been updated.</source>
 			</trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+      </trans-unit>
 			<trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>
 			</trans-unit>
