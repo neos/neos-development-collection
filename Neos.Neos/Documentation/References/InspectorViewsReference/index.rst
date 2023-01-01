@@ -369,3 +369,28 @@ Example ``viewOptions``:
 
   ``yAxisFromZero`` (optional boolean, default=false)
     If set to ``true`` the y-axis will start from ``0``. Otherwise the y-axis will start from the lowest available value.
+
+``NodeInfoView``
+~~~~~~~~~~~~~~~~
+
+.. figure:: Images/NodeInfoView.png
+  :alt: A screenshot showcasing the NodeInfoView. It shows a list of key characteristics of an example node. Those characteristics are "Created" (which is the creation date and time for the node, "12/29/2022 2:58:47PM" in the example), "Last modification" (which is the date and time of the last modification of the node, "12/29/2022 2:58:47PM" in the example), "Identifier" (a UUID, the node identifier), "Name" (the node name), and "Type" (the name of the node's node type).
+
+The ``NodeInfoView`` displays key characteristics of a node. In Neos, every node with a node type that extends ``Neos.Neos:Node`` (which applies to both content and document nodes by default), comes with a pre-configured ``NodeInfoView``. It can be found in the Inspector under the ``meta`` tab.
+
+It is unlikely, you'll ever need to configure this view manually. But if you need to, you can use a configuration like this one:
+
+.. code-block:: yaml
+
+  'Vendor.Site:MyCustomNodeType':
+    # ...
+    ui:
+    inspector:
+      views:
+        nodeInfoViewExample:
+          label: 'NodeInfoView example'
+          group: examples
+          view: 'Neos.Neos/Inspector/Views/NodeInfoView'
+    # ...
+
+The ``NodeInfoView`` has no ``viewOptions``.
