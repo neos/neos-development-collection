@@ -353,7 +353,7 @@
       </trans-unit>
       <trans-unit id="site" xml:space="preserve">
 				<source>Site</source>
-        <target state="needs-translation">Site</target>
+        <target state="translated">Site</target>
       </trans-unit>
       <trans-unit id="document" xml:space="preserve">
 				<source>Document</source>
@@ -377,7 +377,7 @@
       </trans-unit>
       <trans-unit id="primary" xml:space="preserve">
 				<source>Primary</source>
-        <target state="needs-translation">Primary</target>
+        <target state="translated">Primário</target>
       </trans-unit>
       <trans-unit id="package" xml:space="preserve">
 				<source>Package</source>
@@ -385,7 +385,7 @@
       </trans-unit>
       <trans-unit id="deactivated" xml:space="preserve">
 				<source>Deactivated</source>
-        <target state="needs-translation">Deactivated</target>
+        <target state="translated">Desativado</target>
       </trans-unit>
       <trans-unit id="unavailable" xml:space="preserve">
 				<source>Unavailable</source>
@@ -437,11 +437,11 @@
       </trans-unit>
       <trans-unit id="packageKey" xml:space="preserve">
 				<source>Package Key</source>
-        <target state="needs-translation">Package Key</target>
+        <target state="translated">Chave de pacote</target>
       </trans-unit>
       <trans-unit id="description" xml:space="preserve">
 				<source>Description</source>
-        <target state="needs-translation">Description</target>
+        <target state="translated">Descrição</target>
       </trans-unit>
       <trans-unit id="toggleContentTree" xml:space="preserve">
 				<source>Toggle content tree</source>
@@ -633,7 +633,7 @@
       </trans-unit>
       <trans-unit id="content.inspector.groups.visibility" xml:space="preserve">
 				<source>Visibility</source>
-        <target state="needs-translation">Visibility</target>
+        <target state="translated">Visibilidade</target>
       </trans-unit>
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
@@ -968,7 +968,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="service.nodes.show" xml:space="preserve">
 				<source>Show</source>
-        <target state="needs-translation">Show</target>
+        <target state="translated">Mostrar</target>
       </trans-unit>
       <trans-unit id="service.nodes.noPublicUrl" xml:space="preserve">
 				<source>This node cannot be accessed through a public URL</source>
