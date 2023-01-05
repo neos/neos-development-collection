@@ -109,7 +109,7 @@
       </trans-unit>
       <trans-unit id="hide" xml:space="preserve">
 				<source>Hide</source>
-        <target state="needs-translation">Hide</target>
+        <target state="translated">Απόκρυψη</target>
       </trans-unit>
       <trans-unit id="unhide" xml:space="preserve">
 				<source>Unhide</source>
