@@ -77,6 +77,7 @@
 					</f:if>
 				</f:for>
 			</ul>
+			<f:render partial="Module/FlashMessages" />
 			<f:if condition="{moduleContents}">
 				{moduleContents -> f:format.raw()}
 			</f:if>
