@@ -714,7 +714,7 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
       </trans-unit>
       <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
 				<source>A valid string is expected.</source>
-        <target state="needs-translation">A valid string is expected.</target>
+        <target state="translated">Espera-se uma cadeia de caracteres válida</target>
       </trans-unit>
       <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
 				<source>Valid text without any XML tags is expected.</source>
