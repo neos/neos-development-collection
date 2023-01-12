@@ -342,7 +342,7 @@
       </trans-unit>
       <trans-unit id="users.description" xml:space="preserve">
 				<source>The User Management module provides you with an overview of all backend users. You can group them by their properties so you are able to monitor their permissions, filemounts, member groups etc.. This module is an indispensable tool in order to make sure the users are correctly configured.</source>
-        <target state="translated">O módulo de gerenciamento de usuário fornece uma visão geral de todos os usuários de back-end. Você pode agrupá-los por suas propriedades, então você é capaz de monitorar suas permissões, arquivos, grupos de membros etc... Este módulo é uma ferramenta indispensável para garantir que os usuários estão configurados corretamente.</target>
+        <target state="translated">O módulo de gestão de utilizador fornece uma visão geral de todos os utilizadores de back-end. Você pode agrupá-los por suas propriedades, então você consegue monitorar as suas permissões, montagens de ficheiros, grupos de membros, etc... Este módulo é uma ferramenta indispensável para garantir que os utilizadores estão configurados corretamente.</target>
       </trans-unit>
       <trans-unit id="users.action.index" xml:space="preserve">
 				<source>Overview</source>
