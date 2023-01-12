@@ -14,7 +14,8 @@
         "neos/utility-arrays": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
-        "doctrine/orm": "^2.6"
+        "doctrine/orm": "^2.6",
+        "ext-dom": "*"
     },
     "replace": {
         "typo3/typoscript": "self.version"
@@ -30,8 +31,7 @@
         }
     },
     "suggest": {
-        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime",
-        "ext-dom": "Neos.Fusion needs DOMDocument and this requires the PHP dom extension"
+        "phpbench/phpbench": "For running performance benchmarks of the Fusion runtime"
     },
     "extra": {
         "applied-flow-migrations": [
