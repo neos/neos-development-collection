@@ -20,6 +20,7 @@
         "gedmo/doctrine-extensions": "^3.5",
         "behat/transliterator": "~1.0",
         "neos/utility-unicode": "*",
+        "ext-dom": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
         "doctrine/common": "^2.7 || ^3.0",
