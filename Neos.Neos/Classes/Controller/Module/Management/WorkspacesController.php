@@ -721,15 +721,20 @@ class WorkspacesController extends AbstractModuleController
      * Creates an array of workspace names and their respective titles which are possible base workspaces for other
      * workspaces.
      *
-     * @param Workspace $excludedWorkspace If set, this workspace will be excluded from the list of returned workspaces
+     * @param Workspace $excludedWorkspace If set, this workspace and all its child workspaces will be excluded from the list of returned workspaces
      * @return array
      */
     protected function prepareBaseWorkspaceOptions(Workspace $excludedWorkspace = null)
     {
         $baseWorkspaceOptions = [];
+
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace && ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace))) {
+            if (!$workspace->isPersonalWorkspace() &&
+                $workspace !== $excludedWorkspace &&
+                ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace)) &&
+                (!$excludedWorkspace || !isset($workspace->getBaseWorkspaces()[$excludedWorkspace->getName()]))
+            ) {
                 $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
             }
         }
