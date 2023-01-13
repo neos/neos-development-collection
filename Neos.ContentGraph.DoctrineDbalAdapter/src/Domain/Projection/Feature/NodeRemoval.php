@@ -9,6 +9,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\EventCouldNotBeAppli
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\RecursionMode;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
@@ -113,7 +114,7 @@ trait NodeRemoval
         foreach ($event->affectedCoveredDimensionSpacePoints as $coveredDimensionSpacePoint) {
             $parentNodeRecord = $this->projectionContentGraph->findParentNodeRecordByOriginInDimensionSpacePoint(
                 $event->contentStreamId,
-                $event->sourceDimensionSpacePoint,
+                OriginDimensionSpacePoint::fromDimensionSpacePoint($event->sourceDimensionSpacePoint),
                 $coveredDimensionSpacePoint,
                 $event->nodeAggregateId
             );

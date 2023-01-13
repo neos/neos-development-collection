@@ -198,51 +198,105 @@ trait NodeRemoval
             $dimensionSpacePointHashList = '\''
                 . implode('\', \'', $event->affectedCoveredDimensionSpacePoints->getPointHashes())
                 . '\'';
-            $this->getDatabaseConnection()->executeStatement('
+            $descendantAssignments = $this->getDatabaseConnection()->executeQuery('
+                /** @lang PostgreSQL */
                 /**
-                 * This provides a list of minimal hierarchy relation data to be copied: parent and child node anchors
-                 * as well as their child node aggregate identifier to help determining the new siblings
-                 * in the target dimension space point
+                 * First, we collect all hierarchy relations to be copied in the restoration process.
+                 * These are the descendant relations in the origin to be used:
+                 * parentnodeanchor and childnodeanchors only, the rest will be changed
                  */
-                WITH RECURSIVE descendantRelations(parentnodeanchor, childnodeanchor, parentnodeaggregateid, nodeaggregateid, siblingnodeaggregateids) AS (
+                WITH RECURSIVE descendantNodes(relationanchorpoint) AS (
                     /**
-                     * Initial query: find the node aggregate identifiers for the node,
-                     * its parent and its succeeding siblings, if any
-                     * in the dimension space point where the coverage is to be increased FROM
+                     * Initial query: find the proper parent relation to be restored to restore the selected node itself.
+                     * We need to find the node\'s parent covering the source dimension space point
                      */
-                    SELECT srch.parentnodeanchor,
-                           src.relationanchorpoint AS childnodeanchor,
-                           srcp.nodeaggregateidentifier AS parentnodeaggregateid,
-                           src.nodeaggregateidentifier AS nodeaggregateid,
-                           array (
-                               SELECT nodeaggregateidentifier FROM cr_default_p_hypergraph_node
-                               WHERE relationanchorpoint = ANY (srch.childnodeanchors[(array_position(srch.childnodeanchors, src.relationanchorpoint)) + 1:])
-                           ) AS siblingnodeaggregateids
-                    FROM cr_default_p_hypergraph_hierarchyhyperrelation srch
-                        JOIN cr_default_p_hypergraph_node src ON src.relationanchorpoint = ANY (srch.childnodeanchors)
-                        JOIN cr_default_p_hypergraph_node srcp ON srcp.relationanchorpoint = srch.parentnodeanchor
-                    WHERE srch.contentstreamidentifier = \'' . $event->contentStreamId . '\'
-                        AND srch.dimensionspacepointhash = \'' . $event->sourceDimensionSpacePoint->hash . '\'
-                        AND src.nodeaggregateidentifier = \'' . $event->nodeAggregateId . '\'
+                    SELECT p.relationanchorpoint AS parentnodeanchor, n.relationanchorpoint as childnodeanchor, ph.dimensionspacepointhash FROM cr_default_p_hypergraph_node p
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
+                            ON p.relationanchorpoint = ANY(ph.childnodeanchors)
+                        JOIN ' . $this->tableNamePrefix . '_node n
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+                            ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                        WHERE ph.contentstreamidentifier = :contentStreamId
+                            AND ph.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+                            AND p.nodeaggregateidentifier = (
+                                SELECT p.nodeaggregateidentifier
+                                    FROM ' . $this->tableNamePrefix . '_node p
+                                    JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+                                       ON h.parentnodeanchor = p.relationanchorpoint
+                                    JOIN ' . $this->tableNamePrefix . '_node n
+                                       ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                                    WHERE n.nodeaggregateidentifier = :nodeAggregateId
+                                      AND h.contentstreamidentifier = :contentStreamId
+                                      AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                            );
+                            AND h.contentstreamidentifier = :contentStreamId
+                            AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                    SELECT
+                        n.relationanchorpoint,
+                        h.parentnodeanchor
+                    FROM ' . $this->tableNamePrefix . '_node n
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+                            ON n.relationanchorpoint = ANY(h.childnodeanchors)
+                        JOIN ' . $this->tableNamePrefix . '_node p
+                            ON h.parentnodeanchor = p.relationanchorpoint
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
+                            ON p.relationanchorpoint = ANY(ph.childnodeanchors)
+                    WHERE h.parentnodeanchor = :relationAnchorPoint
+                        AND h.contentstreamidentifier = :contentStreamId
+                        AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                              ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
+                            ? ' AND n.classification = :classification'
+                            : '') . '
+
                     UNION ALL
-                        /**
-                         * Iteration query: find all descendant node and sibling node aggregate identifiers
-                         * in the dimension space point where the coverage is to be increased FROM.
-                         */
-                        SELECT ch.parentnodeanchor,
-                               c.relationanchorpoint AS childnodeanchor,
-                               p.nodeaggregateid AS parentnodeaggregateid,
-                               c.nodeaggregateidentifier AS nodeaggregateid,
-                               array (
-                                   SELECT nodeaggregateidentifier FROM cr_default_p_hypergraph_node
-                                   WHERE relationanchorpoint = ANY (ch.childnodeanchors[(array_position(ch.childnodeanchors, c.relationanchorpoint)) + 1:])
-                               ) AS siblingnodeaggregateids
-                        FROM descendantRelations p
-                            JOIN cr_default_p_hypergraph_hierarchyhyperrelation ch ON ch.parentnodeanchor = p.childnodeanchor
-                            JOIN cr_default_p_hypergraph_node c ON c.relationanchorpoint = ANY(ch.childnodeanchors)
-                        WHERE ch.contentstreamidentifier = \'' . $event->contentStreamId . '\'
-                            AND ch.dimensionspacepointhash = \'' . $event->sourceDimensionSpacePoint->hash . '\'
-                ) SELECT
+                    /**
+                     * Iteration query: find all outgoing tethered child node relations from the parent node in its origin;
+                     * which ones are resolved depends on the recursion mode.
+                     */
+                    SELECT
+                        c.relationanchorpoint,
+                        h.parentnodeanchor
+                    FROM
+                        descendantNodes p
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
+                            ON h.parentnodeanchor = p.relationanchorpoint
+                        JOIN ' . $this->tableNamePrefix . '_node c ON c.relationanchorpoint = ANY(h.childnodeanchors)
+                    WHERE h.contentstreamidentifier = :contentStreamId
+                AND h.dimensionspacepointhash = :originDimensionSpacePointHash
+                        ' . ($event->recursionMode === RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS
+                    ? ' AND c.classification = :classification'
+                    : '') . '
+                )
+                SELECT
+                    :contentStreamId AS contentstreamidentifier,
+                    parentnodeanchor,
+                    CAST(dimensionspacepoint AS json),
+                    dimensionspacepointhash,
+                    array_agg(relationanchorpoint) AS childnodeanchors
+                FROM descendantNodes
+                    /** Here we join the affected dimension space points to actually create the new edges */
+                    JOIN (
+                        SELECT unnest(ARRAY[:dimensionSpacePoints]) AS dimensionspacepoint,
+                        unnest(ARRAY[:dimensionSpacePointHashes]) AS dimensionspacepointhash
+                    ) dimensionSpacePoints ON true
+                GROUP BY parentnodeanchor, dimensionspacepoint, dimensionspacepointhash
+            ',
+            [
+                'contentStreamId' => (string)$event->contentStreamId,
+                'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value,
+                'relationAnchorPoint' => (string)$nodeRecord->relationAnchorPoint,
+                'originDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash,
+                'dimensionSpacePoints' => array_map(
+                    fn(DimensionSpacePoint $dimensionSpacePoint): string
+                        => json_encode($dimensionSpacePoint, JSON_THROW_ON_ERROR),
+                    $event->affectedCoveredDimensionSpacePoints->points
+                ),
+                'dimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints->getPointHashes()
+            ],
+            [
+                'dimensionSpacePoints' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ] SELECT
                       parentrelationanchors.relationanchorpoint as parentanchor,
                       parentnodeanchor as sourceparentanchor,
                       --parentnodeaggregateid,
@@ -267,10 +321,10 @@ trait NodeRemoval
                      */
                     LEFT JOIN (
                         SELECT relationanchorpoint, dimensionspacepointhash, nodeaggregateidentifier
-                        FROM cr_default_p_hypergraph_node tgtp
-                            JOIN cr_default_p_hypergraph_hierarchyhyperrelation tgtph
+                        FROM ' . $this->tableNamePrefix . '_node tgtp
+                            JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation tgtph
                             ON tgtp.relationanchorpoint = ANY(tgtph.childnodeanchors)
-                        WHERE tgtph.contentstreamidentifier = \'' . $event->contentStreamId . '\'
+                        WHERE tgtph.contentstreamidentifier = :contentStreamId
                     ) parentrelationanchors
                         ON parentrelationanchors.dimensionspacepointhash = dimensionSpacePoints.dimensionspacepointhash
                         AND parentrelationanchors.nodeaggregateidentifier = parentnodeaggregateid
@@ -279,10 +333,10 @@ trait NodeRemoval
                      */
                     LEFT JOIN (
                         SELECT relationanchorpoint, dimensionspacepointhash, nodeaggregateidentifier
-                        FROM cr_default_p_hypergraph_node tgt
-                        JOIN cr_default_p_hypergraph_hierarchyhyperrelation tgth
+                        FROM ' . $this->tableNamePrefix . '_node tgt
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation tgth
                             ON tgt.relationanchorpoint = ANY(tgth.childnodeanchors)
-                        WHERE tgth.contentstreamidentifier = \'' . $event->contentStreamId . '\'
+                        WHERE tgth.contentstreamidentifier = :contentStreamId
                     ) childrelationanchors
                         ON childrelationanchors.dimensionspacepointhash = dimensionSpacePoints.dimensionspacepointhash
                         AND childrelationanchors.nodeaggregateidentifier = nodeaggregateid
@@ -291,10 +345,10 @@ trait NodeRemoval
                      */
                     LEFT JOIN (
                         SELECT relationanchorpoint, dimensionspacepointhash, nodeaggregateidentifier
-                        FROM cr_default_p_hypergraph_node tgtsib
-                            JOIN cr_default_p_hypergraph_hierarchyhyperrelation tgtsibh
+                        FROM ' . $this->tableNamePrefix . '_node tgtsib
+                            JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation tgtsibh
                             ON tgtsib.relationanchorpoint = ANY(tgtsibh.childnodeanchors)
-                        WHERE tgtsibh.contentstreamidentifier = \'' . $event->contentStreamId . '\'
+                        WHERE tgtsibh.contentstreamidentifier = :contentStreamId
                     ) siblingrelationanchors
                         ON siblingrelationanchors.dimensionspacepointhash = dimensionSpacePoints.dimensionspacepointhash
                         AND siblingrelationanchors.nodeaggregateidentifier IN (
@@ -304,7 +358,21 @@ trait NodeRemoval
                                 LIMIT 1
                         )
 
-            ');
+            ',
+            [
+                'contentStreamId' => $event->contentStreamId,
+                'nodeAggregateId' => $event->nodeAggregateId,
+                'sourceDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash
+            ])->fetchAllAssociative();
+
+            foreach ($descendantAssignments as $descendantAssignment) {
+                $this->getDatabaseConnection()->executeStatement(
+                    'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation';
+                )
+            }
+
+            \Neos\Flow\var_dump($descendantAssignments);
+            exit();
         });
         $nodeRecord = $this->projectionHypergraph->findNodeRecordByOrigin(
             $event->contentStreamId,

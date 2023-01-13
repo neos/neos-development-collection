@@ -42,14 +42,16 @@ Feature: Restore NodeAggregate coverage
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId                | nodeTypeName                                                                | parentNodeAggregateId      | nodeName           | tetheredDescendantNodeAggregateIds                                                                               |
-      | sir-david-nodenborough         | Neos.ContentRepository.Testing:Document                                     | lady-eleonode-rootford     | document           | {}                                                                                                               |
-      | preceding-mc-nodeface          | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | preceding          | {}                                                                                                               |
-      | nody-mc-nodeface               | Neos.ContentRepository.Testing:DocumentWithTetheredChildrenAndGrandChildren | sir-david-nodenborough     | document           | {"tethered":"nodewyn-tetherton", "tethered/tethered": "nodimus-mediocre", "anothertethered":"nodimer-tetherton"} |
-      | succeeding-mc-nodeface         | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | succeeding         | {}                                                                                                               |
-      | another-succeeding-mc-nodeface | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | another-succeeding | {}                                                                                                               |
-      | sir-nodeward-nodington-iii     | Neos.ContentRepository.Testing:ReferencingDocument                          | nody-mc-nodeface           | esquire            | {}                                                                                                               |
-      | nodimus-prime                  | Neos.ContentRepository.Testing:ReferencingDocument                          | sir-nodeward-nodington-iii | prime              | {}                                                                                                               |
+      | nodeAggregateId                 | nodeTypeName                                                                | parentNodeAggregateId      | nodeName           | tetheredDescendantNodeAggregateIds                                                                               |
+      | sir-david-nodenborough          | Neos.ContentRepository.Testing:Document                                     | lady-eleonode-rootford     | document           | {}                                                                                                               |
+      | succeeding-nodenborough         | Neos.ContentRepository.Testing:Document                                     | lady-eleonode-rootford     | succeeding         | {}                                                                                                               |
+      | another-succeeding-nodenborough | Neos.ContentRepository.Testing:Document                                     | lady-eleonode-rootford     | another-succeeding | {}                                                                                                               |
+      | preceding-mc-nodeface           | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | preceding          | {}                                                                                                               |
+      | nody-mc-nodeface                | Neos.ContentRepository.Testing:DocumentWithTetheredChildrenAndGrandChildren | sir-david-nodenborough     | document           | {"tethered":"nodewyn-tetherton", "tethered/tethered": "nodimus-mediocre", "anothertethered":"nodimer-tetherton"} |
+      | succeeding-mc-nodeface          | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | succeeding         | {}                                                                                                               |
+      | another-succeeding-mc-nodeface  | Neos.ContentRepository.Testing:Document                                     | sir-david-nodenborough     | another-succeeding | {}                                                                                                               |
+      | sir-nodeward-nodington-iii      | Neos.ContentRepository.Testing:ReferencingDocument                          | nody-mc-nodeface           | esquire            | {}                                                                                                               |
+      | nodimus-prime                   | Neos.ContentRepository.Testing:ReferencingDocument                          | sir-nodeward-nodington-iii | prime              | {}                                                                                                               |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                  |
       | sourceNodeAggregateId | "sir-nodeward-nodington-iii"           |
@@ -61,6 +63,11 @@ Feature: Restore NodeAggregate coverage
       | nodeAggregateId | "sir-david-nodenborough" |
       | sourceOrigin    | {"language":"en"}        |
       | targetOrigin    | {"language":"de"}        |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value                     |
+      | nodeAggregateId | "succeeding-nodenborough" |
+      | sourceOrigin    | {"language":"en"}         |
+      | targetOrigin    | {"language":"de"}         |
     And the graph projection is fully up to date
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                    |
@@ -82,26 +89,30 @@ Feature: Restore NodeAggregate coverage
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
-    Then I expect exactly 15 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 14 is of type "NodeAggregateCoverageWasRestored" with payload:
-      | Key                                 | Expected                     |
-      | contentStreamId                     | "cs-identifier"              |
-      | nodeAggregateId                     | "nody-mc-nodeface"           |
-      | sourceDimensionSpacePoint           | {"language":"en"}            |
-      | affectedCoveredDimensionSpacePoints | [{"language":"de"}]          |
-      | recursionMode                       | "onlyTetheredDescendants"    |
-      | initiatingUserId                    | "initiating-user-identifier" |
+    Then I expect exactly 20 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 19 is of type "NodeAggregateCoverageWasRestored" with payload:
+      | Key                                 | Expected                  |
+      | contentStreamId                     | "cs-identifier"           |
+      | nodeAggregateId                     | "nody-mc-nodeface"        |
+      | sourceDimensionSpacePoint           | {"language":"en"}         |
+      | affectedCoveredDimensionSpacePoints | [{"language":"de"}]       |
+      | recursionMode                       | "onlyTetheredDescendants" |
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 11 nodes
+    Then I expect the graph projection to consist of exactly 16 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;preceding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-mediocre;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-prime;{"language":"en"} to exist in the content graph
     And I expect the node aggregate "sir-david-nodenborough" to exist

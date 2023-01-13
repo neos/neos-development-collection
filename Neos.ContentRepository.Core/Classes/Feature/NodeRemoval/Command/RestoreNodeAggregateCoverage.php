@@ -71,12 +71,12 @@ final class RestoreNodeAggregateCoverage implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamId,
-            'nodeAggregateIdentifier' => $this->nodeAggregateId,
+            'contentStreamId' => $this->contentStreamId,
+            'nodeAggregateId' => $this->nodeAggregateId,
             'coveredDimensionSpacePoint' => $this->dimensionSpacePointToCover,
             'withSpecializations' => $this->withSpecializations,
             'recursionMode' => $this->recursionMode,
-            'initiatingUserIdentifier' => $this->initiatingUserId
+            'initiatingUserId' => $this->initiatingUserId
         ];
     }
 

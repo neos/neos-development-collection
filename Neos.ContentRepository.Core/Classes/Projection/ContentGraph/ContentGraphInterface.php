@@ -160,6 +160,7 @@ interface ContentGraphInterface extends ProjectionStateInterface
 
     /**
      * @internal only for consumption inside the Command Handler
+     * @deprecated the projector handles this
      */
     public function findDescendantAssignmentsForCoverageIncrease(
         ContentStreamId $contentStreamId,
