@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2023-01-12
+This reference was automatically generated from code on 2023-01-13
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1078,7 +1078,7 @@ Calculate the power of x by y
 Math.random()
 ^^^^^^^^^^^^^
 
-Get a random floating point number between 0 (inclusive) and 1 (exclusive)
+Get a random foating point number between 0 (inclusive) and 1 (exclusive)
 
 That means a result will always be less than 1 and greater or equal to 0, the same way Math.random() works in
 JavaScript.
