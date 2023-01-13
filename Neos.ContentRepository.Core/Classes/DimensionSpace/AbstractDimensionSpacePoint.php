@@ -63,7 +63,7 @@ abstract class AbstractDimensionSpacePoint implements
             }
             if (!is_string($dimensionValue)) {
                 throw new \InvalidArgumentException(
-                    sprintf('Dimension value for %s is not a string', $dimensionName),
+                    sprintf('Dimension value for %s is not a string but: %s', $dimensionName, get_debug_type($dimensionValue)),
                     1506076562
                 );
             }
