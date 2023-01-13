@@ -21,11 +21,11 @@ final class NodeDataLoader implements \IteratorAggregate
             FROM
                 neos_contentrepository_domain_model_nodedata
             WHERE
-                workspace = \'live\'
+                workspace = "live"
                 AND (movedto IS NULL OR removed=0)
-                AND path != \'/\'
+                AND path != "/"
             ORDER BY
-                parentpath, sortingindex
+                parentpath, sortingindex, path
         ');
         return $query->iterateAssociative();
     }
