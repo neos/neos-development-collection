@@ -159,17 +159,6 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): DimensionSpacePointSet;
 
     /**
-     * @internal only for consumption inside the Command Handler
-     * @deprecated the projector handles this
-     */
-    public function findDescendantAssignmentsForCoverageIncrease(
-        ContentStreamId $contentStreamId,
-        DimensionSpacePoint $sourceDimensionSpacePoint,
-        NodeAggregateId $nodeAggregateId,
-        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints
-    ): DescendantAssignments;
-
-    /**
      * @internal only for consumption in testcases
      */
     public function countNodes(): int;

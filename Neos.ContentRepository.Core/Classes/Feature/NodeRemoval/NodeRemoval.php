@@ -162,12 +162,7 @@ trait NodeRemoval
                 $command->nodeAggregateId,
                 $primaryGeneralization,
                 $affectedDimensionSpacePoints,
-                $contentRepository->getContentGraph()->findDescendantAssignmentsForCoverageIncrease(
-                    $command->contentStreamId,
-                    $command->dimensionSpacePointToCover,
-                    $command->nodeAggregateId,
-                    $affectedDimensionSpacePoints
-                )
+                $command->recursionMode
             )
         );
 
