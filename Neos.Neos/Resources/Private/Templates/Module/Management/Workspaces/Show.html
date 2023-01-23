@@ -115,9 +115,13 @@
 							var value = false;
 							if (jQuery(this).is(':checked')) {
 								value = true;
-								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
+								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-discardAllChanges').removeClass('neos-disabled').removeAttr('disabled');
+								jQuery('.publish-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+								jQuery('.discard-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
 							} else {
 								jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+								jQuery('.publish-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
+								jQuery('.discard-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
 							}
 							jQuery('tbody input[type="checkbox"]').prop('checked', value);
 						});
@@ -145,9 +149,13 @@
 							}
 
 							if (jQuery('tbody input[type="checkbox"]:checked').length > 0) {
-								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled')
+								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
+								jQuery('.publish-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+								jQuery('.discard-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
 							} else {
 								jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+								jQuery('.publish-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
+								jQuery('.discard-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
 							}
 						});
 
@@ -180,15 +188,36 @@
 		<div class="neos-pull-right">
 			<f:if condition="{canPublishToBaseWorkspace}">
 				<f:then>
-					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}</button>
-					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'Neos.Neos')}</button>
-					<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}</button>
-					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}</button>
+					<button class="discard-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
+						<i class="fas fa-trash-alt icon-white"></i>
+						{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
+					</button>
+					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="publish-action neos-button neos-button-primary">
+						<i class="fas fa-check-double icon-white"></i>
+						{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
+					</button>
+					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-button-danger neos-hidden neos-disabled batch-action" disabled="disabled">
+						<i class="fas fa-trash-alt icon-white"></i>
+						{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
+					</button>
+					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-primary neos-hidden neos-disabled batch-action" disabled="disabled">
+						<li class="fas fa-check icon-white"></li>
+						{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
+					</button>
 				</f:then>
 				<f:else>
-					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}</button>
-					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-hidden neos-disabled batch-action" disabled="disabled">{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'Neos.Neos')}</button>
-					<button class="neos-button neos-button-danger" data-toggle="modal" href="#discard">{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}</button>
+					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-button-danger neos-hidden neos-disabled batch-action" disabled="disabled">
+						<i class="fas fa-trash-alt icon-white"></i>
+						{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
+					</button>
+					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-primary neos-hidden neos-disabled batch-action" disabled="disabled">
+						<li class="fas fa-check icon-white"></li>
+						{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
+					</button>
+					<button class="discard-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
+						<i class="fas fa-trash-alt icon-white"></i>
+						{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
+					</button>
 				</f:else>
 			</f:if>
 		</div>
