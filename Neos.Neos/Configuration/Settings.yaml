@@ -363,6 +363,7 @@ Neos:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController
         hideInMenu: true
+        icon: fas fa-users
         mainStylesheet: 'Lite'
         submodules:
           usersettings:
