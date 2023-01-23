@@ -294,9 +294,15 @@ Neos:
       widgetTemplatePathAndFileName: 'resource://Neos.Neos/Private/Templates/Module/Widget.html'
       # This stylesheet can be overriden in the configuration of a submodule to reference a reduced stylesheet.
       # Use `Main` for backwards compatibility
-      # Use `Lite` for a reduced variant with a less aggressive reset and other non essential styles removed.
+      # Use `Lite` for a reduced variant with a less aggressive reset and other non-essential styles removed.
       # Use `Minimal` when your module provides its own styles and Neos only needs to show the top and bottom bar.
       mainStylesheet: 'Main'
+
+      # Define additional stylesheets and javascript for all backend modules
+      additionalResources:
+        styleSheets: {}
+        javaScripts:
+          'Neos.Neos': 'resource://Neos.Neos/Public/JavaScript/Main.min.js'
 
       preferredStartModules: [ 'content','user/usersettings' ]
 
