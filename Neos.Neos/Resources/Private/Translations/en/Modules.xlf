@@ -684,6 +684,9 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
 			</trans-unit>
+      <trans-unit id="user.description" xml:space="preserve">
+				<source>Contains modules related to management of users</source>
+			</trans-unit>
 			<trans-unit id="userSettings.label" xml:space="preserve">
 				<source>User Settings</source>
 			</trans-unit>
