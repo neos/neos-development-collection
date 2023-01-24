@@ -116,12 +116,10 @@
 							if (jQuery(this).is(':checked')) {
 								value = true;
 								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-discardAllChanges').removeClass('neos-disabled').removeAttr('disabled');
-								jQuery('.publish-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-								jQuery('.discard-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+								jQuery('.review-button-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
 							} else {
 								jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-								jQuery('.publish-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
-								jQuery('.discard-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
+								jQuery('.review-button-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
 							}
 							jQuery('tbody input[type="checkbox"]').prop('checked', value);
 						});
@@ -150,12 +148,10 @@
 
 							if (jQuery('tbody input[type="checkbox"]:checked').length > 0) {
 								jQuery('.batch-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled');
-								jQuery('.publish-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-								jQuery('.discard-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
+								jQuery('.review-button-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
 							} else {
 								jQuery('.batch-action').addClass('neos-hidden').addClass('neos-disabled').attr('disabled', 'disabled');
-								jQuery('.publish-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
-								jQuery('.discard-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
+								jQuery('.review-button-action').removeClass('neos-hidden').removeClass('neos-disabled').removeAttr('disabled', 'disabled');
 							}
 						});
 
@@ -188,11 +184,11 @@
 		<div class="neos-pull-right">
 			<f:if condition="{canPublishToBaseWorkspace}">
 				<f:then>
-					<button class="discard-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
+					<button class="review-button-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
 						<i class="fas fa-trash-alt icon-white"></i>
 						{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
 					</button>
-					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="publish-action neos-button neos-button-primary">
+					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace})}" type="submit" class="review-button-action neos-button neos-button-primary">
 						<i class="fas fa-check-double icon-white"></i>
 						{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
 					</button>
@@ -214,7 +210,7 @@
 						<li class="fas fa-check icon-white"></li>
 						{neos:backend.translate(id: 'workspaces.publishSelectedChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
 					</button>
-					<button class="discard-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
+					<button class="review-button-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
 						<i class="fas fa-trash-alt icon-white"></i>
 						{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
 					</button>
