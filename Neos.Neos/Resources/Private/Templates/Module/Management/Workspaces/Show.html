@@ -202,7 +202,7 @@
 					</button>
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-primary neos-hidden neos-disabled batch-action" disabled="disabled">
 						<li class="fas fa-check icon-white"></li>
-						{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
+						{neos:backend.translate(id: 'workspaces.publishSelectedChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
 					</button>
 				</f:then>
 				<f:else>
@@ -212,7 +212,7 @@
 					</button>
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-primary neos-hidden neos-disabled batch-action" disabled="disabled">
 						<li class="fas fa-check icon-white"></li>
-						{neos:backend.translate(id: 'workspaces.publishSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
+						{neos:backend.translate(id: 'workspaces.publishSelectedChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
 					</button>
 					<button class="discard-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
 						<i class="fas fa-trash-alt icon-white"></i>
