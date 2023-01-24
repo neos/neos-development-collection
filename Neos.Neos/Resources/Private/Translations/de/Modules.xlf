@@ -204,8 +204,8 @@
         <target state="final">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
-				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
-        <target state="final">Möchten Sie wirklich alle Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
+				<source>Do you really want to discard the changes in the "{0}" workspace?</source>
+        <target state="final">Möchten Sie die Änderungen im Arbeitsbereich "{0}" wirklich verwerfen?</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
         <source>A workspace with this title already exists.</source>
