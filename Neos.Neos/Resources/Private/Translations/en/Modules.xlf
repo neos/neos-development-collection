@@ -152,8 +152,11 @@
 			<trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
 			</trans-unit>
+			<trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard selected changes in the "{0}" workspace?</source>
+			</trans-unit>
 			<trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
-				<source>Do you really want to discard the changes in the "{0}" workspace?</source>
+				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
 			</trans-unit>
 			<trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists">
 				<source>A workspace with this title already exists.</source>
