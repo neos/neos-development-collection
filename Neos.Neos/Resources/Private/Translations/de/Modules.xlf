@@ -204,7 +204,7 @@
         <target state="final">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target>
       </trans-unit>
       <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
-        <source>Do you really want to discard selected changes in the "{0}" workspace?</source>
+        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
         <target state="final">Möchten Sie wirklich die ausgewählten Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
