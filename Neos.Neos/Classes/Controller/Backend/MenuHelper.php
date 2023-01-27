@@ -13,9 +13,12 @@ namespace Neos\Neos\Controller\Backend;
 
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Domain\Service\ContentContextFactory;
+use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
 use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
@@ -33,43 +36,43 @@ use Neos\Utility\PositionalArraySorter;
 class MenuHelper
 {
     /**
-     * @var array
+     * @var array|null
      */
-    protected $moduleListFirstLevelCache = null;
+    protected ?array $moduleListFirstLevelCache = null;
 
     /**
      * @var SiteRepository
      * @Flow\Inject
      */
-    protected $siteRepository;
+    protected SiteRepository $siteRepository;
 
     /**
      * @var PrivilegeManagerInterface
      * @Flow\Inject
      */
-    protected $privilegeManager;
+    protected PrivilegeManagerInterface $privilegeManager;
 
     /**
      * @var array
      */
-    protected $settings;
+    protected array $settings;
 
     /**
      * @Flow\Inject
      * @var IconNameMappingService
      */
-    protected $iconMapper;
+    protected IconNameMappingService $iconMapper;
 
     /**
      * @Flow\Inject
-     * @var \Neos\Neos\Domain\Service\ContentContextFactory
+     * @var ContentContextFactory
      */
-    protected $contextFactory;
+    protected ContentContextFactory $contextFactory;
 
     /**
      * @param array $settings
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -79,6 +82,7 @@ class MenuHelper
      *
      * @param ControllerContext $controllerContext
      * @return array
+     * @throws MissingActionNameException|Exception
      */
     public function buildSiteList(ControllerContext $controllerContext): array
     {
@@ -93,7 +97,7 @@ class MenuHelper
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $node = $context->getNode("/sites/" . $site->getNodeName());
+            $node = $context->getNode(SiteService::SITES_ROOT_PATH . '/' . $site->getNodeName());
             if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
                 $uri = null;
                 $active = false;
@@ -133,8 +137,7 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @return array
-     * @throws \Neos\Flow\Http\Exception
-     * @throws MissingActionNameException
+     * @throws Exception|MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
     {
@@ -214,7 +217,7 @@ class MenuHelper
      * @param array $moduleConfiguration
      * @param string $modulePath
      * @return array
-     * @throws \Neos\Flow\Http\Exception
+     * @throws Exception
      * @throws MissingActionNameException
      */
     protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
