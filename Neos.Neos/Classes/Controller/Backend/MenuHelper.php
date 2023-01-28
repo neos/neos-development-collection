@@ -44,13 +44,13 @@ class MenuHelper
      * @var SiteRepository
      * @Flow\Inject
      */
-    protected SiteRepository $siteRepository;
+    protected $siteRepository;
 
     /**
      * @var PrivilegeManagerInterface
      * @Flow\Inject
      */
-    protected PrivilegeManagerInterface $privilegeManager;
+    protected $privilegeManager;
 
     /**
      * @var array
@@ -61,13 +61,13 @@ class MenuHelper
      * @Flow\Inject
      * @var IconNameMappingService
      */
-    protected IconNameMappingService $iconMapper;
+    protected $iconMapper;
 
     /**
      * @Flow\Inject
      * @var ContentContextFactory
      */
-    protected ContentContextFactory $contextFactory;
+    protected $contextFactory;
 
     /**
      * @param array $settings
