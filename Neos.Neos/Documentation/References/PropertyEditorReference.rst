@@ -276,7 +276,7 @@ the key/value pairs can be accessed in the ``$arguments`` array passed to ``getD
     questions:
       ui:
         inspector:
-          editor: 'Content/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             dataSourceIdentifier: 'questions'
             # alternatively using a custom uri:
