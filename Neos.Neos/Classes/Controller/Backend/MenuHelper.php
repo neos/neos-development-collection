@@ -38,7 +38,7 @@ class MenuHelper
     /**
      * @var array|null
      */
-    protected ?array $moduleListFirstLevelCache = null;
+    protected array $moduleListFirstLevelCache = null;
 
     /**
      * @var SiteRepository
