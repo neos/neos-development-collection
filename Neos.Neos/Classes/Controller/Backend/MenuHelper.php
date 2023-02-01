@@ -38,7 +38,7 @@ class MenuHelper
     /**
      * @var array|null
      */
-    protected array $moduleListFirstLevelCache = null;
+    protected $moduleListFirstLevelCache = null;
 
     /**
      * @var SiteRepository
@@ -55,7 +55,7 @@ class MenuHelper
     /**
      * @var array
      */
-    protected array $settings;
+    protected $settings;
 
     /**
      * @Flow\Inject
