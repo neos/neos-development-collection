@@ -25,5 +25,6 @@
               ul: true
               underline: false
               strikethrough: false
+              blockquote: true
             autoparagraph: true
             placeholder: i18n
