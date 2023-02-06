@@ -40,7 +40,8 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             (
                 $this->imagineService instanceof \Imagine\Imagick\Imagine ||
                 (extension_loaded('imagick') && $this->getOption('overrideImagineDriverCheck'))
-            )
+            ) &&
+            self::originalAssetResourceIsNotEncrypted($thumbnail)
         );
     }
 
@@ -115,5 +116,27 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
             $message = sprintf('Unable to generate thumbnail for the given document (filename: %s, SHA1: %s)', $filename, $sha1);
             throw new Exception\NoThumbnailAvailableException($message, 1433109652, $exception);
         }
+    }
+
+    private static function originalAssetResourceIsNotEncrypted(Thumbnail $thumbnail): bool
+    {
+        $extension = $thumbnail->getOriginalAsset()->getResource()->getFileExtension();
+        if ($extension !== 'pdf') {
+            return true;
+        }
+        $stream = $thumbnail->getOriginalAsset()->getResource()->getStream();
+        if ($stream === false) {
+            return true;
+        }
+
+        while (($chunk = fgets($stream, 1024)) !== false) {
+            if (strpos($chunk, '/Encrypt') !== false) {
+                fclose($stream);
+                return false;
+            }
+        }
+        fclose($stream);
+
+        return true;
     }
 }
