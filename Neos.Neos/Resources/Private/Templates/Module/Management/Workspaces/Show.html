@@ -225,10 +225,6 @@
 						<i class="fas fa-trash-alt icon-white"></i>
 						{neos:backend.translate(id: 'workspaces.discardSelectedChanges', source: 'Modules', package: 'Neos.Neos')}
 					</button>
-					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-success neos-hidden neos-disabled batch-action" disabled="disabled">
-						<i class="fas fa-check icon-white"></i>
-						{neos:backend.translate(id: 'workspaces.publishSelectedChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
-					</button>
 					<button type="submit" class="review-button-action neos-button neos-button-danger" data-toggle="modal" href="#discard">
 						<i class="fas fa-trash-alt icon-white"></i>
 						{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
