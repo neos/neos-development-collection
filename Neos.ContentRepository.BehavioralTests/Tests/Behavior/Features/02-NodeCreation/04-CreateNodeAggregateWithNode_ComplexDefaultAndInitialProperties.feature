@@ -15,6 +15,9 @@ Feature: Create a node aggregate with complex default values
           defaultValue:
             givenName: 'Nody'
             familyName: 'McNodeface'
+        dayOfWeek:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
+          defaultValue: 'https://schema.org/Wednesday'
         now:
           type: DateTimeImmutable
           defaultValue: 'now'
@@ -59,6 +62,7 @@ Feature: Create a node aggregate with complex default values
     And I expect this node to have the following properties:
       | Key           | Value                                           |
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
+      | dayOfWeek     | DayOfWeek:https://schema.org/Wednesday          |
       | postalAddress | PostalAddress:dummy                             |
       | now           | Date:now                                        |
       | date          | Date:2020-08-20T18:56:15+00:00                  |
@@ -70,11 +74,12 @@ Feature: Create a node aggregate with complex default values
       | nodeAggregateId       | "nody-mc-nodeface"                                                                                                       |
       | nodeTypeName          | "Neos.ContentRepository.Testing:Node"                                                                                    |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                 |
-      | initialPropertyValues | {"postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
+      | initialPropertyValues | {"dayOfWeek":"DayOfWeek:https://schema.org/Friday","postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
     And I expect this node to have the following properties:
       | Key           | Value                                           |
+      | dayOfWeek     | DayOfWeek:https://schema.org/Friday             |
       | array         | {"givenName":"Nody", "familyName":"McNodeface"} |
       | postalAddress | PostalAddress:anotherDummy                      |
       | now           | Date:now                                        |
