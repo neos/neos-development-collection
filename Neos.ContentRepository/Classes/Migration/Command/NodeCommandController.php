@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\Migration\Command;
  * source code.
  */
 
+use Neos\ContentRepository\Migration\Service\GeneratorService;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
@@ -18,6 +19,7 @@ use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
 use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use Neos\ContentRepository\Migration\Service\NodeMigration;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationStatus;
@@ -60,6 +62,18 @@ class NodeCommandController extends CommandController
      * @var ContextFactoryInterface
      */
     protected $contextFactory;
+
+    /**
+     * @Flow\Inject
+     * @var PackageManager
+     */
+    protected PackageManager $packageManager;
+
+    /**
+     * @Flow\Inject
+     * @var GeneratorService
+     */
+    protected GeneratorService $generatorService;
 
     /**
      * Do the configured migrations in the given migration.
@@ -149,6 +163,25 @@ class NodeCommandController extends CommandController
         $this->outputLine('<b>Available migrations</b>');
         $this->outputLine();
         $this->output->outputTable($tableRows, ['Version', 'Date', 'Package', 'Comments']);
+    }
+
+    /**
+     * Creates a new node migration for the given package Key
+     *
+     * @param string $packageKey The packageKey for the given package
+     * @return void
+     * @see neos.contentrepository.migration:node:migrationgenerate
+     */
+    public function migrationGenerateCommand(string $packageKey): void
+    {
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
+            exit(1);
+        }
+
+        $generatedFiles = $this->generatorService->generateNodeMigration($packageKey);
+        $this->outputLine(implode(PHP_EOL, $generatedFiles));
+        $this->outputLine('Your node migration has been created successfully.');
     }
 
     /**
