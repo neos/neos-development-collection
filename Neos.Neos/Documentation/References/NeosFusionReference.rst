@@ -588,7 +588,7 @@ Evaluates to::
 Neos.Fusion:Wrapper
 -------------------
 
-If a ``tagName`` is given the ``content`` is wrapped in an HTML tag with the given tag. Otherwise the content is returned as is.
+If a ``tagName`` is given the ``content`` is wrapped in an HTML tag with the given tag. Otherwise, the content is returned as is.
 
 :tagName: (string) Tag name of the HTML element, defaults to ``null``
 :omitClosingTag: (boolean) Whether to render the element ``content`` and the closing tag, defaults to ``FALSE``
