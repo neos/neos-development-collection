@@ -1,0 +1,21 @@
+prototype(Neos.Fusion:Wrapper) < prototype(Neos.Fusion:Component) {
+    tagName = null
+    attributes = Neos.Fusion:DataStructure
+    omitClosingTag = false
+    selfClosingTag = false
+    content = null
+    allowEmptyAttributes = true
+
+    renderer = Neos.Fusion:Case {
+        hasTagName {
+            condition = ${props.tagName && Type.isString(props.tagName)}
+            renderer = Neos.Fusion:Tag {
+                @apply.props = ${props}
+            }
+        }
+        justContent {
+            condition = true
+            renderer = ${props.content}
+        }
+    }
+}

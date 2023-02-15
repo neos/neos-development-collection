@@ -583,6 +583,46 @@ Evaluates to::
 
 	<html version="HTML+RDFa 1.1" xmlns="http://www.w3.org/1999/xhtml">
 
+.. _Neos_Fusion__Wrapper:
+
+Neos.Fusion:Wrapper
+-------------------
+
+If a ``tagName`` is given the ``content`` is wrapped in an HTML tag with the given tag. Otherwise the content is returned as is.
+
+:tagName: (string) Tag name of the HTML element, defaults to ``null``
+:omitClosingTag: (boolean) Whether to render the element ``content`` and the closing tag, defaults to ``FALSE``
+:selfClosingTag: (boolean) Whether the tag is a self-closing tag with no closing tag. Will be resolved from ``tagName`` by default, so default HTML tags are treated correctly.
+:content: (string) The inner content of the element, will only be rendered if the tag is not self-closing and the closing tag is not omitted
+:attributes: (iterable) Tag attributes as key-value pairs. Default is ``Neos.Fusion:DataStructure``. If a non iterable is returned the value is casted to string.
+:allowEmptyAttributes: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values. By default this is ``true``
+
+Example:
+^^^^^^^^
+
+::
+
+	content = Neos.Fusion:Wrapper {
+    attributes.class = 'foo bar'
+		content = 'Hello World'
+	}
+
+Evaluates to::
+
+	Hello World
+
+::
+
+	content = Neos.Fusion:Wrapper {
+    tagName = 'div'
+    attributes.class = 'foo bar'
+		content = 'Hello World'
+	}
+
+Evaluates to::
+
+	<div class="foo bar">Hello World</div>
+
 .. _Neos_Fusion__Attributes:
 
 Neos.Fusion:Attributes
