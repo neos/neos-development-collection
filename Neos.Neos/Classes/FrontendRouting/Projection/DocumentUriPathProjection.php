@@ -585,8 +585,16 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 }
 
                 match ($newLocation->destination::class) {
-                    SucceedingSiblingNodeMoveDestination::class => $this->moveNode($node, $newLocation->destination->parentNodeAggregateId, $newLocation->destination->nodeAggregateId),
-                    ParentNodeMoveDestination::class => $this->moveNode($node, $newLocation->destination->nodeAggregateId, null),
+                    SucceedingSiblingNodeMoveDestination::class => $this->moveNode(
+                        $node,
+                        $newLocation->destination->parentNodeAggregateId,
+                        $newLocation->destination->nodeAggregateId
+                    ),
+                    ParentNodeMoveDestination::class => $this->moveNode(
+                        $node,
+                        $newLocation->destination->nodeAggregateId,
+                        null
+                    ),
                 };
             }
         }

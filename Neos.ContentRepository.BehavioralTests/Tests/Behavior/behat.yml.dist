@@ -11,5 +11,5 @@ default:
       paths:
         - "%paths.base%/Features/"
       contexts:
-        - FeatureContext:
+        - FeatureContext
 
