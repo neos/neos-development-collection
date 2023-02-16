@@ -221,7 +221,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             ), 1599664746, $e);
         }
         if ($row === false) {
-            throw new NodeNotFoundException(sprintf('No matching node found for query "%s" with params %s', $where, json_encode($parameters)), 1599667143);
+            throw new NodeNotFoundException(sprintf(
+                'No matching node found for query "%s" with params %s',
+                $where,
+                json_encode($parameters)
+            ), 1599667143);
         }
         return DocumentNodeInfo::fromDatabaseRow($row);
     }
