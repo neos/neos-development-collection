@@ -203,7 +203,7 @@ Feature: Remove NodeAggregate
       | contentStreamId                      | "cs-identifier"                                                            |
       | nodeAggregateId                      | "nodingers-cat"                                                            |
       | affectedOccupiedDimensionSpacePoints | [{"language":"en"},{"language":"de"}]                                      |
-      | affectedCoveredDimensionSpacePoints  | [{"language":"en"},{"language":"de"},{"language":"fr"},{"language":"gsw"}] |
+      | affectedCoveredDimensionSpacePoints  | [{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"fr"}] |
       | removalAttachmentPoint               | null                                                                       |
     When the graph projection is fully up to date
     Then I expect the graph projection to consist of exactly 2 nodes
