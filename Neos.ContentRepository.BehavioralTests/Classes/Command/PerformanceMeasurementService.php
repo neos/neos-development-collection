@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -42,7 +43,6 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 {
-
     private ContentStreamId $contentStreamId;
     private DimensionSpacePointSet $dimensionSpacePoints;
     private ContentStreamEventStreamName $contentStreamEventStream;
@@ -67,13 +67,15 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         );
     }
 
-    public function removeEverything() {
+    public function removeEverything(): void
+    {
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($this->contentRepositoryId);
         $this->connection->executeStatement('TRUNCATE ' . $this->connection->quoteIdentifier($eventTableName));
         $this->contentRepository->resetProjectionStates();
     }
 
-    public function createNodesForPerformanceTest(int $nodesPerLevel, int $levels) {
+    public function createNodesForPerformanceTest(int $nodesPerLevel, int $levels): void
+    {
         $this->contentRepository->handle(new CreateRootWorkspace(
             WorkspaceName::forLive(),
             WorkspaceTitle::fromString('live'),
@@ -81,10 +83,10 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
             $this->contentStreamId
         ));
 
-        $rootnodeAggregateId = nodeAggregateId::fromString('lady-eleonode-rootford');
+        $rootNodeAggregateId = nodeAggregateId::fromString('lady-eleonode-rootford');
         $rootNodeAggregateWasCreated = new RootNodeAggregateWithNodeWasCreated(
             $this->contentStreamId,
-            $rootnodeAggregateId,
+            $rootNodeAggregateId,
             NodeTypeName::fromString('Neos.ContentRepository:Root'),
             $this->dimensionSpacePoints,
             NodeAggregateClassification::CLASSIFICATION_ROOT,
@@ -99,7 +101,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
         #$time = microtime(true);
         $sumSoFar = 0;
         $events = [];
-        $this->createHierarchy($rootnodeAggregateId, 1, $levels, $nodesPerLevel, $sumSoFar, $events);
+        $this->createHierarchy($rootNodeAggregateId, 1, $levels, $nodesPerLevel, $sumSoFar, $events);
         $this->eventPersister->publishEvents(new EventsToPublish(
             $this->contentStreamEventStream->getEventStreamName(),
             Events::fromArray($events),
@@ -112,6 +114,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 
     /**
      * @throws \Throwable
+     * @param array<int,EventInterface> $events
      */
     private function createHierarchy(
         nodeAggregateId $parentNodeAggregateId,
@@ -136,16 +139,23 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
                     NodeAggregateClassification::CLASSIFICATION_REGULAR,
                 );
                 $sumSoFar++;
-                $this->createHierarchy($nodeAggregateId, $currentLevel + 1, $maximumLevel, $numberOfNodes, $sumSoFar, $events);
+                $this->createHierarchy(
+                    $nodeAggregateId,
+                    $currentLevel + 1,
+                    $maximumLevel,
+                    $numberOfNodes,
+                    $sumSoFar,
+                    $events
+                );
             }
         }
     }
 
-    public function forkContentStream() {
+    public function forkContentStream(): void
+    {
         $this->contentRepository->handle(new ForkContentStream(
             ContentStreamId::create(),
             $this->contentStreamId,
         ));
     }
-
 }

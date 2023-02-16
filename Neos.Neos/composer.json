@@ -14,6 +14,7 @@
         "neos/twitter-bootstrap": "*",
         "neos/contentrepository-core": "*",
         "neos/contentrepositoryregistry": "*",
+        "neos/contentrepository-nodeaccess": "*",
         "neos/fusion": "*",
         "neos/fusion-afx": "*",
         "neos/fusion-form": "^1.0 || ^2.0",

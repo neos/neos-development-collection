@@ -43,9 +43,9 @@ final class PerformanceMeasurementCommandController extends CommandController
     {
         $this->performanceMeasurementService->removeEverything();
         $this->outputLine("All removed. Starting to fill.");
-        CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
-            GraphProjectorCatchUpHookForCacheFlushing::disabled(fn() =>
-                $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
+        CatchUpTriggerWithSynchronousOption::synchronously(
+            fn() => GraphProjectorCatchUpHookForCacheFlushing::disabled(
+                fn() => $this->performanceMeasurementService->createNodesForPerformanceTest($nodesPerLevel, $levels)
             )
         );
     }
@@ -56,8 +56,8 @@ final class PerformanceMeasurementCommandController extends CommandController
     public function testPerformanceCommand(): void
     {
         $time = microtime(true);
-        CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
-            $this->performanceMeasurementService->forkContentStream()
+        CatchUpTriggerWithSynchronousOption::synchronously(
+            fn() => $this->performanceMeasurementService->forkContentStream()
         );
 
         $timeElapsed = microtime(true) - $time;

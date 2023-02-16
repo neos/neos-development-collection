@@ -175,6 +175,9 @@ final class NodeFactory
                 $disabledDimensionSpacePoints[$coveredDimensionSpacePoint->hash] = $coveredDimensionSpacePoint;
             }
         }
+        ksort($occupiedDimensionSpacePoints);
+        ksort($coveredDimensionSpacePoints);
+        ksort($disabledDimensionSpacePoints);
 
         /** @var Node $primaryNode  a nodeAggregate only exists if it at least contains one node. */
         $primaryNode = current($nodesByOccupiedDimensionSpacePoints);
