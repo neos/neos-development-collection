@@ -97,7 +97,7 @@ class MenuHelper
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $node = $context->getNode(SiteService::SITES_ROOT_PATH . '/' . $site->getNodeName());
+            $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
             if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
                 $uri = null;
                 $active = false;
