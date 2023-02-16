@@ -97,7 +97,7 @@ Example ``viewOptions``:
 ``viewOptions`` Reference:
 
 ``dataSource`` (required string)
-  Class name of class implementing ``Neos\Neos\Service\DataSource\DataSourceInterface``
+  Identifier of a DataSource (given in the implementation class)
 
 ``arguments`` (optional array)
   If provided, the ``arguments`` will be passed as the second parameter to the data source's ``getData`` method.
@@ -219,7 +219,7 @@ Example ``viewOptions``:
 ``viewOptions`` Reference:
 
 ``dataSource`` (required string)
-  Class name of class implementing ``Neos\Neos\Service\DataSource\DataSourceInterface``
+  Identifier of a DataSource (given in the implementation class)
 
 ``arguments`` (optional array)
   If provided, the ``arguments`` will be passed as the second parameter to the data source's ``getData`` method.
@@ -333,7 +333,7 @@ Example ``viewOptions``:
 ``viewOptions`` Reference:
 
 ``dataSource`` (required string)
-  Class name of class implementing ``Neos\Neos\Service\DataSource\DataSourceInterface``
+  Identifier of a DataSource (given in the implementation class)
 
 ``arguments`` (optional array)
   If provided, the ``arguments`` will be passed as the second parameter to the data source's ``getData`` method.
