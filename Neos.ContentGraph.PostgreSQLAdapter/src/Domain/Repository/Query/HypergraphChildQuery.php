@@ -124,7 +124,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             AND cn.classification = :classification';
 
         $parameters = $this->parameters;
-        $parameters['classification'] = NodeAggregateClassification::CLASSIFICATION_TETHERED;
+        $parameters['classification'] = NodeAggregateClassification::CLASSIFICATION_TETHERED->value;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
