@@ -1,6 +1,16 @@
 <?php
-
+declare(strict_types=1);
 namespace Neos\Fusion\FusionObjects\Helpers;
+
+/*
+ * This file is part of the Neos.Fusion package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Runtime;
@@ -8,9 +18,8 @@ use Neos\Fusion\Core\Runtime;
 /** @Flow\Proxy(false) */
 final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
 {
-    private array $valueCache = [];
-
-    private array $currentlyEvaluatingIndexes = [];
+    /** @var array<string, LazyReference>  */
+    private array $lazyReferences = [];
 
     public function __construct(
         private string $parentPath,
@@ -23,20 +32,27 @@ final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
 
     public function offsetGet($path): mixed
     {
-        if (!array_key_exists($path, $this->valueCache)) {
-            if (isset($this->currentlyEvaluatingIndexes[$path])) {
-                throw new \RuntimeException('Circular reference detected while evaluating: "' . $this->selfReferentialId . '.' . $path . '"', 1669654158);
+        $fullyQualifiedPath = $this->parentPath . '/' . $path;
+
+        $this->lazyReferences[$path] ??= new LazyReference(
+            function () use ($fullyQualifiedPath) {
+                $this->runtime->pushContextArray($this->effectiveContext);
+                try {
+                    return $this->runtime->evaluate($fullyQualifiedPath);
+                } finally {
+                    $this->runtime->popContext();
+                }
             }
-            $this->currentlyEvaluatingIndexes[$path] = true;
-            $this->runtime->pushContextArray($this->effectiveContext);
-            try {
-                $this->valueCache[$path] = $this->runtime->evaluate($this->parentPath . '/' . $path);
-            } finally {
-                $this->runtime->popContext();
-                unset($this->currentlyEvaluatingIndexes[$path]);
-            }
+        );
+
+        try {
+            return $this->lazyReferences[$path]->deref();
+        } catch (CircularReferenceException) {
+            throw new \RuntimeException(
+                'Circular reference detected while evaluating: "' . $this->selfReferentialId . '.' . $path . '"',
+                1669654158
+            );
         }
-        return $this->valueCache[$path];
     }
 
     public function offsetExists($offset)
