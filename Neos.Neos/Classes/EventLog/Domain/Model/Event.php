@@ -24,7 +24,7 @@ use Neos\Flow\Annotations as Flow;
  *    indexes={
  *        @ORM\Index(name="eventtype",columns={"eventtype"}),
  *        @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"}),
- *        @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"})
+ *        @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"}),
  *        @ORM\Index(name="dimensionshash", columns={"dimensionshash"})
  *    }
  * )
