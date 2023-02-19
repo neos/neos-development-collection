@@ -3,6 +3,12 @@ declare(strict_types=1);
 
 require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -14,6 +20,8 @@ use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -24,14 +32,12 @@ use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
-use Neos\ContentRepository\LegacyNodeMigration\Helpers\EventExporter;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\EventSourcing\EventStore\EventNormalizer;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PHPUnit\Framework\Assert;
@@ -44,6 +50,7 @@ class FeatureContext implements Context
 {
     use FlowContextTrait;
     use NodeOperationsTrait;
+    use EventSourcedTrait;
 
     protected $isolated = false;
 
@@ -65,6 +72,7 @@ class FeatureContext implements Context
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
+        $this->setupEventSourcedTrait();
 
     }
 
@@ -103,12 +111,10 @@ class FeatureContext implements Context
      */
     public function iRunTheEventMigration(string $contentStream = null): void
     {
-        $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
+        $nodeTypeManager = $this->contentRepository->getNodeTypeManager();
         $propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
-        $propertyConverter = $this->getObjectManager()->get(PropertyConverter::class);
-        $contentDimensionSource = $this->getObjectManager()->get(ContentDimensionSourceInterface::class);
-        $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
-        $interDimensionalVariationGraph = new InterDimensionalVariationGraph($contentDimensionSource, $contentDimensionZookeeper);
+        $propertyConverter = $this->getContentRepositoryInternals()->propertyConverter;
+        $interDimensionalVariationGraph = $this->getContentRepositoryInternals()->interDimensionalVariationGraph;
 
         $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
         $migration = new NodeDataToEventsProcessor($nodeTypeManager, $propertyMapper, $propertyConverter, $interDimensionalVariationGraph, $eventNormalizer, $this->mockFilesystem, $this->nodeDataRows);
@@ -230,7 +236,7 @@ class FeatureContext implements Context
      */
     public function iRunTheAssetMigration(): void
     {
-        $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
+        $nodeTypeManager = $this->getContentRepositoryInternals()->nodeTypeManager;
         $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
 
             /**
@@ -334,5 +340,4 @@ class FeatureContext implements Context
             }, $row);
         }, $table->getHash());
     }
-
 }

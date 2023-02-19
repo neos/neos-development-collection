@@ -1,3 +1,4 @@
+@contentrepository
 Feature: Exceptional cases during migrations
 
   Background:
@@ -37,7 +38,7 @@ Feature: Exceptional cases during migrations
     And I run the event migration
     Then I expect a MigrationError with the message
     """
-    Failed to find parent node for node with id "c" and dimensions: []
+    Failed to find parent node for node with id "c" and dimensions: []. Did you properly configure your dimensions setup to be in sync with the old setup?
     """
 
   # TODO: is it possible that nodes are processed in an order where a ancestor node is processed after a child node? -> in that case the following example should work (i.e. the scenario should fail)
@@ -52,7 +53,7 @@ Feature: Exceptional cases during migrations
     And I run the event migration
     Then I expect a MigrationError with the message
     """
-    Failed to find parent node for node with id "c" and dimensions: []
+    Failed to find parent node for node with id "c" and dimensions: []. Did you properly configure your dimensions setup to be in sync with the old setup?
     """
 
   Scenario: Invalid dimension configuration (unknown value)
