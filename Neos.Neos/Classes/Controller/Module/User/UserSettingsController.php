@@ -154,7 +154,7 @@ class UserSettingsController extends AbstractModuleController
     /**
      * Update a given account, ie. the password
      *
-     * @param array<int,string> $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param array<string> $password Expects an array in the format array('<password>', '<password confirmation>')
      * @codingStandardsIgnoreStart
      * @Flow\Validate(argumentName="password", type="\Neos\Neos\Validation\Validator\PasswordValidator", options={ "allowEmpty"=1, "minimum"=1, "maximum"=255 })
      * @codingStandardsIgnoreEnd

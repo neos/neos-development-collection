@@ -187,9 +187,9 @@ class UsersController extends AbstractModuleController
      * Create a new user
      *
      * @param string $username The user name (ie. account identifier) of the new user
-     * @param array<int,string> $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param array<string> $password Expects an array in the format array('<password>', '<password confirmation>')
      * @param User $user The user to create
-     * @param array<int,string> $roleIdentifiers A list of roles (role identifiers) to assign to the new user
+     * @param array<string> $roleIdentifiers A list of roles (role identifiers) to assign to the new user
      * @param string $authenticationProviderName Optional name of the authentication provider.
      *                                         If not provided the user server uses the default authentication provider
      * @return void
@@ -377,8 +377,8 @@ class UsersController extends AbstractModuleController
      * Update a given account
      *
      * @param Account $account The account to update
-     * @param array<int,string> $roleIdentifiers A possibly updated list of roles for the user's primary account
-     * @param array<int,string> $password Expects an array in the format array('<password>', '<password confirmation>')
+     * @param array<string> $roleIdentifiers A possibly updated list of roles for the user's primary account
+     * @param array<string> $password Expects an array in the format array('<password>', '<password confirmation>')
      * @return void
      * @throws StopActionException
      * @throws ForwardException
