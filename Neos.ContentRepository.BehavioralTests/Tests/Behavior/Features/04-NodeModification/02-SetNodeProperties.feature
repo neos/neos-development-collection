@@ -30,6 +30,9 @@ Feature: Set properties
             givenName: 'Nody'
             familyName: 'McNodeface'
             age: 42
+        dayOfWeek:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
+          defaultValue: 'https://schema.org/Wednesday'
         now:
           type: DateTimeImmutable
           defaultValue: 'now'
@@ -85,7 +88,7 @@ Feature: Set properties
       | contentStreamId   | "cs-identifier"                                                                                                                                                                                                                                                 |
       | nodeAggregateId   | "nody-mc-nodeface"                                                                                                                                                                                                                                              |
       | originDimensionSpacePoint | {"language": "de"}                                                                                                                                                                                                                                              |
-      | propertyValues            | {"string":"My new string", "int":8472, "float":72.84, "bool":true, "array":{"givenName":"David", "familyName":"Nodenborough","age":84}, "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "postalAddress":"PostalAddress:anotherDummy"} |
+      | propertyValues            | {"string":"My new string", "int":8472, "float":72.84, "bool":true, "array":{"givenName":"David", "familyName":"Nodenborough","age":84}, "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "postalAddress":"PostalAddress:anotherDummy"} |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"de"} to exist in the content graph
     And I expect this node to have the following properties:
@@ -95,6 +98,7 @@ Feature: Set properties
       | float         | 72.84                                                         |
       | bool          | true                                                          |
       | array         | {"givenName":"David", "familyName":"Nodenborough", "age": 84} |
+      | dayOfWeek     | DayOfWeek:https://schema.org/Friday                           |
       | date          | Date:2021-03-13T17:33:17+00:00                                |
       | uri           | URI:https://www.neos.io                                       |
       | postalAddress | PostalAddress:anotherDummy                                    |
@@ -115,6 +119,7 @@ Feature: Set properties
       | float         | 84.72                                                      |
       | bool          | false                                                      |
       | array         | {"givenName":"Nody", "familyName":"McNodeface", "age": 42} |
+      | dayOfWeek     | DayOfWeek:https://schema.org/Wednesday                     |
       | date          | Date:2020-08-20T18:56:15+00:00                             |
       | uri           | URI:https://neos.io                                        |
       | postalAddress | PostalAddress:dummy                                        |

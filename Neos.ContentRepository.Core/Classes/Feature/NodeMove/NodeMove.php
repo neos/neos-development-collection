@@ -277,7 +277,10 @@ trait NodeMove
         );
         $succeedingSiblingCandidates = iterator_to_array(
             $succeedingSiblingId
-                ? $originContentSubgraph->findSucceedingSiblings($succeedingSiblingId, FindSucceedingSiblingsFilter::all())
+                ? $originContentSubgraph->findSucceedingSiblings(
+                    $succeedingSiblingId,
+                    FindSucceedingSiblingsFilter::all()
+                )
                 : Nodes::createEmpty()
         );
         /* @var $precedingSiblingCandidates Node[] */

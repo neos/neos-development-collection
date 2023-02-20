@@ -38,6 +38,8 @@ Neos:
             className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
           ScalarNormalizer:
             className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer
+          EnumNormalizer:
+            className: Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer
           ArrayNormalizer:
             className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer
           UriNormalizer:

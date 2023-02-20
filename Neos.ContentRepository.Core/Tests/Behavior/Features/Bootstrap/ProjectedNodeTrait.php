@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeDiscriminators;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodesByAdapter;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use PHPUnit\Framework\Assert;
 
@@ -321,6 +322,8 @@ trait ProjectedNodeTrait
                     return \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($serializedPropertyValue, 5));
                 } elseif (\str_starts_with($serializedPropertyValue, 'URI:')) {
                     return new Uri(\mb_substr($serializedPropertyValue, 4));
+                } elseif (\str_starts_with($serializedPropertyValue, 'DayOfWeek:')) {
+                    return DayOfWeek::from(\mb_substr($serializedPropertyValue, 10));
                 }
         }
 

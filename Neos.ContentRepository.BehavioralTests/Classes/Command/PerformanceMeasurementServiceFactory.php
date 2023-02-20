@@ -24,13 +24,14 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
  */
 class PerformanceMeasurementServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
-
     public function __construct(
         private readonly Connection $connection,
-    ) {}
+    ) {
+    }
 
-    public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): PerformanceMeasurementService
-    {
+    public function build(
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
+    ): PerformanceMeasurementService {
         return new PerformanceMeasurementService(
             $serviceFactoryDependencies->eventPersister,
             $serviceFactoryDependencies->contentRepository,

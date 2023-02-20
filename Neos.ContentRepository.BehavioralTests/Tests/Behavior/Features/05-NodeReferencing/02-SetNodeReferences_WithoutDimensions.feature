@@ -25,6 +25,8 @@ Feature: Node References without Dimensions
           properties:
             text:
               type: string
+            dayOfWeek:
+              type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
         referencesPropertyWithProperty:
@@ -32,6 +34,8 @@ Feature: Node References without Dimensions
           properties:
             text:
               type: string
+            dayOfWeek:
+              type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek
             postalAddress:
               type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     """
@@ -79,18 +83,18 @@ Feature: Node References without Dimensions
       | Key                   | Value                                                                                                     |
       | sourceNodeAggregateId | "source-nodandaise"                                                                                       |
       | referenceName         | "referencePropertyWithProperty"                                                                           |
-      | references            | [{"target": "anthony-destinode", "properties":{"text":"my text", "postalAddress":"PostalAddress:dummy"}}] |
+      | references            | [{"target": "anthony-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"}}] |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
       | Name                          | Node                               | Properties                                                |
-      | referencePropertyWithProperty | cs-identifier;anthony-destinode;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
+      | referencePropertyWithProperty | cs-identifier;anthony-destinode;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"} |
 
     And I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{}
     And I expect this node to be referenced by:
       | Name                          | Node                               | Properties                                                |
-      | referencePropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
+      | referencePropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:dummy"} |
 
   Scenario: Ensure that multiple references between nodes can be set and read
     When the command SetNodeReferences is executed with payload:
@@ -121,24 +125,24 @@ Feature: Node References without Dimensions
       | Key                   | Value                                                                                                                                                                                                                    |
       | sourceNodeAggregateId | "source-nodandaise"                                                                                                                                                                                                      |
       | referenceName         | "referencesPropertyWithProperty"                                                                                                                                                                                         |
-      | references            | [{"target":"berta-destinode", "properties":{"text":"my text", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"}}] |
+      | references            | [{"target":"berta-destinode", "properties":{"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}}, {"target":"carl-destinode", "properties":{"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"}}] |
     And the graph projection is fully up to date
 
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{}
     And I expect this node to have the following references:
       | Name                           | Node                             | Properties                                                             |
-      | referencesPropertyWithProperty | cs-identifier;berta-destinode;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"}              |
-      | referencesPropertyWithProperty | cs-identifier;carl-destinode;{}  | {"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"} |
+      | referencesPropertyWithProperty | cs-identifier;berta-destinode;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"}              |
+      | referencesPropertyWithProperty | cs-identifier;carl-destinode;{}  | {"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"} |
 
     And I expect node aggregate identifier "berta-destinode" to lead to node cs-identifier;berta-destinode;{}
     And I expect this node to be referenced by:
       | Name                           | Node                               | Properties                                                |
-      | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "postalAddress":"PostalAddress:dummy"} |
+      | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my text", "dayOfWeek":"DayOfWeek:https://schema.org/Wednesday", "postalAddress":"PostalAddress:dummy"} |
 
     And I expect node aggregate identifier "carl-destinode" to lead to node cs-identifier;carl-destinode;{}
     And I expect this node to be referenced by:
       | Name                           | Node                               | Properties                                                             |
-      | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my other text", "postalAddress":"PostalAddress:anotherDummy"} |
+      | referencesPropertyWithProperty | cs-identifier;source-nodandaise;{} | {"text":"my other text", "dayOfWeek":"DayOfWeek:https://schema.org/Friday", "postalAddress":"PostalAddress:anotherDummy"} |
 
   Scenario: Ensure that references between nodes can be set and overwritten
     When the command SetNodeReferences is executed with payload:

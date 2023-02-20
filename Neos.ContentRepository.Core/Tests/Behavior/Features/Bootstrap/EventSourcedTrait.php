@@ -47,6 +47,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
@@ -440,9 +441,11 @@ trait EventSourcedTrait
                 $propertyValue = PostalAddress::anotherDummy();
             }
             if (is_string($propertyValue)) {
-                if (\mb_strpos($propertyValue, 'Date:') === 0) {
+                if (\str_starts_with($propertyValue, 'DayOfWeek:')) {
+                    $propertyValue = DayOfWeek::from(\mb_substr($propertyValue, 10));
+                } elseif (\str_starts_with($propertyValue, 'Date:')) {
                     $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
-                } elseif (\mb_strpos($propertyValue, 'URI:') === 0) {
+                } elseif (\str_starts_with($propertyValue, 'URI:')) {
                     $propertyValue = new Uri(\mb_substr($propertyValue, 4));
                 } else {
                     try {
