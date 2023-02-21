@@ -26,7 +26,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  */
 class Workspace
 {
-
     /**
      * This prefix determines if a given workspace (name) is a user workspace.
      */
@@ -86,5 +85,4 @@ class Workspace
     {
         return $this->baseWorkspaceName === null && $this->workspaceOwner === null;
     }
-
 }

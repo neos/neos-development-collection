@@ -281,7 +281,9 @@ class UserService
 
     public function findByUserIdentifier(UserId $userId): ?User
     {
-        return $this->partyRepository->findByIdentifier($userId->value);
+        /** @var ?User $user */
+        $user = $this->partyRepository->findByIdentifier($userId->value);
+        return $user;
     }
 
     /**
@@ -736,13 +738,14 @@ class UserService
         }
 
 
-        if ($workspace->isPrivateWorkspace() && $workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($this->getCurrentUser())) {
+        $currentUser = $this->getCurrentUser();
+        if ($workspace->isPrivateWorkspace() && $currentUser !== null && $workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($currentUser)) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
                 'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
             );
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->workspaceOwner !== $this->persistenceManager->getIdentifierByObject($this->getCurrentUser())) {
+        if ($workspace->isPrivateWorkspace() &&  $currentUser !== null && $workspace->workspaceOwner !== $this->persistenceManager->getIdentifierByObject($currentUser)) {
             return $this->privilegeManager->isPrivilegeTargetGranted(
                 'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
             );
@@ -946,7 +949,8 @@ class UserService
                     . ' but the corresponding party is not a Neos User.',
                     get_class($user),
                     $username
-                ), 1422270948
+                ),
+                1422270948
             );
         }
 
