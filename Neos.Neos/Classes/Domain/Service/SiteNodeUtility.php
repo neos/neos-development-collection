@@ -92,6 +92,6 @@ final class SiteNodeUtility
             }
         }
 
-        throw new \RuntimeException('No site node found!');
+        throw new \RuntimeException('No site node found for domain "' . $domain?->getHostname() . '" and site "' . $site?->getNodeName() . '"');
     }
 }
