@@ -23,6 +23,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
+use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Exception\RuntimeException;
@@ -36,6 +37,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Psr\Log\LoggerInterface;
 
 class FusionExceptionView extends AbstractView
 {
@@ -72,6 +74,13 @@ class FusionExceptionView extends AbstractView
      */
     protected $fusionRuntime;
 
+
+    #[Flow\Inject]
+    protected ThrowableStorageInterface $throwableStorage;
+
+    #[Flow\Inject]
+    protected LoggerInterface $logger;
+
     #[Flow\Inject]
     protected SiteNodeUtility $siteNodeUtility;
 
@@ -105,12 +114,16 @@ class FusionExceptionView extends AbstractView
 
         $currentSiteNode = null;
         if ($contentStreamIdentifier instanceof ContentStreamId) {
-            $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
-                $siteDetectionResult->contentRepositoryId,
-                $contentStreamIdentifier,
-                $dimensionSpacePoint,
-                VisibilityConstraints::frontend()
-            );
+            try {
+                $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
+                    $siteDetectionResult->contentRepositoryId,
+                    $contentStreamIdentifier,
+                    $dimensionSpacePoint,
+                    VisibilityConstraints::frontend()
+                );
+            } catch (\RuntimeException $e) {
+                // continue without a site node
+            }
         }
 
         $request = ActionRequest::fromHttpRequest($httpRequest);
@@ -155,7 +168,11 @@ class FusionExceptionView extends AbstractView
             return $output;
         }
 
-        return '';
+        // There was an error during exception handling. Log the original exception instead.
+        $exception = $this->variables['exception'];
+        $message = $this->throwableStorage->logThrowable($exception);
+        $this->logger->critical($message);
+        return 'There was an error during exception handling. See System.log for the original exception.';
     }
 
     /**
