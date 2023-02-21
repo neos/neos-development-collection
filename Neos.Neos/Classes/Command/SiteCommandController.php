@@ -246,8 +246,8 @@ class SiteCommandController extends CommandController
     {
         return array_filter(
             $this->siteRepository->findAll()->toArray(),
-            function ($site) use ($siteNodePattern) {
-                return fnmatch($siteNodePattern, $site->getNodeName());
+            function (Site $site) use ($siteNodePattern) {
+                return fnmatch($siteNodePattern, $site->getNodeName()->value);
             }
         );
     }
