@@ -127,15 +127,15 @@ class WorkspacesController extends AbstractModuleController
                 'changesCounts' => $this->computeChangesCount($userWorkspace, $contentRepository),
                 'canPublish' => false,
                 'canManage' => false,
-                'canDelete' => false
+                'canDelete' => false,
+                'workspaceOwnerHumanReadable' => $userWorkspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($userWorkspace->workspaceOwner))?->getLabel() : null
             ]
         ];
 
         foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
             /** @var \Neos\ContentRepository\Core\Projection\Workspace\Workspace $workspace */
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            // TODO $this->domainUserService->currentUserCanManageWorkspace($workspace)
-            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace())) {
+            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace() || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
                 $workspaceName = (string)$workspace->workspaceName;
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspaceName]['changesCounts'] =
@@ -147,6 +147,7 @@ class WorkspacesController extends AbstractModuleController
                 $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count(
                     $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
                 );
+                $workspacesAndCounts[$workspaceName]['workspaceOwnerHumanReadable'] = $workspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($workspace->workspaceOwner))?->getLabel() : null;
             }
         }
 

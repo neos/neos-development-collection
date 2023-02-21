@@ -279,6 +279,13 @@ class UserService
             : null;
     }
 
+    public function findByUserIdentifier(UserId $userId): ?User
+    {
+        /** @var ?User $user */
+        $user = $this->partyRepository->findByIdentifier($userId->value);
+        return $user;
+    }
+
     /**
      * Creates a user based on the given information
      *
@@ -730,19 +737,19 @@ class UserService
             );
         }
 
-        /** @todo implement me
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() === $this->getCurrentUser()) {
-        return $this->privilegeManager->isPrivilegeTargetGranted(
-        'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
-        );
+
+        $currentUser = $this->getCurrentUser();
+        if ($workspace->isPrivateWorkspace() && $currentUser !== null && $workspace->workspaceOwner === $this->persistenceManager->getIdentifierByObject($currentUser)) {
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageOwnWorkspaces'
+            );
         }
 
-        if ($workspace->isPrivateWorkspace() && $workspace->getOwner() !== $this->getCurrentUser()) {
-        return $this->privilegeManager->isPrivilegeTargetGranted(
-        'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
-        );
+        if ($workspace->isPrivateWorkspace() &&  $currentUser !== null && $workspace->workspaceOwner !== $this->persistenceManager->getIdentifierByObject($currentUser)) {
+            return $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageAllPrivateWorkspaces'
+            );
         }
-         */
 
         return false;
     }
@@ -936,12 +943,15 @@ class UserService
 
         $user = $this->partyService->getAssignedPartyOfAccount($account);
         if (!$user instanceof User) {
-            throw new Exception(sprintf(
-                'Unexpected user type "%s". An account with the identifier "%s" exists,'
+            throw new Exception(
+                sprintf(
+                    'Unexpected user type "%s". An account with the identifier "%s" exists,'
                     . ' but the corresponding party is not a Neos User.',
-                get_class($user),
-                $username
-            ), 1422270948);
+                    get_class($user),
+                    $username
+                ),
+                1422270948
+            );
         }
 
         return $user;
