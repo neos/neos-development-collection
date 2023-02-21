@@ -26,6 +26,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  */
 class Workspace
 {
+
+    /**
+     * This prefix determines if a given workspace (name) is a user workspace.
+     */
+    public const PERSONAL_WORKSPACE_PREFIX = 'user-';
+
     /**
      * @internal
      */
@@ -40,12 +46,33 @@ class Workspace
     ) {
     }
 
+
+    /**
+     * Checks if this workspace is a user's personal workspace
+     * @api
+     */
+    public function isPersonalWorkspace(): bool
+    {
+        return str_starts_with($this->workspaceName->name, static::PERSONAL_WORKSPACE_PREFIX);
+    }
+
+    /**
+     * Checks if this workspace is shared only across users with access to internal workspaces, for example "reviewers"
+     *
+     * @return bool
+     * @api
+     */
+    public function isPrivateWorkspace(): bool
+    {
+        return $this->workspaceOwner !== null && !$this->isPersonalWorkspace();
+    }
+
     /**
      * Checks if this workspace is shared across all editors
      *
      * @return boolean
      */
-    public function isInternalWorkspace()
+    public function isInternalWorkspace(): bool
     {
         return $this->baseWorkspaceName !== null && $this->workspaceOwner === null;
     }
@@ -55,17 +82,9 @@ class Workspace
      *
      * @return boolean
      */
-    public function isPublicWorkspace()
+    public function isPublicWorkspace(): bool
     {
         return $this->baseWorkspaceName === null && $this->workspaceOwner === null;
     }
 
-    /**
-     * Checks if this workspace is a user's personal workspace
-     * @api
-     */
-    public function isPersonalWorkspace(): bool
-    {
-        return $this->workspaceOwner !== null;
-    }
 }
