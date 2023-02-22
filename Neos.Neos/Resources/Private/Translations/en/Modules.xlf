@@ -119,8 +119,8 @@
 			<trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			</trans-unit>
-			<trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
+			<trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+				<source>Publish selected changes to {0}</source>
 			</trans-unit>
 			<trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
@@ -151,6 +151,9 @@
 			</trans-unit>
 			<trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
+			</trans-unit>
+			<trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
 			</trans-unit>
 			<trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>

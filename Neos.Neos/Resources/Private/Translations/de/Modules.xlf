@@ -159,9 +159,9 @@
 				<source>Discard selected changes</source>
         <target state="final">Ausgewählte Änderungen verwerfen</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
-				<source>Publish selected changes</source>
-        <target state="final">Ausgewählte Änderungen veröffentlichen</target>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve" approved="yes">
+				<source>Publish selected changes to {0}</source>
+        <target state="final">Ausgewählte Änderungen nach {0} veröffentlichen</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
@@ -203,8 +203,12 @@
 				<source>There are no unpublished changes in this workspace.</source>
         <target state="final">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target>
       </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="final">Möchten Sie wirklich die ausgewählten Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
+      </trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
-				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <source>Do you really want to discard all changes in the "{0}" workspace?</source>
         <target state="final">Möchten Sie wirklich alle Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
