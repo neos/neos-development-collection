@@ -15,7 +15,7 @@ parameters used in ``ThumbnailConfiguration``, except for the ``async`` paramete
 
 .. code-block:: yaml
 
-  TYPO3:
+  Neos:
     Media:
       thumbnailPresets:
         'Acme.Demo:Thumbnail':
