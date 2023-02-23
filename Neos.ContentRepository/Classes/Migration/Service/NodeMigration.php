@@ -93,12 +93,11 @@ class NodeMigration
     protected function executeSingle(array $migrationDescription)
     {
         $filterExpressions = [];
-        $baseQuery = new Query(NodeData::class);
-        foreach ($this->nodeFilterService->getFilterExpressions($migrationDescription['filters'], $baseQuery) as $filterExpression) {
+        $query = new Query(NodeData::class);
+        foreach ($this->nodeFilterService->getFilterExpressions($migrationDescription['filters'], $query) as $filterExpression) {
             $filterExpressions[] = $filterExpression;
         }
 
-        $query = new Query(NodeData::class);
         if ($filterExpressions !== []) {
             $query->matching(call_user_func_array([new Expr(), 'andX'], $filterExpressions));
         }

@@ -45,10 +45,10 @@ class PropertyValue implements DoctrineFilterInterface
     /**
      * Sets the property value to be checked against.
      *
-     * @param string $propertyValue
+     * @param string|bool|int $propertyValue
      * @return void
      */
-    public function setPropertyValue(string $propertyValue): void
+    public function setPropertyValue($propertyValue): void
     {
         $this->propertyValue = $propertyValue;
     }
@@ -64,10 +64,10 @@ class PropertyValue implements DoctrineFilterInterface
     {
         // Build the like parameter as "key": "value" to search by a specific key and value
         // See NodeDataRepository.findByProperties() for the "inspiration"
-        $likeParameter = trim(json_encode(
+        $likeParameter = sprintf("%%%s%%", trim(json_encode(
             [$this->propertyName => $this->propertyValue],
             JSON_PRETTY_PRINT | JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE
-        ), "{}\n\t ");
+        ), "{}\n\t "));
 
         return [$baseQuery->like('properties', $likeParameter, false)];
     }

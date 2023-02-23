@@ -11,12 +11,17 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Domain\Service\ContentContextFactory;
+use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
+use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
@@ -31,7 +36,7 @@ use Neos\Utility\PositionalArraySorter;
 class MenuHelper
 {
     /**
-     * @var array
+     * @var array|null
      */
     protected $moduleListFirstLevelCache = null;
 
@@ -59,9 +64,15 @@ class MenuHelper
     protected $iconMapper;
 
     /**
+     * @Flow\Inject
+     * @var ContentContextFactory
+     */
+    protected $contextFactory;
+
+    /**
      * @param array $settings
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -71,6 +82,7 @@ class MenuHelper
      *
      * @param ControllerContext $controllerContext
      * @return array
+     * @throws MissingActionNameException|Exception
      */
     public function buildSiteList(ControllerContext $controllerContext): array
     {
@@ -81,34 +93,38 @@ class MenuHelper
             return [];
         }
 
+        $context = $this->contextFactory->create();
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $uri = null;
-            $active = false;
-            /** @var $site Site */
-            if ($site->hasActiveDomains()) {
-                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
-                    return $domain->getHostname();
-                })->toArray();
+            $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+                $uri = null;
+                $active = false;
+                /** @var $site Site */
+                if ($site->hasActiveDomains()) {
+                    $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
+                        return $domain->getHostname();
+                    })->toArray();
 
-                $active = in_array($requestUriHost, $activeHostPatterns, true);
+                    $active = in_array($requestUriHost, $activeHostPatterns, true);
 
-                if ($active) {
-                    $uri = $contentModule['uri'];
-                } else {
-                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    if ($active) {
+                        $uri = $contentModule['uri'];
+                    } else {
+                        $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                    }
+
+                    $domainsFound = true;
                 }
 
-                $domainsFound = true;
+                $sites[] = [
+                    'name' => $site->getName(),
+                    'nodeName' => $site->getNodeName(),
+                    'uri' => $uri,
+                    'active' => $active
+                ];
             }
-
-            $sites[] = [
-                'name' => $site->getName(),
-                'nodeName' => $site->getNodeName(),
-                'uri' => $uri,
-                'active' => $active
-            ];
         }
 
         if ($domainsFound === false) {
@@ -121,8 +137,7 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @return array
-     * @throws \Neos\Flow\Http\Exception
-     * @throws MissingActionNameException
+     * @throws Exception|MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
     {
@@ -202,7 +217,7 @@ class MenuHelper
      * @param array $moduleConfiguration
      * @param string $modulePath
      * @return array
-     * @throws \Neos\Flow\Http\Exception
+     * @throws Exception
      * @throws MissingActionNameException
      */
     protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
