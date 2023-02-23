@@ -14,7 +14,7 @@ Property Type: boolean ``BooleanEditor`` -- Checkbox editor
 
 A ``boolean`` value is rendered using a checkbox in the inspector::
 
-    'isActive'
+    'isActive':
       type: boolean
       ui:
         label: 'is active'
@@ -277,7 +277,7 @@ the key/value pairs can be accessed in the ``$arguments`` array passed to ``getD
     questions:
       ui:
         inspector:
-          editor: 'Content/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             dataSourceIdentifier: 'questions'
             # alternatively using a custom uri:
@@ -625,7 +625,7 @@ For properties of type ``Neos\Media\Domain\Model\ImageInterface``, an image edit
 and resizing functionality, you need to set ``features.crop`` and ``features.resize`` to ``true``, as in the following
 example::
 
-    'teaserImage'
+    'teaserImage':
       type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
@@ -640,7 +640,7 @@ If cropping is enabled, you might want to enforce a certain aspect ratio, which 
 ``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. To show the crop dialog automatically on image upload, configure the ``crop.aspectRatio.forceCrop`` option. In the following example, the
 image format must be ``16:9``::
 
-    'teaserImage'
+    'teaserImage':
       type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
@@ -663,7 +663,7 @@ added or removed from this list underneath ``crop.aspectRatio.options``. If the 
 shall be added to the list, ``crop.aspectRatio.enableOriginal`` must be set to ``true``. If the user should be allowed
 to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``true``::
 
-    'teaserImage'
+    'teaserImage':
       type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
@@ -775,7 +775,7 @@ Property Type: asset (Neos\\Media\\Domain\\Model\\Asset / array<Neos\\Media\\Dom
 If an asset, i.e. ``Neos\Media\Domain\Model\Asset``, shall be uploaded or selected, the following configuration
 is an example::
 
-    'caseStudyPdf'
+    'caseStudyPdf':
       type: 'Neos\Media\Domain\Model\Asset'
       ui:
         label: 'Case Study PDF'
@@ -784,7 +784,7 @@ is an example::
 
 Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\Model\Asset>`` as type::
 
-    'caseStudies'
+    'caseStudies':
       type: 'array<Neos\Media\Domain\Model\Asset>'
       ui:
         label: 'Case Study PDF'
