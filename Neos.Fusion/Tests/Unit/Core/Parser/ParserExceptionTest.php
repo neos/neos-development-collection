@@ -156,6 +156,45 @@ class ParserExceptionTest extends UnitTestCase
         ];
     }
 
+    public function privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration(): \Generator
+    {
+        yield 'simple @private meta key cannot be declared from outside' => [
+            <<<'FUSION'
+            @private.foo = 1
+            FUSION,
+            "@private can only be declared inside a root prototype declaration."
+        ];
+
+        yield 'nested @private meta key cannot be declared from outside' => [
+            <<<'FUSION'
+            path = a:b {
+                @private.foo = 1
+            }
+            FUSION,
+            "@private can only be declared inside a root prototype declaration."
+        ];
+
+        yield '@private meta key cannot be declared in prototype override' => [
+            <<<'FUSION'
+            prototype(a:b) {
+                @private.foo = 1
+            }
+            FUSION,
+            "@private can only be declared inside a root prototype declaration."
+        ];
+
+        yield '@private meta key cannot be declared from outside (inside nested path of prototype declaration)' => [
+            <<<'FUSION'
+            prototype(a:b) < prototype(b:c) {
+                foo {
+                    @private.foo = 1
+                }
+            }
+            FUSION,
+            "@private can only be declared inside a root prototype declaration."
+        ];
+    }
+
     public function parsingWorksButOtherLogicThrows(): \Generator
     {
         yield 'invalid path to object inheritance' => [
@@ -274,6 +313,7 @@ class ParserExceptionTest extends UnitTestCase
      * @dataProvider removedLanguageFeaturedAreExplained
      * @dataProvider generalInvalidFusion
      * @dataProvider parsingWorksButOtherLogicThrows
+     * @dataProvider privateMetaPathCanOnlyBeDeclaredInsideRootPrototypeDeclaration
      * @dataProvider unclosedStatements
      * @dataProvider endOfLineExpected
      */

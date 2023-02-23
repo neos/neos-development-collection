@@ -83,7 +83,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivate()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/private');
+        $view->setFusionPath('/<Neos.Fusion:Component.Private>');
         self::assertEquals('MoinMoin!<div>Moin</div>', $view->render());
     }
 
@@ -93,7 +93,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateLazy()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateLazy');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateLazy>');
         self::assertEquals('MoinMoin!', $view->render());
     }
 
@@ -103,7 +103,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateSelfReferencing()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateSelfReferencing');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateSelfReferencing>');
         self::assertEquals('Moin!Moin!', $view->render());
     }
 
@@ -115,7 +115,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionCode(1669654158);
         $view = $this->buildView();
-        $view->setFusionPath('component/privateSelfReferencingInfiniteLoop');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateSelfReferencingInfiniteLoop>');
         $view->render();
     }
 
@@ -127,7 +127,7 @@ class ComponentTest extends AbstractFusionObjectTest
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionCode(1669654158);
         $view = $this->buildView();
-        $view->setFusionPath('component/privateSelfReferencingInfiniteLoopComplex');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateSelfReferencingInfiniteLoopComplex>');
         $view->render();
     }
 
@@ -137,7 +137,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateCannotBeApplied()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateCannotBeApplied');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateCannotBeApplied>');
         self::assertEquals('', $view->render());
     }
 
@@ -148,7 +148,7 @@ class ComponentTest extends AbstractFusionObjectTest
     {
         $this->expectException(\TypeError::class);
         $view = $this->buildView();
-        $view->setFusionPath('component/privateCannotBeLooped');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateCannotBeLooped>');
         $view->render();
     }
 
@@ -158,7 +158,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateScopeIsIsolatedFromOtherPrivate()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateScopeIsIsolatedFromOtherPrivate');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateScopeIsIsolatedFromOtherPrivate>');
         self::assertEquals(null, $view->render());
     }
 
@@ -168,7 +168,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateScopeIsIsolatedInRenderer()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateScopeIsIsolatedInRenderer');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateScopeIsIsolatedInRenderer>');
         self::assertEquals(null, $view->render());
     }
 
@@ -178,7 +178,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateScopeIsReachableInProps()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateScopeIsReachableInProps');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateScopeIsReachableInProps>');
         self::assertEquals("Moin", $view->render());
     }
 
@@ -188,7 +188,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateLegacyPatternWorks()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateLegacyPatternWorks');
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateLegacyPatternWorks>');
         self::assertEquals('Moin', $view->render());
     }
 
@@ -198,7 +198,7 @@ class ComponentTest extends AbstractFusionObjectTest
     public function componentPrivateOuterContextIsOverridden()
     {
         $view = $this->buildView();
-        $view->setFusionPath('component/privateOuterContextIsOverridden');
-        self::assertStringStartsWith("private props [component/privateOuterContextIsOverridden", $view->render());
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateOuterContextIsOverridden>');
+        self::assertSame("private props [/<Neos.Fusion:Component.PrivateOuterContextIsOverridden>/__meta/private]", $view->render());
     }
 }
