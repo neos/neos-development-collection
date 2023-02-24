@@ -233,7 +233,8 @@ class FusionService
         foreach ($fusionResources as $fusionResource) {
             if (str_starts_with($fusionResource, "resource://") === false) {
                 if (!$resolveDir) {
-                    throw new \RuntimeException(<<<MSG
+                    throw new \RuntimeException(
+                        <<<MSG
                         FusionService::getFusionIncludes incorrectly used. Cannot resolve relative: Path $fusionResource.
                         Now (via bugfix) needed parameter \$resolveDir not specified. Please check your implementation.
                         MSG,
