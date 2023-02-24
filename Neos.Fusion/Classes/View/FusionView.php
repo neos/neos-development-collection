@@ -192,10 +192,10 @@ class FusionView extends AbstractView
                 $fusionPathPattern .= '/Root.fusion';
             }
             if (file_exists($fusionPathPattern)) {
-                $fusionCodeCollection[] = FusionSourceCode::fromFile($fusionPathPattern);
+                $fusionCodeCollection[] = FusionSourceCode::fromFilePath($fusionPathPattern);
             }
         }
-        return $this->fusionParser->parseFrom(FusionSourceCodeCollection::fromArray($fusionCodeCollection));
+        return $this->fusionParser->parseFromSource(new FusionSourceCodeCollection(...$fusionCodeCollection))->toArray();
     }
 
     /**

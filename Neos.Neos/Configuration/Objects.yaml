@@ -14,9 +14,9 @@ Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
 Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
   className: Neos\Neos\Service\PublishingService
 
-Neos\Neos\Aspects\FusionCachingAspect:
+Neos\Neos\Domain\Service\FusionConfigurationCache:
   properties:
-    fusionCache:
+    fusionConfigurationCache:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache

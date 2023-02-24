@@ -12,24 +12,24 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
  */
 
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Domain\Service\FusionSourceCodeFactory;
 use ReflectionMethod;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Neos\Flow\Tests\FunctionalTestCase;
-use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 
 /**
  * Tests for the TypoFusionService
  */
-class FusionServiceTest extends FunctionalTestCase
+class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
 {
     const FIXTURE_FILE_NAME = 'Fixtures/NodeTypes.yaml';
 
     /**
-     * @var FusionService
+     * @var FusionSourceCodeFactory
      */
-    protected $fusionService;
+    protected $factory;
 
     /**
      * @var NodeTypeManager
@@ -58,7 +58,7 @@ class FusionServiceTest extends FunctionalTestCase
     {
         parent::setUp();
 
-        $this->fusionService = $this->objectManager->get(FusionService::class);
+        $this->factory = $this->objectManager->get(FusionSourceCodeFactory::class);
         $this->expectedPrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
         $this->yamlParser = $this->objectManager->get(YamlParser::class);
         $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
@@ -109,6 +109,7 @@ class FusionServiceTest extends FunctionalTestCase
      */
     public function generateFusionForNodeUsesInheritedFusionPrototypeGenerator()
     {
+
         $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');
         self::assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
     }
@@ -120,12 +121,12 @@ class FusionServiceTest extends FunctionalTestCase
     protected function invokeGenerateFusionForNodeType($nodeTypeName)
     {
         $method = new ReflectionMethod(
-            FusionService::class,
+            FusionSourceCodeFactory::class,
             'generateFusionForNodeType'
         );
 
         $method->setAccessible(true);
 
-        $method->invoke($this->fusionService, $this->mockNodeTypeManager->getNodeType($nodeTypeName));
+        $method->invoke($this->factory, $this->mockNodeTypeManager->getNodeType($nodeTypeName));
     }
 }

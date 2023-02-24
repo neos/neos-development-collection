@@ -15,11 +15,11 @@ namespace Neos\Fusion\Core;
 
 use Neos\Fusion;
 
-class FusionSourceCode
+final class FusionSourceCode
 {
     protected function __construct(
         private string $sourceCode,
-        private ?string $contextPathAndFilename
+        private ?string $filePath
     ) {
     }
 
@@ -28,13 +28,13 @@ class FusionSourceCode
         return new static($string, null);
     }
 
-    public static function fromFile(string $fileName): self
+    public static function fromFilePath(string $filePath): self
     {
-        $sourceCode = file_get_contents($fileName);
+        $sourceCode = file_get_contents($filePath);
         if ($sourceCode === false) {
-            throw new Fusion\Exception("Trying to read Fusion source code from file, but '$fileName' is not readable.", 1657963790);
+            throw new Fusion\Exception("Trying to read Fusion source code from file, but '$filePath' is not readable.", 1657963790);
         }
-        return new static($sourceCode, $fileName);
+        return new static($sourceCode, $filePath);
     }
 
     /**
@@ -50,8 +50,8 @@ class FusionSourceCode
         return $this->sourceCode;
     }
 
-    public function getContextPathAndFilename(): ?string
+    public function getFilePath(): ?string
     {
-        return $this->contextPathAndFilename;
+        return $this->filePath;
     }
 }

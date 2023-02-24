@@ -13,19 +13,50 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
-class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
+/** @api */
+final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
 {
+    /** @var array<int, FusionSourceCode> */
     private array $fusionCodeCollection;
 
-    public function __construct(FusionSourceCode ...$fusionCodeCollection)
+    /** @param $fusionSourceCode array<int, FusionSourceCode> */
+    public function __construct(FusionSourceCode ...$fusionSourceCode)
     {
-        $this->fusionCodeCollection = $fusionCodeCollection;
+        $this->fusionCodeCollection = self::deduplicateItemsAndKeepLast($fusionSourceCode);
     }
 
-    /** @param FusionSourceCode[] $fusionCodeCollection */
-    public static function fromArray(array $fusionCodeCollection): self
+    public static function tryFromFilePath(string $filePath): self
     {
-        return new static(...$fusionCodeCollection);
+        if (!is_readable($filePath)) {
+            return static::empty();
+        }
+        return new static(FusionSourceCode::fromFilePath($filePath));
+    }
+
+    public static function fromFilePath(string $filePath): self
+    {
+        return new static(FusionSourceCode::fromFilePath($filePath));
+    }
+
+    public static function fromString(string $string): self
+    {
+        return new static(FusionSourceCode::fromString($string));
+    }
+
+    public static function tryFromPackageFusionRoot(string $packageKey): self
+    {
+        $fusionPathAndFilename = sprintf('resource://%s/Private/Fusion/Root.fusion', $packageKey);
+        return FusionSourceCodeCollection::tryFromFilePath($fusionPathAndFilename);
+    }
+
+    public static function empty()
+    {
+        return new static();
+    }
+
+    public function union(FusionSourceCodeCollection $other): self
+    {
+        return new static(...$this->fusionCodeCollection, ...$other->fusionCodeCollection);
     }
 
     /** @return \ArrayIterator<int,FusionSourceCode>|FusionSourceCode[] */
@@ -37,5 +68,25 @@ class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     public function count(): int
     {
         return count($this->fusionCodeCollection);
+    }
+
+    /**
+     * @param array<int, FusionSourceCode> $fusionSourceCode
+     * @return array<int, FusionSourceCode>
+     */
+    private static function deduplicateItemsAndKeepLast(array $fusionSourceCode): array
+    {
+        $deduplicated = [];
+        $includedFilePathsAndTheirSourceCodesIndex = [];
+        foreach ($fusionSourceCode as $index => $sourceCode) {
+            if (isset($includedFilePathsAndTheirSourceCodesIndex[$sourceCode->getFilePath()])) {
+                unset($deduplicated[$includedFilePathsAndTheirSourceCodesIndex[$sourceCode->getFilePath()]]);
+            }
+            $deduplicated[$index] = $sourceCode;
+            if ($sourceCode->getFilePath()) {
+                $includedFilePathsAndTheirSourceCodesIndex[$sourceCode->getFilePath()] = $index;
+            }
+        }
+        return array_values($deduplicated);
     }
 }

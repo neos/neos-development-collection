@@ -50,28 +50,23 @@ class Parser
      * Parses the given Fusion source code, resolves includes and returns a merged array tree
      * as the result.
      *
-     * @param FusionSourceCode|FusionSourceCodeCollection $sourceCode The Fusion source code to parse
-     * @return array The merged array tree for the Fusion runtime, generated from the source code
+     * @param FusionSourceCodeCollection $sourceCode The Fusion source code to parse
+     * @return FusionConfiguration The fusion configuration for the Fusion runtime
      * @throws Fusion\Exception
      * @api
      */
-    public function parseFrom(FusionSourceCode|FusionSourceCodeCollection $sourceCode): array
+    public function parseFromSource(FusionSourceCodeCollection $sourceCode): FusionConfiguration
     {
-        $fusionSourceCodeCollection = $sourceCode;
-        if ($sourceCode instanceof FusionSourceCode) {
-            $fusionSourceCodeCollection = new FusionSourceCodeCollection($sourceCode);
-        }
+        $mergedArrayTree = new MergedArrayTree([]);
 
-        $mergedArrayTree = new MergedArrayTree();
-
-        foreach ($fusionSourceCodeCollection as $fusionSourceCode) {
+        foreach ($sourceCode as $fusionSourceCode) {
             $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile(
-                $this->getFusionFile($fusionSourceCode)
+                $this->parseToFusionFile($fusionSourceCode)
             );
         }
 
         $mergedArrayTree->buildPrototypeHierarchy();
-        return $mergedArrayTree->getTree();
+        return FusionConfiguration::fromArray($mergedArrayTree->getTree());
     }
 
     /**
@@ -83,7 +78,7 @@ class Parser
      * @param array $mergedArrayTreeUntilNow Used internally for keeping track of the built merged array tree
      * @return array The merged array tree for the Fusion runtime, generated from the source code
      * @throws Fusion\Exception
-     * @deprecated with Neos 8.0 – will be removed with Neos 9.0, use {@link parseFrom} instead
+     * @deprecated with Neos 8.3 – will be removed with Neos 9.0, use {@link parseFromSource} instead
      * @api
      */
     public function parse(string $sourceCode, ?string $contextPathAndFilename = null, array $mergedArrayTreeUntilNow = []): array
@@ -96,7 +91,7 @@ class Parser
         $mergedArrayTree = new MergedArrayTree($mergedArrayTreeUntilNow);
 
         $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile(
-            $this->getFusionFile($fusionSourceCode)
+            $this->parseToFusionFile($fusionSourceCode)
         );
 
         $mergedArrayTree->buildPrototypeHierarchy();
@@ -113,7 +108,7 @@ class Parser
             // Check if not trying to recursively include the current file via globbing
             if ($contextPathAndFilename === null
                 || stat($contextPathAndFilename) !== stat($file)) {
-                $fusionFile = $this->getFusionFile(FusionSourceCode::fromFile($file));
+                $fusionFile = $this->parseToFusionFile(FusionSourceCode::fromFilePath($file));
                 $this->getMergedArrayTreeVisitor($mergedArrayTree)->visitFusionFile($fusionFile);
             }
         }
@@ -131,7 +126,7 @@ class Parser
 
                 $fusionFile = ObjectTreeParser::parse(FusionSourceCode::fromString('value = ' . $transpiledFusion));
 
-                $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree())->visitFusionFile($fusionFile);
+                $mergedArrayTree = $this->getMergedArrayTreeVisitor(new MergedArrayTree([]))->visitFusionFile($fusionFile);
 
                 $temporaryAst = $mergedArrayTree->getTree();
 
@@ -151,10 +146,10 @@ class Parser
         );
     }
 
-    protected function getFusionFile(FusionSourceCode $fusionCode): FusionFile
+    protected function parseToFusionFile(FusionSourceCode $fusionCode): FusionFile
     {
         return $this->parserCache->cacheForFusionFile(
-            $fusionCode->getContextPathAndFilename(),
+            $fusionCode->getFilePath(),
             fn () => ObjectTreeParser::parse($fusionCode)
         );
     }

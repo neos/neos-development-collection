@@ -27,7 +27,7 @@ class FusionParserTest extends FunctionalTestCase
     public function parserHandlesExpressionsThatReturnStrings()
     {
         $parser = new Parser();
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`"StringExpressionValue"`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`"StringExpressionValue"`'))->toArray();
         $expectedAst = [
             'value' => 'StringExpressionValue'
         ];
@@ -40,7 +40,7 @@ class FusionParserTest extends FunctionalTestCase
     public function parserHandlesExpressionsThatReturnMultilineStrings()
     {
         $parser = new Parser();
-        $actualAst = $parser->parseFrom(Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`"String' . chr(10) . 'Expression' . chr(10) . 'Value"`'));
+        $actualAst = $parser->parseFromSource(Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`"String' . "\n" . 'Expression' . "\n" . 'Value"`'))->toArray();
         $expectedAst = [
             'value' => 'String' . chr(10) . 'Expression' . chr(10) . 'Value'
         ];
@@ -54,13 +54,13 @@ class FusionParserTest extends FunctionalTestCase
     {
         $parser = new Parser();
 
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`true`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`true`'))->toArray();
         $expectedAst = [
             'value' => true
         ];
         self::assertEquals($expectedAst, $actualAst);
 
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`false`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`false`'))->toArray();
         $expectedAst = [
             'value' => false
         ];
@@ -74,19 +74,19 @@ class FusionParserTest extends FunctionalTestCase
     {
         $parser = new Parser();
 
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`1234`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`1234`'))->toArray();
         $expectedAst = [
             'value' => 1234
         ];
         self::assertEquals($expectedAst, $actualAst);
 
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`12.34`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`12.34`'))->toArray();
         $expectedAst = [
             'value' => 12.34
         ];
         self::assertEquals($expectedAst, $actualAst);
 
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`-12.34`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`-12.34`'))->toArray();
         $expectedAst = [
             'value' => -12.34
         ];
@@ -99,7 +99,7 @@ class FusionParserTest extends FunctionalTestCase
     public function parserHandlesDslExpressionThatReturnsEelExpressions()
     {
         $parser = new Parser();
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`${1234}`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`${1234}`'))->toArray();
         $expectedAst = [
             'value' => ["__eelExpression" => "1234","__value" => null, "__objectType" => null]
         ];
@@ -112,7 +112,7 @@ class FusionParserTest extends FunctionalTestCase
     public function parserHandlesDslExpressionThatReturnsFusionObjects()
     {
         $parser = new Parser();
-        $actualAst = $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestFusionObjectDsl`{"objectName": "Neos.Fusion:Value", "attributes": { "value": "foo" }}`'));
+        $actualAst = $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestFusionObjectDsl`{"objectName": "Neos.Fusion:Value", "attributes": { "value": "foo" }}`'))->toArray();
         $expectedAst = [
             'value' => ["__eelExpression" => null,"__value" => null, "__objectType" => 'Neos.Fusion:Value', 'value' => "foo"]
         ];
@@ -127,7 +127,7 @@ class FusionParserTest extends FunctionalTestCase
         $parser = new Parser();
         $this->expectException(Fusion\Exception::class);
         $this->expectExceptionCode(1180600696);
-        $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestUnknownDsl`foobar`'));
+        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestUnknownDsl`foobar`'))->toArray();
     }
 
     /**
@@ -138,6 +138,6 @@ class FusionParserTest extends FunctionalTestCase
         $parser = new Parser();
         $this->expectException(Fusion\Exception::class);
         $this->expectExceptionCode(1490714685);
-        $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString('value = TestPassthroughDsl`foobar'));
+        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString('value = TestPassthroughDsl`foobar'))->toArray();
     }
 }

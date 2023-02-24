@@ -199,9 +199,9 @@ class ParserIncludeTest extends UnitTestCase
      */
     public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst): void
     {
-        $actualFusionAst = $this->parser->parseFrom(
+        $actualFusionAst = $this->parser->parseFromSource(new Fusion\Core\FusionSourceCodeCollection(
             Fusion\Core\FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($fusionCode, $contextPathAndFilename)
-        );
+        ))->toArray();
 
         self::assertSame($expectedFusionAst, $actualFusionAst);
     }
@@ -218,7 +218,7 @@ class ParserIncludeTest extends UnitTestCase
         include: /**/*
         Fusion;
 
-        $this->parser->parseFrom(Fusion\Core\FusionSourceCode::fromString($fusionCode));
+        $this->parser->parseFromSource(Fusion\Core\FusionSourceCodeCollection::fromString($fusionCode))->toArray();
     }
 
     public function weirdFusionIncludeValuesAreHandedOver(): \Generator
@@ -250,7 +250,7 @@ class ParserIncludeTest extends UnitTestCase
             ->method('handleFileInclude')
             ->withConsecutive([self::anything(), $includePattern]);
 
-        $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
+        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
     public function throwsFusionIncludesWithSpaces(): \Generator
@@ -287,7 +287,7 @@ class ParserIncludeTest extends UnitTestCase
             ->expects(self::never())
             ->method('handleFileInclude');
 
-        $parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusion));
+        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
     /**
@@ -325,7 +325,7 @@ class ParserIncludeTest extends UnitTestCase
         include: vfs://fusion/$pattern
         Fusion;
 
-        $this->parser->parseFrom(\Neos\Fusion\Core\FusionSourceCode::fromString($fusionCode));
+        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusionCode))->toArray();
     }
 
     /**

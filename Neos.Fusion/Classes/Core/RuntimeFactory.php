@@ -18,44 +18,41 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
-use Psr\Http\Message\ServerRequestFactoryInterface;
 
 /**
- * This runtime factory takes care of instantiating a Fusion runtime.
- *
  * @Flow\Scope("singleton")
  * @api
  */
 class RuntimeFactory
 {
     /**
+     * @var Parser
      * @Flow\Inject
-     * @var ServerRequestFactoryInterface
      */
-    protected $serverRequestFactory;
+    protected $fusionParser;
 
-    /**
-     * @param array $fusionConfiguration
-     * @param ControllerContext $controllerContext
-     * @return Runtime
-     */
-    public function create($fusionConfiguration, ControllerContext $controllerContext = null)
+    public function create(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
     {
         if ($controllerContext === null) {
-            $controllerContext = $this->createControllerContextFromEnvironment();
+            $controllerContext = self::createControllerContextFromEnvironment();
         }
-
         return new Runtime($fusionConfiguration, $controllerContext);
     }
 
-    /**
-     * @return ControllerContext
-     */
-    protected function createControllerContextFromEnvironment()
+    public function createFromSourceCode(
+        FusionSourceCodeCollection $sourceCode,
+        ControllerContext $controllerContext
+    ): Runtime {
+        return new Runtime(
+            $this->fusionParser->parseFromSource($sourceCode),
+            $controllerContext
+        );
+    }
+
+    private static function createControllerContextFromEnvironment(): ControllerContext
     {
         $httpRequest = ServerRequest::fromGlobals();
 
-        /** @var ActionRequest $request */
         $request = ActionRequest::fromHttpRequest($httpRequest);
 
         $uriBuilder = new UriBuilder();
