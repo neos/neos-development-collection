@@ -1297,6 +1297,10 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
 				<source>Last Login</source>
         <target state="translated">Laatste login</target>
       </trans-unit>
+      <trans-unit id="user.description" xml:space="preserve">
+				<source>Contains modules related to management of users</source>
+        <target state="translated">Bevat modules gerelateerd aan het onderhoud van gebruikers</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
