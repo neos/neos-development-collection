@@ -138,16 +138,22 @@ class FusionService
         $siteResourcesPackageKey = $this->getSiteForSiteNode($startNode)->getSiteResourcesPackageKey();
 
         $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
-        $siteRootFusionCode = $this->readExternalFusionFile($siteRootFusionPathAndFilename);
+
+        $fusionAutoIncludes = $this->getFusionIncludes($this->prepareAutoIncludeFusion());
+        $fusionAutoIncludesWithoutSitePackagePath = str_replace(
+            "include: $siteRootFusionPathAndFilename\n",
+            "",
+            $fusionAutoIncludes
+        );
 
         $mergedFusionCode = '';
         $mergedFusionCode .= $this->generateNodeTypeDefinitions();
-        $mergedFusionCode .= $this->getFusionIncludes($this->prepareAutoIncludeFusion());
-        $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes);
-        $mergedFusionCode .= $siteRootFusionCode;
-        $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes);
+        $mergedFusionCode .= $fusionAutoIncludesWithoutSitePackagePath;
+        $mergedFusionCode .= $this->getFusionIncludes($this->prependFusionIncludes, dirname($siteRootFusionPathAndFilename));
+        $mergedFusionCode .= is_readable($siteRootFusionPathAndFilename) ? "include: $siteRootFusionPathAndFilename\n" : "";
+        $mergedFusionCode .= $this->getFusionIncludes($this->appendFusionIncludes, dirname($siteRootFusionPathAndFilename));
 
-        return $this->fusionParser->parse($mergedFusionCode, $siteRootFusionPathAndFilename);
+        return $this->fusionParser->parse($mergedFusionCode);
     }
 
     /**
@@ -221,10 +227,23 @@ class FusionService
      * @param array $fusionResources An array of Fusion resource URIs
      * @return string A string of include statements for all resources
      */
-    protected function getFusionIncludes(array $fusionResources)
+    protected function getFusionIncludes(array $fusionResources, string $resolveDir = null)
     {
         $code = chr(10);
         foreach ($fusionResources as $fusionResource) {
+            if (str_starts_with($fusionResource, "resource://") === false) {
+                if (!$resolveDir) {
+                    throw new \RuntimeException(
+                        <<<MSG
+                        FusionService::getFusionIncludes incorrectly used. Cannot resolve relative: Path $fusionResource.
+                        Now (via bugfix) needed parameter \$resolveDir not specified. Please check your implementation.
+                        MSG,
+                        1677253919
+                    );
+                }
+                // legacy relative includes
+                $fusionResource = $resolveDir . '/' . $fusionResource;
+            }
             $code .= 'include: ' . (string)$fusionResource . chr(10);
         }
         $code .= chr(10);
