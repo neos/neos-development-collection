@@ -147,7 +147,6 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertEquals($code3, $asArray[1]);
         self::assertEquals($code1doubled2, $asArray[2]);
         self::assertEquals($code4, $asArray[3]);
-
     }
 
     /**

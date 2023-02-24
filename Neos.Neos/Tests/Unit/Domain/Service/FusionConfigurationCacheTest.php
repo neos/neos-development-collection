@@ -96,7 +96,7 @@ class FusionConfigurationCacheTest extends UnitTestCase
 
         self::assertEquals(FusionConfiguration::fromArray($mergedObjectTree), $this->fusionConfigurationCache->cacheFusionConfigurationBySite(
             $this->mockSite,
-            fn() => self::fail("FusionConfiguration factory called.")
+            fn () => self::fail("FusionConfiguration factory called.")
         ));
     }
 }

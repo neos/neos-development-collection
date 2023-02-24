@@ -109,7 +109,6 @@ class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
      */
     public function generateFusionForNodeUsesInheritedFusionPrototypeGenerator()
     {
-
         $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');
         self::assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
     }
