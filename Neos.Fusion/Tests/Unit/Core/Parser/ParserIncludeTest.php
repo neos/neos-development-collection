@@ -200,7 +200,7 @@ class ParserIncludeTest extends UnitTestCase
     public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst): void
     {
         $actualFusionAst = $this->parser->parseFromSource(new Fusion\Core\FusionSourceCodeCollection(
-            Fusion\Core\FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($fusionCode, $contextPathAndFilename)
+            Fusion\Core\FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($fusionCode, $contextPathAndFilename)
         ))->toArray();
 
         self::assertSame($expectedFusionAst, $actualFusionAst);

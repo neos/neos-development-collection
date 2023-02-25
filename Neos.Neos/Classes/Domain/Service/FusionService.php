@@ -36,7 +36,7 @@ class FusionService
     /**
      * Pattern used for determining the Fusion root file for a site
      *
-     * @deprecated with Neos 8.3, will be removed with 9.0
+     * @deprecated with Neos 8.3, will be immutable with 9.0
      * @var string
      */
     protected $siteRootFusionPattern = 'resource://%s/Private/Fusion/Root.fusion';

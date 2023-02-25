@@ -41,7 +41,7 @@ class FusionSourceCodeDtosTest extends UnitTestCase
         self::assertEquals("a", $code->getSourceCode());
         self::assertEquals(null, $code->getFilePath());
 
-        $code = FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath("a", "memory://a");
+        $code = FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath("a", "memory://a");
         self::assertEquals("a", $code->getSourceCode());
         self::assertEquals("memory://a", $code->getFilePath());
 

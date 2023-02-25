@@ -86,7 +86,7 @@ class Parser
         // legacy mapping
         $fusionSourceCode = $contextPathAndFilename === null
             ? FusionSourceCode::fromString($sourceCode)
-            : FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $contextPathAndFilename);
+            : FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($sourceCode, $contextPathAndFilename);
 
         $mergedArrayTree = new MergedArrayTree($mergedArrayTreeUntilNow);
 

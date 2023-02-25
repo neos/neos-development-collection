@@ -676,7 +676,7 @@ class ParserTest extends UnitTestCase
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
-        $actualParseTree = $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $fixture)))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($sourceCode, $fixture)))->toArray();
         self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 16');
     }
 
@@ -689,7 +689,7 @@ class ParserTest extends UnitTestCase
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16b.fusion';
         $sourceCode = file_get_contents($fixture);
 
-        $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $fixture)))->toArray();
+        $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($sourceCode, $fixture)))->toArray();
     }
 
     /**
@@ -723,7 +723,7 @@ class ParserTest extends UnitTestCase
         // Test globbing with dots
         $expectedParseTree['globbingWithDots1'] = $text;
 
-        $actualParseTree = $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath($sourceCode, $fixture)))->toArray();
+        $actualParseTree = $this->parser->parseFromSource(new FusionSourceCodeCollection(FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($sourceCode, $fixture)))->toArray();
         self::assertEquals($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 17');
     }
 

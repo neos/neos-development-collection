@@ -40,9 +40,9 @@ final class FusionSourceCode
     /**
      * Watch out for unexpected behaviour {@link https://github.com/neos/neos-development-collection/issues/3835}
      */
-    public static function fromDangerousPotentiallyDifferingSourceCodeAndContextPath(string $sourceCode, string $contextPathAndFilename): self
+    public static function fromDangerousPotentiallyDifferingSourceCodeAndFilePath(string $sourceCode, string $filePath): self
     {
-        return new static($sourceCode, $contextPathAndFilename);
+        return new static(filePath: $filePath, sourceCode: $sourceCode);
     }
 
     public function getSourceCode(): string
