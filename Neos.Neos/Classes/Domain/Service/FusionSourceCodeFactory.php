@@ -1,15 +1,25 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
+/*
+ * This file is part of the Neos.Neos package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Flow\Annotations as Flow;
 
 class FusionSourceCodeFactory
@@ -34,15 +44,9 @@ class FusionSourceCodeFactory
 
     /**
      * @Flow\Inject
-     * @var \Neos\Flow\Package\PackageManager
+     * @var PackageManager
      */
     protected $packageManager;
-
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
 
     public function createFromAutoIncludes(): FusionSourceCodeCollection
     {
@@ -55,11 +59,6 @@ class FusionSourceCodeFactory
             }
         }
         return $sourcecode;
-    }
-
-    public function createFromRootNode(TraversableNodeInterface $rootNode): FusionSourceCodeCollection
-    {
-        return $this->createFromSite($this->findSiteForSiteNode($rootNode));
     }
 
     public function createFromSite(Site $site): FusionSourceCodeCollection
@@ -93,23 +92,17 @@ class FusionSourceCodeFactory
      */
     protected function generateFusionForNodeType(NodeType $nodeType): ?FusionSourceCode
     {
-        if ($nodeType->hasConfiguration('options.fusion.prototypeGenerator') && $nodeType->getConfiguration('options.fusion.prototypeGenerator') !== null) {
-            $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
-            if (!class_exists($generatorClassName)) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
-            }
-            $generator = $this->objectManager->get($generatorClassName);
-            if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-                throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
-            }
-            return FusionSourceCode::fromString($generator->generate($nodeType));
+        $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
+        if ($generatorClassName === null) {
+            return null;
         }
-        return null;
-    }
-
-    private function findSiteForSiteNode(TraversableNodeInterface $siteNode): Site
-    {
-        return $this->siteRepository->findOneByNodeName((string)$siteNode->getNodeName())
-            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->getNodeName()), 1677245517);
+        if (!class_exists($generatorClassName)) {
+            throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+        }
+        $generator = $this->objectManager->get($generatorClassName);
+        if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
+            throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+        }
+        return FusionSourceCode::fromString($generator->generate($nodeType));
     }
 }
