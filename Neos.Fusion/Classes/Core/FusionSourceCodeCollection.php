@@ -25,14 +25,6 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         $this->fusionCodeCollection = self::deduplicateItemsAndKeepLast($fusionSourceCode);
     }
 
-    public static function tryFromFilePath(string $filePath): self
-    {
-        if (!is_readable($filePath)) {
-            return static::empty();
-        }
-        return new static(FusionSourceCode::fromFilePath($filePath));
-    }
-
     public static function fromFilePath(string $filePath): self
     {
         return new static(FusionSourceCode::fromFilePath($filePath));
@@ -43,10 +35,18 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         return new static(FusionSourceCode::fromString($string));
     }
 
-    public static function tryFromPackageFusionRoot(string $packageKey): self
+    public static function tryFromFilePath(string $filePath): self
+    {
+        if (!is_readable($filePath)) {
+            return static::empty();
+        }
+        return static::fromFilePath($filePath);
+    }
+
+    public static function tryFromPackageRootFusion(string $packageKey): self
     {
         $fusionPathAndFilename = sprintf('resource://%s/Private/Fusion/Root.fusion', $packageKey);
-        return FusionSourceCodeCollection::tryFromFilePath($fusionPathAndFilename);
+        return static::tryFromFilePath($fusionPathAndFilename);
     }
 
     public static function empty()

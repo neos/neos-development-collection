@@ -54,7 +54,7 @@ class FusionSourceCodeFactory
         foreach (array_keys($this->packageManager->getAvailablePackages()) as $packageKey) {
             if (isset($this->autoIncludeConfiguration[$packageKey]) && $this->autoIncludeConfiguration[$packageKey] === true) {
                 $sourcecode = $sourcecode->union(
-                    FusionSourceCodeCollection::tryFromPackageFusionRoot($packageKey)
+                    FusionSourceCodeCollection::tryFromPackageRootFusion($packageKey)
                 );
             }
         }
@@ -63,7 +63,7 @@ class FusionSourceCodeFactory
 
     public function createFromSite(Site $site): FusionSourceCodeCollection
     {
-        return FusionSourceCodeCollection::tryFromPackageFusionRoot($site->getSiteResourcesPackageKey());
+        return FusionSourceCodeCollection::tryFromPackageRootFusion($site->getSiteResourcesPackageKey());
     }
 
     /**
