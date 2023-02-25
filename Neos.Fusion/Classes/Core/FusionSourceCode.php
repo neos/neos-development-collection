@@ -18,23 +18,22 @@ use Neos\Fusion;
 final class FusionSourceCode
 {
     protected function __construct(
-        private string $sourceCode,
-        private ?string $filePath
+        private ?string $filePath,
+        private string|\Closure $sourceCode,
     ) {
     }
 
     public static function fromString(string $string): self
     {
-        return new static($string, null);
+        return new static(null, $string);
     }
 
     public static function fromFilePath(string $filePath): self
     {
-        $sourceCode = file_get_contents($filePath);
-        if ($sourceCode === false) {
+        if (is_readable($filePath) === false) {
             throw new Fusion\Exception("Trying to read Fusion source code from file, but '$filePath' is not readable.", 1657963790);
         }
-        return new static($sourceCode, $filePath);
+        return new static($filePath, fn () => file_get_contents($filePath));
     }
 
     /**
@@ -42,12 +41,14 @@ final class FusionSourceCode
      */
     public static function fromDangerousPotentiallyDifferingSourceCodeAndFilePath(string $sourceCode, string $filePath): self
     {
-        return new static(filePath: $filePath, sourceCode: $sourceCode);
+        return new static($filePath, $sourceCode);
     }
 
     public function getSourceCode(): string
     {
-        return $this->sourceCode;
+        return $this->sourceCode instanceof \Closure
+            ? $this->sourceCode = ($this->sourceCode)()
+            : $this->sourceCode;
     }
 
     public function getFilePath(): ?string
