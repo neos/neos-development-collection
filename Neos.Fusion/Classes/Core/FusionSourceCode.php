@@ -19,7 +19,7 @@ final class FusionSourceCode
 {
     protected function __construct(
         private ?string $filePath,
-        private string|\Closure $sourceCode,
+        private string|\Closure $sourceCodeOrFactory,
     ) {
     }
 
@@ -46,9 +46,9 @@ final class FusionSourceCode
 
     public function getSourceCode(): string
     {
-        return $this->sourceCode instanceof \Closure
-            ? $this->sourceCode = ($this->sourceCode)()
-            : $this->sourceCode;
+        return $this->sourceCodeOrFactory instanceof \Closure
+            ? $this->sourceCodeOrFactory = ($this->sourceCodeOrFactory)()
+            : $this->sourceCodeOrFactory;
     }
 
     public function getFilePath(): ?string

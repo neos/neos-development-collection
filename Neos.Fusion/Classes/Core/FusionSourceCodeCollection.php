@@ -77,14 +77,14 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
     private static function deduplicateItemsAndKeepLast(array $fusionSourceCode): array
     {
         $deduplicated = [];
-        $includedFilePathsAndTheirSourceCodesIndex = [];
+        $includedFilePathsAndTheirPreviousIndex = [];
         foreach ($fusionSourceCode as $index => $sourceCode) {
-            if (isset($includedFilePathsAndTheirSourceCodesIndex[$sourceCode->getFilePath()])) {
-                unset($deduplicated[$includedFilePathsAndTheirSourceCodesIndex[$sourceCode->getFilePath()]]);
+            if (isset($includedFilePathsAndTheirPreviousIndex[$sourceCode->getFilePath()])) {
+                unset($deduplicated[$includedFilePathsAndTheirPreviousIndex[$sourceCode->getFilePath()]]);
             }
             $deduplicated[$index] = $sourceCode;
             if ($sourceCode->getFilePath()) {
-                $includedFilePathsAndTheirSourceCodesIndex[$sourceCode->getFilePath()] = $index;
+                $includedFilePathsAndTheirPreviousIndex[$sourceCode->getFilePath()] = $index;
             }
         }
         return array_values($deduplicated);
