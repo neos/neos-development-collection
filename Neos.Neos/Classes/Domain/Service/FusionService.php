@@ -85,6 +85,12 @@ class FusionService
 
     /**
      * @Flow\Inject
+     * @var RuntimeFactory
+     */
+    protected $runtimeFactory;
+
+    /**
+     * @Flow\Inject
      * @var FusionSourceCodeFactory
      */
     protected $fusionSourceCodeFactory;
@@ -94,16 +100,6 @@ class FusionService
      * @var FusionConfigurationCache
      */
     protected $fusionConfigurationCache;
-
-    public function createRuntimeFromSite(
-        Site $site,
-        ControllerContext $controllerContext
-    ): Runtime {
-        return new Runtime(
-            $this->createFusionConfigurationFromSite($site),
-            $controllerContext
-        );
-    }
 
     public function createFusionConfigurationFromSite(Site $site): FusionConfiguration
     {
@@ -133,12 +129,10 @@ class FusionService
     /**
      * Returns a merged Fusion object tree in the context of the given nodes
      *
-     * @deprecated with Neos 8.3, will be removed with 9.0 {@link createFusionConfigurationFromSiteNode}
+     * @deprecated with Neos 8.3, will be removed with 9.0 {@link createFusionConfigurationFromSite}
      *
      * @param TraversableNodeInterface $startNode Node marking the starting point (i.e. the "Site" node)
      * @return array The merged object tree as of the given node
-     * @throws \Neos\Neos\Domain\Exception
-     * @throws \Neos\Fusion\Exception
      */
     public function getMergedFusionObjectTree(TraversableNodeInterface $startNode)
     {
@@ -148,17 +142,18 @@ class FusionService
     /**
      * Create a runtime for the given site node
      *
-     * @deprecated with Neos 8.3, will be removed with 9.0 {@link createRuntimeFromSiteNode}
+     * @deprecated with Neos 8.3, will be removed with 9.0 use {@link createFusionConfigurationFromSite} and {@link RuntimeFactory::createFromConfiguration} instead
      *
      * @return Runtime
-     * @throws \Neos\Fusion\Exception
-     * @throws \Neos\Neos\Domain\Exception
      */
     public function createRuntime(
         TraversableNodeInterface $currentSiteNode,
         ControllerContext $controllerContext
     ) {
-        return $this->createRuntimeFromSite($this->findSiteBySiteNode($currentSiteNode), $controllerContext);
+        return $this->runtimeFactory->createFromConfiguration(
+            $this->createFusionConfigurationFromSite($this->findSiteBySiteNode($currentSiteNode)),
+            $controllerContext
+        );
     }
 
     /**

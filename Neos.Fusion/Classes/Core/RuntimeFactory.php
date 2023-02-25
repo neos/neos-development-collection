@@ -31,11 +31,22 @@ class RuntimeFactory
      */
     protected $fusionParser;
 
-    public function create(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
+    /**
+     * @deprecated with Neos 8.3 might be removed with Neos 9.0 use {@link createFromConfiguration} instead.
+     */
+    public function create(array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
     {
         if ($controllerContext === null) {
             $controllerContext = self::createControllerContextFromEnvironment();
         }
+        return new Runtime(
+            FusionConfiguration::fromArray($fusionConfiguration),
+            $controllerContext
+        );
+    }
+
+    public function createFromConfiguration(FusionConfiguration $fusionConfiguration, ControllerContext $controllerContext): Runtime
+    {
         return new Runtime($fusionConfiguration, $controllerContext);
     }
 
