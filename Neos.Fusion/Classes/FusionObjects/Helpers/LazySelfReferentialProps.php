@@ -34,6 +34,13 @@ final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
     {
         $fullyQualifiedPath = $this->parentPath . '/' . $path;
 
+        if (!$this->runtime->canRender($fullyQualifiedPath)) {
+            throw new \RuntimeException(<<<MESSAGE
+                Cannot evaluate prop: "$this->selfReferentialId.$path".
+                No value found in path "$fullyQualifiedPath".
+                MESSAGE, 1677344049);
+        }
+
         $this->lazyReferences[$path] ??= new LazyReference(
             function () use ($fullyQualifiedPath) {
                 $this->runtime->pushContextArray($this->effectiveContext);
@@ -49,7 +56,7 @@ final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
             return $this->lazyReferences[$path]->deref();
         } catch (CircularReferenceException) {
             throw new \RuntimeException(
-                'Circular reference detected while evaluating: "' . $this->selfReferentialId . '.' . $path . '"',
+                'Circular reference detected while evaluating prop: "' . $this->selfReferentialId . '.' . $path . '"',
                 1669654158
             );
         }

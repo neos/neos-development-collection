@@ -114,6 +114,13 @@ prototype(Neos.Fusion:Component.PrivateSelfReferencing) < prototype(Neos.Fusion:
   renderer = ${private.c + private.d}
 }
 
+prototype(Neos.Fusion:Component.PrivateNotDefined) < prototype(Neos.Fusion:Component) {
+  @private {
+    b = true
+  }
+  renderer = ${private.nonExistant}
+}
+
 prototype(Neos.Fusion:Component.PrivateSelfReferencingInfiniteLoop) < prototype(Neos.Fusion:Component) {
   @private {
     b = ${private.c}

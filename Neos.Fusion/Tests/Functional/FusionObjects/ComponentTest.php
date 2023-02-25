@@ -110,6 +110,19 @@ class ComponentTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function componentPrivateNotDefined()
+    {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionCode(1677344049);
+        $this->expectExceptionMessageMatches('/Cannot evaluate prop: "private.nonExistant"./');
+        $view = $this->buildView();
+        $view->setFusionPath('/<Neos.Fusion:Component.PrivateNotDefined>');
+        $view->render();
+    }
+
+    /**
+     * @test
+     */
     public function componentPrivateSelfReferencingInfiniteLoop()
     {
         $this->expectException(\RuntimeException::class);
@@ -157,9 +170,12 @@ class ComponentTest extends AbstractFusionObjectTest
      */
     public function componentPrivateScopeIsIsolatedFromOtherPrivate()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionCode(1677344049);
+        $this->expectExceptionMessageMatches('/Cannot evaluate prop: "private.outer"./');
         $view = $this->buildView();
         $view->setFusionPath('/<Neos.Fusion:Component.PrivateScopeIsIsolatedFromOtherPrivate>');
-        self::assertEquals(null, $view->render());
+        $view->render();
     }
 
     /**
@@ -167,9 +183,12 @@ class ComponentTest extends AbstractFusionObjectTest
      */
     public function componentPrivateScopeIsIsolatedInRenderer()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionCode(1677344049);
+        $this->expectExceptionMessageMatches('/Cannot evaluate prop: "private.outer"./');
         $view = $this->buildView();
         $view->setFusionPath('/<Neos.Fusion:Component.PrivateScopeIsIsolatedInRenderer>');
-        self::assertEquals(null, $view->render());
+        $view->render();
     }
 
     /**
