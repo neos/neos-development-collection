@@ -21,25 +21,20 @@ use Neos\Neos\Domain\Model\Site;
  * @Flow\Scope("singleton")
  * @internal
  */
-class FusionConfigurationCache
+final class FusionConfigurationCache
 {
-    /**
-     * @Flow\InjectConfiguration("fusion.enableObjectTreeCache")
-     * @var bool
-     */
-    protected $enableObjectTreeCache;
-
-    /**
-     * @var VariableFrontend
-     */
-    protected $fusionConfigurationCache;
+    public function __construct(
+        private VariableFrontend $cache,
+        private ?bool $enabled
+    ) {
+    }
 
     /**
      * @param \Closure(): FusionConfiguration $fusionConfigurationFactory
      */
     public function cacheFusionConfigurationBySite(Site $site, \Closure $fusionConfigurationFactory): FusionConfiguration
     {
-        if (!$this->enableObjectTreeCache) {
+        if (!$this->enabled) {
             return $fusionConfigurationFactory();
         }
 
@@ -47,13 +42,13 @@ class FusionConfigurationCache
 
         $cacheIdentifier = str_replace('.', '_', $siteResourcesPackageKey);
 
-        if ($this->fusionConfigurationCache->has($cacheIdentifier)) {
-            return FusionConfiguration::fromArray($this->fusionConfigurationCache->get($cacheIdentifier));
+        if ($this->cache->has($cacheIdentifier)) {
+            return FusionConfiguration::fromArray($this->cache->get($cacheIdentifier));
         }
 
         $fusionConfiguration = $fusionConfigurationFactory();
 
-        $this->fusionConfigurationCache->set($cacheIdentifier, $fusionConfiguration->toArray());
+        $this->cache->set($cacheIdentifier, $fusionConfiguration->toArray());
 
         return $fusionConfiguration;
     }

@@ -40,16 +40,15 @@ class FusionConfigurationCacheTest extends UnitTestCase
     {
         parent::setUp();
 
-        $this->fusionConfigurationCache = new FusionConfigurationCache();
-
-        $this->inject($this->fusionConfigurationCache, 'enableObjectTreeCache', true);
-
-
         $this->mockFusionCache = $this->getMockBuilder(VariableFrontend::class)->disableOriginalConstructor()->getMock();
-        $this->inject($this->fusionConfigurationCache, 'fusionConfigurationCache', $this->mockFusionCache);
 
         $this->mockSite = $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock();
         $this->mockSite->method('getSiteResourcesPackageKey')->willReturn('Some.ResourcePackage');
+
+        $this->fusionConfigurationCache = new FusionConfigurationCache(
+            cache: $this->mockFusionCache,
+            enabled: true
+        );
     }
 
     /**
