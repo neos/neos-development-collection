@@ -34,6 +34,14 @@ final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
     {
         $fullyQualifiedPath = $this->parentPath . '/' . $path;
 
+        if ($path === "renderer") {
+            // let's see what the future holds for this ;)
+            throw new \RuntimeException(<<<MESSAGE
+                Sorry, the prop name "$this->selfReferentialId.renderer" is reserved and cannot be used.
+                At path "$fullyQualifiedPath".
+                MESSAGE, 1677361824);
+        }
+
         if (!$this->runtime->canRender($fullyQualifiedPath)) {
             throw new \RuntimeException(<<<MESSAGE
                 Cannot evaluate prop: "$this->selfReferentialId.$path".
