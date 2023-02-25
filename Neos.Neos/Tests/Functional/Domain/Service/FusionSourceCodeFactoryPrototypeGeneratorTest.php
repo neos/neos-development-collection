@@ -13,7 +13,6 @@ namespace Neos\Neos\Tests\Functional\Domain\Service;
 
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Domain\Service\FusionSourceCodeFactory;
-use ReflectionMethod;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Neos\Flow\Tests\FunctionalTestCase;
 use Neos\Neos\Tests\Functional\Domain\Service\Fixtures\TestablePrototypeGenerator;
@@ -24,108 +23,83 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
  */
 class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
 {
-    const FIXTURE_FILE_NAME = 'Fixtures/NodeTypes.yaml';
+    private const FIXTURE_FILE_NAME = 'Fixtures/NodeTypes.yaml';
 
-    /**
-     * @var FusionSourceCodeFactory
-     */
-    protected $factory;
+    private FusionSourceCodeFactory $factory;
 
-    /**
-     * @var NodeTypeManager
-     */
-    protected $originalNodeTypeManager;
+    private NodeTypeManager $originalNodeTypeManager;
 
-    /**
-     * @var NodeTypeManager
-     */
-    protected $mockNodeTypeManager;
+    private NodeTypeManager $mockNodeTypeManager;
 
-    /**
-     * @var YamlParser
-     */
-    protected $yamlParser;
+    private NodeTypeManager $fixtureNodeTypeManager;
 
-    /**
-     * @var TestablePrototypeGenerator
-     */
-    protected $expectedPrototypeGenerator;
+    private TestablePrototypeGenerator $testablePrototypeGenerator;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->factory = $this->objectManager->get(FusionSourceCodeFactory::class);
-        $this->expectedPrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
-        $this->yamlParser = $this->objectManager->get(YamlParser::class);
+        $yamlParser = $this->objectManager->get(YamlParser::class);
         $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
-        $this->mockNodeTypeManager = clone ($this->originalNodeTypeManager);
-        $this->mockNodeTypeManager->overrideNodeTypes($this->yamlParser->parse(file_get_contents(__DIR__ . '/' . self::FIXTURE_FILE_NAME)));
+
+        $this->fixtureNodeTypeManager = clone ($this->originalNodeTypeManager);
+        $this->fixtureNodeTypeManager->overrideNodeTypes($yamlParser->parse(file_get_contents(__DIR__ . '/' . self::FIXTURE_FILE_NAME)));
+
+        $this->mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(["getNodeTypes"])
+            ->getMock();
+
         $this->objectManager->setInstance(NodeTypeManager::class, $this->mockNodeTypeManager);
+
+        $this->testablePrototypeGenerator = $this->objectManager->get(TestablePrototypeGenerator::class);
+
+        $this->factory = $this->objectManager->get(FusionSourceCodeFactory::class);
     }
 
-    /**
-     * @return void
-     */
     public function tearDown(): void
     {
         $this->objectManager->setInstance(NodeTypeManager::class, $this->originalNodeTypeManager);
-        $this->expectedPrototypeGenerator->reset();
+        $this->objectManager->forgetInstance(FusionSourceCodeFactory::class);
+        $this->objectManager->forgetInstance(TestablePrototypeGenerator::class);
         parent::tearDown();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function generateFusionForNodeThrowsExceptionForInvalidFusionPrototypeGenerator()
     {
         $this->expectException(Exception::class);
-        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInvalidFusionPrototypeGenerator');
+        $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithInvalidFusionPrototypeGenerator');
+        $this->factory->createFromNodeTypeDefinitions();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function generateFusionForNodeDoesNotUseFusionPrototypeGeneratorWithoutConfiguration()
     {
-        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithoutFusionPrototypeGenerator');
-        self::assertSame(0, $this->expectedPrototypeGenerator->getCallCount());
+        $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithoutFusionPrototypeGenerator');
+        $this->factory->createFromNodeTypeDefinitions();
+        self::assertSame(0, $this->testablePrototypeGenerator->getCallCount());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function generateFusionForNodeUsesDirectlyConfiguredFusionPrototypeGenerator()
     {
-        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithPrototypeGenerator');
-        self::assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
+        $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithPrototypeGenerator');
+        $this->factory->createFromNodeTypeDefinitions();
+        self::assertSame(1, $this->testablePrototypeGenerator->getCallCount());
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function generateFusionForNodeUsesInheritedFusionPrototypeGenerator()
     {
-        $this->invokeGenerateFusionForNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');
-        self::assertSame(1, $this->expectedPrototypeGenerator->getCallCount());
+        $this->mockNodeTypeManagerToOnlyReturnNodeType('Neos.Neos:NodeTypeWithInheritedPrototypeGenerator');
+        $this->factory->createFromNodeTypeDefinitions();
+        self::assertSame(1, $this->testablePrototypeGenerator->getCallCount());
     }
 
-    /**
-     * @param $nodeTypeName
-     * @return void
-     */
-    protected function invokeGenerateFusionForNodeType($nodeTypeName)
+    private function mockNodeTypeManagerToOnlyReturnNodeType(string $nodeTypeName): void
     {
-        $method = new ReflectionMethod(
-            FusionSourceCodeFactory::class,
-            'generateFusionForNodeType'
-        );
-
-        $method->setAccessible(true);
-
-        $method->invoke($this->factory, $this->mockNodeTypeManager->getNodeType($nodeTypeName));
+        $nodeType = $this->fixtureNodeTypeManager->getNodeType($nodeTypeName);
+        $this->mockNodeTypeManager->expects(self::once())->method("getNodeTypes")->willReturn([$nodeType]);
     }
 }

@@ -19,34 +19,23 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
+use Neos\Neos\Domain\Exception as NeosDomainException;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Flow\Annotations as Flow;
 
 class FusionSourceCodeFactory
 {
-    /**
-     * @Flow\InjectConfiguration("fusion.autoInclude")
-     * @var array
-     */
-    protected $autoIncludeConfiguration = [];
+    #[Flow\InjectConfiguration("fusion.autoInclude")]
+    protected array $autoIncludeConfiguration = [];
 
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    #[Flow\Inject]
+    protected NodeTypeManager $nodeTypeManager;
 
-    /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
+    #[Flow\Inject]
+    protected PackageManager $packageManager;
 
-    /**
-     * @Flow\Inject
-     * @var PackageManager
-     */
-    protected $packageManager;
+    #[Flow\Inject]
+    protected ObjectManagerInterface $objectManager;
 
     public function createFromAutoIncludes(): FusionSourceCodeCollection
     {
@@ -71,13 +60,13 @@ class FusionSourceCodeFactory
      *
      * Only fully qualified node types (e.g. MyVendor.MyPackage:NodeType) will be considered.
      *
-     * @throws \Neos\Neos\Domain\Exception
+     * @throws NeosDomainException
      */
     public function createFromNodeTypeDefinitions(): FusionSourceCodeCollection
     {
         $fusion = [];
         foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
-            $fusion[] = $this->generateFusionForNodeType($nodeType);
+            $fusion[] = $this->tryCreateFromNodeTypeDefinition($nodeType);
         }
         return new FusionSourceCodeCollection(...array_filter($fusion));
     }
@@ -88,20 +77,20 @@ class FusionSourceCodeFactory
      * A prototype will be rendered with the generator-class defined in the
      * nodeType-configuration 'fusion.prototypeGenerator'
      *
-     * @throws \Neos\Neos\Domain\Exception
+     * @throws NeosDomainException
      */
-    protected function generateFusionForNodeType(NodeType $nodeType): ?FusionSourceCode
+    private function tryCreateFromNodeTypeDefinition(NodeType $nodeType): ?FusionSourceCode
     {
         $generatorClassName = $nodeType->getConfiguration('options.fusion.prototypeGenerator');
         if ($generatorClassName === null) {
             return null;
         }
         if (!class_exists($generatorClassName)) {
-            throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
+            throw new NeosDomainException('Fusion prototype-generator Class ' . $generatorClassName . ' does not exist');
         }
         $generator = $this->objectManager->get($generatorClassName);
         if (!$generator instanceof DefaultPrototypeGeneratorInterface) {
-            throw new \Neos\Neos\Domain\Exception('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
+            throw new NeosDomainException('Fusion prototype-generator Class ' . $generatorClassName . ' does not implement interface ' . DefaultPrototypeGeneratorInterface::class);
         }
         return FusionSourceCode::fromString($generator->generate($nodeType));
     }
