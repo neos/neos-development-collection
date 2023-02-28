@@ -13,18 +13,21 @@ namespace Neos\ContentRepository\Migration\Command;
 
 use Neos\ContentRepository\Migration\Service\GeneratorService;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\Migration\Domain\Factory\MigrationFactory;
 use Neos\ContentRepository\Migration\Domain\Repository\MigrationStatusRepository;
 use Neos\ContentRepository\Migration\Exception\MigrationException;
+use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\Doctrine\Exception\DatabaseException;
 use Neos\ContentRepository\Migration\Service\NodeMigration;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationStatus;
 use Neos\ContentRepository\Migration\Domain\Model\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Utility\Exception\FilesException;
 
 /**
  * Command controller for tasks related to node handling.
@@ -166,21 +169,24 @@ class NodeCommandController extends CommandController
     }
 
     /**
-     * Creates a new node migration for the given package Key
+     * Creates a node migration for the given package Key.
      *
      * @param string $packageKey The packageKey for the given package
      * @return void
-     * @see neos.contentrepository.migration:node:migrationgenerate
+     * @throws UnknownPackageException
+     * @throws FilesException
+     * @throws StopCommandException
+     * @see neos.contentrepository.migration:node:migrationcreate
      */
-    public function migrationGenerateCommand(string $packageKey): void
+    public function migrationCreateCommand(string $packageKey): void
     {
         if (!$this->packageManager->isPackageAvailable($packageKey)) {
             $this->outputLine('Package "%s" is not available.', [$packageKey]);
-            exit(1);
+            $this->quit(1);
         }
 
-        $generatedFiles = $this->generatorService->generateNodeMigration($packageKey);
-        $this->outputLine(implode(PHP_EOL, $generatedFiles));
+        $createdMigration = $this->generatorService->createNodeMigration($packageKey);
+        $this->outputLine($createdMigration);
         $this->outputLine('Your node migration has been created successfully.');
     }
 

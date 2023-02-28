@@ -12,7 +12,9 @@ namespace Neos\ContentRepository\Migration\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\PackageManager;
+use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
 /**
@@ -29,27 +31,30 @@ class GeneratorService
     protected PackageManager $packageManager;
 
     /**
-     * @var array
-     */
-    protected array $generatedFiles = [];
-
-    /**
-     * Generate a node migration for the given $packageKey
+     * Creates a node migration for the given $packageKey
      *
      * @param string $packageKey the package key
-     * @return array
+     * @return string
+     * @throws UnknownPackageException
+     * @throws FilesException
      */
-    public function generateNodeMigration(string $packageKey): array
+    public function createNodeMigration(string $packageKey): string
     {
-         $templatePath = 'resource://Neos.ContentRepository/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
-         $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';
-
+        $templatePath = 'resource://Neos.ContentRepository/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
+        $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';
 
         $timeStamp = (new \DateTimeImmutable())->format('YmdHis');
         $nodeMigrationFileName = 'Version' . $timeStamp . '.yaml';
 
         $targetPathAndFilename = $nodeMigrationPath . $nodeMigrationFileName;
+        $fileContent = file_get_contents($templatePath);
 
-        // @TODO: Implement logic for create, and saving the file.
+        if (!is_dir(dirname($targetPathAndFilename))) {
+            Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+        }
+
+        file_put_contents($targetPathAndFilename, $fileContent);
+
+        return $packageKey . '/Migrations/ContentRepository/' . $nodeMigrationFileName;
     }
 }
