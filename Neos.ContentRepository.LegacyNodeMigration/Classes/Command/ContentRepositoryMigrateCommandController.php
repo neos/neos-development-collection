@@ -130,7 +130,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
             $this->quit();
         }
 
-        $this->connection->executeStatement('TRUNCATE '. $eventTableName . ';');
+        $this->connection->executeStatement('TRUNCATE ' . $eventTableName);
         $this->outputLine('Truncated events');
 
         $legacyMigrationService = $this->contentRepositoryRegistry->getService(
