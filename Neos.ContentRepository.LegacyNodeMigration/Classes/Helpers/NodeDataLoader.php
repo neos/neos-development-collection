@@ -15,12 +15,8 @@ final class NodeDataLoader implements \IteratorAggregate
 
     public function getIterator(): Traversable
     {
-        $whereClause = [
-            'workspace' => $this->connection->quoteIdentifier("workspace") . ' = ' . $this->connection->quote("live"),
-            'path' => $this->connection->quoteIdentifier("path") . ' != ' . $this->connection->quote("/"),
-            'movedTo' => $this->connection->quoteIdentifier("movedto") . ' IS NULL ',
-            'removed' => $this->connection->quoteIdentifier("removed") . ' = ' . ($this->connection->getDatabasePlatform()->getName() === 'postgresql' ? 'FALSE' : '0')
-        ];
+        $platform = $this->connection->getDatabasePlatform() ? $this->connection->getDatabasePlatform()->getName() : '';
+        $removed = $platform === 'postgresql' ? 'FALSE' : 0;
 
         $query = $this->connection->executeQuery('
             SELECT
@@ -28,12 +24,13 @@ final class NodeDataLoader implements \IteratorAggregate
             FROM
                 neos_contentrepository_domain_model_nodedata
             WHERE
-                ' . $whereClause['workspace'] . ' AND
-                ' . $whereClause['path'] . ' AND
-            (' . $whereClause['movedTo'] . ' OR ' . $whereClause['removed'] . ')
+                "workspace" = \'live\'
+                AND ("movedto" IS NULL OR "removed"=:removed)
+                AND "path" != \'/\'
             ORDER BY
                 parentpath, sortingindex, path
-        ');
+        ', ['removed' => $removed]);
+
         return $query->iterateAssociative();
     }
 }
