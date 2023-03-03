@@ -12,6 +12,7 @@ namespace Neos\Neos\Controller\Backend;
  */
 
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -19,6 +20,7 @@ use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Service\ContentContextFactory;
 use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
 use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
@@ -64,12 +66,6 @@ class MenuHelper
     protected $iconMapper;
 
     /**
-     * @Flow\Inject
-     * @var ContentContextFactory
-     */
-    protected $contextFactory;
-
-    /**
      * @param array $settings
      */
     public function injectSettings(array $settings): void
@@ -93,38 +89,38 @@ class MenuHelper
             return [];
         }
 
-        $context = $this->contextFactory->create();
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
-            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
-                $uri = null;
-                $active = false;
-                /** @var $site Site */
-                if ($site->hasActiveDomains()) {
-                    $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
-                        return $domain->getHostname();
-                    })->toArray();
+            // TODO: we need to check permissions here, a.k.a
+            // TODO: $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+            // TODO: if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            // TODO: unfortunately, it's not so easy; because we do not know what dimension we are in...
+            $uri = null;
+            $active = false;
+            /** @var $site Site */
+            if ($site->hasActiveDomains()) {
+                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
+                    return $domain->getHostname();
+                })->toArray();
 
-                    $active = in_array($requestUriHost, $activeHostPatterns, true);
+                $active = in_array($requestUriHost, $activeHostPatterns, true);
 
-                    if ($active) {
-                        $uri = $contentModule['uri'];
-                    } else {
-                        $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
-                    }
-
-                    $domainsFound = true;
+                if ($active) {
+                    $uri = $contentModule['uri'];
+                } else {
+                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
                 }
 
-                $sites[] = [
-                    'name' => $site->getName(),
-                    'nodeName' => $site->getNodeName(),
-                    'uri' => $uri,
-                    'active' => $active
-                ];
+                $domainsFound = true;
             }
+
+            $sites[] = [
+                'name' => $site->getName(),
+                'nodeName' => $site->getNodeName(),
+                'uri' => $uri,
+                'active' => $active
+            ];
         }
 
         if ($domainsFound === false) {
