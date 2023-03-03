@@ -1013,7 +1013,7 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Creates an array of workspace names and their respective titles which are possible base workspaces for other
      * workspaces.
-     * If $excludedWorkspace is set, this workspace will be excluded from the list of returned workspaces
+     * If $excludedWorkspace is set, this workspace and all its child workspaces will be excluded from the list of returned workspaces
      *
      * @param ContentRepository $contentRepository
      * @param Workspace|null $excludedWorkspace
@@ -1024,7 +1024,9 @@ class WorkspacesController extends AbstractModuleController
         Workspace $excludedWorkspace = null
     ): array {
         $baseWorkspaceOptions = [];
-        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+        $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
+        foreach ($workspaces as $workspace) {
+
             /** @var Workspace $workspace */
             if (
                 !$workspace->isPersonalWorkspace()
@@ -1032,6 +1034,7 @@ class WorkspacesController extends AbstractModuleController
                 && ($workspace->isPublicWorkspace()
                     || $workspace->isInternalWorkspace()
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
+                && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get($excludedWorkspace->workspaceName) === null)
             ) {
                 $baseWorkspaceOptions[(string)$workspace->workspaceName] = (string)$workspace->workspaceTitle;
             }
