@@ -361,6 +361,9 @@
 			</trans-unit>
 
 			<!-- shortcuts -->
+      <trans-unit id="shortcut.toSpecificTarget" xml:space="preserve">
+        <source>This is a shortcut to a specific target:</source>
+      </trans-unit>
 			<trans-unit id="shortcut.clickToContinueToPage" xml:space="preserve">
 				<source>Click {0} to continue to the page.</source>
 			</trans-unit>

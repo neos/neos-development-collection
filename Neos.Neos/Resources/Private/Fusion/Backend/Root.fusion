@@ -1,6 +1,7 @@
 include: resource://Neos.Fusion/Private/Fusion/Root.fusion
 include: resource://Neos.Fusion.Form/Private/Fusion/Root.fusion
 include: Views/*.fusion
+include: Component/*.fusion
 
 Neos.Neos.LoginController.index = Neos.Neos:View.Login {
   site = ${site}

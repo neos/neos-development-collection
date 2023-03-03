@@ -448,19 +448,20 @@ class Asset implements AssetInterface
     public function setAssetCollections(Collection $assetCollections)
     {
         $this->lastModified = new \DateTime();
+
         foreach ($this->assetCollections as $existingAssetCollection) {
             if (!$assetCollections->contains($existingAssetCollection)) {
                 $existingAssetCollection->removeAsset($this);
+                $this->persistenceManager->update($existingAssetCollection);
             }
         }
+
         foreach ($assetCollections as $newAssetCollection) {
-            $newAssetCollection->addAsset($this);
-        }
-        foreach ($this->assetCollections as $assetCollection) {
-            if (!$assetCollections->contains($assetCollection)) {
-                $assetCollections->add($assetCollection);
+            if (!$this->assetCollections->contains($newAssetCollection)) {
+                $newAssetCollection->addAsset($this);
             }
         }
+
         $this->assetCollections = $assetCollections;
     }
 

@@ -9,6 +9,7 @@ all Packages that are in a default (Demo Package) setup.
 
    NodeTypeDefinition
    PropertyEditorReference
+   InspectorViewsReference/index
    ViewHelpers/index
    NeosFusionReference
    EelHelpersReference

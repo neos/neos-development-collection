@@ -1,0 +1,509 @@
+`8.2.0 (2022-12-01) <https://github.com/neos/neos-development-collection/releases/tag/8.2.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Make login logo configurable <https://github.com/neos/neos-development-collection/pull/3924>`_
+--------------------------------------------------------------------------------------------------------
+
+Since ages, we are able to configure the background of the login to customize. The logo was often replaced by CSS. With this change, we are able to configure a logo as well.
+
+The new setting is  'Neos.Neos.userInterface.backendLoginForm.logoImage'
+
+**Review instructions**
+
+Configure a new logo and check the login screen.
+
+<img width="1688" alt="Screenshot 2022-10-18 at 10 39 31" src="https://user-images.githubusercontent.com/1014126/196380887-4d52a85a-61d0-4f1b-b24a-e8d070845acb.png">
+
+* Packages: ``Neos``
+
+`FEATURE: Add Fusion EEL Helper `${Neos.Backend.interfaceLanguage()}` <https://github.com/neos/neos-development-collection/pull/3939>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3638 <https://github.com/neos/neos-development-collection/issues/3638>`_
+implemented as discussed in `#3638 <https://github.com/neos/neos-development-collection/issues/3638>`_
+
+```
+Neos.Backend
+------------
+
+Backend helper eg. for translations in the backend
+
+Implemented in: ``Neos\\Neos\\Fusion\\Helper\\BackendHelper``
+
+Neos.Backend.interfaceLanguage()
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The interface language the user selected or the default language defined in the settings
+Formatted as {@see \\Neos\\Flow\\I18n\\Locale} identifier, eg "de", "en", ...
+
+**Return** (string)
+```
+
+
+If no user is available. ``assert`` https://www.php.net/manual/de/function.assert.php will fail and depending on you php config - throw an error 
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+use this helper in your fusion and check if it correctly reflects you backend user language.
+Try to switch your language via user-settings (possibly flush the fusion cache) and see it correctly reflected
+
+```
+root >
+root = ${Neos.Backend.interfaceLanguage()}
+``` 
+
+
+
+* Packages: ``Neos``
+
+`FEATURE: implement checkbox label in workspace module <https://github.com/neos/neos-development-collection/pull/3929>`_
+------------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Currently, in the Workspace module, in the overview, we have a checkbox for selecting all changes. But this checkbox is not marked with a label. For clarity (and looks), it is better if it is clearly marked what this checkbox does.
+
+## Screenshots
+
+### Before
+!`neos-backend-workspace-module-checkbox-without-label <https://user-images.githubusercontent.com/39345336/197170837-7b4e5878-0f76-4ebc-baeb-62320d4522f9.png>`_
+
+### After
+!`neos-backend-workspace-module-checkbox-with-label <https://user-images.githubusercontent.com/39345336/197170857-b111a761-037a-4fb7-af02-8bb47380447d.png>`_
+
+
+
+* Packages: ``Neos``
+
+`FEATURE: Add `nodetypes://` stream wrapper to support including fusion from NodeTypes folder <https://github.com/neos/neos-development-collection/pull/3903>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+To support colocation of NodeTypes and Fusion Files the ``nodetypes://`` stream wrapper is added that allows to access files from the NodeTypes folder.
+
+The following line in the ``Root.fusion`` will load all fusion files from the ``NodeTypes`` folder of package ``Vendor.Site``
+```
+include: nodetypes://Vendor.Site/**/*.fusion 
+```
+
+**Review instructions**
+
+Basically the stream wrapper is a copy of the resource stream wrapper from flow (https://github.com/neos/flow-development-collection/blob/8.2/Neos.Flow/Classes/ResourceManagement/Streams/ResourceStreamWrapper.php) with the following adjustments. 
+- Added protection against traversal out of the path via multiple ``..`` in the path
+- Support an empty path as this is needed in the most likely globbing pattern ``nodetypes://Vendor.Site/**/*.fusion``
+
+The explicit filter for ``..`` in the filePatternResolver is needed as otherwise the traversal protection will throw a valid exception because of boundary violation when calling isDir on the path ``NodeTypes/..``. 
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`FEATURE: Provide Uris in MenuItemsImplementation <https://github.com/neos/neos-development-collection/pull/3911>`_
+-------------------------------------------------------------------------------------------------------------------
+
+With this change the uris for nodes are included in menuitems. This makes it easier to use them in presentational components as no further processing is needed to turn nodes into uris.
+
+* Resolves: `#3907 <https://github.com/neos/neos-development-collection/issues/3907>`_
+
+**Review instructions**
+
+Debugdump the output of a ``Neos.Neos:MenuItems`` instance. It should include ``uri`` fields for all items.
+
+
+* Packages: ``Neos`` ``NodeTypes.Navigation``
+
+`BUGFIX: Fusion Component declaration `renderer=null` <https://github.com/neos/neos-development-collection/pull/3945>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+followup for `#3915 <https://github.com/neos/neos-development-collection/issues/3915>`_
+
+fixes: https://github.com/neos/neos-development-collection/pull/3915#discussion_r1011450134
+
+
+otherwise when the renderer is misspelled, the evaluation wouldnt notice it as we would have the fallback to ``renderer=""`` 
+
+(fyi assigning a path to null in fusion, is like it doesnt exist - the runtime wouldnt know)
+
+!`image <https://user-images.githubusercontent.com/85400359/199457646-d09dfaeb-e1cf-479f-860a-8c51821db2be.png>`_
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Fusion``
+
+`BUGFIX: 3371 shortcut translations <https://github.com/neos/neos-development-collection/pull/3937>`_
+-----------------------------------------------------------------------------------------------------
+
+closes: `#3371 <https://github.com/neos/neos-development-collection/issues/3371>`_
+
+## 1
+
+
+> the dutch translation f.x. doesnt have correctly formatted ``<br/>`` tags. See f.x.: ``'shortcut.clickToContinueToParentNode'`` and compare the spanish ``&lt; br / &gt;`` to the english source ``&lt;br /&gt;``. A search for ``&lt; br / &gt;`` reveals multiple cases. The problem is, that this invalid html (due to the space) and will be rendered as text (``< br / >``).
+
+
+before in NL:
+!`image <https://user-images.githubusercontent.com/85400359/198111355-d5a4d9f5-f1b5-4b83-8f4a-1f3c914b4955.png>`_
+
+
+after:
+!`image <https://user-images.githubusercontent.com/85400359/198111385-575bd6b0-4044-436d-a145-e14d4934c778.png>`_
+
+## 2
+
+> this translation id doesnt exist: ``'shortcut.toSpecificTarget'`` so the value / fallback ``This is a shortcut to a specific target:`` is always used.
+
+It has been missed in 2014 (since Neos 2) ^^ https://github.com/neos/neos-development-collection/commit/`02f8ff96e1ecd3dfbd9a356c4c6f55bb565916c7 <https://github.com/neos/neos-development-collection/commit/02f8ff96e1ecd3dfbd9a356c4c6f55bb565916c7>``_#diff-``d1bec08a4f5050d463e4f7af3d61b767974d858d <https://github.com/neos/neos-development-collection/commit/d1bec08a4f5050d463e4f7af3d61b767974d858d>`_3d56ced85581ca55c27126dcR6
+
+before in DE (or any other language):
+!`image <https://user-images.githubusercontent.com/85400359/198111487-39e7c03c-c132-4896-a12d-f25da087e07b.png>`_
+
+after:
+nothing to see here yet - but now we can translate via weblate :D
+
+**Upgrade instructions**
+
+**Review instructions**
+
+Check the shortcode rendering in the backend.
+If you switch your user language - flush the fusion cache - as this is not calculated into the shortcut cache:
+ ``./flow cache:flushone Neos_Fusion_Content``
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: fix typos in privilegeTargets <https://github.com/neos/neos-development-collection/pull/3938>`_
+--------------------------------------------------------------------------------------------------------
+
+
+**Review instructions**
+
+Fixes small spelling errors in the priviligeTargets
+
+
+* Packages: ``Neos``
+
+`BUGFIX: fix composer create-project command for neos dev collection <https://github.com/neos/neos-development-collection/pull/3927>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+I noticed that the previous command is no longer working.
+
+* Packages: ``Neos``
+
+`BUGFIX: DI conflict in DataSource `Call to a member function log Throwable() on null` <https://github.com/neos/neos-development-collection/pull/3931>`_
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3858 <https://github.com/neos/neos-development-collection/issues/3858>`_
+
+when one throws an exception in a datasource, it fails logging it and an uncaught error is thrown, because the ``ThrowableStorage`` is not injected:
+
+``Call to a member function log Throwable() on null``
+
+this seems due to a dependency injection conflict with inheritance.
+
+this pr only prevents this conflict from happening
+
+the controller that handles datasources extends the ``AbstractServiceController``
+which injects the ``throwableStorage``
+
+```php
+  /**
+   * @Flow\\Inject
+   * @var ThrowableStorageInterface
+   */
+  protected $throwableStorage;
+```
+
+but the  ``AbstractServiceController`` also extends the ``ActionController`` which injects the ``throwableStorage`` via an inject method into a private property
+
+```php
+    /**
+     * @var ThrowableStorageInterface
+     */
+    private $throwableStorage;
+
+    /**
+     * Injects the throwable storage.
+     *
+     * @param ThrowableStorageInterface $throwableStorage
+     * @return void
+     */
+    public function injectThrowableStorage(ThrowableStorageInterface $throwableStorage)
+    {
+        $this->throwableStorage = $throwableStorage;
+    }
+
+```
+
+this combined doesnt work and results in the ``@Flow\\Inject`` in the ``AbstractServiceController`` not working
+
+solutions are:
+
+- fix the flow DI? (assuming this is a issue)
+- rename the variable (what id did now)
+- use also ``AbstractServiceController::injectThrowableStorage`` and call parent / not the ``@Flow\\Inject`` annotation
+- use a protected property in ``ActionController`` and reuse it
+
+
+## update 1
+this is indeed defined behaviour from flow: https://flowframework.readthedocs.io/en/8.1/TheDefinitiveGuide/PartIII/ObjectManagement.html#property-injection
+> If a setter method exists for the same property, it has precedence.
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Node::countChildNodes($nodeTypeConstraints) filter doesn't work <https://github.com/neos/neos-development-collection/pull/3930>`_
+------------------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3885 <https://github.com/neos/neos-development-collection/issues/3885>`_
+
+``findChildNodes`` is corrently implemented, but ``countChildNodes`` doesnt transform the argument $nodeTypeConstraints NodeTypeConstraints to a string for the legacy api:
+
+either this snipped must be included:
+```php
+$filter = $nodeTypeConstraints !== null ? $nodeTypeConstraints->asLegacyNodeTypeFilterString() : null;
+```
+
+or we must use ``$this->findChildNodes``
+
+without that, the ``NodeTypeConstraints`` is passed further down, and due to lack of typesafety it fails at the last moment:
+```php
+Argument 2 passed to Neos\\Utility\\Arrays::trimExplode() must be of the type string, object given, called in /tmp/neos/Development/SubContextddev/Cache/Code/Flow_Object_Classes/Neos_ContentRepository_Domain_Repository_NodeDataRepository.php on line 1127
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Fusion Runtime @process with simple string <https://github.com/neos/neos-development-collection/pull/3847>`_
+---------------------------------------------------------------------------------------------------------------------
+
+This makes it possible to use ``@process`` with a regular string.
+
+Closes `#3846 <https://github.com/neos/neos-development-collection/issues/3846>`_
+
+**Review instructions**
+try the fusion code from the issue.
+
+it now works as we switched a condition (the count will only happen if it is an array and not possibly a simple value)
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Make import of .ico files possible <https://github.com/neos/neos-development-collection/pull/3923>`_
+-------------------------------------------------------------------------------------------------------------
+
+This enables the possibility of uploading ``.ico`` files.
+
+Closes `#3922 <https://github.com/neos/neos-development-collection/issues/3922>`_
+
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Fix media commands output <https://github.com/neos/neos-development-collection/pull/3902>`_
+----------------------------------------------------------------------------------------------------
+
+Fix Neos.Media commands ``media:clearthumbnails``, ``media:createthumbnails`` and ``media:removeunused`` to properly print a final newline.
+
+Output before:
+```
+user $ ./flow media:clearthumbnails
+0 [->--------------------------]user $
+                                ^-- next prompt
+```
+Output after:
+```
+user $ ./flow media:clearthumbnails
+0 [->--------------------------]
+user $
+```
+Resolved: `#3894 <https://github.com/neos/neos-development-collection/issues/3894>`_
+
+**Upgrade instructions**
+
+None.
+
+**Review instructions**
+
+in ``bash``, execute
+``./flow media:clearthumbnails``
+(by default, ``zsh`` is less affected, it recovers but shows a percent sign)
+
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Fusion Runtime lazy-props evaluation confuses `getLastEvaluat… <https://github.com/neos/neos-development-collection/pull/3677>`_
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3469 <https://github.com/neos/neos-development-collection/issues/3469>`_
+
+doing the check if a render was successful cannot only happen via ``$this->getLastEvaluationStatus()``
+-> as the render path might contain a lazy-prop (closure) which, when evaluated uses the same runtime.
+-> if the last lazy-prop has an ``@if`` annotation its skipped, but the ``$lastEvaluationStatus`` is set on the same runtime.
+-> there might still be partial successful output (the first values of a lazy-prop eg.) so we need to check additionally if the return value is null.
+
+* Packages: ``Fusion``
+
+`BUGFIX: Add correct default value for sortBy parameter <https://github.com/neos/neos-development-collection/pull/3883>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+When using the UserService in your code or via CLI ``./flow user:list`` you will get an exception caused by the incorrect default value. Only if you pass the correct value, e.g. ``accounts.accountIdentifier``, then it works.
+
+This fixes that by providing a (correct) default value of ``accounts.accountIdentifier``.
+
+* Fixes: `#3882 <https://github.com/neos/neos-development-collection/issues/3882>`_
+
+
+* Packages: ``Neos``
+
+`TASK: Remove old UI specific content wrappings and CSS <https://github.com/neos/neos-development-collection/pull/3618>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+The nodetype schema endpoint saves all values with the prefix typo3. This change will replace this with neoscms.
+
+**What I did**
+
+- [x] Removed all content wrappings related to the old Neos UI
+- [x] Removed PHP code that is completely replaced via AOP by Neos UI code
+
+**How to verify it**
+
+Every content element when rendered in the backend should have much less data attributes, especially the ``typo3`` prefixed ones.
+All should still work the same, but cleaner and faster.
+
+
+* Packages: ``Neos``
+
+`TASK: Update code of conduct <https://github.com/neos/neos-development-collection/pull/3905>`_
+-----------------------------------------------------------------------------------------------
+
+Removes the rST version (based on v1.4 of Contributor Covenant) and update the md version to 2.1 of Contributor Covenant.
+
+
+* Packages: ``Neos``
+
+`TASK: minor clean up fusion runtime code  <https://github.com/neos/neos-development-collection/pull/3674>`_
+------------------------------------------------------------------------------------------------------------
+
+I often wanted to bring some light into the Runtime, now here it is ^^
+
+I made **really** small, descriptive commits, so it should be superclear why i did touch code part x.
+
+I ran the benchmark afterwards but there is no difference, as i only changed the syntax...
+
+* Packages: ``Media`` ``Fusion``
+
+`TASK: Render API docs (again) <https://github.com/neos/neos-development-collection/pull/3934>`_
+------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Media.Browser`` ``Neos`` ``.github``
+
+`TASK: Remove unused `Fusion\Core\ParserInterface` <https://github.com/neos/neos-development-collection/pull/3932>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The ``Fusion\\Core\\ParserInterface`` is removed as it could not be used to implement an alternative Fusion parser. The removal of the interface will allow to improve the interface of the parser in future.
+
+
+**Upgrade instructions**
+
+If you must access the Fusion parser directly - then dont inject it by using the ``Fusion\\Core\\ParserInterface`` but inject or instantiate ``Fusion\\Core\\Parser``.
+The recommended way to interact with Fusion is via the FusionView
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Persist every 1000 iterations in media:clearthumbnails <https://github.com/neos/neos-development-collection/pull/3916>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+This includes a few style tweaks as well, but the main part is the introduction
+ of persisting changes every 1000 iterations when clearing thumbnails.
+
+This makes restarting possible without having lost (much) progress.
+
+
+* Packages: ``Media``
+
+`TASK: Split basic fusion prototype files and define defaults <https://github.com/neos/neos-development-collection/pull/3915>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+Splits the Fusion prototypes in Neos.Neos and Neos.Fusion into separate files and adds all available parameters of the PHP implementations also in Fusion.
+This should make it easier for integrators to understand which options are available for each prototype without reading the their PHP implementation code.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Tweak note about target branches for PRs <https://github.com/neos/neos-development-collection/pull/3904>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This removes an explicit mention of the oldest supported branch,
+so we don't have to keep updating it.
+
+* Packages: ``Neos``
+
+`TASK: Use local fonts instead of from Google <https://github.com/neos/neos-development-collection/pull/3919>`_
+---------------------------------------------------------------------------------------------------------------
+
+Removes the use of remote fonts from Google in favor of local font files.
+Additionally ``node-sass`` was updated to allow compilation on M1 Macs.
+
+Replaces `#3873 <https://github.com/neos/neos-development-collection/issues/3873>`_
+
+**Review instructions**
+
+Noto should still be the font used on error pages.
+
+
+* Packages: ``Neos``
+
+`TASK: Document download linking option in PropertyEditorReference <https://github.com/neos/neos-development-collection/pull/3912>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+My pull request includes the documentation for the following pull request:
+- https://github.com/neos/neos-ui/pull/3197
+
+
+* Packages: ``Neos``
+
+`TASK: improve feature issue template wording <https://github.com/neos/neos-development-collection/pull/3909>`_
+---------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`TASK: Rename index to match name in database <https://github.com/neos/neos-development-collection/pull/3889>`_
+---------------------------------------------------------------------------------------------------------------
+
+Renames the index in the NodeData model to match the index name in migration and database.
+
+* Fixes: `#3888 <https://github.com/neos/neos-development-collection/issues/3888>`_
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Add PHP 8.1 to build matrix <https://github.com/neos/neos-development-collection/pull/3884>`_
+----------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+The build on PHP 8.1 should succeed.
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.1.0...8.2.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

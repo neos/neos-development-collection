@@ -495,11 +495,11 @@
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-        <target state="translated">Si tratta di una scorciatoia per la prima pagina figlia. &lt; br / &gt; fare clic su {0} per passare alla pagina.</target>
+        <target state="translated">Si tratta di una scorciatoia per la prima pagina figlia. &lt;br /&gt; fare clic su {0} per passare alla pagina.</target>
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-        <target state="translated">Si tratta di una scorciatoia per la pagina padre. &lt; br / &gt; fare clic su {0} per passare alla pagina.</target>
+        <target state="translated">Si tratta di una scorciatoia per la pagina padre. &lt;br /&gt; fare clic su {0} per passare alla pagina.</target>
       </trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">

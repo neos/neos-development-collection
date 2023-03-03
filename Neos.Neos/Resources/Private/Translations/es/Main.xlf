@@ -373,10 +373,10 @@
 			<target state="translated">(no se ha seleccionado ningún destino)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="translated">Este es un acceso directo a la primera página hija. &lt; br / &gt; Haga clic en {0} para continuar a la página.</target></trans-unit>
+			<target state="translated">Este es un acceso directo a la primera página hija. &lt;br /&gt; Haga clic en {0} para continuar a la página.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="translated">Este es un acceso directo a la página padre. &lt; br / &gt; Haga clic en {0} para continuar a la página.</target></trans-unit>
+			<target state="translated">Este es un acceso directo a la página padre. &lt;br /&gt; Haga clic en {0} para continuar a la página.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>

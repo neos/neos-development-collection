@@ -1150,6 +1150,10 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 				<source>You are not allowed to create a user with roles "{0}".</source>
         <target state="needs-translation">You are not allowed to create a user with roles "{0}".</target>
       </trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+        <target state="needs-translation">Unable to create user.</target>
+      </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
         <target state="needs-translation">User editing denied</target>
@@ -1253,6 +1257,14 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
       <trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
 				<source>Your user has been updated.</source>
         <target state="needs-translation">Your user has been updated.</target>
+      </trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>

@@ -880,7 +880,6 @@ class UserService
     /**
      * @param User $user
      * @param bool $keepCurrentSession
-     * @throws SessionNotStartedException
      */
     private function destroyActiveSessionsForUser(User $user, bool $keepCurrentSession = false): void
     {
@@ -892,7 +891,13 @@ class UserService
             );
             foreach ($activeSessions as $activeSession) {
                 /** @var SessionInterface $activeSession */
-                if ($sessionToKeep instanceof SessionInterface && $activeSession->getId() === $sessionToKeep->getId()) {
+                if (!$activeSession->isStarted()) {
+                    continue;
+                }
+                if ($sessionToKeep instanceof SessionInterface
+                    && $sessionToKeep->isStarted()
+                    && $activeSession->getId() === $sessionToKeep->getId()
+                ) {
                     continue;
                 }
                 $activeSession->destroy(

@@ -373,10 +373,10 @@
 			<target state="translated">(tidak ada target telah dipilih)</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="translated">Ini adalah shortcut untuk halaman pertama anak. &lt; br / &gt; klik {0} untuk melanjutkan ke halaman.</target></trans-unit>
+			<target state="translated">Ini adalah shortcut untuk halaman pertama anak. &lt;br /&gt; klik {0} untuk melanjutkan ke halaman.</target></trans-unit>
       <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-			<target state="translated">Ini adalah shortcut untuk halaman induk. &lt; br / &gt; klik {0} untuk melanjutkan ke halaman.</target></trans-unit>
+			<target state="translated">Ini adalah shortcut untuk halaman induk. &lt;br /&gt; klik {0} untuk melanjutkan ke halaman.</target></trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve">
 				<source>Full Screen</source>

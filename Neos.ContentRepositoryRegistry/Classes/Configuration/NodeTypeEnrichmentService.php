@@ -296,7 +296,7 @@ class NodeTypeEnrichmentService
                         $translationIdGenerator
                     );
                 }
-                if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration['ui'])) {
+                if (!is_array($elementConfiguration) || !$this->shouldFetchTranslation($elementConfiguration['ui'] ?? [])) {
                     continue;
                 }
                 $elementConfiguration['ui']['label'] = $this->getInspectorElementTranslationId(

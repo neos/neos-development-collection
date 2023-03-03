@@ -21,10 +21,11 @@ export default class Message {
     const milliseconds = Date.now();
     const timestamp = Math.floor(milliseconds / 1000);
     const { title, message, type, closeButton } = this.options;
+    const htmlSafeTitle = DOMPurify.sanitize(title);
     const htmlSafeMessage = DOMPurify.sanitize(message);
     const messageMarkup = messageTemplate(
       type,
-      title,
+      htmlSafeTitle,
       htmlSafeMessage,
       closeButton
     );

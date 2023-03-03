@@ -1150,6 +1150,10 @@ Clique em um dos nodes para ver apenas os seus fallbacks e variantes. Clique nov
 				<source>You are not allowed to create a user with roles "{0}".</source>
         <target state="needs-translation">You are not allowed to create a user with roles "{0}".</target>
       </trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+        <target state="needs-translation">Unable to create user.</target>
+      </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
         <target state="needs-translation">User editing denied</target>
@@ -1254,6 +1258,14 @@ Clique em um dos nodes para ver apenas os seus fallbacks e variantes. Clique nov
 				<source>Your user has been updated.</source>
         <target state="needs-translation">Your user has been updated.</target>
       </trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
+      </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>
         <target state="needs-translation">Password updated</target>
@@ -1278,13 +1290,13 @@ Clique em um dos nodes para ver apenas os seus fallbacks e variantes. Clique nov
 				<source>The electronic address "{0}" ({1}) has been deleted for "{2}".</source>
         <target state="needs-translation">The electronic address "{0}" ({1}) has been deleted for "{2}".</target>
       </trans-unit>
-      <trans-unit id="workspaces.selectAllCurrentChanges">
-        <source>Select all current changes</source>
-        <target state="translated">Selecionar todas as alterações atuais</target>
-      </trans-unit>
       <trans-unit id="users.lastLogin" xml:space="preserve">
 				<source>Last Login</source>
         <target state="translated">Última autenticação</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectAllCurrentChanges">
+        <source>Select all current changes</source>
+        <target state="translated">Selecionar todas as alterações atuais</target>
       </trans-unit>
     </body>
   </file>

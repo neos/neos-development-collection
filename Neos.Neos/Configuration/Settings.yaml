@@ -297,6 +297,7 @@ Neos:
 
       backendLoginForm:
         backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper.webp'
+        logoImage: 'resource://Neos.Neos/Public/Images/Login/Logo.svg'
         stylesheets:
           'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'
 
@@ -304,9 +305,15 @@ Neos:
       widgetTemplatePathAndFileName: 'resource://Neos.Neos/Private/Templates/Module/Widget.html'
       # This stylesheet can be overriden in the configuration of a submodule to reference a reduced stylesheet.
       # Use `Main` for backwards compatibility
-      # Use `Lite` for a reduced variant with a less aggressive reset and other non essential styles removed.
+      # Use `Lite` for a reduced variant with a less aggressive reset and other non-essential styles removed.
       # Use `Minimal` when your module provides its own styles and Neos only needs to show the top and bottom bar.
       mainStylesheet: 'Main'
+
+      # Define additional stylesheets and javascript for all backend modules
+      additionalResources:
+        styleSheets: {}
+        javaScripts:
+          'Neos.Neos': 'resource://Neos.Neos/Public/JavaScript/Main.min.js'
 
       preferredStartModules: [ 'content','user/usersettings' ]
 
@@ -379,6 +386,8 @@ Neos:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController
         hideInMenu: true
+        description: 'Neos.Neos:Modules:user.description'
+        icon: fas fa-users
         mainStylesheet: 'Lite'
         submodules:
           usersettings:
@@ -558,6 +567,7 @@ Neos:
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
+      Neos.Backend: Neos\Neos\Fusion\Helper\BackendHelper
 
   # DocTools is a tool used by Neos Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.

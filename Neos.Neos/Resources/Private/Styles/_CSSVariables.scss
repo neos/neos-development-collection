@@ -54,8 +54,8 @@
   --transition-Slow: 0.5s;
 
   --zIndex-SecondaryToolbar-LinkIconButtonFlyout: 1;
-  --zIndex-FlashMessageContainer: 6;
-  --zIndex-LoadingIndicatorContainer: 5;
+  --zIndex-FlashMessageContainer: 60;
+  --zIndex-LoadingIndicatorContainer: 50;
   --zIndex-SecondaryInspector-Context: 1;
   --zIndex-SecondaryInspector-Iframe: 2;
   --zIndex-SecondaryInspector-Close: 3;
@@ -63,12 +63,12 @@
   --zIndex-SecondaryInspectorElevated-DropdownContents: 2;
   --zIndex-Dialog-Context: 1;
   --zIndex-FullScreenClose-Context: 1;
-  --zIndex-Drawer-Context: 1;
+  --zIndex-Drawer: 45;
   --zIndex-Bar-Context: 1;
-  --zIndex-PrimaryToolbar: 4;
+  --zIndex-PrimaryToolbar: 40;
   --zIndex-CheckboxInput-Context: 1;
   --zIndex-DropdownContents-Context: 1;
-  --zIndex-SelectBoxContents: 3;
+  --zIndex-SelectBoxContents: 40;
   --zIndex-NotInlineEditableOverlay-Context: 1;
   --zIndex-CalendarFakeInputMirror-Context: 1;
   --zIndex-RdtPicker-Context: 1;
