@@ -159,10 +159,6 @@
 				<source>Discard selected changes</source>
         <target state="translated">放弃所选的更改</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
-        <target state="translated">发布选择的更改</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
         <target state="translated">舍弃所有更改</target>
