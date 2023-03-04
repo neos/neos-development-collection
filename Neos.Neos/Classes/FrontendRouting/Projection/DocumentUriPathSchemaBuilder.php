@@ -74,8 +74,8 @@ class DocumentUriPathSchemaBuilder
                 'parentnodeaggregateid',
                 'precedingnodeaggregateid',
                 'succeedingnodeaggregateid'
-            ], 'preceding_succeeding')
-            ->addIndex(['sitenodename', 'uripath'], 'sitenode_uripath', [], ['lengths' => [null,100]]);
+            ], $this->tableNamePrefix . '_preceding_succeeding')
+            ->addIndex(['sitenodename', 'uripath'], $this->tableNamePrefix . '_sitenode_uripath', [], ['lengths' => [null,100]]);
     }
 
     private function createLiveContentStreamsTable(Schema $schema): void

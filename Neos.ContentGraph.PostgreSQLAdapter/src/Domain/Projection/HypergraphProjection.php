@@ -121,12 +121,12 @@ final class HypergraphProjection implements ProjectionInterface
             $connection->executeStatement($statement);
         }
         $connection->executeStatement('
-            CREATE INDEX IF NOT EXISTS node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
+            CREATE INDEX IF NOT EXISTS ' . $this->tableNamePrefix . '_node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
 
-            create index if not exists hierarchy_children
+            create index if not exists ' . $this->tableNamePrefix . '_hierarchy_children
                 on ' . $this->tableNamePrefix . '_hierarchyhyperrelation using gin (childnodeanchors);
 
-            create index if not exists restriction_affected
+            create index if not exists ' . $this->tableNamePrefix . '_restriction_affected
                 on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateidentifiers);
         ');
 
