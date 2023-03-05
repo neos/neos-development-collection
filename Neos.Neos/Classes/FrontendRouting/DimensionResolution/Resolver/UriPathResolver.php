@@ -20,10 +20,12 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPathResolverConfigurationException;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 
 /**
  * URI path segment based dimension value resolver
@@ -37,6 +39,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPa
  */
 final class UriPathResolver implements DimensionResolverInterface
 {
+    readonly DimensionSpacePoint $defaultDimensionSpacePoint;
     /**
      * @param array<string,DimensionSpacePoint> $uriPathToDimensionSpacePoint
      * @param array<string,string> $dimensionSpacePointHashToUriPath
@@ -46,13 +49,16 @@ final class UriPathResolver implements DimensionResolverInterface
         private readonly array $uriPathToDimensionSpacePoint,
         private readonly array $dimensionSpacePointHashToUriPath,
         private readonly Segments $segments,
+        DimensionSpacePoint $defaultDimensionSpacePoint,
     ) {
+        $this->defaultDimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($defaultDimensionSpacePoint);
     }
 
     public static function create(
         Segments $segments,
         Separator $separator,
-        ContentDimensionSourceInterface $contentDimensionSource
+        ContentDimensionSourceInterface $contentDimensionSource,
+        DimensionSpacePoint $defaultDimensionSpacePoint,
     ): self {
         self::validate($segments, $separator, $contentDimensionSource);
         list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths(
@@ -62,7 +68,8 @@ final class UriPathResolver implements DimensionResolverInterface
         return new self(
             $uriPathToDimensionSpacePoint,
             $dimensionSpacePointHashToUriPath,
-            $segments
+            $segments,
+            $defaultDimensionSpacePoint
         );
     }
 
@@ -168,7 +175,12 @@ final class UriPathResolver implements DimensionResolverInterface
         $firstUriPathSegment = array_shift($uriPathSegments);
 
         if (isset($this->uriPathToDimensionSpacePoint[$firstUriPathSegment])) {
+            if (count($uriPathSegments) === 0 && $this->uriPathToDimensionSpacePoint[$firstUriPathSegment]->hash === $this->defaultDimensionSpacePoint->hash) {
+                #/en sould not match
+                return $context;
+            }
             // match
+            //die("MATCH");
             $context = $context->withRemainingUriPath('/' . implode('/', $uriPathSegments));
             $context = $context->withAddedDimensionSpacePoint(
                 $this->uriPathToDimensionSpacePoint[$firstUriPathSegment]
@@ -176,6 +188,14 @@ final class UriPathResolver implements DimensionResolverInterface
         } elseif (isset($this->uriPathToDimensionSpacePoint[''])) {
             // Fall-through empty match (if configured)
             $context = $context->withAddedDimensionSpacePoint($this->uriPathToDimensionSpacePoint['']);
+        } else {
+            // TODO FIX ME: Context does not match -> so the default kicks in. -> Not what we want, because prefix was configured.
+            // TODO: clashes with composability!?!?
+
+            if ($firstUriPathSegment === "") {
+                # /: fill with default dsp if not found
+                $context = $context->withAddedDimensionSpacePoint($this->defaultDimensionSpacePoint);
+            }
         }
 
         return $context;
@@ -183,10 +203,16 @@ final class UriPathResolver implements DimensionResolverInterface
 
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $dimensionSpacePoint,
-        SiteNodeName $targetSiteIdentifier,
+        DocumentNodeInfo $targetNode,
         UriConstraints $uriConstraints
     ): UriConstraints {
         $dimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($dimensionSpacePoint);
+
+        if ($targetNode->getUriPath() === '' && $dimensionSpacePoint->hash === $this->defaultDimensionSpacePoint->hash) {
+            // link to homepage; AND default dimensions match:
+            // generate a link to "/" (by not modifying the UriConstraints)
+            return $uriConstraints;
+        }
 
         if (isset($this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash])) {
             $uriPath = $this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash];

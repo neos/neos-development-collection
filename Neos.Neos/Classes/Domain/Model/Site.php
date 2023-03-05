@@ -372,9 +372,9 @@ class Site
     /**
      * @return array<string,mixed>
      */
-    public function getConfiguration(): array
+    public function getConfiguration(): SiteConfiguration
     {
         // we DO NOT want recursive merge here
-        return $this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*'];
+        return SiteConfiguration::fromArray($this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*']);
     }
 }

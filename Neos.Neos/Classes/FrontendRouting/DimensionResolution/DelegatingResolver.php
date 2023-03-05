@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\DimensionResolution;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
@@ -22,6 +21,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
@@ -52,36 +52,32 @@ final class DelegatingResolver implements DimensionResolverInterface
             );
         }
         $siteConfiguration = $site->getConfiguration();
-        $factory = $this->objectManager->get(
-            $siteConfiguration['contentDimensions']['resolver']['factoryClassName']
-                ?? throw new \RuntimeException(
-                    'No Dimension Resolver Factory configured at'
-                        . ' Neos.Neos.sites.*.contentDimensions.resolver.factoryClassName'
-                )
-        );
+
+        $factory = $this->objectManager->get($siteConfiguration->contentDimensionResolverFactoryClassName);
         assert($factory instanceof DimensionResolverFactoryInterface);
-        $resolverOptions = $siteConfiguration['contentDimensions']['resolver']['options'] ?? [];
         $context = $factory->create(
             $siteDetectionResult->contentRepositoryId,
-            $resolverOptions
+            $siteConfiguration
         )->fromRequestToDimensionSpacePoint($context);
 
-        return self::fillWithDefaultDimensionSpacePoint(
+        return $context;
+        // TODO CHANGE ME
+        /*return self::fillWithDefaultDimensionSpacePoint(
             $context,
-            $siteConfiguration['contentDimensions']['defaultDimensionSpacePoint'] ?? []
-        );
+            $siteConfiguration->defaultDimensionSpacePoint
+        );*/
     }
 
     /**
      * @param RequestToDimensionSpacePointContext $context
-     * @param array<string,string> $defaultDimensionSpacePointCoordinates
+     * @param DimensionSpacePoint $defaultDimensionSpacePoint
      * @return RequestToDimensionSpacePointContext
      */
     private static function fillWithDefaultDimensionSpacePoint(
         RequestToDimensionSpacePointContext $context,
-        array $defaultDimensionSpacePointCoordinates
+        DimensionSpacePoint $defaultDimensionSpacePoint
     ): RequestToDimensionSpacePointContext {
-        foreach ($defaultDimensionSpacePointCoordinates as $dimensionName => $defaultDimensionValue) {
+        foreach ($defaultDimensionSpacePoint->coordinates as $dimensionName => $defaultDimensionValue) {
             if (!isset($context->resolvedDimensionSpacePoint->coordinates[$dimensionName])) {
                 $context = $context->withAddedDimensionSpacePoint(
                     DimensionSpacePoint::fromArray([$dimensionName => $defaultDimensionValue])
@@ -93,39 +89,28 @@ final class DelegatingResolver implements DimensionResolverInterface
 
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $dimensionSpacePoint,
-        SiteNodeName $targetSiteIdentifier,
+        DocumentNodeInfo $targetNode,
         UriConstraints $uriConstraints
     ): UriConstraints {
-        $targetSite = $this->siteRepository->findOneByNodeName($targetSiteIdentifier);
+
+        $targetSite = $this->siteRepository->findOneByNodeName($targetNode->getSiteNodeName());
 
         if ($targetSite === null) {
-            throw new \RuntimeException('Did not find site object for identifier ' . $targetSiteIdentifier->value);
+            throw new \RuntimeException('Did not find site object for identifier ' . $targetNode->getSiteNodeName()->value);
         }
-        $siteConfiguration = $targetSite->getConfiguration();
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $siteConfiguration['contentRepository']
-                ?? throw new \RuntimeException(
-                    'There is no content repository identifier configured in Sites configuration'
-                        . '  in Settings.yaml: Neos.Neos.sites.*.contentRepository'
-                )
-        );
+        $targetSiteConfiguration = $targetSite->getConfiguration();
 
         $factory = $this->objectManager->get(
-            $siteConfiguration['contentDimensions']['resolver']['factoryClassName']
-                ?? throw new \RuntimeException(
-                    'No Dimension Resolver Factory configured at'
-                        . ' Neos.Neos.sites.*.contentDimensions.resolver.factoryClassName'
-                )
+            $targetSiteConfiguration->contentDimensionResolverFactoryClassName
         );
         assert($factory instanceof DimensionResolverFactoryInterface);
-        $resolverOptions = $siteConfiguration['contentDimensions']['resolver']['options'] ?? [];
 
         return $factory->create(
-            $contentRepositoryIdentifier,
-            $resolverOptions
+            $targetSiteConfiguration->contentRepositoryId,
+            $targetSiteConfiguration
         )->fromDimensionSpacePointToUriConstraints(
             $dimensionSpacePoint,
-            $targetSiteIdentifier,
+            $targetNode,
             $uriConstraints
         );
     }
