@@ -159,10 +159,6 @@
 				<source>Discard selected changes</source>
         <target state="needs-translation">Discard selected changes</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
-        <target state="needs-translation">Publish selected changes</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
         <target state="needs-translation">Discard all changes</target>
