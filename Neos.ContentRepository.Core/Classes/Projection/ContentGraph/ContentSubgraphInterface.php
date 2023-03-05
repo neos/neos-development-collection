@@ -145,6 +145,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
+     * This is basically a set-based view of descendant nodes; so do not rely on
+     * a default ordering.
+     *
      * @param NodeAggregateIds $entryNodeAggregateIds
      * @param FindDescendantsFilter $filter
      * @return Nodes

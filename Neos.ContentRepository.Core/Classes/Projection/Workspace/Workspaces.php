@@ -32,7 +32,7 @@ final class Workspaces implements \IteratorAggregate, \Countable
     private array $workspaces;
 
     /**
-     * @param iterable<int,Workspace> $collection
+     * @param iterable<mixed,Workspace> $collection
      */
     private function __construct(iterable $collection)
     {
@@ -63,7 +63,8 @@ final class Workspaces implements \IteratorAggregate, \Countable
         return new self([]);
     }
 
-    public function get(WorkspaceName $workspaceName): ?Workspace {
+    public function get(WorkspaceName $workspaceName): ?Workspace
+    {
         return $this->workspaces[$workspaceName->name];
     }
 
@@ -73,7 +74,8 @@ final class Workspaces implements \IteratorAggregate, \Countable
      * @param WorkspaceName $workspaceName
      * @return Workspaces
      */
-    public function getBaseWorkspaces(WorkspaceName $workspaceName): Workspaces {
+    public function getBaseWorkspaces(WorkspaceName $workspaceName): Workspaces
+    {
         $baseWorkspaces = [];
 
         $workspace = $this->get($workspaceName);

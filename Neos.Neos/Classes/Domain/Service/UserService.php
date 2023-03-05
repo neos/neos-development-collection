@@ -894,7 +894,8 @@ class UserService
                 if (!$activeSession->isStarted()) {
                     continue;
                 }
-                if ($sessionToKeep instanceof SessionInterface
+                if (
+                    $sessionToKeep instanceof SessionInterface
                     && $sessionToKeep->isStarted()
                     && $activeSession->getId() === $sessionToKeep->getId()
                 ) {
