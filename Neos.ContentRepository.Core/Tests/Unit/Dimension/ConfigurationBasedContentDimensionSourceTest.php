@@ -58,7 +58,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
                         ],
                     ]
                 ],
-                'defaultValue' => 'valueA1',
                 'dimensionConfiguration' => [
                     'anotherKey' => 'anotherValue'
                 ]
@@ -72,7 +71,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
                     'valueB3' => [
                     ]
                 ],
-                'defaultValue' => 'valueB1'
             ]
         ]);
     }
