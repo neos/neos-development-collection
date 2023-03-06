@@ -282,7 +282,7 @@ class MediaCommandController extends CommandController
 
         if ($unusedAssetCount === 0) {
             !$quiet && $this->output->outputLine(PHP_EOL . 'No unused assets found.');
-            exit;
+            $this->quit(1);
         }
 
         foreach ($tableRowsByAssetSource as $assetSourceIdentifier => $tableRows) {
@@ -298,7 +298,7 @@ class MediaCommandController extends CommandController
 
         if ($assumeYes === false) {
             if (!$this->output->askConfirmation(sprintf('Do you want to remove <b>%s</b> unused assets?', $unusedAssetCount))) {
-                exit;
+                $this->quit(1);
             }
         }
 
