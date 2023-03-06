@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -418,9 +419,11 @@ class MediaCommandController extends CommandController
      * @param string $assetSource If specified, only assets of this asset source are considered. For example "neos" or "my-asset-management-system".
      * @param bool $quiet If set, only errors and questions will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialog.
-     * @param bool $filterCroppedVariants Find custom crops but have to check if used (slow).
+     * @param bool $filterCroppedVariants Find custom cropped variants but have to check if used (slow).
      * @param int|null $limit Limit the result of unused assets displayed and removed for this run.
      * @param string $presetIdentifier If specified, only presets with this identifier are observed.
+     *
+     * @throws StopCommandException
      */
     public function removeOutdatedVariantsCommand(bool $quiet = false, bool $assumeYes = false, bool $filterCroppedVariants = false, int $limit = null, string $assetSource = '', string $presetIdentifier = '')
     {
@@ -434,7 +437,7 @@ class MediaCommandController extends CommandController
 
         if (empty($currentPresets)) {
             !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No presets found.</em>');
-            exit;
+            $this->quit(1);
         }
 
         $filterByAssetSourceIdentifier = $assetSource;
@@ -449,7 +452,7 @@ class MediaCommandController extends CommandController
         $variants = $this->imageVariantRepository->findAllWithOutdatedPresets($currentPresets, !empty($presetIdentifier), $filterCroppedVariants, $limit);
         if (empty($variants)) {
             !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No variants found.</em>');
-            exit;
+            $this->quit(1);
         }
 
         $outdatedVariants = [];
@@ -488,7 +491,7 @@ class MediaCommandController extends CommandController
 
         if (empty($outdatedVariants)) {
             !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No outdated variants found.</em>');
-            exit;
+            $this->quit(1);
         }
 
         if (!$quiet) {
@@ -516,7 +519,7 @@ class MediaCommandController extends CommandController
             }
             if (!$this->output->askConfirmation(PHP_EOL . 'Do you want to remove all variants with outdated presets? [Y,n] ')) {
                 $this->output->outputLine(PHP_EOL . '<em>No variants have been deleted...</em>');
-                exit;
+                $this->quit(1);
             }
         }
 
@@ -546,7 +549,7 @@ class MediaCommandController extends CommandController
             } catch (IllegalObjectTypeException $e) {
                 $this->output->outputLine(PHP_EOL . 'Unable to remove %s: "%s"', [get_class($variantToRemove), $variantToRemove->getTitle()]);
                 $this->output->outputLine(PHP_EOL . $e->getMessage());
-                exit;
+                $this->quit(1);
             }
 
             $outdatedVariantSize += $variantSize;
