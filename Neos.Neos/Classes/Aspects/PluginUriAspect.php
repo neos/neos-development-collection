@@ -44,6 +44,7 @@ class PluginUriAspect
      * @Flow\Around("method(Neos\Flow\Mvc\Routing\UriBuilder->uriFor())")
      * @param \Neos\Flow\Aop\JoinPointInterface $joinPoint The current join point
      * @return string The result of the target method if it has not been intercepted
+     * @deprecated will be removed with Neos 9
      */
     public function rewritePluginViewUris(JoinPointInterface $joinPoint)
     {
