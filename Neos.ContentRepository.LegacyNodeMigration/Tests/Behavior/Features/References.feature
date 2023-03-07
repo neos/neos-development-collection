@@ -1,3 +1,4 @@
+@contentrepository
 Feature: Migrations that contain nodes with "reference" or "references properties
 
   Background:
@@ -36,8 +37,8 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a"}                                                                                                                                                                                                                          |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "b"}                                                                                                                                                                                                                          |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "c"}                                                                                                                                                                                                                          |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"a","sourceNodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[[]],"referenceName":"ref","references":{"b":{"targetNodeAggregateId":"b","properties":null}}}                                                      |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"c","sourceNodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[[]],"referenceName":"refs","references":{"a":{"targetNodeAggregateId":"a","properties":null},"b":{"targetNodeAggregateId":"b","properties":null}}} |
+      | NodeReferencesWereSet               | {"sourceNodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[[]],"referenceName":"ref","references":{"b":{"targetNodeAggregateId":"b","properties":null}}}                                                      |
+      | NodeReferencesWereSet               | {"sourceNodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[[]],"referenceName":"refs","references":{"a":{"targetNodeAggregateId":"a","properties":null},"b":{"targetNodeAggregateId":"b","properties":null}}} |
 
 
   Scenario: Node with references in one dimension
@@ -61,6 +62,6 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "a"}                                                                                                                                                                                                                                          |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "b"}                                                                                                                                                                                                                                          |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "c"}                                                                                                                                                                                                                                          |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"a","sourceNodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[{"language": "en"}],"referenceName":"ref","references":{"b":{"targetNodeAggregateId":"b","properties":null}}}                                                      |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"b","sourceNodeAggregateId":"b","affectedSourceOriginDimensionSpacePoints":[{"language": "de"}],"referenceName":"ref","references":{"a":{"targetNodeAggregateId":"a","properties":null}}}                                                      |
-      | NodeReferencesWereSet               | {"nodeAggregateId":"c","sourceNodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[{"language": "ch"}],"referenceName":"refs","references":{"a":{"targetNodeAggregateId":"a","properties":null},"b":{"targetNodeAggregateId":"b","properties":null}}} |
+      | NodeReferencesWereSet               | {"sourceNodeAggregateId":"a","affectedSourceOriginDimensionSpacePoints":[{"language": "en"}],"referenceName":"ref","references":{"b":{"targetNodeAggregateId":"b","properties":null}}}                                                      |
+      | NodeReferencesWereSet               | {"sourceNodeAggregateId":"b","affectedSourceOriginDimensionSpacePoints":[{"language": "de"}],"referenceName":"ref","references":{"a":{"targetNodeAggregateId":"a","properties":null}}}                                                      |
+      | NodeReferencesWereSet               | {"sourceNodeAggregateId":"c","affectedSourceOriginDimensionSpacePoints":[{"language": "ch"}],"referenceName":"refs","references":{"a":{"targetNodeAggregateId":"a","properties":null},"b":{"targetNodeAggregateId":"b","properties":null}}} |

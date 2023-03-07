@@ -164,10 +164,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $this->createWorkspaceFromDatabaseRow($workspaceRow);
     }
 
-    /**
-     * @return array<string,Workspace>
-     */
-    public function findAll(): array
+    public function findAll(): Workspaces
     {
         $result = [];
 
@@ -183,7 +180,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
         }
 
-        return $result;
+        return Workspaces::fromArray($result);
     }
 
     /**

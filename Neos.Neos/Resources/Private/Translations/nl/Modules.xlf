@@ -159,10 +159,6 @@
 				<source>Discard selected changes</source>
         <target state="final">Geselecteerde wijzigingen verwijderen</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
-				<source>Publish selected changes</source>
-        <target state="final">Geselecteerde wijzigingen publiceren</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
         <target state="final">Alle wijzigingen negeren</target>
@@ -1149,6 +1145,10 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
 				<source>You are not allowed to create a user with roles "{0}".</source>
         <target state="translated">U bent niet bevoegd om een gebruiker aan te maken met de rollen "{0}".</target>
       </trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+        <target state="translated">Niet mogelijk om gebruiker aan te maken.</target>
+      </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
         <target state="translated">Wijzigen van gebruiker niet toegestaan</target>
@@ -1253,6 +1253,14 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
 				<source>Your user has been updated.</source>
         <target state="translated">Uw gebruiker is bijgewerkt.</target>
       </trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="translated">Wachtwoord wijzigen mislukt</target>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="translated">Wachtwoord wijzigen mislukt</target>
+      </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>
         <target state="translated">Wachtwoord bijgewerkt</target>
@@ -1284,6 +1292,18 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
       <trans-unit id="users.lastLogin" xml:space="preserve">
 				<source>Last Login</source>
         <target state="translated">Laatste login</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+				<source>Publish selected changes to {0}</source>
+        <target state="translated">Publiceer geselecteerde wijzigingen naar {0}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="translated">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace wilt weggooien?</target>
+      </trans-unit>
+      <trans-unit id="user.description" xml:space="preserve">
+				<source>Contains modules related to management of users</source>
+        <target state="translated">Bevat modules gerelateerd aan het onderhoud van gebruikers</target>
       </trans-unit>
     </body>
   </file>

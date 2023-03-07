@@ -159,9 +159,9 @@
 				<source>Discard selected changes</source>
         <target state="final">Ausgewählte Änderungen verwerfen</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
-				<source>Publish selected changes</source>
-        <target state="final">Ausgewählte Änderungen veröffentlichen</target>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve" approved="yes">
+				<source>Publish selected changes to {0}</source>
+        <target state="final">Ausgewählte Änderungen nach {0} veröffentlichen</target>
       </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
@@ -203,8 +203,12 @@
 				<source>There are no unpublished changes in this workspace.</source>
         <target state="final">In diesem Arbeitsbereich gibt es keine unveröffentlichten Änderungen.</target>
       </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
+        <source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="final">Möchten Sie wirklich die ausgewählten Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
+      </trans-unit>
       <trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve" approved="yes">
-				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
+        <source>Do you really want to discard all changes in the "{0}" workspace?</source>
         <target state="final">Möchten Sie wirklich alle Änderungen im Arbeitsbereich "{0}" verwerfen?</target>
       </trans-unit>
       <trans-unit id="workspaces.workspaceWithThisTitleAlreadyExists" approved="yes">
@@ -897,6 +901,10 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
 				<source>User</source>
         <target state="final">Benutzer</target>
       </trans-unit>
+      <trans-unit id="user.description" xml:space="preserve">
+        <source>Contains modules related to management of users</source>
+        <target>Enthält Module für die Verwaltung von Benutzern</target>
+      </trans-unit>
       <trans-unit id="userSettings.label" xml:space="preserve" approved="yes">
 				<source>User Settings</source>
         <target state="final">Benutzereinstellungen</target>
@@ -1153,6 +1161,10 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
 				<source>You are not allowed to create a user with roles "{0}".</source>
         <target state="final">Sie dürfen keinen Benutzer mit den Rollen "{0}" erstellen.</target>
       </trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+        <target state="needs-translation">Unable to create user.</target>
+      </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
         <target state="final">Bearbeitung des Benutzers verweigert</target>
@@ -1256,6 +1268,14 @@ Klicken Sie auf einen der Knoten um nur die Fallbacks und Varianten für diesen 
       <trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
 				<source>Your user has been updated.</source>
         <target state="final">Ihr Benutzer wurde aktualisiert.</target>
+      </trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>

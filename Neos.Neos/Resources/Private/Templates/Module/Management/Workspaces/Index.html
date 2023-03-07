@@ -55,10 +55,10 @@
 						<td>
 							<f:security.ifAccess privilegeTarget="Neos.Neos:Backend.Module.Administration.Users">
 								<f:then>
-									<neos:link.module path="administration/users" action="show" arguments="{user: workspace.owner}">{workspace.workspaceOwner}</neos:link.module>
+									<neos:link.module path="administration/users" action="show" arguments="{user: workspace.workspaceOwner}">{workspaceAndCounts.workspaceOwnerHumanReadable}</neos:link.module>
 								</f:then>
 								<f:else>
-									{workspace.workspaceOwner}
+									{workspaceAndCounts.workspaceOwnerHumanReadable}
 								</f:else>
 							</f:security.ifAccess>
 						</td>

@@ -6,7 +6,7 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "8.2.x-dev",
+        "neos/flow-development-collection": "8.3.x-dev",
         "neos/neos-setup": "^2.0",
         "php": "^8.1",
         "doctrine/dbal": "^2.8",
@@ -19,14 +19,15 @@
         "symfony/serializer": "*",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
-        "neos/neos-ui": "*",
         "neos/flow": "*",
+        "neos/neos-ui": "*",
         "symfony/property-access": "*",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
+        "ext-dom": "*",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
@@ -37,10 +38,9 @@
         "neos/fusion-form": "^1.0 || ^2.0",
         "behat/transliterator": "~1.0",
         "neos/form": "*",
-        "neos/kickstarter": "*"
+        "neos/kickstarter": "~8.3.0"
     },
     "replace": {
-        "typo3/typo3cr": "self.version",
         "neos/content-repository": "self.version",
         "neos/contentrepository": "self.version",
         "packagefactory/atomicfusion-afx": "*",

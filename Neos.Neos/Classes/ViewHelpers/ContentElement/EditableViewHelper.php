@@ -114,7 +114,7 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         }
         $this->tag->setContent($content);
 
-        return $this->contentElementEditableService->wrapContentProperty($node, $propertyName, $this->tag->render());
+        return $this->contentElementEditableService->wrapContentProperty($node, $propertyName, (string)$this->tag->render());
     }
 
     /**

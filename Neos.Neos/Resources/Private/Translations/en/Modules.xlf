@@ -119,8 +119,8 @@
 			<trans-unit id="workspaces.discardSelectedChanges" xml:space="preserve">
 				<source>Discard selected changes</source>
 			</trans-unit>
-			<trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
+			<trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+				<source>Publish selected changes to {0}</source>
 			</trans-unit>
 			<trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
@@ -151,6 +151,9 @@
 			</trans-unit>
 			<trans-unit id="workspaces.thereAreNoUnpublishedChanges" xml:space="preserve">
 				<source>There are no unpublished changes in this workspace.</source>
+			</trans-unit>
+			<trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
 			</trans-unit>
 			<trans-unit id="workspaces.discardAllChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard all changes in the "{0}" workspace?</source>
@@ -687,6 +690,9 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="user.label" xml:space="preserve">
 				<source>User</source>
 			</trans-unit>
+      <trans-unit id="user.description" xml:space="preserve">
+				<source>Contains modules related to management of users</source>
+			</trans-unit>
 			<trans-unit id="userSettings.label" xml:space="preserve">
 				<source>User Settings</source>
 			</trans-unit>
@@ -883,6 +889,9 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="users.userCreationDenied.body" xml:space="preserve">
 				<source>You are not allowed to create a user with roles "{0}".</source>
 			</trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+      </trans-unit>
 			<trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
 			</trans-unit>
@@ -962,6 +971,12 @@ Click on one of the nodes to only see its fallbacks and variants. Click again to
 			<trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
 				<source>Your user has been updated.</source>
 			</trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+      </trans-unit>
 			<trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>
 			</trans-unit>

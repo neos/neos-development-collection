@@ -495,11 +495,11 @@
       </trans-unit>
       <trans-unit id="shortcut.clickToContinueToFirstChildNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the first child page.&lt;br /&gt;Click {0} to continue to the page.</source>
-        <target state="final">Dit is een snelkoppeling naar het eerste onderliggende pagina. &lt; br / &gt; Klik op {0} om door te gaan naar de pagina.</target>
+        <target state="final">Dit is een snelkoppeling naar het eerste onderliggende pagina. &lt;br /&gt; Klik op {0} om door te gaan naar de pagina.</target>
       </trans-unit>
-      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="no">
+      <trans-unit id="shortcut.clickToContinueToParentNode" xml:space="preserve" approved="yes">
 				<source>This is a shortcut to the parent page.&lt;br /&gt;Click {0} to continue to the page.</source>
-        <target state="translated">Dit is een snelkoppeling naar de bovenliggende pagina. &lt;br /&gt; Klik op {0} om door te gaan naar de pagina.</target>
+        <target state="final">Dit is een snelkoppeling naar de bovenliggende pagina. &lt;br /&gt; Klik op {0} om door te gaan naar de pagina.</target>
       </trans-unit>
       <!-- javascript -->
       <trans-unit id="content.components.contentContextBar.fullScreenButton.title" xml:space="preserve" approved="yes">
@@ -1098,6 +1098,18 @@
 				<source>Successfully logged out</source>
         <target state="translated">Succesvol uitgelogd</target>
       </trans-unit>
+      <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
+                <source>Back to user "{0}"</source>
+        <target state="translated">Terug naar gebruiker "{0}"</target>
+      </trans-unit>
+      <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
+                <source>Switched back from "{0}" to the orginal user "{1}"</source>
+        <target state="translated">Gewisseld van "{0}" naar de originele gebruiker "{1}"</target>
+      </trans-unit>
+      <trans-unit id="shortcut.toSpecificTarget" xml:space="preserve">
+        <source>This is a shortcut to a specific target:</source>
+        <target state="translated">Dit is een snelkoppeling naar een specifiek doel:</target>
+      </trans-unit>
       <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
                 <source>Switched to the new user "{0}".</source>
         <target state="translated">Wissel naar de nieuwe gebruiker "{0}".</target>
@@ -1113,14 +1125,6 @@
       <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
                 <source>Could not switch back to the original user.</source>
         <target state="translated">Kon niet teruggaan naar de oorspronkelijke gebruiker.</target>
-      </trans-unit>
-      <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
-                <source>Switched back from "{0}" to the orginal user "{1}"</source>
-        <target state="translated">Gewisseld van "{0}" naar de originele gebruiker "{1}"</target>
-      </trans-unit>
-      <trans-unit id="impersonate.label.restoreUserButton" xml:space="preserve" approved="no">
-                <source>Back to user "{0}"</source>
-        <target state="translated">Terug naar gebruiker "{0}"</target>
       </trans-unit>
       <trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="no">
                 <source>Switch back to the orginal user account</source>

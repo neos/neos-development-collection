@@ -1,5 +1,7 @@
 <?php
 
+namespace Neos\Neos\Controller\Backend;
+
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -10,16 +12,19 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
-
+use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Domain\Service\ContentContextFactory;
+use Neos\Neos\Domain\Service\SiteService;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
+use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
@@ -34,7 +39,7 @@ use Neos\Utility\PositionalArraySorter;
 class MenuHelper
 {
     /**
-     * @var ?array<string,mixed>
+     * @var array|null
      */
     protected $moduleListFirstLevelCache = null;
 
@@ -51,7 +56,7 @@ class MenuHelper
     protected $privilegeManager;
 
     /**
-     * @var array<string,mixed>
+     * @var array
      */
     protected $settings;
 
@@ -62,7 +67,7 @@ class MenuHelper
     protected $iconMapper;
 
     /**
-     * @param array<string,mixed> $settings
+     * @param array $settings
      */
     public function injectSettings(array $settings): void
     {
@@ -73,7 +78,8 @@ class MenuHelper
      * Build a list of sites
      *
      * @param ControllerContext $controllerContext
-     * @return array<int,array<string,mixed>>
+     * @return array
+     * @throws MissingActionNameException|Exception
      */
     public function buildSiteList(ControllerContext $controllerContext): array
     {
@@ -87,6 +93,10 @@ class MenuHelper
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
+            // TODO: we need to check permissions here, a.k.a
+            // TODO: $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+            // TODO: if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            // TODO: unfortunately, it's not so easy; because we do not know what dimension we are in...
             $uri = null;
             $active = false;
             /** @var $site Site */
@@ -100,12 +110,7 @@ class MenuHelper
                 if ($active) {
                     $uri = $contentModule['uri'];
                 } else {
-                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor(
-                        'switchSite',
-                        ['site' => $site],
-                        'Backend\Backend',
-                        'Neos.Neos'
-                    );
+                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
                 }
 
                 $domainsFound = true;
@@ -128,9 +133,8 @@ class MenuHelper
 
     /**
      * @param ControllerContext $controllerContext
-     * @return array<string,mixed>
-     * @throws \Neos\Flow\Http\Exception
-     * @throws MissingActionNameException
+     * @return array
+     * @throws Exception|MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
     {
@@ -149,10 +153,7 @@ class MenuHelper
                 continue;
             }
             // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
-            if (
-                isset($moduleConfiguration['privilegeTarget'])
-                && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])
-            ) {
+            if (isset($moduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($moduleConfiguration['privilegeTarget'])) {
                 continue;
             }
             $submodules = [];
@@ -163,29 +164,14 @@ class MenuHelper
                     if (!$this->isModuleEnabled($modulePath)) {
                         continue;
                     }
-                    if (
-                        !$this->privilegeManager->isGranted(
-                            ModulePrivilege::class,
-                            new ModulePrivilegeSubject($modulePath)
-                        )
-                    ) {
+                    if (!$this->privilegeManager->isGranted(ModulePrivilege::class, new ModulePrivilegeSubject($modulePath))) {
                         continue;
                     }
                     // @deprecated since Neos 3.2, use the ModulePrivilegeTarget instead!
-                    if (
-                        isset($submoduleConfiguration['privilegeTarget'])
-                        && !$this->privilegeManager->isPrivilegeTargetGranted(
-                            $submoduleConfiguration['privilegeTarget']
-                        )
-                    ) {
+                    if (isset($submoduleConfiguration['privilegeTarget']) && !$this->privilegeManager->isPrivilegeTargetGranted($submoduleConfiguration['privilegeTarget'])) {
                         continue;
                     }
-                    $submodules[$submoduleName] = $this->collectModuleData(
-                        $controllerContext,
-                        $submoduleName,
-                        $submoduleConfiguration,
-                        $moduleName . '/' . $submoduleName
-                    );
+                    $submodules[$submoduleName] = $this->collectModuleData($controllerContext, $submoduleName, $submoduleConfiguration, $moduleName . '/' . $submoduleName);
                 }
             }
             $this->moduleListFirstLevelCache[$moduleName] = array_merge(
@@ -209,10 +195,7 @@ class MenuHelper
     public function isModuleEnabled(string $modulePath): bool
     {
         $modulePathSegments = explode('/', $modulePath);
-        $moduleConfiguration = Arrays::getValueByPath(
-            $this->settings['modules'],
-            implode('.submodules.', $modulePathSegments)
-        );
+        $moduleConfiguration = Arrays::getValueByPath($this->settings['modules'], implode('.submodules.', $modulePathSegments));
         if (isset($moduleConfiguration['enabled']) && $moduleConfiguration['enabled'] !== true) {
             return false;
         }
@@ -228,18 +211,14 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @param string $module
-     * @param array<string,mixed> $moduleConfiguration
+     * @param array $moduleConfiguration
      * @param string $modulePath
-     * @return array<string,mixed>
-     * @throws \Neos\Flow\Http\Exception
+     * @return array
+     * @throws Exception
      * @throws MissingActionNameException
      */
-    protected function collectModuleData(
-        ControllerContext $controllerContext,
-        string $module,
-        array $moduleConfiguration,
-        string $modulePath
-    ): array {
+    protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array
+    {
         $moduleUri = $controllerContext->getUriBuilder()
             ->reset()
             ->setCreateAbsoluteUri(true)

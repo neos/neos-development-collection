@@ -14,7 +14,8 @@
         "neos/utility-arrays": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
-        "doctrine/orm": "^2.6"
+        "doctrine/orm": "^2.6",
+        "ext-dom": "*"
     },
     "replace": {
         "typo3/typoscript": "self.version"

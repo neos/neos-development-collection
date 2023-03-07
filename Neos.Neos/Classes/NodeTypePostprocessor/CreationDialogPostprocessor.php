@@ -129,8 +129,8 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
         if (isset($propertyConfiguration['validation'])) {
             $convertedConfiguration['validation'] = $propertyConfiguration['validation'];
         }
-        if (isset($propertyConfiguration['position'])) {
-            $convertedConfiguration['position'] = $propertyConfiguration['position'];
+        if (isset($propertyConfiguration['ui']['inspector']['position'])) {
+            $convertedConfiguration['position'] = $propertyConfiguration['ui']['inspector']['position'];
         }
 
         $editor = $propertyConfiguration['ui']['inspector']['editor']
