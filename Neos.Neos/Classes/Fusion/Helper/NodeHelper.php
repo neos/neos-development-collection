@@ -84,6 +84,20 @@ class NodeHelper implements ProtectedContextAwareInterface
         return new NodeLabelToken($node);
     }
 
+    public function inBackend(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
+    }
+
+    public function isLive(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
+    }
+
     /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
@@ -112,7 +126,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         if ($nodePath->isAbsolute()) {
             $node = $this->findRootNode($node);
         }
-
 
         return $this->findNodeByPath($node, $nodePath);
     }
@@ -147,7 +160,6 @@ class NodeHelper implements ProtectedContextAwareInterface
 
         return $node;
     }
-
 
     /**
      * @param string $methodName

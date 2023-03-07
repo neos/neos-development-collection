@@ -18,8 +18,7 @@ root {
   editPreviewMode {
     @position = 'end 9996'
     possibleEditPreviewModePath = ${documentNode.context.currentRenderingMode.fusionPath}
-    # TODO: inBackend helper should be moved OUT of Neos.Ui, as it is public API
-    condition = ${Neos.Ui.NodeInfo.inBackend(documentNode) && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
+    condition = ${Neos.Node.inBackend(documentNode) && this.possibleEditPreviewModePath != null && this.possibleEditPreviewModePath != ''}
     renderPath = ${'/' + this.possibleEditPreviewModePath}
   }
 
@@ -47,7 +46,7 @@ root {
 
   rawContent {
     @position = 'end 10000'
-    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.edit}
+    condition = ${Neos.Node.inBackend(documentNode) && documentNode.context.currentRenderingMode.edit}
     renderPath = '/rawContent'
   }
 
