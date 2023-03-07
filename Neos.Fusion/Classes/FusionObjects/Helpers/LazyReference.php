@@ -14,7 +14,10 @@ namespace Neos\Fusion\FusionObjects\Helpers;
 
 use Neos\Flow\Annotations as Flow;
 
-/** @Flow\Proxy(false) */
+/**
+ * @internal
+ * @Flow\Proxy(false)
+ */
 final class LazyReference
 {
     private bool $isLocked = false;

@@ -15,10 +15,20 @@ namespace Neos\Fusion\FusionObjects\Helpers;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\Core\Runtime;
 
-/** @Flow\Proxy(false) */
+/**
+ * A proxy for Fusions private props.
+ * It lazily evaluates a path when accessed via the passed $effectiveContext the context `this` is not set.
+ * One can reference another private prop when evaluating - a circular reference will result in an Exception.
+ * If a private prop is not defined but accessed an Exception will also be thrown.
+ * The private props are not Traversable but only a Proxy as it's not trivial to know all the keys beforehand
+ * and using a Neos.Fusion:DataStructure wouldn't be lazy.
+ *
+ * @internal
+ * @Flow\Proxy(false)
+ */
 final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
 {
-    /** @var array<string, LazyReference>  */
+    /** @var array<string, LazyReference> */
     private array $lazyReferences = [];
 
     public function __construct(
@@ -70,7 +80,7 @@ final class LazySelfReferentialProps implements \ArrayAccess, \Stringable
         }
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->offsetGet($offset) !== null;
     }
