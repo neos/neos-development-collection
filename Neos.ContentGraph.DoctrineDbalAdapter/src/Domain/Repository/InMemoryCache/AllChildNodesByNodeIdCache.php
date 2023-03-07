@@ -71,8 +71,6 @@ final class AllChildNodesByNodeIdCache
     public function findChildNodes(
         NodeAggregateId $parentNodeAggregateId,
         NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraintsWithSubNodeTypes,
-        int $limit = null,
-        int $offset = null
     ): array {
         if ($this->isEnabled === false) {
             return [];
@@ -94,10 +92,6 @@ final class AllChildNodesByNodeIdCache
                 ) {
                     $result[] = $childNode;
                 }
-            }
-
-            if ($limit || $offset) {
-                $result = array_slice($result, $offset ?? 0, $limit);
             }
         }
         return $result;

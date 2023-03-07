@@ -130,9 +130,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * @param NodeAggregateId $nodeAggregateId
-     * @return NodePath
+     * @return NodePath|null
      */
-    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath;
+    public function findNodePath(NodeAggregateId $nodeAggregateId): ?NodePath;
 
     public function findSubtrees(
         NodeAggregateIds $entryNodeAggregateIds,

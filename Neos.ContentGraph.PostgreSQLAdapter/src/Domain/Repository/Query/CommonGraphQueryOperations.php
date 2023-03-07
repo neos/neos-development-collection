@@ -56,35 +56,9 @@ trait CommonGraphQueryOperations
         NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
         string $prefix
     ): self {
-        $query = $this->query;
         $parameters = $this->parameters;
-        $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames;
-        $parameters['disallowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames;
         $types = $this->types;
-        $types['allowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
-        $types['disallowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
-        if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
-            if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
-                if ($nodeTypeConstraints->isWildCardAllowed) {
-                    $query .= '
-            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)
-            OR ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
-                } else {
-                    $query .= '
-            AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)
-            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
-                }
-            } else {
-                if (!$nodeTypeConstraints->isWildCardAllowed) {
-                    $query .= '
-            AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
-                }
-            }
-        } elseif (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
-            $query .= '
-            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
-        }
-
+        $query = $this->query . QueryUtility::getNodeTypeConstraintsClause($nodeTypeConstraints, $prefix, $parameters, $types);
         return new self($query, $parameters, $this->tableNamePrefix, $types);
     }
 

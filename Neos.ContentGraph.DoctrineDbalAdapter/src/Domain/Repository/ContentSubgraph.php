@@ -180,9 +180,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         NodeAggregateId $parentNodeAggregateId,
         FindChildNodesFilter $filter
     ): Nodes {
-        if ($filter->limit !== null || $filter->offset !== null) {
-            throw new \RuntimeException("TODO: Limit/Offset not yet supported in findChildNodes");
-        }
         $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::allowAll();
         if ($filter->nodeTypeConstraints) {
             $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
@@ -205,8 +202,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 $cache->findChildNodes(
                     $parentNodeAggregateId,
                     $nodeTypeConstraintsWithSubNodeTypes,
-                    $filter->limit,
-                    $filter->offset
                 )
             );
         }
@@ -235,6 +230,15 @@ SELECT c.*, h.name, h.contentstreamid FROM ' . $this->tableNamePrefix . '_node p
             'c'
         );
         $query->addToQuery('ORDER BY h.position ASC');
+        if ($filter->limit !== null) {
+            $query->addToQuery('LIMIT ' . $filter->limit);
+        }
+        if ($filter->offset !== null) {
+            if ($filter->limit === null) {
+                $query->addToQuery('LIMIT ' . PHP_INT_MAX);
+            }
+            $query->addToQuery('OFFSET ' . $filter->offset);
+        }
 
         $result = [];
         foreach ($query->execute($this->getDatabaseConnection())->fetchAllAssociative() as $nodeData) {
@@ -259,13 +263,13 @@ SELECT c.*, h.name, h.contentstreamid FROM ' . $this->tableNamePrefix . '_node p
             );
         }
 
-        //if ($limit === null && $offset === null) { @todo reenable once this is supported
-        $cache->add(
-            $parentNodeAggregateId,
-            $nodeTypeConstraintsWithSubNodeTypes,
-            $result
-        );
-        //}
+        if ($filter->limit === null && $filter->offset === null) {
+            $cache->add(
+                $parentNodeAggregateId,
+                $nodeTypeConstraintsWithSubNodeTypes,
+                $result
+            );
+        }
 
         return Nodes::fromArray($result);
     }
@@ -561,9 +565,7 @@ SELECT p.*, h.contentstreamid, hp.name FROM ' . $this->tableNamePrefix . '_node 
     ): ?Node {
         $currentNode = $this->findNodeById($startingNodeAggregateId);
         if (!$currentNode) {
-            throw new \RuntimeException(
-                'Starting Node (identified by ' . $startingNodeAggregateId . ') does not exist.'
-            );
+            return null;
         }
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
@@ -695,7 +697,7 @@ WHERE
                 $filter->nodeTypeConstraints,
                 $this->nodeTypeManager
             );
-            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes, null, 'n');
         }
         $query->addToQuery(' ORDER BY h.position DESC');
         if ($filter->limit) {
@@ -754,7 +756,7 @@ WHERE
                 $filter->nodeTypeConstraints,
                 $this->nodeTypeManager
             );
-            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes);
+            self::addNodeTypeConstraintsToQuery($query, $nodeTypeConstraintsWithSubNodeTypes, null, 'n');
         }
         $query->addToQuery(' ORDER BY h.position ASC');
         if ($filter->limit) {
@@ -797,7 +799,7 @@ WHERE
     }
 
 
-    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath
+    public function findNodePath(NodeAggregateId $nodeAggregateId): ?NodePath
     {
         $cache = $this->inMemoryCache->getNodePathCache();
 
@@ -834,6 +836,9 @@ WHERE
                 'nodeAggregateId' => (string)$nodeAggregateId
             ]
         )->fetchAllAssociative();
+        if ($result === []) {
+            return null;
+        }
 
         $nodePathSegments = [];
 
@@ -920,7 +925,7 @@ union
 	 where
 	 	h.contentstreamid = :contentStreamId
 		AND h.dimensionspacepointhash = :dimensionSpacePointHash
-		and p.level + 1 <= :maximumLevels
+		###LEVEL_LIMIT###
         ###NODE_TYPE_CONSTRAINTS###
         ###VISIBILITY_CONSTRAINTS_RECURSION###
 
@@ -938,16 +943,22 @@ order by level asc, position asc;'
             ->parameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->parameter('maximumLevels', $filter->maximumLevels);
 
-        $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-            $filter->nodeTypeConstraints,
-            $this->nodeTypeManager
-        );
+        $query->addToQuery($filter->maximumLevels !== null ? 'AND p.level + 1 <= :maximumLevels' : '', '###LEVEL_LIMIT###');
 
-        self::addNodeTypeConstraintsToQuery(
-            $query,
-            $nodeTypeConstraintsWithSubNodeTypes,
-            '###NODE_TYPE_CONSTRAINTS###'
-        );
+
+        if ($filter->nodeTypeConstraints !== null) {
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $filter->nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            self::addNodeTypeConstraintsToQuery(
+                $query,
+                $nodeTypeConstraintsWithSubNodeTypes,
+                '###NODE_TYPE_CONSTRAINTS###'
+            );
+        } else {
+            $query->addToQuery('', '###NODE_TYPE_CONSTRAINTS###');
+        }
 
         $this->addRestrictionRelationConstraintsToQuery(
             $query,
@@ -1083,16 +1094,20 @@ order by level asc, position asc;'
             ->parameter('contentStreamId', (string)$this->contentStreamId)
             ->parameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
 
-        $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-            $filter->nodeTypeConstraints,
-            $this->nodeTypeManager
-        );
-        self::addNodeTypeConstraintsToQuery(
-            $query,
-            $nodeTypeConstraintsWithSubNodeTypes,
-            '###NODE_TYPE_CONSTRAINTS###',
-            ''
-        );
+        if ($filter->nodeTypeConstraints !== null) {
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $filter->nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            self::addNodeTypeConstraintsToQuery(
+                $query,
+                $nodeTypeConstraintsWithSubNodeTypes,
+                '###NODE_TYPE_CONSTRAINTS###',
+                ''
+            );
+        } else {
+            $query->addToQuery('', '###NODE_TYPE_CONSTRAINTS###');
+        }
         self::addSearchTermConstraintsToQuery(
             $query,
             $filter->searchTerm,
