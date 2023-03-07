@@ -92,6 +92,7 @@ trait EventSourcedTrait
 {
     use CurrentSubgraphTrait;
     use CurrentUserTrait;
+    use NodeTraversalTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
     use GenericCommandExecutionAndEventPublication;
