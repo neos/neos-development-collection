@@ -199,31 +199,43 @@ trait NodeRemoval
                 $dspHash = $descendantAssignment['dimensionspacepointhash'];
                 $parentAnchor = $descendantAssignment['parentrelationanchorpoint'];
                 $succeedingSiblingAnchor = $descendantAssignment['succeedingsiblingrelationanchorpoint'];
-                if ($succeedingSiblingAnchor === HypergraphProjection::ANCHOR_POINT_SORT_FROM_RESULT) {
-                    if (isset($hierarchyRecords[$dspHash][$parentAnchor])) {
-                        $hierarchyRecords[$dspHash][$parentAnchor]['childnodeanchors'][]
-                            = $descendantAssignment['childrelationanchorpoint'];
+                if ($succeedingSiblingAnchor) {
+                    if ($succeedingSiblingAnchor === HypergraphProjection::ANCHOR_POINT_SORT_FROM_RESULT) {
+                        if (isset($hierarchyRecords[$dspHash][$parentAnchor])) {
+                            $hierarchyRecords[$dspHash][$parentAnchor]['childnodeanchors'][]
+                                = $descendantAssignment['childrelationanchorpoint'];
+                        } else {
+                            $hierarchyRecords[$dspHash][$parentAnchor] = [
+                                'contentstreamidentifier' => $event->contentStreamId->getValue(),
+                                'parentnodeanchor' => $descendantAssignment['parentrelationanchorpoint'],
+                                'dimensionspacepointhash' => $descendantAssignment['dimensionspacepointhash'],
+                                'dimensionspacepoint' => $descendantAssignment['dimensionspacepoint'],
+                                'childnodeanchors' => [$descendantAssignment['childrelationanchorpoint']],
+                            ];
+                        }
                     } else {
-                        $hierarchyRecords[$dspHash][$parentAnchor] = [
-                            'contentstreamidentifier' => $event->contentStreamId->getValue(),
-                            'parentnodeanchor' => $descendantAssignment['parentrelationanchorpoint'],
-                            'dimensionspacepointhash' => $descendantAssignment['dimensionspacepointhash'],
-                            'dimensionspacepoint' => $descendantAssignment['dimensionspacepoint'],
-                            'childnodeanchors' => [$descendantAssignment['childrelationanchorpoint']],
-                        ];
-                    }
-                } else {
-                    $query = 'UPDATE ' . $this->getHierarchyRelationTableName() . '
+                        $query = 'UPDATE ' . $this->getHierarchyRelationTableName() . '
                         SET childnodeanchors = (childnodeanchors[:array_position(childnodeanchors,\'' . $succeedingSiblingAnchor . '\')-1]
                             || \'' . $descendantAssignment['childrelationanchorpoint'] . '\'::uuid
                             || childnodeanchors[array_position(childnodeanchors,\'' . $succeedingSiblingAnchor . '\'):])
                         WHERE dimensionspacepointhash=\'' . $descendantAssignment['dimensionspacepointhash'] . '\'
                             AND contentstreamidentifier = \'' . $event->contentStreamId . '\'
                             AND parentnodeanchor = \'' . $descendantAssignment['parentrelationanchorpoint'] . '\'';
-                    $this->getDatabaseConnection()->executeStatement($query);
+                        $this->getDatabaseConnection()->executeStatement($query);
+                    }
+                } else {
+                    $hierarchyRecords[$dspHash][$parentAnchor] = [
+                        'contentstreamidentifier' => $event->contentStreamId->getValue(),
+                        'parentnodeanchor' => $descendantAssignment['parentrelationanchorpoint'],
+                        'dimensionspacepointhash' => $descendantAssignment['dimensionspacepointhash'],
+                        'dimensionspacepoint' => $descendantAssignment['dimensionspacepoint'],
+                        'childnodeanchors' => [$descendantAssignment['childrelationanchorpoint']],
+                    ];
                 }
-
-                $restrictionRecords[$descendantAssignment['dimensionspacepointhash']][$descendantAssignment['childnodeaggregateid']] = $descendantAssignment['childnodeaggregateid'];
+                 $restrictionRecords[$dspHash][] = [
+                     'parentnodeaggregateid' => $descendantAssignment['parentnodeaggregateid'],
+                     'childnodeaggregateid' => $descendantAssignment['childnodeaggregateid'],
+                 ];
             }
 
             foreach ($hierarchyRecords as $hierarchyRecordsInDsp) {
@@ -233,6 +245,49 @@ trait NodeRemoval
                     $this->getDatabaseConnection()->insert(
                         $this->getHierarchyRelationTableName(),
                         $hierarchyRecord
+                    );
+                }
+            }
+
+            foreach ($restrictionRecords as $dimensionSpacePointHash => $restrictionRecordsForDsp) {
+                foreach ($restrictionRecordsForDsp as $restrictionRecord) {
+                    $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
+                        'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation (
+                        contentstreamidentifier,
+                        dimensionspacepointhash,
+                        originnodeaggregateidentifier,
+                        affectednodeaggregateidentifiers
+                    )
+                    SELECT contentstreamidentifier, :dimensionSpacePointHash,
+                        originnodeaggregateidentifier, :affectedNodeAggregateIds
+                    FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
+                    WHERE source.contentstreamidentifier = :contentStreamId
+                        AND source.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                        AND source.originnodeaggregateidentifier = :sourceNodeAggregateId',
+                        [
+                            'contentStreamId' => (string)$event->contentStreamId,
+                            'sourceDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash,
+                            'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                            'sourceNodeAggregateId' => $restrictionRecord['childnodeaggregateid'],
+                            'affectedNodeAggregateIds' => '{' . $restrictionRecord['childnodeaggregateid'] . '}'
+                        ]
+                    );
+                    $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
+                        'UPDATE ' . $this->tableNamePrefix . '_restrictionhyperrelation
+                        SET affectednodeaggregateidentifiers = array_append(
+                            affectednodeaggregateidentifiers,
+                            :childNodeAggregateId
+                        )
+                        WHERE contentstreamidentifier = :contentStreamId
+                            AND dimensionspacepointhash = :dimensionSpacePointHash
+                            AND :parentNodeAggregateId = ANY(affectednodeaggregateidentifiers)
+                            AND NOT (:childNodeAggregateId = ANY(affectednodeaggregateidentifiers))',
+                        [
+                            'contentStreamId' => (string)$event->contentStreamId,
+                            'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                            'childNodeAggregateId' => $restrictionRecord['childnodeaggregateid'],
+                            'parentNodeAggregateId' => $restrictionRecord['parentnodeaggregateid']
+                        ]
                     );
                 }
             }
