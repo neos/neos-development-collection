@@ -26,13 +26,13 @@ trait BackendUserTranslationTrait
      * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
-    protected $_localizationService;
+    protected $localizationService;
 
     /**
      * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
-    protected $_userService;
+    protected $userService;
 
     /**
      * Set the locale according to the user settings
@@ -41,8 +41,8 @@ trait BackendUserTranslationTrait
      */
     protected function initializeObject()
     {
-        $this->_localizationService->getConfiguration()->setCurrentLocale(
-            new Locale($this->_userService->getInterfaceLanguage())
+        $this->localizationService->getConfiguration()->setCurrentLocale(
+            new Locale($this->userService->getInterfaceLanguage())
         );
     }
 }
