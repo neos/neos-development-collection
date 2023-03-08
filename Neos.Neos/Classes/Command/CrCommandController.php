@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Command;
@@ -13,42 +14,26 @@ namespace Neos\Neos\Command;
  * source code.
  */
 
-use Doctrine\DBAL\Configuration;
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Exception as DbalException;
-use Doctrine\DBAL\Exception\ConnectionException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\ExportService;
 use Neos\ContentRepository\Export\ExportServiceFactory;
 use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
-use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
-use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
-use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
+use Neos\ESCR\AssetUsage\AssetUsageFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
-use Neos\Flow\Persistence\PersistenceManagerInterface;
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\ResourceManagement\ResourceManager;
-use Neos\Flow\ResourceManagement\ResourceRepository;
-use Neos\Flow\Utility\Environment;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Utility\Files;
 
 class CrCommandController extends CommandController
 {
-
     /**
      * @var array
      */
@@ -56,15 +41,9 @@ class CrCommandController extends CommandController
     protected array $flowSettings;
 
     public function __construct(
-        private readonly Connection $connection,
-        private readonly Environment $environment,
-        private readonly PersistenceManagerInterface $persistenceManager,
         private readonly AssetRepository $assetRepository,
-        private readonly ResourceRepository $resourceRepository,
-        private readonly ResourceManager $resourceManager,
-        private readonly PropertyMapper $propertyMapper,
+        private readonly AssetUsageFinder $assetUsageFinder,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly SiteRepository $siteRepository,
     ) {
         parent::__construct();
     }
@@ -77,9 +56,8 @@ class CrCommandController extends CommandController
      * @param bool $verbose If set, all notices will be rendered
      * @throws \Exception
      */
-    public function exportCommand(string $path, string $cr='default', bool $verbose = false): void
+    public function exportCommand(string $path, string $cr = 'default', bool $verbose = false): void
     {
-
         $contentRepositoryIdentifier = ContentRepositoryId::fromString($cr);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
         $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
@@ -94,6 +72,8 @@ class CrCommandController extends CommandController
             new ExportServiceFactory(
                 $filesystem,
                 $contentRepository->getWorkspaceFinder(),
+                $this->assetRepository,
+                $this->assetUsageFinder,
                 $liveContentStreamIdentifier
             )
         );
@@ -110,15 +90,12 @@ class CrCommandController extends CommandController
      * @param bool $verbose If set, all notices will be rendered
      * @throws \Exception
      */
-    public function importCommand(string $path, string $cr='default', bool $verbose = false,  ): void
+    public function importCommand(string $path, string $cr = 'default', bool $verbose = false,): void
     {
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
 
         $contentRepositoryIdentifier = ContentRepositoryId::fromString($cr);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamIdentifier = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
+        $contentStreamIdentifier = ContentStreamId::create();
 
         $this->outputLine('Importing events');
 
@@ -126,24 +103,14 @@ class CrCommandController extends CommandController
             $contentRepositoryIdentifier,
             new ImportServiceFactory(
                 $filesystem,
-                $liveContentStreamIdentifier
+                $contentStreamIdentifier
             )
         );
         assert($importService instanceof ImportService);
         $importService->runAllProcessors($this->outputLine(...), $verbose);
 
-        $this->outputLine();
-
-        // TODO: 'assetUsage'
-        $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'contentStream'];
         $this->outputLine('Replaying projections');
-        $verbose && $this->output->progressStart(count($projections));
-        foreach ($projections as $projection) {
-            Scripts::executeCommand('neos.contentrepositoryregistry:cr:replay', $this->flowSettings, false, ['projectionName' => $projection]);
-            /** @noinspection DisconnectedForeachInstructionInspection */
-            $verbose && $this->output->progressAdvance();
-        }
-        $verbose && $this->output->progressFinish();
+        Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepositoryIdentifier' => $contentRepositoryIdentifier]);
 
         $this->outputLine('<success>Done</success>');
     }

@@ -6,9 +6,10 @@ namespace Neos\ContentRepository\Core\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\EventStore\EventStoreInterface;
 
 /**
  * @api
@@ -17,6 +18,7 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
 {
     public function __construct(
         private readonly ContentRepository $contentRepository,
+        private readonly EventStoreInterface $eventStore,
     ) {
     }
 
@@ -41,5 +43,15 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
         }
 
         return $outdatedWorkspaces;
+    }
+
+    public function pruneAll(): void
+    {
+        $workspaces = $this->contentRepository->getWorkspaceFinder()->findAll();
+
+        foreach ($workspaces as $workspace) {
+            $streamName = WorkspaceEventStreamName::fromWorkspaceName($workspace->workspaceName)->getEventStreamName();
+            $this->eventStore->deleteStream($streamName);
+        }
     }
 }

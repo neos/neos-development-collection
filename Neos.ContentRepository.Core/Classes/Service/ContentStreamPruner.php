@@ -77,6 +77,16 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         return $removedContentStreams;
     }
 
+    public function pruneAll(): void
+    {
+        $contentStreamIds = $this->contentRepository->getContentStreamFinder()->findAllIds();
+
+        foreach ($contentStreamIds as $contentStreamId) {
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
+            $this->eventStore->deleteStream($streamName);
+        }
+    }
+
     public function getLastCommandResult(): ?CommandResult
     {
         return $this->lastCommandResult;
