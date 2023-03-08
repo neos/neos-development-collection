@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -41,7 +43,7 @@ final class FindDescendantsFilter
         }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
-                $searchTerm ?? $this->searchTerm,
+            $searchTerm ?? $this->searchTerm,
         );
     }
 

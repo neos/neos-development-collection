@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -20,7 +22,7 @@ final class FindSubtreesFilter
 
     public static function all(): self
     {
-        return new self(null, null, null);
+        return new self(null, null);
     }
 
     public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
