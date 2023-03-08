@@ -108,7 +108,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
         assert($this->contentStreamId !== null);
 
-        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamId);
+        $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamId($this->contentStreamId)->getEventStreamName();
         $events = Events::with(
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
@@ -123,7 +123,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         }
 
         $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->name);
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($workspaceName)->getEventStreamName();
         $events = Events::with(
             $this->normalizeEvent(
                 new RootWorkspaceWasCreated(

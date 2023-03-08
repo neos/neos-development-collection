@@ -15,26 +15,26 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
- * A content stream's event stream name
+ * A workspaces event stream name
  *
  * @internal
  */
-final class ContentStreamEventStreamName
+final class WorkspaceEventStreamName
 {
-    public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
-
+    private const EVENT_STREAM_NAME_PREFIX = 'Workspace:';
 
     private function __construct(
         private readonly string $eventStreamName,
     ) {
     }
 
-    public static function fromContentStreamId(ContentStreamId $contentStreamId): self
+    public static function fromWorkspaceName(WorkspaceName $workspaceName): self
     {
-        return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId);
+        return new self(self::EVENT_STREAM_NAME_PREFIX . $workspaceName->name);
     }
 
     public function getEventStreamName(): StreamName

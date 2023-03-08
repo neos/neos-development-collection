@@ -143,7 +143,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         return new EventsToPublish(
-            StreamName::fromString('Workspace:' . $command->workspaceName),
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
             $events,
             ExpectedVersion::ANY()
         );
@@ -184,7 +184,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         return new EventsToPublish(
-            StreamName::fromString('Workspace:' . $command->workspaceName),
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
             $events,
             ExpectedVersion::ANY()
         );
@@ -220,7 +220,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         )->block();
 
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $events = Events::with(
             new WorkspaceWasPublished(
                 $command->workspaceName,
@@ -384,7 +384,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             }
         }
 
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if (!$rebaseStatistics->hasErrors()) {
@@ -544,7 +545,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 6) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $events = Events::with(
             new WorkspaceWasPartiallyPublished(
                 $command->workspaceName,
@@ -626,7 +627,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 3) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $events = Events::with(
             new WorkspaceWasPartiallyDiscarded(
                 $command->workspaceName,
@@ -679,7 +680,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         )->block();
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         $events = Events::with(
             new WorkspaceWasDiscarded(
                 $command->workspaceName,
