@@ -27,6 +27,10 @@
           position: 20
           icon: 'icon-cog'
       groups:
+        default:
+          label: i18n
+          position: 10
+          icon: 'icon-pencil'
         type:
           label: i18n
           tab: 'meta'
