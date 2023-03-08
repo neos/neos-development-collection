@@ -254,22 +254,25 @@ class NodeController extends ActionController
     protected function overrideViewVariablesFromInternalArguments()
     {
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
-            $node = $this->propertyMapper->convert((string)$nodeContextPath, Node::class);
+            assert(is_string($nodeContextPath));
+            $node = $this->propertyMapper->convert($nodeContextPath, Node::class);
             if (!$node instanceof Node) {
                 throw new NodeNotFoundException(sprintf(
                     'The node with context path "%s" could not be resolved',
-                    (string)$nodeContextPath
+                    $nodeContextPath
                 ), 1437051934);
             }
             $this->view->assign('value', $node);
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            $this->response->setHttpHeader('X-Neos-AffectedNodePath', (string)$affectedNodeContextPath);
+            assert(is_string($affectedNodeContextPath));
+            $this->response->setHttpHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
-            $this->view->setFusionPath((string)$fusionPath);
+            assert(is_string($fusionPath));
+            $this->view->setFusionPath($fusionPath);
         }
     }
 

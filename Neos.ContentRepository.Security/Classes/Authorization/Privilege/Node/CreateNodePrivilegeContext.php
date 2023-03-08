@@ -41,9 +41,7 @@ class CreateNodePrivilegeContext extends NodePrivilegeContext
     {
         if (is_array($this->creationNodeTypes)) {
             return $this->creationNodeTypes;
-        } elseif (is_string($this->creationNodeTypes)) {
-            return [$this->creationNodeTypes];
         }
-        return [];
+        return [$this->creationNodeTypes];
     }
 }
