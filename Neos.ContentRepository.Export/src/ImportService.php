@@ -25,12 +25,11 @@ class ImportService implements ContentRepositoryServiceInterface
 {
 
     public function __construct(
-        private readonly Filesystem          $filesystem,
-        private readonly EventNormalizer     $eventNormalizer,
+        private readonly Filesystem $filesystem,
+        private readonly EventNormalizer $eventNormalizer,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentStreamId     $contentStreamIdentifier,
-    )
-    {
+        private readonly ContentStreamId $contentStreamIdentifier,
+    ) {
     }
 
     public function runAllProcessors(\Closure $outputLineFn, bool $verbose = false): void
@@ -38,17 +37,17 @@ class ImportService implements ContentRepositoryServiceInterface
         /** @var ProcessorInterface[] $processors */
         $processors = [
             'Importing events' => new  EventStoreImportProcessor(
-                true,
+                false,
                 $this->filesystem,
                 $this->eventStore,
                 $this->eventNormalizer,
-                $this->contentStreamIdentifier
+                $this->contentStreamIdentifier,
             )
         ];
 
         foreach ($processors as $label => $processor) {
             $outputLineFn($label . '...');
-            $verbose && $processor->onMessage(fn(Severity $severity, string $message) => $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
+            $verbose && $processor->onMessage(fn (Severity $severity, string $message) => $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
                 throw new \RuntimeException($label . ': ' . $result->message ?? '');

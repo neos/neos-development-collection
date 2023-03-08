@@ -24,7 +24,7 @@ class ImportServiceFactory implements ContentRepositoryServiceFactoryInterface
 
     public function __construct(
         private readonly Filesystem      $filesystem,
-        private readonly ContentStreamId $contentStreamIdentifier
+        private readonly ContentStreamId $contentStreamIdentifier,
     )
     {
     }
@@ -35,7 +35,7 @@ class ImportServiceFactory implements ContentRepositoryServiceFactoryInterface
             $this->filesystem,
             $serviceFactoryDependencies->eventNormalizer,
             $serviceFactoryDependencies->eventStore,
-            $this->contentStreamIdentifier
+            $this->contentStreamIdentifier,
         );
     }
 }
