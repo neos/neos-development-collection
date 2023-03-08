@@ -11,6 +11,7 @@ namespace Neos\Fusion\FusionObjects;
  * source code.
  */
 
+use Neos\Fusion\Service\RenderAttributesTrait;
 
 /**
  * A Fusion object for tag based content
@@ -21,6 +22,8 @@ namespace Neos\Fusion\FusionObjects;
  */
 class TagImplementation extends AbstractFusionObject
 {
+    use RenderAttributesTrait;
+
     /**
      * List of self-closing tags
      *
@@ -122,39 +125,5 @@ class TagImplementation extends AbstractFusionObject
             $renderedAttributes = (string)$attributes;
         }
         return '<' . $tagName . $renderedAttributes . ($selfClosingTag ? ' /' : '') . '>' . (!$omitClosingTag && !$selfClosingTag ? $content . '</' . $tagName . '>' : '');
-    }
-
-    /**
-     * Render the tag attributes for the given key->values as atring,
-     * if an value is an iterable it will be concatenated with spaces as seperator
-     *
-     * @param iterable $attributes
-     * @param bool $allowEmpty
-     */
-    protected function renderAttributes(iterable $attributes, $allowEmpty = true): string
-    {
-        $renderedAttributes = '';
-        foreach ($attributes as $attributeName => $attributeValue) {
-            if ($attributeValue === null || $attributeValue === false) {
-                continue;
-            }
-            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8', false);
-            if ($attributeValue === true || $attributeValue === '') {
-                $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
-            } else {
-                if (is_array($attributeValue)) {
-                    $joinedAttributeValue = '';
-                    foreach ($attributeValue as $attributeValuePart) {
-                        if ((string)$attributeValuePart !== '') {
-                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
-                        }
-                    }
-                    $attributeValue = trim($joinedAttributeValue);
-                }
-                $encodedAttributeValue = htmlspecialchars($attributeValue, ENT_COMPAT, 'UTF-8', false);
-                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
-            }
-        }
-        return $renderedAttributes;
     }
 }

@@ -35,7 +35,22 @@ class AugmenterImplementation extends AbstractArrayFusionObject
      *
      * @var array
      */
-    protected $ignoreProperties = ['__meta', 'fallbackTagName', 'content'];
+    protected $ignoreProperties = ['__meta', 'fallbackTagName', 'content', 'allowEmptyAttributes'];
+
+    /**
+     * Whether empty attributes (HTML5 syntax) should be allowed
+     *
+     * @return boolean
+     */
+    protected function getAllowEmptyAttributes()
+    {
+        $allowEmpty = $this->fusionValue('allowEmptyAttributes');
+        if ($allowEmpty === null) {
+            return true;
+        } else {
+            return (boolean)$allowEmpty;
+        }
+    }
 
     /**
      * @return void|string
@@ -44,11 +59,12 @@ class AugmenterImplementation extends AbstractArrayFusionObject
     {
         $content = $this->fusionValue('content');
         $fallbackTagName = $this->fusionValue('fallbackTagName');
+        $allowEmptyAttributes = $this->getAllowEmptyAttributes();
 
-        $attributes = array_filter($this->evaluateNestedProperties());
+        $attributes = $this->evaluateNestedProperties();
 
         if ($attributes && is_array($attributes) && count($attributes) > 0) {
-            return $this->htmlAugmenter->addAttributes($content, $attributes, $fallbackTagName);
+            return $this->htmlAugmenter->addAttributes($content, $attributes, $fallbackTagName, null, $allowEmptyAttributes);
         } else {
             return $content;
         }
