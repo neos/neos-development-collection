@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -33,8 +35,7 @@ final class FindSucceedingSiblingsFilter
         NodeTypeConstraints|string $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null,
-    ): self
-    {
+    ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
         }
