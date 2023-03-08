@@ -44,7 +44,6 @@ final class ContentDimensionZookeeper
                 assert($contentDimension instanceof Dimension\ContentDimension);
                 if (empty($dimensionCombinations)) {
                     foreach ($contentDimension->values as $serializedValue => $dimensionValue) {
-                        // @phpstan-ignore-next-line
                         $dimensionCombinations[] = [(string)$contentDimension->id => $dimensionValue];
                     }
                 } else {

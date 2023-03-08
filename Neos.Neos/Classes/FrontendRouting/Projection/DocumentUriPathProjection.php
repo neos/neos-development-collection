@@ -595,6 +595,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                         $newLocation->destination->nodeAggregateId,
                         null
                     ),
+                    default => null,
                 };
             }
         }

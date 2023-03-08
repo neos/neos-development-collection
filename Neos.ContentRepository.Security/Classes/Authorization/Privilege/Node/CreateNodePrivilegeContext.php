@@ -44,7 +44,6 @@ class CreateNodePrivilegeContext extends NodePrivilegeContext
         } elseif (is_string($this->creationNodeTypes)) {
             return [$this->creationNodeTypes];
         }
-        // @phpstan-ignore-next-line
         return [];
     }
 }
