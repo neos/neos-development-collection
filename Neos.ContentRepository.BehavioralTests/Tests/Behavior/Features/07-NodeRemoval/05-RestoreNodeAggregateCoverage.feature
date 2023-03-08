@@ -1,4 +1,4 @@
-@contentrepository @fixtures @adapters=DoctrineDBAL,Postgres
+@contentrepository @fixtures @adapters=Postgres
 Feature: Restore NodeAggregate coverage
 
   As a user of the CR I want to be able to restore coverage of a NodeAggregate or parts of it.
@@ -117,8 +117,18 @@ Feature: Restore NodeAggregate coverage
     And I expect a node identified by cs-identifier;nodimus-prime;{"language":"en"} to exist in the content graph
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "preceding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"}]
+    And I expect the node aggregate "succeeding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nodewyn-tetherton" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"}]
     And I expect the node aggregate "nodimus-mediocre" to exist
@@ -127,8 +137,6 @@ Feature: Restore NodeAggregate coverage
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"}]
     And I expect the node aggregate "sir-nodeward-nodington-iii" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"}]
-    And I expect the node aggregate "succeeding-mc-nodeface" to exist
-    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nodimus-prime" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"}]
 
@@ -136,24 +144,50 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
-      | 2     | nody-mc-nodeface       |
-      | 3     | nodewyn-tetherton      |
-      | 4     | nodimus-mediocre       |
-      | 3     | nodimer-tetherton      |
-      | 2     | succeeding-mc-nodeface |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"}       |
-      | document | cs-identifier;succeeding-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -166,7 +200,13 @@ Feature: Restore NodeAggregate coverage
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"en"}
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to have no child nodes
     And I expect this node to have no references
@@ -199,83 +239,176 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to no node
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/document/tethered" to lead to no node
     And I expect node aggregate identifier "nodimus-mediocre" and node path "document/document/tethered/tethered" to lead to no node
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to no node
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to no node
     And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to no node
 
-    # Additional test for restoring coverage on a non-occupied source
+    # Additional test for restoring coverage using a parent not occupying the source DSP
     When the command RestoreNodeAggregateCoverage is executed with payload:
       | Key                        | Value                     |
       | nodeAggregateId            | "nody-mc-nodeface"        |
       | dimensionSpacePointToCover | {"language":"gsw"}        |
       | withSpecializations        | false                     |
       | recursionMode              | "onlyTetheredDescendants" |
-    Then I expect exactly 14 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 13 is of type "NodeAggregateCoverageWasRestored" with payload:
-      | Key                                 | Expected                     |
-      | contentStreamId                     | "cs-identifier"              |
-      | nodeAggregateId                     | "nody-mc-nodeface"           |
-      | sourceDimensionSpacePoint           | {"language":"de"}            |
-      | affectedCoveredDimensionSpacePoints | [{"language":"gsw"}]         |
-      | recursive                           | false                        |
-      | initiatingUserId                    | "initiating-user-identifier" |
+    Then I expect exactly 21 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 20 is of type "NodeAggregateCoverageWasRestored" with payload:
+      | Key                                 | Expected                  |
+      | contentStreamId                     | "cs-identifier"           |
+      | nodeAggregateId                     | "nody-mc-nodeface"        |
+      | sourceDimensionSpacePoint           | {"language":"de"}         |
+      | affectedCoveredDimensionSpacePoints | [{"language":"gsw"}]      |
+      | recursionMode                       | "onlyTetheredDescendants" |
     When the graph projection is fully up to date
 
     # Re-check the specialization
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
-      | 2     | nody-mc-nodeface       |
-      | 3     | nodewyn-tetherton      |
-      | 4     | nodimus-mediocre       |
-      | 3     | nodimer-tetherton      |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                 |
-      | document | cs-identifier;nodewyn-tetherton;{"language":"en"} |
-      | document | cs-identifier;nodimer-tetherton;{"language":"en"} |
+      | Name            | NodeDiscriminator                                 |
+      | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"} |
+      | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/document/tethered" to lead to node cs-identifier;nodewyn-tetherton;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to have the following child nodes:
       | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nodimus-mediocre;{"language":"en"} |
+      | tethered | cs-identifier;nodimus-mediocre;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nodimus-mediocre" and node path "document/document/tethered/tethered" to lead to node cs-identifier;nodimus-mediocre;{"language":"en"}
-    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton";{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"language":"en"}
     And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to node cs-identifier;nodimer-tetherton;{"language":"en"}
-    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface";{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to no node
     And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to no node
@@ -286,30 +419,46 @@ Feature: Restore NodeAggregate coverage
       | nodeAggregateId            | "nody-mc-nodeface"        |
       | dimensionSpacePointToCover | {"language":"de"}         |
       | withSpecializations        | true                      |
-      | recursive                  | "onlyTetheredDescendants" |
-    Then I expect exactly 13 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 12 is of type "NodeAggregateCoverageWasRestored" with payload:
+      | recursionMode              | "onlyTetheredDescendants" |
+    Then I expect exactly 20 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 19 is of type "NodeAggregateCoverageWasRestored" with payload:
       | Key                                 | Expected                               |
       | contentStreamId                     | "cs-identifier"                        |
       | nodeAggregateId                     | "nody-mc-nodeface"                     |
-      | originDimensionSpacePoint           | {"language":"en"}                      |
+      | sourceDimensionSpacePoint           | {"language":"en"}                      |
       | affectedCoveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
-      | recursive                           | false                                  |
-      | initiatingUserId                    | "initiating-user-identifier"           |
+      | recursionMode                       | "onlyTetheredDescendants"              |
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 9 nodes
+    Then I expect the graph projection to consist of exactly 16 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;preceding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-mediocre;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-prime;{"language":"en"} to exist in the content graph
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "preceding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "succeeding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-mc-nodeface" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nodewyn-tetherton" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
@@ -326,22 +475,50 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
-      | 2     | nody-mc-nodeface       |
-      | 3     | nodewyn-tetherton      |
-      | 4     | nodimus-mediocre       |
-      | 3     | nodimer-tetherton      |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -351,6 +528,18 @@ Feature: Restore NodeAggregate coverage
       | Name            | NodeDiscriminator                                 |
       | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"} |
       | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -381,22 +570,50 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
-      | 2     | nody-mc-nodeface       |
-      | 3     | nodewyn-tetherton      |
-      | 4     | nodimus-mediocre       |
-      | 3     | nodimer-tetherton      |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -406,6 +623,18 @@ Feature: Restore NodeAggregate coverage
       | Name            | NodeDiscriminator                                 |
       | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"} |
       | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -438,31 +667,47 @@ Feature: Restore NodeAggregate coverage
       | nodeAggregateId            | "nody-mc-nodeface" |
       | dimensionSpacePointToCover | {"language":"de"}  |
       | withSpecializations        | false              |
-      | recursive                  | "allDescendants"   |
-    Then I expect exactly 13 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 12 is of type "NodeAggregateCoverageWasRestored" with payload:
-      | Key                                 | Expected                     |
-      | contentStreamId                     | "cs-identifier"              |
-      | nodeAggregateId                     | "nody-mc-nodeface"           |
-      | originDimensionSpacePoint           | {"language":"en"}            |
-      | affectedCoveredDimensionSpacePoints | [{"language":"de"}]          |
-      | recursive                           | true                         |
-      | initiatingUserId                    | "initiating-user-identifier" |
+      | recursionMode              | "allDescendants"   |
+    Then I expect exactly 20 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 19 is of type "NodeAggregateCoverageWasRestored" with payload:
+      | Key                                 | Expected            |
+      | contentStreamId                     | "cs-identifier"     |
+      | nodeAggregateId                     | "nody-mc-nodeface"  |
+      | sourceDimensionSpacePoint           | {"language":"en"}   |
+      | affectedCoveredDimensionSpacePoints | [{"language":"de"}] |
+      | recursionMode                       | "allDescendants"    |
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 9 nodes
+    Then I expect the graph projection to consist of exactly 16 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;preceding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-mediocre;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-prime;{"language":"en"} to exist in the content graph
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "preceding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"}]
+    And I expect the node aggregate "succeeding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nodewyn-tetherton" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"}]
     And I expect the node aggregate "nodimus-mediocre" to exist
@@ -478,28 +723,56 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId            |
-      | 0     | lady-eleonode-rootford     |
-      | 1     | sir-david-nodenborough     |
-      | 2     | nody-mc-nodeface           |
-      | 3     | nodewyn-tetherton          |
-      | 4     | nodimus-mediocre           |
-      | 3     | nodimer-tetherton          |
-      | 3     | sir-nodeward-nodington-iii |
-      | 4     | nodimus-prime              |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 3     | sir-nodeward-nodington-iii      |
+      | 4     | nodimus-prime                   |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
     And I expect this node to have no references
     And I expect this node to be referenced by:
-      | Name       | Node                                                       | Properties |
+      | Name       | Node                                        | Properties |
       | references | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} | null       |
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
@@ -508,6 +781,34 @@ Feature: Restore NodeAggregate coverage
       | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"}          |
       | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"}          |
       | esquire         | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                             |
+      | prime | cs-identifier;nodimus-prime;{"language":"en"} |
+    And I expect this node to have the following references:
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to node cs-identifier;nodimus-prime;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -531,14 +832,174 @@ Feature: Restore NodeAggregate coverage
     And I expect this node to have no references
     And I expect this node to not be referenced
 
+    # Check the specialization
+    When I am in dimension space point {"language":"gsw"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
+
+    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to no node
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/document/tethered" to lead to no node
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "document/document/tethered/tethered" to lead to no node
+    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to no node
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to no node
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to no node
+
+    # Additional test for restoring coverage using a parent not occupying the source DSP
+    When the command RestoreNodeAggregateCoverage is executed with payload:
+      | Key                        | Value              |
+      | nodeAggregateId            | "nody-mc-nodeface" |
+      | dimensionSpacePointToCover | {"language":"gsw"} |
+      | withSpecializations        | false              |
+      | recursionMode              | "allDescendants"   |
+    Then I expect exactly 21 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 20 is of type "NodeAggregateCoverageWasRestored" with payload:
+      | Key                                 | Expected             |
+      | contentStreamId                     | "cs-identifier"      |
+      | nodeAggregateId                     | "nody-mc-nodeface"   |
+      | sourceDimensionSpacePoint           | {"language":"de"}    |
+      | affectedCoveredDimensionSpacePoints | [{"language":"gsw"}] |
+      | recursionMode                       | "allDescendants"     |
+    When the graph projection is fully up to date
+
+    # Re-check the specialization
+    When I am in dimension space point {"language":"gsw"}
+    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
+    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 3     | sir-nodeward-nodington-iii          |
+      | 4     | nodimus-prime                   |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
+
+    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have the following child nodes:
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to be referenced by:
+      | Name       | Node                                        | Properties |
+      | references | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} | null       |
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to node cs-identifier;nody-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have the following child nodes:
+      | Name            | NodeDiscriminator                                          |
+      | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"}          |
+      | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"}          |
+      | esquire         | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
     And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to have the following child nodes:
-      | Name  | NodeDiscriminator                             |
+      | Name     | NodeDiscriminator                             |
       | prime | cs-identifier;nodimus-prime;{"language":"en"} |
     And I expect this node to have the following references:
-      | Name       | Node                                                    | Properties |
-      | references | cs-identifier;sir-david-nodenborough;{"language": "de"} | null       |
+      | Name              | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
     And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to node cs-identifier;nodimus-prime;{"language":"en"}
@@ -547,27 +1008,25 @@ Feature: Restore NodeAggregate coverage
     And I expect this node to have no references
     And I expect this node to not be referenced
 
-    # Check the specialization
-    When I am in dimension space point {"language":"gsw"}
-    Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/document/tethered" to lead to node cs-identifier;nodewyn-tetherton;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
-    And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId        |
-      | 0     | lady-eleonode-rootford |
-      | 1     | sir-david-nodenborough |
+      | Name     | NodeDiscriminator                                |
+      | tethered | cs-identifier;nodimus-mediocre;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
-    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect node aggregate identifier "nodimus-mediocre" and node path "document/document/tethered/tethered" to lead to node cs-identifier;nodimus-mediocre;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nodewyn-tetherton;{"language":"en"}
     And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
-    And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to no node
-    And I expect node aggregate identifier "nodewyn-tetherton" and node path "document/document/tethered" to lead to no node
-    And I expect node aggregate identifier "nodimus-mediocre" and node path "document/document/tethered/tethered" to lead to no node
-    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to no node
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to no node
-    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to no node
+    And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to node cs-identifier;nodimer-tetherton;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
   Scenario: Restore node aggregate coverage with specializations and recursive
     When the command RestoreNodeAggregateCoverage is executed with payload:
@@ -575,30 +1034,46 @@ Feature: Restore NodeAggregate coverage
       | nodeAggregateId            | "nody-mc-nodeface" |
       | dimensionSpacePointToCover | {"language":"de"}  |
       | withSpecializations        | true               |
-      | recursive                  | "allDescendants"   |
-    Then I expect exactly 13 events to be published on stream with prefix "Neos.ContentRepository:ContentStream:cs-identifier"
-    And event at index 12 is of type "NodeAggregateCoverageWasRestored" with payload:
-      | Key                                 | Expected                               |
-      | contentStreamId                     | "cs-identifier"                        |
-      | nodeAggregateId                     | "nody-mc-nodeface"                     |
-      | originDimensionSpacePoint           | {"language":"en"}                      |
+      | recursionMode              | "allDescendants"   |
+    Then I expect exactly 20 events to be published on stream with prefix "ContentStream:cs-identifier"
+    And event at index 19 is of type "NodeAggregateCoverageWasRestored" with payload:
+      | Key                                 | Expected            |
+      | contentStreamId                     | "cs-identifier"     |
+      | nodeAggregateId                     | "nody-mc-nodeface"  |
+      | sourceDimensionSpacePoint           | {"language":"en"}   |
       | affectedCoveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}] |
-      | recursive                           | true                                   |
-      | initiatingUserId                    | "initiating-user-identifier"           |
+      | recursionMode                       | "allDescendants"    |
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 9 nodes
+    Then I expect the graph projection to consist of exactly 16 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-nodenborough;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-nodenborough;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;preceding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodewyn-tetherton;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-mediocre;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimer-tetherton;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
+    And I expect a node identified by cs-identifier;succeeding-mc-nodeface;{"language":"de"} to exist in the content graph
+    And I expect a node identified by cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} to exist in the content graph
     And I expect a node identified by cs-identifier;nodimus-prime;{"language":"en"} to exist in the content graph
     And I expect the node aggregate "sir-david-nodenborough" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-nodenborough" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "preceding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "succeeding-mc-nodeface" to exist
+    And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
+    And I expect the node aggregate "another-succeeding-mc-nodeface" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
     And I expect the node aggregate "nodewyn-tetherton" to exist
     And I expect this node aggregate to cover dimension space points [{"language":"en"},{"language":"de"},{"language":"gsw"}]
@@ -615,28 +1090,56 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId            |
-      | 0     | lady-eleonode-rootford     |
-      | 1     | sir-david-nodenborough     |
-      | 2     | nody-mc-nodeface           |
-      | 3     | nodewyn-tetherton          |
-      | 4     | nodimus-mediocre           |
-      | 3     | nodimer-tetherton          |
-      | 3     | sir-nodeward-nodington-iii |
-      | 4     | nodimus-prime              |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 3     | sir-nodeward-nodington-iii      |
+      | 4     | nodimus-prime                   |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
     And I expect this node to have no references
     And I expect this node to be referenced by:
-      | Name       | Node                                                       | Properties |
+      | Name       | Node                                        | Properties |
       | references | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} | null       |
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
@@ -645,6 +1148,34 @@ Feature: Restore NodeAggregate coverage
       | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"}          |
       | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"}          |
       | esquire         | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                             |
+      | prime | cs-identifier;nodimus-prime;{"language":"en"} |
+    And I expect this node to have the following references:
+      | Name       | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to node cs-identifier;nodimus-prime;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -664,22 +1195,6 @@ Feature: Restore NodeAggregate coverage
 
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to node cs-identifier;nodimer-tetherton;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
-    And I expect this node to have no child nodes
-    And I expect this node to have no references
-    And I expect this node to not be referenced
-
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
-    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
-    And I expect this node to have the following child nodes:
-      | Name  | NodeDiscriminator                             |
-      | prime | cs-identifier;nodimus-prime;{"language":"en"} |
-    And I expect this node to have the following references:
-      | Name       | Node                                                    | Properties |
-      | references | cs-identifier;sir-david-nodenborough;{"language": "de"} | null       |
-    And I expect this node to not be referenced
-
-    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to node cs-identifier;nodimus-prime;{"language":"en"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
@@ -688,28 +1203,56 @@ Feature: Restore NodeAggregate coverage
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                      |
-      | document | cs-identifier;sir-david-nodenborough;{"language":"de"} |
+      | Name               | NodeDiscriminator                                               |
+      | document           | cs-identifier;sir-david-nodenborough;{"language":"de"}          |
+      | succeeding         | cs-identifier;succeeding-nodenborough;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-nodenborough;{"language":"en"} |
     And the subtree for node aggregate "lady-eleonode-rootford" with node types "" and 4 levels deep should be:
-      | Level | NodeAggregateId            |
-      | 0     | lady-eleonode-rootford     |
-      | 1     | sir-david-nodenborough     |
-      | 2     | nody-mc-nodeface           |
-      | 3     | nodewyn-tetherton          |
-      | 4     | nodimus-mediocre           |
-      | 3     | nodimer-tetherton          |
-      | 3     | sir-nodeward-nodington-iii |
-      | 4     | nodimus-prime              |
+      | Level | nodeAggregateId                 |
+      | 0     | lady-eleonode-rootford          |
+      | 1     | sir-david-nodenborough          |
+      | 2     | preceding-mc-nodeface           |
+      | 2     | nody-mc-nodeface                |
+      | 3     | nodewyn-tetherton               |
+      | 4     | nodimus-mediocre                |
+      | 3     | nodimer-tetherton               |
+      | 3     | sir-nodeward-nodington-iii          |
+      | 4     | nodimus-prime                   |
+      | 2     | succeeding-mc-nodeface          |
+      | 2     | another-succeeding-mc-nodeface  |
+      | 1     | succeeding-nodenborough         |
+      | 1     | another-succeeding-nodenborough |
 
     And I expect node aggregate identifier "sir-david-nodenborough" and node path "document" to lead to node cs-identifier;sir-david-nodenborough;{"language":"de"}
     And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:
-      | Name     | NodeDiscriminator                                |
-      | document | cs-identifier;nody-mc-nodeface;{"language":"en"} |
+      | Name               | NodeDiscriminator                                              |
+      | preceding          | cs-identifier;preceding-mc-nodeface;{"language":"en"}          |
+      | document           | cs-identifier;nody-mc-nodeface;{"language":"en"}               |
+      | succeeding         | cs-identifier;succeeding-mc-nodeface;{"language":"de"}         |
+      | another-succeeding | cs-identifier;another-succeeding-mc-nodeface;{"language":"en"} |
     And I expect this node to have no references
     And I expect this node to be referenced by:
-      | Name       | Node                                                       | Properties |
+      | Name       | Node                                        | Properties |
       | references | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} | null       |
+
+    And I expect node aggregate identifier "succeeding-nodenborough" and node path "succeeding" to lead to node cs-identifier;succeeding-nodenborough;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-nodenborough" and node path "another-succeeding" to lead to node cs-identifier;another-succeeding-nodenborough;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;lady-eleonode-rootford;{}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "preceding-mc-nodeface" and node path "document/preceding" to lead to node cs-identifier;preceding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
 
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/document" to lead to node cs-identifier;nody-mc-nodeface;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
@@ -718,6 +1261,34 @@ Feature: Restore NodeAggregate coverage
       | tethered        | cs-identifier;nodewyn-tetherton;{"language":"en"}          |
       | anothertethered | cs-identifier;nodimer-tetherton;{"language":"en"}          |
       | esquire         | cs-identifier;sir-nodeward-nodington-iii;{"language":"en"} |
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "succeeding-mc-nodeface" and node path "document/succeeding" to lead to node cs-identifier;succeeding-mc-nodeface;{"language":"de"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "another-succeeding-mc-nodeface" and node path "document/another-succeeding" to lead to node cs-identifier;another-succeeding-mc-nodeface;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"de"}
+    And I expect this node to have no child nodes
+    And I expect this node to have no references
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
+    And I expect this node to have the following child nodes:
+      | Name     | NodeDiscriminator                             |
+      | prime | cs-identifier;nodimus-prime;{"language":"en"} |
+    And I expect this node to have the following references:
+      | Name              | Node                                    | Properties |
+      | references | cs-identifier;sir-david-nodenborough;{"language":"de"} | null       |
+    And I expect this node to not be referenced
+
+    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to node cs-identifier;nodimus-prime;{"language":"en"}
+    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
+    And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced
 
@@ -737,22 +1308,6 @@ Feature: Restore NodeAggregate coverage
 
     And I expect node aggregate identifier "nodimer-tetherton" and node path "document/document/anothertethered" to lead to node cs-identifier;nodimer-tetherton;{"language":"en"}
     And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
-    And I expect this node to have no child nodes
-    And I expect this node to have no references
-    And I expect this node to not be referenced
-
-    And I expect node aggregate identifier "sir-nodeward-nodington-iii" and node path "document/document/esquire" to lead to node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
-    And I expect this node to be a child of node cs-identifier;nody-mc-nodeface;{"language":"en"}
-    And I expect this node to have the following child nodes:
-      | Name  | NodeDiscriminator                             |
-      | prime | cs-identifier;nodimus-prime;{"language":"en"} |
-    And I expect this node to have the following references:
-      | Name       | Node                                                    | Properties |
-      | references | cs-identifier;sir-david-nodenborough;{"language": "de"} | null       |
-    And I expect this node to not be referenced
-
-    And I expect node aggregate identifier "nodimus-prime" and node path "document/document/esquire/prime" to lead to node cs-identifier;nodimus-prime;{"language":"en"}
-    And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{"language":"en"}
     And I expect this node to have no child nodes
     And I expect this node to have no references
     And I expect this node to not be referenced

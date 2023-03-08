@@ -66,6 +66,8 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
  */
 final class HypergraphProjection implements ProjectionInterface
 {
+    public const ANCHOR_POINT_SORT_FROM_RESULT = '00000000-0000-0000-0000-000000000000';
+
     use ContentStreamForking;
     use NodeCreation;
     use NodeDisabling;
@@ -261,6 +263,11 @@ final class HypergraphProjection implements ProjectionInterface
             );
         }
         return $this->contentHypergraph;
+    }
+
+    protected function getHierarchyRelationTableName(): string
+    {
+        return $this->getDatabaseConnection()->quoteIdentifier($this->tableNamePrefix . '_hierarchyhyperrelation');
     }
 
     protected function getProjectionHypergraph(): ProjectionHypergraph

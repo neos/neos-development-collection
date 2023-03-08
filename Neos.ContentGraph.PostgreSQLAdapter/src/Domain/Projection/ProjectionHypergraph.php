@@ -21,6 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\RecursionMode;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -708,6 +709,137 @@ final class ProjectionHypergraph
         ];
 
         return (int)$this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public function findDescendantAssignments(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        DimensionSpacePoint $sourceDimensionSpacePoint,
+        DimensionSpacePointSet $affectedCoveredDimensionSpacePoints,
+        RecursionMode $recursionMode
+    ): array {
+        return $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */ '
+WITH RECURSIVE parentrelation AS (
+    /**
+     * Initial query: find the proper parent relation to be restored to restore the selected node itself.
+     * We need to find the node\'s parent\'s variant covering the target dimension space point
+     * as well as an appropriate succeeding sibling
+     */
+    SELECT
+        /* The parent node aggregate id, to be used for restriction relations */
+        tarp.nodeaggregateidentifier AS parentnodeaggregateid,
+        /* The parent relation anchor point, to be used for hierarchy relations */
+        tarp.relationanchorpoint     AS parentrelationanchorpoint,
+        /* The child node aggregat id, to be used for restriction relations */
+        srcn.nodeaggregateidentifier AS childnodeaggregateid,
+        /* The child relation anchor point, to be used for hierarchy relations */
+        srcn.relationanchorpoint     AS childrelationanchorpoint,
+        /* The dimension space point and hash, to be used for hierarchy relations */
+        tarp.dimensionspacepoint,
+        tarp.dimensionspacepointhash,
+        /* The succeeding sibling relation anchor point, to be used for hierarchy relations */
+        tars.relationanchorpoint     AS succeedingsiblingrelationanchorpoint,
+        /* The order in which the children are to be arranged in newly created hierarchy relations */
+        1::bigint                    AS ordinality,
+        1::bigint                    AS level
+    FROM cr_default_p_hypergraph_hierarchyhyperrelation srch
+        JOIN cr_default_p_hypergraph_node srcn
+             ON srcn.relationanchorpoint = ANY (srch.childnodeanchors)
+        JOIN cr_default_p_hypergraph_node srcp
+             ON srcp.relationanchorpoint = srch.parentnodeanchor
+        /**
+         * Join the target parent per dimension space point, i.e. the node covering the respective target DSP and
+         * sharing the node aggregate ID with the source\'s parent
+         */
+        LEFT JOIN LATERAL (
+            SELECT tarpn.nodeaggregateidentifier, tarpn.relationanchorpoint, tarph.dimensionspacepoint, tarph.dimensionspacepointhash
+                FROM cr_default_p_hypergraph_node tarpn
+                    JOIN cr_default_p_hypergraph_hierarchyhyperrelation tarph
+                        ON tarpn.relationanchorpoint = ANY (tarph.childnodeanchors)
+                WHERE tarph.contentstreamidentifier = :contentStreamId
+                    AND tarph.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+                    AND tarpn.nodeaggregateidentifier = srcp.nodeaggregateidentifier
+        ) tarp ON TRUE
+        /**
+         * Join the target succeeding sibling per dimension space point, i.e. the first child node of the target parent
+         * which is in the list of succeeding siblings of the source node
+         */
+        LEFT JOIN LATERAL (
+            SELECT tars.relationanchorpoint, tars.nodeaggregateidentifier
+                FROM cr_default_p_hypergraph_node tars
+                    JOIN cr_default_p_hypergraph_hierarchyhyperrelation tarsh
+                        ON tars.relationanchorpoint = ANY (tarsh.childnodeanchors)
+                WHERE tarsh.contentstreamidentifier = :contentStreamId
+                    AND tarsh.parentnodeanchor = tarp.relationanchorpoint
+                    AND tarsh.dimensionspacepointhash = tarp.dimensionspacepointhash
+                    AND tars.nodeaggregateidentifier IN (
+                        SELECT nodeaggregateidentifier
+                        FROM cr_default_p_hypergraph_node
+                             JOIN unnest(srch.childnodeanchors[(array_position(srch.childnodeanchors, srcn.relationanchorpoint))+1:]) WITH ORDINALITY AS T(childnodeanchor,index) ON relationanchorpoint = childnodeanchor
+                        ORDER BY index
+                        LIMIT 1
+                    )
+        ) tars ON true
+            WHERE srcn.nodeaggregateidentifier = :nodeAggregateId
+            AND srch.contentstreamidentifier = :contentStreamId
+            AND srch.dimensionspacepointhash = :sourceDimensionSpacePointHash
+
+    UNION ALL
+        /**
+         * Iteration query: find all descendant node and sibling node relation anchor points in the source dimension space point
+         * Generally, nothing exists in any of the target DSPs yet, so we can just copy all hierarchy relations as they are.
+         * The only exception are descendant nodes moved before deletion; They still may exist elsewhere and break the iteration.
+         */
+        SELECT parentrelation.childnodeaggregateid     AS parentnodeaggregateid,
+               parentrelation.childrelationanchorpoint AS parentrelationanchorpoint,
+               srcc.nodeaggregateidentifier            AS childnodeaggregateid,
+               srcc.relationanchorpoint                AS childrelationanchorpoint,
+               parentrelation.dimensionspacepoint,
+               parentrelation.dimensionspacepointhash,
+               /** we choose an arbitrary UUID to define that succeeding siblings are to be resolved from the results */
+               :anchorPointForResultResolution         AS succeedingsiblingrelationanchorpoint,
+               index                                   AS ordinality,
+               parentrelation.level + 1                AS level
+        FROM parentrelation
+            JOIN cr_default_p_hypergraph_hierarchyhyperrelation srch
+                ON srch.parentnodeanchor = parentrelation.childrelationanchorpoint
+                    AND srch.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                    AND srch.contentstreamidentifier = :contentStreamId,
+            unnest(srch.childnodeanchors) WITH ORDINALITY AS T(childnodeanchor,index)
+            JOIN cr_default_p_hypergraph_node srcc
+                ON srcc.relationanchorpoint = childnodeanchor
+                ' . match ($recursionMode) {
+                    RecursionMode::MODE_ALL_DESCENDANTS => '',
+                    RecursionMode::MODE_ONLY_TETHERED_DESCENDANTS => 'AND srcc.classification = :classification',
+                } . '
+            /** Filter out moved nodes, i.e. descendant node aggregates already covering the target DSP */
+            LEFT OUTER JOIN LATERAL (
+                SELECT relationanchorpoint FROM cr_default_p_hypergraph_node n
+                    JOIN cr_default_p_hypergraph_hierarchyhyperrelation h
+                         ON n.relationanchorpoint = ANY (h.childnodeanchors)
+                    WHERE n.nodeaggregateidentifier = srcc.nodeaggregateidentifier
+                        AND h.dimensionspacepointhash = parentrelation.dimensionspacepointhash
+                        AND h.contentstreamidentifier = :contentStreamId
+            ) movednode ON TRUE
+                WHERE movednode.relationanchorpoint IS NULL
+) SELECT * FROM parentrelation ORDER BY level, ordinality
+            ',
+            [
+                'contentStreamId' => (string)$contentStreamId,
+                'nodeAggregateId' => (string)$nodeAggregateId,
+                'sourceDimensionSpacePointHash' => $sourceDimensionSpacePoint->hash,
+                'dimensionSpacePointHashes' => $affectedCoveredDimensionSpacePoints->getPointHashes(),
+                'anchorPointForResultResolution' => HypergraphProjection::ANCHOR_POINT_SORT_FROM_RESULT,
+                'classification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
+            ],
+            [
+                'dimensionSpacePoints' => Connection::PARAM_STR_ARRAY,
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
+            ]
+        )->fetchAllAssociative();
     }
 
     protected function getDatabaseConnection(): Connection
