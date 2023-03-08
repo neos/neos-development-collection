@@ -16,10 +16,13 @@ namespace Neos\ContentRepository\Export;
 
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ESCR\AssetUsage\AssetUsageFinder;
 use Neos\EventStore\EventStoreInterface;
+use Neos\Media\Domain\Repository\AssetRepository;
 
 class ExportService implements ContentRepositoryServiceInterface
 {
@@ -28,6 +31,8 @@ class ExportService implements ContentRepositoryServiceInterface
         private readonly Filesystem          $filesystem,
         private readonly WorkspaceFinder     $workspaceFinder,
         private readonly EventStoreInterface $eventStore,
+        private readonly AssetRepository $assetRepository,
+        private readonly AssetUsageFinder $assetUsageFinder,
         private readonly ContentStreamId     $contentStreamIdentifier,
     )
     {
@@ -37,7 +42,8 @@ class ExportService implements ContentRepositoryServiceInterface
     {
         /** @var ProcessorInterface[] $processors */
         $processors = [
-            'Exporting events' => new  EventExportProcessor($this->filesystem, $this->workspaceFinder, $this->eventStore)
+            'Exporting events' => new  EventExportProcessor($this->filesystem, $this->workspaceFinder, $this->eventStore),
+            'Exporting assets' => new  AssetExportProcessor($this->filesystem, $this->assetRepository, $this->workspaceFinder, $this->assetUsageFinder)
         ];
 
         foreach ($processors as $label => $processor) {

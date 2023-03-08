@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependenc
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ESCR\AssetUsage\AssetUsageFinder;
+use Neos\Media\Domain\Repository\AssetRepository;
 
 class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
@@ -26,6 +28,8 @@ class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
     public function __construct(
         private readonly Filesystem      $filesystem,
         private readonly WorkspaceFinder $workspaceFinder,
+        private readonly AssetRepository $assetRepository,
+        private readonly AssetUsageFinder $assetUsageFinder,
         private readonly ContentStreamId $contentStreamIdentifier
     )
     {
@@ -37,6 +41,8 @@ class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
             $this->filesystem,
             $this->workspaceFinder,
             $serviceFactoryDependencies->eventStore,
+            $this->assetRepository,
+            $this->assetUsageFinder,
             $this->contentStreamIdentifier
         );
     }

@@ -28,6 +28,7 @@ use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
+use Neos\ESCR\AssetUsage\AssetUsageFinder;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
@@ -56,15 +57,9 @@ class CrCommandController extends CommandController
     protected array $flowSettings;
 
     public function __construct(
-        private readonly Connection $connection,
-        private readonly Environment $environment,
-        private readonly PersistenceManagerInterface $persistenceManager,
         private readonly AssetRepository $assetRepository,
-        private readonly ResourceRepository $resourceRepository,
-        private readonly ResourceManager $resourceManager,
-        private readonly PropertyMapper $propertyMapper,
+        private readonly AssetUsageFinder $assetUsageFinder,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly SiteRepository $siteRepository,
     ) {
         parent::__construct();
     }
@@ -94,6 +89,8 @@ class CrCommandController extends CommandController
             new ExportServiceFactory(
                 $filesystem,
                 $contentRepository->getWorkspaceFinder(),
+                $this->assetRepository,
+                $this->assetUsageFinder,
                 $liveContentStreamIdentifier
             )
         );
