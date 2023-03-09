@@ -82,10 +82,10 @@ Feature: Find nodes using the findNodePath query
     And the graph projection is fully up to date
 
   Scenario: findNodePath queries without result
-    When I execute the findNodePath query for node aggregate id "non-existing" I expect no path to be returned
+    When I execute the findNodePath query for node aggregate id "non-existing" I expect an exception 'Failed to retrieve node path for node "non-existing"'
     # node "b1" is disabled so it must not be returned
-    When I execute the findNodePath query for node aggregate id "b1" I expect no path to be returned
-    When I execute the findNodePath query for node aggregate id "b1a" I expect no path to be returned
+    When I execute the findNodePath query for node aggregate id "b1" I expect an exception 'Failed to retrieve node path for node "b1"'
+    When I execute the findNodePath query for node aggregate id "b1a" I expect an exception 'Failed to retrieve node path for node "b1a"'
 
   Scenario: findNodePath queries with result
     When I execute the findNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/" to be returned
