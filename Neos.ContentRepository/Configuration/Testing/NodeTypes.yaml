@@ -199,3 +199,9 @@
       type: string
     someDate:
       type: DateTime
+
+'Neos.ContentRepository.Testing:NodeTypeWithPlainLabel':
+  label: 'Test nodetype'
+
+'Neos.ContentRepository.Testing:NodeTypeWithEelExpressionLabel':
+  label: '${"Test" + " " + "nodetype"}'
