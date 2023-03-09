@@ -1,5 +1,6 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
-Feature: Find nodes using the findSubtrees query
+@contentrepository @adapters=DoctrineDBAL
+  # TODO implement for Postgres
+Feature: Find nodes using the findDescendantNodes query
 
   Background:
     Given I have the following content dimensions:
@@ -73,76 +74,17 @@ Feature: Find nodes using the findSubtrees query
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "a2a2a"        |
+      | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findSubtrees queries without results
-    When I execute the findSubtrees query for entry node aggregate id "non-existing" I expect no results
-    # node "a2a2a" is disabled so it should not yield results
-    When I execute the findSubtrees query for entry node aggregate id "a2a2a" I expect no results
 
-  Scenario: findSubtrees queries with results
-    When I execute the findSubtrees query for entry node aggregate id "a2a2" I expect no results
-    """
-    a2a2
-    """
-    When I execute the findSubtrees query for entry node aggregate id "b1" I expect the following tree:
-    """
-    b1
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" I expect the following tree:
-    """
-    home
-     terms
-     contact
-     a
-      a1
-      a2
-       a2a
-        a2a1
-        a2a2
-      a3
-     b
-      b1
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
-    """
-    home
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"maximumLevels": 2}' I expect the following tree:
-    """
-    home
-     terms
-     contact
-     a
-      a1
-      a2
-      a3
-     b
-      b1
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage"}' I expect the following tree:
-    """
-    home
-     a
-      a1
-      a2
-       a2a
-        a2a1
-        a2a2
-      a3
-     b
-      b1
-    """
-#    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage", "maximumLevels": 3}' I expect the following tree:
-#    """
-#    home
-#     a
-#      a1
-#      a2
-#       a2a
-#      a3
-#     b
-#      b1
-#    """
+  Scenario: findDescendantNodes queries without results
+    When I execute the findDescendantNodes query for entry node aggregate id "non-existing" I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2a2a"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "string"}' I expect no nodes to be returned
+
+  Scenario: findDescendantNodes queries with results
+    When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2" to be returned

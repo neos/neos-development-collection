@@ -1,5 +1,5 @@
 @contentrepository @adapters=DoctrineDBAL,Postgres
-Feature: Find nodes using the findReferencedNodes query
+Feature: Find nodes using the findReferences query
 
   Background:
     Given I have the following content dimensions:
@@ -127,15 +127,15 @@ Feature: Find nodes using the findReferencedNodes query
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findReferencedNodes queries without results
-    When I execute the findReferencedNodes query for node aggregate id "a" and filter '{"referenceName": "non-existing"}' I expect no references to be returned
-    When I execute the findReferencedNodes query for node aggregate id "non-existing" I expect no references to be returned
+  Scenario: findReferences queries without results
+    When I execute the findReferences query for node aggregate id "a" and filter '{"referenceName": "non-existing"}' I expect no references to be returned
+    When I execute the findReferences query for node aggregate id "non-existing" I expect no references to be returned
     # "a2" is referenced by "a2a3" but "a2a3" is disabled so this reference should be ignored
-    When I execute the findReferencedNodes query for node aggregate id "a2" I expect no references to be returned
+    When I execute the findReferences query for node aggregate id "a2" I expect no references to be returned
     # "a2a3" is referenced by "a2" but "a2a3" is disabled so this reference should be ignored
-    When I execute the findReferencedNodes query for node aggregate id "a2a3" I expect no references to be returned
+    When I execute the findReferences query for node aggregate id "a2a3" I expect no references to be returned
 
-  Scenario: findReferencedNodes queries with results
-    When I execute the findReferencedNodes query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "b1", "name": "refs", "properties": null}, {"nodeAggregateId": "a2a2", "name": "refs", "properties": null}]' to be returned
-    When I execute the findReferencedNodes query for node aggregate id "a" and filter '{"referenceName": "ref"}' I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
-    When I execute the findReferencedNodes query for node aggregate id "c" I expect the references '[{"nodeAggregateId": "b", "name": "ref", "properties": null}, {"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
+  Scenario: findReferences queries with results
+    When I execute the findReferences query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "b1", "name": "refs", "properties": null}, {"nodeAggregateId": "a2a2", "name": "refs", "properties": null}]' to be returned
+    When I execute the findReferences query for node aggregate id "a" and filter '{"referenceName": "ref"}' I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
+    When I execute the findReferences query for node aggregate id "c" I expect the references '[{"nodeAggregateId": "b", "name": "ref", "properties": null}, {"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned

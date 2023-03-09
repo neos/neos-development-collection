@@ -16,19 +16,18 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRu
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
@@ -70,16 +69,16 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $childNodes;
     }
 
-    public function findReferencedNodes(NodeAggregateId $nodeAggregateId, FindReferencedNodesFilter $filter): References
+    public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
     {
         // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->findReferencedNodes($nodeAggregateId, $filter);
+        return $this->wrappedContentSubgraph->findReferences($nodeAggregateId, $filter);
     }
 
-    public function findReferencingNodes(NodeAggregateId $nodeAggregateId, FindReferencingNodesFilter $filter): References
+    public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
     {
         // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->findReferencingNodes($nodeAggregateId, $filter);
+        return $this->wrappedContentSubgraph->findBackReferences($nodeAggregateId, $filter);
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -144,43 +143,41 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $node;
     }
 
-    public function findSucceedingSiblings(NodeAggregateId $sibling, FindSucceedingSiblingsFilter $filter): Nodes
+    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
     {
         // TODO implement runtime caches
-        return $this->wrappedContentSubgraph->findSucceedingSiblings($sibling, $filter);
+        return $this->wrappedContentSubgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter);
     }
 
-    public function findPrecedingSiblings(NodeAggregateId $sibling, FindPrecedingSiblingsFilter $filter): Nodes
+    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
     {
         // TODO implement runtime caches
-        return $this->wrappedContentSubgraph->findPrecedingSiblings($sibling, $filter);
+        return $this->wrappedContentSubgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter);
     }
 
-    public function findNodePath(NodeAggregateId $nodeAggregateId): ?NodePath
+    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): NodePath
     {
         $nodePathCache = $this->inMemoryCache->getNodePathCache();
         $cachedNodePath = $nodePathCache->get($nodeAggregateId);
         if ($cachedNodePath !== null) {
             return $cachedNodePath;
         }
-        $nodePath = $this->wrappedContentSubgraph->findNodePath($nodeAggregateId);
-        if ($nodePath !== null) {
-            $nodePathCache->add($nodeAggregateId, $nodePath);
-        }
+        $nodePath = $this->wrappedContentSubgraph->retrieveNodePath($nodeAggregateId);
+        $nodePathCache->add($nodeAggregateId, $nodePath);
         return $nodePath;
     }
 
-    public function findSubtrees(NodeAggregateIds $entryNodeAggregateIds, FindSubtreesFilter $filter): Subtrees
+    public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
     {
         // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->findSubtrees($entryNodeAggregateIds, $filter);
+        return $this->wrappedContentSubgraph->findSubtree($entryNodeAggregateId, $filter);
         // TODO populate NodeByNodeAggregateIdCache and ParentNodeIdByChildNodeIdCache from result
     }
 
-    public function findDescendants(NodeAggregateIds $entryNodeAggregateIds, FindDescendantsFilter $filter): Nodes
+    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
         // TODO: implement runtime caches
-        return $this->wrappedContentSubgraph->findDescendants($entryNodeAggregateIds, $filter);
+        return $this->wrappedContentSubgraph->findDescendantNodes($entryNodeAggregateId, $filter);
     }
 
     public function countNodes(): int

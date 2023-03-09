@@ -5,25 +5,25 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 
 /**
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindDescendantsFilter
+final class FindSucceedingSiblingNodesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
         public readonly ?NodeTypeConstraints $nodeTypeConstraints,
-        public readonly ?SearchTerm $searchTerm,
+        public readonly ?int $limit,
+        public readonly ?int $offset,
     ) {
     }
 
     public static function all(): self
     {
-        return new self(null, null);
+        return new self(null, null, null);
     }
 
     public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
@@ -33,22 +33,21 @@ final class FindDescendantsFilter
 
     public function with(
         NodeTypeConstraints|string $nodeTypeConstraints = null,
-        SearchTerm|string $searchTerm = null,
+        int $limit = null,
+        int $offset = null,
     ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
         }
-        if (is_string($searchTerm)) {
-            $searchTerm = SearchTerm::fulltext($searchTerm);
-        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
-            $searchTerm ?? $this->searchTerm,
+            $limit ?? $this->limit,
+            $offset ?? $this->offset,
         );
     }
 
-    public function withSearchTerm(SearchTerm|string $searchTerm): self
+    public function withPagination(int $limit, int $offset): self
     {
-        return $this->with(searchTerm: $searchTerm);
+        return $this->with(limit: $limit, offset: $offset);
     }
 }

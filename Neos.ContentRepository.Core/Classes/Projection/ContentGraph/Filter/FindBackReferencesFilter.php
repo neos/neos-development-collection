@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
 /**
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindReferencedNodesFilter
+final class FindBackReferencesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.

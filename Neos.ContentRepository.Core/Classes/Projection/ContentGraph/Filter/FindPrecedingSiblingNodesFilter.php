@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 /**
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindPrecedingSiblingsFilter
+final class FindPrecedingSiblingNodesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.

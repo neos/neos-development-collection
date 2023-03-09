@@ -16,18 +16,17 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use PHPUnit\Framework\Assert;
 
@@ -64,16 +63,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findReferencedNodes query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect the references :referencesSerialized to be returned
-     * @When I execute the findReferencedNodes query for node aggregate id :nodeIdSerialized I expect the references :referencesSerialized to be returned
-     * @When I execute the findReferencedNodes query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect no references to be returned
-     * @When I execute the findReferencedNodes query for node aggregate id :nodeIdSerialized I expect no references to be returned
+     * @When I execute the findReferences query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect the references :referencesSerialized to be returned
+     * @When I execute the findReferences query for node aggregate id :nodeIdSerialized I expect the references :referencesSerialized to be returned
+     * @When I execute the findReferences query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect no references to be returned
+     * @When I execute the findReferences query for node aggregate id :nodeIdSerialized I expect no references to be returned
      */
-    public function iExecuteTheFindReferencedNodesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, string $filterSerialized = null, string $referencesSerialized = null): void
+    public function iExecuteTheFindReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, string $filterSerialized = null, string $referencesSerialized = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
-        $filter = FindReferencedNodesFilter::all();
+        $filter = FindReferencesFilter::all();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -81,22 +80,22 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->getValue(), 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findReferencedNodes($nodeAggregateId, $filter)));
+            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->getValue(), 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findReferences($nodeAggregateId, $filter)));
             Assert::assertSame($expectedReferences, $actualReferences);
         }
     }
 
     /**
-     * @When I execute the findReferencingNodes query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect the references :referencesSerialized to be returned
-     * @When I execute the findReferencingNodes query for node aggregate id :nodeIdSerialized I expect the references :referencesSerialized to be returned
-     * @When I execute the findReferencingNodes query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect no references to be returned
-     * @When I execute the findReferencingNodes query for node aggregate id :nodeIdSerialized I expect no references to be returned
+     * @When I execute the findBackReferences query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect the references :referencesSerialized to be returned
+     * @When I execute the findBackReferences query for node aggregate id :nodeIdSerialized I expect the references :referencesSerialized to be returned
+     * @When I execute the findBackReferences query for node aggregate id :nodeIdSerialized and filter :filterSerialized I expect no references to be returned
+     * @When I execute the findBackReferences query for node aggregate id :nodeIdSerialized I expect no references to be returned
      */
-    public function iExecuteTheFindReferencingNodesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, string $filterSerialized = null, string $referencesSerialized = null): void
+    public function iExecuteTheFindBackReferencesQueryIExpectTheFollowingReferences(string $nodeIdSerialized, string $filterSerialized = null, string $referencesSerialized = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
-        $filter = FindReferencingNodesFilter::all();
+        $filter = FindBackReferencesFilter::all();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -104,7 +103,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->getValue(), 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findReferencingNodes($nodeAggregateId, $filter)));
+            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->getValue(), 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findBackReferences($nodeAggregateId, $filter)));
             Assert::assertSame($expectedReferences, $actualReferences);
         }
     }
@@ -176,16 +175,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findSucceedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
-     * @When I execute the findSucceedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
-     * @When I execute the findSucceedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect no nodes to be returned
-     * @When I execute the findSucceedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized I expect no nodes to be returned
+     * @When I execute the findSucceedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     * @When I execute the findSucceedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     * @When I execute the findSucceedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect no nodes to be returned
+     * @When I execute the findSucceedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized I expect no nodes to be returned
      */
-    public function iExecuteTheFindSucceedingSiblingsQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
+    public function iExecuteTheFindSucceedingSiblingNodesQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
     {
         $siblingNodeAggregateId = NodeAggregateId::fromString($siblingNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindSucceedingSiblingsFilter::all();
+        $filter = FindSucceedingSiblingNodesFilter::all();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -193,22 +192,22 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findSucceedingSiblings($siblingNodeAggregateId, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }
 
     /**
-     * @When I execute the findPrecedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
-     * @When I execute the findPrecedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
-     * @When I execute the findPrecedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect no nodes to be returned
-     * @When I execute the findPrecedingSiblings query for sibling node aggregate id :siblingNodeIdSerialized I expect no nodes to be returned
+     * @When I execute the findPrecedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     * @When I execute the findPrecedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     * @When I execute the findPrecedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized and filter :filterSerialized I expect no nodes to be returned
+     * @When I execute the findPrecedingSiblingNodes query for sibling node aggregate id :siblingNodeIdSerialized I expect no nodes to be returned
      */
-    public function iExecuteTheFindPrecedingSiblingsQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
+    public function iExecuteTheFindPrecedingSiblingNodesQueryIExpectTheFollowingNodes(string $siblingNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
     {
         $siblingNodeAggregateId = NodeAggregateId::fromString($siblingNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindPrecedingSiblingsFilter::all();
+        $filter = FindPrecedingSiblingNodesFilter::all();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -216,23 +215,34 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findPrecedingSiblings($siblingNodeAggregateId, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }
 
     /**
-     * @When I execute the findNodePath query for node aggregate id :nodeIdSerialized I expect the path :expectedPathSerialized to be returned
-     * @When I execute the findNodePath query for node aggregate id :nodeIdSerialized I expect no path to be returned
+     * @When I execute the retrieveNodePath query for node aggregate id :nodeIdSerialized I expect the path :expectedPathSerialized to be returned
+     * @When I execute the retrieveNodePath query for node aggregate id :nodeIdSerialized I expect an exception :expectedExceptionMessage
      */
-    public function iExecuteTheFindNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null): void
+    public function iExecuteTheRetrieveNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null, string $expectedExceptionMessage = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedNodePath = $expectedPathSerialized !== null ? NodePath::fromString($expectedPathSerialized) : null;
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodePath = $subgraph->findNodePath($nodeAggregateId);
+            try {
+                $actualNodePath = $subgraph->retrieveNodePath($nodeAggregateId);
+            } catch (\InvalidArgumentException $exception) {
+                if ($expectedExceptionMessage === null) {
+                    throw $exception;
+                }
+                Assert::assertSame($expectedExceptionMessage, $exception->getMessage(), 'Exception message mismatch');
+                continue;
+            }
+            if ($expectedExceptionMessage !== null) {
+                Assert::fail('Expected an exception but none was thrown');
+            }
             if ($expectedNodePath === null) {
                 Assert::assertNull($actualNodePath);
             } else {
@@ -242,15 +252,15 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findSubtrees query for entry node aggregate id :entryNodeIdsSerialized I expect the following tree:
-     * @When I execute the findSubtrees query for entry node aggregate id :entryNodeIdsSerialized I expect no results
-     * @When I execute the findSubtrees query for entry node aggregate id :entryNodeIdsSerialized and filter :filterSerialized I expect the following tree:
-     * @When I execute the findSubtrees query for entry node aggregate id :entryNodeIdsSerialized and filter :filterSerialized I expect no results
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized I expect the following tree:
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized I expect no results
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized and filter :filterSerialized I expect the following tree:
+     * @When I execute the findSubtree query for entry node aggregate id :entryNodeIdsSerialized and filter :filterSerialized I expect no results
      */
-    public function iExecuteTheFindSubtreesQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, string $filterSerialized = null, PyStringNode $expectedTree = null): void
+    public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, string $filterSerialized = null, PyStringNode $expectedTree = null): void
     {
-        $entryNodeAggregateIds = NodeAggregateIds::create(NodeAggregateId::fromString($entryNodeIdSerialized));
-        $filter = FindSubtreesFilter::all();
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $filter = FindSubtreeFilter::all();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -259,7 +269,11 @@ trait NodeTraversalTrait
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $result = [];
-            $subtreeStack = iterator_to_array($subgraph->findSubtrees($entryNodeAggregateIds, $filter));
+            $subtreeStack = [];
+            $subtree = $subgraph->findSubtree($entryNodeAggregateId, $filter);
+            if ($subtree !== null) {
+                $subtreeStack[] = $subtree;
+            }
             while ($subtreeStack !== []) {
                 /** @var Subtree $subtree */
                 $subtree = array_shift($subtreeStack);
@@ -271,16 +285,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findDescendants query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
-     * @When I execute the findDescendants query for entry node aggregate id :entryNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
-     * @When I execute the findDescendants query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect no nodes to be returned
-     * @When I execute the findDescendants query for entry node aggregate id :entryNodeIdSerialized I expect no nodes to be returned
+     * @When I execute the findDescendantNodes query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     * @When I execute the findDescendantNodes query for entry node aggregate id :entryNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
+     * @When I execute the findDescendantNodes query for entry node aggregate id :entryNodeIdSerialized and filter :filterSerialized I expect no nodes to be returned
+     * @When I execute the findDescendantNodes query for entry node aggregate id :entryNodeIdSerialized I expect no nodes to be returned
      */
-    public function iExecuteTheFindDescendantsQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
+    public function iExecuteTheFindDescendantNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = null, string $expectedNodeIdsSerialized = null): void
     {
-        $entryNodeAggregateIds = NodeAggregateIds::create(NodeAggregateId::fromString($entryNodeIdSerialized));
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindDescendantsFilter::all();
+        $filter = FindDescendantNodesFilter::all();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -288,7 +302,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findDescendants($entryNodeAggregateIds, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }

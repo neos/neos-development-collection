@@ -1,6 +1,6 @@
 @contentrepository @adapters=DoctrineDBAL
   # TODO implement for Postgres
-Feature: Find nodes using the findNodePath query
+Feature: Find nodes using the retrieveNodePath query
 
   Background:
     Given I have the following content dimensions:
@@ -75,19 +75,23 @@ Feature: Find nodes using the findNodePath query
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
       | b1a             | b1a      | Neos.ContentRepository.Testing:Page        | b1                     | {"text": "b1a"}       | {}                                       |
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId |
+      | unnamed         | Neos.ContentRepository.Testing:Homepage | a2a                   |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "b1"          |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findNodePath queries without result
-    When I execute the findNodePath query for node aggregate id "non-existing" I expect no path to be returned
+  Scenario: retrieveNodePath queries without result
+    When I execute the retrieveNodePath query for node aggregate id "non-existing" I expect an exception 'Failed to retrieve node path for node "non-existing"'
     # node "b1" is disabled so it must not be returned
-    When I execute the findNodePath query for node aggregate id "b1" I expect no path to be returned
-    When I execute the findNodePath query for node aggregate id "b1a" I expect no path to be returned
+    When I execute the retrieveNodePath query for node aggregate id "b1" I expect an exception 'Failed to retrieve node path for node "b1"'
+    When I execute the retrieveNodePath query for node aggregate id "b1a" I expect an exception 'Failed to retrieve node path for node "b1a"'
+    When I execute the retrieveNodePath query for node aggregate id "unnamed" I expect an exception 'The path "//home/a/a2/a2a/" is no valid NodePath because it contains a segment "" that is no valid NodeName'
 
-  Scenario: findNodePath queries with result
-    When I execute the findNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/" to be returned
-    When I execute the findNodePath query for node aggregate id "home" I expect the path "//home" to be returned
-    When I execute the findNodePath query for node aggregate id "a2a2" I expect the path "//home/a/a2/a2a/a2a2" to be returned
+  Scenario: retrieveNodePath queries with result
+    When I execute the retrieveNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/" to be returned
+    When I execute the retrieveNodePath query for node aggregate id "home" I expect the path "//home" to be returned
+    When I execute the retrieveNodePath query for node aggregate id "a2a2" I expect the path "//home/a/a2/a2a/a2a2" to be returned
