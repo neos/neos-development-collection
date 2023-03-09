@@ -130,15 +130,13 @@ class Runtime
      */
     protected $lastEvaluationStatus;
 
-    /**
-     * Constructor for the Fusion Runtime
-     *
-     * @param array $fusionConfiguration
-     * @param ControllerContext $controllerContext
-     */
-    public function __construct(array $fusionConfiguration, ControllerContext $controllerContext)
+    public function __construct(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext)
     {
-        $this->runtimeConfiguration = new RuntimeConfiguration($fusionConfiguration);
+        $this->runtimeConfiguration = new RuntimeConfiguration(
+            $fusionConfiguration instanceof FusionConfiguration
+                ? $fusionConfiguration->toArray()
+                : $fusionConfiguration
+        );
         $this->controllerContext = $controllerContext;
         $this->runtimeContentCache = new RuntimeContentCache($this);
     }

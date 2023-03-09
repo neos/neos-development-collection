@@ -14,15 +14,17 @@ Neos\ContentRepository\Domain\Service\ContextFactoryInterface:
 Neos\ContentRepository\Domain\Service\PublishingServiceInterface:
   className: Neos\Neos\Service\PublishingService
 
-Neos\Neos\Aspects\FusionCachingAspect:
-  properties:
-    fusionCache:
+Neos\Neos\Domain\Service\FusionConfigurationCache:
+  arguments:
+    1:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: Neos_Neos_Fusion
+    2:
+      setting: "Neos.Neos:fusion.enableObjectTreeCache"
 
 'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
