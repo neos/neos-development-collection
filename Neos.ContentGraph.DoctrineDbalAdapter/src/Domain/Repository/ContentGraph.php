@@ -19,6 +19,7 @@ use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -45,7 +46,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 final class ContentGraph implements ContentGraphInterface
 {
     /**
-     * @var array<string,ContentSubgraph>
+     * @var array<string,ContentSubgraphWithRuntimeCaches>
      */
     private array $subgraphs = [];
 
@@ -64,14 +65,16 @@ final class ContentGraph implements ContentGraphInterface
     ): ContentSubgraphInterface {
         $index = $contentStreamId . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
-            $this->subgraphs[$index] = new ContentSubgraph(
-                $contentStreamId,
-                $dimensionSpacePoint,
-                $visibilityConstraints,
-                $this->client,
-                $this->nodeFactory,
-                $this->nodeTypeManager,
-                $this->tableNamePrefix
+            $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
+                new ContentSubgraph(
+                    $contentStreamId,
+                    $dimensionSpacePoint,
+                    $visibilityConstraints,
+                    $this->client,
+                    $this->nodeFactory,
+                    $this->nodeTypeManager,
+                    $this->tableNamePrefix
+                )
             );
         }
 
@@ -478,7 +481,7 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @return ContentSubgraph[]
+     * @return ContentSubgraphWithRuntimeCaches[]
      * @internal only used for {@see DoctrineDbalContentGraphProjection}
      */
     public function getSubgraphs(): array

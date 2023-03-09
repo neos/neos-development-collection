@@ -68,12 +68,21 @@ Feature: Find nodes using the findDescendants query
       | a2a             | a2a      | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}       | {}                                       |
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1"}      | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
+      | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}     | {}                                       |
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a2a"       |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
+
 
   Scenario: findDescendants queries without results
     When I execute the findDescendants query for entry node aggregate id "non-existing" I expect no nodes to be returned
+    When I execute the findDescendants query for entry node aggregate id "home" and filter '{"searchTerm": "a2a2a"}' I expect no nodes to be returned
+    When I execute the findDescendants query for entry node aggregate id "home" and filter '{"searchTerm": "string"}' I expect no nodes to be returned
 
   Scenario: findDescendants queries with results
     When I execute the findDescendants query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2" to be returned

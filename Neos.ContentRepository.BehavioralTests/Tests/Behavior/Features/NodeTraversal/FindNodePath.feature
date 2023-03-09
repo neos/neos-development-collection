@@ -74,9 +74,18 @@ Feature: Find nodes using the findNodePath query
       | a6              | a6       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a6"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+      | b1a             | b1a      | Neos.ContentRepository.Testing:Page        | b1                     | {"text": "b1a"}       | {}                                       |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "b1"          |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
   Scenario: findNodePath queries without result
     When I execute the findNodePath query for node aggregate id "non-existing" I expect no path to be returned
+    # node "b1" is disabled so it must not be returned
+    When I execute the findNodePath query for node aggregate id "b1" I expect no path to be returned
+    When I execute the findNodePath query for node aggregate id "b1a" I expect no path to be returned
 
   Scenario: findNodePath queries with result
     When I execute the findNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/" to be returned

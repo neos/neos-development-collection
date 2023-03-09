@@ -14,8 +14,6 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentSubhypergraph;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
@@ -292,6 +290,17 @@ trait NodeTraversalTrait
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findDescendants($entryNodeAggregateIds, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
+        }
+    }
+
+    /**
+     * @When I execute the countNodes query I expect the result to be :expectedResult
+     */
+    public function iExecuteTheCountNodesQueryIExpectTheFollowingResult(int $expectedResult): void
+    {
+        /** @var ContentSubgraphInterface $subgraph */
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            Assert::assertSame($expectedResult, $subgraph->countNodes());
         }
     }
 

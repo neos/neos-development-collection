@@ -77,13 +77,23 @@ Feature: Find nodes using the findChildNodeConnectedThroughEdgeName query
       | a2a             | a2a      | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}       | {}                                       |
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1"}      | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
+      | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}     | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a2"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
   Scenario: findChildNodeConnectedThroughEdgeName queries without results
     When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id "non-existing" and edge name "non-existing" I expect no node to be returned
     When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id "home" and edge name "non-existing" I expect no node to be returned
     When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id "non-existing" and edge name "home" I expect no node to be returned
+    # node "a2a2" is disabled and should not be returned
+    When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id "a2a" and edge name "a2a2" I expect no node to be returned
+    # node "a2a2" is disabled and should not lead to results if specified as parent node id
+    When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id "a2a2" and edge name "a2a2a" I expect no node to be returned
 
   Scenario: findChildNodeConnectedThroughEdgeName queries with results
     When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id "home" and edge name "contact" I expect the node "contact" to be returned
