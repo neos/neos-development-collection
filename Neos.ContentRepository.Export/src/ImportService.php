@@ -16,7 +16,9 @@ namespace Neos\ContentRepository\Export;
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\EventStore\EventStoreInterface;
 
@@ -33,6 +35,10 @@ class ImportService implements ContentRepositoryServiceInterface
 
     public function runAllProcessors(\Closure $outputLineFn, bool $verbose = false): void
     {
+        if ($this->liveWorkspaceContentStreamExisits()) {
+            throw new \RuntimeException("Your content repository already contains a live workspace. Please use ./flow cr:prune <content-repository-identifier> to clear the regarding content repository before you import a one.");
+        }
+
         /** @var ProcessorInterface[] $processors */
         $processors = [
             'Importing events' => new  EventStoreImportProcessor(
@@ -54,5 +60,11 @@ class ImportService implements ContentRepositoryServiceInterface
             $outputLineFn('  ' . $result->message);
             $outputLineFn();
         }
+    }
+
+    private function liveWorkspaceContentStreamExisits(): bool
+    {
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName(WorkspaceName::forLive())->getEventStreamName();
+        return $this->eventStore->load($workspaceStreamName)->getIterator()->current() !== null;
     }
 }

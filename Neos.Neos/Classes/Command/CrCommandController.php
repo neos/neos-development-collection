@@ -106,7 +106,13 @@ class CrCommandController extends CommandController
             )
         );
         assert($importService instanceof ImportService);
-        $importService->runAllProcessors($this->outputLine(...), $verbose);
+        try {
+            $importService->runAllProcessors($this->outputLine(...), $verbose);
+        } catch (\RuntimeException $exception) {
+            $this->outputLine('<error>Error: ' . $exception->getMessage() . '</error>');
+            $this->outputLine('<error>Import stopped.</error>');
+            return;
+        }
 
         $this->outputLine('Replaying projections');
         Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepositoryIdentifier' => $contentRepositoryIdentifier]);
