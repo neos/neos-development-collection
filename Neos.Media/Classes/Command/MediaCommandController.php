@@ -505,7 +505,7 @@ class MediaCommandController extends CommandController
             }
 
             $notLimitedDeletableOutput = PHP_EOL . '<b>There are %s asset variants ready to be deleted.</b>';
-            $this->outputLine($notLimitedDeletableOutput, [sizeof($outdatedVariants)]);
+            $this->outputLine($notLimitedDeletableOutput, [count($outdatedVariants)]);
             if ($limit) {
                 $this->outputLine(' find more by running without the "--limit" parameter');
             }
@@ -524,7 +524,7 @@ class MediaCommandController extends CommandController
         }
 
         !$quiet && $this->outputLine(PHP_EOL . PHP_EOL . '<b>Removing selected:</b>');
-        !$quiet && $this->output->progressStart(sizeof($outdatedVariants));
+        !$quiet && $this->output->progressStart(count($outdatedVariants));
 
         $outdatedVariantSize = 0;
         $stillUsedVariants = 0;

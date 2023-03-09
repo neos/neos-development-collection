@@ -22,11 +22,10 @@ use Neos\Flow\Annotations as Flow;
  */
 class ImageVariantService
 {
-    /**
-     * @Flow\Inject
-     * @var AssetVariantGenerator
-     */
-    protected $assetVariantGenerator;
+    public function __construct(
+        private AssetVariantGenerator $assetVariantGenerator
+    ) {
+    }
 
     /**
      * Return all presets defined in 'Settings.Neos.Media.yaml' with presetName as key
