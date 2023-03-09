@@ -121,12 +121,15 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('dh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
-            ->andWhere('sh.contentstreamid = :contentStreamId')
-            ->orderBy('r.name, r.position');
+            ->andWhere('sh.contentstreamid = :contentStreamId');
+        if ($filter->referenceName === null) {
+            $queryBuilder->addOrderBy('r.name');
+        }
+        $queryBuilder->addOrderBy('r.position');
         $this->addRestrictionRelationConstraints($queryBuilder, 'dn', 'dh');
         $this->addRestrictionRelationConstraints($queryBuilder, 'sn', 'sh');
         if ($filter->referenceName !== null) {
-            $queryBuilder->andWhere('r.name = :name')->setParameter('name', $filter->referenceName->value);
+            $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
         }
         return $this->fetchReferences($queryBuilder);
     }
@@ -144,12 +147,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('dh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
-            ->andWhere('sh.contentstreamid = :contentStreamId')
-            ->orderBy('r.name, r.position');
+            ->andWhere('sh.contentstreamid = :contentStreamId');
+        if ($filter->referenceName === null) {
+            $queryBuilder->addOrderBy('r.name');
+        }
+        $queryBuilder->addOrderBy('r.position');
+        $queryBuilder->addOrderBy('sn.nodeaggregateid');
         $this->addRestrictionRelationConstraints($queryBuilder, 'dn', 'dh');
         $this->addRestrictionRelationConstraints($queryBuilder, 'sn', 'sh');
         if ($filter->referenceName !== null) {
-            $queryBuilder->andWhere('r.name = :name')->setParameter('name', $filter->referenceName->value);
+            $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
         }
         return $this->fetchReferences($queryBuilder);
     }
