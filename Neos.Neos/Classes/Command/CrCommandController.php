@@ -35,7 +35,7 @@ use Neos\Utility\Files;
 class CrCommandController extends CommandController
 {
     /**
-     * @var array
+     * @var array<string|int,mixed>
      */
     #[Flow\InjectConfiguration(package: 'Neos.Flow')]
     protected array $flowSettings;
@@ -74,7 +74,6 @@ class CrCommandController extends CommandController
                 $contentRepository->getWorkspaceFinder(),
                 $this->assetRepository,
                 $this->assetUsageFinder,
-                $liveContentStreamIdentifier
             )
         );
         assert($exportService instanceof ExportService);

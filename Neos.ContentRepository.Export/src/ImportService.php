@@ -13,12 +13,11 @@ namespace Neos\ContentRepository\Export;
  * source code.
  */
 
-
 use League\Flysystem\Filesystem;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\EventStore\EventStoreInterface;
 
 class ImportService implements ContentRepositoryServiceInterface

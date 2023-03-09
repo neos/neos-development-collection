@@ -4,20 +4,20 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
-use Neos\Neos\PendingChangesProjection\ChangeProjection;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection;
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ESCR\AssetUsage\Projector\AssetUsageProjection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\Neos\PendingChangesProjection\ChangeProjection;
 
 class CrCommandController extends CommandController
 {
@@ -91,7 +91,7 @@ class CrCommandController extends CommandController
         //});
         // TODO: MAX SEQ NUMBER
         //if ($maximumSequenceNumber !== null) {
-            //    $eventListenerInvoker = $eventListenerInvoker->withMaximumSequenceNumber($maximumSequenceNumber);
+        //    $eventListenerInvoker = $eventListenerInvoker->withMaximumSequenceNumber($maximumSequenceNumber);
         //}
 
         $contentRepository->resetProjectionState($projectionName);
@@ -122,7 +122,6 @@ class CrCommandController extends CommandController
             new WorkspaceMaintenanceServiceFactory()
         );
         $workspaceMaintenanceService->pruneAll();
-
 
         $this->replayAllCommand();
     }

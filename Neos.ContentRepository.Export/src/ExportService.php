@@ -13,13 +13,11 @@ namespace Neos\ContentRepository\Export;
  * source code.
  */
 
-
 use League\Flysystem\Filesystem;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ESCR\AssetUsage\AssetUsageFinder;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -33,7 +31,6 @@ class ExportService implements ContentRepositoryServiceInterface
         private readonly EventStoreInterface $eventStore,
         private readonly AssetRepository $assetRepository,
         private readonly AssetUsageFinder $assetUsageFinder,
-        private readonly ContentStreamId $contentStreamIdentifier,
     ) {
     }
 
