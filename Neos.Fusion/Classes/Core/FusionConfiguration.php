@@ -13,6 +13,11 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+/**
+ * This holds the parsed Fusion Configuration and can be used to pass it to the Runtime via
+ * {@see RuntimeFactory::createFromConfiguration()}
+ * The contents of this DTO are internal and can change at any time!
+ */
 final class FusionConfiguration
 {
     /** @internal */
