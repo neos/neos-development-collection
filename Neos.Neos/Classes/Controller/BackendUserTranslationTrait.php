@@ -22,17 +22,19 @@ use Neos\Flow\I18n\Locale;
  */
 trait BackendUserTranslationTrait
 {
+    // phpcs:disable
     /**
      * @Flow\Inject
      * @var \Neos\Flow\I18n\Service
      */
-    protected $localizationService;
+    protected $_localizationService;
 
     /**
      * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
-    protected $userService;
+    protected $_userService; // @codingStandardsIgnoreEnd
+    // phpcs:enable
 
     /**
      * Set the locale according to the user settings
@@ -41,8 +43,8 @@ trait BackendUserTranslationTrait
      */
     protected function initializeObject()
     {
-        $this->localizationService->getConfiguration()->setCurrentLocale(
-            new Locale($this->userService->getInterfaceLanguage())
+        $this->_localizationService->getConfiguration()->setCurrentLocale(
+            new Locale($this->_userService->getInterfaceLanguage())
         );
     }
 }
