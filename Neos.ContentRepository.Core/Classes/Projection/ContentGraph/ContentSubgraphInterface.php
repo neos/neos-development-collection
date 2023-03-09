@@ -83,7 +83,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
 
     /**
-     * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter
      *
      * If a Search Term is specified, the properties are searched for this search term.
      *
