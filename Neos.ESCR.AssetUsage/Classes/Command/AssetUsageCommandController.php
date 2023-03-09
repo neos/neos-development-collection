@@ -3,33 +3,19 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage\Command;
 
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ESCR\AssetUsage\Dto\AssetUsage;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\Flow\Cli\CommandController;
-use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ESCR\AssetUsage\Projector\AssetUsageRepositoryFactory;
+use Neos\ESCR\AssetUsage\Service\AssetUsageSyncServiceFactory;
 
 final class AssetUsageCommandController extends CommandController
 {
-    /**
-     * @var array<string, DimensionSpacePoint>|null
-     */
-    private ?array $dimensionSpacePointsByHash = null;
-    /**
-     * @var array<string, bool>
-     */
-    private array $existingAssetsById = [];
-
     public function __construct(
-        private readonly AssetUsageRepository $assetUsageRepository,
-        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
-        private readonly ContentGraphInterface $contentGraph,
         private readonly AssetRepository $assetRepository,
+        private readonly AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
     ) {
         parent::__construct();
     }
@@ -44,17 +30,26 @@ final class AssetUsageCommandController extends CommandController
      *
      * @param bool $quiet if Set, only errors will be outputted
      */
-    public function syncCommand(bool $quiet = false): void
+    public function syncCommand(string $contentRepositoryIdentifier = 'default', bool $quiet = false): void
     {
-        $usages = $this->assetUsageRepository->findUsages(AssetUsageFilter::create());
+        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $assetServiceSyncService = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryIdentifier,
+            new AssetUsageSyncServiceFactory(
+                $this->assetRepository,
+                $this->assetUsageRepositoryFactory
+            )
+        );
+
+        $usages = $assetServiceSyncService->findAllUsages();
         if (!$quiet) {
             $this->output->progressStart($usages->count());
         }
         $numberOfRemovedUsages = 0;
         foreach ($usages as $usage) {
-            if (!$this->isAssetUsageStillValid($usage)) {
-                $this->assetUsageRepository->remove($usage);
-                $numberOfRemovedUsages ++;
+            if (!$assetServiceSyncService->isAssetUsageStillValid($usage)) {
+                $assetServiceSyncService->removeAssetUsage($usage);
+                $numberOfRemovedUsages++;
             }
             if (!$quiet) {
                 $this->output->progressAdvance();
@@ -69,36 +64,4 @@ final class AssetUsageCommandController extends CommandController
         }
     }
 
-    private function isAssetUsageStillValid(AssetUsage $usage): bool
-    {
-        if (!isset($this->existingAssetsById[$usage->assetIdentifier])) {
-            /** @var AssetInterface|null $asset */
-            $asset = $this->assetRepository->findByIdentifier($usage->assetIdentifier);
-            $this->existingAssetsById[$usage->assetIdentifier] = $asset !== null;
-        }
-        if ($this->existingAssetsById[$usage->assetIdentifier] === false) {
-            return false;
-        }
-        $dimensionSpacePoint = $this->getDimensionSpacePointByHash($usage->originDimensionSpacePoint);
-        if ($dimensionSpacePoint === null) {
-            return false;
-        }
-        $subGraph = $this->contentGraph->getSubgraph(
-            $usage->contentStreamIdentifier,
-            $dimensionSpacePoint,
-            VisibilityConstraints::withoutRestrictions()
-        );
-        $node = $subGraph->findNodeById($usage->nodeAggregateIdentifier);
-        return $node !== null;
-    }
-
-    private function getDimensionSpacePointByHash(string $dimensionSpacePointHash): ?DimensionSpacePoint
-    {
-        if ($this->dimensionSpacePointsByHash === null) {
-            foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
-                $this->dimensionSpacePointsByHash[$dimensionSpacePoint->hash] = $dimensionSpacePoint;
-            }
-        }
-        return $this->dimensionSpacePointsByHash[$dimensionSpacePointHash] ?? null;
-    }
 }

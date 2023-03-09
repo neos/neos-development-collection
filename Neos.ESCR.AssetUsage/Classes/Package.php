@@ -18,14 +18,15 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(AssetService::class, 'assetRemoved', function (AssetInterface $asset) use ($bootstrap) {
-            /** @var AssetUsageRepository $assetUsageRepository */
-            $assetUsageRepository = $bootstrap->getObjectManager()->get(AssetUsageRepository::class);
-            /** @var PersistenceManagerInterface $persistenceManager */
-            $persistenceManager = $bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
-            $assetIdentifier = $persistenceManager->getIdentifierByObject($asset);
-            if (is_string($assetIdentifier)) {
-                $assetUsageRepository->removeAsset($assetIdentifier);
-            }
+            // TODO: Get current CR from Request
+            ///** @var AssetUsageRepository $assetUsageRepository */
+            //$assetUsageRepository = $bootstrap->getObjectManager()->get(AssetUsageRepository::class);
+            ///** @var PersistenceManagerInterface $persistenceManager */
+            //$persistenceManager = $bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
+            //$assetIdentifier = $persistenceManager->getIdentifierByObject($asset);
+            //if (is_string($assetIdentifier)) {
+            //    $assetUsageRepository->removeAsset($assetIdentifier);
+            //}
         });
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage;
@@ -32,7 +33,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
 
     public function __construct(
         private readonly AssetUsageFinder $assetUsageFinder,
-        private readonly PersistenceManagerInterface $persistenceManager
+        private readonly PersistenceManagerInterface $persistenceManager,
     ) {
     }
 
