@@ -71,6 +71,7 @@ Feature: Find nodes using the findReferencingNodes query
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeName | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | home     | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
+      | c               | c        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "c"}         | {}                                       |
       | a               | a        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "a"}         | {}                                       |
       | a1              | a1       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a1"}        | {}                                       |
       | a2              | a2       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a2"}        | {}                                       |
@@ -81,6 +82,11 @@ Feature: Find nodes using the findReferencingNodes query
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                            |
+      | sourceNodeAggregateId | "c"                                              |
+      | referenceName         | "refs"                                           |
+      | references            | [{"target":"b1", "properties": {"foo": "foos"}}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                |
       | sourceNodeAggregateId | "a"                                  |
@@ -97,10 +103,10 @@ Feature: Find nodes using the findReferencingNodes query
       | referenceName         | "refs"                                                                                           |
       | references            | [{"target":"a3", "properties": {"foo": "bar"}}, {"target":"a2a1", "properties": {"foo": "baz"}}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                   | Value                                           |
-      | sourceNodeAggregateId | "a"                                             |
-      | referenceName         | "ref"                                           |
-      | references            | [{"target":"b1", "properties": {"foo": "bar"}}] |
+      | Key                   | Value                                                            |
+      | sourceNodeAggregateId | "a"                                                              |
+      | referenceName         | "refs"                                                           |
+      | references            | [{"target":"b1", "properties": {"foo": "bar"}}, {"target": "b"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value               |
       | sourceNodeAggregateId | "a2"                |
@@ -129,3 +135,4 @@ Feature: Find nodes using the findReferencingNodes query
     When I execute the findReferencingNodes query for node aggregate id "a" and filter '{"referenceName": "non-existing"}' I expect no references to be returned
     When I execute the findReferencingNodes query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": null}]' to be returned
     When I execute the findReferencingNodes query for node aggregate id "a3" and filter '{"referenceName": "refs"}' I expect the references '[{"nodeAggregateId": "b", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
+    When I execute the findReferencingNodes query for node aggregate id "b1" I expect the references '[{"nodeAggregateId": "a", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "c", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned

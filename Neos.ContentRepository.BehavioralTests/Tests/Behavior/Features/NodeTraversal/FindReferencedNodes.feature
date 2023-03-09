@@ -71,6 +71,7 @@ Feature: Find nodes using the findReferencedNodes query
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
+      | c               | Neos.ContentRepository.Testing:Page        | home                   | {"text": "c"}         | {}                                       |
       | a               | Neos.ContentRepository.Testing:Page        | home                   | {"text": "a"}         | {}                                       |
       | a1              | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a1"}        | {}                                       |
       | a2              | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a2"}        | {}                                       |
@@ -106,15 +107,24 @@ Feature: Find nodes using the findReferencedNodes query
       | referenceName         | "ref"               |
       | references            | [{"target":"a2a3"}] |
     And the command SetNodeReferences is executed with payload:
-      | Key                   | Value               |
-      | sourceNodeAggregateId | "a2a3"                |
-      | referenceName         | "ref"               |
+      | Key                   | Value             |
+      | sourceNodeAggregateId | "a2a3"            |
+      | referenceName         | "ref"             |
       | references            | [{"target":"a2"}] |
-    And the graph projection is fully up to date
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value                                            |
+      | sourceNodeAggregateId | "c"                                              |
+      | referenceName         | "refs"                                           |
+      | references            | [{"target":"b1", "properties": {"foo": "foos"}}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value            |
+      | sourceNodeAggregateId | "c"              |
+      | referenceName         | "ref"            |
+      | references            | [{"target":"b"}] |
     And the command DisableNodeAggregate is executed with payload:
-      | Key                          | Value              |
-      | nodeAggregateId              | "a2a3"             |
-      | nodeVariantSelectionStrategy | "allVariants"      |
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a3"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
   Scenario: findReferencedNodes queries without results
@@ -128,3 +138,4 @@ Feature: Find nodes using the findReferencedNodes query
   Scenario: findReferencedNodes queries with results
     When I execute the findReferencedNodes query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "b1", "name": "refs", "properties": null}, {"nodeAggregateId": "a2a2", "name": "refs", "properties": null}]' to be returned
     When I execute the findReferencedNodes query for node aggregate id "a" and filter '{"referenceName": "ref"}' I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
+    When I execute the findReferencedNodes query for node aggregate id "c" I expect the references '[{"nodeAggregateId": "b", "name": "ref", "properties": null}, {"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
