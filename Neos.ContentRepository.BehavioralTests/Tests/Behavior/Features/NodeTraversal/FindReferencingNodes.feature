@@ -77,6 +77,8 @@ Feature: Find nodes using the findReferencingNodes query
       | a2a             | a2a      | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}       | {}                                       |
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1"}      | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
+      | a2a3            | a2a3     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3"}      | {}                                       |
+      | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command SetNodeReferences is executed with payload:
@@ -93,19 +95,37 @@ Feature: Find nodes using the findReferencingNodes query
       | Key                   | Value                                                                                            |
       | sourceNodeAggregateId | "b"                                                                                              |
       | referenceName         | "refs"                                                                                           |
-      | references            | [{"target":"a2", "properties": {"foo": "bar"}}, {"target":"a2a1", "properties": {"foo": "baz"}}] |
+      | references            | [{"target":"a3", "properties": {"foo": "bar"}}, {"target":"a2a1", "properties": {"foo": "baz"}}] |
     And the command SetNodeReferences is executed with payload:
       | Key                   | Value                                           |
       | sourceNodeAggregateId | "a"                                             |
       | referenceName         | "ref"                                           |
       | references            | [{"target":"b1", "properties": {"foo": "bar"}}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value               |
+      | sourceNodeAggregateId | "a2"                |
+      | referenceName         | "ref"               |
+      | references            | [{"target":"a2a3"}] |
+    And the command SetNodeReferences is executed with payload:
+      | Key                   | Value             |
+      | sourceNodeAggregateId | "a2a3"            |
+      | referenceName         | "ref"             |
+      | references            | [{"target":"a2"}] |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a3"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
   Scenario: findReferencingNodes queries without results
     When I execute the findReferencingNodes query for node aggregate id "non-existing" I expect no references to be returned
     When I execute the findReferencingNodes query for node aggregate id "home" I expect no references to be returned
+    # "a2" is references node "a2a3" but "a2a3" is disabled so this reference should be ignored
+    When I execute the findReferencingNodes query for node aggregate id "a2" I expect no references to be returned
+    # "a2a3" is references node "a2" but "a2a3" is disabled so this reference should be ignored
+    When I execute the findReferencingNodes query for node aggregate id "a2a3" I expect no references to be returned
 
   Scenario: findReferencingNodes queries with results
     When I execute the findReferencingNodes query for node aggregate id "a" and filter '{"referenceName": "non-existing"}' I expect no references to be returned
     When I execute the findReferencingNodes query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": null}]' to be returned
-    When I execute the findReferencingNodes query for node aggregate id "a2" and filter '{"referenceName": "refs"}' I expect the references '[{"nodeAggregateId": "b", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
+    When I execute the findReferencingNodes query for node aggregate id "a3" and filter '{"referenceName": "refs"}' I expect the references '[{"nodeAggregateId": "b", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned

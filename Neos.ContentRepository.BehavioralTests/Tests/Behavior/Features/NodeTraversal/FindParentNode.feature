@@ -79,11 +79,20 @@ Feature: Find nodes using the findParentNodes query
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a"         |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
   Scenario: findParentNode queries without result
     When I execute the findParentNode query for node aggregate id "non-existing" I expect no node to be returned
     When I execute the findParentNode query for node aggregate id "lady-eleonode-rootford" I expect no node to be returned
+    # node "a2a" is disabled, so it should be ignored
+    When I execute the findParentNode query for node aggregate id "a2a" I expect no node to be returned
+    # the parent node of "a2a1", "a2a", is disabled, so it must not be returned
+    When I execute the findParentNode query for node aggregate id "a2a1" I expect no node to be returned
 
   Scenario: findParentNode queries with result
     When I execute the findParentNode query for node aggregate id "home" I expect the node "lady-eleonode-rootford" to be returned
-    When I execute the findParentNode query for node aggregate id "a2a2" I expect the node "a2a" to be returned
+    When I execute the findParentNode query for node aggregate id "a2" I expect the node "a" to be returned

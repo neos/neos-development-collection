@@ -83,6 +83,11 @@ Feature: Find nodes using the findPrecedingSiblings query
       | a6              | a6       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a6"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a2a1"        |
+      | nodeVariantSelectionStrategy | "allVariants" |
+    And the graph projection is fully up to date
 
   Scenario: findPrecedingSiblings queries without result
     When I execute the findPrecedingSiblings query for sibling node aggregate id "non-existing" I expect no nodes to be returned
