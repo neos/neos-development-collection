@@ -309,9 +309,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
     }
 
-    public function findNodePath(NodeAggregateId $nodeAggregateId): ?NodePath
+    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath
     {
-        return null;
+        return NodePath::fromString('/');
     }
 
     public function findSubtrees(

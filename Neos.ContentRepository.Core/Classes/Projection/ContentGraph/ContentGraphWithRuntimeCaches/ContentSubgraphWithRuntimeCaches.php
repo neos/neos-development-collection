@@ -156,7 +156,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $this->wrappedContentSubgraph->findPrecedingSiblings($sibling, $filter);
     }
 
-    public function findNodePath(NodeAggregateId $nodeAggregateId): ?NodePath
+    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath
     {
         $nodePathCache = $this->inMemoryCache->getNodePathCache();
         $cachedNodePath = $nodePathCache->get($nodeAggregateId);
@@ -164,9 +164,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             return $cachedNodePath;
         }
         $nodePath = $this->wrappedContentSubgraph->findNodePath($nodeAggregateId);
-        if ($nodePath !== null) {
-            $nodePathCache->add($nodeAggregateId, $nodePath);
-        }
+        $nodePathCache->add($nodeAggregateId, $nodePath);
         return $nodePath;
     }
 

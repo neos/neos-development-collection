@@ -223,21 +223,28 @@ trait NodeTraversalTrait
 
     /**
      * @When I execute the findNodePath query for node aggregate id :nodeIdSerialized I expect the path :expectedPathSerialized to be returned
-     * @When I execute the findNodePath query for node aggregate id :nodeIdSerialized I expect no path to be returned
+     * @When I execute the findNodePath query for node aggregate id :nodeIdSerialized I expect an exception :expectedExceptionMessage
      */
-    public function iExecuteTheFindNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null): void
+    public function iExecuteTheFindNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null, string $expectedExceptionMessage = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedNodePath = $expectedPathSerialized !== null ? NodePath::fromString($expectedPathSerialized) : null;
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodePath = $subgraph->findNodePath($nodeAggregateId);
-            if ($expectedNodePath === null) {
-                Assert::assertNull($actualNodePath);
-            } else {
-                Assert::assertSame((string)$expectedNodePath, (string)$actualNodePath);
+            try {
+                $actualNodePath = $subgraph->findNodePath($nodeAggregateId);
+            } catch (\InvalidArgumentException $exception) {
+                if ($expectedExceptionMessage === null) {
+                    throw $exception;
+                }
+                Assert::assertSame($expectedExceptionMessage, $exception->getMessage(), 'Exception message mismatch');
+                continue;
             }
+            if ($expectedExceptionMessage !== null) {
+                Assert::fail('Expected an exception but none was thrown');
+            }
+            Assert::assertSame((string)$expectedNodePath, (string)$actualNodePath);
         }
     }
 

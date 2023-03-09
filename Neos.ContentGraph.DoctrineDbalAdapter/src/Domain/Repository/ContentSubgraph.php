@@ -234,7 +234,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNodes($queryBuilder);
     }
 
-    public function findNodePath(NodeAggregateId $nodeAggregateId): ?NodePath
+    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('h.name, h.parentnodeanchor')
@@ -261,7 +261,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'nodePath');
         if ($result === []) {
-            return null;
+            throw new \InvalidArgumentException(sprintf('Failed to retrieve node path for node "%s"', $nodeAggregateId->getValue()), 1678391715);
         }
         return NodePath::fromPathSegments(array_reverse(array_column($result, 'name')));
     }
