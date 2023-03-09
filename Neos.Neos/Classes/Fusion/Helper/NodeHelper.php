@@ -112,7 +112,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
 
-    public function nodeAddressToString(Node $node): string
+    public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->subgraphIdentity->contentRepositoryId
