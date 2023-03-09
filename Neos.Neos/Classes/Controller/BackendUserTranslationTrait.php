@@ -33,7 +33,7 @@ trait BackendUserTranslationTrait
      * @Flow\Inject
      * @var \Neos\Neos\Service\UserService
      */
-    protected $_userService; // @codingStandardsIgnoreEnd
+    protected $_userService;
     // phpcs:enable
 
     /**
