@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
@@ -30,7 +31,6 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Doctrine\DBAL\Connection;
 use Neos\EventStore\CatchUp\CatchUp;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
@@ -64,7 +64,7 @@ final class AssetUsageProjection implements ProjectionInterface
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
-    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
+    public function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         try {
             $assetIdsByProperty = $this->getAssetIdsByProperty($event->initialPropertyValues);
@@ -72,31 +72,7 @@ final class AssetUsageProjection implements ProjectionInterface
             throw new \RuntimeException(
                 sprintf(
                     'Failed to extract asset ids from event "%s": %s',
-                    $event->getNodeAggregateId(),
-                    $e->getMessage()
-                ),
-                1646321894,
-                $e
-            );
-        }
-        $nodeAddress = new NodeAddress(
-            $event->contentStreamId,
-            $event->originDimensionSpacePoint->toDimensionSpacePoint(),
-            $event->nodeAggregateId,
-            WorkspaceName::fromString('live')
-        );
-        $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
-    }
-
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
-    {
-        try {
-            $assetIdsByProperty = $this->getAssetIdsByProperty($event->propertyValues);
-        } catch (InvalidTypeException $e) {
-            throw new \RuntimeException(
-                sprintf(
-                    'Failed to extract asset ids from event "%s": %s',
-                    $event->getNodeAggregateId(),
+                    $eventEnvelope->event->id->value,
                     $e->getMessage()
                 ),
                 1646321894,
@@ -106,8 +82,30 @@ final class AssetUsageProjection implements ProjectionInterface
         $nodeAddress = new NodeAddress(
             $event->getContentStreamId(),
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
-            $event->getNodeAggregateId(),
-            WorkspaceName::fromString('live')
+            $event->getNodeAggregateId()
+        );
+        $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
+    }
+
+    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
+    {
+        try {
+            $assetIdsByProperty = $this->getAssetIdsByProperty($event->propertyValues);
+        } catch (InvalidTypeException $e) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Failed to extract asset ids from event "%s": %s',
+                    $eventEnvelope->event->id->value,
+                    $e->getMessage()
+                ),
+                1646321894,
+                $e
+            );
+        }
+        $nodeAddress = new NodeAddress(
+            $event->getContentStreamId(),
+            $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+            $event->getNodeAggregateId()
         );
         $this->repository->addUsagesForNode($nodeAddress, $assetIdsByProperty);
     }
@@ -194,8 +192,8 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         if ($type === 'string' || is_subclass_of($type, \Stringable::class, true)) {
             // @phpstan-ignore-next-line
-            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string) $value, $matches, PREG_SET_ORDER);
-            return array_map(static fn(array $match) => $match['assetId'], $matches);
+            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
+            return array_map(static fn (array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
             // @phpstan-ignore-next-line
@@ -251,7 +249,7 @@ final class AssetUsageProjection implements ProjectionInterface
         $catchUp->run($eventStream);
     }
 
-    private function apply(\Neos\EventStore\Model\EventEnvelope $eventEnvelope): void
+    private function apply(EventEnvelope $eventEnvelope): void
     {
         if (!$this->canHandle($eventEnvelope->event)) {
             return;
