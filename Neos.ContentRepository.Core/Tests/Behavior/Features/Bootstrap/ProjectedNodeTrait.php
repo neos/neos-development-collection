@@ -356,7 +356,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedReferences) {
             $actualReferences = $this->getCurrentSubgraphs()[$adapterName]
-                ->findReferences($currentNode->nodeAggregateId, FindReferencesFilter::all());
+                ->findReferences($currentNode->nodeAggregateId, FindReferencesFilter::create());
 
             $this->assertReferencesMatch($expectedReferences, $actualReferences, $adapterName);
         });
@@ -370,7 +370,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $references = $this->getCurrentSubgraphs()[$adapterName]
-                ->findReferences($currentNode->nodeAggregateId, FindReferencesFilter::all());
+                ->findReferences($currentNode->nodeAggregateId, FindReferencesFilter::create());
 
             Assert::assertCount(0, $references, 'No references were expected in adapter "' . $adapterName . '".');
         });
@@ -385,7 +385,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedReferences) {
             $actualReferences = $this->getCurrentSubgraphs()[$adapterName]
-                ->findBackReferences($currentNode->nodeAggregateId, FindBackReferencesFilter::all());
+                ->findBackReferences($currentNode->nodeAggregateId, FindBackReferencesFilter::create());
 
             $this->assertReferencesMatch($expectedReferences, $actualReferences, $adapterName);
         });
@@ -464,7 +464,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $originNodes = $this->getCurrentSubgraphs()[$adapterName]
-                ->findBackReferences($currentNode->nodeAggregateId, FindBackReferencesFilter::all());
+                ->findBackReferences($currentNode->nodeAggregateId, FindBackReferencesFilter::create());
             Assert::assertCount(0, $originNodes, 'No referencing nodes were expected in adapter "' . $adapterName . '".');
         });
     }
@@ -512,7 +512,7 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedChildNodesTable) {
             $subgraph = $this->getCurrentSubgraphs()[$adapterName];
             $actualChildNodes = [];
-            foreach ($subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::all()) as $actualChildNode) {
+            foreach ($subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::create()) as $actualChildNode) {
                 $actualChildNodes[] = $actualChildNode;
             }
 
@@ -538,7 +538,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $subgraph = $this->getCurrentSubgraphs()[$adapterName];
-            $actualChildNodes = $subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::all());
+            $actualChildNodes = $subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::create());
 
             Assert::assertEquals(0, count($actualChildNodes), 'ContentSubgraph::findChildNodes returned present child nodes in adapter "' . $adapterName . '"');
         });
@@ -553,7 +553,7 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedPrecedingSiblingsTable) {
             $actualSiblings = [];
             foreach ($this->getCurrentSubgraphs()[$adapterName]
-                         ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::all())
+                         ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::create())
                      as $actualSibling
             ) {
                 $actualSiblings[] = $actualSibling;
@@ -574,7 +574,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]
-                ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::all());
+                ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::create());
             Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findPrecedingSiblingNodes: No siblings were expected in adapter "' . $adapterName . '"');
         });
     }
@@ -589,7 +589,7 @@ trait ProjectedNodeTrait
             $actualSiblings = [];
             foreach (
                 $this->getCurrentSubgraphs()[$adapterName]
-                    ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::all())
+                    ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::create())
                 as $actualSibling
             ) {
                 $actualSiblings[] = $actualSibling;
@@ -610,7 +610,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]
-                ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::all());
+                ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::create());
             Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findSucceedingSiblingNodes: No siblings were expected');
         });
     }

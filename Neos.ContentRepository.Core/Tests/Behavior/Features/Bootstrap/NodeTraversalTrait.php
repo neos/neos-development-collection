@@ -49,7 +49,7 @@ trait NodeTraversalTrait
     {
         $parentNodeAggregateId = NodeAggregateId::fromString($parentNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindChildNodesFilter::all();
+        $filter = FindChildNodesFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -72,7 +72,7 @@ trait NodeTraversalTrait
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
-        $filter = FindReferencesFilter::all();
+        $filter = FindReferencesFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -95,7 +95,7 @@ trait NodeTraversalTrait
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
-        $filter = FindBackReferencesFilter::all();
+        $filter = FindBackReferencesFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -184,7 +184,7 @@ trait NodeTraversalTrait
     {
         $siblingNodeAggregateId = NodeAggregateId::fromString($siblingNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindSucceedingSiblingNodesFilter::all();
+        $filter = FindSucceedingSiblingNodesFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -207,7 +207,7 @@ trait NodeTraversalTrait
     {
         $siblingNodeAggregateId = NodeAggregateId::fromString($siblingNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindPrecedingSiblingNodesFilter::all();
+        $filter = FindPrecedingSiblingNodesFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -256,7 +256,7 @@ trait NodeTraversalTrait
     public function iExecuteTheFindSubtreeQueryIExpectTheFollowingTrees(string $entryNodeIdSerialized, string $filterSerialized = null, PyStringNode $expectedTree = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
-        $filter = FindSubtreeFilter::all();
+        $filter = FindSubtreeFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);
@@ -290,7 +290,7 @@ trait NodeTraversalTrait
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $expectedNodeIds = $expectedNodeIdsSerialized !== null ? array_filter(explode(',', $expectedNodeIdsSerialized)) : [];
-        $filter = FindDescendantNodesFilter::all();
+        $filter = FindDescendantNodesFilter::create();
         if ($filterSerialized !== null) {
             $filterValues = json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR);
             $filter = $filter->with(...$filterValues);

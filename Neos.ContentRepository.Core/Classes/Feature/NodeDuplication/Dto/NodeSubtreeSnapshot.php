@@ -47,7 +47,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
     {
         $childNodes = [];
         foreach (
-            $subgraph->findChildNodes($sourceNode->nodeAggregateId, FindChildNodesFilter::all()) as $sourceChildNode
+            $subgraph->findChildNodes($sourceNode->nodeAggregateId, FindChildNodesFilter::create()) as $sourceChildNode
         ) {
             $childNodes[] = self::fromSubgraphAndStartNode($subgraph, $sourceChildNode);
         }
@@ -61,7 +61,7 @@ final class NodeSubtreeSnapshot implements \JsonSerializable
             $sourceNode->classification,
             $properties->serialized(),
             NodeReferencesSnapshot::fromReferences(
-                $subgraph->findReferences($sourceNode->nodeAggregateId, FindReferencesFilter::all())
+                $subgraph->findReferences($sourceNode->nodeAggregateId, FindReferencesFilter::create())
             ),
             $childNodes
         );

@@ -137,7 +137,7 @@ class TetheredNodeAdjustments
                         $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::all());
+                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::create());
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];

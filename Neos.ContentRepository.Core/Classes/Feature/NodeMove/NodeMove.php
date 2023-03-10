@@ -272,14 +272,14 @@ trait NodeMove
         $succeedingSibling = null;
         $precedingSiblingCandidates = iterator_to_array(
             $precedingSiblingId
-                ? $originContentSubgraph->findPrecedingSiblingNodes($precedingSiblingId, FindPrecedingSiblingNodesFilter::all())
+                ? $originContentSubgraph->findPrecedingSiblingNodes($precedingSiblingId, FindPrecedingSiblingNodesFilter::create())
                 : Nodes::createEmpty()
         );
         $succeedingSiblingCandidates = iterator_to_array(
             $succeedingSiblingId
                 ? $originContentSubgraph->findSucceedingSiblingNodes(
                     $succeedingSiblingId,
-                    FindSucceedingSiblingNodesFilter::all()
+                    FindSucceedingSiblingNodesFilter::create()
                 )
                 : Nodes::createEmpty()
         );
@@ -314,7 +314,7 @@ trait NodeMove
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblingNodes(
                         $precedingSiblingId,
-                        FindSucceedingSiblingNodesFilter::all()->withPagination(1, 0)
+                        FindSucceedingSiblingNodesFilter::create()->withPagination(1, 0)
                     );
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();
@@ -373,7 +373,7 @@ trait NodeMove
                 if ($precedingSiblingId && $precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblingNodes(
                         $precedingSiblingId,
-                        FindSucceedingSiblingNodesFilter::all()->withPagination(1, 0)
+                        FindSucceedingSiblingNodesFilter::create()->withPagination(1, 0)
                     );
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();

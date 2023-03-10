@@ -268,7 +268,7 @@ class NodeView extends JsonView
 
         $filter = $nodeTypeFilter
             ? FindChildNodesFilter::nodeTypeConstraints($nodeTypeFilter)
-            : FindChildNodesFilter::all();
+            : FindChildNodesFilter::create();
         foreach ($subgraph->findChildNodes($node->nodeAggregateId, $filter) as $childNode) {
             if (
                 !$this->privilegeManager->isGranted(

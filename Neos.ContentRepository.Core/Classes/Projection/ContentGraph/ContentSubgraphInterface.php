@@ -83,8 +83,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
 
     /**
-     *
-     * If a Search Term is specified, the properties are searched for this search term.
+     * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
      *
      * Note: This is basically a set-based view of descendant nodes; so the ordering should not be relied upon
      */
@@ -92,6 +91,8 @@ interface ContentSubgraphInterface extends \JsonSerializable
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a tree
+     *
+     * Note: This returns a fragment of the existing tree structure. The structure is kept intact but nodes might be missing depending on the specified filter
      *
      * @return Subtree|null the recursive tree of all matching nodes, or NULL if the entry node is not accessible
      */
@@ -122,7 +123,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
      */
     public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
-
 
     /**
      * Determine the absolute path of a node
