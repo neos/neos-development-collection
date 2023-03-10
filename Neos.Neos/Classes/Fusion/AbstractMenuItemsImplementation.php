@@ -174,7 +174,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected function getNodeLevelInSite(Node $node): int
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $nodePath = $subgraph->findNodePath($node->nodeAggregateId);
-        return $nodePath->getDepth() - 2; // sites always are depth 2;
+
+        return $subgraph->findNodePath($node->nodeAggregateId)->getDepth() - 2; // sites always are depth 2;
     }
 }

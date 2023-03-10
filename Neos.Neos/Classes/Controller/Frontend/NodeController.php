@@ -341,17 +341,15 @@ class NodeController extends ActionController
         $currentDocumentNode = $subtree->node;
 
         $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->nodeAggregateId);
-        if ($nodePathOfDocumentNode !== null) {
-            $nodePathCache->add($currentDocumentNode->nodeAggregateId, $nodePathOfDocumentNode);
+        $nodePathCache->add($currentDocumentNode->nodeAggregateId, $nodePathOfDocumentNode);
 
-            foreach ($subtree->children as $childSubtree) {
-                self::fillCacheInternal(
-                    $childSubtree,
-                    $currentDocumentNode,
-                    $nodePathOfDocumentNode,
-                    $inMemoryCache
-                );
-            }
+        foreach ($subtree->children as $childSubtree) {
+            self::fillCacheInternal(
+                $childSubtree,
+                $currentDocumentNode,
+                $nodePathOfDocumentNode,
+                $inMemoryCache
+            );
         }
     }
 
