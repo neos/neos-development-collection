@@ -151,6 +151,9 @@ final class NodeFactory
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
     ): Subtrees {
+        if ($nodeRows === []) {
+            return Subtrees::createEmpty();
+        }
         $subtreesByParentNodeAggregateIdentifier = [];
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(

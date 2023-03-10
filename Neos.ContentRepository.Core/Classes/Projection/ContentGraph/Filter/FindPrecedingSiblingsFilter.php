@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -26,15 +28,26 @@ final class FindPrecedingSiblingsFilter
 
     public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
     {
+        return self::all()->with(nodeTypeConstraints: $nodeTypeConstraints);
+    }
+
+    public function with(
+        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        int $limit = null,
+        int $offset = null,
+    ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
         }
-
-        return new self($nodeTypeConstraints, null, null);
+        return new self(
+            $nodeTypeConstraints ?? $this->nodeTypeConstraints,
+            $limit ?? $this->limit,
+            $offset ?? $this->offset,
+        );
     }
 
     public function withPagination(int $limit, int $offset): self
     {
-        return new self($this->nodeTypeConstraints, $limit, $offset);
+        return $this->with(limit: $limit, offset: $offset);
     }
 }
