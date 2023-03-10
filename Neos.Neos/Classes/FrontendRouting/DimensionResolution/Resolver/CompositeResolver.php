@@ -55,15 +55,15 @@ final class CompositeResolver implements DimensionResolverInterface
     }
 
     public function fromDimensionSpacePointToUriConstraints(
-        DimensionSpacePoint $dimensionSpacePoint,
-        DocumentNodeInfo $targetNode,
+        DimensionSpacePoint $filteredDimensionSpacePoint,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints {
         foreach (array_reverse($this->resolvers) as $resolver) {
             assert($resolver instanceof DimensionResolverInterface);
             $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints(
-                $dimensionSpacePoint,
-                $targetNode,
+                $filteredDimensionSpacePoint,
+                $targetNodeInfo,
                 $uriConstraints
             );
         }

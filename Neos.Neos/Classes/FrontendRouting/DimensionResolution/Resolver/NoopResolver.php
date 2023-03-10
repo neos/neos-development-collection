@@ -37,8 +37,8 @@ final class NoopResolver implements DimensionResolverInterface
     }
 
     public function fromDimensionSpacePointToUriConstraints(
-        DimensionSpacePoint $dimensionSpacePoint,
-        DocumentNodeInfo $targetNode,
+        DimensionSpacePoint $filteredDimensionSpacePoint,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints {
         return $uriConstraints;

@@ -107,14 +107,14 @@ interface DimensionResolverInterface
      * Called for each generated URL, to adjust (and return) the passed-in UriConstraints
      * depending on the given DimensionSpacePoint.
      *
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param DocumentNodeInfo $targetNode
+     * @param DimensionSpacePoint $filteredDimensionSpacePoint
+     * @param DocumentNodeInfo $targetNodeInfo
      * @param UriConstraints $uriConstraints the pre-applied uriConstraints -> modify and return them.
      * @return UriConstraints
      */
     public function fromDimensionSpacePointToUriConstraints(
-        DimensionSpacePoint $dimensionSpacePoint,
-        DocumentNodeInfo $targetNode,
+        DimensionSpacePoint $filteredDimensionSpacePoint,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints;
 }

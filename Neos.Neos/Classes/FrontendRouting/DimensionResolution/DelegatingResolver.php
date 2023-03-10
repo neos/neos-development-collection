@@ -88,15 +88,14 @@ final class DelegatingResolver implements DimensionResolverInterface
     }
 
     public function fromDimensionSpacePointToUriConstraints(
-        DimensionSpacePoint $dimensionSpacePoint,
-        DocumentNodeInfo $targetNode,
+        DimensionSpacePoint $filteredDimensionSpacePoint,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints {
-
-        $targetSite = $this->siteRepository->findOneByNodeName($targetNode->getSiteNodeName());
+        $targetSite = $this->siteRepository->findOneByNodeName($targetNodeInfo->getSiteNodeName());
 
         if ($targetSite === null) {
-            throw new \RuntimeException('Did not find site object for identifier ' . $targetNode->getSiteNodeName()->value);
+            throw new \RuntimeException('Did not find site object for identifier ' . $targetNodeInfo->getSiteNodeName()->value);
         }
         $targetSiteConfiguration = $targetSite->getConfiguration();
 
@@ -109,8 +108,8 @@ final class DelegatingResolver implements DimensionResolverInterface
             $targetSiteConfiguration->contentRepositoryId,
             $targetSiteConfiguration
         )->fromDimensionSpacePointToUriConstraints(
-            $dimensionSpacePoint,
-            $targetNode,
+            $filteredDimensionSpacePoint,
+            $targetNodeInfo,
             $uriConstraints
         );
     }
