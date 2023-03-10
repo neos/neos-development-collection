@@ -84,7 +84,7 @@ class ChildrenOperation extends AbstractOperation
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::all());
+                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::create());
             foreach ($childNodes as $childNode) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;

@@ -14,7 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
+use Doctrine\DBAL\Connection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 
 /**
@@ -39,5 +40,47 @@ final class QueryUtility
                     AND rest.dimensionspacepointhash = ' . $prefix . 'h.dimensionspacepointhash
                     AND ' . $prefix . 'n.nodeaggregateidentifier = ANY(rest.affectednodeaggregateidentifiers)
             )';
+    }
+
+    /**
+     * @param NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints
+     * @param string $prefix
+     * @param array<string,mixed> $parameters
+     * @param array<string,int|string> $types
+     * @return string
+     */
+    public static function getNodeTypeConstraintsClause(
+        NodeTypeConstraintsWithSubNodeTypes $nodeTypeConstraints,
+        string $prefix,
+        array &$parameters,
+        array &$types,
+    ): string {
+        $query = '';
+        $parameters['allowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->toStringArray();
+        $parameters['disallowedNodeTypeNames'] = $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->toStringArray();
+        $types['allowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
+        $types['disallowedNodeTypeNames'] = Connection::PARAM_STR_ARRAY;
+        if (!$nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()) {
+            if (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+                if ($nodeTypeConstraints->isWildCardAllowed) {
+                    $query .= '
+            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)
+            OR ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
+                } else {
+                    $query .= '
+            AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)
+            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
+                }
+            } else {
+                if (!$nodeTypeConstraints->isWildCardAllowed) {
+                    $query .= '
+            AND ' . $prefix . '.nodetypename IN (:allowedNodeTypeNames)';
+                }
+            }
+        } elseif (!$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty()) {
+            $query .= '
+            AND ' . $prefix . '.nodetypename NOT IN (:disallowedNodeTypeNames)';
+        }
+        return $query;
     }
 }

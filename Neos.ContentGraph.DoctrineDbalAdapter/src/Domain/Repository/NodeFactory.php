@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -62,8 +63,7 @@ final class NodeFactory
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $node = new Node(
+        return new Node(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
                 ContentStreamId::fromString($nodeRow['contentstreamid']),
@@ -74,12 +74,20 @@ final class NodeFactory
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $nodeType,
+            $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
         );
+    }
 
-        return $node;
+    /**
+     * @param array<int, array<string, mixed>> $nodeRows
+     */
+    public function mapNodeRowsToNodes(array $nodeRows, DimensionSpacePoint $dimensionSpacePoint, VisibilityConstraints $visibilityConstraints): Nodes
+    {
+        return Nodes::fromArray(
+            array_map(fn (array $nodeRow) => $this->mapNodeRowToNode($nodeRow, $dimensionSpacePoint, $visibilityConstraints), $nodeRows)
+        );
     }
 
     public function createPropertyCollectionFromJsonString(string $jsonString): PropertyCollection

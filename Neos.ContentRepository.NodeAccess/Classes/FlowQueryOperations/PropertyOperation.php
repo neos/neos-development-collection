@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -93,21 +93,21 @@ class PropertyOperation extends AbstractOperation
             $element = $context[0];
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             if ($propertyPath === '_path') {
-                return (string)$subgraph->findNodePath($element->nodeAggregateId);
+                return (string)$subgraph->retrieveNodePath($element->nodeAggregateId);
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {
                 if ($element->nodeType->getPropertyType($propertyPath) === 'reference') {
                     return (
-                        $subgraph->findReferencedNodes(
+                        $subgraph->findReferences(
                             $element->nodeAggregateId,
-                            FindReferencedNodesFilter::referenceName($propertyPath)
+                            FindReferencesFilter::referenceName($propertyPath)
                         )[0] ?? null
                     )?->node;
                 } elseif ($element->nodeType->getPropertyType($propertyPath) === 'references') {
-                    return $subgraph->findReferencedNodes(
+                    return $subgraph->findReferences(
                         $element->nodeAggregateId,
-                        FindReferencedNodesFilter::referenceName($propertyPath)
+                        FindReferencesFilter::referenceName($propertyPath)
                     )->getNodes();
                 } else {
                     return $element->getProperty($propertyPath);

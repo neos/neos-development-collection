@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 /**
- * A search term for use in {@see ContentSubgraphInterface::findDescendants()} API.
+ * A search term for use in Filters for the {@see ContentSubgraphInterface} API.
  *
  * @api DTO for {@see ContentSubgraphInterface}
  */

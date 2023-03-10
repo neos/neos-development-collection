@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -147,9 +147,9 @@ class NodesController extends ActionController
 
         if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
             $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
-            $nodes = !is_null($entryNode) ? $subgraph->findDescendants(
-                NodeAggregateIds::create($entryNode->nodeAggregateId),
-                FindDescendantsFilter::nodeTypeConstraints(
+            $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
+                $entryNode->nodeAggregateId,
+                FindDescendantNodesFilter::nodeTypeConstraints(
                     NodeTypeConstraints::create(
                         NodeTypeNames::fromStringArray($nodeTypes),
                         NodeTypeNames::createEmpty()

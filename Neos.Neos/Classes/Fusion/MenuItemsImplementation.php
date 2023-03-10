@@ -14,9 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
@@ -154,33 +155,35 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
         if (!is_null($this->getItemCollection())) {
-            $childSubtrees = $subgraph->findSubtrees(
-                NodeAggregateIds::fromNodes($this->getItemCollection()),
-                FindSubtreesFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
-                    ->withMaximumLevels($this->getMaximumLevels())
-            );
             $items = [];
-            foreach ($childSubtrees as $childSubtree) {
+            foreach ($this->getItemCollection() as $node) {
+                $childSubtree = $subgraph->findSubtree(
+                    $node->nodeAggregateId,
+                    FindSubtreeFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
+                        ->withMaximumLevels($this->getMaximumLevels())
+                );
+                if ($childSubtree === null) {
+                    continue;
+                }
                 $items[] = $this->traverseChildren($childSubtree);
             }
             return $items;
-        } else {
-            $entryParentNode = $this->findMenuStartingPoint();
-            if (!$entryParentNode) {
-                return [];
-            }
-
-            $childSubtrees = $subgraph->findSubtrees(
-                NodeAggregateIds::create($entryParentNode->nodeAggregateId),
-                FindSubtreesFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
-                    ->withMaximumLevels($this->getMaximumLevels())
-            );
-            $childSubtree = $childSubtrees->first();
-            if (!$childSubtree) {
-                return [];
-            }
-            return $this->traverseChildren($childSubtree)->getChildren();
         }
+
+        $entryParentNode = $this->findMenuStartingPoint();
+        if (!$entryParentNode) {
+            return [];
+        }
+
+        $childSubtree = $subgraph->findSubtree(
+            $entryParentNode->nodeAggregateId,
+            FindSubtreeFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
+                ->withMaximumLevels($this->getMaximumLevels())
+        );
+        if ($childSubtree === null) {
+            return [];
+        }
+        return $this->traverseChildren($childSubtree)->getChildren();
     }
 
     protected function traverseChildren(Subtree $subtree): MenuItem
