@@ -12,6 +12,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ESCR\AssetUsage\Dto\AssetUsage;
 use Neos\ESCR\AssetUsage\Service\GlobalAssetUsageService;
 use Neos\ESCR\AssetUsage\Dto\AssetUsages;
+use Neos\ESCR\AssetUsage\Dto\AssetUsageReference;
 
 /**
  * Implementation of the Neos AssetUsageStrategyInterface in order to protect assets in use
@@ -59,7 +60,12 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
             return [];
         }
         /** @var \IteratorAggregate<UsageReference> $convertedUsages */
-        $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new UsageReference($asset));
+        $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new AssetUsageReference(
+            $asset,
+            $usage->contentStreamIdentifier,
+            $usage->originDimensionSpacePoint,
+            $usage->nodeAggregateIdentifier
+        ));
         return iterator_to_array($convertedUsages);
     }
 
