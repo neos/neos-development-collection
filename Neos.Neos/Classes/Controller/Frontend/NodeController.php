@@ -331,6 +331,9 @@ class NodeController extends ActionController
             FindSubtreeFilter::nodeTypeConstraints('!Neos.Neos:Document')
                 ->withMaximumLevels(20)
         );
+        if ($subtree === null) {
+            return;
+        }
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $currentDocumentNode = $subtree->node;

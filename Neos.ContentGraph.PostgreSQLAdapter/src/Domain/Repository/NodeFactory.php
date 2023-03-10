@@ -150,7 +150,7 @@ final class NodeFactory
     public function mapNodeRowsToSubtree(
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
-    ): Subtree {
+    ): ?Subtree {
         $subtreesByParentNodeAggregateIdentifier = [];
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(
