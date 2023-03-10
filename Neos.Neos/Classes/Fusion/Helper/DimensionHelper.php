@@ -17,18 +17,18 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\ObjectManagement\DependencyInjection\DependencyProxy;
 
 /**
  * Helper for nodes in various content dimensions.
+ *
+ * @api For usage in Fusion/Eel as `Neos.Dimension.*`
  */
-class DimensionHelper implements ProtectedContextAwareInterface
+final class DimensionHelper implements ProtectedContextAwareInterface
 {
     /**
      * @var ContentRepositoryRegistry
@@ -44,10 +44,10 @@ class DimensionHelper implements ProtectedContextAwareInterface
      *     Neos.Dimension.currentValue(node, 'language')
      *
      * @param Node $node
-     * @param string|ContentDimensionId $dimensionName
+     * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
      * @return string|null
      */
-    public function currentValue(Node $node, string|ContentDimensionId $dimensionName): ?string
+    public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?string
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
         return $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
@@ -61,53 +61,30 @@ class DimensionHelper implements ProtectedContextAwareInterface
      *     Neos.Dimension.originValue(node, 'language')
      *
      * @param Node $node
-     * @param string|ContentDimensionId $dimensionName
+     * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
      * @return string|null
      */
-    public function originValue(Node $node, string|ContentDimensionId $dimensionName): ?string
+    public function originValue(Node $node, ContentDimensionId|string $dimensionName): ?string
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
         return $node->originDimensionSpacePoint->getCoordinate($contentDimensionId);
     }
 
     /**
-     * Get default dimension value for the content repository defined by `node`.
+     * Find all content dimensions in content repository defined by `contentRepositoryId` or `node`.
      *
      * Example::
      *
-     *     Neos.Dimension.findDefaultValue(node, 'language')
+     *     Neos.Dimension.all(contentRepositoryId)
+     *     Neos.Dimension.all(node)
      *
-     * @param Node $node
-     * @param string|ContentDimensionId $dimensionName
-     * @return string|null
-     */
-    public function findDefaultValue(Node $node, string|ContentDimensionId $dimensionName): ?string
-    {
-        $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $rootValues = $contentRepository
-            ->getContentDimensionSource()
-            ->getDimension($contentDimensionId)
-            ?->getRootValues() ?: [];
-
-        $dimensionValue = reset($rootValues);
-
-        return $dimensionValue ? $dimensionValue->value : null;
-    }
-
-    /**
-     * Find all content dimensions in content repository defined by `node`.
-     *
-     * Example::
-     *
-     *     Neos.Dimension.findDimensions(node)
-     *
-     * @param Node $node
+     * @param ContentRepositoryId|Node $subject Node will be used to determine `ContentRepositoryId`
      * @return array<string,ContentDimension>
      */
-    public function findDimensions(Node $node): array
+    public function all(ContentRepositoryId|Node $subject): array
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         return $contentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority();
     }
@@ -120,11 +97,11 @@ class DimensionHelper implements ProtectedContextAwareInterface
      *     Neos.Dimension.findVariantInDimension(node, 'language', 'en_UK')
      *
      * @param Node $node
-     * @param string|ContentDimensionId $dimensionName
-     * @param string|ContentDimensionValue $dimensionValue
+     * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
+     * @param ContentDimensionValue|string $dimensionValue String will be converted to `ContentDimensionValue`
      * @return Node|null
      */
-    public function findVariantInDimension(Node $node, string|ContentDimensionId $dimensionName, string|ContentDimensionValue $dimensionValue): ?Node
+    public function findVariantInDimension(Node $node, ContentDimensionId|string $dimensionName, ContentDimensionValue|string $dimensionValue): ?Node
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
         $contentDimensionValue = is_string($dimensionValue) ? new ContentDimensionValue($dimensionValue) : $dimensionValue;
@@ -132,67 +109,11 @@ class DimensionHelper implements ProtectedContextAwareInterface
 
         return $contentRepository
             ->getContentGraph()
-            ->getSubgraph($node->subgraphIdentity->contentStreamId, $node->subgraphIdentity->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value), $node->subgraphIdentity->visibilityConstraints)
-            ->findNodeById($node->nodeAggregateId);
-    }
-
-    /**
-     * Find all variants of `node` across the specified dimension.
-     *
-     * Example::
-     *
-     *     Neos.Dimension.findVariantsInDimension(node, 'language')
-     *
-     * @param Node $node
-     * @param string|ContentDimensionId $dimensionName
-     * @return Nodes
-     */
-    public function findVariantsInDimension(Node $node, string|ContentDimensionId $dimensionName): Nodes
-    {
-        $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-
-        $variantNodes = [];
-        foreach ($contentRepository->getVariationGraph()->getDimensionSpacePoints() as $dimensionSpacePoint) {
-            if ($dimensionSpacePoint->equals($node->subgraphIdentity->dimensionSpacePoint)) {
-                $variantNodes[] = $node;
-            } elseif (
-                $dimensionSpacePoint->isDirectVariantInDimension(
-                    $node->subgraphIdentity->dimensionSpacePoint,
-                    $contentDimensionId
-                )
-            ) {
-                $variantNode = $contentRepository
-                    ->getContentGraph()
-                    ->getSubgraph($node->subgraphIdentity->contentStreamId, $dimensionSpacePoint, $node->subgraphIdentity->visibilityConstraints)
-                    ->findNodeById($node->nodeAggregateId);
-
-                if ($variantNode instanceof Node) {
-                    $variantNodes[] = $variantNode;
-                }
-            }
-        }
-
-        return Nodes::fromArray($variantNodes);
-    }
-
-    /**
-     * Find all values the specified dimension can have.
-     *
-     * Example::
-     *
-     *     Neos.Dimension.findPotentialDimensionValues(node, 'language')
-     *
-     * @param Node $node
-     * @param string|ContentDimensionId $dimensionName
-     * @return ContentDimensionValues
-     */
-    public function findPotentialDimensionValues(Node $node, string|ContentDimensionId $dimensionName): ContentDimensionValues
-    {
-        $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-
-        return $contentRepository->getContentDimensionSource()->getDimension($contentDimensionId)?->values ?: new ContentDimensionValues([]);
+            ->getSubgraph(
+                $node->subgraphIdentity->contentStreamId,
+                $node->subgraphIdentity->dimensionSpacePoint->vary($contentDimensionId, $contentDimensionValue->value),
+                $node->subgraphIdentity->visibilityConstraints
+            )->findNodeById($node->nodeAggregateId);
     }
 
     public function allowsCallOfMethod($methodName): bool
