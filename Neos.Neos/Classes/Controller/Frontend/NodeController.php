@@ -150,7 +150,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph, $contentRepository);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
@@ -226,7 +226,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph, $contentRepository);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
@@ -319,7 +319,6 @@ class NodeController extends ActionController
     private function fillCacheWithContentNodes(
         NodeAggregateId $nodeAggregateIdentifier,
         ContentSubgraphInterface $subgraph,
-        ContentRepository $contentRepository
     ): void {
         if (!$subgraph instanceof ContentSubgraphWithRuntimeCaches) {
             // wrong subgraph implementation
@@ -391,7 +390,6 @@ class NodeController extends ActionController
             $childNode = $childSubtree->node;
             $allChildNodes[] = $childNode;
         }
-
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
             $node->nodeAggregateId,
