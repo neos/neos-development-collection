@@ -10,8 +10,7 @@ use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageProjection;
+use Neos\ESCR\AssetUsage\Projection\AssetUsageProjection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -30,7 +29,6 @@ class CrCommandController extends CommandController
      * @var ObjectManagerInterface
      */
     protected $objectManager;
-
 
 
     public function setupCommand(string $contentRepositoryIdentifier = 'default')

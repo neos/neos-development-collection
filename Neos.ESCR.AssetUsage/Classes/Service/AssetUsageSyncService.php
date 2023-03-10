@@ -2,7 +2,6 @@
 
 namespace Neos\ESCR\AssetUsage\Service;
 
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ESCR\AssetUsage\AssetUsageFinder;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Dto\AssetUsage;
@@ -11,8 +10,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ESCR\AssetUsage\Dto\AssetUsages;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepositoryFactory;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
+use Neos\ESCR\AssetUsage\Projection\AssetUsageRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;

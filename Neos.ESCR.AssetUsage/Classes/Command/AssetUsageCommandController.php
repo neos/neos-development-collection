@@ -7,7 +7,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepositoryFactory;
+use Neos\ESCR\AssetUsage\Projection\AssetUsageRepositoryFactory;
 use Neos\ESCR\AssetUsage\Service\AssetUsageSyncServiceFactory;
 
 final class AssetUsageCommandController extends CommandController

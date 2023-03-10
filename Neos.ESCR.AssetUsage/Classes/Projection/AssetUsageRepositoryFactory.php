@@ -1,14 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Projector;
+namespace Neos\ESCR\AssetUsage\Projection;
 
-use Neos\Flow\Annotations as Flow;
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 final class AssetUsageRepositoryFactory

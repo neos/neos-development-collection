@@ -2,13 +2,15 @@ Neos:
   ESCR:
     AssetUsage:
       enabled: true
+      contentRepositories:
+        default: true
 
   ContentRepositoryRegistry:
     presets:
       'default':
         projections:
           'Neos.ESCR.AssetUsage':
-            factoryObjectName: Neos\ESCR\AssetUsage\Projector\AssetUsageProjectionFactory
+            factoryObjectName: Neos\ESCR\AssetUsage\Projection\AssetUsageProjectionFactory
 
 
 

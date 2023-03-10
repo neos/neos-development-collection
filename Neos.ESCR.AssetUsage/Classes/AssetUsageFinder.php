@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ESCR\AssetUsage;
 
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
+use Neos\ESCR\AssetUsage\Projection\AssetUsageRepository;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
 use Neos\ESCR\AssetUsage\Dto\AssetUsages;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;

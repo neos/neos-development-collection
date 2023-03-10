@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Projector;
+namespace Neos\ESCR\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
@@ -129,7 +129,7 @@ final class AssetUsageRepository
                 'SELECT COUNT(*) FROM (' . $queryBuilder->getSQL() . ') s',
                 $queryBuilder->getParameters()
             );
-            return (int) $count;
+            return (int)$count;
         });
     }
 

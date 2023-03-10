@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Projector;
+namespace Neos\ESCR\AssetUsage\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;

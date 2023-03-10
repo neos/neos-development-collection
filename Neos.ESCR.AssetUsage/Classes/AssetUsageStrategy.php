@@ -10,7 +10,7 @@ use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\ESCR\AssetUsage\Dto\AssetUsage;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\ESCR\AssetUsage\Service\GlobalAssetUsageService;
 use Neos\ESCR\AssetUsage\Dto\AssetUsages;
 
 /**
@@ -32,7 +32,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
     protected bool $enabled = false;
 
     public function __construct(
-        private readonly AssetUsageFinder $assetUsageFinder,
+        private readonly GlobalAssetUsageService $globalAssetUsageService,
         private readonly PersistenceManagerInterface $persistenceManager,
     ) {
     }
@@ -70,10 +70,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
             throw new \InvalidArgumentException('The specified asset has no valid id', 1649236892);
         }
         if (!isset($this->runtimeCache[$assetId])) {
-            $filter = AssetUsageFilter::create()
-                ->withAsset($assetId)
-                ->groupByNode();
-            $this->runtimeCache[$assetId] = $this->assetUsageFinder->findByFilter($filter);
+            $this->runtimeCache[$assetId] = $this->globalAssetUsageService->findAssetUsageByAssetId($assetId);
         }
         return $this->runtimeCache[$assetId];
     }
