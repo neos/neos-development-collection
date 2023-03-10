@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 class CrCommandController extends CommandController
 {
