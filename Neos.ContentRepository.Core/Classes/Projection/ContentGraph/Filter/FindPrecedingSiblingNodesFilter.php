@@ -7,15 +7,15 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 
 /**
- * Immutable filter DTO for {@see ContentSubgraphInterface::findChildNodes()}
+ * Immutable filter DTO for {@see ContentSubgraphInterface::findPrecedingSiblingNodes()}
  *
  * Example:
  *
- * FindChildNodesFilter::create()->with(nodeTypeConstraint: 'Some.Included:NodeType,!Some.Excluded:NodeType');
+ * FindPrecedingSiblingNodesFilter::create()->with(nodeTypeConstraint: 'Some.Included:NodeType,!Some.Excluded:NodeType');
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindChildNodesFilter
+final class FindPrecedingSiblingNodesFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
@@ -34,7 +34,7 @@ final class FindChildNodesFilter
 
     public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
     {
-        return self::create()->withNodeTypeConstraints($nodeTypeConstraints);
+        return self::create()->with(nodeTypeConstraints: $nodeTypeConstraints);
     }
 
     /**
@@ -46,7 +46,7 @@ final class FindChildNodesFilter
     public function with(
         NodeTypeConstraints|string $nodeTypeConstraints = null,
         int $limit = null,
-        int $offset = null
+        int $offset = null,
     ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
@@ -56,11 +56,6 @@ final class FindChildNodesFilter
             $limit ?? $this->limit,
             $offset ?? $this->offset,
         );
-    }
-
-    public function withNodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
-    {
-        return $this->with(nodeTypeConstraints: $nodeTypeConstraints);
     }
 
     public function withPagination(int $limit, int $offset): self

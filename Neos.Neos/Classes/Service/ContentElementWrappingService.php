@@ -367,7 +367,7 @@ class ContentElementWrappingService
 
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
-        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateId, FindChildNodesFilter::all()) as $node) {
+        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateId, FindChildNodesFilter::create()) as $node) {
             if ($node->nodeType->isOfType('Neos.Neos:Document') === true) {
                 continue;
             }
@@ -380,7 +380,7 @@ class ContentElementWrappingService
                 /** @codingStandardsIgnoreEnd */
             }
 
-            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::all());
+            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::create());
             $hasChildNodes = false;
             foreach ($nestedNodes as $nestedNode) {
                 $hasChildNodes = true;

@@ -1,6 +1,6 @@
 @contentrepository @adapters=DoctrineDBAL
   # TODO implement for Postgres
-Feature: Find nodes using the findNodePath query
+Feature: Find nodes using the findDescendantNodes query
 
   Background:
     Given I have the following content dimensions:
@@ -68,26 +68,23 @@ Feature: Find nodes using the findNodePath query
       | a2a             | a2a      | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}       | {}                                       |
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1"}      | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
+      | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}     | {}                                       |
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
-      | a4              | a4       | Neos.ContentRepository.Testing:SpecialPage | a                      | {"text": "a4"}        | {}                                       |
-      | a5              | a5       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a5"}        | {}                                       |
-      | a6              | a6       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a6"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
-      | b1a             | b1a      | Neos.ContentRepository.Testing:Page        | b1                     | {"text": "b1a"}       | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "b1"          |
+      | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findNodePath queries without result
-    When I execute the findNodePath query for node aggregate id "non-existing" I expect an exception 'Failed to retrieve node path for node "non-existing"'
-    # node "b1" is disabled so it must not be returned
-    When I execute the findNodePath query for node aggregate id "b1" I expect an exception 'Failed to retrieve node path for node "b1"'
-    When I execute the findNodePath query for node aggregate id "b1a" I expect an exception 'Failed to retrieve node path for node "b1a"'
 
-  Scenario: findNodePath queries with result
-    When I execute the findNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/" to be returned
-    When I execute the findNodePath query for node aggregate id "home" I expect the path "//home" to be returned
-    When I execute the findNodePath query for node aggregate id "a2a2" I expect the path "//home/a/a2/a2a/a2a2" to be returned
+  Scenario: findDescendantNodes queries without results
+    When I execute the findDescendantNodes query for entry node aggregate id "non-existing" I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2a2a"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "string"}' I expect no nodes to be returned
+
+  Scenario: findDescendantNodes queries with results
+    When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2" to be returned

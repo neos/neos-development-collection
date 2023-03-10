@@ -17,7 +17,7 @@ namespace Neos\Neos\Controller\Frontend;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -326,20 +326,19 @@ class NodeController extends ActionController
         }
         $inMemoryCache = $subgraph->inMemoryCache;
 
-        $subtree = $subgraph->findSubtrees(
-            NodeAggregateIds::fromArray([$nodeAggregateIdentifier]),
-            FindSubtreesFilter::nodeTypeConstraints('!Neos.Neos:Document')
+        $subtree = $subgraph->findSubtree(
+            $nodeAggregateIdentifier,
+            FindSubtreeFilter::nodeTypeConstraints('!Neos.Neos:Document')
                 ->withMaximumLevels(20)
-        )->first();
-        if (is_null($subtree)) {
+        );
+        if ($subtree === null) {
             return;
         }
-
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $currentDocumentNode = $subtree->node;
 
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->nodeAggregateId);
+        $nodePathOfDocumentNode = $subgraph->retrieveNodePath($currentDocumentNode->nodeAggregateId);
         $nodePathCache->add($currentDocumentNode->nodeAggregateId, $nodePathOfDocumentNode);
 
         foreach ($subtree->children as $childSubtree) {

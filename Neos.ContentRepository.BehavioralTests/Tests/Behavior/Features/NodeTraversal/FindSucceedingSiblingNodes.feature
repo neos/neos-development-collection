@@ -1,5 +1,5 @@
 @contentrepository @adapters=DoctrineDBAL,Postgres
-Feature: Find nodes using the findSubtrees query
+Feature: Find nodes using the findSucceedingSiblingNodes query
 
   Background:
     Given I have the following content dimensions:
@@ -13,6 +13,16 @@ Feature: Find nodes using the findSubtrees query
       properties:
         text:
           type: string
+        refs:
+          type: references
+          properties:
+            foo:
+              type: string
+        ref:
+          type: reference
+          properties:
+            foo:
+              type: string
     'Neos.ContentRepository.Testing:SomeMixin':
       abstract: true
     'Neos.ContentRepository.Testing:Homepage':
@@ -67,82 +77,29 @@ Feature: Find nodes using the findSubtrees query
       | a2a             | a2a      | Neos.ContentRepository.Testing:SpecialPage | a2                     | {"text": "a2a"}       | {}                                       |
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1"}      | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2"}      | {}                                       |
-      | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}     | {}                                       |
+      | a2a3            | a2a3     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a3"}      | {}                                       |
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
+      | a4              | a4       | Neos.ContentRepository.Testing:SpecialPage | a                      | {"text": "a4"}        | {}                                       |
+      | a5              | a5       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a5"}        | {}                                       |
+      | a6              | a6       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a6"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "a2a2a"        |
+      | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findSubtrees queries without results
-    When I execute the findSubtrees query for entry node aggregate id "non-existing" I expect no results
-    # node "a2a2a" is disabled so it should not yield results
-    When I execute the findSubtrees query for entry node aggregate id "a2a2a" I expect no results
+  Scenario: findSucceedingSiblingNodes queries without results
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "non-existing" I expect no nodes to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect no nodes to be returned
+    # node "a2a3" is disabled and should not be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a2a2" I expect no nodes to be returned
 
-  Scenario: findSubtrees queries with results
-    When I execute the findSubtrees query for entry node aggregate id "a2a2" I expect no results
-    """
-    a2a2
-    """
-    When I execute the findSubtrees query for entry node aggregate id "b1" I expect the following tree:
-    """
-    b1
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" I expect the following tree:
-    """
-    home
-     terms
-     contact
-     a
-      a1
-      a2
-       a2a
-        a2a1
-        a2a2
-      a3
-     b
-      b1
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
-    """
-    home
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"maximumLevels": 2}' I expect the following tree:
-    """
-    home
-     terms
-     contact
-     a
-      a1
-      a2
-      a3
-     b
-      b1
-    """
-    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage"}' I expect the following tree:
-    """
-    home
-     a
-      a1
-      a2
-       a2a
-        a2a1
-        a2a2
-      a3
-     b
-      b1
-    """
-#    When I execute the findSubtrees query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage", "maximumLevels": 3}' I expect the following tree:
-#    """
-#    home
-#     a
-#      a1
-#      a2
-#       a2a
-#      a3
-#     b
-#      b1
-#    """
+  Scenario: findSucceedingSiblingNodes queries with results
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" I expect the nodes "a2,a3,a4,a5,a6" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2,a3,a5,a6" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Page"}' I expect the nodes "a4" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"limit": 3, "offset": 1}' I expect the nodes "a3,a4,a5" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:NonExisting", "limit": 4, "offset": 2}' I expect the nodes "a5,a6" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a2a1" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:NonExisting"}' I expect the nodes "a2a2" to be returned
