@@ -95,7 +95,7 @@ class NextOperation extends AbstractOperation
             return null;
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all())
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
             ->next($contextNode);
     }
 }

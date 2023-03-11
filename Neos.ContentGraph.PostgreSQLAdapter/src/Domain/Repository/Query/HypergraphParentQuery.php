@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
@@ -76,5 +77,12 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         $parameters['dimensionSpacePointHash'] = $dimensionSpacePoint->hash;
 
         return new self($query, $parameters, $this->tableNamePrefix);
+    }
+
+    public function withRestriction(VisibilityConstraints $visibilityConstraints): self
+    {
+        $query = $this->query . QueryUtility::getRestrictionClause($visibilityConstraints, $this->tableNamePrefix, 'c');
+
+        return new self($query, $this->parameters, $this->tableNamePrefix, $this->types);
     }
 }

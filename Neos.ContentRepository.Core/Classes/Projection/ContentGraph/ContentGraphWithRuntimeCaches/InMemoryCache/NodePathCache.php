@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -36,22 +36,12 @@ final class NodePathCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function contains(NodeAggregateId $nodeAggregateId): bool
-    {
-        if ($this->isEnabled === false) {
-            return false;
-        }
-        $key = (string)$nodeAggregateId;
-        return isset($this->nodePaths[$key]);
-    }
-
     public function add(NodeAggregateId $nodeAggregateId, NodePath $nodePath): void
     {
         if ($this->isEnabled === false) {
             return;
         }
-        $key = (string)$nodeAggregateId;
-        $this->nodePaths[$key] = $nodePath;
+        $this->nodePaths[$nodeAggregateId->getValue()] = $nodePath;
     }
 
     public function get(NodeAggregateId $nodeAggregateId): ?NodePath
@@ -59,8 +49,6 @@ final class NodePathCache
         if ($this->isEnabled === false) {
             return null;
         }
-        $key = (string)$nodeAggregateId;
-
-        return $this->nodePaths[$key] ?? null;
+        return $this->nodePaths[$nodeAggregateId->getValue()] ?? null;
     }
 }

@@ -16,7 +16,7 @@ namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -103,9 +103,9 @@ class PluginService
     protected function getNodes(Node $siteNode, NodeTypeNames $nodeTypeNames): Nodes
     {
         return $this->contentRepositoryRegistry->subgraphForNode($siteNode)
-            ->findDescendants(
-                NodeAggregateIds::create($siteNode->nodeAggregateId),
-                FindDescendantsFilter::nodeTypeConstraints(
+            ->findDescendantNodes(
+                $siteNode->nodeAggregateId,
+                FindDescendantNodesFilter::nodeTypeConstraints(
                     NodeTypeConstraints::create($nodeTypeNames, NodeTypeNames::createEmpty())
                 )
             );

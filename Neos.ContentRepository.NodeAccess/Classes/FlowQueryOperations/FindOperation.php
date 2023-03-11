@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
@@ -276,11 +276,11 @@ class FindOperation extends AbstractOperation
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
 
-            foreach ($subgraph->findDescendants(
-                NodeAggregateIds::fromArray($entryPoint['nodes']),
-                FindDescendantsFilter::nodeTypeConstraints($nodeTypeFilter)
-            ) as $descendant) {
-                $result[] = $descendant;
+            /** @var Node $node */
+            foreach ($entryPoints['nodes'] as $node) {
+                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::nodeTypeConstraints($nodeTypeFilter)) as $descendant) {
+                    $result[] = $descendant;
+                }
             }
         }
 

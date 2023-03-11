@@ -160,10 +160,6 @@
 				<source>Discard selected changes</source>
         <target state="final">បេាះបង់ចោលការកែតម្រូវ</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
-				<source>Publish selected changes</source>
-        <target state="final">ការជ្រើសរើសត្រូវបានផ្លាស់ប្ដូរសំរាប់ដាក់ប្រើប្រាស់</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
         <target state="final">បោះបង់ការផ្លាស់ប្តូរទាំងអស់</target>

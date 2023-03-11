@@ -81,7 +81,7 @@ class SiblingsOperation extends AbstractOperation
             }
 
             foreach (
-                $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all()) as $childNode
+                $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create()) as $childNode
             ) {
                 if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;

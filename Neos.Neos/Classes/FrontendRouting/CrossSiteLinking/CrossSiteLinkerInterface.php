@@ -25,6 +25,7 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  * You will not call implementations of this interface yourself.
  *
  * See {@see EventSourcedFrontendNodeRoutePartHandler} for documentation.
+ * @api
  */
 interface CrossSiteLinkerInterface
 {

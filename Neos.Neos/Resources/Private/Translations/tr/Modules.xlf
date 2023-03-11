@@ -159,10 +159,6 @@
 				<source>Discard selected changes</source>
         <target state="translated">Seçili değişiklikleri iptal et</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
-        <target state="translated">Seçili değişiklikleri yayımla</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
         <target state="translated">Bütün değişiklikleri iptal et</target>

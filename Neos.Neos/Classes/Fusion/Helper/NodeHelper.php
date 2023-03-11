@@ -62,7 +62,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 return $subNode;
             } else {
                 $nodePathOfNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                    ->findNodePath($node->nodeAggregateId);
+                    ->retrieveNodePath($node->nodeAggregateId);
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
@@ -84,6 +84,20 @@ class NodeHelper implements ProtectedContextAwareInterface
         return new NodeLabelToken($node);
     }
 
+    public function inBackend(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
+    }
+
+    public function isLive(Node $node): bool
+    {
+        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
+    }
+
     /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
@@ -98,7 +112,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
 
-    public function nodeAddressToString(Node $node): string
+    public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->subgraphIdentity->contentRepositoryId
@@ -112,7 +126,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         if ($nodePath->isAbsolute()) {
             $node = $this->findRootNode($node);
         }
-
 
         return $this->findNodeByPath($node, $nodePath);
     }
@@ -147,7 +160,6 @@ class NodeHelper implements ProtectedContextAwareInterface
 
         return $node;
     }
-
 
     /**
      * @param string $methodName

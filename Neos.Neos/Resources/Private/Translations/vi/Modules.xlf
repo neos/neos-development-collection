@@ -159,10 +159,6 @@
 				<source>Discard selected changes</source>
         <target state="translated">Bỏ các thay đổi đã lựa chọn </target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
-        <target state="translated">Công khai các thay đổi đã lựa chọn</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
         <target state="translated">Loại bỏ tất cả thay đổi</target>
