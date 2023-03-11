@@ -177,7 +177,7 @@ final class UriPathResolver implements DimensionResolverInterface
         $remainingUriPathSegments = explode('/', $normalizedUriPath);
         $firstUriPathSegment = array_shift($remainingUriPathSegments);
 
-        if (isset($this->uriPathToDimensionSpacePoint[$firstUriPathSegment])) {
+        if (!empty($firstUriPathSegment) && isset($this->uriPathToDimensionSpacePoint[$firstUriPathSegment])) {
             // URL starts with /en_US (f.e.)
             if (count($remainingUriPathSegments) === 0 && $this->uriPathToDimensionSpacePoint[$firstUriPathSegment]->hash === $this->filteredDefaultDimensionSpacePoint->hash) {
                 // user calls /en_US, but has this configured as default dimension space point.

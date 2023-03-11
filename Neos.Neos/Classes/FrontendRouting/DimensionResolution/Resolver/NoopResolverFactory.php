@@ -29,7 +29,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 final class NoopResolverFactory implements DimensionResolverFactoryInterface
 {
     public function create(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         SiteConfiguration $siteConfiguration,
     ): DimensionResolverInterface {
         return new NoopResolver();

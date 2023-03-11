@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -313,16 +314,18 @@ trait RoutingTrait
     private RequestToDimensionSpacePointContext $dimensionResolverContext;
 
     /**
-     * @When I invoke the Dimension Resolver :factoryClassName with options:
+     * @When I invoke the Dimension Resolver from site configuration:
      */
-    public function iInvokeTheDimensionResolverWithOptions(string $factoryClassName, PyStringNode $resolverOptionsYaml)
+    public function iInvokeTheDimensionResolverWithOptions(PyStringNode $rawSiteConfigurationYaml)
     {
-        $dimensionResolverFactory = $this->getObjectManager()->get($factoryClassName);
-        assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
-        $resolverOptions = Yaml::parse($resolverOptionsYaml->getRaw()) ?? [];
-        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryId::fromString('default'), $resolverOptions);
+        $rawSiteConfiguration = Yaml::parse($rawSiteConfigurationYaml->getRaw()) ?? [];
+        $siteConfiguration = SiteConfiguration::fromArray($rawSiteConfiguration);
 
-        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryId::fromString("default"));
+        $dimensionResolverFactory = $this->getObjectManager()->get($siteConfiguration->contentDimensionResolverFactoryClassName);
+        assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
+        $dimensionResolver = $dimensionResolverFactory->create($siteConfiguration->contentRepositoryId, $siteConfiguration);
+
+        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), $siteConfiguration->contentRepositoryId);
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
         $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
@@ -331,12 +334,12 @@ trait RoutingTrait
     }
 
     /**
-     * @When I invoke the Dimension Resolver :factoryClassName with options and exceptions are caught:
+     * @When I invoke the Dimension Resolver from site configuration and exceptions are caught:
      */
-    public function iInvokeTheDimensionResolverWithOptionsAndExceptionsAreCaught(string $factoryClassName, PyStringNode $resolverOptionsYaml)
+    public function iInvokeTheDimensionResolverWithOptionsAndExceptionsAreCaught(PyStringNode $resolverOptionsYaml)
     {
         try {
-            $this->iInvokeTheDimensionResolverWithOptions($factoryClassName, $resolverOptionsYaml);
+            $this->iInvokeTheDimensionResolverWithOptions($resolverOptionsYaml);
         } catch (\Exception $e) {
             $this->lastCommandException = $e;
         }

@@ -36,18 +36,15 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
     }
 
     public function create(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         SiteConfiguration $siteConfiguration,
     ): DimensionResolverInterface {
-        $internals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
-            new AutoUriPathResolverFactoryInternalsFactory()
-        );
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         return UriPathResolver::create(
             Segments::fromArray($siteConfiguration->contentDimensionResolverOptions['segments'] ?? []),
             Separator::fromString($siteConfiguration->contentDimensionResolverOptions['separator'] ?? '_'),
-            $internals->contentDimensionSource,
+            $contentRepository->getContentDimensionSource(),
             $siteConfiguration->defaultDimensionSpacePoint,
         );
     }

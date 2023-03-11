@@ -42,15 +42,12 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
     }
 
     public function create(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         SiteConfiguration $siteConfiguration
     ): DimensionResolverInterface {
-        $autoUriPathResolverFactoryInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
-            new AutoUriPathResolverFactoryInternalsFactory()
-        );
-        $contentDimensions = $autoUriPathResolverFactoryInternals
-            ->contentDimensionSource
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentDimensions = $contentRepository
+            ->getContentDimensionSource()
             ->getContentDimensionsOrderedByPriority();
 
         if (count($contentDimensions) >= 2) {

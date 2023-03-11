@@ -19,7 +19,7 @@ use Neos\Neos\Domain\Model\SiteConfiguration;
 interface DimensionResolverFactoryInterface
 {
     public function create(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         SiteConfiguration $siteConfiguration,
     ): DimensionResolverInterface;
 }
