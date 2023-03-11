@@ -40,31 +40,13 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
             }
         );
 
-        return new AssetUsages(
-            function () use ($assetUsages) {
-                return array_reduce(
-                    $assetUsages,
-                    function (\AppendIterator $globalAssetUsages, AssetUsages $assetUsage) {
-                        $globalAssetUsages->append($assetUsage->getIterator());
-                        return $globalAssetUsages;
-                    },
-                    new \AppendIterator()
-                );
-            },
-            function () use ($assetUsages) {
-                return array_reduce(
-                    $assetUsages,
-                    fn ($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
-                    0
-                );
-            }
-        );
+        return AssetUsages::fromArrayOfAssetUsages($assetUsages);
     }
 
     public function removeAssetUsageByAssetId(string $assetId): void
     {
         $this->withAllRepositories(
-            fn (AssetUsageRepository $repository) => $repository->removeAsset($assetId)
+            fn(AssetUsageRepository $repository) => $repository->removeAsset($assetId)
         );
     }
 
@@ -92,6 +74,6 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 
     private function withAllRepositories(callable $callback): array
     {
-        return array_map(fn ($repository) => $callback($repository), $this->getContentRepositories());
+        return array_map(fn($repository) => $callback($repository), $this->getContentRepositories());
     }
 }

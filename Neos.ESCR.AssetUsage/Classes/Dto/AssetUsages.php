@@ -46,4 +46,30 @@ final class AssetUsages implements \IteratorAggregate, \Countable
         }
         return $this->countRuntimeCache;
     }
+
+    /**
+     * @param array<AssetUsages> $assetUsages
+     */
+    public static function fromArrayOfAssetUsages(array $assetUsages): self
+    {
+        return new self(
+            function () use ($assetUsages) {
+                return array_reduce(
+                    $assetUsages,
+                    function (\AppendIterator $globalAssetUsages, AssetUsages $assetUsage) {
+                        $globalAssetUsages->append($assetUsage->getIterator());
+                        return $globalAssetUsages;
+                    },
+                    new \AppendIterator()
+                );
+            },
+            function () use ($assetUsages) {
+                return array_reduce(
+                    $assetUsages,
+                    fn($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
+                    0
+                );
+            }
+        );
+    }
 }

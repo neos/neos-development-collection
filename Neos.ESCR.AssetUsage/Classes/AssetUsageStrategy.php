@@ -13,6 +13,7 @@ use Neos\ESCR\AssetUsage\Dto\AssetUsage;
 use Neos\ESCR\AssetUsage\Service\GlobalAssetUsageService;
 use Neos\ESCR\AssetUsage\Dto\AssetUsages;
 use Neos\ESCR\AssetUsage\Dto\AssetUsageReference;
+use Neos\Media\Domain\Model\VariantSupportInterface;
 
 /**
  * Implementation of the Neos AssetUsageStrategyInterface in order to protect assets in use
@@ -76,7 +77,13 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
             throw new \InvalidArgumentException('The specified asset has no valid id', 1649236892);
         }
         if (!isset($this->runtimeCache[$assetId])) {
-            $this->runtimeCache[$assetId] = $this->globalAssetUsageService->findAssetUsageByAssetId($assetId);
+            $assetUsagesPerRelatedAsset[] = $this->globalAssetUsageService->findAssetUsageByAssetId($assetId);
+
+            if ($asset instanceof VariantSupportInterface) {
+                $assetUsagesPerRelatedAsset = array_merge(array_map(fn(AssetInterface $assetVariant) => $this->getUsages($assetVariant), $asset->getVariants()));
+            }
+
+            $this->runtimeCache[$assetId] = AssetUsages::fromArrayOfAssetUsages($assetUsagesPerRelatedAsset);
         }
         return $this->runtimeCache[$assetId];
     }
