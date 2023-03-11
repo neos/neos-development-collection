@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -35,7 +37,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 /**
  * @internal implementation detail of Command Handlers
  */
-trait RootNodeCreation
+trait RootNodeHandling
 {
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
@@ -98,6 +100,45 @@ trait RootNodeCreation
             $command->nodeTypeName,
             $coveredDimensionSpacePoints,
             NodeAggregateClassification::CLASSIFICATION_ROOT,
+        );
+    }
+
+    /**
+     * @param UpdateRootNodeAggregateDimensions $command
+     * @return EventsToPublish
+     */
+    private function handleUpdateRootNodeAggregateDimensions(
+        UpdateRootNodeAggregateDimensions $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $this->requireProjectedNodeAggregateToNotExist(
+            $command->contentStreamId,
+            $command->nodeAggregateId,
+            $contentRepository
+        );
+        $nodeType = $this->requireNodeType($command->nodeTypeName);
+        $this->requireNodeTypeToNotBeAbstract($nodeType);
+        $this->requireNodeTypeToBeOfTypeRoot($nodeType);
+
+        $events = Events::with(
+            new RootNodeAggregateDimensionsWereUpdated(
+                $command->contentStreamId,
+                $command->nodeAggregateId,
+                $this->getAllowedDimensionSubspace()
+            )
+        );
+
+        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
+            $command->contentStreamId
+        );
+        return new EventsToPublish(
+            $contentStreamEventStream->getEventStreamName(),
+            NodeAggregateEventPublisher::enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
         );
     }
 }

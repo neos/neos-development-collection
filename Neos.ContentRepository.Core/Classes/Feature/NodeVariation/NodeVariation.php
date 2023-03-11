@@ -17,6 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeVariation;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\RootNodeCannotBeVaried;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
@@ -57,6 +58,9 @@ trait NodeVariation
             $command->nodeAggregateId,
             $contentRepository
         );
+        if ($nodeAggregate->classification->isRoot()) {
+            throw new RootNodeCannotBeVaried(sprintf('The node aggregate "%s" is a root node - so you cannot call CreateNodeVariant on it.', $nodeAggregate->nodeAggregateId), 1678517028);
+        }
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
         $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate);

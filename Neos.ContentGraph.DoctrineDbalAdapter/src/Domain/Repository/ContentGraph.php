@@ -20,6 +20,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -35,6 +37,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use function Amp\Promise\first;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -115,13 +118,20 @@ final class ContentGraph implements ContentGraphInterface
         ) : null;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function findRootNodeAggregateByType(
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
+        return $this->findRootNodeAggregates(
+            $contentStreamId,
+            FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
+        )->first();
+    }
+
+    public function findRootNodeAggregates(
+        ContentStreamId $contentStreamId,
+        FindRootNodeAggregatesFilter $filter,
+    ): NodeAggregates {
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*, h.contentstreamid, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
@@ -129,28 +139,29 @@ final class ContentGraph implements ContentGraphInterface
                         JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON h.childnodeanchor = n.relationanchorpoint
                     WHERE h.contentstreamid = :contentStreamId
-                        AND h.parentnodeanchor = :rootEdgeParentAnchorId
-                        AND n.nodetypename = :nodeTypeName';
+                        AND h.parentnodeanchor = :rootEdgeParentAnchorId';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'rootEdgeParentAnchorId' => (string)NodeRelationAnchorPoint::forRootEdge(),
-            'nodeTypeName' => (string)$nodeTypeName,
         ];
 
-        $nodeRow = $connection->executeQuery($query, $parameters)->fetchAssociative();
-
-        if (!is_array($nodeRow)) {
-            throw new \RuntimeException('Root Node Aggregate not found');
+        if ($filter->nodeTypeName !== null) {
+            $query .= 'AND n.nodetypename = :nodeTypeName';
+            $parameters['nodeTypeName'] = (string)$filter->nodeTypeName;
         }
 
-        /** @var NodeAggregate $nodeAggregate The factory will return a NodeAggregate since the array is not empty */
-        $nodeAggregate = $this->nodeFactory->mapNodeRowsToNodeAggregate(
-            [$nodeRow],
+
+        $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
+
+
+        /** @var NodeAggregates[] $nodeAggregate The factory will return a NodeAggregate since the array is not empty */
+        $nodeAggregates = $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $nodeRows,
             VisibilityConstraints::withoutRestrictions()
         );
 
-        return $nodeAggregate;
+        return NodeAggregates::fromArray($nodeAggregates);
     }
 
     public function findNodeAggregatesByType(

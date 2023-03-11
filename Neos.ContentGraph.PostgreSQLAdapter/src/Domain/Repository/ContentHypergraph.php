@@ -24,6 +24,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -106,7 +108,17 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
-        throw new \BadMethodCallException('method findRootNodeAggregateByType is not implemented yet.', 1645782874);
+        return $this->findRootNodeAggregates(
+            $contentStreamId,
+            FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
+        )->first();
+    }
+
+    public function findRootNodeAggregates(
+        ContentStreamId $contentStreamId,
+        FindRootNodeAggregatesFilter $filter,
+    ): NodeAggregates {
+        throw new \BadMethodCallException('method findRootNodeAggregates is not implemented yet.', 1645782874);
     }
 
     /**

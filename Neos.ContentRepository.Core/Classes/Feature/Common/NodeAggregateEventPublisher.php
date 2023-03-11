@@ -27,10 +27,6 @@ use Neos\EventStore\Model\Event\EventMetadata;
  */
 final class NodeAggregateEventPublisher
 {
-    /**
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
     public static function enrichWithCommand(
         CommandInterface $command,
         Events $events,
