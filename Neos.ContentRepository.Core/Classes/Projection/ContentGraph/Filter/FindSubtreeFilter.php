@@ -31,7 +31,7 @@ final class FindSubtreeFilter
         return new self(null, null);
     }
 
-    public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
+    public static function nodeTypeConstraints(NodeTypeConstraints $nodeTypeConstraints): self
     {
         return self::create()->with(nodeTypeConstraints: $nodeTypeConstraints);
     }
@@ -43,12 +43,9 @@ final class FindSubtreeFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeConstraints $nodeTypeConstraints = null,
         int $maximumLevels = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
-        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
             $maximumLevels ?? $this->maximumLevels,

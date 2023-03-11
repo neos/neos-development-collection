@@ -32,7 +32,7 @@ final class FindPrecedingSiblingNodesFilter
         return new self(null, null, null);
     }
 
-    public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
+    public static function nodeTypeConstraints(NodeTypeConstraints $nodeTypeConstraints): self
     {
         return self::create()->with(nodeTypeConstraints: $nodeTypeConstraints);
     }
@@ -44,13 +44,10 @@ final class FindPrecedingSiblingNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeConstraints $nodeTypeConstraints = null,
         int $limit = null,
         int $offset = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
-        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
             $limit ?? $this->limit,

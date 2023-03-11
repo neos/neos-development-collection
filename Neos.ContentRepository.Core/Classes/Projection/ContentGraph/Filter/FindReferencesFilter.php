@@ -31,7 +31,7 @@ final class FindReferencesFilter
         return new self(null);
     }
 
-    public static function referenceName(ReferenceName|string $referenceName): self
+    public static function referenceName(ReferenceName $referenceName): self
     {
         return self::create()->with(referenceName: $referenceName);
     }
@@ -43,11 +43,8 @@ final class FindReferencesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        ReferenceName|string $referenceName = null,
+        ReferenceName $referenceName = null,
     ): self {
-        if (is_string($referenceName)) {
-            $referenceName = ReferenceName::fromString($referenceName);
-        }
         return new self(
             $referenceName ?? $this->referenceName,
         );

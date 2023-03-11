@@ -32,7 +32,7 @@ final class FindDescendantNodesFilter
         return new self(null, null);
     }
 
-    public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
+    public static function nodeTypeConstraints(NodeTypeConstraints $nodeTypeConstraints): self
     {
         return self::create()->with(nodeTypeConstraints: $nodeTypeConstraints);
     }
@@ -44,22 +44,16 @@ final class FindDescendantNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
-        SearchTerm|string $searchTerm = null,
+        NodeTypeConstraints $nodeTypeConstraints = null,
+        SearchTerm $searchTerm = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
-        }
-        if (is_string($searchTerm)) {
-            $searchTerm = SearchTerm::fulltext($searchTerm);
-        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
             $searchTerm ?? $this->searchTerm,
         );
     }
 
-    public function withSearchTerm(SearchTerm|string $searchTerm): self
+    public function withSearchTerm(SearchTerm $searchTerm): self
     {
         return $this->with(searchTerm: $searchTerm);
     }
