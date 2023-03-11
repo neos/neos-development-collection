@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Neos\Neos\Domain\Model;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -11,7 +13,10 @@ use Neos\Flow\Annotations as Flow;
  */
 final class SiteConfiguration
 {
-
+    /**
+     * @param array<string,mixed> $configuration
+     * @return static
+     */
     public static function fromArray(array $configuration): self
     {
 
@@ -36,6 +41,12 @@ final class SiteConfiguration
         );
     }
 
+    /**
+     * @param ContentRepositoryId $contentRepositoryId
+     * @param string $contentDimensionResolverFactoryClassName
+     * @param array<string,mixed> $contentDimensionResolverOptions
+     * @param DimensionSpacePoint $defaultDimensionSpacePoint
+     */
     private function __construct(
         public readonly ContentRepositoryId $contentRepositoryId,
         public readonly string $contentDimensionResolverFactoryClassName,

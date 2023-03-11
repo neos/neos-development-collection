@@ -61,30 +61,6 @@ final class DelegatingResolver implements DimensionResolverInterface
         )->fromRequestToDimensionSpacePoint($context);
 
         return $context;
-        // TODO CHANGE ME
-        /*return self::fillWithDefaultDimensionSpacePoint(
-            $context,
-            $siteConfiguration->defaultDimensionSpacePoint
-        );*/
-    }
-
-    /**
-     * @param RequestToDimensionSpacePointContext $context
-     * @param DimensionSpacePoint $defaultDimensionSpacePoint
-     * @return RequestToDimensionSpacePointContext
-     */
-    private static function fillWithDefaultDimensionSpacePoint(
-        RequestToDimensionSpacePointContext $context,
-        DimensionSpacePoint $defaultDimensionSpacePoint
-    ): RequestToDimensionSpacePointContext {
-        foreach ($defaultDimensionSpacePoint->coordinates as $dimensionName => $defaultDimensionValue) {
-            if (!isset($context->resolvedDimensionSpacePoint->coordinates[$dimensionName])) {
-                $context = $context->withAddedDimensionSpacePoint(
-                    DimensionSpacePoint::fromArray([$dimensionName => $defaultDimensionValue])
-                );
-            }
-        }
-        return $context;
     }
 
     public function fromDimensionSpacePointToUriConstraints(

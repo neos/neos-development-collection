@@ -40,9 +40,9 @@ use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 final class UriPathResolver implements DimensionResolverInterface
 {
     /**
-     * @var DimensionSpacePoint default dimension space point reduces to the dimensions which this resolver is responsible for
+     * @var DimensionSpacePoint default dimension space point reduced to the dimensions which this resolver is responsible for
      */
-    readonly DimensionSpacePoint $filteredDefaultDimensionSpacePoint;
+    private readonly DimensionSpacePoint $filteredDefaultDimensionSpacePoint;
     /**
      * @param array<string,DimensionSpacePoint> $uriPathToDimensionSpacePoint
      * @param array<string,string> $dimensionSpacePointHashToUriPath

@@ -75,7 +75,7 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
         return UriPathResolver::create(
             $segments,
             Separator::fromString('-'),
-            $autoUriPathResolverFactoryInternals->contentDimensionSource,
+            $contentRepository->getContentDimensionSource(),
             $siteConfiguration->defaultDimensionSpacePoint
         );
     }

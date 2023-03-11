@@ -369,9 +369,6 @@ class Site
     {
     }
 
-    /**
-     * @return array<string,mixed>
-     */
     public function getConfiguration(): SiteConfiguration
     {
         // we DO NOT want recursive merge here
