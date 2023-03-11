@@ -667,7 +667,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType('Neos.Neos:Document');
     }
 
@@ -675,7 +675,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType('Neos.Neos:Shortcut');
     }
 

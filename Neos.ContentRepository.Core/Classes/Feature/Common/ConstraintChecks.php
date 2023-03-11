@@ -649,7 +649,7 @@ trait ConstraintChecks
     ): void {
         $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
 
-        foreach ($referenceProperties->getValues() as $propertyName => $propertyValue) {
+        foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]
                 ?? null;
 
@@ -671,7 +671,7 @@ trait ConstraintChecks
                     $nodeTypeName,
                     PropertyName::fromString($propertyName),
                     is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
-                    $propertyType->getValue()
+                    $propertyType->value
                 );
             }
         }

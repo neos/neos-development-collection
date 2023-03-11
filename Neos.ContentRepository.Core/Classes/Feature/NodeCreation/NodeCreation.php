@@ -122,7 +122,7 @@ trait NodeCreation
         }
 
         $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
-        foreach ($propertyValues->getValues() as $propertyName => $propertyValue) {
+        foreach ($propertyValues->values as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
                     PropertyName::fromString($propertyName),
@@ -138,7 +138,7 @@ trait NodeCreation
                 throw PropertyCannotBeSet::becauseTheValueDoesNotMatchTheConfiguredType(
                     PropertyName::fromString($propertyName),
                     is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
-                    $propertyType->getValue()
+                    $propertyType->value
                 );
             }
         }

@@ -198,7 +198,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $pathParts = $nodePath->getParts();
         $nodeName = end($pathParts);
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
         if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateIdentifier)) {
@@ -328,10 +328,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     private function isAutoCreatedChildNode(NodeTypeName $parentNodeTypeName, NodeName $nodeName): bool
     {
-        if (!$this->nodeTypeManager->hasNodeType($parentNodeTypeName->getValue())) {
+        if (!$this->nodeTypeManager->hasNodeType($parentNodeTypeName)) {
             return false;
         }
-        $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName->getValue());
+        $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
         return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
     }
 }

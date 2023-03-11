@@ -43,7 +43,7 @@ final class AllChildNodesByNodeIdCache
         }
 
         $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
-        $this->childNodes[$parentNodeAggregateId->getValue()][$nodeTypeConstraintsKey] = $childNodes;
+        $this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey] = $childNodes;
     }
 
     public function contains(
@@ -55,7 +55,7 @@ final class AllChildNodesByNodeIdCache
         }
 
         $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
-        return isset($this->childNodes[$parentNodeAggregateId->getValue()][$nodeTypeConstraintsKey]);
+        return isset($this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey]);
     }
 
     public function findChildNodes(
@@ -66,6 +66,6 @@ final class AllChildNodesByNodeIdCache
             return Nodes::createEmpty();
         }
         $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
-        return $this->childNodes[$parentNodeAggregateId->getValue()][$nodeTypeConstraintsKey] ?? Nodes::createEmpty();
+        return $this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey] ?? Nodes::createEmpty();
     }
 }

@@ -57,7 +57,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findChildNodes($parentNodeAggregateId, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findChildNodes($parentNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }
@@ -80,7 +80,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->getValue(), 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findReferences($nodeAggregateId, $filter)));
+            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->value, 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findReferences($nodeAggregateId, $filter)));
             Assert::assertSame($expectedReferences, $actualReferences);
         }
     }
@@ -103,7 +103,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->getValue(), 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findBackReferences($nodeAggregateId, $filter)));
+            $actualReferences = array_map(static fn (Reference $reference) => ['nodeAggregateId' => $reference->node->nodeAggregateId->value, 'name' => $reference->name->value, 'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)], iterator_to_array($subgraph->findBackReferences($nodeAggregateId, $filter)));
             Assert::assertSame($expectedReferences, $actualReferences);
         }
     }
@@ -120,7 +120,7 @@ trait NodeTraversalTrait
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertSame($actualNode?->nodeAggregateId->getValue(), $expectedNodeAggregateId?->getValue());
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
 
@@ -136,7 +136,7 @@ trait NodeTraversalTrait
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualParentNode = $subgraph->findParentNode($nodeAggregateId);
-            Assert::assertSame($actualParentNode?->nodeAggregateId->getValue(), $expectedNodeAggregateId?->getValue());
+            Assert::assertSame($actualParentNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
 
@@ -153,7 +153,7 @@ trait NodeTraversalTrait
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNode = $subgraph->findNodeByPath($path, $startingNodeAggregateId);
-            Assert::assertSame($actualNode?->nodeAggregateId->getValue(), $expectedNodeAggregateId?->getValue());
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
 
@@ -170,7 +170,7 @@ trait NodeTraversalTrait
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNode = $subgraph->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
-            Assert::assertSame($actualNode?->nodeAggregateId->getValue(), $expectedNodeAggregateId?->getValue());
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
 
@@ -192,7 +192,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }
@@ -215,7 +215,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }
@@ -273,7 +273,7 @@ trait NodeTraversalTrait
             while ($subtreeStack !== []) {
                 /** @var Subtree $subtree */
                 $subtree = array_shift($subtreeStack);
-                $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->getValue();
+                $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value;
                 $subtreeStack = [...$subtree->children, ...$subtreeStack];
             }
             Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));
@@ -298,7 +298,7 @@ trait NodeTraversalTrait
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->getValue(), iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
+            $actualNodeIds = array_map(static fn (Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
             Assert::assertSame($expectedNodeIds, $actualNodeIds);
         }
     }

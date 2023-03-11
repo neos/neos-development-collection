@@ -43,7 +43,7 @@ final class PropertyConverter
     ): SerializedPropertyValues {
         $serializedPropertyValues = [];
 
-        foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
+        foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName]) && $propertyValue === null) {
                 // The property is undefined and the value null => we want to remove it, so we set it to null
                 $serializedPropertyValues[$propertyName] = null;
@@ -101,7 +101,7 @@ final class PropertyConverter
     ): SerializedPropertyValues {
         $serializedPropertyValues = [];
 
-        foreach ($propertyValuesToWrite->getValues() as $propertyName => $propertyValue) {
+        foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
             // reference properties are always completely overwritten,
             // so we don't need the node properties' unset option
             $declaredType = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]['type'];
@@ -119,13 +119,13 @@ final class PropertyConverter
 
     public function deserializePropertyValue(SerializedPropertyValue $serializedPropertyValue): mixed
     {
-        if (is_null($serializedPropertyValue->getValue())) {
+        if (is_null($serializedPropertyValue->value)) {
             return null;
         }
 
         return $this->serializer->denormalize(
-            $serializedPropertyValue->getValue(),
-            $serializedPropertyValue->getType()
+            $serializedPropertyValue->value,
+            $serializedPropertyValue->type
         );
     }
 }
