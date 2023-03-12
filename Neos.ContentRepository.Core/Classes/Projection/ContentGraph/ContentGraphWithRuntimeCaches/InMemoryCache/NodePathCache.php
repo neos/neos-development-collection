@@ -41,7 +41,7 @@ final class NodePathCache
         if ($this->isEnabled === false) {
             return;
         }
-        $this->nodePaths[$nodeAggregateId->getValue()] = $nodePath;
+        $this->nodePaths[$nodeAggregateId->value] = $nodePath;
     }
 
     public function get(NodeAggregateId $nodeAggregateId): ?NodePath
@@ -49,6 +49,6 @@ final class NodePathCache
         if ($this->isEnabled === false) {
             return null;
         }
-        return $this->nodePaths[$nodeAggregateId->getValue()] ?? null;
+        return $this->nodePaths[$nodeAggregateId->value] ?? null;
     }
 }

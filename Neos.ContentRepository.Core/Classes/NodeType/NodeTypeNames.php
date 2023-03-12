@@ -85,7 +85,7 @@ final class NodeTypeNames implements \IteratorAggregate
      */
     public function toStringArray(): array
     {
-        return array_map(fn(NodeTypeName $nodeTypeName) => $nodeTypeName->getValue(), $this->nodeTypeNames);
+        return array_map(fn(NodeTypeName $nodeTypeName) => $nodeTypeName->value, $this->nodeTypeNames);
     }
 
     public function isEmpty(): bool

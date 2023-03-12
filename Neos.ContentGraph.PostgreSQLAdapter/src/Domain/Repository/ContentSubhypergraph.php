@@ -320,7 +320,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FindSubtreeFilter $filter
     ): ?Subtree {
         $parameters = [
-            'entryNodeAggregateIdentifier' => $entryNodeAggregateId->getValue(),
+            'entryNodeAggregateIdentifier' => $entryNodeAggregateId->value,
             'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $filter->maximumLevels

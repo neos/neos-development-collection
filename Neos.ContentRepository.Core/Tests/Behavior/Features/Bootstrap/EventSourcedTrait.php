@@ -484,8 +484,8 @@ trait EventSourcedTrait
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
-                $workspaceA->currentContentStreamId->getValue(),
-                $workspaceB->currentContentStreamId->getValue(),
+                $workspaceA->currentContentStreamId->value,
+                $workspaceB->currentContentStreamId->value,
                 'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
             );
         }

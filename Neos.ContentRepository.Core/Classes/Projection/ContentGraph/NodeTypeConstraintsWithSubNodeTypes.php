@@ -107,11 +107,11 @@ final class NodeTypeConstraintsWithSubNodeTypes
     ): NodeTypeNames {
         $processedNodeTypeNames = [];
         foreach ($nodeTypeNames as $nodeTypeName) {
-            $processedNodeTypeNames[$nodeTypeName->getValue()] = $nodeTypeName;
-            $subNodeTypes = $nodeTypeManager->getSubNodeTypes($nodeTypeName->getValue(), true);
+            $processedNodeTypeNames[$nodeTypeName->value] = $nodeTypeName;
+            $subNodeTypes = $nodeTypeManager->getSubNodeTypes($nodeTypeName, true);
             foreach ($subNodeTypes as $subNodeType) {
                 assert($subNodeType instanceof NodeType);
-                $processedNodeTypeNames[$subNodeType->name->getValue()] = $subNodeType->name;
+                $processedNodeTypeNames[$subNodeType->name->value] = $subNodeType->name;
             }
         }
 

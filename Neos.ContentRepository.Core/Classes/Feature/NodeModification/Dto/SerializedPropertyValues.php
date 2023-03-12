@@ -33,11 +33,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<string,?SerializedPropertyValue>
-     */
-    private array $values;
-
-    /**
      * @var \ArrayIterator<string,?SerializedPropertyValue>
      */
     protected \ArrayIterator $iterator;
@@ -45,9 +40,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     /**
      * @param array<string,?SerializedPropertyValue> $values
      */
-    private function __construct(array $values)
-    {
-        $this->values = $values;
+    private function __construct(
+        public readonly array $values
+    ) {
         $this->iterator = new \ArrayIterator($this->values);
     }
 
@@ -154,14 +149,6 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return array<string,?SerializedPropertyValue>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
-    }
-
-    /**
      * @return \ArrayIterator<string,?SerializedPropertyValue>
      */
     public function getIterator(): \ArrayIterator
@@ -181,7 +168,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue?->getValue();
+            $values[$propertyName] = $propertyValue?->value;
         }
 
         return $values;
