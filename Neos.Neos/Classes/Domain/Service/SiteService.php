@@ -76,15 +76,8 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-            ?? throw new \RuntimeException(
-                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                . ' Neos.Neos.sites.*.contentRepository'
-            )
-        );
         $siteServiceInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
         $siteServiceInternals->removeSiteNode($site->getNodeName());
@@ -177,15 +170,8 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-            ?? throw new \RuntimeException(
-                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                . ' Neos.Neos.sites.*.contentRepository'
-            )
-        );
         $siteServiceInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
         $siteServiceInternals->createSiteNode($site, $nodeTypeName);

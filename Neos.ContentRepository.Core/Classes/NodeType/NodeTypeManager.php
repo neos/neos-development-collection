@@ -81,8 +81,11 @@ class NodeTypeManager
      * @return array<NodeType> Sub node types of the given super type, indexed by node type name
      * @api
      */
-    public function getSubNodeTypes(string $superTypeName, bool $includeAbstractNodeTypes = true): array
+    public function getSubNodeTypes(string|NodeTypeName $superTypeName, bool $includeAbstractNodeTypes = true): array
     {
+        if ($superTypeName instanceof NodeTypeName) {
+            $superTypeName = $superTypeName->value;
+        }
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
@@ -113,8 +116,11 @@ class NodeTypeManager
      * @throws NodeTypeNotFoundException
      * @api
      */
-    public function getNodeType(string $nodeTypeName): NodeType
+    public function getNodeType(string|NodeTypeName $nodeTypeName): NodeType
     {
+        if ($nodeTypeName instanceof NodeTypeName) {
+            $nodeTypeName = $nodeTypeName->value;
+        }
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
@@ -147,8 +153,11 @@ class NodeTypeManager
      * @return boolean true if it exists, otherwise false
      * @api
      */
-    public function hasNodeType(string $nodeTypeName): bool
+    public function hasNodeType(string|NodeTypeName $nodeTypeName): bool
     {
+        if ($nodeTypeName instanceof NodeTypeName) {
+            $nodeTypeName = $nodeTypeName->value;
+        }
         if ($this->cachedNodeTypes === []) {
             $this->loadNodeTypes();
         }
@@ -303,7 +312,7 @@ class NodeTypeManager
 
         $superType = $this->loadNodeType($superTypeName, $completeNodeTypeConfiguration);
         if ($superType->isFinal() === true) {
-            throw new NodeTypeIsFinalException($superType->name->getValue(), 1444944148);
+            throw new NodeTypeIsFinalException($superType->name->value, 1444944148);
         }
 
         return $superType;

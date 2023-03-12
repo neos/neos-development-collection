@@ -30,7 +30,7 @@ final class ContentStreamId implements \JsonSerializable, \Stringable
     private static array $instances = [];
 
     private function __construct(
-        private string $value
+        public string $value
     ) {
     }
 
@@ -50,11 +50,6 @@ final class ContentStreamId implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function getValue(): string
     {
         return $this->value;
     }

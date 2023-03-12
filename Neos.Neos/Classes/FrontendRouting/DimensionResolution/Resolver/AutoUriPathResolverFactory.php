@@ -17,6 +17,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 
@@ -40,19 +41,13 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
     ) {
     }
 
-    /**
-     * @param array<string,mixed> $dimensionResolverOptions
-     */
     public function create(
-        ContentRepositoryId $contentRepositoryIdentifier,
-        array $dimensionResolverOptions
+        ContentRepositoryId $contentRepositoryId,
+        SiteConfiguration $siteConfiguration
     ): DimensionResolverInterface {
-        $autoUriPathResolverFactoryInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
-            new AutoUriPathResolverFactoryInternalsFactory()
-        );
-        $contentDimensions = $autoUriPathResolverFactoryInternals
-            ->contentDimensionSource
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentDimensions = $contentRepository
+            ->getContentDimensionSource()
             ->getContentDimensionsOrderedByPriority();
 
         if (count($contentDimensions) >= 2) {
@@ -80,7 +75,8 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
         return UriPathResolver::create(
             $segments,
             Separator::fromString('-'),
-            $autoUriPathResolverFactoryInternals->contentDimensionSource
+            $contentRepository->getContentDimensionSource(),
+            $siteConfiguration->defaultDimensionSpacePoint
         );
     }
 }

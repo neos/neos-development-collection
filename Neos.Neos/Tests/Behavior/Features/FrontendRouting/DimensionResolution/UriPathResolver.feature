@@ -30,8 +30,12 @@ Feature: UriPathResolver works as expected
     Given I have no content dimensions
     When I am on URL "/"
 
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
     """
     Then the resolved dimension should be '{}' and the remaining URI Path should be "/"
 
@@ -41,15 +45,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # Dimension Value -> URI Path Segment
-          de: deu
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # Dimension Value -> URI Path Segment
+                de: deu
+                en: uk
     """
     # the UriPathResolver will return an empty object for the homepage, but then the DelegatingResolver will fill
     # it with the default values
@@ -61,15 +70,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/deu"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # Dimension Value -> URI Path Segment
-          de: deu
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # Dimension Value -> URI Path Segment
+                de: deu
+                en: uk
     """
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/"
 
@@ -79,15 +93,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/deu/test"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # Dimension Value -> URI Path Segment
-          de: deu
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # Dimension Value -> URI Path Segment
+                de: deu
+                en: uk
     """
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/test"
 
@@ -97,15 +116,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # empty for "de"
-          de: ''
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # empty for "de"
+                de: ''
+                en: uk
     """
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/"
 
@@ -115,15 +139,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/test"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # empty for "de"
-          de: ''
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # empty for "de"
+                de: ''
+                en: uk
     """
     Then the resolved dimension should be '{"language": "de"}' and the remaining URI Path should be "/test"
 
@@ -133,15 +162,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/uk"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # empty for "de"
-          de: ''
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # empty for "de"
+                de: ''
+                en: uk
     """
     Then the resolved dimension should be '{"language": "en"}' and the remaining URI Path should be "/"
 
@@ -151,15 +185,20 @@ Feature: UriPathResolver works as expected
       | language   | en, de |                 |
 
     When I am on URL "/uk/test"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # empty for "de"
-          de: ''
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # empty for "de"
+                de: ''
+                en: uk
     """
     Then the resolved dimension should be '{"language": "en"}' and the remaining URI Path should be "/test"
 
@@ -170,20 +209,24 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: 'deu'
-          en: uk
-      -
-        dimensionIdentifier: target_group
-        dimensionValueMapping:
-          normal: 'no'
-          simple: 'si'
-
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: 'deu'
+                en: uk
+            -
+              dimensionIdentifier: target_group
+              dimensionValueMapping:
+                normal: 'no'
+                simple: 'si'
     """
     # the UriPathResolver will return an empty object for the homepage, but then the DelegatingResolver will fill
     # it with the default values
@@ -196,22 +239,26 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/uk_si"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # empty for "de"
-          de: 'deu'
-          en: uk
-      -
-        dimensionIdentifier: target_group
-        dimensionValueMapping:
-          # empty for "de"
-          normal: 'no'
-          simple: 'si'
-
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # empty for "de"
+                de: 'deu'
+                en: uk
+            -
+              dimensionIdentifier: target_group
+              dimensionValueMapping:
+                # empty for "de"
+                normal: 'no'
+                simple: 'si'
     """
     Then the resolved dimension should be '{"language": "en", "target_group": "simple"}' and the remaining URI Path should be "/"
 
@@ -222,20 +269,24 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/uk_si/test"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: 'deu'
-          en: uk
-      -
-        dimensionIdentifier: target_group
-        dimensionValueMapping:
-          normal: 'no'
-          simple: 'si'
-
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: 'deu'
+                en: uk
+            -
+              dimensionIdentifier: target_group
+              dimensionValueMapping:
+                normal: 'no'
+                simple: 'si'
     """
     Then the resolved dimension should be '{"language": "en", "target_group": "simple"}' and the remaining URI Path should be "/test"
 
@@ -246,21 +297,25 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "<inputUri>"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options:
+    And I invoke the Dimension Resolver from site configuration:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          # empty for "de"
-          de: ''
-          en: uk
-      -
-        dimensionIdentifier: target_group
-        dimensionValueMapping:
-          normal: ''
-          simple: 'si'
-
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                # empty for "de"
+                de: ''
+                en: uk
+            -
+              dimensionIdentifier: target_group
+              dimensionValueMapping:
+                normal: ''
+                simple: 'si'
     """
     Then the resolved dimension should be '<expectedDimension>' and the remaining URI Path should be "<expectedRemainingUriPath>"
 
@@ -283,14 +338,19 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: 'deu'
-          en: 'deu'
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: 'deu'
+                en: 'deu'
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
@@ -301,19 +361,24 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: ''
-          en: uk
-      -
-        dimensionIdentifier: target_group
-        dimensionValueMapping:
-          normal: ''
-          simple: 'uk'
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: ''
+                en: uk
+            -
+              dimensionIdentifier: target_group
+              dimensionValueMapping:
+                normal: ''
+                simple: 'uk'
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
@@ -323,11 +388,16 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    segments:
-      -
-        dimensionIdentifier: language_notexisting
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language_notexisting
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
@@ -337,13 +407,18 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          nonExisting: "foo"
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                nonExisting: "foo"
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
@@ -353,14 +428,19 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: de
-          en: u/k
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: de
+                en: u/k
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
@@ -370,15 +450,20 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    separator: 'foo/f'
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: de
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          separator: 'foo/f'
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: de
+                en: uk
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
 
@@ -388,14 +473,19 @@ Feature: UriPathResolver works as expected
       | language     | en, de         |                 |
 
     When I am on URL "/"
-    And I invoke the Dimension Resolver "Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory" with options and exceptions are caught:
+    And I invoke the Dimension Resolver from site configuration and exceptions are caught:
     """
-    separator: '-'
-    segments:
-      -
-        dimensionIdentifier: language
-        dimensionValueMapping:
-          de: d-e
-          en: uk
+    contentRepository: default
+    contentDimensions:
+      resolver:
+        factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+        options:
+          separator: '-'
+          segments:
+            -
+              dimensionIdentifier: language
+              dimensionValueMapping:
+                de: d-e
+                en: uk
     """
     Then the last command should have thrown an exception of type "UriPathResolverConfigurationException"
