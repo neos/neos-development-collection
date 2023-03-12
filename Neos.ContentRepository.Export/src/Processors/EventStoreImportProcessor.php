@@ -119,7 +119,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         try {
             $contentStreamCreationCommitResult = $this->eventStore->commit($contentStreamStreamName, $events, ExpectedVersion::NO_STREAM());
         } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $this->contentStreamId->getValue()));
+            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $this->contentStreamId->value));
         }
 
         $workspaceName = WorkspaceName::forLive();

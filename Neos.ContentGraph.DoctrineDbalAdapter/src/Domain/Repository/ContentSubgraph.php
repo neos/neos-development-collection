@@ -89,8 +89,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'n', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->getValue())
-            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
+            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->orderBy('h.position', 'ASC');
         if ($filter->nodeTypeConstraints !== null) {
@@ -116,10 +116,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('sh', $this->tableNamePrefix . '_referencerelation', 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
             ->innerJoin('sh', $this->tableNamePrefix . '_node', 'dn', 'dn.nodeaggregateid = r.destinationnodeaggregateid')
             ->innerJoin('sh', $this->tableNamePrefix . '_hierarchyrelation', 'dh', 'dh.childnodeanchor = dn.relationanchorpoint')
-            ->where('sn.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->getValue())
+            ->where('sn.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
             ->andWhere('dh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('sh.contentstreamid = :contentStreamId');
         if ($filter->referenceName === null) {
             $queryBuilder->addOrderBy('r.name');
@@ -142,10 +142,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('sh', $this->tableNamePrefix . '_referencerelation', 'r', 'r.nodeanchorpoint = sn.relationanchorpoint')
             ->innerJoin('sh', $this->tableNamePrefix . '_node', 'dn', 'dn.nodeaggregateid = r.destinationnodeaggregateid')
             ->innerJoin('sh', $this->tableNamePrefix . '_hierarchyrelation', 'dh', 'dh.childnodeanchor = dn.relationanchorpoint')
-            ->where('dn.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->getValue())
+            ->where('dn.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
             ->andWhere('dh.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('sh.contentstreamid = :contentStreamId');
         if ($filter->referenceName === null) {
             $queryBuilder->addOrderBy('r.name');
@@ -166,8 +166,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('n.*, h.name, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->getValue())
-            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
+            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
         $this->addRestrictionRelationConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
@@ -181,8 +181,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'ph.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = ph.childnodeanchor')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.childnodeanchor = pn.relationanchorpoint')
-            ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->getValue())
-            ->andWhere('ph.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->where('cn.nodeaggregateid = :childNodeAggregateId')->setParameter('childNodeAggregateId', $childNodeAggregateId->value)
+            ->andWhere('ph.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash');
@@ -213,8 +213,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from($this->tableNamePrefix . '_node', 'pn')
             ->innerJoin('pn', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = pn.relationanchorpoint')
             ->innerJoin('pn', $this->tableNamePrefix . '_node', 'cn', 'cn.relationanchorpoint = h.childnodeanchor')
-            ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->getValue())
-            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
+            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('h.name = :edgeName')->setParameter('edgeName', (string)$edgeName);
         $this->addRestrictionRelationConstraints($queryBuilder, 'cn');
@@ -254,13 +254,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
             ->from('nodePath')
-            ->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->setParameter('nodeAggregateId', $nodeAggregateId->getValue());
+            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'nodePath');
         if ($result === []) {
-            throw new \InvalidArgumentException(sprintf('Failed to retrieve node path for node "%s"', $nodeAggregateId->getValue()), 1678391715);
+            throw new \InvalidArgumentException(sprintf('Failed to retrieve node path for node "%s"', $nodeAggregateId->value), 1678391715);
         }
         return NodePath::fromPathSegments(array_reverse(array_column($result, 'name')));
     }
@@ -297,9 +297,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('tree')
             ->orderBy('level')
             ->addOrderBy('position')
-            ->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->getValue());
+            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
         $subtreesByNodeId = [];
@@ -348,9 +348,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from('tree')
             ->orderBy('level')
             ->addOrderBy('position')
-            ->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->getValue());
+            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
         if ($filter->nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints, '');
         }
@@ -367,7 +367,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('COUNT(*)')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
         try {
             $result = $this->executeQuery($queryBuilder)->fetchOne();
@@ -465,10 +465,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->select('n.*, h.name, h.contentstreamid')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->getValue())
+            ->where('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('h.parentnodeanchor = (' . $parentNodeAnchorSubQuery->getSQL() . ')')
-            ->andWhere('n.nodeaggregateid != :siblingNodeAggregateId')->setParameter('siblingNodeAggregateId', $siblingNodeAggregateId->getValue())
+            ->andWhere('n.nodeaggregateid != :siblingNodeAggregateId')->setParameter('siblingNodeAggregateId', $siblingNodeAggregateId->value)
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
 

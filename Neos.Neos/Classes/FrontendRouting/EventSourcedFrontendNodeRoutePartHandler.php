@@ -69,12 +69,12 @@ use Psr\Http\Message\UriInterface;
  * ```
  *
  *
- * ### {@see SiteDetectionMiddleware}: Multi-Site Support (implemented)
- * and Multiple Content Repository Support (planned)
+ * ### {@see SiteDetectionMiddleware}: Multi-Site Support
+ * and Multiple Content Repository Support
  *
  * The Dimension Resolving configuration might be site-specific, f.e. one site maps a subdomain to a different language;
  * and another site which wants to use the UriPathSegment.
- * Additionally, we soon want to support using different content repositories for different sites
+ * Additionally, we want to support using different content repositories for different sites
  * (e.g. to have different NodeTypes configured, or differing dimension configuration).
  *
  * Thus, the {@see DimensionResolverInterface} and the frontend routing in general needs the result of the site
@@ -313,7 +313,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         );
         $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints(
             $nodeAddress->dimensionSpacePoint,
-            $nodeInfo->getSiteNodeName(),
+            $nodeInfo,
             $uriConstraints
         );
 

@@ -96,7 +96,7 @@ class TetheredNodeAdjustments
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
                                     $events,
-                                    ExpectedVersion::ANY()
+                                        ExpectedVersion::ANY()
                                 );
                             }
                         );
@@ -190,11 +190,11 @@ class TetheredNodeAdjustments
      */
     private function ensureNodeIsOfType(Node $node, NodeType $expectedNodeType): \Generator
     {
-        if ($node->nodeTypeName->getValue() !== $expectedNodeType->getName()) {
+        if ($node->nodeTypeName->value !== $expectedNodeType->name->value) {
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType . '", but was "' . $node->nodeTypeName->getValue() . '".'
+                'should be of type "' . $expectedNodeType . '", but was "' . $node->nodeTypeName->value . '".'
             );
         }
     }

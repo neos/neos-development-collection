@@ -107,12 +107,12 @@ class ContentCacheFlusher
 
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
-            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->getValue()])) {
+            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->value])) {
                 // we've already processed this NodeAggregateIdentifier (i.e. flushed the caches for it);
                 // thus we can skip this one, and thus break the cycle.
                 continue;
             }
-            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->getValue()] = true;
+            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->value] = true;
 
             $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId
                 . '%_' . $nodeAggregate->nodeAggregateId;

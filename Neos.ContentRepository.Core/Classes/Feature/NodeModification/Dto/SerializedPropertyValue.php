@@ -24,19 +24,12 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 final class SerializedPropertyValue implements \JsonSerializable
 {
     /**
-     * @var int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null
-     */
-    private int|float|string|bool|array|\ArrayObject|null $value;
-
-    private string $type;
-
-    /**
      * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
      */
-    public function __construct(int|float|string|bool|array|\ArrayObject|null $value, string $type)
-    {
-        $this->value = $value;
-        $this->type = $type;
+    public function __construct(
+        public readonly int|float|string|bool|array|\ArrayObject|null $value,
+        public readonly string $type
+    ) {
     }
 
     /**
@@ -52,19 +45,6 @@ final class SerializedPropertyValue implements \JsonSerializable
         }
 
         return new self($valueAndType['value'], $valueAndType['type']);
-    }
-
-    public function getType(): string
-    {
-        return $this->type;
-    }
-
-    /**
-     * @return int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null
-     */
-    public function getValue(): int|float|string|bool|array|\ArrayObject|null
-    {
-        return $this->value;
     }
 
     /**

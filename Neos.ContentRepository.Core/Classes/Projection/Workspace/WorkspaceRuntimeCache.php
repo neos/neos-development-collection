@@ -59,7 +59,7 @@ final class WorkspaceRuntimeCache
         if ($this->cacheEnabled === true) {
             $this->cachedWorkspacesByName[$workspace->workspaceName->name] = $workspace;
             $this->cachedWorkspacesByContentStreamId[
-                $workspace->currentContentStreamId->getValue()
+                $workspace->currentContentStreamId->value
             ] = $workspace;
         }
     }

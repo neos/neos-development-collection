@@ -63,6 +63,10 @@ Feature: Routing functionality with multiple content dimensions
                         de: de
                         gsw: gsw
                         en: ''
+                    -
+                      dimensionIdentifier: market
+                      dimensionValueMapping:
+                        DE: ''
     """
 
     And the graph projection is fully up to date
@@ -70,14 +74,66 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Resolve homepage URL in multiple dimensions
     When I am on URL "/"
-    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"en"}' should resolve to URL "/"
-    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"de"}' should resolve to URL "/de/"
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"
     And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/"
+
+  Scenario: Resolve homepage URL without empty dimensionValueMapping
+    # when resolving the URL "/", the defaultDimensionSpacePoint is used.
+    # -> /en should not resolve then.
+    # => that's why when we want to generate a URL for the homepage with the default dimensionSpacePoint,
+    #    this must generate "/" (and not ("/en" f.e.)
+    When the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              defaultDimensionSpacePoint:
+                market: DE
+                language: en
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de: de
+                        gsw: gsw
+                        # !!! MODIFIED and not empty.
+                        en: en
+                    -
+                      dimensionIdentifier: market
+                      dimensionValueMapping:
+                        DE: ''
+    """
+    # URL -> Node
+    # special case for homepage: / should be resolved to default dimensions.
+    When I am on URL "/"
+    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}'
+    When I am on URL "/de"
+    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
+    # homepage should not be available via dimension
+    Then No node should match URL "/en"
+    # all other english pages should have /en prefix as usual.
+    When I am on URL "/en/nody/carl"
+    Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}'
+    Then No node should match URL "/nody/carl"
+    When I am on URL "/de/nody/karl-de"
+    Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
+
+    # Node -> URL
+    # special case for homepage: homepage should be resolved to /
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"
+    And the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/en/nody/carl"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Resolve node URLs in multiple dimensions
     When I am on URL "/"
-    Then the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"en"}' should resolve to URL "/nody/carl"
-    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"CH", "language":"de"}' should resolve to URL "/de/nody/carl"
+    Then the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/nody/carl"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Move Dimension, then resolving should still work

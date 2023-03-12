@@ -74,16 +74,16 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
             {
                 $nodeTypes = [$this->nodeTypeName];
                 if ($this->withSubTypes) {
-                    foreach ($this->nodeTypeManager->getSubNodeTypes($this->nodeTypeName->getValue()) as $nodeType) {
+                    foreach ($this->nodeTypeManager->getSubNodeTypes($this->nodeTypeName) as $nodeType) {
                         $nodeTypes[] = $nodeType->getName();
                     }
                 }
 
                 if ($this->exclude) {
-                    return !in_array($nodeAggregate->nodeTypeName->getValue(), $nodeTypes);
+                    return !in_array($nodeAggregate->nodeTypeName->value, $nodeTypes);
                 } else {
                     // non-negated
-                    return in_array($nodeAggregate->nodeTypeName->getValue(), $nodeTypes);
+                    return in_array($nodeAggregate->nodeTypeName->value, $nodeTypes);
                 }
             }
         };
