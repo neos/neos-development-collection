@@ -112,14 +112,11 @@ trait RootNodeHandling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
-        $this->requireProjectedNodeAggregateToNotExist(
+        $this->requireProjectedNodeAggregate(
             $command->contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
-        $nodeType = $this->requireNodeType($command->nodeTypeName);
-        $this->requireNodeTypeToNotBeAbstract($nodeType);
-        $this->requireNodeTypeToBeOfTypeRoot($nodeType);
 
         $events = Events::with(
             new RootNodeAggregateDimensionsWereUpdated(

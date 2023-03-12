@@ -58,12 +58,11 @@ trait NodeVariation
             $command->nodeAggregateId,
             $contentRepository
         );
-        if ($nodeAggregate->classification->isRoot()) {
-            throw new RootNodeCannotBeVaried(sprintf('The node aggregate "%s" is a root node - so you cannot call CreateNodeVariant on it.', $nodeAggregate->nodeAggregateId), 1678517028);
-        }
+        // we do this check first, because it gives a more meaningful error message on what you need to do.
+        // we cannot use sentences with "." because the UI will only print the 1st sentence :/
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be varied; If this error happens, you most likely need to run ./flow content:refreshRootNodeDimensions to update the root node dimensions.');
         $this->requireDimensionSpacePointToExist($command->sourceOrigin->toDimensionSpacePoint());
         $this->requireDimensionSpacePointToExist($command->targetOrigin->toDimensionSpacePoint());
-        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
         $this->requireNodeAggregateToBeUntethered($nodeAggregate);
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);

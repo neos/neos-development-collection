@@ -279,7 +279,6 @@ class NodesController extends ActionController
                 VisibilityConstraints::withoutRestrictions()
             );
 
-        var_dump($identifier);
         if ($mode === 'adoptFromAnotherDimension' || $mode === 'adoptFromAnotherDimensionAndCopyContent') {
             CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                 $this->adoptNodeAndParents(
@@ -395,9 +394,7 @@ class NodesController extends ActionController
         // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse
         // them to know what we need to create.
         // TODO: TEST THAT AUTO CREATED CHILD NODES WORK (though this should not have influence)
-        var_dump($identifiersFromRootlineToTranslate);
 
-        xdebug_break();
         foreach (array_reverse($identifiersFromRootlineToTranslate) as $identifier) {
             assert($identifier instanceof NodeAggregateId);
             // NOTE: for creating node variants, we need to find the ORIGIN DSP
@@ -408,8 +405,6 @@ class NodesController extends ActionController
                 throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier
                     . ' not found. This should never happen.', 1660905374);
             }
-            var_dump("SOURCENODE");
-            var_dump($sourceNode->nodeAggregateId);
             $contentRepository->handle(
                 new CreateNodeVariant(
                     $contentStreamId,

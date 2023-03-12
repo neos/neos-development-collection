@@ -46,8 +46,8 @@ final class ContentCommandController extends CommandController
 
         foreach ($rootNodeAggregates as $rootNodeAggregate) {
             $this->outputFormatted('Refreshing dimensions for root node aggregate %s (of type %s)', [
-                $rootNodeAggregate->nodeAggregateId->getValue(),
-                $rootNodeAggregate->nodeTypeName->getValue()
+                $rootNodeAggregate->nodeAggregateId->value,
+                $rootNodeAggregate->nodeTypeName->value
             ]);
             $contentRepository->handle(
                 new UpdateRootNodeAggregateDimensions(
@@ -84,7 +84,7 @@ final class ContentCommandController extends CommandController
 
     public function copyAcrossDimensions(string $source, string $target, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
-        // TODO: CLI arguments: $contentRepositoryId => $contentRepository (in other CLI commands)
+        /*// TODO: CLI arguments: $contentRepositoryId => $contentRepository (in other CLI commands)
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $source = DimensionSpacePoint::fromJsonString($source);
         $target = DimensionSpacePoint::fromJsonString($target);
@@ -102,6 +102,7 @@ final class ContentCommandController extends CommandController
                 $target
             )
         )->block();
-        $this->outputFormatted('Done!');
+        $this->outputFormatted('Done!');*/
+        // TODO
     }
 }

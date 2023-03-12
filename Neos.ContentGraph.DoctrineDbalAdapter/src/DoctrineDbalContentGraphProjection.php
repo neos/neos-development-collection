@@ -318,11 +318,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $this->transactional(function () use ($rootNodeAnchorPoint, $event) {
             // delete all hierarchy edges of the root node
             $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
+                DELETE FROM ' . $this->tableNamePrefix . '_hierarchyrelation
                 WHERE
-                    h.parentnodeanchor = :parentNodeAnchor
-                    AND h.childnodeanchor = :childNodeAnchor
-                    AND h.contentstreamid = :contentStreamId
+                    parentnodeanchor = :parentNodeAnchor
+                    AND childnodeanchor = :childNodeAnchor
+                    AND contentstreamid = :contentStreamId
             ', [
                 'parentNodeAnchor' => (string)NodeRelationAnchorPoint::forRootEdge(),
                 'childNodeAnchor' => (string)$rootNodeAnchorPoint,

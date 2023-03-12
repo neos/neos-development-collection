@@ -139,7 +139,7 @@ final class ContentGraph implements ContentGraphInterface
                         JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON h.childnodeanchor = n.relationanchorpoint
                     WHERE h.contentstreamid = :contentStreamId
-                        AND h.parentnodeanchor = :rootEdgeParentAnchorId';
+                        AND h.parentnodeanchor = :rootEdgeParentAnchorId ';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
@@ -147,7 +147,7 @@ final class ContentGraph implements ContentGraphInterface
         ];
 
         if ($filter->nodeTypeName !== null) {
-            $query .= 'AND n.nodetypename = :nodeTypeName';
+            $query .= ' AND n.nodetypename = :nodeTypeName';
             $parameters['nodeTypeName'] = (string)$filter->nodeTypeName;
         }
 
@@ -161,7 +161,7 @@ final class ContentGraph implements ContentGraphInterface
             VisibilityConstraints::withoutRestrictions()
         );
 
-        return NodeAggregates::fromArray($nodeAggregates);
+        return NodeAggregates::fromArray(iterator_to_array($nodeAggregates));
     }
 
     public function findNodeAggregatesByType(
