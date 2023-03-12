@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
@@ -112,11 +113,14 @@ trait RootNodeHandling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
-        $this->requireProjectedNodeAggregate(
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
+        if (!$nodeAggregate->classification->isRoot()) {
+            throw new NodeAggregateIsNotRoot('The node aggregate ' . $nodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
+        }
 
         $events = Events::with(
             new RootNodeAggregateDimensionsWereUpdated(
