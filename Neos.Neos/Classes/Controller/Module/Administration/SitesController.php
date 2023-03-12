@@ -181,14 +181,7 @@ class SitesController extends AbstractModuleController
         if ($site->getNodeName() !== $newSiteNodeName) {
             $this->redirect('index');
         }
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-            ?? throw new \RuntimeException(
-                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                . ' Neos.Neos.sites.*.contentRepository'
-            )
-        );
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId);
 
         $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
         if (!$liveWorkspace instanceof Workspace) {

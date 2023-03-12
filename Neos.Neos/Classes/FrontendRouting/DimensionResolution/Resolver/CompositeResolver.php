@@ -19,6 +19,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 
 /**
  * Helper class implementing a Resolver Chain.
@@ -54,15 +55,15 @@ final class CompositeResolver implements DimensionResolverInterface
     }
 
     public function fromDimensionSpacePointToUriConstraints(
-        DimensionSpacePoint $dimensionSpacePoint,
-        SiteNodeName $targetSiteIdentifier,
+        DimensionSpacePoint $filteredDimensionSpacePoint,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints {
         foreach (array_reverse($this->resolvers) as $resolver) {
             assert($resolver instanceof DimensionResolverInterface);
             $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints(
-                $dimensionSpacePoint,
-                $targetSiteIdentifier,
+                $filteredDimensionSpacePoint,
+                $targetNodeInfo,
                 $uriConstraints
             );
         }

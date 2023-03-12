@@ -9,6 +9,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\CompositeResolver;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
@@ -106,14 +107,14 @@ interface DimensionResolverInterface
      * Called for each generated URL, to adjust (and return) the passed-in UriConstraints
      * depending on the given DimensionSpacePoint.
      *
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param SiteNodeName $targetSiteIdentifier
+     * @param DimensionSpacePoint $filteredDimensionSpacePoint
+     * @param DocumentNodeInfo $targetNodeInfo
      * @param UriConstraints $uriConstraints the pre-applied uriConstraints -> modify and return them.
      * @return UriConstraints
      */
     public function fromDimensionSpacePointToUriConstraints(
-        DimensionSpacePoint $dimensionSpacePoint,
-        SiteNodeName $targetSiteIdentifier,
+        DimensionSpacePoint $filteredDimensionSpacePoint,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints;
 }
