@@ -314,6 +314,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 OriginDimensionSpacePoint::fromArray([]),
                 $event->contentStreamId
             );
+        if ($rootNodeAnchorPoint === null) {
+            // should never happen.
+            return;
+        }
 
         $this->transactional(function () use ($rootNodeAnchorPoint, $event) {
             // delete all hierarchy edges of the root node

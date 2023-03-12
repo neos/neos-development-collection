@@ -29,7 +29,7 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
     private array $nodeAggregates;
 
     /**
-     * @param iterable<int,NodeAggregate> $collection
+     * @param iterable<mixed,NodeAggregate> $collection
      */
     private function __construct(iterable $collection)
     {
@@ -48,7 +48,7 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @param array<int,NodeAggregate> $nodeAggregates
+     * @param array<mixed,NodeAggregate> $nodeAggregates
      */
     public static function fromArray(array $nodeAggregates): self
     {

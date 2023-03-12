@@ -37,7 +37,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use function Amp\Promise\first;
 
 /**
  * The Doctrine DBAL adapter content graph
@@ -155,7 +154,7 @@ final class ContentGraph implements ContentGraphInterface
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
 
 
-        /** @var NodeAggregates[] $nodeAggregate The factory will return a NodeAggregate since the array is not empty */
+        /** @var \Traversable<NodeAggregate> $nodeAggregates The factory will return a NodeAggregate since the array is not empty */
         $nodeAggregates = $this->nodeFactory->mapNodeRowsToNodeAggregates(
             $nodeRows,
             VisibilityConstraints::withoutRestrictions()
