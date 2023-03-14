@@ -1360,7 +1360,6 @@ class NodeDataRepository extends Repository
         $minimalPositionByIdentifier = [];
         /** @var $node NodeData */
         foreach ($nodes as $node) {
-
             // Find the position of the workspace, a smaller value means more priority
             $workspaceNames = array_map(
                 function (Workspace $workspace) {
@@ -1722,10 +1721,10 @@ class NodeDataRepository extends Repository
                 switch ($this->entityManager->getConnection()->getDatabasePlatform()->getName()) {
                     case 'postgresql':
                         $parameters['asset' . md5($relatedIdentifier)] = '%asset://' . strtolower($relatedIdentifier) . '%';
-                    break;
+                        break;
                     case 'sqlite':
                         $parameters['asset' . md5($relatedIdentifier)] = '%asset:\/\/' . strtolower($relatedIdentifier) . '%';
-                    break;
+                        break;
                     default:
                         $parameters['asset' . md5($relatedIdentifier)] = '%asset:\\\\/\\\\/' . strtolower($relatedIdentifier) . '%';
                 }

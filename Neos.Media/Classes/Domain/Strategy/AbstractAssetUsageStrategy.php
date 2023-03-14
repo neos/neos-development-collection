@@ -21,7 +21,6 @@ use Neos\Media\Domain\Model\AssetInterface;
  */
 abstract class AbstractAssetUsageStrategy implements AssetUsageStrategyInterface
 {
-
     /**
      * Returns true if the asset is used.
      *

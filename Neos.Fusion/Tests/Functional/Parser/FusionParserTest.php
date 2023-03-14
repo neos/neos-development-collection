@@ -20,7 +20,6 @@ use Neos\Fusion;
  */
 class FusionParserTest extends FunctionalTestCase
 {
-
     /**
      * @test
      */
