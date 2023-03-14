@@ -4,16 +4,20 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Plugin View</source>
-			<target state="translated">Vista de la extensión</target></trans-unit>
+        <target state="translated">Vista del complemento</target>
+      </trans-unit>
       <trans-unit id="groups.pluginViews" xml:space="preserve">
 				<source>Plugin Views</source>
-			<target state="translated">Vistas de la extensión</target></trans-unit>
+        <target state="translated">Vistas de la extensión</target>
+      </trans-unit>
       <trans-unit id="properties.plugin" xml:space="preserve">
 				<source>Master View</source>
-			<target state="translated">Vista general</target></trans-unit>
+        <target state="translated">Vista general</target>
+      </trans-unit>
       <trans-unit id="properties.view" xml:space="preserve">
 				<source>Plugin View</source>
-			<target state="translated">Vista de la extensión</target></trans-unit>
+        <target state="translated">Vista de la extensión</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
