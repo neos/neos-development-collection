@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeVariation projection feature trait
@@ -35,9 +36,9 @@ trait NodeVariation
      * @throws \Exception
      * @throws \Throwable
      */
-    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
+    private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             // Do the actual specialization
             $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
                 $event->contentStreamId,
@@ -50,7 +51,8 @@ trait NodeVariation
 
             $specializedNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
-                $event->specializationOrigin
+                $event->specializationOrigin,
+                $eventEnvelope
             );
 
             $uncoveredDimensionSpacePoints = $event->specializationCoverage->points;
@@ -136,9 +138,9 @@ trait NodeVariation
      * @throws \Exception
      * @throws \Throwable
      */
-    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
+    public function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             // do the generalization
             $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
                 $event->contentStreamId,
@@ -158,7 +160,8 @@ trait NodeVariation
             }
             $generalizedNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
-                $event->generalizationOrigin
+                $event->generalizationOrigin,
+                $eventEnvelope
             );
 
             $unassignedIngoingDimensionSpacePoints = $event->generalizationCoverage;
@@ -244,9 +247,9 @@ trait NodeVariation
     /**
      * @throws \Throwable
      */
-    public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
+    public function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             // Do the peer variant creation itself
             $sourceNode = $this->getProjectionContentGraph()->findNodeInAggregate(
                 $event->contentStreamId,
@@ -266,7 +269,8 @@ trait NodeVariation
             }
             $peerNode = $this->copyNodeToDimensionSpacePoint(
                 $sourceNode,
-                $event->peerOrigin
+                $event->peerOrigin,
+                $eventEnvelope
             );
 
             $unassignedIngoingDimensionSpacePoints = $event->peerCoverage;
@@ -336,7 +340,8 @@ trait NodeVariation
 
     abstract protected function copyNodeToDimensionSpacePoint(
         NodeRecord $sourceNode,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        EventEnvelope $eventEnvelope,
     ): NodeRecord;
 
     abstract protected function copyHierarchyRelationToDimensionSpacePoint(

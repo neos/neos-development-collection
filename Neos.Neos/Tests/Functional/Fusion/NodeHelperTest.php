@@ -148,6 +148,8 @@ class NodeHelperTest extends AbstractFusionObjectTest
                 return null;
             });
 
+        $now = new \DateTimeImmutable();
+
         $this->textNode = new Node(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString("cr"),
@@ -161,7 +163,11 @@ class NodeHelperTest extends AbstractFusionObjectTest
             NodeTypeName::fromString("nt"),
             $nodeType,
             $textNodeProperties,
-            null
+            null,
+            $now,
+            $now,
+            null,
+            null,
         );
     }
 }

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -38,7 +39,11 @@ final class NodeRecord
         public NodeTypeName $nodeTypeName,
         public NodeAggregateClassification $classification,
         /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
-        public ?NodeName $nodeName = null
+        public ?NodeName $nodeName,
+        public \DateTimeImmutable $createdAt,
+        public \DateTimeImmutable $originalCreatedAt,
+        public ?\DateTimeImmutable $lastModifiedAt,
+        public ?\DateTimeImmutable $originalLastModifiedAt,
     ) {
     }
 
@@ -55,7 +60,16 @@ final class NodeRecord
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
             'nodetypename' => (string)$this->nodeTypeName,
-            'classification' => $this->classification->value
+            'classification' => $this->classification->value,
+            'createdat' => $this->createdAt,
+            'originalcreatedat' => $this->originalCreatedAt,
+            'lastmodifiedat' => $this->lastModifiedAt,
+            'originallastmodifiedat' => $this->originalLastModifiedAt,
+        ], [
+            'createdat' => Types::DATETIME_IMMUTABLE,
+            'originalcreatedat' => Types::DATETIME_IMMUTABLE,
+            'lastmodifiedat' => Types::DATETIME_IMMUTABLE,
+            'originallastmodifiedat' => Types::DATETIME_IMMUTABLE,
         ]);
     }
 
@@ -73,10 +87,15 @@ final class NodeRecord
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
                 'nodetypename' => (string)$this->nodeTypeName,
-                'classification' => $this->classification->value
+                'classification' => $this->classification->value,
+                'lastmodifiedat' => $this->lastModifiedAt,
+                'originallastmodifiedat' => $this->originalLastModifiedAt,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
+            ], [
+                'lastmodifiedat' => Types::DATETIME_IMMUTABLE,
+                'originallastmodifiedat' => Types::DATETIME_IMMUTABLE,
             ]
         );
     }
@@ -107,7 +126,11 @@ final class NodeRecord
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
-            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
+            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null,
+            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['createdat']),
+            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['originalcreatedat']),
+            isset($databaseRow['lastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['lastmodifiedat']) : null,
+            isset($databaseRow['originallastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['originallastmodifiedat']) : null,
         );
     }
 }

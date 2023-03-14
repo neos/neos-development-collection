@@ -77,6 +77,10 @@ final class NodeFactory
             $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
+            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['createdat']),
+            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['originalcreatedat']),
+            isset($nodeRow['lastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['lastmodifiedat']) : null,
+            isset($nodeRow['originallastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['originallastmodifiedat']) : null,
         );
     }
 
