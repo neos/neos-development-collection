@@ -13,7 +13,6 @@ use Neos\Utility\Files;
 
 class NodeTypesLoader implements LoaderInterface
 {
-
     /**
      * @var YamlSource
      */

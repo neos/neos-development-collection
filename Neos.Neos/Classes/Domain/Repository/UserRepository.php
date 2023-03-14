@@ -25,7 +25,6 @@ use Neos\Flow\Persistence\QueryResultInterface;
  */
 class UserRepository extends Repository
 {
-
     /**
      * @return QueryResultInterface
      * @deprecated
