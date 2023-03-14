@@ -20,7 +20,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class FusionConfigurationCacheTest extends UnitTestCase
 {
-
     /**
      * @var FusionConfigurationCache
      */
