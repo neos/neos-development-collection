@@ -17,7 +17,6 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 class DebugConsoleTest extends AbstractFusionObjectTest
 {
-
     /**
      * @test
      */
