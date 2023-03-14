@@ -27,7 +27,6 @@ use Neos\Fusion\Exception\CacheException;
  */
 class ContentCacheTest extends UnitTestCase
 {
-
     /**
      * @return array
      */

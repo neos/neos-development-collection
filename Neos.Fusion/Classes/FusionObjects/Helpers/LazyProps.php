@@ -10,7 +10,6 @@ use Neos\Fusion\Core\Runtime;
  */
 final class LazyProps implements \ArrayAccess, \Iterator, \JsonSerializable
 {
-
     /**
      * @var array
      */

@@ -22,7 +22,6 @@ use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
  */
 class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 {
-
     /**
      * @Flow\Inject
      * @var ConfigurationContentDimensionPresetSource

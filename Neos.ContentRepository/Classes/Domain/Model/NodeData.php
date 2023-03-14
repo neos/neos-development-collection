@@ -882,7 +882,6 @@ class NodeData extends AbstractNodeData
 
         if ($this->workspace->getName() !== $targetWorkspace->getName()) {
             if ($targetPath === $originalPath) {
-
                 // The existing shadow node in the target workspace will be used as the actual moved node
                 $movedNodeDataInTargetWorkspace = $targetPathShadowNodeData->getMovedTo();
                 if ($movedNodeDataInTargetWorkspace !== null) {

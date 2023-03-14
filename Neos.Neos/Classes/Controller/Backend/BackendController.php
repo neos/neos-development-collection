@@ -30,7 +30,6 @@ use Neos\Neos\Service\XliffService;
  */
 class BackendController extends ActionController
 {
-
     /**
      * @Flow\Inject
      * @var BackendRedirectionService

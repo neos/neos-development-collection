@@ -32,7 +32,6 @@ use Psr\Log\LoggerInterface;
  */
 class FrontendNodeRoutePartHandler extends DynamicRoutePart implements FrontendNodeRoutePartHandlerInterface
 {
-
     /**
      * @Flow\Inject
      * @var LoggerInterface
