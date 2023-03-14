@@ -88,7 +88,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeMoveIntegrityCheckService
 {
-
     /**
      * @Flow\Inject
      * @var ContentDimensionCombinator

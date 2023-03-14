@@ -24,7 +24,6 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  */
 class RouteCacheAspect
 {
-
     /**
      * @Flow\Inject
      * @var ContextFactoryInterface
