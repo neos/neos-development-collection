@@ -26,7 +26,6 @@ require_once __DIR__ . '/../../Fixtures/AssetTypeWithoutRepository.php';
  */
 class AssetServiceTest extends UnitTestCase
 {
-
     /**
      * @return array
      */
