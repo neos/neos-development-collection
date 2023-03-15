@@ -93,7 +93,8 @@ final class NodeRecord
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
-            ], [
+            ],
+            [
                 'lastmodifiedat' => Types::DATETIME_IMMUTABLE,
                 'originallastmodifiedat' => Types::DATETIME_IMMUTABLE,
             ]
@@ -127,10 +128,19 @@ final class NodeRecord
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null,
-            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['createdat']),
-            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['originalcreatedat']),
-            isset($databaseRow['lastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['lastmodifiedat']) : null,
-            isset($databaseRow['originallastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $databaseRow['originallastmodifiedat']) : null,
+            self::parseDateTimeString($databaseRow['createdat']),
+            self::parseDateTimeString($databaseRow['originalcreatedat']),
+            isset($databaseRow['lastmodifiedat']) ? self::parseDateTimeString($databaseRow['lastmodifiedat']) : null,
+            isset($databaseRow['originallastmodifiedat']) ? self::parseDateTimeString($databaseRow['originallastmodifiedat']) : null,
         );
+    }
+
+    private static function parseDateTimeString(string $string): \DateTimeImmutable
+    {
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        if ($result === false) {
+            throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
+        }
+        return $result;
     }
 }

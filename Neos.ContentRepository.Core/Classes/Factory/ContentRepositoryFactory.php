@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Factory;
 
+use DateTimeImmutable;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
@@ -33,6 +34,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -97,7 +99,12 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
-                $this->userIdProvider
+                $this->userIdProvider,
+                new class implements ClockInterface {
+                    public function now(): DateTimeImmutable {
+                        return new DateTimeImmutable();
+                    }
+                }
             );
         }
         return $this->contentRepository;

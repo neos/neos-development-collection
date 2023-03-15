@@ -30,34 +30,28 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use DateTimeImmutable;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -77,13 +71,18 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\Works
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
+use Psr\Clock\ClockInterface;
 
 /**
  * Features context
@@ -471,6 +470,20 @@ trait EventSourcedTrait
         }
         $this->lastCommandOrEventResult->block();
         $this->lastCommandOrEventResult = null;
+    }
+
+    /**
+     * @When the current date and time is :timestamp
+     */
+    public function theCurrentDateAndTimeIs(string $timestamp): void
+    {
+        $now = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $timestamp);
+        $this->contentRepository = $this->contentRepository->withClock(new class ($now) implements ClockInterface {
+            public function __construct(private readonly DateTimeImmutable $now) {}
+            public function now(): DateTimeImmutable {
+                return $this->now;
+            }
+        });
     }
 
     /**

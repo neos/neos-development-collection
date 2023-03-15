@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDe
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeMove projection feature trait
@@ -38,7 +39,7 @@ trait NodeMove
      * @param NodeAggregateWasMoved $event
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
+    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
     {
         $this->transactional(function () use ($event) {
             foreach ($event->nodeMoveMappings as $moveNodeMapping) {
@@ -100,6 +101,7 @@ trait NodeMove
                     );
                 }
             }
+            // TODO update last modified values
         });
     }
 

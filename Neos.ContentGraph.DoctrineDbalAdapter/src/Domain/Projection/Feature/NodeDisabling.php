@@ -6,6 +6,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeDisabling projection feature trait
@@ -19,7 +20,7 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event, EventEnvelope $eventEnvelope): void
     {
         $this->transactional(function () use ($event) {
             // TODO: still unsure why we need an "INSERT IGNORE" here;
@@ -83,6 +84,7 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
+            // TODO update last modified values
         });
     }
 

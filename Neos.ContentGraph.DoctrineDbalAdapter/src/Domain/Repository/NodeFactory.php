@@ -77,10 +77,10 @@ final class NodeFactory
             $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
-            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['createdat']),
-            \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['originalcreatedat']),
-            isset($nodeRow['lastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['lastmodifiedat']) : null,
-            isset($nodeRow['originallastmodifiedat']) ? \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $nodeRow['originallastmodifiedat']) : null,
+            self::parseDateTimeString($nodeRow['createdat']),
+            self::parseDateTimeString($nodeRow['originalcreatedat']),
+            isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
+            isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
         );
     }
 
@@ -309,5 +309,14 @@ final class NodeFactory
                 )
             );
         }
+    }
+
+    private static function parseDateTimeString(string $string): \DateTimeImmutable
+    {
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        if ($result === false) {
+            throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
+        }
+        return $result;
     }
 }
