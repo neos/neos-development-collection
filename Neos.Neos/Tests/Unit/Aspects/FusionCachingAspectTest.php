@@ -28,7 +28,6 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class FusionCachingAspectTest extends UnitTestCase
 {
-
     /**
      * @var FusionCachingAspect
      */

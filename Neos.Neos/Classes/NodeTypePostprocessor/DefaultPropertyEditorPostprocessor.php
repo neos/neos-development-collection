@@ -22,7 +22,6 @@ use Neos\Neos\Exception;
  */
 class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
