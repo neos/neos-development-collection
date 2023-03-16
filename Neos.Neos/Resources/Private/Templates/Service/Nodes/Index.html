@@ -26,9 +26,9 @@
                             </f:if>
                         </f:alias>
                         <label class="node-label">{node.label}</label>
-                        (<span class="node-identifier">{node.identifier}</span>)
+                        (<span class="node-identifier">{node.nodeAggregateId}</span>)
                         [<span class="node-type">{node.nodeType.name}</span>]
-                        <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.identifier}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
+                        <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.nodeAggregateId}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
                     </li>
                 </f:for>
             </ul>
