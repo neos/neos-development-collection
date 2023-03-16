@@ -23,7 +23,6 @@ use Neos\Fusion\Service\HtmlAugmenter;
  */
 class AugmenterImplementation extends AbstractArrayFusionObject
 {
-
     /**
      * @var HtmlAugmenter
      * @Flow\Inject

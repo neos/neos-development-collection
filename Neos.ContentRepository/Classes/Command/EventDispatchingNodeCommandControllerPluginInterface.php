@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Command;
  */
 interface EventDispatchingNodeCommandControllerPluginInterface extends NodeCommandControllerPluginInterface
 {
-
     /**
      * Entering a task. Event arguments are $taskDescription, $taskClosure (only executed if not in dry-run) and (optionally)  a $requiresConfirmation flag
      */
