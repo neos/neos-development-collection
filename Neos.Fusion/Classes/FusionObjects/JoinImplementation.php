@@ -16,7 +16,6 @@ namespace Neos\Fusion\FusionObjects;
  */
 class JoinImplementation extends AbstractArrayFusionObject
 {
-
     /**
      * Get the glue to insert between items
      *
