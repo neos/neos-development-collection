@@ -31,7 +31,7 @@ final class CountChildNodesFilter
 
     public static function create(): self
     {
-        return new self(null, null, null);
+        return new self(null);
     }
 
     public static function fromFindChildNodesFilter(FindChildNodesFilter $filter): self

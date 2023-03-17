@@ -472,6 +472,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $queryBuilder;
     }
 
+    /**
+     * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
+     */
     private function buildDescendantNodesQueries(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter|CountDescendantNodesFilter $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
