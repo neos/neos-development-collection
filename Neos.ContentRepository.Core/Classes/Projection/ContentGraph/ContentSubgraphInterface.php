@@ -54,9 +54,15 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node;
 
     /**
-     * Find direct child nodes of the specified parent node
+     * Find direct child nodes of the specified parent node that match the given $filter
      */
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\FindChildNodesFilter $filter): Nodes;
+
+    /**
+     * Count direct child nodes of the specified parent node that match the given $filter
+     * @see findChildNodes
+     */
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int;
 
     /**
      * Find the direct parent of a node specified by its aggregate id
@@ -90,6 +96,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindDescendantNodesFilter $filter): Nodes;
 
     /**
+     * Count all nodes underneath the $entryNodeAggregateId that match the specified $filter
+     * @see findDescendantNodes
+     */
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int;
+
+    /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a tree
      *
      * Note: This returns a fragment of the existing tree structure. The structure is kept intact but nodes might be missing depending on the specified filter
@@ -109,12 +121,24 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findReferences(NodeAggregateId $nodeAggregateId, Filter\FindReferencesFilter $filter): References;
 
     /**
+     * Count all "outgoing" references of a given node that match the specified $filter
+     * @see findReferences
+     */
+    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int;
+
+    /**
      * Find all "incoming" references of a given node that match the specified $filter
      * If nodes "A" and "B" both have a reference to "C", the node "C" has two incoming references.
      *
      * @see findReferences
      */
     public function findBackReferences(NodeAggregateId $nodeAggregateId, Filter\FindBackReferencesFilter $filter): References;
+
+    /**
+     * Count all "incoming" references of a given node that match the specified $filter
+     * @see findBackReferences
+     */
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int;
 
     /**
      * Find a single node underneath $startingNodeAggregateId that matches the specified $path

@@ -26,6 +26,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
@@ -127,6 +128,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         );
     }
 
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int
+    {
+        // TODO: Implement countChildNodes() method.
+        return 0;
+    }
+
     public function findReferences(
         NodeAggregateId $nodeAggregateId,
         FindReferencesFilter $filter
@@ -156,6 +163,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $referenceRows,
             $this->visibilityConstraints
         );
+    }
+
+    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int
+    {
+        // TODO: Implement countReferences() method.
+        return 0;
     }
 
     public function findBackReferences(
@@ -188,6 +201,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $referenceRows,
             $this->visibilityConstraints
         );
+    }
+
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int
+    {
+        // TODO: Implement countBackReferences() method.
+        return 0;
     }
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
@@ -406,6 +425,13 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FindDescendantNodesFilter $filter
     ): Nodes {
         return Nodes::createEmpty();
+    }
+
+
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
+    {
+        // TODO: Implement countDescendantNodes() method.
+        return 0;
     }
 
     /**
