@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
@@ -69,16 +70,37 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $childNodes;
     }
 
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int
+    {
+        $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
+        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypeConstraints)) {
+            return $childNodesCache->countChildNodes($parentNodeAggregateId, $filter->nodeTypeConstraints);
+        }
+        return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
+    }
+
     public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findReferences($nodeAggregateId, $filter);
     }
 
+    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int
+    {
+        // TODO: implement runtime caches
+        return $this->wrappedContentSubgraph->countReferences($nodeAggregateId, $filter);
+    }
+
     public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findBackReferences($nodeAggregateId, $filter);
+    }
+
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int
+    {
+        // TODO: implement runtime caches
+        return $this->wrappedContentSubgraph->countBackReferences($nodeAggregateId, $filter);
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
@@ -178,6 +200,12 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->findDescendantNodes($entryNodeAggregateId, $filter);
+    }
+
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
+    {
+        // TODO: implement runtime caches
+        return $this->wrappedContentSubgraph->countDescendantNodes($entryNodeAggregateId, $filter);
     }
 
     public function countNodes(): int
