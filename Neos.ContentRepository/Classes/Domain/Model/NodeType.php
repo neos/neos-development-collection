@@ -463,7 +463,7 @@ class NodeType
                 switch ($type) {
                     case 'DateTime':
                         $defaultValues[$propertyName] = new \DateTime($propertyConfiguration['defaultValue']);
-                    break;
+                        break;
                     default:
                         $defaultValues[$propertyName] = $propertyConfiguration['defaultValue'];
                 }
