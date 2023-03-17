@@ -15,8 +15,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFound;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
+use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
@@ -28,6 +30,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\PositionalArraySorter;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -98,11 +101,10 @@ final class ContentRepositoryRegistry
         return $this->contentRepositoryServiceInstances[$contentRepositoryIdentifier->value][get_class($contentRepositoryServiceFactory)];
     }
 
-
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    private function getFactory(ContentRepositoryId $contentRepositoryIdentifier): ContentRepositoryFactory
+    public function getFactory(ContentRepositoryId $contentRepositoryIdentifier): ContentRepositoryFactory
     {
         // This cache is CRUCIAL, because it ensures that the same CR always deals with the same objects internally, even if multiple services
         // are called on the same CR.
@@ -135,6 +137,7 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionsFactory($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildUserIdProvider($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
+                $this->buildClock($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset),
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryIdentifier, $exception);
@@ -238,5 +241,15 @@ final class ContentRepositoryRegistry
             throw new \RuntimeException(sprintf('userIdProvider.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, UserIdProviderFactoryInterface::class, get_debug_type($userIdProviderFactory)));
         }
         return $userIdProviderFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset);
+    }
+
+    private function buildClock(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ClockInterface
+    {
+        assert(isset($contentRepositoryPreset['clock']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have clock.factoryObjectName configured.', $contentRepositorySettings['preset']));
+        $clockFactory = $this->objectManager->get($contentRepositoryPreset['clock']['factoryObjectName']);
+        if (!$clockFactory instanceof ClockFactoryInterface) {
+            throw new \RuntimeException(sprintf('clock.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ClockFactoryInterface::class, get_debug_type($clockFactory)));
+        }
+        return $clockFactory->build();
     }
 }

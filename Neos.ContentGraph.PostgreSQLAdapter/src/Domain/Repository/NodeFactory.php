@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -88,10 +89,13 @@ final class NodeFactory
                 $this->propertyConverter
             ),
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
-            self::parseDateTimeString($nodeRow['createdat']),
-            self::parseDateTimeString($nodeRow['originalcreatedat']),
-            isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
-            isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
+            Timestamps::create(
+                // TODO replace with $nodeRow['createdat'] and $nodeRow['originalcreatedat'] once projection has implemented support
+                self::parseDateTimeString('2023-03-17 12:00:00'),
+                self::parseDateTimeString('2023-03-17 12:00:00'),
+                isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
+                isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
+            ),
         );
 
         return $result;

@@ -30,7 +30,6 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use DateTimeImmutable;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
@@ -70,6 +69,9 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\Works
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\MutableClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
@@ -82,7 +84,6 @@ use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
-use Psr\Clock\ClockInterface;
 
 /**
  * Features context
@@ -140,21 +141,7 @@ trait EventSourcedTrait
 
     protected function getContentRepository(): ContentRepository
     {
-        $currentUserId = $this->getCurrentUserId();
-        $currentDateAndTime = $this->getCurrentDateAndTime();
-        $contentRepository = $this->contentRepository;
-        if ($currentUserId !== null) {
-            $contentRepository = $contentRepository->withInitiatingUserId($currentUserId);
-        }
-        if ($currentDateAndTime !== null) {
-            $contentRepository = $contentRepository->withClock(new class ($currentDateAndTime) implements ClockInterface {
-                public function __construct(private readonly DateTimeImmutable $now) {}
-                public function now(): DateTimeImmutable {
-                    return $this->now;
-                }
-            });
-        }
-        return $contentRepository;
+        return $this->contentRepository;
     }
 
     /**
@@ -255,13 +242,16 @@ trait EventSourcedTrait
             //
             // This is to make the testcases more stable and deterministic. We can remove this workaround
             // once the Postgres adapter is fully ready.
-            unset($registrySettings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
+            unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
         }
+        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
+        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
 
         $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
             $registrySettings,
             $this->getObjectManager()
         );
+
 
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
@@ -386,7 +376,7 @@ trait EventSourcedTrait
 
                 // if we end up here without exception, we know the projection states were properly reset.
                 $projectionsWereReset = true;
-            } catch(CheckpointException $checkpointException) {
+            } catch (CheckpointException $checkpointException) {
                 // TODO: HACK: UGLY CODE!!!
                 if ($checkpointException->getCode() === 1652279016 && $retryCount < 20) { // we wait for 10 seconds max.
                     // another process is in the critical section; a.k.a.
@@ -475,14 +465,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @When I wait for :seconds seconds
-     */
-    public function iWait(int $seconds): void
-    {
-        sleep($seconds);
-    }
-
-    /**
      * @When /^the graph projection is fully up to date$/
      */
     public function theGraphProjectionIsFullyUpToDate()
@@ -542,8 +524,7 @@ trait EventSourcedTrait
         string $serializedNodeTypeConstraints,
         int $maximumLevels,
         TableNode $table
-    ): void
-    {
+    ): void {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
@@ -569,7 +550,8 @@ trait EventSourcedTrait
                 Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
                 $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
                 $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
-                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId), 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
+                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId),
+                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
             }
         }
     }

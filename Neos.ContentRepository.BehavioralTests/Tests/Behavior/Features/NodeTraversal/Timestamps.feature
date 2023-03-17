@@ -1,4 +1,5 @@
 @contentrepository @adapters=DoctrineDBAL
+ # TODO implement for Postgres
 Feature: TODO
 
   Background:
@@ -79,23 +80,38 @@ Feature: TODO
     And the graph projection is fully up to date
     And the current date and time is "2023-03-16T12:00:00+01:00"
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | nodeName | nodeTypeName                               | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
-      | home            | home     | Neos.ContentRepository.Testing:Homepage    | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
-      | a               | a        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "a"}         | {}                                       |
-      | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
+      | nodeAggregateId | nodeName | nodeTypeName                            | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
+      | home            | home     | Neos.ContentRepository.Testing:Homepage | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
+      | a               | a        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "a"}         | {}                                       |
+      | b               | b        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "b"}         | {}                                       |
 
   Scenario: TODO
     And the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                |
-      | contentStreamId           | "cs-user"            |
-      | nodeAggregateId           | "a"                  |
-      | propertyValues            | {"text": "Changed"} |
+      | Key             | Value               |
+      | contentStreamId | "cs-user"           |
+      | nodeAggregateId | "a"                 |
+      | propertyValues  | {"text": "Changed"} |
     When I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
     And the graph projection is fully up to date
-    And I wait for 5 seconds
     And the current date and time is "2023-03-16T14:00:00+01:00"
     When the command PublishWorkspace is executed with payload:
-      | Key              | Value                        |
-      | workspaceName    | "user-test"                  |
+      | Key           | Value       |
+      | workspaceName | "user-test" |
     And the graph projection is fully up to date
+
+    And I am in content stream "cs-user"
+    Then I expect the node "a" to have the following timestamps:
+      | createdAt           | originalCreatedAt   | lastModifiedAt      | originalLastModifiedAt |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00    |
+    And I expect the node "b" to have the following timestamps:
+      | createdAt           | originalCreatedAt   | lastModifiedAt | originalLastModifiedAt |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |                |                        |
+
+    And I am in content stream "cs-review"
+    Then I expect the node "a" to have the following timestamps:
+      | createdAt           | originalCreatedAt   | lastModifiedAt      | originalLastModifiedAt |
+      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 | 2023-03-16 14:00:00 | 2023-03-16 13:00:00    |
+    And I expect the node "b" to have the following timestamps:
+      | createdAt           | originalCreatedAt   | lastModifiedAt | originalLastModifiedAt |
+      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 |                |                        |

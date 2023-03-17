@@ -1,0 +1,48 @@
+<?php
+
+/*
+ * This file is part of the Neos.ContentRepository package.
+ *
+ * (c) Contributors of the Neos Project - www.neos.io
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\Projection\ContentGraph;
+
+use DateTimeImmutable;
+
+/**
+ * Creation and modification timestamps of a node
+ *
+ * @api
+ */
+final class Timestamps
+{
+    /**
+     * @param DateTimeImmutable $createdAt When was the node created in its content stream
+     * @param DateTimeImmutable $originalCreatedAt When was the node created originally
+     * @param ?DateTimeImmutable $lastModifiedAt When was the node last updated in its content stream, or NULL if it was never changed
+     * @param ?DateTimeImmutable $originalLastModifiedAt When was the node last updated originally, or NULL if it was never changed
+     */
+    public function __construct(
+        public readonly DateTimeImmutable $createdAt,
+        public readonly DateTimeImmutable $originalCreatedAt,
+        public readonly ?DateTimeImmutable $lastModifiedAt,
+        public readonly ?DateTimeImmutable $originalLastModifiedAt,
+    ) {
+    }
+
+    public static function create(
+        DateTimeImmutable $createdAt,
+        DateTimeImmutable $originalCreatedAt,
+        ?DateTimeImmutable $lastModifiedAt,
+        ?DateTimeImmutable $originalLastModifiedAt
+    ): self {
+        return new self($createdAt, $originalCreatedAt, $lastModifiedAt, $originalLastModifiedAt);
+    }
+}

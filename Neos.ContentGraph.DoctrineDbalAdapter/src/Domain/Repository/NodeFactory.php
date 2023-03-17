@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -77,10 +78,12 @@ final class NodeFactory
             $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
-            self::parseDateTimeString($nodeRow['createdat']),
-            self::parseDateTimeString($nodeRow['originalcreatedat']),
-            isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
-            isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
+            Timestamps::create(
+                self::parseDateTimeString($nodeRow['createdat']),
+                self::parseDateTimeString($nodeRow['originalcreatedat']),
+                isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
+                isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
+            ),
         );
     }
 

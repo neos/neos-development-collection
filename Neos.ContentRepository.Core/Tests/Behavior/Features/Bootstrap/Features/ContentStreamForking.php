@@ -28,8 +28,6 @@ trait ContentStreamForking
 
     abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
-    abstract protected function getCurrentUserId(): ?UserId;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**

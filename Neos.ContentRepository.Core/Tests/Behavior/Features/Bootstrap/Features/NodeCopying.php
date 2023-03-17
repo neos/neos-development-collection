@@ -38,8 +38,6 @@ trait NodeCopying
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserId(): ?UserId;
-
     abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     abstract protected function getCurrentNodes(): ?NodesByAdapter;

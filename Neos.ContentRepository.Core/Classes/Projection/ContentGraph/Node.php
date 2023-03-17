@@ -68,10 +68,7 @@ final class Node
          */
         public readonly PropertyCollectionInterface $properties,
         public readonly ?NodeName $nodeName,
-        public readonly \DateTimeImmutable $createdAt,
-        public readonly \DateTimeImmutable $originalCreatedAt,
-        public readonly ?\DateTimeImmutable $lastModifiedAt,
-        public readonly ?\DateTimeImmutable $originalLastModifiedAt,
+        public readonly Timestamps $timestamps,
     ) {
     }
 

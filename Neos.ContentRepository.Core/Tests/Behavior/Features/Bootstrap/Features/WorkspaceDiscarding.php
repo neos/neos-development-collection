@@ -27,7 +27,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 trait WorkspaceDiscarding
 {
     abstract protected function getContentRepository(): ContentRepository;
-    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 

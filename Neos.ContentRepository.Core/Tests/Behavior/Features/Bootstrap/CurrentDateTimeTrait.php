@@ -12,25 +12,18 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use DateTimeImmutable;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClock;
 
 /**
  * The feature trait to simulate date and time
  */
 trait CurrentDateTimeTrait
 {
-    protected ?DateTimeImmutable $currentDateAndTime = null;
-
     /**
      * @When the current date and time is :timestamp
      */
     public function theCurrentDateAndTimeIs(string $timestamp): void
     {
-        $this->currentDateAndTime = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $timestamp);
-    }
-
-    public function getCurrentDateAndTime(): ?DateTimeImmutable
-    {
-        return $this->currentDateAndTime;
+        FakeClock::setNow(\DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $timestamp));
     }
 }

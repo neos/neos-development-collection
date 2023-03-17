@@ -33,6 +33,9 @@ Neos:
         userIdProvider:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\UserIdProvider\StaticUserIdProviderFactory
 
+        clock:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+
         propertyConverters:
           DateTimeNormalizer:
             className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer

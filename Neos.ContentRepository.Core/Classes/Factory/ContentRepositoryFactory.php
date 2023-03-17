@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Factory;
 
-use DateTimeImmutable;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
@@ -28,10 +27,9 @@ use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
@@ -56,6 +54,7 @@ final class ContentRepositoryFactory
         ProjectionsFactory $projectionsFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
+        private readonly ClockInterface $clock,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -65,7 +64,7 @@ final class ContentRepositoryFactory
 
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryId,
-            $eventStore,
+            $eventStore->withClock($this->clock),
             new EventNormalizer(),
             $nodeTypeManager,
             $contentDimensionSource,
@@ -100,11 +99,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
-                new class implements ClockInterface {
-                    public function now(): DateTimeImmutable {
-                        return new DateTimeImmutable();
-                    }
-                }
+                $this->clock,
             );
         }
         return $this->contentRepository;

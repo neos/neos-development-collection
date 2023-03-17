@@ -119,36 +119,6 @@ final class ContentRepository
         return $this->eventPersister->publishEvents($eventsToPublish);
     }
 
-    public function withInitiatingUserId(UserId $userId): self
-    {
-        return new self(
-            $this->commandBus,
-            $this->eventStore,
-            $this->projections,
-            $this->eventPersister,
-            $this->nodeTypeManager,
-            $this->variationGraph,
-            $this->contentDimensionSource,
-            new StaticUserIdProvider($userId),
-            $this->clock,
-        );
-    }
-
-    public function withClock(ClockInterface $clock): self
-    {
-        return new self(
-            $this->commandBus,
-            $this->eventStore->withClock($clock),
-            $this->projections,
-            $this->eventPersister,
-            $this->nodeTypeManager,
-            $this->variationGraph,
-            $this->contentDimensionSource,
-            $this->userIdProvider,
-            $clock,
-        );
-    }
-
     /**
      * @template T of ProjectionStateInterface
      * @param class-string<T> $projectionStateClassName

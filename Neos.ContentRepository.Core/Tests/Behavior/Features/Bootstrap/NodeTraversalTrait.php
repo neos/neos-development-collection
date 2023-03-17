@@ -37,8 +37,6 @@ trait NodeTraversalTrait
 {
     use CurrentSubgraphTrait;
 
-    abstract protected function readPayloadTable(TableNode $payloadTable): array;
-
     /**
      * @When I execute the findChildNodes query for parent node aggregate id :parentNodeIdSerialized and filter :filterSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
      * @When I execute the findChildNodes query for parent node aggregate id :parentNodeIdSerialized I expect the nodes :expectedNodeIdsSerialized to be returned
@@ -314,4 +312,26 @@ trait NodeTraversalTrait
         }
     }
 
+    /**
+     * @Then I expect the node :nodeIdSerialized to have the following timestamps:
+     */
+    public function iExpectTheNodeToHaveTheFollowingTimestamps(string $nodeIdSerialized, TableNode $expectedTimestampsTable): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
+        $expectedTimestamps = array_map(static fn (string $timestamp) => $timestamp === '' ? null : \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $timestamp), $expectedTimestampsTable->getHash()[0]);
+        /** @var ContentSubgraphInterface $subgraph */
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $node = $subgraph->findNodeById($nodeAggregateId);
+            if ($node === null) {
+                Assert::fail(sprintf('Failed to find node with aggregate id "%s"', $nodeAggregateId->value));
+            }
+            $actualTimestamps = [
+                'createdAt' => $node->timestamps->createdAt,
+                'originalCreatedAt' => $node->timestamps->originalCreatedAt,
+                'lastModifiedAt' => $node->timestamps->lastModifiedAt,
+                'originalLastModifiedAt' => $node->timestamps->originalLastModifiedAt,
+            ];
+            Assert::assertEquals($expectedTimestamps, $actualTimestamps);
+        }
+    }
 }
