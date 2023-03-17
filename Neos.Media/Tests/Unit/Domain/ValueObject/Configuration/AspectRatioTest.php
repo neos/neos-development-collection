@@ -122,13 +122,13 @@ class AspectRatioTest extends UnitTestCase
         switch ($expectedOrientation) {
             case AspectRatio::ORIENTATION_LANDSCAPE:
                 self::assertTrue($aspectRatio->isOrientationLandscape());
-            break;
+                break;
             case AspectRatio::ORIENTATION_PORTRAIT:
                 self::assertTrue($aspectRatio->isOrientationPortrait());
-            break;
+                break;
             case AspectRatio::ORIENTATION_SQUARE:
                 self::assertTrue($aspectRatio->isOrientationSquare());
-            break;
+                break;
         }
     }
 }

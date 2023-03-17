@@ -27,7 +27,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class DataSourceController extends AbstractServiceController
 {
-
     /**
      * @var array
      */

@@ -8,7 +8,6 @@ use PHPUnit\Framework\TestCase;
 
 class AfxServiceTest extends TestCase
 {
-
     /**
      * @test
      */
