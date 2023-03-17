@@ -46,12 +46,21 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ContentSubgraphInterface;
 
     /**
-     * @api
+     * @deprecated please use {@see findRootNodeAggregates} instead
+     * @internal
      */
     public function findRootNodeAggregateByType(
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate;
+
+    /**
+     * @api
+     */
+    public function findRootNodeAggregates(
+        ContentStreamId $contentStreamId,
+        Filter\FindRootNodeAggregatesFilter $filter,
+    ): NodeAggregates;
 
     /**
      * @return iterable<NodeAggregate>
