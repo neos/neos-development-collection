@@ -17,7 +17,6 @@ namespace Neos\Fusion\FusionObjects;
  */
 class JoinImplementation extends DataStructureImplementation
 {
-
     /**
      * Get the glue to insert between items
      *

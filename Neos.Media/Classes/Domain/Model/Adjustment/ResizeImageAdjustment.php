@@ -320,15 +320,15 @@ class ResizeImageAdjustment extends AbstractImageAdjustment
             // height and width are set explicitly:
             case ($this->width !== null && $this->height !== null):
                 $newDimensions = $this->calculateWithFixedDimensions($originalDimensions, $this->width, $this->height);
-            break;
-            // only width is set explicitly:
+                break;
+                // only width is set explicitly:
             case ($this->width !== null):
                 $newDimensions = $this->calculateScalingToWidth($originalDimensions, $this->width);
-            break;
-            // only height is set explicitly:
+                break;
+                // only height is set explicitly:
             case ($this->height !== null):
                 $newDimensions = $this->calculateScalingToHeight($originalDimensions, $this->height);
-            break;
+                break;
         }
 
         // We apply maximum dimensions and scale the new dimensions proportionally down to fit into the maximum.
