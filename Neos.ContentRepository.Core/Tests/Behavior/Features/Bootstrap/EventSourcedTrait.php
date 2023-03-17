@@ -91,6 +91,7 @@ trait EventSourcedTrait
 {
     use CurrentSubgraphTrait;
     use CurrentUserTrait;
+    use CurrentDateTimeTrait;
     use NodeTraversalTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
@@ -140,7 +141,20 @@ trait EventSourcedTrait
     protected function getContentRepository(): ContentRepository
     {
         $currentUserId = $this->getCurrentUserId();
-        return $currentUserId === null ? $this->contentRepository : $this->contentRepository->withInitiatingUserId($currentUserId);
+        $currentDateAndTime = $this->getCurrentDateAndTime();
+        $contentRepository = $this->contentRepository;
+        if ($currentUserId !== null) {
+            $contentRepository = $contentRepository->withInitiatingUserId($currentUserId);
+        }
+        if ($currentDateAndTime !== null) {
+            $contentRepository = $contentRepository->withClock(new class ($currentDateAndTime) implements ClockInterface {
+                public function __construct(private readonly DateTimeImmutable $now) {}
+                public function now(): DateTimeImmutable {
+                    return $this->now;
+                }
+            });
+        }
+        return $contentRepository;
     }
 
     /**
@@ -461,6 +475,14 @@ trait EventSourcedTrait
     }
 
     /**
+     * @When I wait for :seconds seconds
+     */
+    public function iWait(int $seconds): void
+    {
+        sleep($seconds);
+    }
+
+    /**
      * @When /^the graph projection is fully up to date$/
      */
     public function theGraphProjectionIsFullyUpToDate()
@@ -470,20 +492,6 @@ trait EventSourcedTrait
         }
         $this->lastCommandOrEventResult->block();
         $this->lastCommandOrEventResult = null;
-    }
-
-    /**
-     * @When the current date and time is :timestamp
-     */
-    public function theCurrentDateAndTimeIs(string $timestamp): void
-    {
-        $now = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $timestamp);
-        $this->contentRepository = $this->contentRepository->withClock(new class ($now) implements ClockInterface {
-            public function __construct(private readonly DateTimeImmutable $now) {}
-            public function now(): DateTimeImmutable {
-                return $this->now;
-            }
-        });
     }
 
     /**

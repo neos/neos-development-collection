@@ -138,7 +138,7 @@ final class ContentRepository
     {
         return new self(
             $this->commandBus,
-            $this->eventStore,
+            $this->eventStore->withClock($clock),
             $this->projections,
             $this->eventPersister,
             $this->nodeTypeManager,

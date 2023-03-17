@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
+use Psr\Clock\ClockInterface;
 
 class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 {
@@ -18,9 +19,15 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 
     public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $eventStorePreset): EventStoreInterface
     {
+        $clock = new class implements ClockInterface {
+            public function now(): \DateTimeImmutable {
+                return new \DateTimeImmutable();
+            }
+        };
         return new DoctrineEventStore(
             $this->connection,
-            self::databaseTableName($contentRepositoryIdentifier)
+            self::databaseTableName($contentRepositoryIdentifier),
+            $clock
         );
     }
 
