@@ -46,8 +46,9 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ContentSubgraphInterface;
 
     /**
-     * @deprecated please use {@see findRootNodeAggregates} instead
-     * @internal
+     * @api
+     * Throws exception if no root aggregate found, because a Content Repository needs at least
+     * one root node to function.
      */
     public function findRootNodeAggregateByType(
         ContentStreamId $contentStreamId,
