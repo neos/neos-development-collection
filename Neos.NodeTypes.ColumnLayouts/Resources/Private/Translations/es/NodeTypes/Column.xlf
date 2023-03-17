@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
                 <source>Layout</source>
-        <target state="translated">Diseño</target>
+        <target state="translated">Disposición</target>
       </trans-unit>
     </body>
   </file>
