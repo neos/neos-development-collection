@@ -66,12 +66,12 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
-    public function get(ContentRepositoryId $contentRepositoryIdentifier): ContentRepository
+    public function get(ContentRepositoryId $contentRepositoryId): ContentRepository
     {
-        if (!array_key_exists($contentRepositoryIdentifier->value, $this->contentRepositoryInstances)) {
-            $this->contentRepositoryInstances[$contentRepositoryIdentifier->value] = $this->getFactory($contentRepositoryIdentifier)->build();
+        if (!array_key_exists($contentRepositoryId->value, $this->contentRepositoryInstances)) {
+            $this->contentRepositoryInstances[$contentRepositoryId->value] = $this->getFactory($contentRepositoryId)->build();
         }
-        return $this->contentRepositoryInstances[$contentRepositoryIdentifier->value];
+        return $this->contentRepositoryInstances[$contentRepositoryId->value];
     }
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
