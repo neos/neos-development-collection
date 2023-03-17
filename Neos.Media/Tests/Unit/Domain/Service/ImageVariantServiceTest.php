@@ -15,16 +15,27 @@ namespace Neos\Media\Tests\Unit\Domain\Service;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Domain\Service\ImageVariantService;
-use Neos\Media\Domain\ValueObject\Configuration\Label;
 use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
-use ReflectionException;
 
 class ImageVariantServiceTest extends UnitTestCase
 {
     public function getAllPresetsOfIdentifierProvider(): iterable
     {
-        $neosPreset = new VariantPreset(new Label('neosTestImageVariants'));
-        $flowPreset = new VariantPreset(new Label('flowTestImageVariants'));
+        $neosPreset = VariantPreset::fromConfiguration([
+            'label' => 'neosTestImageVariants',
+            'mediaTypePatterns' => [],
+            'variants' => ['neos' => [
+                'label' => 'neosVariant'
+            ]]
+        ]);
+
+        $flowPreset = VariantPreset::fromConfiguration([
+            'label' => 'flowTestImageVariants',
+            'mediaTypePatterns' => [],
+            'variants' => ['flow' => [
+                'label' => 'flowVariant'
+            ]]
+        ]);
 
         yield 'empty' => [
             'variantPreset' => [
@@ -61,8 +72,6 @@ class ImageVariantServiceTest extends UnitTestCase
      * @param VariantPreset[] $variantPresets
      * @param string|null $presetIdentifier
      * @param bool $emptyResult
-     *
-     * @throws ReflectionException
      */
     public function getAllPresetsOfIdentifier(array $variantPresets, ?string $presetIdentifier, bool $emptyResult): void
     {
@@ -76,7 +85,7 @@ class ImageVariantServiceTest extends UnitTestCase
         if ($emptyResult) {
             self::assertEquals([], $presetsConfig);
         } else {
-            self::assertEquals([$variantPresets['neos']], $presetsConfig);
+            self::assertEquals(['neos'], $presetsConfig);
         }
     }
 }

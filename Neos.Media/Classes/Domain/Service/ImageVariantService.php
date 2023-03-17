@@ -28,32 +28,44 @@ class ImageVariantService
     }
 
     /**
-     * Return all presets defined in 'Settings.Neos.Media.yaml' with presetName as key
+     * Return all presets defined for provided identifier in 'Settings.Neos.Media.yaml' configuration
      *
-     * @param string $presetIdentifier
+     * @param string $identifier
      * @return VariantPreset[]
      */
-    public function getAllPresetsOfIdentifier(string $presetIdentifier): array
+    public function getAllPresetsOfIdentifier(string $identifier): array
     {
+        /** @var VariantPreset[][] $variantPresetConfigurations */
         $variantPresetConfigurations = $this->getAllPresetsByConfiguration();
 
-        $variantPresetName = array_key_exists($presetIdentifier, $variantPresetConfigurations);
+        $variantPresetName = array_key_exists($identifier, $variantPresetConfigurations);
 
         if (!$variantPresetName) {
             // the given presetIdentifier ist not included in variantPresetConfigurations
             return [];
         }
 
-        return [$variantPresetConfigurations[$presetIdentifier]];
+        return $variantPresetConfigurations[$identifier];
     }
 
     /**
-     * Return presets from 'Settings.Neos.Media.yaml'
+     * Return presets from 'Settings.Neos.Media.yaml' configuration
      *
      * @return VariantPreset[]
      */
     public function getAllPresetsByConfiguration(): array
     {
-        return $this->assetVariantGenerator->getVariantPresets();
+        $presets = [];
+        $variantPresetConfigs = $this->assetVariantGenerator->getVariantPresets();
+
+        foreach ($variantPresetConfigs as $presetsConfig) {
+            $variantPresetName = array_search($presetsConfig, $variantPresetConfigs);
+            $presetKeys = array_keys($presetsConfig->variants());
+            foreach ($presetKeys as $preset) {
+                $presets[(string)$variantPresetName][] = $preset;
+            }
+        }
+
+        return $presets;
     }
 }

@@ -24,16 +24,38 @@ use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
  */
 class ImageVariantRepository extends AssetRepository
 {
+    public function findOutdatedVariantsByName(?string $identifier, ?string $variantName, int $limit = null): array
+    {
+        $queryBuilder = $this->entityManager->createQueryBuilder()
+            ->select('iv')
+            ->from(ImageVariant::class, 'iv')
+            ->setMaxResults($limit);
+
+        if (is_null($identifier) && is_null($variantName)) {
+            $queryBuilder
+                ->where('iv.presetIdentifier IS NULL')
+                ->andWhere('iv.presetVariantName IS NULL');
+        } else {
+            $queryBuilder
+                ->where('iv.presetIdentifier = (:configuredIdentifiers)')
+                ->setParameter('configuredIdentifiers', $identifier);
+
+            $queryBuilder
+                ->andWhere('iv.presetVariantName = (:configuredVariantName)')
+                ->setParameter('configuredVariantName', $variantName);
+        }
+
+        return $queryBuilder->getQuery()->execute();
+    }
+
     /**
      * Returns array of ImageVariants with outdated presets
      *
      * @param VariantPreset[] $configuredPresets
-     * @param bool $deleteOnlyFromGivenPresets
-     * @param bool $filterCroppedVariants
      * @param int|null $limit
      * @return ImageVariant[]
      */
-    public function findAllWithOutdatedPresets(array $configuredPresets, bool $deleteOnlyFromGivenPresets, bool $filterCroppedVariants, int $limit = null): array
+    public function findAllWithOutdatedPresets(array $configuredPresets, int $limit = null): array
     {
         $configuredIdentifiers = array_keys($configuredPresets);
         $queryBuilder = $this->entityManager->createQueryBuilder()
@@ -41,29 +63,21 @@ class ImageVariantRepository extends AssetRepository
             ->from(ImageVariant::class, 'iv')
             ->setMaxResults($limit);
 
-        if (!$deleteOnlyFromGivenPresets) {
-            /**
-             * for completely outdated preset configurations
-             *
-             * EXAMPLE:
-             *  - you have the identifiers Neos.Cool, Neos.Yeah (and there was a Neos.Awesome previously)
-             * case 1:
-             *  - the user want to delete variants from Neos.Yeah
-             *  - condition will not be executed - deleteFromGivenPresets is true
-             * case 2:
-             *  - no preset to delete from configured
-             *  - condition will be executed - whole Neos.Awesome will be added to query
-             */
-            $queryBuilder
-                ->where('iv.presetIdentifier NOT IN (:configuredIdentifiers)')
-                ->setParameter('configuredIdentifiers', $configuredIdentifiers);
-        }
-
-        if ($filterCroppedVariants) {
-            // custom cropped variants will be saved with null value as presetIdentifier and presetVariantName
-            $queryBuilder
-                ->orWhere('iv.presetIdentifier IS NULL AND iv.presetVariantName IS NULL');
-        }
+        /**
+         * for completely outdated preset configurations
+         *
+         * EXAMPLE:
+         *  - you have the identifiers Neos.Cool, Neos.Yeah (and there was a Neos.Awesome previously)
+         * case 1:
+         *  - the user want to delete variants from Neos.Yeah
+         *  - condition will not be executed - deleteFromGivenPresets is true
+         * case 2:
+         *  - no preset to delete from configured
+         *  - condition will be executed - whole Neos.Awesome will be added to query
+         */
+        $queryBuilder
+            ->where('iv.presetIdentifier NOT IN (:configuredIdentifiers)')
+            ->setParameter('configuredIdentifiers', $configuredIdentifiers);
 
         $i = 0;
         foreach ($configuredPresets as $presetIdentifier => $presetVariantNames) {
