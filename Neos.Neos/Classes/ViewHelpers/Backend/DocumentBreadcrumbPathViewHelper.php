@@ -20,7 +20,6 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
-
     /**
      * @var boolean
      */

@@ -23,7 +23,6 @@ use Neos\ContentRepository\Domain\Service\ContextFactory;
  */
 class NodePrivilegeContext
 {
-
     /**
      * @Flow\Inject
      * @var TransientNodeCache
