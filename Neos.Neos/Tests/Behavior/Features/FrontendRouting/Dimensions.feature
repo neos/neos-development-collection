@@ -291,7 +291,7 @@ Feature: Routing functionality with multiple content dimensions
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-
+    And the graph projection is fully up to date
     # create variant for fr and sites node
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
@@ -299,6 +299,7 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
+    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | contentStreamId | "cs-identifier"                  |
@@ -354,7 +355,7 @@ Feature: Routing functionality with multiple content dimensions
     And the command UpdateRootNodeAggregateDimensions is executed with payload:
       | Key             | Value                    |
       | nodeAggregateId | "lady-eleonode-rootford" |
-
+    And the graph projection is fully up to date
     # create variant for fr and sites node
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
@@ -362,6 +363,7 @@ Feature: Routing functionality with multiple content dimensions
       | nodeAggregateId | "sir-david-nodenborough"         |
       | sourceOrigin    | {"market":"DE", "language":"en"} |
       | targetOrigin    | {"market":"DE", "language":"fr"} |
+    And the graph projection is fully up to date
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | contentStreamId | "cs-identifier"                  |
