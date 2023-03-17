@@ -57,7 +57,7 @@ final class SiteNodeUtility
     }
 
     public function findCurrentSiteNode(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamIdentifier,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
@@ -68,7 +68,7 @@ final class SiteNodeUtility
             : $this->siteRepository->findDefault();
 
         if ($site instanceof Site) {
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
                 $contentStreamIdentifier,
                 $dimensionSpacePoint,

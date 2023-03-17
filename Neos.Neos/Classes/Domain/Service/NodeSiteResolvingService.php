@@ -33,10 +33,10 @@ class NodeSiteResolvingService
 
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,
-        ContentRepositoryId $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryId
     ): ?Node {
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $contentRepositoryIdentifier
+            $contentRepositoryId
         );
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamId,

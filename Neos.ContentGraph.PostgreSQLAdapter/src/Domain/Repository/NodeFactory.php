@@ -53,7 +53,7 @@ final class NodeFactory
     private PropertyConverter $propertyConverter;
 
     public function __construct(
-        private readonly ContentRepositoryId $contentRepositoryIdentifier,
+        private readonly ContentRepositoryId $contentRepositoryId,
         NodeTypeManager $nodeTypeManager,
         PropertyConverter $propertyConverter
     ) {
@@ -73,7 +73,7 @@ final class NodeFactory
         $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
         $result = new Node(
             ContentSubgraphIdentity::create(
-                $this->contentRepositoryIdentifier,
+                $this->contentRepositoryId,
                 $contentStreamIdentifier ?: ContentStreamId::fromString($nodeRow['contentstreamidentifier']),
                 $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
                 $visibilityConstraints

@@ -110,9 +110,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function indexAction()
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $currentAccount = $this->securityContext->getAccount();
         $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
@@ -160,11 +160,11 @@ class WorkspacesController extends AbstractModuleController
 
     public function showAction(WorkspaceName $workspace): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $workspacesControllerInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             new WorkspacesControllerInternalsFactory()
         );
 
@@ -191,9 +191,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function newAction()
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository));
     }
@@ -215,9 +215,9 @@ class WorkspacesController extends AbstractModuleController
         string $visibility,
         WorkspaceDescription $description
     ) {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceName = WorkspaceName::fromString(
             Utility::renderValidNodeName((string)$title) . '-'
@@ -266,9 +266,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function editAction(WorkspaceName $workspace)
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
         if (is_null($workspace)) {
@@ -335,9 +335,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function deleteAction(Workspace $workspace)
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if ($workspace->isPersonalWorkspace()) {
             $this->redirect('index');
@@ -411,9 +411,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function rebaseAndRedirectAction(Node $targetNode, Workspace $targetWorkspace): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $currentAccount = $this->securityContext->getAccount();
         $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
@@ -476,9 +476,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function publishNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromUriString($nodeAddress);
 
@@ -514,9 +514,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         $nodeAddress = $nodeAddressFactory->createFromUriString($nodeAddress);
 
@@ -563,9 +563,9 @@ class WorkspacesController extends AbstractModuleController
     public function publishOrDiscardNodesAction(array $nodes, string $action, string $selectedWorkspace): void
     {
         $selectedWorkspace = WorkspaceName::fromString($selectedWorkspace);
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
         $nodesToPublishOrDiscard = [];
@@ -623,9 +623,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function publishWorkspaceAction(WorkspaceName $workspace): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepository->handle(
             new PublishWorkspace(
                 $workspace
@@ -656,9 +656,9 @@ class WorkspacesController extends AbstractModuleController
      */
     public function discardWorkspaceAction(WorkspaceName $workspace): void
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepository->handle(
             DiscardWorkspace::create(
                 $workspace,

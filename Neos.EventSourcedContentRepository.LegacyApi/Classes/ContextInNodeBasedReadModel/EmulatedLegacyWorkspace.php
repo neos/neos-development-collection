@@ -29,7 +29,7 @@ class EmulatedLegacyWorkspace
     protected ?Workspace $workspace;
 
     public function __construct(
-        private readonly ContentRepositoryId $contentRepositoryIdentifier,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeAddress $nodeAddressOfContextNode
     ) {
     }
@@ -39,7 +39,7 @@ class EmulatedLegacyWorkspace
         $this->legacyLogger->info('context.workspace.baseWorkspace called', LogEnvironment::fromMethodName(__METHOD__));
 
         if ($this->workspace === null) {
-            $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
             $this->workspace = $contentRepository->getWorkspaceFinder()
                 ->findOneByName($this->nodeAddressOfContextNode->workspaceName);
         }

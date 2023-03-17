@@ -20,7 +20,7 @@ class ContentStreamCommandController extends CommandController
      */
     public function exportCommand(string $contentStreamIdentifier, string $contentRepositoryIdentifier = 'default', int $startSequenceNumber = 0): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         throw new \RuntimeException('TODO IMPL??');
         // TODO??$events = $this->contentRepositoryEventStore->load(
         //    StreamName::fromString($contentStreamIdentifier),
@@ -123,8 +123,8 @@ class ContentStreamCommandController extends CommandController
      */
     public function pruneCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new ContentStreamPrunerFactory());
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryId, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->prune();
         $unusedContentStreamsPresent = false;
@@ -142,8 +142,8 @@ class ContentStreamCommandController extends CommandController
      */
     public function pruneRemovedFromEventStreamCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new ContentStreamPrunerFactory());
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryId, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();
         $unusedContentStreamsPresent = false;

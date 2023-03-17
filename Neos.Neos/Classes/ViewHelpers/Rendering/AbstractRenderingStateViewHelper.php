@@ -70,7 +70,6 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
                 $baseNode = $currentContext['node'];
             }
         }
-
         if ($baseNode === null) {
             throw new ViewHelperException(
                 'The ' . get_class($this) . ' needs a Node to determine the state.'
@@ -78,9 +77,9 @@ abstract class AbstractRenderingStateViewHelper extends AbstractViewHelper
                 1427267133
             );
         }
-
+        /** @var Node $baseNode */
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $baseNode->subgraphIdentity->contentRepositoryIdentifier
+            $baseNode->subgraphIdentity->contentRepositoryId
         );
         return NodeAddressFactory::create($contentRepository)->createFromNode($baseNode);
     }

@@ -112,9 +112,9 @@ class NodesController extends ActionController
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null
     ): void {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
 
         $nodeAddress = $contextNode
@@ -178,7 +178,7 @@ class NodesController extends ActionController
     /**
      * Shows a specific node
      *
-     * @param string $identifier Specifies the node to look up (NodeAggregateIdentifier)
+     * @param string $identifier Specifies the node to look up (NodeAggregateId)
      * @param string $workspaceName Name of the workspace to use for querying the node
      * @param array $dimensions Optional list of dimensions and their values which should be
      * used for querying the specified node
@@ -186,10 +186,10 @@ class NodesController extends ActionController
      */
     public function showAction(string $identifier, string $workspaceName = 'live', array $dimensions = []): void
     {
-        $identifier = NodeAggregateId::fromString($identifier);
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $nodeAggregateId = NodeAggregateId::fromString($identifier);
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()
             ->findOneByName(WorkspaceName::fromString($workspaceName));
@@ -203,11 +203,11 @@ class NodesController extends ActionController
                 VisibilityConstraints::withoutRestrictions()
             );
 
-        $node = $subgraph->findNodeById($identifier);
+        $node = $subgraph->findNodeById($nodeAggregateId);
 
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
-                $identifier,
+                $nodeAggregateId,
                 $workspace->currentContentStreamId,
                 $dimensionSpacePoint,
                 $contentRepository
@@ -255,10 +255,10 @@ class NodesController extends ActionController
         array $dimensions = [],
         array $sourceDimensions = []
     ): void {
-        $identifier = NodeAggregateId::fromString($identifier);
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $nodeAggregateId = NodeAggregateId::fromString($identifier);
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()
             ->findOneByName(WorkspaceName::fromString($workspaceName));
@@ -283,7 +283,7 @@ class NodesController extends ActionController
             CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                 $this->adoptNodeAndParents(
                     $workspace->currentContentStreamId,
-                    $identifier,
+                    $nodeAggregateId,
                     $sourceSubgraph,
                     $targetSubgraph,
                     $targetDimensionSpacePoint,
@@ -292,7 +292,7 @@ class NodesController extends ActionController
                 ));
 
             $this->redirect('show', null, null, [
-                'identifier' => $identifier,
+                'identifier' => $nodeAggregateId,
                 'workspaceName' => $workspaceName,
                 'dimensions' => $dimensions
             ]);

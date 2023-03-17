@@ -72,8 +72,8 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
         if (isset($currentContext['node'])) {
             /** @var Node $node */
             $node = $currentContext['node'];
-            $contentRepositoryIdentifier = $node->subgraphIdentity->contentRepositoryId;
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $contentRepositoryId = $node->subgraphIdentity->contentRepositoryId;
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
             $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
                 $node->subgraphIdentity->contentStreamId
             );

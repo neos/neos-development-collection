@@ -44,13 +44,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function buildItems(): array
     {
         $menuItems = [];
-        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryId;
+        $contentRepositoryId = $this->currentNode->subgraphIdentity->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
         );
 
         $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             new DimensionsMenuItemsImplementationInternalsFactory()
         );
         assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);

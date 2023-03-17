@@ -309,10 +309,10 @@ class LinkingService
             }
             try {
                 // if we get a node string, we need to assume it links to the current site
-                $contentRepositoryIdentifier = SiteDetectionResult::fromRequest(
+                $contentRepositoryId = SiteDetectionResult::fromRequest(
                     $controllerContext->getRequest()->getHttpRequest()
                 )->contentRepositoryId;
-                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+                $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
                 $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($node);
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($nodeAddress->workspaceName);
                 $subgraph = $contentRepository->getContentGraph()->getSubgraph(
