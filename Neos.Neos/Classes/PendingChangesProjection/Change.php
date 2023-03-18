@@ -32,7 +32,7 @@ class Change
     /**
      * @var ContentStreamId
      */
-    public $contentStreamIdentifier;
+    public $contentStreamId;
 
     /**
      * @var NodeAggregateId
@@ -65,7 +65,7 @@ class Change
     public ?NodeAggregateId $removalAttachmentPoint;
 
     public function __construct(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         bool $changed,
@@ -73,7 +73,7 @@ class Change
         bool $deleted,
         ?NodeAggregateId $removalAttachmentPoint = null
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->contentStreamId = $contentStreamId;
         $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->changed = $changed;
@@ -89,7 +89,7 @@ class Change
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         $databaseConnection->insert($tableName, [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+            'contentStreamId' => (string)$this->contentStreamId,
             'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
@@ -111,7 +111,7 @@ class Change
                 'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
             ],
             [
-                'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+                'contentStreamId' => (string)$this->contentStreamId,
                 'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
                 'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
                 'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
@@ -125,7 +125,7 @@ class Change
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamId::fromString($databaseRow['contentStreamIdentifier']),
+            ContentStreamId::fromString($databaseRow['contentStreamId']),
             NodeAggregateId::fromString($databaseRow['nodeAggregateIdentifier']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],

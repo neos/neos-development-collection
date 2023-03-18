@@ -307,13 +307,13 @@ class NodesController extends ActionController
      */
     protected function addExistingNodeVariantInformationToResponse(
         NodeAggregateId $identifier,
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         ContentRepository $contentRepository
     ): void {
         $contentGraph = $contentRepository->getContentGraph();
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
-        $nodeAggregate = $contentGraph->findNodeAggregateById($contentStreamIdentifier, $identifier);
+        $nodeAggregate = $contentGraph->findNodeAggregateById($contentStreamId, $identifier);
 
         if ($nodeAggregate && $nodeAggregate->coveredDimensionSpacePoints->count() > 0) {
             $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', 'true');
@@ -330,7 +330,7 @@ class NodesController extends ActionController
                 $missingNodesOnRootline = 0;
                 while (
                     $parentAggregate = self::firstNodeAggregate(
-                        $contentGraph->findParentNodeAggregates($contentStreamIdentifier, $identifier)
+                        $contentGraph->findParentNodeAggregates($contentStreamId, $identifier)
                     )
                 ) {
                     if (!$parentAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {

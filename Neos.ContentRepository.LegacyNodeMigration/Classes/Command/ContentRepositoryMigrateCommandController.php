@@ -118,8 +118,8 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $contentRepositoryId = $site->getConfiguration()->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamIdentifier = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
+        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
+        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
 
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryId);
         $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE [n]? ', $eventTableName), false);
@@ -141,7 +141,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
                 $this->resourceRepository,
                 $this->resourceManager,
                 $this->propertyMapper,
-                $liveContentStreamIdentifier
+                $liveContentStreamId
             )
         );
         assert($legacyMigrationService instanceof LegacyMigrationService);

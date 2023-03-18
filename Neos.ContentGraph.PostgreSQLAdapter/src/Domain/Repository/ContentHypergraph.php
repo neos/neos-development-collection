@@ -173,10 +173,10 @@ final class ContentHypergraph implements ContentGraphInterface
     ): ?NodeAggregate {
         $query = /** @lang PostgreSQL */ '
             SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename,
-                   n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
+                   n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint
                 FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
                 JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
-            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
+            WHERE ph.contentstreamid = :contentStreamId
                 AND n.nodeaggregateidentifier = (
                     SELECT pn.nodeaggregateidentifier
                         FROM ' . $this->tableNamePrefix . '_node pn
@@ -186,10 +186,10 @@ final class ContentHypergraph implements ContentGraphInterface
                     WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier
                         AND cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
                         AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
-                        AND ch.contentstreamidentifier = :contentStreamIdentifier
+                        AND ch.contentstreamid = :contentStreamId
                 )';
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamId,
+            'contentStreamId' => (string)$contentStreamId,
             'childNodeAggregateIdentifier' => (string)$childNodeAggregateId,
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash
         ];

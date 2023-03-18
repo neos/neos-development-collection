@@ -37,7 +37,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
      * @param array<int,string>|null $fieldsToFetch
      */
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateIdentifier,
         string $tableNamePrefix,
         ?array $fieldsToFetch = null
@@ -47,18 +47,18 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                 ? implode(', ', $fieldsToFetch)
                 : 'cn.origindimensionspacepoint, cn.nodeaggregateidentifier, cn.nodetypename,
                     cn.classification, cn.properties, cn.nodename,
-                    ch.contentstreamidentifier, ch.dimensionspacepoint') . '
+                    ch.contentstreamid, ch.dimensionspacepoint') . '
             FROM ' . $tableNamePrefix . '_node pn
             JOIN (
                 SELECT *, unnest(childnodeanchors) AS childnodeanchor
                 FROM ' . $tableNamePrefix . '_hierarchyhyperrelation
             ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
             JOIN ' . $tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
-            WHERE ch.contentstreamidentifier = :contentStreamIdentifier
+            WHERE ch.contentstreamid = :contentStreamId
                 AND pn.nodeaggregateidentifier = :parentNodeAggregateIdentifier';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
             'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier
         ];
 

@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
  */
 final class RestrictionHyperrelationRecord
 {
-    public ContentStreamId $contentStreamIdentifier;
+    public ContentStreamId $contentStreamId;
 
     public string $dimensionSpacePointHash;
 
@@ -35,12 +35,12 @@ final class RestrictionHyperrelationRecord
     public NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers;
 
     public function __construct(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         string $dimensionSpacePointHash,
         NodeAggregateId $originNodeAggregateIdentifier,
         NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
+        $this->contentStreamId = $contentStreamId;
         $this->dimensionSpacePointHash = $dimensionSpacePointHash;
         $this->originNodeAggregateIdentifier = $originNodeAggregateIdentifier;
         $this->affectedNodeAggregateIdentifiers = $affectedNodeAggregateIdentifiers;
@@ -52,7 +52,7 @@ final class RestrictionHyperrelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamId::fromString($databaseRow['contentstreamidentifier']),
+            ContentStreamId::fromString($databaseRow['contentstreamid']),
             $databaseRow['dimensionspacepointhash'],
             NodeAggregateId::fromString($databaseRow['originnodeaggregateidentifier']),
             NodeAggregateIdentifiers::fromDatabaseString($databaseRow['affectednodeaggregateidentifiers'])
@@ -103,14 +103,14 @@ final class RestrictionHyperrelationRecord
     {
         $databaseConnection->executeStatement(
             'INSERT INTO ' . $tableNamePrefix . '_restrictionhyperrelation (
-                contentstreamidentifier,
+                contentstreamid,
                 dimensionspacepointhash,
                 originnodeaggregateidentifier,
                 affectednodeaggregateidentifiers
             ) VALUES (?, ?, ?, ?)
             ON CONFLICT DO NOTHING',
             [
-                (string)$this->contentStreamIdentifier,
+                (string)$this->contentStreamId,
                 $this->dimensionSpacePointHash,
                 (string)$this->originNodeAggregateIdentifier,
                 $this->affectedNodeAggregateIdentifiers->toDatabaseString()
@@ -150,7 +150,7 @@ final class RestrictionHyperrelationRecord
     public function getDatabaseIdentifier(): array
     {
         return [
-            'contentstreamidentifier' => (string)$this->contentStreamIdentifier,
+            'contentstreamid' => (string)$this->contentStreamId,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'originnodeaggregateidentifier' => (string)$this->originNodeAggregateIdentifier
         ];

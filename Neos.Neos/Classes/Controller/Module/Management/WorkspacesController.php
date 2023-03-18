@@ -712,12 +712,12 @@ class WorkspacesController extends AbstractModuleController
 
         $siteChanges = [];
         $changes = $contentRepository->projectionState(ChangeFinder::class)
-            ->findByContentStreamIdentifier(
+            ->findByContentStreamId(
                 $selectedWorkspace->currentContentStreamId
             );
 
         foreach ($changes as $change) {
-            $contentStreamIdentifier = $change->contentStreamIdentifier;
+            $contentStreamId = $change->contentStreamId;
 
             if ($change->deleted) {
                 // If we deleted a node, there is no way for us to anymore find the deleted node in the ContentStream
@@ -726,10 +726,10 @@ class WorkspacesController extends AbstractModuleController
                 //
                 // This is safe because the UI basically shows what would be removed once the deletion is published.
                 $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($selectedWorkspace, $contentRepository);
-                $contentStreamIdentifier = $baseWorkspace->currentContentStreamId;
+                $contentStreamId = $baseWorkspace->currentContentStreamId;
             }
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $change->originDimensionSpacePoint->toDimensionSpacePoint(),
                 VisibilityConstraints::withoutRestrictions()
             );
@@ -777,7 +777,7 @@ class WorkspacesController extends AbstractModuleController
                             'isNew' => false,
                             'contentChanges' => $this->renderContentChanges(
                                 $node,
-                                $change->contentStreamIdentifier,
+                                $change->contentStreamId,
                                 $contentRepository
                             )
                         ];
@@ -816,11 +816,11 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getOriginalNode(
         Node $modifiedNode,
-        ContentStreamId $baseContentStreamIdentifier,
+        ContentStreamId $baseContentStreamId,
         ContentRepository $contentRepository
     ): ?Node {
         $baseSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $baseContentStreamIdentifier,
+            $baseContentStreamId,
             $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
@@ -837,17 +837,17 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function renderContentChanges(
         Node $changedNode,
-        ContentStreamId $contentStreamIdentifierOfOriginalNode,
+        ContentStreamId $contentStreamIdOfOriginalNode,
         ContentRepository $contentRepository
     ): array {
         $currentWorkspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-            $contentStreamIdentifierOfOriginalNode
+            $contentStreamIdOfOriginalNode
         );
         $originalNode = null;
         if ($currentWorkspace !== null) {
             $baseWorkspace = $this->getBaseWorkspaceWhenSureItExists($currentWorkspace, $contentRepository);
-            $baseContentStreamIdentifier = $baseWorkspace->currentContentStreamId;
-            $originalNode = $this->getOriginalNode($changedNode, $baseContentStreamIdentifier, $contentRepository);
+            $baseContentStreamId = $baseWorkspace->currentContentStreamId;
+            $originalNode = $this->getOriginalNode($changedNode, $baseContentStreamId, $contentRepository);
         }
 
 

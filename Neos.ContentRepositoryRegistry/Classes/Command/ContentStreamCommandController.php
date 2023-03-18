@@ -18,12 +18,12 @@ class ContentStreamCommandController extends CommandController
     /**
      * @throws \Neos\Flow\Cli\Exception\StopCommandException
      */
-    public function exportCommand(string $contentStreamIdentifier, string $contentRepositoryIdentifier = 'default', int $startSequenceNumber = 0): void
+    public function exportCommand(string $contentStream, string $contentRepository = 'default', int $startSequenceNumber = 0): void
     {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         throw new \RuntimeException('TODO IMPL??');
         // TODO??$events = $this->contentRepositoryEventStore->load(
-        //    StreamName::fromString($contentStreamIdentifier),
+        //    StreamName::fromString($contentStream),
         //    $startSequenceNumber
         //);
     }
@@ -37,7 +37,7 @@ class ContentStreamCommandController extends CommandController
      * @throws \Neos\EventSourcing\EventListener\Exception\EventCouldNotBeAppliedException
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
-    public function importCommand(string $contentStreamIdentifier, string $file = null): void
+    public function importCommand(string $contentStream, string $file = null): void
     {
         throw new \RuntimeException('TODO IMPL??');
         // TODO
@@ -53,8 +53,8 @@ class ContentStreamCommandController extends CommandController
 //        }
 //        $normalizer = new EventNormalizer(new EventTypeResolver());
 //
-//        $contentStreamToImportTo = ContentStreamIdentifier::fromString($contentStreamIdentifier);
-//        $eventStreamName = ContentStreamEventStreamName::fromContentStreamIdentifier($contentStreamToImportTo)
+//        $contentStreamToImportTo = ContentStreamId::fromString($contentStream);
+//        $eventStreamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamToImportTo)
 //            ->getEventStreamName();
 //
 //        $this->outputLine('Clearing workspace projection to create the workspace to import to.');

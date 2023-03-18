@@ -67,9 +67,9 @@ class NodeAddressFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
         $nodeAggregateIdentifier = NodeAggregateId::fromString($nodeAggregateIdentifierSerialized);
 
-        $contentStreamIdentifier = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
+        $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
             ?->currentContentStreamId;
-        if (is_null($contentStreamIdentifier)) {
+        if (is_null($contentStreamId)) {
             throw new \InvalidArgumentException(
                 'Could not resolve content stream identifier for node address ' . $serializedNodeAddress,
                 1645363784
@@ -77,7 +77,7 @@ class NodeAddressFactory
         }
 
         return new NodeAddress(
-            $contentStreamIdentifier,
+            $contentStreamId,
             $dimensionSpacePoint,
             $nodeAggregateIdentifier,
             $workspaceName

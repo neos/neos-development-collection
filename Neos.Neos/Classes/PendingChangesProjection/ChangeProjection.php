@@ -90,7 +90,7 @@ class ChangeProjection implements ProjectionInterface
 
         $schema = new Schema();
         $changeTable = $schema->createTable($this->tableName);
-        $changeTable->addColumn('contentStreamIdentifier', Types::STRING)
+        $changeTable->addColumn('contentStreamId', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $changeTable->addColumn('changed', Types::BOOLEAN)
@@ -113,7 +113,7 @@ class ChangeProjection implements ProjectionInterface
             ->setNotnull(false);
 
         $changeTable->setPrimaryKey([
-            'contentStreamIdentifier',
+            'contentStreamId',
             'nodeAggregateIdentifier',
             'originDimensionSpacePointHash'
         ]);
@@ -271,12 +271,12 @@ class ChangeProjection implements ProjectionInterface
             $this->getDatabaseConnection()->executeUpdate(
                 'DELETE FROM ' . $this->tableName . '
                     WHERE
-                        contentStreamIdentifier = :contentStreamIdentifier
+                        contentStreamId = :contentStreamId
                         AND nodeAggregateIdentifier = :nodeAggregateIdentifier
                         AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
                     ',
                 [
-                    'contentStreamIdentifier' => (string)$event->contentStreamId,
+                    'contentStreamId' => (string)$event->contentStreamId,
                     'nodeAggregateIdentifier' => (string)$event->nodeAggregateId,
                     'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints
                         ->getPointHashes()
@@ -289,10 +289,10 @@ class ChangeProjection implements ProjectionInterface
             foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
                     'INSERT INTO ' . $this->tableName . '
-                            (contentStreamIdentifier, nodeAggregateIdentifier, originDimensionSpacePoint,
+                            (contentStreamId, nodeAggregateIdentifier, originDimensionSpacePoint,
                              originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
-                            :contentStreamIdentifier,
+                            :contentStreamId,
                             :nodeAggregateIdentifier,
                             :originDimensionSpacePoint,
                             :originDimensionSpacePointHash,
@@ -303,7 +303,7 @@ class ChangeProjection implements ProjectionInterface
                         )
                     ',
                     [
-                        'contentStreamIdentifier' => (string)$event->contentStreamId,
+                        'contentStreamId' => (string)$event->contentStreamId,
                         'nodeAggregateIdentifier' => (string)$event->nodeAggregateId,
                         'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
                         'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
@@ -325,13 +325,13 @@ class ChangeProjection implements ProjectionInterface
                         c.originDimensionSpacePointHash = :newDimensionSpacePointHash
                     WHERE
                       c.originDimensionSpacePointHash = :originalDimensionSpacePointHash
-                      AND c.contentStreamIdentifier = :contentStreamIdentifier
+                      AND c.contentStreamId = :contentStreamId
                       ',
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
                     'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
-                    'contentStreamIdentifier' => (string)$event->contentStreamId
+                    'contentStreamId' => (string)$event->contentStreamId
                 ]
             );
         });
@@ -366,31 +366,31 @@ class ChangeProjection implements ProjectionInterface
     }
 
     private function markAsChanged(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
         $this->transactional(function () use (
-            $contentStreamIdentifier,
+            $contentStreamId,
             $nodeAggregateIdentifier,
             $originDimensionSpacePoint
         ) {
             // HACK: basically we are not allowed to read other Projection's finder methods here;
             // but we nevertheless do it.
             // we can maybe figure out another way of solving this lateron.
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamIdentifier);
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
             if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
             $change = $this->getChange(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $nodeAggregateIdentifier,
                 $originDimensionSpacePoint
             );
             if ($change === null) {
                 $change = new Change(
-                    $contentStreamIdentifier,
+                    $contentStreamId,
                     $nodeAggregateIdentifier,
                     $originDimensionSpacePoint,
                     true,
@@ -443,17 +443,17 @@ class ChangeProjection implements ProjectionInterface
     }
 
     private function getChange(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateIdentifier,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?Change {
         $changeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM ' . $this->tableName . ' n
-WHERE n.contentStreamIdentifier = :contentStreamIdentifier
+WHERE n.contentStreamId = :contentStreamId
 AND n.nodeAggregateIdentifier = :nodeAggregateIdentifier
 AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             [
-                'contentStreamIdentifier' => $contentStreamIdentifier,
+                'contentStreamId' => $contentStreamId,
                 'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]

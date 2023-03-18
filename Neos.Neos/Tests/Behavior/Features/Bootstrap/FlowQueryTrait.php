@@ -38,7 +38,7 @@ trait FlowQueryTrait
     /**
      * @var ContentStreamId
      */
-    private ?ContentStreamId $contentStreamIdentifier = null;
+    private ?ContentStreamId $contentStreamId = null;
 
     /**
      * @var DimensionSpacePoint

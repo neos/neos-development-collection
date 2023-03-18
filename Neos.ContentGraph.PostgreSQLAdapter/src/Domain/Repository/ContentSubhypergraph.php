@@ -69,7 +69,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 final class ContentSubhypergraph implements ContentSubgraphInterface
 {
     public function __construct(
-        private readonly ContentStreamId $contentStreamIdentifier,
+        private readonly ContentStreamId $contentStreamId,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
         private readonly PostgresDbalClientInterface $databaseClient,
@@ -81,7 +81,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node
     {
-        $query = HypergraphQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
+        $query = HypergraphQuery::create($this->contentStreamId, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withNodeAggregateIdentifier($nodeAggregateId)
             ->withRestriction($this->visibilityConstraints);
@@ -100,7 +100,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FindChildNodesFilter $filter
     ): Nodes {
         $query = HypergraphChildQuery::create(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $parentNodeAggregateId,
             $this->tableNamePrefix
         );
@@ -139,8 +139,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FindReferencesFilter $filter
     ): References {
         $query = HypergraphReferenceQuery::create(
-            $this->contentStreamIdentifier,
-            'tarn.*, tarh.contentstreamidentifier, tarh.dimensionspacepoint',
+            $this->contentStreamId,
+            'tarn.*, tarh.contentstreamid, tarh.dimensionspacepoint',
             $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -176,8 +176,8 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FindBackReferencesFilter $filter
     ): References {
         $query = HypergraphReferenceQuery::create(
-            $this->contentStreamIdentifier,
-            'srcn.*, srch.contentstreamidentifier, srch.dimensionspacepoint',
+            $this->contentStreamId,
+            'srcn.*, srch.contentstreamid, srch.dimensionspacepoint',
             $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
@@ -211,7 +211,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
-        $query = HypergraphParentQuery::create($this->contentStreamIdentifier, $this->tableNamePrefix);
+        $query = HypergraphParentQuery::create($this->contentStreamId, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
             ->withChildNodeAggregateIdentifier($childNodeAggregateId);
@@ -251,7 +251,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeName $edgeName
     ): ?Node {
         $query = HypergraphChildQuery::create(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $parentNodeAggregateId,
             $this->tableNamePrefix,
         );
@@ -302,7 +302,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         int $offset = null
     ): Nodes {
         $query = HypergraphSiblingQuery::create(
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
             $this->dimensionSpacePoint,
             $sibling,
             $mode,
@@ -340,7 +340,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): ?Subtree {
         $parameters = [
             'entryNodeAggregateIdentifier' => $entryNodeAggregateId->value,
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+            'contentStreamId' => (string)$this->contentStreamId,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $filter->maximumLevels
         ];
@@ -359,7 +359,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = /** @lang PostgreSQL */
             '-- ContentSubhypergraph::findSubtree
     WITH RECURSIVE subtree AS (
-        SELECT n.*, h.contentstreamidentifier,
+        SELECT n.*, h.contentstreamid,
             h.dimensionspacepoint,
             \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
             0 as level,
@@ -374,14 +374,14 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
                      unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
             ) h ON n.relationanchorpoint = h.childnodeanchor
         WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
-            AND h.contentstreamidentifier = :contentStreamIdentifier
+            AND h.contentstreamid = :contentStreamId
 	    	AND h.dimensionspacepointhash = :dimensionSpacePointHash
         ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix) . '
     UNION ALL
          -- --------------------------------
          -- RECURSIVE query: do one "child" query step, taking into account the depth and node type constraints
          -- --------------------------------
-        SELECT cn.*, ch.contentstreamidentifier,
+        SELECT cn.*, ch.contentstreamid,
             ch.dimensionspacepoint,
             p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
             p.level + 1 as level,
@@ -397,7 +397,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ) ch ON ch.parentnodeanchor = p.relationanchorpoint
             INNER JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
 	    WHERE
-	 	    ch.contentstreamidentifier = :contentStreamIdentifier
+	 	    ch.contentstreamid = :contentStreamId
 		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
 		    ' . ($filter->maximumLevels !== null ? 'AND p.level + 1 <= :maximumLevels' : '') . '
             ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix, 'c') . '
@@ -444,11 +444,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         'SELECT COUNT(*)
             FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
-            WHERE h.contentstreamidentifier = :contentStreamIdentifier
+            WHERE h.contentstreamid = :contentStreamId
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
+            'contentStreamId' => (string)$this->contentStreamId,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash
         ];
 
@@ -468,7 +468,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamIdentifier' => $this->contentStreamIdentifier,
+            'contentStreamId' => $this->contentStreamId,
             'dimensionSpacePoint' => $this->dimensionSpacePoint
         ];
     }

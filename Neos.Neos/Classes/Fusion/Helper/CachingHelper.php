@@ -62,7 +62,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         foreach ($nodes as $node) {
             if ($node instanceof Node) {
                 $prefixedNodeIdentifiers[] = $prefix . '_'
-                    . $this->renderContentStreamIdentifierTag($node->subgraphIdentity->contentStreamId)
+                    . $this->renderContentStreamIdTag($node->subgraphIdentity->contentStreamId)
                     . '_' . $node->nodeAggregateId;
             } else {
                 throw new Exception(sprintf(
@@ -105,7 +105,7 @@ class CachingHelper implements ProtectedContextAwareInterface
     {
         $contentStreamTag = '';
         if ($contextNode instanceof Node) {
-            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+            $contentStreamTag = $this->renderContentStreamIdTag(
                 $contextNode->subgraphIdentity->contentStreamId
             ) . '_';
         }
@@ -148,7 +148,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $contentStreamTag = '';
 
         if ($contextNode instanceof Node) {
-            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+            $contentStreamTag = $this->renderContentStreamIdTag(
                 $contextNode->subgraphIdentity->contentStreamId
             ) . '_';
         }
@@ -183,12 +183,12 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param ContentStreamId $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @return string
      */
-    private function renderContentStreamIdentifierTag(ContentStreamId $contentStreamIdentifier)
+    private function renderContentStreamIdTag(ContentStreamId $contentStreamId)
     {
-        return '%' . $contentStreamIdentifier . '%';
+        return '%' . $contentStreamId . '%';
     }
 
     /**

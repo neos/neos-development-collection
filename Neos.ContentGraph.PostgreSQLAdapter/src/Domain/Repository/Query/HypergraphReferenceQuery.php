@@ -30,7 +30,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         string $nodeFieldsToFetch,
         string $tableNamePrefix
     ): self {
@@ -45,10 +45,10 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
             ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
         JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation tarh
             ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
-     WHERE srch.contentstreamidentifier = :contentStreamIdentifier
-     AND tarh.contentstreamidentifier = :contentStreamIdentifier';
+     WHERE srch.contentstreamid = :contentStreamId
+     AND tarh.contentstreamid = :contentStreamId';
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
         ];
 
         return new self(

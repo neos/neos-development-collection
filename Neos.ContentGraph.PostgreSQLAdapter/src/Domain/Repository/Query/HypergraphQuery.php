@@ -31,14 +31,14 @@ final class HypergraphQuery implements HypergraphQueryInterface
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         string $tableNamePrefix,
         bool $joinRestrictionRelations = false
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier,
                 n.nodetypename, n.classification, n.properties, n.nodename,
-                h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
+                h.contentstreamid, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
                 r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
             FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
             JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
@@ -46,14 +46,14 @@ final class HypergraphQuery implements HypergraphQueryInterface
                 ? '
             LEFT JOIN ' . $tableNamePrefix . '_restrictionhyperrelation r
                 ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
-                AND r.contentstreamidentifier = h.contentstreamidentifier
+                AND r.contentstreamid = h.contentstreamid
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
                 : '')
             . '
-            WHERE h.contentstreamidentifier = :contentStreamIdentifier';
+            WHERE h.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamId' => (string)$contentStreamId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);
