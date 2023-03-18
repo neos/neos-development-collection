@@ -460,11 +460,11 @@ trait ConstraintChecks
     /**
      * @throws NodeAggregateIsRoot
      */
-    protected function requireNodeAggregateToNotBeRoot(NodeAggregate $nodeAggregate): void
+    protected function requireNodeAggregateToNotBeRoot(NodeAggregate $nodeAggregate, ?string $extraReason = '.'): void
     {
         if ($nodeAggregate->classification->isRoot()) {
             throw new NodeAggregateIsRoot(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId . '" is classified as root.',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId . '" is classified as root  ' . $extraReason,
                 1554586860
             );
         }

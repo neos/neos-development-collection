@@ -24,6 +24,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -106,7 +108,37 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
-        throw new \BadMethodCallException('method findRootNodeAggregateByType is not implemented yet.', 1645782874);
+        $rootNodeAggregates = $this->findRootNodeAggregates(
+            $contentStreamId,
+            FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
+        );
+
+        if ($rootNodeAggregates->count() > 1) {
+            $ids = [];
+            foreach ($rootNodeAggregates as $rootNodeAggregate) {
+                $ids[] = $rootNodeAggregate->nodeAggregateId->value;
+            }
+            throw new \RuntimeException(sprintf(
+                'More than one root node aggregate of type "%s" found (IDs: %s).',
+                $nodeTypeName->value,
+                implode(', ', $ids)
+            ));
+        }
+
+        $rootNodeAggregate = $rootNodeAggregates->first();
+
+        if ($rootNodeAggregate === null) {
+            throw new \RuntimeException('Root Node Aggregate not found');
+        }
+
+        return $rootNodeAggregate;
+    }
+
+    public function findRootNodeAggregates(
+        ContentStreamId $contentStreamId,
+        FindRootNodeAggregatesFilter $filter,
+    ): NodeAggregates {
+        throw new \BadMethodCallException('method findRootNodeAggregates is not implemented yet.', 1645782874);
     }
 
     /**
