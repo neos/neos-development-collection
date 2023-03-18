@@ -38,14 +38,14 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
      */
     public static function create(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $parentNodeAggregateIdentifier,
+        NodeAggregateId $parentNodeAggregateId,
         string $tableNamePrefix,
         ?array $fieldsToFetch = null
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
-                : 'cn.origindimensionspacepoint, cn.nodeaggregateidentifier, cn.nodetypename,
+                : 'cn.origindimensionspacepoint, cn.nodeaggregateid, cn.nodetypename,
                     cn.classification, cn.properties, cn.nodename,
                     ch.contentstreamid, ch.dimensionspacepoint') . '
             FROM ' . $tableNamePrefix . '_node pn
@@ -55,11 +55,11 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
             JOIN ' . $tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
             WHERE ch.contentstreamid = :contentStreamId
-                AND pn.nodeaggregateidentifier = :parentNodeAggregateIdentifier';
+                AND pn.nodeaggregateid = :parentNodeAggregateId';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier
+            'parentNodeAggregateId' => (string)$parentNodeAggregateId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);

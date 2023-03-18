@@ -137,8 +137,8 @@ class FindOperation extends AbstractOperation
             $filterResults = [];
             $generatedNodes = false;
             if (isset($filter['IdentifierFilter'])) {
-                $nodeAggregateIdentifier = NodeAggregateId::fromString($filter['IdentifierFilter']);
-                $filterResults = $this->addNodesByIdentifier($nodeAggregateIdentifier, $entryPoints, $filterResults);
+                $nodeAggregateId = NodeAggregateId::fromString($filter['IdentifierFilter']);
+                $filterResults = $this->addNodesById($nodeAggregateId, $entryPoints, $filterResults);
                 $generatedNodes = true;
             } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                 $nodePath = NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
@@ -216,15 +216,15 @@ class FindOperation extends AbstractOperation
      * @param array<int,Node> $result
      * @return array<int,Node>
      */
-    protected function addNodesByIdentifier(
-        NodeAggregateId $nodeAggregateIdentifier,
+    protected function addNodesById(
+        NodeAggregateId $nodeAggregateId,
         array $entryPoints,
         array $result
     ): array {
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
-            $nodeByIdentifier = $subgraph->findNodeById($nodeAggregateIdentifier);
+            $nodeByIdentifier = $subgraph->findNodeById($nodeAggregateId);
             if ($nodeByIdentifier) {
                 $result[] = $nodeByIdentifier;
             }

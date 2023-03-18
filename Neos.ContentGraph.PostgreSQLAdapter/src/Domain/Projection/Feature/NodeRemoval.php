@@ -143,7 +143,7 @@ trait NodeRemoval
                 $this->removeFromRestrictions(
                     $contentStreamId,
                     $dimensionSpacePoint,
-                    $nodeRecord->nodeAggregateIdentifier
+                    $nodeRecord->nodeAggregateId
                 );
                 $this->cascadeHierarchy(
                     $contentStreamId,
@@ -158,24 +158,24 @@ trait NodeRemoval
     /**
      * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
     private function removeFromRestrictions(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
                 $contentStreamId,
                 $dimensionSpacePoint,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             ) as $restrictionRelation
         ) {
-            $restrictionRelation->removeAffectedNodeAggregateIdentifier(
-                $nodeAggregateIdentifier,
+            $restrictionRelation->removeAffectedNodeAggregateId(
+                $nodeAggregateId,
                 $this->getDatabaseConnection(),
                 $this->tableNamePrefix
             );

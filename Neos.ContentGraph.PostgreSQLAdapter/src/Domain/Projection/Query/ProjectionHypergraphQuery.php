@@ -102,13 +102,13 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         return new self($query, $parameters, $this->types);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
+    public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         $query = $this->query .= '
-            AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND n.nodeaggregateid = :nodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
+        $parameters['nodeAggregateId'] = (string)$nodeAggregateId;
 
         return new self($query, $parameters, $this->types);
     }

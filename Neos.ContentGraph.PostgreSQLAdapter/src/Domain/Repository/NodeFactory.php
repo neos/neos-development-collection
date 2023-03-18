@@ -78,7 +78,7 @@ final class NodeFactory
                 $dimensionSpacePoint ?: DimensionSpacePoint::fromJsonString($nodeRow['dimensionspacepoint']),
                 $visibilityConstraints
             ),
-            NodeAggregateId::fromString($nodeRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($nodeRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
@@ -151,21 +151,21 @@ final class NodeFactory
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
     ): ?Subtree {
-        $subtreesByParentNodeAggregateIdentifier = [];
+        $subtreesByParentNodeAggregateId = [];
         foreach ($nodeRows as $nodeRow) {
             $node = $this->mapNodeRowToNode(
                 $nodeRow,
                 $visibilityConstraints
             );
 
-            $subtreesByParentNodeAggregateIdentifier[$nodeRow['parentnodeaggregateidentifier']][] = new Subtree(
+            $subtreesByParentNodeAggregateId[$nodeRow['parentnodeaggregateid']][] = new Subtree(
                 (int)$nodeRow['level'],
                 $node,
-                $subtreesByParentNodeAggregateIdentifier[$nodeRow['nodeaggregateidentifier']] ?? []
+                $subtreesByParentNodeAggregateId[$nodeRow['nodeaggregateid']] ?? []
             );
         }
 
-        return Subtrees::fromArray($subtreesByParentNodeAggregateIdentifier['ROOT'])->first();
+        return Subtrees::fromArray($subtreesByParentNodeAggregateId['ROOT'])->first();
     }
 
     /**
@@ -180,7 +180,7 @@ final class NodeFactory
         }
 
         $contentStreamId = null;
-        $nodeAggregateIdentifier = null;
+        $nodeAggregateId = null;
         $nodeAggregateClassification = null;
         $nodeTypeName = null;
         $nodeName = null;
@@ -204,8 +204,8 @@ final class NodeFactory
                 null,
                 $contentStreamId
             );
-            $nodeAggregateIdentifier = $nodeAggregateIdentifier
-                ?: NodeAggregateId::fromString($nodeRow['nodeaggregateidentifier']);
+            $nodeAggregateId = $nodeAggregateId
+                ?: NodeAggregateId::fromString($nodeRow['nodeaggregateid']);
             $nodeAggregateClassification = $nodeAggregateClassification
                 ?: NodeAggregateClassification::from($nodeRow['classification']);
             $nodeTypeName = $nodeTypeName ?: NodeTypeName::fromString($nodeRow['nodetypename']);
@@ -230,7 +230,7 @@ final class NodeFactory
 
         return new NodeAggregate(
             $contentStreamId,
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             $nodeAggregateClassification,
             $nodeTypeName,
             $nodeName,
@@ -256,8 +256,8 @@ final class NodeFactory
         }
 
         $contentStreamId = null;
-        /** @var NodeAggregateId[] $nodeAggregateIdentifiers */
-        $nodeAggregateIdentifiers = [];
+        /** @var NodeAggregateId[] $nodeAggregateIds */
+        $nodeAggregateIds = [];
         /** @var NodeAggregateClassification[] $nodeAggregateClassifications */
         $nodeAggregateClassifications = [];
         /** @var NodeTypeName[] $nodeTypeNames */
@@ -279,7 +279,7 @@ final class NodeFactory
         /** @var DimensionSpacePoint[][] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
         foreach ($nodeRows as $nodeRow) {
-            $key = $nodeRow['nodeaggregateidentifier'];
+            $key = $nodeRow['nodeaggregateid'];
             $contentStreamId = $contentStreamId
                 ?: ContentStreamId::fromString($nodeRow['contentstreamid']);
             $node = $this->mapNodeRowToNode(
@@ -288,8 +288,8 @@ final class NodeFactory
                 null,
                 $contentStreamId
             );
-            $nodeAggregateIdentifiers[$key] = NodeAggregateId::fromString(
-                $nodeRow['nodeaggregateidentifier']
+            $nodeAggregateIds[$key] = NodeAggregateId::fromString(
+                $nodeRow['nodeaggregateid']
             );
             if (!isset($nodeAggregateClassifications[$key])) {
                 $nodeAggregateClassifications[$key] = NodeAggregateClassification::from(
@@ -323,10 +323,10 @@ final class NodeFactory
             }
         }
 
-        foreach ($nodeAggregateIdentifiers as $key => $nodeAggregateIdentifier) {
+        foreach ($nodeAggregateIds as $key => $nodeAggregateId) {
             yield new NodeAggregate(
                 $contentStreamId,
-                $nodeAggregateIdentifier,
+                $nodeAggregateId,
                 $nodeAggregateClassifications[$key],
                 $nodeTypeNames[$key],
                 $nodeNames[$key],

@@ -39,7 +39,7 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
-                : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename,
+                : 'pn.origindimensionspacepoint, pn.nodeaggregateid, pn.nodetypename,
                     pn.classification, pn.properties, pn.nodename,
                     ph.contentstreamid, ph.dimensionspacepoint') . '
             FROM ' . $tableNamePrefix . '_hierarchyhyperrelation ph
@@ -56,13 +56,13 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $tableNamePrefix);
     }
 
-    public function withChildNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
+    public function withChildNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         $query = $this->query .= '
-            AND cn.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND cn.nodeaggregateid = :nodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
+        $parameters['nodeAggregateId'] = (string)$nodeAggregateId;
 
         return new self($query, $parameters, $this->tableNamePrefix);
     }

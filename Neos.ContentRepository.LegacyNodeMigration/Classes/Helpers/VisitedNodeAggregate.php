@@ -21,17 +21,17 @@ final class VisitedNodeAggregate
     private array $variants = [];
 
     public function __construct(
-        public readonly NodeAggregateId $nodeAggregateIdentifier,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
 
     ) {}
 
-    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateIdentifier): void
+    public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId): void
     {
         if (isset($this->variants[$originDimensionSpacePoint->hash])) {
-            throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateIdentifier, $originDimensionSpacePoint), 1653050442);
+            throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateId, $originDimensionSpacePoint), 1653050442);
         }
-        $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateIdentifier);
+        $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateId);
     }
 
     public function getOriginDimensionSpacePoints(): OriginDimensionSpacePointSet
@@ -42,7 +42,7 @@ final class VisitedNodeAggregate
     public function getVariant(OriginDimensionSpacePoint $originDimensionSpacePoint): VisitedNodeVariant
     {
         if (!isset($this->variants[$originDimensionSpacePoint->hash])) {
-            throw new \InvalidArgumentException(sprintf('Variant %s of node "%s" has not been visited before', $originDimensionSpacePoint, $this->nodeAggregateIdentifier), 1656058159);
+            throw new \InvalidArgumentException(sprintf('Variant %s of node "%s" has not been visited before', $originDimensionSpacePoint, $this->nodeAggregateId), 1656058159);
         }
         return $this->variants[$originDimensionSpacePoint->hash];
     }

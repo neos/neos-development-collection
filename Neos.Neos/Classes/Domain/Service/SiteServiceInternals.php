@@ -115,10 +115,10 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
-        $siteNodeAggregateIdentifier = NodeAggregateId::create();
+        $siteNodeAggregateId = NodeAggregateId::create();
         $this->contentRepository->handle(new CreateNodeAggregateWithNode(
             $liveContentStreamId,
-            $siteNodeAggregateIdentifier,
+            $siteNodeAggregateId,
             NodeTypeName::fromString($nodeTypeName),
             OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
             $sitesNodeIdentifier,
@@ -133,7 +133,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
             $this->contentRepository->handle(new CreateNodeVariant(
                 $liveContentStreamId,
-                $siteNodeAggregateIdentifier,
+                $siteNodeAggregateId,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($rootDimensionSpacePoint),
             ))->block();

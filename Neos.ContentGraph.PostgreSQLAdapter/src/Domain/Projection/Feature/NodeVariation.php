@@ -97,7 +97,7 @@ trait NodeVariation
                     $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
                         $event->contentStreamId,
                         $specializedDimensionSpacePoint,
-                        $sourceParent->nodeAggregateIdentifier
+                        $sourceParent->nodeAggregateId
                     );
                     if (is_null($parentNode)) {
                         throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
@@ -214,7 +214,7 @@ trait NodeVariation
     ): NodeRecord {
         $copy = new NodeRecord(
             NodeRelationAnchorPoint::create(),
-            $sourceNode->nodeAggregateIdentifier,
+            $sourceNode->nodeAggregateId,
             $targetOrigin,
             $targetOrigin->hash,
             $sourceNode->properties,
@@ -232,7 +232,7 @@ trait NodeVariation
      */
     protected function replaceNodeRelationAnchorPoint(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $affectedNodeAggregateIdentifier,
+        NodeAggregateId $affectedNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePointSet,
         NodeRelationAnchorPoint $newNodeRelationAnchorPoint
     ): void {
@@ -243,12 +243,12 @@ trait NodeVariation
                     ON n.relationanchorpoint = ANY(p.childnodeanchors)
                 WHERE p.contentstreamid = :contentStreamId
                 AND p.dimensionspacepointhash = :affectedDimensionSpacePointHash
-                AND n.nodeaggregateidentifier = :affectedNodeAggregateIdentifier
+                AND n.nodeaggregateid = :affectedNodeAggregateId
             )';
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'newNodeRelationAnchorPoint' => (string)$newNodeRelationAnchorPoint,
-            'affectedNodeAggregateIdentifier' => (string)$affectedNodeAggregateIdentifier
+            'affectedNodeAggregateId' => (string)$affectedNodeAggregateId
         ];
         foreach ($affectedDimensionSpacePointSet as $affectedDimensionSpacePoint) {
             $parentStatement = /** @lang PostgreSQL */
@@ -279,32 +279,32 @@ trait NodeVariation
 
     protected function addMissingHierarchyRelations(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         NodeRelationAnchorPoint $targetRelationAnchor,
         DimensionSpacePointSet $coverage,
         string $eventClassName
     ): void {
         $missingCoverage = $coverage->getDifference(
-            $this->getProjectionHyperGraph()->findCoverageByNodeAggregateIdentifier(
+            $this->getProjectionHyperGraph()->findCoverageByNodeAggregateId(
                 $contentStreamId,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             )
         );
         if ($missingCoverage->count() > 0) {
             $sourceParentNode = $this->getProjectionHyperGraph()->findParentNodeRecordByOrigin(
                 $contentStreamId,
                 $sourceOrigin,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             );
             if (!$sourceParentNode) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing($eventClassName);
             }
-            $parentNodeAggregateIdentifier = $sourceParentNode->nodeAggregateIdentifier;
+            $parentNodeAggregateId = $sourceParentNode->nodeAggregateId;
             $sourceSucceedingSiblingNode = $this->getProjectionHyperGraph()->findParentNodeRecordByOrigin(
                 $contentStreamId,
                 $sourceOrigin,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             );
             foreach ($missingCoverage as $uncoveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well,
@@ -314,7 +314,7 @@ trait NodeVariation
                 $hierarchyRelation = $this->getProjectionHyperGraph()->findChildHierarchyHyperrelationRecord(
                     $contentStreamId,
                     $uncoveredDimensionSpacePoint,
-                    $parentNodeAggregateIdentifier
+                    $parentNodeAggregateId
                 );
 
                 if ($hierarchyRelation && $sourceSucceedingSiblingNode) {
@@ -322,7 +322,7 @@ trait NodeVariation
                     $targetSucceedingSibling = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
                         $contentStreamId,
                         $uncoveredDimensionSpacePoint,
-                        $sourceSucceedingSiblingNode->nodeAggregateIdentifier
+                        $sourceSucceedingSiblingNode->nodeAggregateId
                     );
 
                     $hierarchyRelation->addChildNodeAnchor(
@@ -335,7 +335,7 @@ trait NodeVariation
                     $targetParentNode = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
                         $contentStreamId,
                         $uncoveredDimensionSpacePoint,
-                        $parentNodeAggregateIdentifier
+                        $parentNodeAggregateId
                     );
                     if (!$targetParentNode) {
                         throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
@@ -416,14 +416,14 @@ trait NodeVariation
                   name,
                   position,
                   properties,
-                  targetnodeaggregateidentifier
+                  targetnodeaggregateid
                 )
                 SELECT
                   :newSourceRelationAnchorPoint AS sourcenodeanchor,
                   ref.name,
                   ref.position,
                   ref.properties,
-                  ref.targetnodeaggregateidentifier
+                  ref.targetnodeaggregateid
                 FROM
                     ' . $this->tableNamePrefix . '_referencerelation ref
                     WHERE ref.sourcenodeanchor = :sourceNodeAnchorPoint

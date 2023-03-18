@@ -29,7 +29,7 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
     public static function create(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         HypergraphSiblingQueryMode $queryMode,
         string $tableNamePrefix
     ): self {
@@ -41,14 +41,14 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
         JOIN ' . $tableNamePrefix . '_node sn ON childnodeanchor = sn.relationanchorpoint
     WHERE sh.contentstreamid = :contentStreamId
         AND sh.dimensionspacepointhash = :dimensionSpacePointHash
-        AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+        AND n.nodeaggregateid = :nodeAggregateId
         AND childnodeanchor != n.relationanchorpoint'
                 . $queryMode->renderCondition();
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'nodeAggregateId' => (string)$nodeAggregateId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);

@@ -51,9 +51,9 @@ trait ContentStreamForking
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
                 'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
                     (contentstreamid, dimensionspacepointhash,
-                     originnodeaggregateidentifier, affectednodeaggregateidentifiers)
+                     originnodeaggregateid, affectednodeaggregateids)
                 SELECT :targetContentStreamId, dimensionspacepointhash,
-                    originnodeaggregateidentifier, affectednodeaggregateidentifiers
+                    originnodeaggregateid, affectednodeaggregateids
                 FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
                 WHERE source.contentstreamid = :sourceContentStreamId',
                 $parameters

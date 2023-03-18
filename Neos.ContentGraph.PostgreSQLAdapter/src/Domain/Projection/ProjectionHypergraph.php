@@ -66,11 +66,11 @@ final class ProjectionHypergraph
     public function findNodeRecordByCoverage(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): ?NodeRecord {
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query =  $query->withDimensionSpacePoint($dimensionSpacePoint)
-            ->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+            ->withNodeAggregateId($nodeAggregateId);
         /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -83,11 +83,11 @@ final class ProjectionHypergraph
     public function findNodeRecordByOrigin(
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): ?NodeRecord {
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        $query = $query->withNodeAggregateId($nodeAggregateId);
 
         /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAssociative();
@@ -102,7 +102,7 @@ final class ProjectionHypergraph
     public function findParentNodeRecordByOrigin(
         ContentStreamId $contentStreamId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
-        NodeAggregateId $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateId
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT p.*
@@ -112,12 +112,12 @@ final class ProjectionHypergraph
             WHERE h.contentstreamid = :contentStreamId
             AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
             AND h.dimensionspacepointhash = :originDimensionSpacePointHash
-            AND n.nodeaggregateidentifier = :childNodeAggregateIdentifier';
+            AND n.nodeaggregateid = :childNodeAggregateId';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
+            'childNodeAggregateId' => (string)$childNodeAggregateId
         ];
 
         $result = $this->getDatabaseConnection()
@@ -137,14 +137,14 @@ final class ProjectionHypergraph
             JOIN neos_contentgraph_hierarchyhyperrelation h ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamid = :contentStreamId
                 AND h.dimensionspacepointhash = :dimensionSpacePointHash
-                AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+                AND n.nodeaggregateid = :nodeAggregateId
     ) AS sh
-    WHERE sn.nodeaggregateidentifier != :nodeAggregateIdentifier' . $queryMode->renderCondition();
+    WHERE sn.nodeaggregateid != :nodeAggregateId' . $queryMode->renderCondition();
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'nodeAggregateId' => (string)$nodeAggregateId
         ];*/
         return null;
     }
@@ -156,7 +156,7 @@ final class ProjectionHypergraph
     public function findParentNodeRecordByCoverage(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $coveredDimensionSpacePoint,
-        NodeAggregateId $childNodeAggregateIdentifier
+        NodeAggregateId $childNodeAggregateId
     ): ?NodeRecord {
         $query = /** @lang PostgreSQL */
             'SELECT p.*
@@ -165,12 +165,12 @@ final class ProjectionHypergraph
             JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
             WHERE h.contentstreamid = :contentStreamId
             AND h.dimensionspacepointhash = :coveredDimensionSpacePointHash
-            AND n.nodeaggregateidentifier = :childNodeAggregateIdentifier';
+            AND n.nodeaggregateid = :childNodeAggregateId';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateIdentifier
+            'childNodeAggregateId' => (string)$childNodeAggregateId
         ];
 
         $result = $this->getDatabaseConnection()
@@ -186,10 +186,10 @@ final class ProjectionHypergraph
      */
     public function findNodeRecordsForNodeAggregate(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): array {
         $query = ProjectionHypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateIdentifier);
+        $query = $query->withNodeAggregateId($nodeAggregateId);
 
         /** @phpstan-ignore-next-line @todo check actual return type */
         $result = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -380,19 +380,19 @@ final class ProjectionHypergraph
     public function findChildHierarchyHyperrelationRecord(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): ?HierarchyHyperrelationRecord {
         $query = /** @lang PostgreSQL */
             'SELECT h.*
             FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE h.contentstreamid = :contentStreamId
-            AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+            AND n.nodeaggregateid = :nodeAggregateId
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'nodeAggregateId' => (string)$nodeAggregateId,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash
         ];
 
@@ -433,24 +433,24 @@ final class ProjectionHypergraph
 
     /**
      * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @return DimensionSpacePointSet
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
-    public function findCoverageByNodeAggregateIdentifier(
+    public function findCoverageByNodeAggregateId(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): DimensionSpacePointSet {
         $query = /** @lang PostgreSQL */
             'SELECT h.dimensionspacepoint
             FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
             JOIN ' . $this->tableNamePrefix . '_node n ON h.parentnodeanchor = n.relationanchorpoint
             WHERE h.contentstreamid = :contentStreamId
-            AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND n.nodeaggregateid = :nodeAggregateId';
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'nodeAggregateId' => (string)$nodeAggregateId
         ];
 
         $dimensionSpacePoints = [];
@@ -464,7 +464,7 @@ final class ProjectionHypergraph
     /**
      * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePointSet $dimensionSpacePoints
-     * @param NodeAggregateId $originNodeAggregateIdentifier
+     * @param NodeAggregateId $originNodeAggregateId
      * @return array|RestrictionHyperrelationRecord[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
@@ -472,19 +472,19 @@ final class ProjectionHypergraph
     public function findOutgoingRestrictionRelations(
         ContentStreamId $contentStreamId,
         DimensionSpacePointSet $dimensionSpacePoints,
-        NodeAggregateId $originNodeAggregateIdentifier
+        NodeAggregateId $originNodeAggregateId
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
             FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation r
             WHERE r.contentstreamid = :contentStreamId
             AND r.dimensionspacepointhash IN (:dimensionSpacePointHashes)
-            AND r.originnodeaggregateidentifier = :originNodeAggregateIdentifier';
+            AND r.originnodeaggregateid = :originNodeAggregateId';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
-            'originNodeAggregateIdentifier' => (string)$originNodeAggregateIdentifier
+            'originNodeAggregateId' => (string)$originNodeAggregateId
         ];
         $types = [
             'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
@@ -509,19 +509,19 @@ final class ProjectionHypergraph
     public function findIngoingRestrictionRelations(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): array {
         $query = /** @lang PostgreSQL */
             'SELECT r.*
             FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation r
             WHERE r.contentstreamid = :contentStreamId
             AND r.dimensionspacepointhash = :dimensionSpacePointHash
-            AND :nodeAggregateIdentifier = ANY(r.affectednodeaggregateidentifiers)';
+            AND :nodeAggregateId = ANY(r.affectednodeaggregateids)';
 
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'nodeAggregateId' => (string)$nodeAggregateId
         ];
 
         $restrictionRelations = [];
@@ -536,30 +536,30 @@ final class ProjectionHypergraph
     /**
      * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePointSet $dimensionSpacePoints
-     * @param NodeAggregateId $nodeAggregateIdentifier
-     * @return array|NodeAggregateIdentifiers[]
+     * @param NodeAggregateId $nodeAggregateId
+     * @return array|NodeAggregateIds[]
      * @throws DBALException
      * @throws \Doctrine\DBAL\Driver\Exception
      */
-    public function findDescendantNodeAggregateIdentifiers(
+    public function findDescendantNodeAggregateIds(
         ContentStreamId $contentStreamId,
         DimensionSpacePointSet $dimensionSpacePoints,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): array {
         $query = /** @lang PostgreSQL */ '
-            -- ProjectionHypergraph::findDescendantNodeAggregateIdentifiers
-            WITH RECURSIVE descendantNodes(nodeaggregateidentifier, relationanchorpoint, dimensionspacepointhash) AS (
+            -- ProjectionHypergraph::findDescendantNodeAggregateIds
+            WITH RECURSIVE descendantNodes(nodeaggregateid, relationanchorpoint, dimensionspacepointhash) AS (
                     -- --------------------------------
                     -- INITIAL query: select the root nodes
                     -- --------------------------------
                     SELECT
-                       n.nodeaggregateidentifier,
+                       n.nodeaggregateid,
                        n.relationanchorpoint,
                        h.dimensionspacepointhash
                     FROM ' . $this->tableNamePrefix . '_node n
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                         ON n.relationanchorpoint = ANY(h.childnodeanchors)
-                    WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+                    WHERE n.nodeaggregateid = :entryNodeAggregateId
                         AND h.contentstreamid = :contentStreamId
                         AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
 
@@ -568,7 +568,7 @@ final class ProjectionHypergraph
                     -- RECURSIVE query: do one "child" query step
                     -- --------------------------------
                     SELECT
-                        c.nodeaggregateidentifier,
+                        c.nodeaggregateid,
                         c.relationanchorpoint,
                         h.dimensionspacepointhash
                     FROM
@@ -580,10 +580,10 @@ final class ProjectionHypergraph
                         h.contentstreamid = :contentStreamId
                         AND h.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
             )
-            SELECT nodeaggregateidentifier, dimensionspacepointhash from descendantNodes';
+            SELECT nodeaggregateid, dimensionspacepointhash from descendantNodes';
 
         $parameters = [
-            'entryNodeAggregateIdentifier' => (string)$nodeAggregateIdentifier,
+            'entryNodeAggregateId' => (string)$nodeAggregateId,
             'contentStreamId' => (string)$contentStreamId,
             'affectedDimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes()
         ];
@@ -594,16 +594,16 @@ final class ProjectionHypergraph
 
         $rows = $this->getDatabaseConnection()->executeQuery($query, $parameters, $types)
             ->fetchAllAssociative();
-        $nodeAggregateIdentifiersByDimensionSpacePoint = [];
+        $nodeAggregateIdsByDimensionSpacePoint = [];
         foreach ($rows as $row) {
-            $nodeAggregateIdentifiersByDimensionSpacePoint[$row['dimensionspacepointhash']]
-                [$row['nodeaggregateidentifier']]
-                = NodeAggregateId::fromString($row['nodeaggregateidentifier']);
+            $nodeAggregateIdsByDimensionSpacePoint[$row['dimensionspacepointhash']]
+                [$row['nodeaggregateid']]
+                = NodeAggregateId::fromString($row['nodeaggregateid']);
         }
 
-        return array_map(function (array $nodeAggregateIdentifiers) {
-            return NodeAggregateIdentifiers::fromArray($nodeAggregateIdentifiers);
-        }, $nodeAggregateIdentifiersByDimensionSpacePoint);
+        return array_map(function (array $nodeAggregateIds) {
+            return NodeAggregateIds::fromArray($nodeAggregateIds);
+        }, $nodeAggregateIdsByDimensionSpacePoint);
     }
 
     public function countContentStreamCoverage(NodeRelationAnchorPoint $anchorPoint): int

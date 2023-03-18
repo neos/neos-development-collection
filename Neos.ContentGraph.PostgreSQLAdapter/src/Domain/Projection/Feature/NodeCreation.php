@@ -185,18 +185,18 @@ trait NodeCreation
     protected function connectToRestrictionRelations(
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $parentNodeAggregateIdentifier,
-        NodeAggregateId $affectedNodeAggregateIdentifier
+        NodeAggregateId $parentNodeAggregateId,
+        NodeAggregateId $affectedNodeAggregateId
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
                 $contentStreamId,
                 $dimensionSpacePoint,
-                $parentNodeAggregateIdentifier
+                $parentNodeAggregateId
             ) as $ingoingRestrictionRelation
         ) {
-            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
-                $affectedNodeAggregateIdentifier,
+            $ingoingRestrictionRelation->addAffectedNodeAggregateId(
+                $affectedNodeAggregateId,
                 $this->getDatabaseConnection(),
                 $this->tableNamePrefix
             );

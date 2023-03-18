@@ -734,7 +734,7 @@ class WorkspacesController extends AbstractModuleController
                 VisibilityConstraints::withoutRestrictions()
             );
 
-            $node = $subgraph->findNodeById($change->nodeAggregateIdentifier);
+            $node = $subgraph->findNodeById($change->nodeAggregateId);
             if ($node) {
                 $pathParts = explode('/', (string)$subgraph->retrieveNodePath($node->nodeAggregateId));
                 if (count($pathParts) > 2) {

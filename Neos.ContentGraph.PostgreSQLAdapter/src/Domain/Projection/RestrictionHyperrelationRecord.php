@@ -30,20 +30,20 @@ final class RestrictionHyperrelationRecord
 
     public string $dimensionSpacePointHash;
 
-    public NodeAggregateId $originNodeAggregateIdentifier;
+    public NodeAggregateId $originNodeAggregateId;
 
-    public NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers;
+    public NodeAggregateIds $affectedNodeAggregateIds;
 
     public function __construct(
         ContentStreamId $contentStreamId,
         string $dimensionSpacePointHash,
-        NodeAggregateId $originNodeAggregateIdentifier,
-        NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers
+        NodeAggregateId $originNodeAggregateId,
+        NodeAggregateIds $affectedNodeAggregateIds
     ) {
         $this->contentStreamId = $contentStreamId;
         $this->dimensionSpacePointHash = $dimensionSpacePointHash;
-        $this->originNodeAggregateIdentifier = $originNodeAggregateIdentifier;
-        $this->affectedNodeAggregateIdentifiers = $affectedNodeAggregateIdentifiers;
+        $this->originNodeAggregateId = $originNodeAggregateId;
+        $this->affectedNodeAggregateIds = $affectedNodeAggregateIds;
     }
 
     /**
@@ -54,23 +54,23 @@ final class RestrictionHyperrelationRecord
         return new self(
             ContentStreamId::fromString($databaseRow['contentstreamid']),
             $databaseRow['dimensionspacepointhash'],
-            NodeAggregateId::fromString($databaseRow['originnodeaggregateidentifier']),
-            NodeAggregateIdentifiers::fromDatabaseString($databaseRow['affectednodeaggregateidentifiers'])
+            NodeAggregateId::fromString($databaseRow['originnodeaggregateid']),
+            NodeAggregateIds::fromDatabaseString($databaseRow['affectednodeaggregateids'])
         );
     }
 
     /**
      * @throws DBALException
      */
-    public function addAffectedNodeAggregateIdentifier(
-        NodeAggregateId $nodeAggregateIdentifier,
+    public function addAffectedNodeAggregateId(
+        NodeAggregateId $nodeAggregateId,
         Connection $databaseConnection,
         string $tableNamePrefix
     ): void {
-        $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->add($nodeAggregateIdentifier);
+        $affectedNodeAggregateIds = $this->affectedNodeAggregateIds->add($nodeAggregateId);
 
-        $this->updateAffectedNodeAggregateIdentifiers(
-            $affectedNodeAggregateIdentifiers,
+        $this->updateAffectedNodeAggregateIds(
+            $affectedNodeAggregateIds,
             $databaseConnection,
             $tableNamePrefix
         );
@@ -79,17 +79,17 @@ final class RestrictionHyperrelationRecord
     /**
      * @throws DBALException
      */
-    public function removeAffectedNodeAggregateIdentifier(
-        NodeAggregateId $nodeAggregateIdentifier,
+    public function removeAffectedNodeAggregateId(
+        NodeAggregateId $nodeAggregateId,
         Connection $databaseConnection,
         string $tableNamePrefix
     ): void {
-        $affectedNodeAggregateIdentifiers = $this->affectedNodeAggregateIdentifiers->remove($nodeAggregateIdentifier);
-        if ($affectedNodeAggregateIdentifiers->isEmpty()) {
+        $affectedNodeAggregateIds = $this->affectedNodeAggregateIds->remove($nodeAggregateId);
+        if ($affectedNodeAggregateIds->isEmpty()) {
             $this->removeFromDatabase($databaseConnection, $tableNamePrefix);
         } else {
-            $this->updateAffectedNodeAggregateIdentifiers(
-                $affectedNodeAggregateIdentifiers,
+            $this->updateAffectedNodeAggregateIds(
+                $affectedNodeAggregateIds,
                 $databaseConnection,
                 $tableNamePrefix
             );
@@ -105,15 +105,15 @@ final class RestrictionHyperrelationRecord
             'INSERT INTO ' . $tableNamePrefix . '_restrictionhyperrelation (
                 contentstreamid,
                 dimensionspacepointhash,
-                originnodeaggregateidentifier,
-                affectednodeaggregateidentifiers
+                originnodeaggregateid,
+                affectednodeaggregateids
             ) VALUES (?, ?, ?, ?)
             ON CONFLICT DO NOTHING',
             [
                 (string)$this->contentStreamId,
                 $this->dimensionSpacePointHash,
-                (string)$this->originNodeAggregateIdentifier,
-                $this->affectedNodeAggregateIdentifiers->toDatabaseString()
+                (string)$this->originNodeAggregateId,
+                $this->affectedNodeAggregateIds->toDatabaseString()
             ]
         );
     }
@@ -121,19 +121,19 @@ final class RestrictionHyperrelationRecord
     /**
      * @throws DBALException
      */
-    private function updateAffectedNodeAggregateIdentifiers(
-        NodeAggregateIdentifiers $affectedNodeAggregateIdentifiers,
+    private function updateAffectedNodeAggregateIds(
+        NodeAggregateIds $affectedNodeAggregateIds,
         Connection $databaseConnection,
         string $tableNamePrefix
     ): void {
         $databaseConnection->update(
             $tableNamePrefix . '_restrictionhyperrelation',
             [
-                'affectednodeaggregateidentifiers' => $affectedNodeAggregateIdentifiers->toDatabaseString()
+                'affectednodeaggregateids' => $affectedNodeAggregateIds->toDatabaseString()
             ],
             $this->getDatabaseIdentifier()
         );
-        $this->affectedNodeAggregateIdentifiers = $affectedNodeAggregateIdentifiers;
+        $this->affectedNodeAggregateIds = $affectedNodeAggregateIds;
     }
 
     /**
@@ -152,7 +152,7 @@ final class RestrictionHyperrelationRecord
         return [
             'contentstreamid' => (string)$this->contentStreamId,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'originnodeaggregateidentifier' => (string)$this->originNodeAggregateIdentifier
+            'originnodeaggregateid' => (string)$this->originNodeAggregateId
         ];
     }
 }

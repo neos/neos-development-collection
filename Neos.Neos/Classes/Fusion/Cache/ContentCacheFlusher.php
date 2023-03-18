@@ -56,21 +56,21 @@ class ContentCacheFlusher
      *
      * @param ContentRepository $contentRepository
      * @param ContentStreamId $contentStreamId
-     * @param NodeAggregateId $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      */
     public function flushNodeAggregate(
         ContentRepository $contentRepository,
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): void {
         $tagsToFlush = [];
 
         $tagsToFlush[ContentCache::TAG_EVERYTHING] = 'which were tagged with "Everything".';
 
-        $this->registerChangeOnNodeIdentifier($contentStreamId, $nodeAggregateIdentifier, $tagsToFlush);
+        $this->registerChangeOnNodeIdentifier($contentStreamId, $nodeAggregateId, $tagsToFlush);
         $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
             $contentStreamId,
-            $nodeAggregateIdentifier
+            $nodeAggregateId
         );
         if (!$nodeAggregate) {
             // Node Aggregate was removed in the meantime, so no need to clear caches on this one anymore.
@@ -80,7 +80,7 @@ class ContentCacheFlusher
         $this->registerChangeOnNodeType(
             $nodeAggregate->nodeTypeName,
             $contentStreamId,
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             $tagsToFlush,
             $contentRepository
         );
@@ -89,30 +89,30 @@ class ContentCacheFlusher
         foreach (
             $contentRepository->getContentGraph()->findParentNodeAggregates(
                 $contentStreamId,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             ) as $parentNodeAggregate
         ) {
             $parentNodeAggregates[] = $parentNodeAggregate;
         }
         // we do not need these variables anymore here
-        unset($contentStreamId, $nodeAggregateIdentifier);
+        unset($contentStreamId, $nodeAggregateId);
 
 
         // NOTE: Normally, the content graph cannot contain cycles. However, during the
         // testcase "Features/ProjectionIntegrityViolationDetection/AllNodesAreConnectedToARootNodePerSubgraph.feature"
         // and in case of bugs, it could have actually cycles.
         // We still want the content cache flushing to work, without hanging up in an endless loop.
-        // That's why we track the seen NodeAggregateIdentifiers to be sure we don't travers them multiple times.
-        $processedNodeAggregateIdentifiers = [];
+        // That's why we track the seen NodeAggregateIds to be sure we don't travers them multiple times.
+        $processedNodeAggregateIds = [];
 
         while ($nodeAggregate = array_shift($parentNodeAggregates)) {
             assert($nodeAggregate instanceof NodeAggregate);
-            if (isset($processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->value])) {
-                // we've already processed this NodeAggregateIdentifier (i.e. flushed the caches for it);
+            if (isset($processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value])) {
+                // we've already processed this NodeAggregateId (i.e. flushed the caches for it);
                 // thus we can skip this one, and thus break the cycle.
                 continue;
             }
-            $processedNodeAggregateIdentifiers[$nodeAggregate->nodeAggregateId->value] = true;
+            $processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value] = true;
 
             $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId
                 . '%_' . $nodeAggregate->nodeAggregateId;
@@ -153,10 +153,10 @@ class ContentCacheFlusher
      */
     private function registerChangeOnNodeIdentifier(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         array &$tagsToFlush
     ): void {
-        $cacheIdentifier = '%' . $contentStreamId . '%_' . $nodeAggregateIdentifier;
+        $cacheIdentifier = '%' . $contentStreamId . '%_' . $nodeAggregateId;
         $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
             'which were tagged with "Node_%s" because that identifier has changed.',
             $cacheIdentifier
@@ -169,7 +169,7 @@ class ContentCacheFlusher
         );
 
         // Legacy
-        $cacheIdentifier = (string)$nodeAggregateIdentifier;
+        $cacheIdentifier = (string)$nodeAggregateId;
         $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
             'which were tagged with "Node_%s" because that identifier has changed.',
             $cacheIdentifier

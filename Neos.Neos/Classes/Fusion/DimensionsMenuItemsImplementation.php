@@ -144,7 +144,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function findClosestGeneralizationMatchingDimensionValue(
         DimensionSpacePoint $dimensionSpacePoint,
         ContentDimensionId $contentDimensionIdentifier,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         DimensionsMenuItemsImplementationInternals $dimensionMenuItemsImplementationInternals,
         ContentRepository $contentRepository
     ): ?Node {
@@ -162,7 +162,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                         $generalization,
                         $this->currentNode->subgraphIdentity->visibilityConstraints,
                     )
-                    ->findNodeById($nodeAggregateIdentifier);
+                    ->findNodeById($nodeAggregateId);
                 if ($variant) {
                     return $variant;
                 }

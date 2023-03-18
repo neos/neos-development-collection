@@ -83,7 +83,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     {
         $query = HypergraphQuery::create($this->contentStreamId, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withNodeAggregateIdentifier($nodeAggregateId)
+            ->withNodeAggregateId($nodeAggregateId)
             ->withRestriction($this->visibilityConstraints);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
@@ -144,7 +144,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withSourceNodeAggregateIdentifier($nodeAggregateId)
+            ->withSourceNodeAggregateId($nodeAggregateId)
             ->withSourceRestriction($this->visibilityConstraints)
             ->withTargetRestriction($this->visibilityConstraints);
 
@@ -181,7 +181,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $this->tableNamePrefix
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
-            ->withTargetNodeAggregateIdentifier($nodeAggregateId)
+            ->withTargetNodeAggregateId($nodeAggregateId)
             ->withSourceRestriction($this->visibilityConstraints)
             ->withTargetRestriction($this->visibilityConstraints);
 
@@ -192,7 +192,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $orderings[] = 'r.name';
         }
         $orderings[] = 'r.position';
-        $orderings[] = 'srcn.nodeaggregateidentifier';
+        $orderings[] = 'srcn.nodeaggregateid';
         $query = $query->orderedBy($orderings);
 
         $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -214,7 +214,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $query = HypergraphParentQuery::create($this->contentStreamId, $this->tableNamePrefix);
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
-            ->withChildNodeAggregateIdentifier($childNodeAggregateId);
+            ->withChildNodeAggregateId($childNodeAggregateId);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -339,7 +339,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         FindSubtreeFilter $filter
     ): ?Subtree {
         $parameters = [
-            'entryNodeAggregateIdentifier' => $entryNodeAggregateId->value,
+            'entryNodeAggregateId' => $entryNodeAggregateId->value,
             'contentStreamId' => (string)$this->contentStreamId,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $filter->maximumLevels
@@ -361,7 +361,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     WITH RECURSIVE subtree AS (
         SELECT n.*, h.contentstreamid,
             h.dimensionspacepoint,
-            \'ROOT\'::varchar AS parentNodeAggregateIdentifier,
+            \'ROOT\'::varchar AS parentNodeAggregateId,
             0 as level,
             h.ordinality
         FROM ' . $this->tableNamePrefix . '_node n
@@ -373,7 +373,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
                      -- ensure that we preserve sorting of child nodes.
                      unnest(childnodeanchors) WITH ORDINALITY childnodeanchor
             ) h ON n.relationanchorpoint = h.childnodeanchor
-        WHERE n.nodeaggregateidentifier = :entryNodeAggregateIdentifier
+        WHERE n.nodeaggregateid = :entryNodeAggregateId
             AND h.contentstreamid = :contentStreamId
 	    	AND h.dimensionspacepointhash = :dimensionSpacePointHash
         ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix) . '
@@ -383,7 +383,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
          -- --------------------------------
         SELECT cn.*, ch.contentstreamid,
             ch.dimensionspacepoint,
-            p.nodeaggregateidentifier as parentNodeAggregateIdentifier,
+            p.nodeaggregateid as parentNodeAggregateId,
             p.level + 1 as level,
             ch.ordinality
         FROM subtree p

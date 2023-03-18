@@ -37,7 +37,7 @@ class Change
     /**
      * @var NodeAggregateId
      */
-    public $nodeAggregateIdentifier;
+    public $nodeAggregateId;
 
     /**
      * @var OriginDimensionSpacePoint
@@ -66,7 +66,7 @@ class Change
 
     public function __construct(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         bool $changed,
         bool $moved,
@@ -74,7 +74,7 @@ class Change
         ?NodeAggregateId $removalAttachmentPoint = null
     ) {
         $this->contentStreamId = $contentStreamId;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->nodeAggregateId = $nodeAggregateId;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->changed = $changed;
         $this->moved = $moved;
@@ -90,7 +90,7 @@ class Change
     {
         $databaseConnection->insert($tableName, [
             'contentStreamId' => (string)$this->contentStreamId,
-            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+            'nodeAggregateId' => (string)$this->nodeAggregateId,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
@@ -112,7 +112,7 @@ class Change
             ],
             [
                 'contentStreamId' => (string)$this->contentStreamId,
-                'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
+                'nodeAggregateId' => (string)$this->nodeAggregateId,
                 'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
                 'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             ]
@@ -126,7 +126,7 @@ class Change
     {
         return new self(
             ContentStreamId::fromString($databaseRow['contentStreamId']),
-            NodeAggregateId::fromString($databaseRow['nodeAggregateIdentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeAggregateId']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],

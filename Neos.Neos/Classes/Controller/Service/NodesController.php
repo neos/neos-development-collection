@@ -106,7 +106,7 @@ class NodesController extends ActionController
     /* @phpstan-ignore-next-line */
     public function indexAction(
         string $searchTerm = '',
-        array $nodeIdentifiers = [],
+        array $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
         array $nodeTypes = ['Neos.Neos:Document'],
@@ -145,7 +145,7 @@ class NodesController extends ActionController
             );
         }
 
-        if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
+        if ($nodeIds === [] && !is_null($nodeAddress)) {
             $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
                 $entryNode->nodeAggregateId,
@@ -162,9 +162,9 @@ class NodesController extends ActionController
             }
 
             $nodes = [];
-            foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
+            foreach ($nodeIds as $nodeAggregateId) {
                 $node = $subgraph->findNodeById(
-                    NodeAggregateId::fromString($nodeAggregateIdentifier)
+                    NodeAggregateId::fromString($nodeAggregateId)
                 );
                 if ($node !== null) {
                     $nodes[] = $node;
@@ -366,7 +366,7 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
-     * @param NodeAggregateId $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @param ContentSubgraphInterface $sourceSubgraph
      * @param ContentSubgraphInterface $targetSubgraph
      * @param ContentRepository $contentRepository
@@ -375,7 +375,7 @@ class NodesController extends ActionController
      */
     protected function adoptNodeAndParents(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         DimensionSpacePoint $targetDimensionSpacePoint,
@@ -384,11 +384,11 @@ class NodesController extends ActionController
     ) {
         $identifiersFromRootlineToTranslate = [];
         while (
-            $nodeAggregateIdentifier
-            && $targetSubgraph->findNodeById($nodeAggregateIdentifier) === null
+            $nodeAggregateId
+            && $targetSubgraph->findNodeById($nodeAggregateId) === null
         ) {
-            $identifiersFromRootlineToTranslate[] = $nodeAggregateIdentifier;
-            $nodeAggregateIdentifier = $sourceSubgraph->findParentNode($nodeAggregateIdentifier)
+            $identifiersFromRootlineToTranslate[] = $nodeAggregateId;
+            $nodeAggregateId = $sourceSubgraph->findParentNode($nodeAggregateId)
                 ?->nodeAggregateId;
         }
         // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse

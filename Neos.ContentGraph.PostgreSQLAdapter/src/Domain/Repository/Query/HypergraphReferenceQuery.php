@@ -42,7 +42,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation srch
             ON srcn.relationanchorpoint = ANY(srch.childnodeanchors)
         JOIN ' . $tableNamePrefix . '_node tarn
-            ON r.targetnodeaggregateidentifier = tarn.nodeaggregateidentifier
+            ON r.targetnodeaggregateid = tarn.nodeaggregateid
         JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation tarh
             ON tarn.relationanchorpoint = ANY(tarh.childnodeanchors)
      WHERE srch.contentstreamid = :contentStreamId
@@ -71,27 +71,27 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
-    public function withSourceNodeAggregateIdentifier(NodeAggregateId $sourceNodeAggregateIdentifier): self
+    public function withSourceNodeAggregateId(NodeAggregateId $sourceNodeAggregateId): self
     {
         $query = $this->query;
         $query .= '
-    AND srcn.nodeaggregateidentifier = :sourceNodeAggregateIdentifier';
+    AND srcn.nodeaggregateid = :sourceNodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['sourceNodeAggregateIdentifier'] = (string)$sourceNodeAggregateIdentifier;
+        $parameters['sourceNodeAggregateId'] = (string)$sourceNodeAggregateId;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
 
-    public function withTargetNodeAggregateIdentifier(
-        NodeAggregateId $targetNodeAggregateIdentifier
+    public function withTargetNodeAggregateId(
+        NodeAggregateId $targetNodeAggregateId
     ): self {
         $query = $this->query;
         $query .= '
-    AND tarn.nodeaggregateidentifier = :targetNodeAggregateIdentifier';
+    AND tarn.nodeaggregateid = :targetNodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['targetNodeAggregateIdentifier'] = (string)$targetNodeAggregateIdentifier;
+        $parameters['targetNodeAggregateId'] = (string)$targetNodeAggregateId;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }

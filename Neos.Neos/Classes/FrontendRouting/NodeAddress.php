@@ -74,7 +74,7 @@ final class NodeAddress
     public function __toString(): string
     {
         return sprintf(
-            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateIdentifier=%s, workspaceName=%s]',
+            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->nodeAggregateId,

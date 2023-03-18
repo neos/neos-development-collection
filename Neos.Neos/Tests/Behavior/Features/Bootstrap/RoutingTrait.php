@@ -186,14 +186,14 @@ trait RoutingTrait
     }
 
     /**
-     * @Then the matched node should be :nodeAggregateIdentifier in content stream :contentStreamId and dimension :dimensionSpacePoint
+     * @Then the matched node should be :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint
      */
-    public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateIdentifier, string $contentStreamId, string $dimensionSpacePoint): void
+    public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
     {
         $nodeAddress = $this->match($this->requestUrl);
         Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateId);
+        Assert::assertSame($nodeAggregateId, (string)$nodeAddress->nodeAggregateId);
         Assert::assertSame($contentStreamId, (string)$nodeAddress->contentStreamId);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
@@ -241,24 +241,24 @@ trait RoutingTrait
 
 
     /**
-     * @Then The node :nodeAggregateIdentifier in content stream :contentStreamId and dimension :dimensionSpacePoint should resolve to URL :url
+     * @Then The node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint should resolve to URL :url
      */
-    public function theNodeShouldResolveToUrl(string $nodeAggregateIdentifier, string $contentStreamId, string $dimensionSpacePoint, string $url): void
+    public function theNodeShouldResolveToUrl(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint, string $url): void
     {
-        $resolvedUrl = $this->resolveUrl($nodeAggregateIdentifier, $contentStreamId, $dimensionSpacePoint);
+        $resolvedUrl = $this->resolveUrl($nodeAggregateId, $contentStreamId, $dimensionSpacePoint);
         Assert::assertSame($url, (string)$resolvedUrl);
     }
 
 
     /**
-     * @Then The node :nodeAggregateIdentifier in content stream :contentStreamId and dimension :dimensionSpacePoint should not resolve to an URL
+     * @Then The node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint should not resolve to an URL
      */
-    public function theNodeShouldNotResolve(string $nodeAggregateIdentifier, string $contentStreamId, string $dimensionSpacePoint): void
+    public function theNodeShouldNotResolve(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
     {
         $resolvedUrl = null;
         $exception = false;
         try {
-            $resolvedUrl = $this->resolveUrl($nodeAggregateIdentifier, $contentStreamId, $dimensionSpacePoint);
+            $resolvedUrl = $this->resolveUrl($nodeAggregateId, $contentStreamId, $dimensionSpacePoint);
         } catch (NoMatchingRouteException $exception) {
             $exception = true;
         }
@@ -285,7 +285,7 @@ trait RoutingTrait
         Assert::assertEquals($expectedResult, $actualResult);
     }
 
-    private function resolveUrl(string $nodeAggregateIdentifier, string $contentStreamId, string $dimensionSpacePoint): UriInterface
+    private function resolveUrl(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): UriInterface
     {
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
@@ -294,7 +294,7 @@ trait RoutingTrait
         $nodeAddress = new NodeAddress(
             ContentStreamId::fromString($contentStreamId),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            NodeAggregateId::fromString($nodeAggregateIdentifier),
+            NodeAggregateId::fromString($nodeAggregateId),
             WorkspaceName::forLive()
         );
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);

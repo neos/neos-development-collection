@@ -93,7 +93,7 @@ final class ContentHypergraph implements ContentGraphInterface
     ): ?Node {
         $query = HypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateId);
+        $query = $query->withNodeAggregateId($nodeAggregateId);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -156,7 +156,7 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
         $query = HypergraphQuery::create($contentStreamId, $this->tableNamePrefix, true);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateId);
+        $query = $query->withNodeAggregateId($nodeAggregateId);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
@@ -172,25 +172,25 @@ final class ContentHypergraph implements ContentGraphInterface
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
         $query = /** @lang PostgreSQL */ '
-            SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename,
+            SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename,
                    n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint
                 FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
                 JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
             WHERE ph.contentstreamid = :contentStreamId
-                AND n.nodeaggregateidentifier = (
-                    SELECT pn.nodeaggregateidentifier
+                AND n.nodeaggregateid = (
+                    SELECT pn.nodeaggregateid
                         FROM ' . $this->tableNamePrefix . '_node pn
                         JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation ch
                             ON pn.relationanchorpoint = ch.parentnodeanchor
                         JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
-                    WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                    WHERE cn.nodeaggregateid = :childNodeAggregateId
                         AND cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
                         AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
                         AND ch.contentstreamid = :contentStreamId
                 )';
         $parameters = [
             'contentStreamId' => (string)$contentStreamId,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateId,
+            'childNodeAggregateId' => (string)$childNodeAggregateId,
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash
         ];
 
@@ -213,7 +213,7 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): iterable {
         $query = HypergraphParentQuery::create($contentStreamId, $this->tableNamePrefix);
-        $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateId);
+        $query = $query->withChildNodeAggregateId($childNodeAggregateId);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 

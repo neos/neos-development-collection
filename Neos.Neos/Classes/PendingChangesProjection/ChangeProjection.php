@@ -98,7 +98,7 @@ class ChangeProjection implements ProjectionInterface
         $changeTable->addColumn('moved', Types::BOOLEAN)
             ->setNotnull(true);
 
-        $changeTable->addColumn('nodeAggregateIdentifier', Types::STRING)
+        $changeTable->addColumn('nodeAggregateId', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $changeTable->addColumn('originDimensionSpacePoint', Types::TEXT)
@@ -114,7 +114,7 @@ class ChangeProjection implements ProjectionInterface
 
         $changeTable->setPrimaryKey([
             'contentStreamId',
-            'nodeAggregateIdentifier',
+            'nodeAggregateId',
             'originDimensionSpacePointHash'
         ]);
 
@@ -272,12 +272,12 @@ class ChangeProjection implements ProjectionInterface
                 'DELETE FROM ' . $this->tableName . '
                     WHERE
                         contentStreamId = :contentStreamId
-                        AND nodeAggregateIdentifier = :nodeAggregateIdentifier
+                        AND nodeAggregateId = :nodeAggregateId
                         AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
                     ',
                 [
                     'contentStreamId' => (string)$event->contentStreamId,
-                    'nodeAggregateIdentifier' => (string)$event->nodeAggregateId,
+                    'nodeAggregateId' => (string)$event->nodeAggregateId,
                     'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints
                         ->getPointHashes()
                 ],
@@ -289,11 +289,11 @@ class ChangeProjection implements ProjectionInterface
             foreach ($event->affectedOccupiedDimensionSpacePoints as $occupiedDimensionSpacePoint) {
                 $this->getDatabaseConnection()->executeUpdate(
                     'INSERT INTO ' . $this->tableName . '
-                            (contentStreamId, nodeAggregateIdentifier, originDimensionSpacePoint,
+                            (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
                              originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
                             :contentStreamId,
-                            :nodeAggregateIdentifier,
+                            :nodeAggregateId,
                             :originDimensionSpacePoint,
                             :originDimensionSpacePointHash,
                             1,
@@ -304,7 +304,7 @@ class ChangeProjection implements ProjectionInterface
                     ',
                     [
                         'contentStreamId' => (string)$event->contentStreamId,
-                        'nodeAggregateIdentifier' => (string)$event->nodeAggregateId,
+                        'nodeAggregateId' => (string)$event->nodeAggregateId,
                         'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
                         'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
                         'removalAttachmentPoint' => $event->removalAttachmentPoint?->__toString()
@@ -367,12 +367,12 @@ class ChangeProjection implements ProjectionInterface
 
     private function markAsChanged(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): void {
         $this->transactional(function () use (
             $contentStreamId,
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             $originDimensionSpacePoint
         ) {
             // HACK: basically we are not allowed to read other Projection's finder methods here;
@@ -385,13 +385,13 @@ class ChangeProjection implements ProjectionInterface
             }
             $change = $this->getChange(
                 $contentStreamId,
-                $nodeAggregateIdentifier,
+                $nodeAggregateId,
                 $originDimensionSpacePoint
             );
             if ($change === null) {
                 $change = new Change(
                     $contentStreamId,
-                    $nodeAggregateIdentifier,
+                    $nodeAggregateId,
                     $originDimensionSpacePoint,
                     true,
                     false,
@@ -444,17 +444,17 @@ class ChangeProjection implements ProjectionInterface
 
     private function getChange(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint
     ): ?Change {
         $changeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM ' . $this->tableName . ' n
 WHERE n.contentStreamId = :contentStreamId
-AND n.nodeAggregateIdentifier = :nodeAggregateIdentifier
+AND n.nodeAggregateId = :nodeAggregateId
 AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             [
                 'contentStreamId' => $contentStreamId,
-                'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
+                'nodeAggregateId' => $nodeAggregateId,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetch();
