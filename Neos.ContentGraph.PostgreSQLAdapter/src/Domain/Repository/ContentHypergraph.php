@@ -113,10 +113,6 @@ final class ContentHypergraph implements ContentGraphInterface
             FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
         );
 
-        if ($rootNodeAggregates->count() === 0) {
-            throw new \RuntimeException('Root Node Aggregate not found');
-        }
-
         if ($rootNodeAggregates->count() > 1) {
             $ids = [];
             foreach ($rootNodeAggregates as $rootNodeAggregate) {
@@ -129,7 +125,13 @@ final class ContentHypergraph implements ContentGraphInterface
             ));
         }
 
-        return $rootNodeAggregates->first();
+        $rootNodeAggregate = $rootNodeAggregates->first();
+
+        if ($rootNodeAggregate === null) {
+            throw new \RuntimeException('Root Node Aggregate not found');
+        }
+
+        return $rootNodeAggregate;
     }
 
     public function findRootNodeAggregates(
