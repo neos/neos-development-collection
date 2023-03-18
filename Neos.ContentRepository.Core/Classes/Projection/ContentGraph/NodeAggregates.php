@@ -74,17 +74,14 @@ final class NodeAggregates implements \IteratorAggregate, \Countable
     }
 
     /**
-     * Throws exception if no root aggregate found, because a Content Repository needs at least
-     * one root node to function.
-     *
-     * @return NodeAggregate
+     * @return NodeAggregate|null
      */
-    public function first(): NodeAggregate
+    public function first(): ?NodeAggregate
     {
         if (count($this->nodeAggregates) > 0) {
             $array = $this->nodeAggregates;
             return reset($array);
         }
-        throw new \RuntimeException('Root Node Aggregate not found');
+        return null;
     }
 }

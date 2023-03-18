@@ -121,10 +121,30 @@ final class ContentGraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
-        return $this->findRootNodeAggregates(
+        $rootNodeAggregates = $this->findRootNodeAggregates(
             $contentStreamId,
             FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
-        )->first();
+        );
+
+        if ($rootNodeAggregates->count() > 1) {
+            $ids = [];
+            foreach ($rootNodeAggregates as $rootNodeAggregate) {
+                $ids[] = $rootNodeAggregate->nodeAggregateId->value;
+            }
+            throw new \RuntimeException(sprintf(
+                'More than one root node aggregate of type "%s" found (IDs: %s).',
+                $nodeTypeName->value,
+                implode(', ', $ids)
+            ));
+        }
+
+        $rootNodeAggregate = $rootNodeAggregates->first();
+
+        if ($rootNodeAggregate === null) {
+            throw new \RuntimeException('Root Node Aggregate not found');
+        }
+
+        return $rootNodeAggregate;
     }
 
     public function findRootNodeAggregates(
