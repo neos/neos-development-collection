@@ -41,7 +41,6 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 
