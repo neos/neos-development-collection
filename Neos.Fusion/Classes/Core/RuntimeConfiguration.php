@@ -11,7 +11,6 @@ use Neos\Utility\Arrays;
  */
 final class RuntimeConfiguration
 {
-
     /**
      * The parsed Fusion configuration
      *

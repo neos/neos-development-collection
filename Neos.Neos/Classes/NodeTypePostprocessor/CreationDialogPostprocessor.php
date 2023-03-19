@@ -51,7 +51,6 @@ use Neos\Utility\PositionalArraySorter;
  */
 class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")

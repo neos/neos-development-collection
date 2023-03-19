@@ -18,7 +18,6 @@ namespace Neos\Fusion\Core\Cache;
  */
 trait ParserCacheIdentifierTrait
 {
-
     /**
      * creates a comparable hash of the dsl type and content to be used as cache identifier
      */
