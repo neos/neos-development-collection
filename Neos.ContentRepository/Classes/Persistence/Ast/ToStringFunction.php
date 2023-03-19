@@ -21,7 +21,6 @@ use Doctrine\ORM\Query\SqlWalker;
  */
 class ToStringFunction extends FunctionNode
 {
-
     /**
      * @var mixed
      */

@@ -104,7 +104,6 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 2])
             && $fusionPathSegments[$numberOfFusionPathSegments - 2] === 'process') {
-
             // cut off the SHORT processing syntax "__meta/process/contentElementWrapping<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -3));
         }
@@ -113,7 +112,6 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
             && $fusionPathSegments[$numberOfFusionPathSegments - 4] === '__meta'
             && isset($fusionPathSegments[$numberOfFusionPathSegments - 3])
             && $fusionPathSegments[$numberOfFusionPathSegments - 3] === 'process') {
-
             // cut off the LONG processing syntax "__meta/process/contentElementWrapping/expression<Neos.Neos:ContentElementWrapping>"
             return implode('/', array_slice($fusionPathSegments, 0, -4));
         }
