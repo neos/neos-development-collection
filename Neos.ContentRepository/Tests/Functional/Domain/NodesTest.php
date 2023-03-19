@@ -1063,6 +1063,23 @@ class NodesTest extends FunctionalTestCase
     /**
      * @test
      */
+    public function getLabelReturnsParsedEelExpressionOrFallback()
+    {
+        $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
+        $nodeTypeWithPlainLabel = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithPlainLabel');
+        $nodeTypeWithEelExpressionLabel = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeTypeWithEelExpressionLabel');
+
+        $rootNode = $this->context->getNode('/');
+        $nodeWithPlainLabel = $rootNode->createNode('node-plain', $nodeTypeWithPlainLabel, '30e893c1-caef-0ca5-b53d-e5699bb8e506');
+        $nodeWithEelExpressionLabel = $rootNode->createNode('node-eel', $nodeTypeWithEelExpressionLabel, '81c848ed-abb5-7608-a5db-7eea0331ccfa');
+
+        self::assertEquals('Test nodetype', $nodeWithPlainLabel->getLabel());
+        self::assertEquals('Test nodetype', $nodeWithEelExpressionLabel->getLabel());
+    }
+
+    /**
+     * @test
+     */
     public function nodesCanBeCopiedAfterAndBeforeAndKeepProperties()
     {
         $rootNode = $this->context->getNode('/');
