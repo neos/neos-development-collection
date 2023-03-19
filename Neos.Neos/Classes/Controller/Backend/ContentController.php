@@ -158,9 +158,9 @@ class ContentController extends ActionController
     public function uploadAssetAction(Asset $asset, string $metadata, string $node, string $propertyName)
     {
         $nodeAddressString = $node;
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
 
         $node = $contentRepository->getContentGraph()
@@ -394,9 +394,9 @@ class ContentController extends ActionController
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $this->response->setContentType('application/json');
 
@@ -466,7 +466,7 @@ class ContentController extends ActionController
      */
     public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
 
         $this->response->setContentType('application/json');
@@ -474,7 +474,7 @@ class ContentController extends ActionController
         $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions(
             WorkspaceName::fromString($workspaceName),
             DimensionSpacePoint::fromArray($dimensions),
-            $contentRepositoryIdentifier
+            $contentRepositoryId
         );
 
         $masterPlugins = [];

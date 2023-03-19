@@ -317,7 +317,7 @@ class NodeController extends ActionController
     }
 
     private function fillCacheWithContentNodes(
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $subgraph,
     ): void {
         if (!$subgraph instanceof ContentSubgraphWithRuntimeCaches) {
@@ -327,7 +327,7 @@ class NodeController extends ActionController
         $inMemoryCache = $subgraph->inMemoryCache;
 
         $subtree = $subgraph->findSubtree(
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             FindSubtreeFilter::nodeTypeConstraints('!Neos.Neos:Document')
                 ->withMaximumLevels(20)
         );

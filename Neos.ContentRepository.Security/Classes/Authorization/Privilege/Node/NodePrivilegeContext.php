@@ -178,11 +178,11 @@ class NodePrivilegeContext
     protected function resolveNodePathOrResult(string $nodePathOrIdentifier): bool|string
     {
         try {
-            $nodeAggregateIdentifier = NodeAggregateId::fromString($nodePathOrIdentifier);
-            if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateId)) {
+            $nodeAggregateId = NodeAggregateId::fromString($nodePathOrIdentifier);
+            if ($nodeAggregateId->equals($this->node->nodeAggregateId)) {
                 return true;
             }
-            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateIdentifier);
+            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateId);
             if (is_null($otherNode)) {
                 return false;
             }

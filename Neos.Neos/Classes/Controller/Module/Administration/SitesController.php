@@ -247,9 +247,9 @@ class SitesController extends AbstractModuleController
     public function newSiteAction(Site $site = null)
     {
         // This is not 100% correct, but it is as good as we can get it to work right now
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');

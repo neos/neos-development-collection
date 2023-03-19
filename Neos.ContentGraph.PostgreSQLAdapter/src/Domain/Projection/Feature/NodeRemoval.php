@@ -90,7 +90,7 @@ trait NodeRemoval
                             LEFT JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation h
                                 ON n.relationanchorpoint = ANY(h.childnodeanchors)
                         WHERE n.relationanchorpoint IN (:affectedRelationAnchorPoints)
-                            AND h.contentstreamidentifier IS NULL
+                            AND h.contentstreamid IS NULL
                     )
                     RETURNING relationanchorpoint
                 )
@@ -113,13 +113,13 @@ trait NodeRemoval
      * @param array<int,NodeRelationAnchorPoint> &$affectedRelationAnchorPoints
      */
     private function cascadeHierarchy(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeRelationAnchorPoint $nodeRelationAnchorPoint,
         array &$affectedRelationAnchorPoints
     ): void {
         $childHierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
-            $contentStreamIdentifier,
+            $contentStreamId,
             $dimensionSpacePoint,
             $nodeRelationAnchorPoint
         );
@@ -141,12 +141,12 @@ trait NodeRemoval
                     $affectedRelationAnchorPoints[] = $nodeRecord->relationAnchorPoint;
                 }
                 $this->removeFromRestrictions(
-                    $contentStreamIdentifier,
+                    $contentStreamId,
                     $dimensionSpacePoint,
-                    $nodeRecord->nodeAggregateIdentifier
+                    $nodeRecord->nodeAggregateId
                 );
                 $this->cascadeHierarchy(
-                    $contentStreamIdentifier,
+                    $contentStreamId,
                     $dimensionSpacePoint,
                     $nodeRecord->relationAnchorPoint,
                     $affectedRelationAnchorPoints
@@ -156,26 +156,26 @@ trait NodeRemoval
     }
 
     /**
-     * @param ContentStreamId $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
     private function removeFromRestrictions(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier
+        NodeAggregateId $nodeAggregateId
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             ) as $restrictionRelation
         ) {
-            $restrictionRelation->removeAffectedNodeAggregateIdentifier(
-                $nodeAggregateIdentifier,
+            $restrictionRelation->removeAffectedNodeAggregateId(
+                $nodeAggregateId,
                 $this->getDatabaseConnection(),
                 $this->tableNamePrefix
             );

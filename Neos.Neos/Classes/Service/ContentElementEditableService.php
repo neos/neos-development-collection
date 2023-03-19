@@ -88,11 +88,11 @@ class ContentElementEditableService
     }
 
     private function isContentStreamOfLiveWorkspace(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         ContentRepository $contentRepository
     ): bool {
         return $contentRepository->getWorkspaceFinder()
-            ->findOneByCurrentContentStreamId($contentStreamIdentifier)
+            ->findOneByCurrentContentStreamId($contentStreamId)
             ?->workspaceName->isLive() ?: false;
     }
 }

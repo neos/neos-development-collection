@@ -67,9 +67,9 @@ class PluginService
     public function getPluginNodesWithViewDefinitions(
         WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepositoryId $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryId
     ): Nodes {
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
@@ -77,7 +77,7 @@ class PluginService
         }
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             $workspace->currentContentStreamId,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
@@ -180,11 +180,11 @@ class PluginService
      * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
      */
     public function getPluginViewDefinitionByAction(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         $controllerObjectName,
         $actionName
     ): ?PluginViewDefinition {
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(
             'Neos.Neos:Plugin',
             false

@@ -32,7 +32,7 @@ final class NodeRecord
 {
     public NodeRelationAnchorPoint $relationAnchorPoint;
 
-    public NodeAggregateId $nodeAggregateIdentifier;
+    public NodeAggregateId $nodeAggregateId;
 
     public OriginDimensionSpacePoint $originDimensionSpacePoint;
 
@@ -48,7 +48,7 @@ final class NodeRecord
 
     public function __construct(
         NodeRelationAnchorPoint $relationAnchorPoint,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         string $originDimensionSpacePointHash,
         SerializedPropertyValues $properties,
@@ -57,7 +57,7 @@ final class NodeRecord
         ?NodeName $nodeName = null
     ) {
         $this->relationAnchorPoint = $relationAnchorPoint;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->nodeAggregateId = $nodeAggregateId;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
         $this->properties = $properties;
@@ -74,7 +74,7 @@ final class NodeRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeAggregateId::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['origindimensionspacepoint']),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),
@@ -93,7 +93,7 @@ final class NodeRecord
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+            'nodeaggregateid' => (string) $this->nodeAggregateId,
             'nodetypename' => (string) $this->nodeTypeName,
             'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
@@ -111,7 +111,7 @@ final class NodeRecord
             [
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-                'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
+                'nodeaggregateid' => (string) $this->nodeAggregateId,
                 'nodetypename' => (string) $this->nodeTypeName,
                 'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),

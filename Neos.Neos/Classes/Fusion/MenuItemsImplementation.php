@@ -225,8 +225,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         $fusionContext = $this->runtime->getCurrentContext();
         $traversalStartingPoint = $this->getStartingPoint() ?: $fusionContext['node'] ?? null;
 
-        $contentRepositoryIdentifier = $this->currentNode->subgraphIdentity->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = $this->currentNode->subgraphIdentity->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if (!$traversalStartingPoint instanceof Node) {
             throw new FusionException(

@@ -7,5 +7,5 @@ use Neos\EventStore\EventStoreInterface;
 
 interface EventStoreFactoryInterface
 {
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $eventStorePreset): EventStoreInterface;
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $eventStorePreset): EventStoreInterface;
 }

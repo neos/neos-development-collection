@@ -21,7 +21,7 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
     protected $flowSettings;
 
     public function __construct(
-        private readonly ContentRepositoryId $contentRepositoryIdentifier
+        private readonly ContentRepositoryId $contentRepositoryId
     )
     {
     }
@@ -35,7 +35,7 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
                 'neos.contentrepositoryregistry:subprocessprojectioncatchup:catchup',
                 $this->flowSettings,
                 [
-                    'contentRepositoryIdentifier' => $this->contentRepositoryIdentifier->value,
+                    'contentRepositoryIdentifier' => $this->contentRepositoryId->value,
                     'projectionClassName' => get_class($projection)
                 ]
             );

@@ -38,19 +38,19 @@ final class ChangeFinder implements ProjectionStateInterface
     }
 
     /**
-     * @param ContentStreamId $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @return array|Change[]
      */
-    public function findByContentStreamIdentifier(ContentStreamId $contentStreamIdentifier): array
+    public function findByContentStreamId(ContentStreamId $contentStreamId): array
     {
         $connection = $this->client->getConnection();
         $changeRows = $connection->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
-                WHERE contentStreamIdentifier = :contentStreamIdentifier
+                WHERE contentStreamId = :contentStreamId
             ',
             [
-                ':contentStreamIdentifier' => (string)$contentStreamIdentifier
+                ':contentStreamId' => (string)$contentStreamId
             ]
         )->fetchAll();
         $changes = [];
@@ -60,16 +60,16 @@ final class ChangeFinder implements ProjectionStateInterface
         return $changes;
     }
 
-    public function countByContentStreamIdentifier(ContentStreamId $contentStreamIdentifier): int
+    public function countByContentStreamId(ContentStreamId $contentStreamId): int
     {
         $connection = $this->client->getConnection();
         return (int)$connection->executeQuery(
             '
                 SELECT * FROM ' . $this->tableName . '
-                WHERE contentStreamIdentifier = :contentStreamIdentifier
+                WHERE contentStreamId = :contentStreamId
             ',
             [
-                ':contentStreamIdentifier' => (string)$contentStreamIdentifier
+                ':contentStreamId' => (string)$contentStreamId
             ]
         )->rowCount();
     }

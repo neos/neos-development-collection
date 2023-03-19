@@ -27,28 +27,28 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         HypergraphSiblingQueryMode $queryMode,
         string $tableNamePrefix
     ): self {
         $query = /** @lang PostgreSQL */
-            'SELECT sn.*, sh.contentstreamidentifier, sh.dimensionspacepoint, ordinality, childnodeanchor
+            'SELECT sn.*, sh.contentstreamid, sh.dimensionspacepoint, ordinality, childnodeanchor
     FROM ' . $tableNamePrefix . '_node n
         JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation sh ON n.relationanchorpoint = ANY(sh.childnodeanchors),
             unnest(sh.childnodeanchors) WITH ORDINALITY childnodeanchor
         JOIN ' . $tableNamePrefix . '_node sn ON childnodeanchor = sn.relationanchorpoint
-    WHERE sh.contentstreamidentifier = :contentStreamIdentifier
+    WHERE sh.contentstreamid = :contentStreamId
         AND sh.dimensionspacepointhash = :dimensionSpacePointHash
-        AND n.nodeaggregateidentifier = :nodeAggregateIdentifier
+        AND n.nodeaggregateid = :nodeAggregateId
         AND childnodeanchor != n.relationanchorpoint'
                 . $queryMode->renderCondition();
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'nodeAggregateIdentifier' => (string)$nodeAggregateIdentifier
+            'nodeAggregateId' => (string)$nodeAggregateId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);
