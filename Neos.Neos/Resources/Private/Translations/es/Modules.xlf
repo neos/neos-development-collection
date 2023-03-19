@@ -230,12 +230,10 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="translated">No se eliminó el espacio de trabajo "{0}" porque actualmente contiene {1} nodo.</target>
-        </trans-unit>
+          <target state="translated">No se eliminó el espacio de trabajo "{0}" porque actualmente contiene {1} nodo.</target> </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">No se eliminó el espacio de trabajo "{0}" porque actualmente contiene {1} nodos.</target>
-        </trans-unit>
+          <target state="translated">No se eliminó el espacio de trabajo "{0}" porque actualmente contiene {1} nodos.</target> </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
         <source>The workspace "{0}" has been removed.</source>
@@ -273,9 +271,9 @@
 				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
         <target state="translated">Este módulo proporciona una visión general de todos los eventos relevantes que afectan a esta instalación de Neos.</target>
       </trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="yes">
+      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="no">
 				<source>Here's what happened recently in Neos</source>
-        <target state="final">Esto es lo que sucedió recientemente en Neos:</target>
+        <target state="translated">Esto es lo que ocurrió recientemente en Neos</target>
       </trans-unit>
       <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
 				<source>There have not been recorded any events yet which could be displayed in this history.</source>
@@ -327,7 +325,7 @@
       </trans-unit>
       <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
 				<source>This node has been removed in the meantime</source>
-        <target state="translated">Por los momentos, este nodo ha sido removido.</target>
+        <target state="translated">Mientras tanto, este nodo ha sido eliminado</target>
       </trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
@@ -870,20 +868,21 @@
 				<source>Inter dimensional</source>
         <target state="final">Interdimensional</target>
       </trans-unit>
-      <trans-unit id="dimensions.interDimension.description" xml:space="preserve" approved="yes">
+      <trans-unit id="dimensions.interDimension.description" xml:space="preserve" approved="no">
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-        <target state="final">El gráfico intra dimensional de respaldo muestra todas las posibles suplencias (mostradas como bordes) entre los subgráficos (la dimensión de contenido valora combinaciones, mostradas como nodos).
-Las suplencias primarias son están marcadas en azul y son siempre visibles, mientras que las suplencias de menor prioridad son mostradas si el ratón les pasa por encima. Mientras más alta la prioridad más alta la opacidad. Haga clic en uno de los nodos para solamente ver sus suplencias y variantes. Haga clic de nuevo para remover el filtro.</target>
+        <target state="translated">El gráfico de respaldo interdimensional muestra todos los posibles respaldos (mostrados como bordes) entre subgráficos (combinaciones de valores de dimensión de contenido, mostrados como nodos). 
+Los recursos alternativos primarios están marcados en azul y siempre visibles, mientras que los recursos alternativos de menor prioridad se muestran al pasar el mouse. Cuanto mayor sea la prioridad, mayor será la opacidad. 
+Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga clic de nuevo para eliminar el filtro.</target>
       </trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve" approved="yes">
 				<source>Intra dimensional fallback graph</source>
         <target state="final">Gráfico Intradimensional de respaldo</target>
       </trans-unit>
-      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve" approved="yes">
+      <trans-unit id="dimensions.intraDimension.short" xml:space="preserve" approved="no">
 				<source>Intra dimensional</source>
-        <target state="final">Intra dimensional</target>
+        <target state="translated">Interdimensional</target>
       </trans-unit>
       <trans-unit id="dimensions.intraDimension.description" xml:space="preserve" approved="yes">
 				<source>The intra dimensional fallback graph displays fallbacks within each content dimension.</source>
@@ -988,7 +987,7 @@ Las suplencias primarias son están marcadas en azul y son siempre visibles, mie
       </trans-unit>
       <trans-unit id="configuration.anErrorOccurredDuringValidationOfTheConfiguration.title" xml:space="preserve">
 				<source>An error occurred during validation of the configuration.</source>
-        <target state="needs-translation">An error occurred during validation of the configuration.</target>
+        <target state="translated">Se ha producido un error durante la validación de la configuración.</target>
       </trans-unit>
       <trans-unit id="configuration.configurationTypeNotFound.body" xml:space="preserve">
 				<source>Configuration type not found.</source>
@@ -1000,7 +999,7 @@ Las suplencias primarias son están marcadas en azul y son siempre visibles, mie
       </trans-unit>
       <trans-unit id="sites.sitePackageNotFound.body" xml:space="preserve">
 				<source>The site package with key "{0}" was not found.</source>
-        <target state="needs-translation">The site package with key "{0}" was not found.</target>
+        <target state="translated">No se ha encontrado el paquete de sitio con la clave "{0}".</target>
       </trans-unit>
       <trans-unit id="sites.update.title" xml:space="preserve">
 				<source>Update</source>
