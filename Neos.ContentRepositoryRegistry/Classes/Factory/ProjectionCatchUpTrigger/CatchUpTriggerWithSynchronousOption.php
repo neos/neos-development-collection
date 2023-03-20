@@ -54,7 +54,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
     }
 
     public function __construct(
-        private readonly ContentRepositoryId $contentRepositoryIdentifier,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly SubprocessProjectionCatchUpTrigger $inner
     )
     {
@@ -63,7 +63,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
     public function triggerCatchUp(Projections $projections): void
     {
         if (self::$synchronousEnabled) {
-            $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
             foreach ($projections as $projection) {
                 $projectionClassName = get_class($projection);
                 $contentRepository->catchUpProjection($projectionClassName);

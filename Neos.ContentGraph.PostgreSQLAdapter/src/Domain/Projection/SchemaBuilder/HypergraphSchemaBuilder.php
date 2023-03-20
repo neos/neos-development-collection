@@ -48,7 +48,7 @@ class HypergraphSchemaBuilder
         $table = $schema->createTable($this->tableNamePrefix . '_node');
         $table->addColumn('relationanchorpoint', 'hypergraphuuid')
             ->setNotnull(true);
-        $table->addColumn('nodeaggregateidentifier', Types::STRING)
+        $table->addColumn('nodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('origindimensionspacepoint', Types::JSON)
@@ -70,7 +70,7 @@ class HypergraphSchemaBuilder
         $table
             ->setPrimaryKey(['relationanchorpoint'])
             ->addIndex(['origindimensionspacepointhash'], 'node_origin')
-            ->addIndex(['nodeaggregateidentifier'], 'node_aggregate_identifier')
+            ->addIndex(['nodeaggregateid'], 'node_aggregate_identifier')
             /** NOTE: the GIN index on properties is added in {@see HypergraphProjection::setupTables()} */
             ->addIndex(['nodename'], 'node_name');
     }
@@ -78,7 +78,7 @@ class HypergraphSchemaBuilder
     private function createHierarchyHyperrelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_hierarchyhyperrelation');
-        $table->addColumn('contentstreamidentifier', Types::STRING)
+        $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('parentnodeanchor', 'hypergraphuuid')
@@ -91,8 +91,8 @@ class HypergraphSchemaBuilder
         $table->addColumn('childnodeanchors', 'hypergraphuuids')
             ->setNotnull(true);
         $table
-            ->setPrimaryKey(['contentstreamidentifier', 'parentnodeanchor', 'dimensionspacepointhash'])
-            ->addIndex(['contentstreamidentifier'], 'hierarchy_content_stream_identifier')
+            ->setPrimaryKey(['contentstreamid', 'parentnodeanchor', 'dimensionspacepointhash'])
+            ->addIndex(['contentstreamid'], 'hierarchy_content_stream_identifier')
             ->addIndex(['parentnodeanchor'], 'hierarchy_parent')
             /** NOTE: the GIN index on childnodeanchors is added in {@see HypergraphProjection::setupTables()} */
             ->addIndex(['dimensionspacepointhash'], 'hierarchy_dimension_space_point');
@@ -111,40 +111,40 @@ class HypergraphSchemaBuilder
             ->setNotnull(true);
         $table->addColumn('properties', 'hypergraphjsonb')
             ->setNotnull(false);
-        $table->addColumn('targetnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('targetnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
 
         $table
             ->setPrimaryKey(['sourcenodeanchor', 'name', 'position'])
             ->addIndex(['sourcenodeanchor'], 'reference_source')
-            ->addIndex(['targetnodeaggregateidentifier'], 'reference_target');
+            ->addIndex(['targetnodeaggregateid'], 'reference_target');
     }
 
     private function createRestrictionHyperrelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_restrictionhyperrelation');
-        $table->addColumn('contentstreamidentifier', Types::STRING)
+        $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('originnodeaggregateidentifier', Types::STRING)
+        $table->addColumn('originnodeaggregateid', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateidentifiers', 'hypergraphvarchars')
+        $table->addColumn('affectednodeaggregateids', 'hypergraphvarchars')
             ->setNotnull(true);
 
         $table
             ->setPrimaryKey([
-                'contentstreamidentifier',
+                'contentstreamid',
                 'dimensionspacepointhash',
-                'originnodeaggregateidentifier'
+                'originnodeaggregateid'
             ])
-            ->addIndex(['contentstreamidentifier'], 'restriction_content_stream_identifier')
+            ->addIndex(['contentstreamid'], 'restriction_content_stream_identifier')
             ->addIndex(['dimensionspacepointhash'], 'restriction_dimension_space_point')
-            ->addIndex(['originnodeaggregateidentifier'], 'restriction_origin');
-            /** NOTE: the GIN index on affectednodeaggregateidentifiers is added in {@see HypergraphProjection::setupTables()} */
+            ->addIndex(['originnodeaggregateid'], 'restriction_origin');
+            /** NOTE: the GIN index on affectednodeaggregateids is added in {@see HypergraphProjection::setupTables()} */
     }
 }

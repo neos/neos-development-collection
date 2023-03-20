@@ -60,7 +60,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                     $properties = $node->properties;
                     /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $serializedPropertyValue safe since Node::hasProperty */
                     $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
-                    $propertyValue = $serializedPropertyValue->getValue();
+                    $propertyValue = $serializedPropertyValue->value;
                     if (!is_string($propertyValue)) {
                         throw new \Exception(
                             'StripTagsOnProperty can only be applied to properties of type string.',
@@ -76,7 +76,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => new SerializedPropertyValue(
                                     $newValue,
-                                    $serializedPropertyValue->getType()
+                                    $serializedPropertyValue->type
                                 )
                             ]),
                         )

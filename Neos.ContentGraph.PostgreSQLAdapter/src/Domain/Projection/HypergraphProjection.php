@@ -127,7 +127,7 @@ final class HypergraphProjection implements ProjectionInterface
                 on ' . $this->tableNamePrefix . '_hierarchyhyperrelation using gin (childnodeanchors);
 
             create index if not exists restriction_affected
-                on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateidentifiers);
+                on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
         ');
 
         return SetupResult::success('');

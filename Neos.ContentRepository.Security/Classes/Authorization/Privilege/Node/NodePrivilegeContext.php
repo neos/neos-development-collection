@@ -61,7 +61,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with($nodePathOrResult, (string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateId));
+        return str_starts_with($nodePathOrResult, (string)$this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId));
     }
 
     /**
@@ -80,7 +80,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with((string)$this->getSubgraph()->findNodePath($this->node->nodeAggregateId), $nodePathOrResult);
+        return str_starts_with((string)$this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId), $nodePathOrResult);
     }
 
     /**
@@ -178,15 +178,15 @@ class NodePrivilegeContext
     protected function resolveNodePathOrResult(string $nodePathOrIdentifier): bool|string
     {
         try {
-            $nodeAggregateIdentifier = NodeAggregateId::fromString($nodePathOrIdentifier);
-            if ($nodeAggregateIdentifier->equals($this->node->nodeAggregateId)) {
+            $nodeAggregateId = NodeAggregateId::fromString($nodePathOrIdentifier);
+            if ($nodeAggregateId->equals($this->node->nodeAggregateId)) {
                 return true;
             }
-            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateIdentifier);
+            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateId);
             if (is_null($otherNode)) {
                 return false;
             }
-            return $this->getSubgraph()->findNodePath($otherNode->nodeAggregateId) . '/';
+            return $this->getSubgraph()->retrieveNodePath($otherNode->nodeAggregateId) . '/';
         } catch (\InvalidArgumentException $e) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }

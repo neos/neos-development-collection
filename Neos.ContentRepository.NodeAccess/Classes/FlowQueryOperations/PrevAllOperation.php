@@ -67,13 +67,13 @@ class PrevAllOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIds = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             foreach ($this->getPrevForNode($contextNode) as $prevNode) {
                 if ($prevNode !== null
-                    && !isset($outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateId])
+                    && !isset($outputNodeAggregateIds[(string)$prevNode->nodeAggregateId])
                 ) {
-                    $outputNodeAggregateIdentifiers[(string)$prevNode->nodeAggregateId] = true;
+                    $outputNodeAggregateIds[(string)$prevNode->nodeAggregateId] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -97,7 +97,7 @@ class PrevAllOperation extends AbstractOperation
             return Nodes::createEmpty();
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all())
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
             ->previousAll($contextNode);
     }
 }

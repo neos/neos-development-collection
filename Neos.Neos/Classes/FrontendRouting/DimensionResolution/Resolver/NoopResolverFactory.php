@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 
@@ -27,12 +28,9 @@ use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
  */
 final class NoopResolverFactory implements DimensionResolverFactoryInterface
 {
-    /**
-     * @param array<string,mixed> $dimensionResolverOptions
-     */
     public function create(
-        ContentRepositoryId $contentRepositoryIdentifier,
-        array $dimensionResolverOptions
+        ContentRepositoryId $contentRepositoryId,
+        SiteConfiguration $siteConfiguration,
     ): DimensionResolverInterface {
         return new NoopResolver();
     }

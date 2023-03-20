@@ -13,7 +13,7 @@
                     <caption>{neos:backend.translate(id: 'service.nodes.nodeProperties', value: 'Node Properties')}</caption>
                     <tr>
                         <th>_identifier</th>
-                        <td class="node-identifier">{node.identifier}</td>
+                        <td class="node-identifier">{node.nodeAggregateId}</td>
                     </tr>
                     <tr>
                         <th>_path</th>
@@ -48,7 +48,7 @@
                         </f:else>
                     </f:if>
                 </f:alias>
-                <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.nodeAggregateIdentifier}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
+                <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.nodeAggregateId}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
             </div>
         </div>
     </body>

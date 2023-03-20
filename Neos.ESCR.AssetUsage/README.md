@@ -31,11 +31,11 @@ For now the visualization within Neos is rather limited though:
 
 The `AssetUsageFinder` is the central authority to find used assets.
 
-E.g. to find asset usages by a `contentStreamIdentifier` and group them by asset instance:
+E.g. to find asset usages by a `contentStreamId` and group them by asset instance:
 
 ```php
 $assetFilter = AssetUsageFilter::create()
-   ->withContentStream($liveWorkspace->getCurrentContentStreamIdentifier())
+   ->withContentStream($liveWorkspace->getCurrentContentStreamId())
    ->groupByAsset();
 $usages = $assetUsageFinder->findByFilter($assetFilter);
 

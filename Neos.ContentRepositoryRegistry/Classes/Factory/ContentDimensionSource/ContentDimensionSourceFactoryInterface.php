@@ -7,5 +7,5 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 interface ContentDimensionSourceFactoryInterface
 {
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentDimensionSourcePreset): ContentDimensionSourceInterface;
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $contentDimensionSourcePreset): ContentDimensionSourceInterface;
 }

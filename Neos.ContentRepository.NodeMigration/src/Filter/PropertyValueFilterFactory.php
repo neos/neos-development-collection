@@ -52,7 +52,7 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
                     return false;
                 }
 
-                return $this->serializedValue === $serializedPropertyValue->getValue();
+                return $this->serializedValue === $serializedPropertyValue->value;
             }
         };
     }

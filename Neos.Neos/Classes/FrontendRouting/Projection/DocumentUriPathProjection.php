@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -120,6 +121,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         return in_array($eventClassName, [
             RootWorkspaceWasCreated::class,
             RootNodeAggregateWithNodeWasCreated::class,
+            RootNodeAggregateDimensionsWereUpdated::class,
             NodeAggregateWithNodeWasCreated::class,
             NodeAggregateTypeWasChanged::class,
             NodePeerVariantWasCreated::class,
@@ -155,6 +157,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         match ($eventInstance::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($eventInstance),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($eventInstance),
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($eventInstance),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($eventInstance),
@@ -215,6 +218,29 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if (!$this->isLiveContentStream($event->contentStreamId)) {
             return;
         }
+        foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
+            $this->insertNode([
+                'uriPath' => '',
+                'nodeAggregateIdPath' => $event->nodeAggregateId,
+                'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+                'nodeAggregateId' => $event->nodeAggregateId,
+            ]);
+        }
+    }
+
+    private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
+    {
+        if (!$this->isLiveContentStream($event->contentStreamId)) {
+            return;
+        }
+
+        $this->dbal->delete(
+            $this->tableNamePrefix . '_uri',
+            [
+                'nodeAggregateId' => $event->nodeAggregateId
+            ]
+        );
+
         foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
             $this->insertNode([
                 'uriPath' => '',
@@ -617,7 +643,8 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $node->getDimensionSpacePointHash()
         ));
         if ($newParentNode === null) {
-            // This should never happen really..
+            // This happens if the parent node does not exist in the moved variant.
+            // Can happen if the content dimension configuration was updated, and dimension migrations were not run.
             return;
         }
 
@@ -625,6 +652,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if ($this->isNodeExplicitlyDisabled($node)) {
             $disabledDelta++;
         }
+
         $this->updateNodeQuery(
             /** @codingStandardsIgnoreStart */
             'SET
@@ -643,7 +671,26 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'sourceNodeAggregateIdPathOffset'
                     => (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1,
                 'newParentUriPath' => $newParentNode->getUriPath(),
-                'sourceUriPathOffset' => (int)strrpos($node->getUriPath(), '/') + 1,
+                // we have to distinguish two cases here:
+                // - standard case: we want to move the nodes with URI /foo/bar into /target
+                //   -> we want to strip the common prefix of the node (and all descendants)
+                //      and then prepend the suffix with the new parent. Example:
+                //
+                //   /foo/bar     -> /target (+ /bar) => /target/bar
+                //   /foo/bar/baz => /target (+ /bar/baz) => /target/bar/baz
+                //
+                //
+                // - move directly underneath ROOT node of CR.
+                //   the 1st level underneath the root node (in Neos) is the Site node, which needs to have
+                //   an empty uriPath.
+                //
+                //   This is why we set the offset to the complete length, to create an empty string for the moved node
+                //   in the SQL query above. Example:
+                //
+                //   /foo/bar     -> / (+ /) => /
+                //   /foo/bar/baz => / (+ /baz) => /baz
+                //
+                'sourceUriPathOffset' => $newParentNode->isRoot() ? strlen($node->getUriPath()) + 1 : ((int)strrpos($node->getUriPath(), '/') + 1),
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]
@@ -667,7 +714,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType('Neos.Neos:Document');
     }
 
@@ -675,7 +722,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType('Neos.Neos:Shortcut');
     }
 

@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -106,15 +106,15 @@ class NodesController extends ActionController
     /* @phpstan-ignore-next-line */
     public function indexAction(
         string $searchTerm = '',
-        array $nodeIdentifiers = [],
+        array $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null
     ): void {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
 
         $nodeAddress = $contextNode
@@ -145,11 +145,11 @@ class NodesController extends ActionController
             );
         }
 
-        if ($nodeIdentifiers === [] && !is_null($nodeAddress)) {
+        if ($nodeIds === [] && !is_null($nodeAddress)) {
             $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
-            $nodes = !is_null($entryNode) ? $subgraph->findDescendants(
-                NodeAggregateIds::create($entryNode->nodeAggregateId),
-                FindDescendantsFilter::nodeTypeConstraints(
+            $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
+                $entryNode->nodeAggregateId,
+                FindDescendantNodesFilter::nodeTypeConstraints(
                     NodeTypeConstraints::create(
                         NodeTypeNames::fromStringArray($nodeTypes),
                         NodeTypeNames::createEmpty()
@@ -162,9 +162,9 @@ class NodesController extends ActionController
             }
 
             $nodes = [];
-            foreach ($nodeIdentifiers as $nodeAggregateIdentifier) {
+            foreach ($nodeIds as $nodeAggregateId) {
                 $node = $subgraph->findNodeById(
-                    NodeAggregateId::fromString($nodeAggregateIdentifier)
+                    NodeAggregateId::fromString($nodeAggregateId)
                 );
                 if ($node !== null) {
                     $nodes[] = $node;
@@ -178,7 +178,7 @@ class NodesController extends ActionController
     /**
      * Shows a specific node
      *
-     * @param string $identifier Specifies the node to look up (NodeAggregateIdentifier)
+     * @param string $identifier Specifies the node to look up (NodeAggregateId)
      * @param string $workspaceName Name of the workspace to use for querying the node
      * @param array $dimensions Optional list of dimensions and their values which should be
      * used for querying the specified node
@@ -186,10 +186,10 @@ class NodesController extends ActionController
      */
     public function showAction(string $identifier, string $workspaceName = 'live', array $dimensions = []): void
     {
-        $identifier = NodeAggregateId::fromString($identifier);
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $nodeAggregateId = NodeAggregateId::fromString($identifier);
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()
             ->findOneByName(WorkspaceName::fromString($workspaceName));
@@ -203,11 +203,11 @@ class NodesController extends ActionController
                 VisibilityConstraints::withoutRestrictions()
             );
 
-        $node = $subgraph->findNodeById($identifier);
+        $node = $subgraph->findNodeById($nodeAggregateId);
 
         if ($node === null) {
             $this->addExistingNodeVariantInformationToResponse(
-                $identifier,
+                $nodeAggregateId,
                 $workspace->currentContentStreamId,
                 $dimensionSpacePoint,
                 $contentRepository
@@ -255,10 +255,10 @@ class NodesController extends ActionController
         array $dimensions = [],
         array $sourceDimensions = []
     ): void {
-        $identifier = NodeAggregateId::fromString($identifier);
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $nodeAggregateId = NodeAggregateId::fromString($identifier);
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()
             ->findOneByName(WorkspaceName::fromString($workspaceName));
@@ -283,7 +283,7 @@ class NodesController extends ActionController
             CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
                 $this->adoptNodeAndParents(
                     $workspace->currentContentStreamId,
-                    $identifier,
+                    $nodeAggregateId,
                     $sourceSubgraph,
                     $targetSubgraph,
                     $targetDimensionSpacePoint,
@@ -292,7 +292,7 @@ class NodesController extends ActionController
                 ));
 
             $this->redirect('show', null, null, [
-                'identifier' => $identifier,
+                'identifier' => $nodeAggregateId,
                 'workspaceName' => $workspaceName,
                 'dimensions' => $dimensions
             ]);
@@ -307,13 +307,13 @@ class NodesController extends ActionController
      */
     protected function addExistingNodeVariantInformationToResponse(
         NodeAggregateId $identifier,
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         ContentRepository $contentRepository
     ): void {
         $contentGraph = $contentRepository->getContentGraph();
         $nodeTypeManager = $contentRepository->getNodeTypeManager();
-        $nodeAggregate = $contentGraph->findNodeAggregateById($contentStreamIdentifier, $identifier);
+        $nodeAggregate = $contentGraph->findNodeAggregateById($contentStreamId, $identifier);
 
         if ($nodeAggregate && $nodeAggregate->coveredDimensionSpacePoints->count() > 0) {
             $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', 'true');
@@ -323,14 +323,14 @@ class NodesController extends ActionController
             // materialized recursively upwards in the rootline. To find the node path for the given identifier,
             // we just use the first result. This is a safe assumption at least for "Document" nodes (aggregate=true),
             // because they are always moved in-sync.
-            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName->getValue())->isAggregate()) {
+            if ($nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName)->isAggregate()) {
                 // TODO: we would need the SourceDimensions parameter (as in Create()) to ensure the correct
                 // rootline is traversed. Here, we, as a workaround, simply use the 1st aggregate for now.
 
                 $missingNodesOnRootline = 0;
                 while (
                     $parentAggregate = self::firstNodeAggregate(
-                        $contentGraph->findParentNodeAggregates($contentStreamIdentifier, $identifier)
+                        $contentGraph->findParentNodeAggregates($contentStreamId, $identifier)
                     )
                 ) {
                     if (!$parentAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
@@ -366,7 +366,7 @@ class NodesController extends ActionController
     /**
      * Adopt (translate) the given node and parents that are not yet visible to the given context
      *
-     * @param NodeAggregateId $nodeAggregateIdentifier
+     * @param NodeAggregateId $nodeAggregateId
      * @param ContentSubgraphInterface $sourceSubgraph
      * @param ContentSubgraphInterface $targetSubgraph
      * @param ContentRepository $contentRepository
@@ -375,7 +375,7 @@ class NodesController extends ActionController
      */
     protected function adoptNodeAndParents(
         ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $sourceSubgraph,
         ContentSubgraphInterface $targetSubgraph,
         DimensionSpacePoint $targetDimensionSpacePoint,
@@ -384,11 +384,11 @@ class NodesController extends ActionController
     ) {
         $identifiersFromRootlineToTranslate = [];
         while (
-            $nodeAggregateIdentifier
-            && $targetSubgraph->findNodeById($nodeAggregateIdentifier) === null
+            $nodeAggregateId
+            && $targetSubgraph->findNodeById($nodeAggregateId) === null
         ) {
-            $identifiersFromRootlineToTranslate[] = $nodeAggregateIdentifier;
-            $nodeAggregateIdentifier = $sourceSubgraph->findParentNode($nodeAggregateIdentifier)
+            $identifiersFromRootlineToTranslate[] = $nodeAggregateId;
+            $nodeAggregateId = $sourceSubgraph->findParentNode($nodeAggregateId)
                 ?->nodeAggregateId;
         }
         // $identifiersFromRootlineToTranslate is now bottom-to-top; so we need to reverse

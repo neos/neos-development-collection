@@ -34,18 +34,18 @@ class CrCommandController extends CommandController
 
     public function setupCommand(string $contentRepositoryIdentifier = 'default')
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepository->setUp();
-        $this->outputLine('Content Repository tables "' . $contentRepositoryIdentifier . '" set up.');
+        $this->outputLine('Content Repository tables "' . $contentRepositoryId->value . '" set up.');
     }
 
     public function replayCommand(string $projectionName, string $contentRepositoryIdentifier = 'default', int $maximumSequenceNumber = null, bool $quiet = false)
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if ($projectionName === 'graph') {
             $projectionName = ContentGraphProjection::class;

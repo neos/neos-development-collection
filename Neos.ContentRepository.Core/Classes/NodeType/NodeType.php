@@ -231,7 +231,7 @@ class NodeType
      */
     public function getName(): string
     {
-        return $this->name->getValue();
+        return $this->name->value;
     }
 
     /**
@@ -294,7 +294,7 @@ class NodeType
      */
     public function isOfType(string $nodeType): bool
     {
-        if ($nodeType === $this->name->getValue()) {
+        if ($nodeType === $this->name->value) {
             return true;
         }
         if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
@@ -616,15 +616,15 @@ class NodeType
         }
 
         if (
-            array_key_exists($nodeType->name->getValue(), $constraints)
-            && $constraints[$nodeType->name->getValue()] === true
+            array_key_exists($nodeType->name->value, $constraints)
+            && $constraints[$nodeType->name->value] === true
         ) {
             return true;
         }
 
         if (
-            array_key_exists($nodeType->name->getValue(), $constraints)
-            && $constraints[$nodeType->name->getValue()] === false
+            array_key_exists($nodeType->name->value, $constraints)
+            && $constraints[$nodeType->name->value] === false
         ) {
             return false;
         }
@@ -721,6 +721,6 @@ class NodeType
      */
     public function __toString(): string
     {
-        return $this->name->getValue();
+        return $this->name->value;
     }
 }

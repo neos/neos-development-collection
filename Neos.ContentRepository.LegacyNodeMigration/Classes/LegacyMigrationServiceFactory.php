@@ -40,7 +40,7 @@ class LegacyMigrationServiceFactory implements ContentRepositoryServiceFactoryIn
         private readonly ResourceRepository $resourceRepository,
         private readonly ResourceManager $resourceManager,
         private readonly PropertyMapper $propertyMapper,
-        private readonly ContentStreamId $contentStreamIdentifier,
+        private readonly ContentStreamId $contentStreamId,
     )
     {
     }
@@ -63,7 +63,7 @@ class LegacyMigrationServiceFactory implements ContentRepositoryServiceFactoryIn
             $serviceFactoryDependencies->eventNormalizer,
             $serviceFactoryDependencies->propertyConverter,
             $serviceFactoryDependencies->eventStore,
-            $this->contentStreamIdentifier,
+            $this->contentStreamId,
         );
     }
 }

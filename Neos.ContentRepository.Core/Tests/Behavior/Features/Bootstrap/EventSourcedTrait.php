@@ -38,7 +38,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
@@ -92,6 +92,7 @@ trait EventSourcedTrait
 {
     use CurrentSubgraphTrait;
     use CurrentUserTrait;
+    use NodeTraversalTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
     use GenericCommandExecutionAndEventPublication;
@@ -483,8 +484,8 @@ trait EventSourcedTrait
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
-                $workspaceA->currentContentStreamId->getValue(),
-                $workspaceB->currentContentStreamId->getValue(),
+                $workspaceA->currentContentStreamId->value,
+                $workspaceB->currentContentStreamId->value,
                 'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
             );
         }
@@ -528,14 +529,16 @@ trait EventSourcedTrait
             assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();
 
-            $subtrees = $contentGraph
+            $subtree = $contentGraph
                 ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
-                ->findSubtrees(NodeAggregateIds::fromArray([$nodeAggregateId]),
-                    FindSubtreesFilter::nodeTypeConstraints($nodeTypeConstraints)->withMaximumLevels($maximumLevels));
+                ->findSubtree($nodeAggregateId,
+                    FindSubtreeFilter::nodeTypeConstraints($nodeTypeConstraints)->withMaximumLevels($maximumLevels));
 
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];
-            self::flattenSubtreeForComparison($subtrees, $flattenedSubtree);
+            if ($subtree !== null) {
+                self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
+            }
 
             Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match (adapter: ' . $adapterName . ')');
 
@@ -550,18 +553,11 @@ trait EventSourcedTrait
         }
     }
 
-    private static function flattenSubtreeForComparison(Subtree|Subtrees $subtree, array &$result)
+    private static function flattenSubtreeForComparison(Subtree $subtree, array &$result): void
     {
-        if ($subtree instanceof Subtrees) {
-            foreach ($subtree as $childSubtree) {
-                self::flattenSubtreeForComparison($childSubtree, $result);
-            }
-        } else {
-            $result[] = $subtree;
-
-            foreach ($subtree->children as $childSubtree) {
-                self::flattenSubtreeForComparison($childSubtree, $result);
-            }
+        $result[] = $subtree;
+        foreach ($subtree->children as $childSubtree) {
+            self::flattenSubtreeForComparison($childSubtree, $result);
         }
     }
 

@@ -132,13 +132,13 @@ class NodeUriImplementation extends AbstractFusionObject
         /** @todo implement us
         elseif ($node === '~') {
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
-        $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateIdentifier()
+        $nodeAddress = $nodeAddress->withNodeAggregateId(
+        $this->nodeSiteResolvingService->findSiteNodeForNodeAddress($nodeAddress)->getNodeAggregateId()
         );
         } elseif (is_string($node) && substr($node, 0, 7) === 'node://') {
         $nodeAddress = $this->nodeAddressFactory->createFromNode($node);
-        $nodeAddress = $nodeAddress->withNodeAggregateIdentifier(
-        NodeAggregateIdentifier::fromString(\mb_substr($node, 7))
+        $nodeAddress = $nodeAddress->withNodeAggregateId(
+        NodeAggregateId::fromString(\mb_substr($node, 7))
         );*/
 
         $uriBuilder = new UriBuilder();

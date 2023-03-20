@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 
 final class StaticUserIdProviderFactory implements UserIdProviderFactoryInterface
 {
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): UserIdProviderInterface
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): UserIdProviderInterface
     {
         return new StaticUserIdProvider(UserId::forSystemUser());
     }

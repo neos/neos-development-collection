@@ -460,11 +460,11 @@ trait ConstraintChecks
     /**
      * @throws NodeAggregateIsRoot
      */
-    protected function requireNodeAggregateToNotBeRoot(NodeAggregate $nodeAggregate): void
+    protected function requireNodeAggregateToNotBeRoot(NodeAggregate $nodeAggregate, ?string $extraReason = '.'): void
     {
         if ($nodeAggregate->classification->isRoot()) {
             throw new NodeAggregateIsRoot(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId . '" is classified as root.',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId . '" is classified as root  ' . $extraReason,
                 1554586860
             );
         }
@@ -649,7 +649,7 @@ trait ConstraintChecks
     ): void {
         $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
 
-        foreach ($referenceProperties->getValues() as $propertyName => $propertyValue) {
+        foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]
                 ?? null;
 
@@ -671,7 +671,7 @@ trait ConstraintChecks
                     $nodeTypeName,
                     PropertyName::fromString($propertyName),
                     is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue),
-                    $propertyType->getValue()
+                    $propertyType->value
                 );
             }
         }

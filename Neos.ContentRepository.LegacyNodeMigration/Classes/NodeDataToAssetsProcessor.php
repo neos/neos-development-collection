@@ -37,7 +37,7 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
         foreach ($this->nodeDataRows as $nodeDataRow) {
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
             try {
-                $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->getValue());
+                $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
             } catch (NodeTypeNotFoundException $exception) {
                 $numberOfErrors ++;
                 $this->dispatch(Severity::ERROR, '%s. Node: "%s"', $exception->getMessage(), $nodeDataRow['identifier']);
