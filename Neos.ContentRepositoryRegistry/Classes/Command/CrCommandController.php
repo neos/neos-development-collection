@@ -10,7 +10,7 @@ use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ESCR\AssetUsage\Projection\AssetUsageProjection;
+use Neos\Neos\AssetUsage\Projection\AssetUsageProjection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;

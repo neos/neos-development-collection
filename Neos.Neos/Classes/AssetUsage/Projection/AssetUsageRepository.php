@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Projection;
+namespace Neos\Neos\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception as DbalException;
@@ -11,12 +11,12 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ESCR\AssetUsage\Dto\NodeAddress;
+use Neos\Neos\AssetUsage\Dto\NodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
-use Neos\ESCR\AssetUsage\Dto\AssetUsage;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\Neos\AssetUsage\Dto\AssetUsage;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;

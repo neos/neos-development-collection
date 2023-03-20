@@ -1,12 +1,12 @@
 <?php
 
-namespace Neos\ESCR\AssetUsage\Service;
+namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\AssetUsageFinder;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\Media\Domain\Repository\AssetRepository;
-use Neos\ESCR\AssetUsage\Projection\AssetUsageRepositoryFactory;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<AssetUsageSyncService>

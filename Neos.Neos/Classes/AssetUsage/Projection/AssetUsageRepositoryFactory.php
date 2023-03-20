@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Projection;
+namespace Neos\Neos\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;

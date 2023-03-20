@@ -1,0 +1,6 @@
+Neos:
+  Neos:
+    AssetUsage:
+      enabled: true
+      contentRepositories:
+        default: true

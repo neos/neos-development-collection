@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage;
+namespace Neos\Neos\AssetUsage;
 
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\ESCR\AssetUsage\Dto\AssetUsage;
-use Neos\ESCR\AssetUsage\Service\GlobalAssetUsageService;
-use Neos\ESCR\AssetUsage\Dto\AssetUsages;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageReference;
+use Neos\Neos\AssetUsage\Dto\AssetUsage;
+use Neos\Neos\AssetUsage\Service\GlobalAssetUsageService;
+use Neos\Neos\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 use Neos\Media\Domain\Model\VariantSupportInterface;
 
 /**
@@ -28,9 +28,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
      */
     private array $runtimeCache = [];
 
-    /**
-     * @Flow\InjectConfiguration("enabled")
-     */
+    #[Flow\InjectConfiguration(path: "AssetUsage.enabled")]
     protected bool $enabled = false;
 
     public function __construct(
@@ -67,7 +65,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
             $usage->originDimensionSpacePoint,
             $usage->nodeAggregateIdentifier
         ));
-        return iterator_to_array($convertedUsages);
+        return iterator_to_array($convertedUsages, false);
     }
 
     private function getUsages(AssetInterface $asset): AssetUsages

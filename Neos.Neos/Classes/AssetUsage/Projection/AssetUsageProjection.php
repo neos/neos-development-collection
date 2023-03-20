@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Projection;
+namespace Neos\Neos\AssetUsage\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ESCR\AssetUsage\Dto\AssetIdsByProperty;
+use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
-use Neos\ESCR\AssetUsage\Dto\NodeAddress;
+use Neos\Neos\AssetUsage\Dto\NodeAddress;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
@@ -26,7 +26,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\AssetUsageFinder;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Doctrine\DBAL\Connection;
@@ -175,8 +175,8 @@ final class AssetUsageProjection implements ProjectionInterface
         /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
             $assetIdentifiers[$propertyName] = $this->extractAssetIdentifiers(
-                $propertyValue->getType(),
-                $propertyValue->getValue()
+                $propertyValue->type,
+                $propertyValue->value
             );
         }
         return new AssetIdsByProperty($assetIdentifiers);

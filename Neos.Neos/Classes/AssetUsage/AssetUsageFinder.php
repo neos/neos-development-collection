@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage;
+namespace Neos\Neos\AssetUsage;
 
-use Neos\ESCR\AssetUsage\Projection\AssetUsageRepository;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 
 /**

@@ -1,24 +1,21 @@
 <?php
 
-namespace Neos\ESCR\AssetUsage\Service;
+namespace Neos\Neos\AssetUsage\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Flow\Annotations as Flow;
-use Neos\ESCR\AssetUsage\Projection\AssetUsageRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
 
 
 class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 {
-    /**
-     * @var array
-     */
-    #[Flow\InjectConfiguration]
+    #[Flow\InjectConfiguration(path: "AssetUsage")]
     protected array $flowSettings;
 
     protected ?array $repositories = null;

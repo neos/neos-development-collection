@@ -12,12 +12,11 @@
 
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Dto;
+namespace Neos\Neos\AssetUsage\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\Flow\Annotations as Flow;
 
 /**

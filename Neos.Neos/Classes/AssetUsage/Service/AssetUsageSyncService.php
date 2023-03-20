@@ -1,16 +1,16 @@
 <?php
 
-namespace Neos\ESCR\AssetUsage\Service;
+namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Dto\AssetUsage;
+use Neos\Neos\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsage;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ESCR\AssetUsage\Dto\AssetUsages;
-use Neos\ESCR\AssetUsage\Projection\AssetUsageRepository;
+use Neos\Neos\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;

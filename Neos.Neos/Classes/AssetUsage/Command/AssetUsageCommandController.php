@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Command;
+namespace Neos\Neos\AssetUsage\Command;
 
 use Neos\Flow\Cli\CommandController;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ESCR\AssetUsage\Projection\AssetUsageRepositoryFactory;
-use Neos\ESCR\AssetUsage\Service\AssetUsageSyncServiceFactory;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
+use Neos\Neos\AssetUsage\Service\AssetUsageSyncServiceFactory;
 
 final class AssetUsageCommandController extends CommandController
 {

@@ -12,7 +12,7 @@ final class Version20230303145522 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Initial migration creating the "neos_neos_projection_asset_usage" table';
+        return 'Removing the "neos_neos_projection_asset_usage" table';
     }
 
     public function up(Schema $schema): void

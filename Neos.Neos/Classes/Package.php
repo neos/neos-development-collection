@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\Core\Bootstrap;
@@ -32,6 +31,9 @@ use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Service\EditorContentStreamZookeeper;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Neos\AssetUsage\Service\GlobalAssetUsageService;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 /**
  * The Neos Package
@@ -165,5 +167,17 @@ class Package extends BasePackage
                 }
             }
         );
+
+        $dispatcher->connect(AssetService::class, 'assetRemoved', function (AssetInterface $asset) use ($bootstrap) {
+
+            $globalAssetUsageService = $bootstrap->getObjectManager()->get(GlobalAssetUsageService::class);
+
+            /** @var PersistenceManagerInterface $persistenceManager */
+            $persistenceManager = $bootstrap->getObjectManager()->get(PersistenceManagerInterface::class);
+            $assetIdentifier = $persistenceManager->getIdentifierByObject($asset);
+            if (is_string($assetIdentifier)) {
+                $globalAssetUsageService->removeAssetUsageByAssetId($assetIdentifier);
+            }
+        });
     }
 }

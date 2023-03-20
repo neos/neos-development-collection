@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage\Dto;
+namespace Neos\Neos\AssetUsage\Dto;
 
 use Neos\Flow\Annotations as Flow;
 
