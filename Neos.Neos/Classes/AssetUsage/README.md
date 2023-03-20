@@ -23,10 +23,6 @@ will protect used assets from being removed via the Neos Media module.
 
 Currently, this needs no further configuration.
 
-For now the visualization within Neos is rather limited though:
-
-![](Screenshot.png "Screenshot from the Neos Media module")
-
 ### Find usages
 
 The `AssetUsageFinder` is the central authority to find used assets.
