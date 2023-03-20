@@ -30,25 +30,25 @@ final class AssetUsageCommandController extends CommandController
      *
      * @param bool $quiet if Set, only errors will be outputted
      */
-    public function syncCommand(string $contentRepositoryIdentifier = 'default', bool $quiet = false): void
+    public function syncCommand(string $contentRepository = 'default', bool $quiet = false): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $assetServiceSyncService = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+        $contentRepository = ContentRepositoryId::fromString($contentRepository);
+        $assetUsageSyncService = $this->contentRepositoryRegistry->getService(
+            $contentRepository,
             new AssetUsageSyncServiceFactory(
                 $this->assetRepository,
                 $this->assetUsageRepositoryFactory
             )
         );
 
-        $usages = $assetServiceSyncService->findAllUsages();
+        $usages = $assetUsageSyncService->findAllUsages();
         if (!$quiet) {
             $this->output->progressStart($usages->count());
         }
         $numberOfRemovedUsages = 0;
         foreach ($usages as $usage) {
-            if (!$assetServiceSyncService->isAssetUsageStillValid($usage)) {
-                $assetServiceSyncService->removeAssetUsage($usage);
+            if (!$assetUsageSyncService->isAssetUsageStillValid($usage)) {
+                $assetUsageSyncService->removeAssetUsage($usage);
                 $numberOfRemovedUsages++;
             }
             if (!$quiet) {
