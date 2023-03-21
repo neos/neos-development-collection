@@ -17,7 +17,6 @@ use Neos\Flow\Annotations as Flow;
  */
 class TransientNodeCache
 {
-
     /**
      * @var NodeInterface[]
      */

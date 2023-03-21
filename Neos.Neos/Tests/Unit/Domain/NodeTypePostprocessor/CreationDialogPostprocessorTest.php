@@ -8,7 +8,6 @@ use PHPUnit\Framework\MockObject\MockObject;
 
 class CreationDialogPostprocessorTest extends UnitTestCase
 {
-
     /**
      * @var CreationDialogPostprocessor
      */

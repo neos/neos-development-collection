@@ -25,7 +25,6 @@ use Neos\Fusion\Afx\Parser\AfxParserException;
  */
 class AfxDslImplementation implements DslInterface
 {
-
     /**
      * Transpile the given dsl-code to fusion-code
      *
