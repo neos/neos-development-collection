@@ -37,7 +37,7 @@ $usages = $assetUsageFinder->findByFilter($assetFilter);
 
 //$usages->count();
 foreach ($usages as $usage) {
-  // $usage->assetIdentifier;
+  // $usage->assetId;
 }
 ```
 

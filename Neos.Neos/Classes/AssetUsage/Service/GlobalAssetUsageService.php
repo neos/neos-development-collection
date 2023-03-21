@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\AssetUsage\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
@@ -12,12 +14,17 @@ use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
 
-
 class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
     #[Flow\InjectConfiguration(path: "AssetUsage")]
     protected array $flowSettings;
 
+    /**
+     * @var array<string, ContentRepository>
+     */
     protected ?array $repositories = null;
 
     public function __construct(
@@ -31,6 +38,7 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
             function (ContentRepository $repository) use ($assetId) {
                 $filter = AssetUsageFilter::create()
                     ->withAsset($assetId)
+                    ->includeVariantsOfAsset()
                     ->groupByNode();
 
                 return $repository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
@@ -47,10 +55,12 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
         );
     }
 
+    /**
+     * @return array<ContentRepository>
+     */
     private function getContentRepositories(): array
     {
         if ($this->repositories === null) {
-
             $this->repositories = [];
 
             $repositoryIds = $this->flowSettings['contentRepositories'];
@@ -69,6 +79,10 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
         return $this->repositories;
     }
 
+    /**
+     * @param callable $callback
+     * @return array<mixed>
+     */
     private function withAllRepositories(callable $callback): array
     {
         return array_map(fn($repository) => $callback($repository), $this->getContentRepositories());

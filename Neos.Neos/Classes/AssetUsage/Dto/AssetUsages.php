@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Dto;
@@ -11,7 +12,6 @@ use Neos\Flow\Annotations as Flow;
  */
 final class AssetUsages implements \IteratorAggregate, \Countable
 {
-
     private ?int $countRuntimeCache = null;
 
     public function __construct(

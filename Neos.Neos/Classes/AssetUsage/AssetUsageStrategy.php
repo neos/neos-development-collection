@@ -13,7 +13,6 @@ use Neos\Neos\AssetUsage\Dto\AssetUsage;
 use Neos\Neos\AssetUsage\Service\GlobalAssetUsageService;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
-use Neos\Media\Domain\Model\VariantSupportInterface;
 
 /**
  * Implementation of the Neos AssetUsageStrategyInterface in order to protect assets in use
@@ -61,9 +60,9 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
         /** @var \IteratorAggregate<UsageReference> $convertedUsages */
         $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new AssetUsageReference(
             $asset,
-            $usage->contentStreamIdentifier,
+            $usage->contentStreamId,
             $usage->originDimensionSpacePoint,
-            $usage->nodeAggregateIdentifier
+            $usage->nodeAggregateId
         ));
         return iterator_to_array($convertedUsages, false);
     }
@@ -75,13 +74,7 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
             throw new \InvalidArgumentException('The specified asset has no valid id', 1649236892);
         }
         if (!isset($this->runtimeCache[$assetId])) {
-            $assetUsagesPerRelatedAsset[] = $this->globalAssetUsageService->findAssetUsageByAssetId($assetId);
-
-            if ($asset instanceof VariantSupportInterface) {
-                $assetUsagesPerRelatedAsset = array_merge(array_map(fn(AssetInterface $assetVariant) => $this->getUsages($assetVariant), $asset->getVariants()));
-            }
-
-            $this->runtimeCache[$assetId] = AssetUsages::fromArrayOfAssetUsages($assetUsagesPerRelatedAsset);
+            $this->runtimeCache[$assetId] = $this->globalAssetUsageService->findAssetUsageByAssetId($assetId);
         }
         return $this->runtimeCache[$assetId];
     }

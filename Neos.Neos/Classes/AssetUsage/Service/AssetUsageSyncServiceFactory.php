@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\AssetUsage\Service;
 
 use Neos\Neos\AssetUsage\AssetUsageFinder;
@@ -13,7 +15,6 @@ use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
  */
 class AssetUsageSyncServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
-
     public function __construct(
         private readonly AssetRepository $assetRepository,
         private readonly AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
@@ -21,8 +22,8 @@ class AssetUsageSyncServiceFactory implements ContentRepositoryServiceFactoryInt
     }
 
     public function build(
-        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): AssetUsageSyncService
-    {
+        ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies,
+    ): AssetUsageSyncService {
         return new AssetUsageSyncService(
             $serviceFactoryDependencies->contentRepository->projectionState(AssetUsageFinder::class),
             $serviceFactoryDependencies->contentRepository->getContentGraph(),

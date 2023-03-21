@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Projection;
@@ -32,6 +33,10 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Doctrine\DBAL\Connection;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Model\AssetVariantInterface;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 
 /**
  *
@@ -42,9 +47,12 @@ final class AssetUsageProjection implements ProjectionInterface
     private ?AssetUsageFinder $stateAccessor = null;
     private AssetUsageRepository $repository;
     private DoctrineCheckpointStorage $checkpointStorage;
+    /** @var array<string, string|null> */
+    private array $originalAssetIdMappingRuntimeCache = [];
 
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
+        private readonly AssetRepository $assetRepository,
         ContentRepositoryId $contentRepositoryId,
         Connection $dbal,
         AssetUsageRepositoryFactory $assetUsageRepositoyFactory,
@@ -170,16 +178,21 @@ final class AssetUsageProjection implements ProjectionInterface
      */
     private function getAssetIdsByProperty(SerializedPropertyValues $propertyValues): AssetIdsByProperty
     {
-        /** @var array<string, array<string>> $assetIdentifiers */
-        $assetIdentifiers = [];
+        /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
+        $assetIds = [];
         /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
-            $assetIdentifiers[$propertyName] = $this->extractAssetIdentifiers(
+            $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
                 $propertyValue->value
             );
+
+            $assetIds[$propertyName] = array_map(
+                fn($assetId) => new AssetIdAndOriginalAssetId($assetId, $this->findOriginalAssetId($assetId)),
+                $extractedAssetIds
+            );
         }
-        return new AssetIdsByProperty($assetIdentifiers);
+        return new AssetIdsByProperty($assetIds);
     }
 
     /**
@@ -188,15 +201,13 @@ final class AssetUsageProjection implements ProjectionInterface
      * @return array<string>
      * @throws InvalidTypeException
      */
-    private function extractAssetIdentifiers(string $type, mixed $value): array
+    private function extractAssetIds(string $type, mixed $value): array
     {
         if ($type === 'string' || is_subclass_of($type, \Stringable::class, true)) {
-            // @phpstan-ignore-next-line
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
-            return array_map(static fn (array $match) => $match['assetId'], $matches);
+            return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
-            // @phpstan-ignore-next-line
             return isset($value['__identifier']) ? [$value['__identifier']] : [];
         }
 
@@ -206,17 +217,19 @@ final class AssetUsageProjection implements ProjectionInterface
         if ($parsedType['elementType'] === null) {
             return [];
         }
-        if (!is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true)
-            && !is_subclass_of($parsedType['elementType'], \Stringable::class, true)) {
+        if (
+            !is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true)
+            && !is_subclass_of($parsedType['elementType'], \Stringable::class, true)
+        ) {
             return [];
         }
-        /** @var array<array<string>> $assetIdentifiers */
-        $assetIdentifiers = [];
+        /** @var array<array<string>> $assetIds */
+        $assetIds = [];
         /** @var iterable<mixed> $value */
         foreach ($value as $elementValue) {
-            $assetIdentifiers[] = $this->extractAssetIdentifiers($parsedType['elementType'], $elementValue);
+            $assetIds[] = $this->extractAssetIds($parsedType['elementType'], $elementValue);
         }
-        return array_merge(...$assetIdentifiers);
+        return array_merge(...$assetIds);
     }
 
     public function setUp(): void
@@ -269,6 +282,7 @@ final class AssetUsageProjection implements ProjectionInterface
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($eventInstance),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($eventInstance),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($eventInstance),
+            default => null,
         };
     }
 
@@ -283,5 +297,17 @@ final class AssetUsageProjection implements ProjectionInterface
             $this->stateAccessor = new AssetUsageFinder($this->repository);
         }
         return $this->stateAccessor;
+    }
+
+    private function findOriginalAssetId(string $assetId): ?string
+    {
+        if (!array_key_exists($assetId, $this->originalAssetIdMappingRuntimeCache)) {
+            /** @var AssetInterface|null $asset */
+            $asset = $this->assetRepository->findByIdentifier($assetId);
+            /** @phpstan-ignore-next-line  */
+            $this->originalAssetIdMappingRuntimeCache[$assetId] = $asset instanceof AssetVariantInterface ? $asset->getOriginalAsset()->getIdentifier() : null;
+        }
+
+        return $this->originalAssetIdMappingRuntimeCache[$assetId];
     }
 }

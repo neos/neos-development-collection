@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Dto;
@@ -8,30 +9,29 @@ use Traversable;
 
 /**
  * @Flow\Proxy(false)
- * @implements \IteratorAggregate<string, array<string>>
+ * @implements \IteratorAggregate<string, array<AssetIdAndOriginalAssetId>>
  */
 final class AssetIdsByProperty implements \IteratorAggregate
 {
-
     /**
      * @var array<string>
      */
     private array $propertyNamesWithoutAssets = [];
 
     /**
-     * @var array<string, array<string>>
+     * @var array<string, array<AssetIdAndOriginalAssetId>>
      */
-    private array $assetIdentifiers = [];
+    private array $assetIds = [];
 
     /**
-     * @param array<string, array<string>> $assetIdentifiers
+     * @param array<string, array<AssetIdAndOriginalAssetId>> $assetIds
      */
-    public function __construct(array $assetIdentifiers)
+    public function __construct(array $assetIds)
     {
-        foreach ($assetIdentifiers as $propertyName => $assetIdentifiersForThisProperty) {
-            $assetIdentifiersForThisProperty === []
+        foreach ($assetIds as $propertyName => $assetIdsForThisProperty) {
+            $assetIdsForThisProperty === []
                 ? $this->propertyNamesWithoutAssets[] = $propertyName
-                : $this->assetIdentifiers[$propertyName] = $assetIdentifiersForThisProperty;
+                : $this->assetIds[$propertyName] = $assetIdsForThisProperty;
         }
     }
 
@@ -50,6 +50,6 @@ final class AssetIdsByProperty implements \IteratorAggregate
 
     public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->assetIdentifiers);
+        return new \ArrayIterator($this->assetIds);
     }
 }

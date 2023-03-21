@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Dto;
@@ -12,12 +13,11 @@ use Neos\Flow\Annotations as Flow;
  */
 final class AssetUsage
 {
-
     public function __construct(
-        public readonly string $assetIdentifier,
-        public readonly ContentStreamId $contentStreamIdentifier,
+        public readonly string $assetId,
+        public readonly ContentStreamId $contentStreamId,
         public readonly string $originDimensionSpacePoint,
-        public readonly NodeAggregateId $nodeAggregateIdentifier,
+        public readonly NodeAggregateId $nodeAggregateId,
         public readonly string $propertyName,
     ) {
     }

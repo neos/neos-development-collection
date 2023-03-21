@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Projection;
@@ -8,12 +9,17 @@ use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\Media\Domain\Repository\AssetRepository;
 
+/**
+ * @implements ProjectionFactoryInterface<AssetUsageProjection>
+ */
 final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
         private readonly Connection $dbal,
         private readonly AssetUsageRepositoryFactory $assetUsageRepositoyFactory,
+        private readonly AssetRepository $assetRepository,
     ) {
     }
 
@@ -25,6 +31,7 @@ final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
     ): AssetUsageProjection {
         return new AssetUsageProjection(
             $projectionFactoryDependencies->eventNormalizer,
+            $this->assetRepository,
             $projectionFactoryDependencies->contentRepositoryId,
             $this->dbal,
             $this->assetUsageRepositoyFactory,

@@ -70,7 +70,7 @@ class Package extends BasePackage
             'filesHaveChanged',
             function (
                 $fileMonitorIdentifier,
-                array $changedFiles
+                array $changedFiles,
             ) use (
                 $flushConfigurationCache,
                 $flushXliffServiceCache
@@ -170,6 +170,7 @@ class Package extends BasePackage
 
         $dispatcher->connect(AssetService::class, 'assetRemoved', function (AssetInterface $asset) use ($bootstrap) {
 
+            /** @var GlobalAssetUsageService $globalAssetUsageService */
             $globalAssetUsageService = $bootstrap->getObjectManager()->get(GlobalAssetUsageService::class);
 
             /** @var PersistenceManagerInterface $persistenceManager */

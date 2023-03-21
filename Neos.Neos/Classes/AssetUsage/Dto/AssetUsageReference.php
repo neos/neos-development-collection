@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Dto;
@@ -15,9 +16,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepositoryNodeInformationInte
  */
 final class AssetUsageReference extends UsageReference implements ContentRepositoryNodeInformationInterface
 {
-
-    public function __construct
-    (
+    public function __construct(
         AssetInterface $asset,
         private readonly ContentStreamId $contentStreamId,
         private readonly string $originDimensionSpacePointHash,

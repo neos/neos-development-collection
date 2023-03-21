@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\AssetUsage\Service;
 
 use Neos\Neos\AssetUsage\AssetUsageFinder;
@@ -48,12 +50,12 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
 
     public function isAssetUsageStillValid(AssetUsage $usage): bool
     {
-        if (!isset($this->existingAssetsById[$usage->assetIdentifier])) {
+        if (!isset($this->existingAssetsById[$usage->assetId])) {
             /** @var AssetInterface|null $asset */
-            $asset = $this->assetRepository->findByIdentifier($usage->assetIdentifier);
-            $this->existingAssetsById[$usage->assetIdentifier] = $asset !== null;
+            $asset = $this->assetRepository->findByIdentifier($usage->assetId);
+            $this->existingAssetsById[$usage->assetId] = $asset !== null;
         }
-        if ($this->existingAssetsById[$usage->assetIdentifier] === false) {
+        if ($this->existingAssetsById[$usage->assetId] === false) {
             return false;
         }
         $dimensionSpacePoint = $this->getDimensionSpacePointByHash($usage->originDimensionSpacePoint);
@@ -61,11 +63,11 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
             return false;
         }
         $subGraph = $this->contentGraph->getSubgraph(
-            $usage->contentStreamIdentifier,
+            $usage->contentStreamId,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $subGraph->findNodeById($usage->nodeAggregateIdentifier);
+        $node = $subGraph->findNodeById($usage->nodeAggregateId);
         return $node !== null;
     }
 

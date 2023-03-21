@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Command;
@@ -63,5 +64,4 @@ final class AssetUsageCommandController extends CommandController
             ]);
         }
     }
-
 }
