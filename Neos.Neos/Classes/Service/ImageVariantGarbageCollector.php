@@ -77,9 +77,9 @@ class ImageVariantGarbageCollector
                 // then we are safe to remove the asset here.
                 if (
                     $usageItem instanceof ContentRepositoryNodeInformationInterface
-                    && $usageItem->getContentStreamId() === $node->subgraphIdentity->contentStreamId
+                    && $usageItem->getContentStreamId()->equals($node->subgraphIdentity->contentStreamId)
                     && $usageItem->getOriginDimensionSpacePointHash() === $node->originDimensionSpacePoint->hash
-                    && $usageItem->getNodeAggregateId() === $node->nodeAggregateId
+                    && $usageItem->getNodeAggregateId()->equals($node->nodeAggregateId)
                 ) {
                     $this->assetRepository->remove($oldValue);
                 }
