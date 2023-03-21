@@ -14,6 +14,9 @@ use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
 
+/**
+ * @internal
+ */
 class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 {
     /**

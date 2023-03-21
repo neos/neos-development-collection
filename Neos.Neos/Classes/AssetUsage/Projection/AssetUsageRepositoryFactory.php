@@ -7,6 +7,9 @@ namespace Neos\Neos\AssetUsage\Projection;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
+/**
+ * @internal
+ */
 final class AssetUsageRepositoryFactory
 {
     public function __construct(

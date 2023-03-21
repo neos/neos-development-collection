@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 
 /**
  * Central authority to look up asset usages
+ * @api
  */
 final class AssetUsageFinder implements ProjectionStateInterface
 {

@@ -13,6 +13,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
  * @implements ProjectionFactoryInterface<AssetUsageProjection>
+ * @internal
  */
 final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
 {

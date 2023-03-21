@@ -39,8 +39,8 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 
 /**
- *
  * @implements ProjectionInterface<AssetUsageFinder>
+ * @internal
  */
 final class AssetUsageProjection implements ProjectionInterface
 {

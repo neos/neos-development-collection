@@ -9,6 +9,7 @@ use Neos\Flow\Annotations as Flow;
 /**
  * @Flow\Proxy(false)
  * @implements \IteratorAggregate<AssetUsage>
+ * @api
  */
 final class AssetUsages implements \IteratorAggregate, \Countable
 {

@@ -10,6 +10,7 @@ use Traversable;
 /**
  * @Flow\Proxy(false)
  * @implements \IteratorAggregate<string, array<AssetIdAndOriginalAssetId>>
+ * @internal
  */
 final class AssetIdsByProperty implements \IteratorAggregate
 {

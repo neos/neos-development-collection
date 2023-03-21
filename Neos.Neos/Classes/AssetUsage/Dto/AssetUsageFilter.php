@@ -9,6 +9,7 @@ use Neos\Flow\Annotations as Flow;
 
 /**
  * @Flow\Proxy(false)
+ * @api
  */
 final class AssetUsageFilter
 {

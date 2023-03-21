@@ -12,6 +12,7 @@ use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<AssetUsageSyncService>
+ * @api
  */
 class AssetUsageSyncServiceFactory implements ContentRepositoryServiceFactoryInterface
 {

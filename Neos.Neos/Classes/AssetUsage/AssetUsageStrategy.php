@@ -19,6 +19,7 @@ use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
  * to be deleted via the Media Module.
  *
  * @Flow\Scope("singleton")
+ * @api
  */
 final class AssetUsageStrategy implements AssetUsageStrategyInterface
 {

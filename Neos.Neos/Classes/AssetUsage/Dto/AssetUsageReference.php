@@ -13,6 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepositoryNodeInformationInte
 
 /**
  * @Flow\Proxy(false)
+ * @api
  */
 final class AssetUsageReference extends UsageReference implements ContentRepositoryNodeInformationInterface
 {

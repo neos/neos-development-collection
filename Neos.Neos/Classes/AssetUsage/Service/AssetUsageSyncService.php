@@ -17,6 +17,9 @@ use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 
+/**
+ * @api
+ */
 class AssetUsageSyncService implements ContentRepositoryServiceInterface
 {
     /**
