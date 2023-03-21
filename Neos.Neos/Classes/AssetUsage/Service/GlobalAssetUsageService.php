@@ -78,7 +78,7 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
                 }
                 $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryId);
 
-                $this->repositories[(string)$contentRepositoryId] = $this->contentRepositoryRegistry->get(
+                $this->repositories[$contentRepositoryId->value] = $this->contentRepositoryRegistry->get(
                     $contentRepositoryId
                 );
             }
@@ -89,10 +89,10 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 
     private function getAssetUsageRepository(ContentRepositoryId $contentRepositoryId): AssetUsageRepository
     {
-        if (!array_key_exists((string)$contentRepositoryId, $this->assetUsageRepositories)) {
-            $this->assetUsageRepositories[(string)$contentRepositoryId] = $this->assetUsageRepositoryFactory->build($contentRepositoryId);
+        if (!array_key_exists($contentRepositoryId->value, $this->assetUsageRepositories)) {
+            $this->assetUsageRepositories[$contentRepositoryId->value] = $this->assetUsageRepositoryFactory->build($contentRepositoryId);
         }
 
-        return $this->assetUsageRepositories[(string)$contentRepositoryId];
+        return $this->assetUsageRepositories[$contentRepositoryId->value];
     }
 }
