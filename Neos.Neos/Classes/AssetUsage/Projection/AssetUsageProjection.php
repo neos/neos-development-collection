@@ -55,9 +55,9 @@ final class AssetUsageProjection implements ProjectionInterface
         private readonly AssetRepository $assetRepository,
         ContentRepositoryId $contentRepositoryId,
         Connection $dbal,
-        AssetUsageRepositoryFactory $assetUsageRepositoyFactory,
+        AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
     ) {
-        $this->repository = $assetUsageRepositoyFactory->build($contentRepositoryId);
+        $this->repository = $assetUsageRepositoryFactory->build($contentRepositoryId);
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $dbal,
             $this->repository->getTableNamePrefix() . '_checkpoint',

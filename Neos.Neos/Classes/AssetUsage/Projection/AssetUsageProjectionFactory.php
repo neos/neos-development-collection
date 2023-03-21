@@ -19,7 +19,7 @@ final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
 {
     public function __construct(
         private readonly Connection $dbal,
-        private readonly AssetUsageRepositoryFactory $assetUsageRepositoyFactory,
+        private readonly AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
         private readonly AssetRepository $assetRepository,
     ) {
     }
@@ -35,7 +35,7 @@ final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
             $this->assetRepository,
             $projectionFactoryDependencies->contentRepositoryId,
             $this->dbal,
-            $this->assetUsageRepositoyFactory,
+            $this->assetUsageRepositoryFactory,
         );
     }
 }
