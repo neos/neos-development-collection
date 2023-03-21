@@ -12,6 +12,7 @@ use Neos\Neos\AssetUsage\AssetUsageFinder;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
 
 /**
@@ -28,34 +29,38 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
     /**
      * @var array<string, ContentRepository>
      */
-    protected ?array $repositories = null;
+    private ?array $repositories = null;
+
+    /**
+     * @var array<string, AssetUsageRepository>
+     */
+    private ?array $assetUsageRepositories = null;
 
     public function __construct(
-        protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
     ) {
     }
 
     public function findAssetUsageByAssetId(string $assetId): AssetUsages
     {
-        $assetUsages = $this->withAllRepositories(
-            function (ContentRepository $repository) use ($assetId) {
-                $filter = AssetUsageFilter::create()
-                    ->withAsset($assetId)
-                    ->includeVariantsOfAsset()
-                    ->groupByNode();
+        $filter = AssetUsageFilter::create()
+            ->withAsset($assetId)
+            ->includeVariantsOfAsset()
+            ->groupByNode();
 
-                return $repository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
-            }
-        );
-
-        return AssetUsages::fromArrayOfAssetUsages($assetUsages);
+        $assetUsages = [];
+        foreach ($this->getContentRepositories() as $contentRepository) {
+            $assetUsages[] = $contentRepository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
+        }
+        return AssetUsages::fromArrayOfAssetUsages(array_merge(...$assetUsages));
     }
 
     public function removeAssetUsageByAssetId(string $assetId): void
     {
-        $this->withAllRepositories(
-            fn(AssetUsageRepository $repository) => $repository->removeAsset($assetId)
-        );
+        foreach ($this->getContentRepositories() as $contentRepositoryId => $contentRepository) {
+            $this->getAssetUsageRepository(ContentRepositoryId::fromString($contentRepositoryId))->removeAsset($assetId);
+        }
     }
 
     /**
@@ -82,12 +87,12 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
         return $this->repositories;
     }
 
-    /**
-     * @param callable $callback
-     * @return array<mixed>
-     */
-    private function withAllRepositories(callable $callback): array
+    private function getAssetUsageRepository(ContentRepositoryId $contentRepositoryId): AssetUsageRepository
     {
-        return array_map(fn($repository) => $callback($repository), $this->getContentRepositories());
+        if (!array_key_exists((string)$contentRepositoryId, $this->assetUsageRepositories)) {
+            $this->assetUsageRepositories[(string)$contentRepositoryId] = $this->assetUsageRepositoryFactory->build($contentRepositoryId);
+        }
+
+        return $this->assetUsageRepositories[(string)$contentRepositoryId];
     }
 }
