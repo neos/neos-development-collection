@@ -54,7 +54,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class UserService
 {
-
     /**
      * Might be configurable in the future, for now centralising this as a "constant"
      *

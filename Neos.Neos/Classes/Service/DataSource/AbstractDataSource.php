@@ -21,7 +21,6 @@ use Neos\Neos\Exception;
  */
 abstract class AbstractDataSource implements DataSourceInterface
 {
-
     /**
      * The identifier of the operation
      *
