@@ -23,7 +23,6 @@ use Neos\Neos\Service\Mapping\NodePropertyConverterService;
  */
 class NodePropertyConverterServiceTest extends FunctionalTestCase
 {
-
     /**
      * @test
      */

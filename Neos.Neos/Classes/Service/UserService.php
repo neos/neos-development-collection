@@ -30,7 +30,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class UserService
 {
-
     /**
      * @Flow\Inject
      * @var \Neos\Neos\Domain\Service\UserService
