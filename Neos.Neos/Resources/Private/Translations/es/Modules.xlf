@@ -1003,31 +1003,31 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       </trans-unit>
       <trans-unit id="sites.update.body" xml:space="preserve">
 				<source>The site "{0}" has been updated.</source>
-        <target state="translated">La página "{0}" ha sido actualizada.</target>
+        <target state="translated">El sitio "{0}" ha sido actualizado.</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.title" xml:space="preserve">
 				<source>Missing Package</source>
-        <target state="translated">Falta un paquete</target>
+        <target state="translated">Paquete perdido</target>
       </trans-unit>
       <trans-unit id="sites.missingPackage.body" xml:space="preserve">
 				<source>The package "{0}" is required to create new site packages.</source>
-        <target state="translated">El paquete "{0}" es necesario para crear nuevos paquetes de la página.</target>
+        <target state="translated">El paquete "{0}" es necesario para crear nuevos paquetes para el sitio.</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.title" xml:space="preserve">
 				<source>Invalid package key</source>
-        <target state="translated">Clave del paquete incorrecta</target>
+        <target state="translated">Clave del paquete no válida</target>
       </trans-unit>
       <trans-unit id="sites.invalidPackageKey.body" xml:space="preserve">
 				<source>The package key "{0}" already exists.</source>
-        <target state="translated">La clave del paquete "{0}" ya existe.</target>
+        <target state="translated">La clave de paquete "{0}" ya existe.</target>
       </trans-unit>
       <trans-unit id="sites.sitePackagesWasCreated.body" xml:space="preserve">
 				<source>Site package {0} was created.</source>
-        <target state="translated">Se ha creado el paquete de la página {0}.</target>
+        <target state="translated">Se ha creado el paquete de sitio {0}.</target>
       </trans-unit>
       <trans-unit id="sites.theSiteHasBeenImported.body" xml:space="preserve">
 				<source>The site has been imported.</source>
-        <target state="translated">Se ha importado la página.</target>
+        <target state="translated">El sitio ha sido importado.</target>
       </trans-unit>
       <trans-unit id="sites.importError.title" xml:space="preserve">
 				<source>Import error</source>
@@ -1047,7 +1047,7 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.title" xml:space="preserve">
 				<source>Site creation error</source>
-        <target state="translated">Error en la creación de la página</target>
+        <target state="translated">Error al crear la página</target>
       </trans-unit>
       <trans-unit id="sites.siteCreationError.givenNodeTypeNotFound.body" xml:space="preserve">
 				<source>Error: The given node type "{0}" was not found</source>
@@ -1063,7 +1063,7 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       </trans-unit>
       <trans-unit id="sites.successfullyCreatedSite.body" xml:space="preserve">
 				<source>Successfully created site "{0}" with siteNode "{1}", type "{2}" and packageKey "{3}"</source>
-        <target state="translated">Creado con éxito la página "{0}" con siteNode "{1}", type "{2}" y packageKey "{3}"</target>
+        <target state="translated">Creado con éxito el sitio "{0}" con siteNode "{1}", type "{2}" y packageKey "{3}"</target>
       </trans-unit>
       <trans-unit id="sites.siteDeleted.title" xml:space="preserve">
 				<source>Site deleted</source>
@@ -1087,7 +1087,7 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       </trans-unit>
       <trans-unit id="sites.siteDeactivated.body" xml:space="preserve">
 				<source>The site "{0}" has been deactivated.</source>
-        <target state="translated">La página "{0}" ha sido desactivada.</target>
+        <target state="translated">La página "{0}" ha sido desarrollada.</target>
       </trans-unit>
       <trans-unit id="sites.domainUpdated.title" xml:space="preserve">
 				<source>Domain updated</source>
@@ -1292,6 +1292,18 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
       <trans-unit id="user.description" xml:space="preserve">
 				<source>Contains modules related to management of users</source>
         <target state="translated">Contiene módulos relacionados con la gestión de usuarios</target>
+      </trans-unit>
+      <trans-unit id="workspaces.selectAllCurrentChanges">
+        <source>Select all current changes</source>
+        <target state="translated">Seleccionar todos los cambios actuales</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="translated">¿Realmente desea descartar los cambios seleccionados en el área de trabajo "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+				<source>Publish selected changes to {0}</source>
+        <target state="translated">Publicar los cambios seleccionados en {0}</target>
       </trans-unit>
     </body>
   </file>
