@@ -120,7 +120,7 @@ class FeatureContext implements Context
         $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
         $migration = new NodeDataToEventsProcessor($nodeTypeManager, $propertyMapper, $propertyConverter, $interDimensionalVariationGraph, $eventNormalizer, $this->mockFilesystem, $this->nodeDataRows);
         if ($contentStream !== null) {
-            $migration->setContentStreamIdentifier(ContentStreamId::fromString($contentStream));
+            $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
         $this->lastMigrationResult = $migration->run();
     }

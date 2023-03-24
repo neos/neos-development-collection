@@ -16,14 +16,14 @@ Feature: The FlowQuery find operation
     'Neos.ContentRepository.Testing:Document': []
     """
     And the event RootWorkspaceWasCreated was published with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamIdentifier | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamIdentifier     | "cs-identifier"               |
+      | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
@@ -33,7 +33,7 @@ Feature: The FlowQuery find operation
   Scenario: Find a tethered child node, e.g. via q(node).find('tethered')
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                                       |
-      | contentStreamIdentifier            | "cs-identifier"                                             |
+      | contentStreamId                    | "cs-identifier"                                             |
       | nodeAggregateId                    | "sir-david-nodenborough"                                    |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes" |
       | originDimensionSpacePoint          | {}                                                          |

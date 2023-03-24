@@ -18,7 +18,7 @@ class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $nodeTypeManagerPreset): NodeTypeManager
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $nodeTypeManagerPreset): NodeTypeManager
     {
         return new NodeTypeManager(
             function() {

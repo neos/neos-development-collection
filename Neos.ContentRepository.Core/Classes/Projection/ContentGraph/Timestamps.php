@@ -24,16 +24,16 @@ use DateTimeImmutable;
 final class Timestamps
 {
     /**
-     * @param DateTimeImmutable $createdAt When was the node created in its content stream
-     * @param DateTimeImmutable $originalCreatedAt When was the node created originally
-     * @param ?DateTimeImmutable $lastModifiedAt When was the node last updated in its content stream, or NULL if it was never changed
-     * @param ?DateTimeImmutable $originalLastModifiedAt When was the node last updated originally, or NULL if it was never changed
+     * @param DateTimeImmutable $created When was the node created in its content stream
+     * @param DateTimeImmutable $originalCreated When was the node created originally
+     * @param ?DateTimeImmutable $lastModified When was the node last updated in its content stream, or NULL if it was never changed
+     * @param ?DateTimeImmutable $originalLastModified When was the node last updated originally, or NULL if it was never changed
      */
-    public function __construct(
-        public readonly DateTimeImmutable $createdAt,
-        public readonly DateTimeImmutable $originalCreatedAt,
-        public readonly ?DateTimeImmutable $lastModifiedAt,
-        public readonly ?DateTimeImmutable $originalLastModifiedAt,
+    private function __construct(
+        public readonly DateTimeImmutable $created,
+        public readonly DateTimeImmutable $originalCreated,
+        public readonly ?DateTimeImmutable $lastModified,
+        public readonly ?DateTimeImmutable $originalLastModified,
     ) {
     }
 

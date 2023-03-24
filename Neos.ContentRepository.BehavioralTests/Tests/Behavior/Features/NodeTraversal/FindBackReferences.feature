@@ -130,9 +130,9 @@ Feature: Find nodes using the findBackReferences query
     When I execute the findBackReferences query for node aggregate id "a2" I expect no references to be returned
     # "a2a3" is references node "a2" but "a2a3" is disabled so this reference should be ignored
     When I execute the findBackReferences query for node aggregate id "a2a3" I expect no references to be returned
+    When I execute the findBackReferences query for node aggregate id "a" and filter '{"referenceName": "non-existing"}' I expect no references to be returned
 
   Scenario: findBackReferences queries with results
-    When I execute the findBackReferences query for node aggregate id "a" and filter '{"referenceName": "non-existing"}' I expect no references to be returned
     When I execute the findBackReferences query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": null}]' to be returned
     When I execute the findBackReferences query for node aggregate id "a3" and filter '{"referenceName": "refs"}' I expect the references '[{"nodeAggregateId": "b", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
     When I execute the findBackReferences query for node aggregate id "b1" I expect the references '[{"nodeAggregateId": "a", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "c", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned

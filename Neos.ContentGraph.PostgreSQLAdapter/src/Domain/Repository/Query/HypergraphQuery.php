@@ -31,29 +31,29 @@ final class HypergraphQuery implements HypergraphQueryInterface
     use CommonGraphQueryOperations;
 
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         string $tableNamePrefix,
         bool $joinRestrictionRelations = false
     ): self {
         $query = /** @lang PostgreSQL */
-            'SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier,
+            'SELECT n.origindimensionspacepoint, n.nodeaggregateid,
                 n.nodetypename, n.classification, n.properties, n.nodename,
-                h.contentstreamidentifier, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
+                h.contentstreamid, h.dimensionspacepoint' . ($joinRestrictionRelations ? ',
                 r.dimensionspacepointhash AS disabledDimensionSpacePointHash' : '') . '
             FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
             JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)'
             . ($joinRestrictionRelations
                 ? '
             LEFT JOIN ' . $tableNamePrefix . '_restrictionhyperrelation r
-                ON n.nodeaggregateidentifier = r.originnodeaggregateidentifier
-                AND r.contentstreamidentifier = h.contentstreamidentifier
+                ON n.nodeaggregateid = r.originnodeaggregateid
+                AND r.contentstreamid = h.contentstreamid
                 AND r.dimensionspacepointhash = h.dimensionspacepointhash'
                 : '')
             . '
-            WHERE h.contentstreamidentifier = :contentStreamIdentifier';
+            WHERE h.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamId' => (string)$contentStreamId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);
@@ -81,13 +81,13 @@ final class HypergraphQuery implements HypergraphQueryInterface
         return new self($query, $parameters, $this->tableNamePrefix);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
+    public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         $query = $this->query .= '
-            AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND n.nodeaggregateid = :nodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
+        $parameters['nodeAggregateId'] = (string)$nodeAggregateId;
 
         return new self($query, $parameters, $this->tableNamePrefix);
     }

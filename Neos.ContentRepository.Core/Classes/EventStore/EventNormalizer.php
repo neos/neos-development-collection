@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
@@ -81,6 +82,7 @@ final class EventNormalizer
             NodeSpecializationVariantWasCreated::class,
             RootNodeAggregateWithNodeWasCreated::class,
             RootWorkspaceWasCreated::class,
+            RootNodeAggregateDimensionsWereUpdated::class,
             WorkspaceRebaseFailed::class,
             WorkspaceWasCreated::class,
             WorkspaceWasDiscarded::class,

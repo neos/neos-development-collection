@@ -51,16 +51,16 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         $this->types = $types;
     }
 
-    public static function create(ContentStreamId $contentStreamIdentifier, string $tableNamePrefix): self
+    public static function create(ContentStreamId $contentStreamId, string $tableNamePrefix): self
     {
         $query = /** @lang PostgreSQL */
             'SELECT n.*
             FROM ' . $tableNamePrefix . '_hierarchyhyperrelation h
             JOIN ' . $tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(h.childnodeanchors)
-            WHERE h.contentstreamidentifier = :contentStreamIdentifier';
+            WHERE h.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamId' => (string)$contentStreamId
         ];
 
         return new self($query, $parameters, []);
@@ -102,13 +102,13 @@ final class ProjectionHypergraphQuery implements ProjectionHypergraphQueryInterf
         return new self($query, $parameters, $this->types);
     }
 
-    public function withNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
+    public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         $query = $this->query .= '
-            AND n.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND n.nodeaggregateid = :nodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
+        $parameters['nodeAggregateId'] = (string)$nodeAggregateId;
 
         return new self($query, $parameters, $this->types);
     }

@@ -216,7 +216,7 @@ class TetheredNodeAdjustments
      * @param array<int,string> $expectedNodeOrdering
      */
     private function reorderNodes(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         Node $parentNode,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
@@ -233,7 +233,7 @@ class TetheredNodeAdjustments
             $succeedingNode = $actualTetheredChildNodes[$succeedingSiblingNodeName];
 
             $events[] = new NodeAggregateWasMoved(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $nodeToMove->nodeAggregateId,
                 OriginNodeMoveMappings::fromArray([
                     new OriginNodeMoveMapping(
@@ -260,7 +260,7 @@ class TetheredNodeAdjustments
             $succeedingSiblingNodeName = $nodeNameToMove;
         }
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             Events::fromArray($events),

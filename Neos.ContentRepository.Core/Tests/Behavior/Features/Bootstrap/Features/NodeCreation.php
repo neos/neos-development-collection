@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -102,6 +103,29 @@ trait NodeCreation
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 
         $this->publishEvent('RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->rootNodeAggregateId = $nodeAggregateId;
+    }
+
+    /**
+     * @When /^the command UpdateRootNodeAggregateDimensions is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws ContentStreamDoesNotExistYet
+     * @throws \Exception
+     */
+    public function theCommandUpdateRootNodeAggregateDimensionsIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
+        $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
+
+        $command = new UpdateRootNodeAggregateDimensions(
+            $contentStreamId,
+            $nodeAggregateId,
+        );
+
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
         $this->rootNodeAggregateId = $nodeAggregateId;
     }
 

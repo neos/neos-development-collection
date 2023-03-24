@@ -36,9 +36,9 @@ final class QueryUtility
             AND NOT EXISTS (
                 SELECT 1
                 FROM ' . $tableNamePrefix . '_restrictionhyperrelation rest
-                WHERE rest.contentstreamidentifier = ' . $prefix . 'h.contentstreamidentifier
+                WHERE rest.contentstreamid = ' . $prefix . 'h.contentstreamid
                     AND rest.dimensionspacepointhash = ' . $prefix . 'h.dimensionspacepointhash
-                    AND ' . $prefix . 'n.nodeaggregateidentifier = ANY(rest.affectednodeaggregateidentifiers)
+                    AND ' . $prefix . 'n.nodeaggregateid = ANY(rest.affectednodeaggregateids)
             )';
     }
 

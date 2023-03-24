@@ -8,8 +8,8 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 final class ContentRepositoryNotFound extends \InvalidArgumentException
 {
 
-    public static function notConfigured(ContentRepositoryId $contentRepositoryIdentifier): self
+    public static function notConfigured(ContentRepositoryId $contentRepositoryId): self
     {
-        return new self(sprintf('A content repository with id "%s" is not configured', $contentRepositoryIdentifier->value), 1650557155);
+        return new self(sprintf('A content repository with id "%s" is not configured', $contentRepositoryId->value), 1650557155);
     }
 }

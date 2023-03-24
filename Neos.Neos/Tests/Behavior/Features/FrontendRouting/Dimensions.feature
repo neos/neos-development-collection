@@ -256,3 +256,145 @@ Feature: Routing functionality with multiple content dimensions
     When I am on URL "/"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should resolve to URL "/at/nody/karl-de"
+
+
+  Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
+    # new "fr" language
+    Given I have the following content dimensions:
+      | Identifier | Values          | Generalizations |
+      | market     | DE, CH          | CH->DE          |
+      | language   | en, de, gsw, fr | gsw->de->en     |
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de: de
+                        gsw: gsw
+                        en: ''
+                        fr: 'fr'
+                    -
+                      dimensionIdentifier: market
+                      dimensionValueMapping:
+                        DE: ''
+    """
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+    And the graph projection is fully up to date
+    # create variant for fr and sites node
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                            |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "sir-david-nodenborough"         |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"fr"} |
+    And the graph projection is fully up to date
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                            |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "nody-mc-nodeface"               |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"fr"} |
+
+    And the graph projection is fully up to date
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                            |
+      | contentStreamId           | "cs-identifier"                  |
+      | nodeAggregateId           | "nody-mc-nodeface"               |
+      | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
+      | propertyValues            | {"uriPathSegment": "nody-fr"}    |
+
+    And the graph projection is fully up to date
+
+    When I am on URL "/"
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/"
+    Then the node "nody-mc-nodeface" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/nody-fr"
+
+
+  Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
+    # new "fr" language
+    Given I have the following content dimensions:
+      | Identifier | Values          | Generalizations |
+      | market     | DE, CH          | CH->DE          |
+      | language   | en, de, gsw, fr | gsw->de->en     |
+    And the sites configuration is:
+    """
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
+                options:
+                  segments:
+                    -
+                      dimensionIdentifier: language
+                      dimensionValueMapping:
+                        de: de
+                        gsw: gsw
+                        en: ''
+                        fr: 'fr'
+                    -
+                      dimensionIdentifier: market
+                      dimensionValueMapping:
+                        DE: ''
+    """
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+    And the graph projection is fully up to date
+    # create variant for fr and sites node
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                            |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "sir-david-nodenborough"         |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"fr"} |
+    And the graph projection is fully up to date
+    When the command CreateNodeVariant is executed with payload:
+      | Key             | Value                            |
+      | contentStreamId | "cs-identifier"                  |
+      | nodeAggregateId | "nody-mc-nodeface"               |
+      | sourceOrigin    | {"market":"DE", "language":"en"} |
+      | targetOrigin    | {"market":"DE", "language":"fr"} |
+
+    And the graph projection is fully up to date
+
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value                            |
+      | contentStreamId           | "cs-identifier"                  |
+      | nodeAggregateId           | "nody-mc-nodeface"               |
+      | originDimensionSpacePoint | {"market":"DE", "language":"fr"} |
+      | propertyValues            | {"uriPathSegment": "nody-fr"}    |
+    And the graph projection is fully up to date
+
+
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                                 | Value                            |
+      | contentStreamId                     | "cs-identifier"                  |
+      | nodeAggregateId                     | "nody-mc-nodeface"               |
+      | dimensionSpacePoint                 | {"market":"DE", "language":"fr"} |
+      | newParentNodeAggregateId            | "lady-eleonode-rootford"         |
+      | newSucceedingSiblingNodeAggregateId | null                             |
+      | relationDistributionStrategy        | "scatter"                        |
+    And The documenturipath projection is up to date
+
+    And the graph projection is fully up to date
+
+    When I am on URL "/"
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"en"}' should resolve to URL "/"
+    # moved node
+    Then the node "nody-mc-nodeface" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"fr"}' should resolve to URL "/fr/"

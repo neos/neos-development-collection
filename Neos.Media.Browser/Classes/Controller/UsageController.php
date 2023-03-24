@@ -79,8 +79,8 @@ class UsageController extends ActionController
      */
     public function relatedNodesAction(AssetInterface $asset)
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $userWorkspaceName = $this->userService->getPersonalWorkspaceName();
         $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($userWorkspaceName));
 

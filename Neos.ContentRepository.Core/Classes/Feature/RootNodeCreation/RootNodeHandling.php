@@ -19,9 +19,12 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateIsNotRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
@@ -35,7 +38,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 /**
  * @internal implementation detail of Command Handlers
  */
-trait RootNodeCreation
+trait RootNodeHandling
 {
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
@@ -98,6 +101,45 @@ trait RootNodeCreation
             $command->nodeTypeName,
             $coveredDimensionSpacePoints,
             NodeAggregateClassification::CLASSIFICATION_ROOT,
+        );
+    }
+
+    /**
+     * @param UpdateRootNodeAggregateDimensions $command
+     * @return EventsToPublish
+     */
+    private function handleUpdateRootNodeAggregateDimensions(
+        UpdateRootNodeAggregateDimensions $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamId,
+            $command->nodeAggregateId,
+            $contentRepository
+        );
+        if (!$nodeAggregate->classification->isRoot()) {
+            throw new NodeAggregateIsNotRoot('The node aggregate ' . $nodeAggregate->nodeAggregateId->value . ' is not classified as root, but should be for command UpdateRootNodeAggregateDimensions.', 1678647355);
+        }
+
+        $events = Events::with(
+            new RootNodeAggregateDimensionsWereUpdated(
+                $command->contentStreamId,
+                $command->nodeAggregateId,
+                $this->getAllowedDimensionSubspace()
+            )
+        );
+
+        $contentStreamEventStream = ContentStreamEventStreamName::fromContentStreamId(
+            $command->contentStreamId
+        );
+        return new EventsToPublish(
+            $contentStreamEventStream->getEventStreamName(),
+            NodeAggregateEventPublisher::enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
         );
     }
 }

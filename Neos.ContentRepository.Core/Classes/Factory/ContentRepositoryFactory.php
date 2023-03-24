@@ -64,7 +64,7 @@ final class ContentRepositoryFactory
 
         $this->projectionFactoryDependencies = new ProjectionFactoryDependencies(
             $contentRepositoryId,
-            $eventStore->withClock($this->clock),
+            $eventStore,
             new EventNormalizer(),
             $nodeTypeManager,
             $contentDimensionSource,

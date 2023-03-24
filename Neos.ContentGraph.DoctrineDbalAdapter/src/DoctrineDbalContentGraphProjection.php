@@ -41,6 +41,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
@@ -161,6 +162,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $eventClassName = $this->eventNormalizer->getEventClassName($event);
         return in_array($eventClassName, [
             RootNodeAggregateWithNodeWasCreated::class,
+            RootNodeAggregateDimensionsWereUpdated::class,
             NodeAggregateWithNodeWasCreated::class,
             NodeAggregateNameWasChanged::class,
             ContentStreamWasForked::class,
@@ -205,6 +207,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         if ($eventInstance instanceof RootNodeAggregateWithNodeWasCreated) {
             $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope);
+        } elseif ($eventInstance instanceof RootNodeAggregateDimensionsWereUpdated) {
+            $this->whenRootNodeAggregateDimensionsWereUpdated($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWithNodeWasCreated) {
             $this->whenNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodeAggregateNameWasChanged) {
@@ -276,12 +280,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $dimensionSpacePoint = DimensionSpacePoint::fromArray([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->nodeAggregateId,
-            $dimensionSpacePoint->coordinates,
-            $dimensionSpacePoint->hash,
+            $originDimensionSpacePoint->coordinates,
+            $originDimensionSpacePoint->hash,
             SerializedPropertyValues::fromArray([]),
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
@@ -298,6 +302,47 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $event->contentStreamId,
                 NodeRelationAnchorPoint::forRootEdge(),
                 $node->relationAnchorPoint,
+                $event->coveredDimensionSpacePoints,
+                null
+            );
+        });
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
+    {
+        $rootNodeAnchorPoint = $this->projectionContentGraph
+            ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                $event->nodeAggregateId,
+                /** the origin DSP of the root node is always the empty dimension ({@see whenRootNodeAggregateWithNodeWasCreated}) */
+                OriginDimensionSpacePoint::fromArray([]),
+                $event->contentStreamId
+            );
+        if ($rootNodeAnchorPoint === null) {
+            // should never happen.
+            return;
+        }
+
+        $this->transactional(function () use ($rootNodeAnchorPoint, $event) {
+            // delete all hierarchy edges of the root node
+            $this->getDatabaseConnection()->executeUpdate('
+                DELETE FROM ' . $this->tableNamePrefix . '_hierarchyrelation
+                WHERE
+                    parentnodeanchor = :parentNodeAnchor
+                    AND childnodeanchor = :childNodeAnchor
+                    AND contentstreamid = :contentStreamId
+            ', [
+                'parentNodeAnchor' => (string)NodeRelationAnchorPoint::forRootEdge(),
+                'childNodeAnchor' => (string)$rootNodeAnchorPoint,
+                'contentStreamId' => (string)$event->contentStreamId
+            ]);
+            // recreate hierarchy edges for the root node
+            $this->connectHierarchy(
+                $event->contentStreamId,
+                NodeRelationAnchorPoint::forRootEdge(),
+                $rootNodeAnchorPoint,
                 $event->coveredDimensionSpacePoints,
                 null
             );
