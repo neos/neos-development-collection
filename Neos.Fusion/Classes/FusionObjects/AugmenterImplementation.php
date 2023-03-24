@@ -23,7 +23,6 @@ use Neos\Fusion\Service\HtmlAugmenter;
  */
 class AugmenterImplementation extends JoinImplementation
 {
-
     /**
      * @var HtmlAugmenter
      * @Flow\Inject
