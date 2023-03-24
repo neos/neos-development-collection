@@ -460,8 +460,6 @@ class MediaCommandController extends CommandController
 
             $this->outputLine('To delete them, please use the <b>removeUnusedImageVariants</b> command.');
         }
-
-        die;
     }
 
     /**
@@ -469,9 +467,6 @@ class MediaCommandController extends CommandController
      *
      * This command iterates over all existing asset variants with outdated preset.
      * They can be deleted if not used.
-     *
-     * To delete custom crops made in neos backend, set identifier and name to NULL:
-     * `media:removeoutdatedvariants --identifier NULL --variant-name NULL`
      *
      * @param string $identifier Identifier of variants to remove.
      * @param string $variantName Variants with this name will be removed (if exist).
@@ -483,11 +478,6 @@ class MediaCommandController extends CommandController
      */
     public function removeOutdatedVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, int $limit = null)
     {
-        if ($identifier == 'NULL' && $variantName == 'NULL') {
-            $identifier = null;
-            $variantName = null;
-        }
-
         $variants = $this->imageVariantRepository->findOutdatedVariantsByName($identifier, $variantName, $limit);
         if (empty($variants)) {
             !$quiet && $this->output->outputLine('<em>Not found any presets with name ' . $variantName . ' in ' . $identifier . '</em>');
@@ -495,7 +485,6 @@ class MediaCommandController extends CommandController
         }
 
         $outdatedVariants = [];
-
         foreach ($variants as $variant) {
             // check if necessary for current configuration
             if (!empty($filterByAssetSourceIdentifier) && $variant->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
@@ -528,22 +517,12 @@ class MediaCommandController extends CommandController
         !$quiet && $this->output->progressStart(count($outdatedVariants));
 
         $outdatedVariantSize = 0;
-        $stillUsedVariants = 0;
         foreach ($outdatedVariants as $variantToRemove) {
             !$quiet && $this->output->progressAdvance();
             $variantSize = $variantToRemove->getResource()->getFileSize();
 
             try {
                 $variantToRemove->getResource()->disableLifecycleEvents();
-                if (!$variantToRemove->getPresetIdentifier() && !$variantToRemove->getPresetVariantName()) {
-                    // customized variants don't have presetIdentifier or presetVariantName
-                    if ($this->assetService->isInUse($variantToRemove)) {
-                        // if the variant is customized and in use
-                        // it will not be deleted but counted for user notification
-                        $stillUsedVariants += 1;
-                        continue;
-                    }
-                }
 
                 $this->assetRepository->removeWithoutUsageChecks($variantToRemove);
                 $this->persistenceManager->persistAll();
@@ -556,13 +535,6 @@ class MediaCommandController extends CommandController
             $outdatedVariantSize += $variantSize;
         }
         !$quiet && $this->output->progressFinish();
-
-        if (!$quiet) {
-            if ($stillUsedVariants > 0) {
-                $this->outputLine(PHP_EOL . '<b>Found ' . $stillUsedVariants . ' still used asset variants.</b>');
-                $this->outputLine('Those have not been deleted.');
-            }
-        }
 
         $readableStorageSize = Files::bytesToSizeString($outdatedVariantSize);
         $this->outputLine(PHP_EOL . '<success>Removed ' . $readableStorageSize . '</success>');
