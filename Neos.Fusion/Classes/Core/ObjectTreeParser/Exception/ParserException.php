@@ -131,7 +131,7 @@ class ParserException extends Exception
             $lineNumberCursor,
             $linePartAfterCursor,
             $linePartBeforeCursor
-            ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
+        ) = self::splitAtCursorGetLinePartsAndLineNumber($this->fluentFusion, $this->fluentCursor);
 
         $isEof = strlen($this->fluentFusion) === $this->fluentCursor;
         $nextLine = new MessageLinePart($linePartAfterCursor, $isEof);
