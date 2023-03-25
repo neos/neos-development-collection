@@ -46,6 +46,8 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
+ * See {@see ContentStreamFinder} for explanation.
+ *
  * @internal
  * @implements ProjectionInterface<ContentStreamFinder>
  */
@@ -219,7 +221,7 @@ class ContentStreamProjection implements ProjectionInterface
             'contentStreamId' => $event->newContentStreamId,
             'version' => self::extractVersion($eventEnvelope),
             'sourceContentStreamId' => $event->sourceContentStreamId,
-            'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
+            'state' => ContentStreamFinder::STATE_FORKED,
         ]);
     }
 
