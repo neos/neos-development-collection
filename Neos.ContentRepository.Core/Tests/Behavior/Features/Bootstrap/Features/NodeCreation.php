@@ -206,7 +206,7 @@ trait NodeCreation
                     ? NodeName::fromString($row['nodeName'])
                     : null,
                 isset($row['initialPropertyValues'])
-                    ? PropertyValuesToWrite::fromJsonString($row['initialPropertyValues'])
+                    ? $this->parsePropertyValuesJsonString($row['initialPropertyValues'])
                     : null,
                 isset($row['tetheredDescendantNodeAggregateIds'])
                     ? NodeAggregateIdsByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIds'])
@@ -216,6 +216,18 @@ trait NodeCreation
             $this->theGraphProjectionIsFullyUpToDate();
         }
     }
+
+    private function parsePropertyValuesJsonString(string $jsonString): PropertyValuesToWrite
+    {
+        $array = \json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
+        return PropertyValuesToWrite::fromArray(
+            array_map(
+                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
+                $array
+            )
+        );
+    }
+
     /**
      * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
      * @param TableNode $payloadTable
