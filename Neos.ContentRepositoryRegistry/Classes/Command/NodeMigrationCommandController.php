@@ -53,7 +53,7 @@ class NodeMigrationCommandController extends CommandController
      */
     public function migrateCommand(string $version, $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default')
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
         try {
             $migrationConfiguration = $this->migrationFactory->getMigrationForVersion($version);
@@ -66,7 +66,7 @@ class NodeMigrationCommandController extends CommandController
                 $this->quit(1);
             }
 
-            $nodeMigrationService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new NodeMigrationServiceFactory());
+            $nodeMigrationService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new NodeMigrationServiceFactory());
             $nodeMigrationService->executeMigration(
                 new ExecuteMigration(
                     $migrationConfiguration,

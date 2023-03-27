@@ -68,4 +68,11 @@ final class AllChildNodesByNodeIdCache
         $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
         return $this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey] ?? Nodes::createEmpty();
     }
+
+    public function countChildNodes(
+        NodeAggregateId $parentNodeAggregateId,
+        ?NodeTypeConstraints $nodeTypeConstraints
+    ): int {
+        return $this->findChildNodes($parentNodeAggregateId, $nodeTypeConstraints)->count();
+    }
 }

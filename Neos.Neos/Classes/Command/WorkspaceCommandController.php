@@ -73,8 +73,8 @@ class WorkspaceCommandController extends CommandController
         $verbose = false,
         $dryRun = false
     ) {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if (!$dryRun) {
             $contentRepository->handle(new PublishWorkspace(
@@ -104,8 +104,8 @@ class WorkspaceCommandController extends CommandController
         $verbose = false,
         $dryRun = false
     ) {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if (!$dryRun) {
             try {
@@ -124,8 +124,8 @@ class WorkspaceCommandController extends CommandController
 
     public function createRootCommand(string $name, string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $contentRepository->handle(new CreateRootWorkspace(
             WorkspaceName::fromString($name),
@@ -155,8 +155,8 @@ class WorkspaceCommandController extends CommandController
         $owner = '',
         string $contentRepositoryIdentifier = 'default'
     ) {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if ($owner === '') {
             $workspaceOwner = null;
@@ -341,8 +341,8 @@ class WorkspaceCommandController extends CommandController
      */
     public function listCommand(string $contentRepositoryIdentifier = 'default')
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
 

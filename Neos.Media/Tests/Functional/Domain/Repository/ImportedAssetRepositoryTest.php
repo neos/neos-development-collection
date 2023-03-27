@@ -18,7 +18,6 @@ use Neos\Media\Tests\Functional\AbstractTest;
 
 class ImportedAssetRepositoryTest extends AbstractTest
 {
-
     /**
      * @var boolean
      */

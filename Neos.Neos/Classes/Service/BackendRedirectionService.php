@@ -163,9 +163,9 @@ class BackendRedirectionService
 
     protected function getLastVisitedNode(string $workspaceName, ActionRequest $actionRequest): ?Node
     {
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($actionRequest->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($actionRequest->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
         if (!$workspace || !$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;

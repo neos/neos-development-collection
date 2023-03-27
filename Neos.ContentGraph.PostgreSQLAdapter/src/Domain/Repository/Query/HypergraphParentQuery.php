@@ -32,37 +32,37 @@ final class HypergraphParentQuery implements HypergraphQueryInterface
      * @param array<int,string>|null $fieldsToFetch
      */
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         string $tableNamePrefix,
         ?array $fieldsToFetch = null
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
-                : 'pn.origindimensionspacepoint, pn.nodeaggregateidentifier, pn.nodetypename,
+                : 'pn.origindimensionspacepoint, pn.nodeaggregateid, pn.nodetypename,
                     pn.classification, pn.properties, pn.nodename,
-                    ph.contentstreamidentifier, ph.dimensionspacepoint') . '
+                    ph.contentstreamid, ph.dimensionspacepoint') . '
             FROM ' . $tableNamePrefix . '_hierarchyhyperrelation ph
             JOIN ' . $tableNamePrefix . '_node pn ON pn.relationanchorpoint = ANY(ph.childnodeanchors)
             JOIN ' . $tableNamePrefix . '_hierarchyhyperrelation ch ON ch.parentnodeanchor = pn.relationanchorpoint
             JOIN ' . $tableNamePrefix . '_node cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
-            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
-                AND ch.contentstreamidentifier = :contentStreamIdentifier';
+            WHERE ph.contentstreamid = :contentStreamId
+                AND ch.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier
+            'contentStreamId' => (string)$contentStreamId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);
     }
 
-    public function withChildNodeAggregateIdentifier(NodeAggregateId $nodeAggregateIdentifier): self
+    public function withChildNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         $query = $this->query .= '
-            AND cn.nodeaggregateidentifier = :nodeAggregateIdentifier';
+            AND cn.nodeaggregateid = :nodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateIdentifier'] = (string)$nodeAggregateIdentifier;
+        $parameters['nodeAggregateId'] = (string)$nodeAggregateId;
 
         return new self($query, $parameters, $this->tableNamePrefix);
     }

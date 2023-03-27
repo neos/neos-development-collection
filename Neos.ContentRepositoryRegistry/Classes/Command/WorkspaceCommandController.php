@@ -20,9 +20,9 @@ class WorkspaceCommandController extends CommandController
      */
     public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
         $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces();

@@ -188,9 +188,9 @@ class FusionService
      * @return string
      * @throws \Neos\Neos\Domain\Exception
      */
-    protected function generateNodeTypeDefinitions(ContentRepositoryId $contentRepositoryIdentifier)
+    protected function generateNodeTypeDefinitions(ContentRepositoryId $contentRepositoryId)
     {
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $code = '';
         /** @var NodeType $nodeType */
         foreach ($contentRepository->getNodeTypeManager()->getNodeTypes(false) as $nodeType) {

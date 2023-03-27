@@ -7,5 +7,5 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 
 interface UserIdProviderFactoryInterface
 {
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): UserIdProviderInterface;
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): UserIdProviderInterface;
 }

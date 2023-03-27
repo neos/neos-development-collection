@@ -33,29 +33,29 @@ trait ContentStreamForking
     {
         $this->transactional(function () use ($event) {
             $parameters = [
-                'sourceContentStreamIdentifier' => (string)$event->sourceContentStreamId,
-                'targetContentStreamIdentifier' => (string)$event->newContentStreamId
+                'sourceContentStreamId' => (string)$event->sourceContentStreamId,
+                'targetContentStreamId' => (string)$event->newContentStreamId
             ];
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
                 'INSERT INTO ' . $this->tableNamePrefix . '_hierarchyhyperrelation
-                    (contentstreamidentifier, parentnodeanchor,
+                    (contentstreamid, parentnodeanchor,
                      dimensionspacepoint, dimensionspacepointhash, childnodeanchors)
-                SELECT :targetContentStreamIdentifier, parentnodeanchor,
+                SELECT :targetContentStreamId, parentnodeanchor,
                     dimensionspacepoint, dimensionspacepointhash, childnodeanchors
                 FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation source
-                WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
+                WHERE source.contentstreamid = :sourceContentStreamId',
                 $parameters
             );
 
             $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
                 'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation
-                    (contentstreamidentifier, dimensionspacepointhash,
-                     originnodeaggregateidentifier, affectednodeaggregateidentifiers)
-                SELECT :targetContentStreamIdentifier, dimensionspacepointhash,
-                    originnodeaggregateidentifier, affectednodeaggregateidentifiers
+                    (contentstreamid, dimensionspacepointhash,
+                     originnodeaggregateid, affectednodeaggregateids)
+                SELECT :targetContentStreamId, dimensionspacepointhash,
+                    originnodeaggregateid, affectednodeaggregateids
                 FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
-                WHERE source.contentstreamidentifier = :sourceContentStreamIdentifier',
+                WHERE source.contentstreamid = :sourceContentStreamId',
                 $parameters
             );
         });

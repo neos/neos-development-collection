@@ -117,7 +117,7 @@ final class EditorContentStreamZookeeper
                     // @todo: find base workspace for user
                     /** @var Workspace $baseWorkspace */
                     $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-                    $editorsNewContentStreamIdentifier = ContentStreamId::create();
+                    $editorsNewContentStreamId = ContentStreamId::create();
                     $similarlyNamedWorkspaces = $contentRepository->getWorkspaceFinder()->findByPrefix(
                         $workspaceName->toContentRepositoryWorkspaceName()
                     );
@@ -131,7 +131,7 @@ final class EditorContentStreamZookeeper
                             $baseWorkspace->workspaceName,
                             new WorkspaceTitle((string) $user->getName()),
                             new WorkspaceDescription(''),
-                            $editorsNewContentStreamIdentifier,
+                            $editorsNewContentStreamId,
                         )
                     )->block();
                 } else {

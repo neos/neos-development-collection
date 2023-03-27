@@ -25,9 +25,9 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
     }
 
     public static function graphProjectionTableNamePrefix(
-        ContentRepositoryId $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryId
     ): string {
-        return sprintf('cr_%s_p_hypergraph', $contentRepositoryIdentifier);
+        return sprintf('cr_%s_p_hypergraph', $contentRepositoryId);
     }
 
     public function build(

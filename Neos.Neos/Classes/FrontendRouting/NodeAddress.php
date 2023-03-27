@@ -27,7 +27,7 @@ use Neos\Flow\Annotations as Flow;
  * Show me
  *  node $nodeAggregateId
  *  in dimensions $dimensionSpacePoint
- *  in contentStreamIdentifier $contentStreamIdentifier
+ *  in contentStreamId $contentStreamId
  *
  * It is used in Neos Routing to build a URI to a node.
  *
@@ -74,7 +74,7 @@ final class NodeAddress
     public function __toString(): string
     {
         return sprintf(
-            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateIdentifier=%s, workspaceName=%s]',
+            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             $this->nodeAggregateId,
