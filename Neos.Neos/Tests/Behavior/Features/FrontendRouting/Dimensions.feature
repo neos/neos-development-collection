@@ -21,7 +21,6 @@ Feature: Routing functionality with multiple content dimensions
       | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
       | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
-    # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues           | nodeName |

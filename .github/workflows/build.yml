@@ -115,7 +115,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
-          coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
       - name: Checkout development distribution
@@ -252,7 +251,7 @@ jobs:
           # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
           # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
           set +e
-          composer test:behavioral:stop-on-failure
+          CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 composer test:behavioral:stop-on-failure
           retVal=$?
 
           # automatically search for race conditions

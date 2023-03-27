@@ -8,11 +8,17 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And I have the following NodeTypes configuration:
     """
     'Neos.Neos:Sites': {}
+    'Neos.Neos:Document': {}
+    'Neos.Neos:Content': {}
     'Neos.EventSourcedNeosAdjustments:Test.Routing.Page':
+      superTypes:
+        'Neos.Neos:Document': true
       properties:
         uriPathSegment:
           type: string
     'Neos.EventSourcedNeosAdjustments:Test.Routing.Content':
+      superTypes:
+        'Neos.Neos:Content': true
       properties:
         uriPathSegment:
           type: string
@@ -38,7 +44,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     #          leaf-mc-node
     #      nody-mc-nodeface
     #
-    # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
