@@ -79,10 +79,10 @@ final class NodeFactory
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             Timestamps::create(
-                self::parseDateTimeString($nodeRow['createdat']),
-                self::parseDateTimeString($nodeRow['originalcreatedat']),
-                isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
-                isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
+                self::parseDateTimeString($nodeRow['created']),
+                self::parseDateTimeString($nodeRow['originalcreated']),
+                isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
+                isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
         );
     }

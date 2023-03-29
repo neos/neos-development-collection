@@ -50,14 +50,14 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('classification', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
-        $table->addColumn('createdat', Types::DATETIME_IMMUTABLE)
+        $table->addColumn('created', Types::DATETIME_IMMUTABLE)
             ->setNotnull(true);
-        $table->addColumn('originalcreatedat', Types::DATETIME_IMMUTABLE)
+        $table->addColumn('originalcreated', Types::DATETIME_IMMUTABLE)
             ->setNotnull(true);
-        $table->addColumn('lastmodifiedat', Types::DATETIME_IMMUTABLE)
+        $table->addColumn('lastmodified', Types::DATETIME_IMMUTABLE)
             ->setNotnull(false)
             ->setDefault(null);
-        $table->addColumn('originallastmodifiedat', Types::DATETIME_IMMUTABLE)
+        $table->addColumn('originallastmodified', Types::DATETIME_IMMUTABLE)
             ->setNotnull(false)
             ->setDefault(null);
         $table

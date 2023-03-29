@@ -40,10 +40,10 @@ final class NodeRecord
         public NodeAggregateClassification $classification,
         /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
         public ?NodeName $nodeName,
-        public \DateTimeImmutable $createdAt,
-        public \DateTimeImmutable $originalCreatedAt,
-        public ?\DateTimeImmutable $lastModifiedAt,
-        public ?\DateTimeImmutable $originalLastModifiedAt,
+        public \DateTimeImmutable $created,
+        public \DateTimeImmutable $originalCreated,
+        public ?\DateTimeImmutable $lastModified,
+        public ?\DateTimeImmutable $originalLastModified,
     ) {
     }
 
@@ -61,15 +61,15 @@ final class NodeRecord
             'properties' => json_encode($this->properties),
             'nodetypename' => (string)$this->nodeTypeName,
             'classification' => $this->classification->value,
-            'createdat' => $this->createdAt,
-            'originalcreatedat' => $this->originalCreatedAt,
-            'lastmodifiedat' => $this->lastModifiedAt,
-            'originallastmodifiedat' => $this->originalLastModifiedAt,
+            'created' => $this->created,
+            'originalcreated' => $this->originalCreated,
+            'lastmodified' => $this->lastModified,
+            'originallastmodified' => $this->originalLastModified,
         ], [
-            'createdat' => Types::DATETIME_IMMUTABLE,
-            'originalcreatedat' => Types::DATETIME_IMMUTABLE,
-            'lastmodifiedat' => Types::DATETIME_IMMUTABLE,
-            'originallastmodifiedat' => Types::DATETIME_IMMUTABLE,
+            'created' => Types::DATETIME_IMMUTABLE,
+            'originalcreated' => Types::DATETIME_IMMUTABLE,
+            'lastmodified' => Types::DATETIME_IMMUTABLE,
+            'originallastmodified' => Types::DATETIME_IMMUTABLE,
         ]);
     }
 
@@ -88,15 +88,15 @@ final class NodeRecord
                 'properties' => json_encode($this->properties),
                 'nodetypename' => (string)$this->nodeTypeName,
                 'classification' => $this->classification->value,
-                'lastmodifiedat' => $this->lastModifiedAt,
-                'originallastmodifiedat' => $this->originalLastModifiedAt,
+                'lastmodified' => $this->lastModified,
+                'originallastmodified' => $this->originalLastModified,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
             ],
             [
-                'lastmodifiedat' => Types::DATETIME_IMMUTABLE,
-                'originallastmodifiedat' => Types::DATETIME_IMMUTABLE,
+                'lastmodified' => Types::DATETIME_IMMUTABLE,
+                'originallastmodified' => Types::DATETIME_IMMUTABLE,
             ]
         );
     }
@@ -128,10 +128,10 @@ final class NodeRecord
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null,
-            self::parseDateTimeString($databaseRow['createdat']),
-            self::parseDateTimeString($databaseRow['originalcreatedat']),
-            isset($databaseRow['lastmodifiedat']) ? self::parseDateTimeString($databaseRow['lastmodifiedat']) : null,
-            isset($databaseRow['originallastmodifiedat']) ? self::parseDateTimeString($databaseRow['originallastmodifiedat']) : null,
+            self::parseDateTimeString($databaseRow['created']),
+            self::parseDateTimeString($databaseRow['originalcreated']),
+            isset($databaseRow['lastmodified']) ? self::parseDateTimeString($databaseRow['lastmodified']) : null,
+            isset($databaseRow['originallastmodified']) ? self::parseDateTimeString($databaseRow['originallastmodified']) : null,
         );
     }
 

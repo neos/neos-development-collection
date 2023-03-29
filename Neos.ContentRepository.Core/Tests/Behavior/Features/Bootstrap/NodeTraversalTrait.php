@@ -408,10 +408,10 @@ trait NodeTraversalTrait
                 Assert::fail(sprintf('Failed to find node with aggregate id "%s"', $nodeAggregateId->value));
             }
             $actualTimestamps = [
-                'createdAt' => $node->timestamps->created,
-                'originalCreatedAt' => $node->timestamps->originalCreated,
-                'lastModifiedAt' => $node->timestamps->lastModified,
-                'originalLastModifiedAt' => $node->timestamps->originalLastModified,
+                'created' => $node->timestamps->created,
+                'originalCreated' => $node->timestamps->originalCreated,
+                'lastModified' => $node->timestamps->lastModified,
+                'originalLastModified' => $node->timestamps->originalLastModified,
             ];
             Assert::assertEquals($expectedTimestamps, $actualTimestamps);
         }

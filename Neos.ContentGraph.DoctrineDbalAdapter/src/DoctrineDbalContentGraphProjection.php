@@ -390,8 +390,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     h.childnodeanchor = n.relationanchorpoint
                 SET
                   h.name = :newName,
-                  n.lastmodifiedat = :lastModifiedAt,
-                  n.originallastmodifiedat = :originalLastModifiedAt
+                  n.lastmodified = :lastModified,
+                  n.originallastmodified = :originalLastModified
 
                 WHERE
                     n.nodeaggregateid = :nodeAggregateId
@@ -400,11 +400,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 'newName' => (string)$event->newNodeName,
                 'nodeAggregateId' => (string)$event->nodeAggregateId,
                 'contentStreamId' => (string)$event->contentStreamId,
-                'lastModifiedAt' => $eventEnvelope->recordedAt,
-                'originalLastModifiedAt' => self::initiatingDateTime($eventEnvelope),
+                'lastModified' => $eventEnvelope->recordedAt,
+                'originalLastModified' => self::initiatingDateTime($eventEnvelope),
             ], [
-                'lastModifiedAt' => Types::DATETIME_IMMUTABLE,
-                'originalLastModifiedAt' => Types::DATETIME_IMMUTABLE,
+                'lastModified' => Types::DATETIME_IMMUTABLE,
+                'originalLastModified' => Types::DATETIME_IMMUTABLE,
             ]);
         });
     }
@@ -764,8 +764,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $this->transactional(function () use ($event, $eventEnvelope) {
             $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event, $eventEnvelope) {
                 $node->properties = $node->properties->merge($event->propertyValues);
-                $node->lastModifiedAt = $eventEnvelope->recordedAt;
-                $node->originalLastModifiedAt = self::initiatingDateTime($eventEnvelope);
+                $node->lastModified = $eventEnvelope->recordedAt;
+                $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
             });
         });
     }
@@ -798,8 +798,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $event->contentStreamId,
                     $nodeAnchorPoint,
                     function (NodeRecord $node) use ($eventEnvelope) {
-                        $node->lastModifiedAt = $eventEnvelope->recordedAt;
-                        $node->originalLastModifiedAt = self::initiatingDateTime($eventEnvelope);
+                        $node->lastModified = $eventEnvelope->recordedAt;
+                        $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
                     }
                 );
 
@@ -1013,8 +1013,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $anchorPoint,
                     function (NodeRecord $node) use ($event, $eventEnvelope) {
                         $node->nodeTypeName = $event->newNodeTypeName;
-                        $node->lastModifiedAt = $eventEnvelope->recordedAt;
-                        $node->originalLastModifiedAt = self::initiatingDateTime($eventEnvelope);
+                        $node->lastModified = $eventEnvelope->recordedAt;
+                        $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
                     }
                 );
             }

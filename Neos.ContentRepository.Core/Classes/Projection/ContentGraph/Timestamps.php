@@ -38,11 +38,11 @@ final class Timestamps
     }
 
     public static function create(
-        DateTimeImmutable $createdAt,
-        DateTimeImmutable $originalCreatedAt,
-        ?DateTimeImmutable $lastModifiedAt,
-        ?DateTimeImmutable $originalLastModifiedAt
+        DateTimeImmutable $created,
+        DateTimeImmutable $originalCreated,
+        ?DateTimeImmutable $lastModified,
+        ?DateTimeImmutable $originalLastModified
     ): self {
-        return new self($createdAt, $originalCreatedAt, $lastModifiedAt, $originalLastModifiedAt);
+        return new self($created, $originalCreated, $lastModified, $originalLastModified);
     }
 }

@@ -86,7 +86,7 @@ Feature: TODO
       | b               | b        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "b"}         | {}                                       |
 
   Scenario: TODO
-    And the current date and time is "2023-03-16T13:00:00+01:00"
+    When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value               |
       | contentStreamId | "cs-user"           |
@@ -102,16 +102,16 @@ Feature: TODO
 
     And I am in content stream "cs-user"
     Then I expect the node "a" to have the following timestamps:
-      | createdAt           | originalCreatedAt   | lastModifiedAt      | originalLastModifiedAt |
-      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00    |
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
     And I expect the node "b" to have the following timestamps:
-      | createdAt           | originalCreatedAt   | lastModifiedAt | originalLastModifiedAt |
-      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |                |                        |
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
 
     And I am in content stream "cs-review"
     Then I expect the node "a" to have the following timestamps:
-      | createdAt           | originalCreatedAt   | lastModifiedAt      | originalLastModifiedAt |
-      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 | 2023-03-16 14:00:00 | 2023-03-16 13:00:00    |
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 | 2023-03-16 14:00:00 | 2023-03-16 13:00:00  |
     And I expect the node "b" to have the following timestamps:
-      | createdAt           | originalCreatedAt   | lastModifiedAt | originalLastModifiedAt |
-      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 |                |                        |
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 |              |                      |

@@ -90,11 +90,11 @@ final class NodeFactory
             ),
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
             Timestamps::create(
-                // TODO replace with $nodeRow['createdat'] and $nodeRow['originalcreatedat'] once projection has implemented support
+                // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
                 self::parseDateTimeString('2023-03-17 12:00:00'),
                 self::parseDateTimeString('2023-03-17 12:00:00'),
-                isset($nodeRow['lastmodifiedat']) ? self::parseDateTimeString($nodeRow['lastmodifiedat']) : null,
-                isset($nodeRow['originallastmodifiedat']) ? self::parseDateTimeString($nodeRow['originallastmodifiedat']) : null,
+                isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
+                isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
         );
 
