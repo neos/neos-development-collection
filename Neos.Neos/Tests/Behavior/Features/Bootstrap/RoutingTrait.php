@@ -290,7 +290,6 @@ trait RoutingTrait
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
         }
-        putenv('FLOW_REWRITEURLS=1');
         $nodeAddress = new NodeAddress(
             ContentStreamId::fromString($contentStreamId),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
