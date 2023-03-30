@@ -19,6 +19,39 @@ use DateTimeImmutable;
 /**
  * Creation and modification timestamps of a node
  *
+ * * `created`: Date and time a node was created in its content stream
+ * * `originalCreated`: Date and time a node was created originally (this is equal to `created` for nodes in the original content stream)
+ * * `lastModified`: Date and time a node was last modified in its content stream (NULL = never modified)
+ * * `originalLastModified` Date and time a node was last modified in its original content stream
+ *
+ * When a node is originally created via one of the following events:
+ * * {@see RootNodeAggregateWithNodeWasCreated}
+ * * {@see NodeAggregateWithNodeWasCreated}
+ * the `created` and `originalCreated` values are set to the current date and time.
+ *
+ * When the creation even is re-applied on a different content stream (i.e. when publishing a node initially)
+ * or when a node variant is created via one of the following events:
+ * * {@see NodeSpecializationVariantWasCreated}
+ * * {@see NodeGeneralizationVariantWasCreated}
+ * * {@see NodePeerVariantWasCreated}
+ * the `created` value is set to the current date and time while the `originalCreated` value is copied over
+ * from the already existing node.
+ *
+ * The `lastModified` and `originalLastModified` values will be NULL upon creation. This allows for checking whether a node has been modified
+ * at all.
+ *
+ * When a node is being modified via one of the following events:
+ * * {@see NodeAggregateNameWasChanged}
+ * * {@see NodePropertiesWereSet}
+ * * {@see NodeReferencesWereSet}
+ * * {@see NodeAggregateWasEnabled}
+ * * {@see NodeAggregateTypeWasChanged}
+ * * {@see NodeAggregateWasMoved}
+ * * {@see NodeAggregateWasDisabled}
+ * the `lastModified` is set to the current date and time.
+ * the `originalLastModified` value is also set to the current date and time if the node is modified in the original content stream.
+ * Otherwise, it is copied over from the original event
+ *
  * @api
  */
 final class Timestamps
