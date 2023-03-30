@@ -177,9 +177,38 @@ class ProjectionContentGraph
 
         if (count($rows) === 1) {
             return NodeRelationAnchorPoint::fromString($rows[0]['relationanchorpoint']);
-        } else {
-            return null;
         }
+        return null;
+    }
+
+    /**
+     * @return iterable<NodeRelationAnchorPoint>
+     */
+    public function getAnchorPointsForNodeAndDimensionSpacePointsAndContentStream(
+        NodeAggregateId $nodeAggregateId,
+        DimensionSpacePointSet $dimensionSpacePoints,
+        ContentStreamId $contentStreamId
+    ): iterable {
+        $rows = $this->getDatabaseConnection()->executeQuery(
+            'SELECT DISTINCT n.relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
+ INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h ON h.childnodeanchor = n.relationanchorpoint
+ WHERE n.nodeaggregateid = :nodeAggregateId
+ AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
+ AND h.contentstreamid = :contentStreamId',
+            [
+                'nodeAggregateId' => (string)$nodeAggregateId,
+                'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
+                'contentStreamId' => (string)$contentStreamId,
+            ],
+            [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+            ]
+        )->fetchAllAssociative();
+
+        return array_map(
+            static fn(array $row) => NodeRelationAnchorPoint::fromString($row['relationanchorpoint']),
+            $rows
+        );
     }
 
     /**

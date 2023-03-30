@@ -22,7 +22,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -762,11 +761,29 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
         $this->transactional(function () use ($event, $eventEnvelope) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event, $eventEnvelope) {
-                $node->properties = $node->properties->merge($event->propertyValues);
-                $node->lastModified = $eventEnvelope->recordedAt;
-                $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
-            });
+            $anchorPoint = $this->projectionContentGraph
+                ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                    $event->getNodeAggregateId(),
+                    $event->getOriginDimensionSpacePoint(),
+                    $event->getContentStreamId()
+                );
+            if (is_null($anchorPoint)) {
+                throw new \InvalidArgumentException(
+                    'Cannot update node with copy on write since no anchor point could be resolved for node '
+                    . $event->getNodeAggregateId() . ' in content stream '
+                    . $event->getContentStreamId(),
+                    1645303332
+                );
+            }
+            $this->updateNodeRecordWithCopyOnWrite(
+                $event->getContentStreamId(),
+                $anchorPoint,
+                function (NodeRecord $node) use ($event, $eventEnvelope) {
+                    $node->properties = $node->properties->merge($event->propertyValues);
+                    $node->lastModified = $eventEnvelope->recordedAt;
+                    $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
+                }
+            );
         });
     }
 
@@ -925,13 +942,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      */
     private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
                 $event->affectedDimensionSpacePoints
             );
-            // TODO update last modified values
+            $this->updateLastModifiedTimestamp($event->nodeAggregateId, $event->contentStreamId, $event->affectedDimensionSpacePoints, $eventEnvelope);
         });
     }
 
@@ -1002,11 +1019,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event, EventEnvelope $eventEnvelope): void
     {
         $this->transactional(function () use ($event, $eventEnvelope) {
-            $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
-                $event->nodeAggregateId,
-                $event->contentStreamId
-            );
-
+            $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->nodeAggregateId, $event->contentStreamId);
             foreach ($anchorPoints as $anchorPoint) {
                 $this->updateNodeRecordWithCopyOnWrite(
                     $event->contentStreamId,
@@ -1021,46 +1034,19 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         });
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     */
-    private function updateNodeWithCopyOnWrite(EventInterface $event, callable $operations): mixed
+    protected function updateLastModifiedTimestamp(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePointSet $affectedDimensionSpacePoints, EventEnvelope $eventEnvelope): void
     {
-        if (
-            method_exists($event, 'getNodeAggregateId')
-            && method_exists($event, 'getOriginDimensionSpacePoint')
-            && method_exists($event, 'getContentStreamId')
-        ) {
-            $anchorPoint = $this->projectionContentGraph
-                ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                    $event->getNodeAggregateId(),
-                    $event->getOriginDimensionSpacePoint(),
-                    $event->getContentStreamId()
-                );
-        } else {
-            throw new \InvalidArgumentException(
-                'Cannot update node with copy on write for events of type '
-                    . get_class($event) . ' since they provide no NodeAggregateId, '
-                    . 'OriginDimensionSpacePoint or ContentStreamId',
-                1645303167
+        $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAndDimensionSpacePointsAndContentStream($nodeAggregateId, $affectedDimensionSpacePoints, $contentStreamId);
+        foreach ($anchorPoints as $anchorPoint) {
+            $this->updateNodeRecordWithCopyOnWrite(
+                $contentStreamId,
+                $anchorPoint,
+                function (NodeRecord $node) use ($eventEnvelope) {
+                    $node->lastModified = $eventEnvelope->recordedAt;
+                    $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
+                }
             );
         }
-
-        if (is_null($anchorPoint)) {
-            throw new \InvalidArgumentException(
-                'Cannot update node with copy on write since no anchor point could be resolved for node '
-                . $event->getNodeAggregateId() . ' in content stream '
-                . $event->getContentStreamId(),
-                1645303332
-            );
-        }
-
-        return $this->updateNodeRecordWithCopyOnWrite(
-            $event->getContentStreamId(),
-            $anchorPoint,
-            $operations
-        );
     }
 
     private function updateNodeRecordWithCopyOnWrite(

@@ -5,7 +5,12 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventEnvelope;
 
 /**
@@ -17,12 +22,16 @@ trait NodeDisabling
 {
     abstract protected function getTableNamePrefix(): string;
 
+    abstract protected function updateLastModifiedTimestamp(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePointSet $affectedDimensionSpacePoints, EventEnvelope $eventEnvelope): void;
+
     /**
      * @throws \Throwable
      */
     private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
+
+
             // TODO: still unsure why we need an "INSERT IGNORE" here;
             // normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeStatement(
@@ -84,7 +93,7 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
-            // TODO update last modified values
+            $this->updateLastModifiedTimestamp($event->nodeAggregateId, $event->contentStreamId, $event->affectedDimensionSpacePoints, $eventEnvelope);
         });
     }
 

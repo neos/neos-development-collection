@@ -35,13 +35,18 @@ trait NodeMove
 
     abstract protected function getTableNamePrefix(): string;
 
+    abstract protected function updateLastModifiedTimestamp(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePointSet $affectedDimensionSpacePoints, EventEnvelope $eventEnvelope): void;
+
     /**
      * @param NodeAggregateWasMoved $event
      * @throws \Throwable
      */
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
+
+            $dimensionSpacePoints = [];
+
             foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                 // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
                 /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveNodeMapping */
@@ -58,13 +63,16 @@ trait NodeMove
                 foreach ($moveNodeMapping->newLocations as $newLocation) {
                     assert($newLocation instanceof CoverageNodeMoveMapping);
 
+                    $dimensionSpacePoints[] = $newLocation->coveredDimensionSpacePoint;
+                    $affectedDimensionSpacePoints = new DimensionSpacePointSet([
+                        $newLocation->coveredDimensionSpacePoint
+                    ]);
+
                     // remove restriction relations by ancestors. We will reconnect them back after the move.
                     $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
                         $event->contentStreamId,
                         $event->nodeAggregateId,
-                        new DimensionSpacePointSet([
-                            $newLocation->coveredDimensionSpacePoint
-                        ])
+                        $affectedDimensionSpacePoints
                     );
 
                     // do the move (depending on how the move target is specified)
@@ -95,13 +103,11 @@ trait NodeMove
                         $event->contentStreamId,
                         $newParentNodeAggregateId,
                         $event->nodeAggregateId,
-                        new DimensionSpacePointSet([
-                            $newLocation->coveredDimensionSpacePoint
-                        ])
+                        $affectedDimensionSpacePoints
                     );
                 }
             }
-            // TODO update last modified values
+            $this->updateLastModifiedTimestamp($event->nodeAggregateId, $event->contentStreamId, DimensionSpacePointSet::fromArray($dimensionSpacePoints), $eventEnvelope);
         });
     }
 

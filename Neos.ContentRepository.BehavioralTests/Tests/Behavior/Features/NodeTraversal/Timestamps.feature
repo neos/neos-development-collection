@@ -1,9 +1,10 @@
 @contentrepository @adapters=DoctrineDBAL
  # TODO implement for Postgres
-Feature: TODO
+Feature: Behavior of Node timestamp properties "created", "originalCreated", "lastModified" and "originalLastModified"
 
   Background:
-    Given I have the following content dimensions:
+    Given the current date and time is "2023-03-16T12:00:00+01:00"
+    And I have the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And I have the following NodeTypes configuration:
@@ -78,24 +79,194 @@ Feature: TODO
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
-    And the current date and time is "2023-03-16T12:00:00+01:00"
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeName | nodeTypeName                            | parentNodeAggregateId  | initialPropertyValues | tetheredDescendantNodeAggregateIds       |
       | home            | home     | Neos.ContentRepository.Testing:Homepage | lady-eleonode-rootford | {}                    | {"terms": "terms", "contact": "contact"} |
       | a               | a        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "a"}         | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page     | home                   | {"text": "b"}         | {}                                       |
+    And the command CreateNodeVariant is executed with payload:
+      | Key             | Value             |
+      | contentStreamId | "cs-user"         |
+      | nodeAggregateId | "a"               |
+      | sourceOrigin    | {"language":"de"} |
+      | targetOrigin    | {"language":"ch"} |
+    And the graph projection is fully up to date
 
-  Scenario: TODO
+  Scenario: NodePropertiesWereSet events update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command SetNodeProperties is executed with payload:
+      | Key                       | Value               |
+      | contentStreamId           | "cs-user"           |
+      | originDimensionSpacePoint | {"language": "ch"}  |
+      | nodeAggregateId           | "a"                 |
+      | propertyValues            | {"text": "Changed"} |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+
+  Scenario: NodeAggregateNameWasChanged events update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command "ChangeNodeAggregateName" is executed with payload:
+      | Key             | Value       |
+      | contentStreamId | "cs-user"   |
+      | nodeAggregateId | "a"         |
+      | newNodeName     | "a-renamed" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+
+  Scenario: NodeReferencesWereSet events update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command SetNodeReferences is executed with payload:
+      | Key                             | Value              |
+      | contentStreamId                 | "cs-user"          |
+      | sourceOriginDimensionSpacePoint | {"language": "ch"} |
+      | sourceNodeAggregateId           | "a"                |
+      | referenceName                   | "ref"              |
+      | references                      | [{"target": "b"}]  |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+    And I expect the node "b" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+    And I expect the node "b" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+  Scenario: NodeAggregateWasEnabled and NodeAggregateWasDisabled events update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command DisableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | contentStreamId              | "cs-user"            |
+      | coveredDimensionSpacePoint   | {"language": "ch"}   |
+      | nodeAggregateId              | "a"                  |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    And VisibilityConstraints are set to "withoutRestrictions"
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+
+    When the current date and time is "2023-03-16T14:00:00+01:00"
+    And the command EnableNodeAggregate is executed with payload:
+      | Key                          | Value                |
+      | contentStreamId              | "cs-user"            |
+      | coveredDimensionSpacePoint   | {"language": "ch"}   |
+      | nodeAggregateId              | "a"                  |
+      | nodeVariantSelectionStrategy | "allSpecializations" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 14:00:00 | 2023-03-16 14:00:00  |
+
+  Scenario: NodeAggregateTypeWasChanged events update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command ChangeNodeAggregateType was published with payload:
+      | Key             | Value                                        |
+      | contentStreamId | "cs-user"                                    |
+      | nodeAggregateId | "a"                                          |
+      | newNodeTypeName | "Neos.ContentRepository.Testing:SpecialPage" |
+      | strategy        | "happypath"                                  |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+
+  Scenario: NodeAggregateWasMoved events update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command MoveNodeAggregate is executed with payload:
+      | Key                          | Value                   |
+      | contentStreamId              | "cs-user"               |
+      | dimensionSpacePoint          | {"language": "ch"}      |
+      | relationDistributionStrategy | "gatherSpecializations" |
+      | nodeAggregateId              | "a"                     |
+      | newParentNodeAggregateId     | "b"                     |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+    And I expect the node "b" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 | 2023-03-16 13:00:00 | 2023-03-16 13:00:00  |
+    And I expect the node "b" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+
+  Scenario: RootNodeAggregateDimensionsWereUpdated events don't update last modified timestamps
+    When the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command UpdateRootNodeAggregateDimensions is executed with payload:
+      | Key             | Value                    |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-user" and dimension space point {"language":"de"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When I am in content stream "cs-user" and dimension space point {"language":"ch"}
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 12:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+
+  Scenario: Original created and last modified timestamps when publishing nodes over multiple content streams
     When the current date and time is "2023-03-16T13:00:00+01:00"
     And the command SetNodeProperties is executed with payload:
       | Key             | Value               |
       | contentStreamId | "cs-user"           |
       | nodeAggregateId | "a"                 |
       | propertyValues  | {"text": "Changed"} |
-    When I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
+    And I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
     And the graph projection is fully up to date
     And the current date and time is "2023-03-16T14:00:00+01:00"
-    When the command PublishWorkspace is executed with payload:
+    And the command PublishWorkspace is executed with payload:
       | Key           | Value       |
       | workspaceName | "user-test" |
     And the graph projection is fully up to date
@@ -115,3 +286,16 @@ Feature: TODO
     And I expect the node "b" to have the following timestamps:
       | created             | originalCreated     | lastModified | originalLastModified |
       | 2023-03-16 14:00:00 | 2023-03-16 12:00:00 |              |                      |
+
+    When the current date and time is "2023-03-16T15:00:00+01:00"
+    And the command PublishWorkspace is executed with payload:
+      | Key           | Value    |
+      | workspaceName | "review" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-live"
+    Then I expect the node "a" to have the following timestamps:
+      | created             | originalCreated     | lastModified        | originalLastModified |
+      | 2023-03-16 15:00:00 | 2023-03-16 12:00:00 | 2023-03-16 15:00:00 | 2023-03-16 13:00:00  |
+    And I expect the node "b" to have the following timestamps:
+      | created             | originalCreated     | lastModified | originalLastModified |
+      | 2023-03-16 15:00:00 | 2023-03-16 12:00:00 |              |                      |
