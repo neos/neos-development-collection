@@ -27,13 +27,14 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -41,10 +42,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
@@ -113,11 +112,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             );
             $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'cn');
         }
-        if (!is_null($filter->limit)) {
-            $query = $query->withLimit($filter->limit);
-        }
-        if (!is_null($filter->offset)) {
-            $query = $query->withOffset($filter->offset);
+        if (!is_null($filter->pagination)) {
+            $query = $query
+                ->withLimit($filter->pagination->limit)
+                ->withOffset($filter->pagination->offset);
         }
 
         $childNodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
@@ -276,8 +274,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
             $filter->nodeTypeConstraints,
-            $filter->limit,
-            $filter->offset
+            $filter->pagination,
         );
     }
 
@@ -289,8 +286,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
             $filter->nodeTypeConstraints,
-            $filter->limit,
-            $filter->offset
+            $filter->pagination,
         );
     }
 
@@ -298,8 +294,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         NodeAggregateId $sibling,
         HypergraphSiblingQueryMode $mode,
         ?NodeTypeConstraints $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null
+        ?Pagination $pagination = null,
     ): Nodes {
         $query = HypergraphSiblingQuery::create(
             $this->contentStreamId,
@@ -317,11 +312,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'sn');
         }
         $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
-        if (!is_null($limit)) {
-            $query = $query->withLimit($limit);
-        }
-        if (!is_null($offset)) {
-            $query = $query->withOffset($offset);
+        if (!is_null($pagination)) {
+            $query = $query
+                ->withLimit($pagination->limit)
+                ->withOffset($pagination->offset);
         }
 
         $siblingsRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();

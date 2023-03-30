@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 
 /**
@@ -22,14 +23,13 @@ final class FindPrecedingSiblingNodesFilter
      */
     private function __construct(
         public readonly ?NodeTypeConstraints $nodeTypeConstraints,
-        public readonly ?int $limit,
-        public readonly ?int $offset,
+        public readonly ?Pagination $pagination,
     ) {
     }
 
     public static function create(): self
     {
-        return new self(null, null, null);
+        return new self(null, null);
     }
 
     public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
@@ -45,21 +45,22 @@ final class FindPrecedingSiblingNodesFilter
      */
     public function with(
         NodeTypeConstraints|string $nodeTypeConstraints = null,
-        int $limit = null,
-        int $offset = null,
+        Pagination|array $pagination = null,
     ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
         }
+        if (is_array($pagination)) {
+            $pagination = Pagination::fromArray($pagination);
+        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
-            $limit ?? $this->limit,
-            $offset ?? $this->offset,
+                $pagination ?? $this->pagination,
         );
     }
 
     public function withPagination(int $limit, int $offset): self
     {
-        return $this->with(limit: $limit, offset: $offset);
+        return $this->with(pagination: Pagination::fromLimitAndOffset($limit, $offset));
     }
 }

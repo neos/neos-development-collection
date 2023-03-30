@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSibl
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\NegateCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
@@ -105,11 +106,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
         $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
-        if ($filter->limit !== null) {
-            $queryBuilder->setMaxResults($filter->limit);
-        }
-        if ($filter->offset !== null) {
-            $queryBuilder->setFirstResult($filter->offset);
+        if ($filter->pagination !== null) {
+            $queryBuilder
+                ->setMaxResults($filter->pagination->limit)
+                ->setFirstResult($filter->pagination->offset);
         }
         return $this->fetchNodes($queryBuilder);
     }
@@ -214,13 +214,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
     {
-        $queryBuilder = $this->buildSiblingsQuery(false, $siblingNodeAggregateId, $filter->nodeTypeConstraints, $filter->limit, $filter->offset);
+        $queryBuilder = $this->buildSiblingsQuery(false, $siblingNodeAggregateId, $filter->nodeTypeConstraints, $filter->pagination);
         return $this->fetchNodes($queryBuilder);
     }
 
     public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
     {
-        $queryBuilder = $this->buildSiblingsQuery(true, $siblingNodeAggregateId, $filter->nodeTypeConstraints, $filter->limit, $filter->offset);
+        $queryBuilder = $this->buildSiblingsQuery(true, $siblingNodeAggregateId, $filter->nodeTypeConstraints, $filter->pagination);
         return $this->fetchNodes($queryBuilder);
     }
 
@@ -509,7 +509,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $queryBuilder;
     }
 
-    private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ?NodeTypeConstraints $nodeTypeConstraints, ?int $limit, ?int $offset): QueryBuilder
+    private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ?NodeTypeConstraints $nodeTypeConstraints, ?Pagination $pagination): QueryBuilder
     {
         $parentNodeAnchorSubQuery = $this->createQueryBuilder()
             ->select('sh.parentnodeanchor')
@@ -542,11 +542,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilder, $nodeTypeConstraints);
         }
-        if ($limit !== null) {
-            $queryBuilder->setMaxResults($limit);
-        }
-        if ($offset !== null) {
-            $queryBuilder->setFirstResult($offset);
+        if ($pagination !== null) {
+            $queryBuilder
+                ->setMaxResults($pagination->limit)
+                ->setFirstResult($pagination->offset);
         }
         return $queryBuilder;
     }

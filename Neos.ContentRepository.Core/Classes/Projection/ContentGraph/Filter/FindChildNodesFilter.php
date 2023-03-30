@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -25,14 +26,13 @@ final class FindChildNodesFilter
     private function __construct(
         public readonly ?NodeTypeConstraints $nodeTypeConstraints,
         public readonly ?PropertyValueCriteriaInterface $propertyValue,
-        public readonly ?int $limit,
-        public readonly ?int $offset,
+        public readonly ?Pagination $pagination,
     ) {
     }
 
     public static function create(): self
     {
-        return new self(null, null, null, null);
+        return new self(null, null, null);
     }
 
     public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
@@ -49,8 +49,7 @@ final class FindChildNodesFilter
     public function with(
         NodeTypeConstraints|string $nodeTypeConstraints = null,
         PropertyValueCriteriaInterface|string $propertyValue = null,
-        int $limit = null,
-        int $offset = null
+        Pagination|array $pagination = null,
     ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
@@ -58,11 +57,13 @@ final class FindChildNodesFilter
         if (is_string($propertyValue)) {
             $propertyValue = PropertyValueCriteriaParser::parse($propertyValue);
         }
+        if (is_array($pagination)) {
+            $pagination = Pagination::fromArray($pagination);
+        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
             $propertyValue ?? $this->propertyValue,
-            $limit ?? $this->limit,
-            $offset ?? $this->offset,
+            $pagination ?? $this->pagination,
         );
     }
 
@@ -73,6 +74,6 @@ final class FindChildNodesFilter
 
     public function withPagination(int $limit, int $offset): self
     {
-        return $this->with(limit: $limit, offset: $offset);
+        return $this->with(pagination: Pagination::fromLimitAndOffset($limit, $offset));
     }
 }

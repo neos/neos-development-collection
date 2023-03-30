@@ -97,5 +97,5 @@ Feature: Find nodes using the findPrecedingSiblingNodes query
     When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" I expect the nodes "a5,a4,a3,a2,a1" to be returned
     When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a5,a3,a2,a1" to be returned
     When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Page"}' I expect the nodes "a4" to be returned
-    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"limit": 3, "offset": 1}' I expect the nodes "a4,a3,a2" to be returned
-    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:NonExisting", "limit": 4, "offset": 2}' I expect the nodes "a2,a1" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"pagination": {"limit": 3, "offset": 1}}' I expect the nodes "a4,a3,a2" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:NonExisting", "pagination": {"limit": 4, "offset": 2}}' I expect the nodes "a2,a1" to be returned
