@@ -82,7 +82,7 @@ Feature: Publishing moved nodes without dimensions
       | nodesToPublish           | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
     And the graph projection is fully up to date
 
-    Then I expect the graph projection to consist of exactly 6 nodes
+    Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
@@ -122,7 +122,7 @@ Feature: Publishing moved nodes without dimensions
       | nodesToPublish           | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
-    Then I expect the graph projection to consist of exactly 6 nodes
+    Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
@@ -172,7 +172,7 @@ Feature: Publishing moved nodes without dimensions
       | nodesToPublish           | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
     And the graph projection is fully up to date
 
-    Then I expect the graph projection to consist of exactly 7 nodes
+    Then I expect the graph projection to consist of exactly 5 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
@@ -217,7 +217,7 @@ Feature: Publishing moved nodes without dimensions
       | nodesToPublish           | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}] |
 
     When the graph projection is fully up to date
-    Then I expect the graph projection to consist of exactly 6 nodes
+    Then I expect the graph projection to consist of exactly 4 nodes
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph

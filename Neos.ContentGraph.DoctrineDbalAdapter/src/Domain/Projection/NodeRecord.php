@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -40,10 +41,7 @@ final class NodeRecord
         public NodeAggregateClassification $classification,
         /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
         public ?NodeName $nodeName,
-        public \DateTimeImmutable $created,
-        public \DateTimeImmutable $originalCreated,
-        public ?\DateTimeImmutable $lastModified,
-        public ?\DateTimeImmutable $originalLastModified,
+        public Timestamps $timestamps,
     ) {
     }
 
@@ -61,10 +59,10 @@ final class NodeRecord
             'properties' => json_encode($this->properties),
             'nodetypename' => (string)$this->nodeTypeName,
             'classification' => $this->classification->value,
-            'created' => $this->created,
-            'originalcreated' => $this->originalCreated,
-            'lastmodified' => $this->lastModified,
-            'originallastmodified' => $this->originalLastModified,
+            'created' => $this->timestamps->created,
+            'originalcreated' => $this->timestamps->originalCreated,
+            'lastmodified' => $this->timestamps->lastModified,
+            'originallastmodified' => $this->timestamps->originalLastModified,
         ], [
             'created' => Types::DATETIME_IMMUTABLE,
             'originalcreated' => Types::DATETIME_IMMUTABLE,
@@ -88,8 +86,8 @@ final class NodeRecord
                 'properties' => json_encode($this->properties),
                 'nodetypename' => (string)$this->nodeTypeName,
                 'classification' => $this->classification->value,
-                'lastmodified' => $this->lastModified,
-                'originallastmodified' => $this->originalLastModified,
+                'lastmodified' => $this->timestamps->lastModified,
+                'originallastmodified' => $this->timestamps->originalLastModified,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
@@ -128,10 +126,12 @@ final class NodeRecord
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
             isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null,
-            self::parseDateTimeString($databaseRow['created']),
-            self::parseDateTimeString($databaseRow['originalcreated']),
-            isset($databaseRow['lastmodified']) ? self::parseDateTimeString($databaseRow['lastmodified']) : null,
-            isset($databaseRow['originallastmodified']) ? self::parseDateTimeString($databaseRow['originallastmodified']) : null,
+            Timestamps::create(
+                self::parseDateTimeString($databaseRow['created']),
+                self::parseDateTimeString($databaseRow['originalcreated']),
+                isset($databaseRow['lastmodified']) ? self::parseDateTimeString($databaseRow['lastmodified']) : null,
+                isset($databaseRow['originallastmodified']) ? self::parseDateTimeString($databaseRow['originallastmodified']) : null,
+            ),
         );
     }
 

@@ -22,14 +22,12 @@ trait NodeDisabling
 {
     abstract protected function getTableNamePrefix(): string;
 
-    abstract protected function updateLastModifiedTimestamp(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePointSet $affectedDimensionSpacePoints, EventEnvelope $eventEnvelope): void;
-
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event, EventEnvelope $eventEnvelope): void
+    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        $this->transactional(function () use ($event, $eventEnvelope) {
+        $this->transactional(function () use ($event) {
 
 
             // TODO: still unsure why we need an "INSERT IGNORE" here;
@@ -93,7 +91,6 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
             );
-            $this->updateLastModifiedTimestamp($event->nodeAggregateId, $event->contentStreamId, $event->affectedDimensionSpacePoints, $eventEnvelope);
         });
     }
 
