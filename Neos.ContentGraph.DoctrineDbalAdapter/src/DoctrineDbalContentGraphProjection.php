@@ -45,6 +45,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -289,10 +290,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
             null,
-            $eventEnvelope->recordedAt,
-            self::initiatingDateTime($eventEnvelope),
-            null,
-            null,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+               null,
+                null,
+            ),
         );
 
         $this->transactional(function () use ($node, $event) {
@@ -475,10 +478,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $nodeTypeName,
             $nodeAggregateClassification,
             $nodeName,
-            $eventEnvelope->recordedAt,
-            self::initiatingDateTime($eventEnvelope),
-            null,
-            null,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+                null,
+                null,
+            ),
         );
 
         // reconnect parent relations
@@ -780,8 +785,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $anchorPoint,
                 function (NodeRecord $node) use ($event, $eventEnvelope) {
                     $node->properties = $node->properties->merge($event->propertyValues);
-                    $node->lastModified = $eventEnvelope->recordedAt;
-                    $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
+                    $node->timestamps = $node->timestamps->with(
+                        lastModified: $eventEnvelope->recordedAt,
+                        originalLastModified: self::initiatingDateTime($eventEnvelope)
+                    );
                 }
             );
         });
@@ -815,8 +822,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $event->contentStreamId,
                     $nodeAnchorPoint,
                     function (NodeRecord $node) use ($eventEnvelope) {
-                        $node->lastModified = $eventEnvelope->recordedAt;
-                        $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
+                        $node->timestamps = $node->timestamps->with(
+                            lastModified: $eventEnvelope->recordedAt,
+                            originalLastModified: self::initiatingDateTime($eventEnvelope)
+                        );
                     }
                 );
 
@@ -1005,10 +1014,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $sourceNode->nodeTypeName,
             $sourceNode->classification,
             $sourceNode->nodeName,
-            $eventEnvelope->recordedAt,
-            self::initiatingDateTime($eventEnvelope),
-            null,
-            null,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+                null,
+                null,
+            ),
         );
         $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
@@ -1025,8 +1036,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $anchorPoint,
                     function (NodeRecord $node) use ($event, $eventEnvelope) {
                         $node->nodeTypeName = $event->newNodeTypeName;
-                        $node->lastModified = $eventEnvelope->recordedAt;
-                        $node->originalLastModified = self::initiatingDateTime($eventEnvelope);
+                        $node->timestamps = $node->timestamps->with(
+                            lastModified: $eventEnvelope->recordedAt,
+                            originalLastModified: self::initiatingDateTime($eventEnvelope)
+                        );
                     }
                 );
             }

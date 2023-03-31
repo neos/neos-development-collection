@@ -75,4 +75,25 @@ final class Timestamps
     ): self {
         return new self($created, $originalCreated, $lastModified, $originalLastModified);
     }
+
+    /**
+     * Returns a new copy with the specified new values
+     *
+     * Note: The signature of this method might be extended in the future, so it should always be used with named arguments
+     * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+     */
+    public function with(
+        DateTimeImmutable $created = null,
+        DateTimeImmutable $originalCreated = null,
+        DateTimeImmutable $lastModified = null,
+        DateTimeImmutable $originalLastModified = null,
+    )
+    {
+        return new self(
+            $created ?? $this->created,
+            $originalCreated ?? $this->originalCreated,
+            $lastModified ?? $this->lastModified,
+            $originalLastModified ?? $this->originalLastModified,
+        );
+    }
 }
