@@ -293,7 +293,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             Timestamps::create(
                 $eventEnvelope->recordedAt,
                 self::initiatingDateTime($eventEnvelope),
-               null,
+                null,
                 null,
             ),
         );

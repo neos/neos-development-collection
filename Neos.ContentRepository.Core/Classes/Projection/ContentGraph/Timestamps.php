@@ -87,8 +87,7 @@ final class Timestamps
         DateTimeImmutable $originalCreated = null,
         DateTimeImmutable $lastModified = null,
         DateTimeImmutable $originalLastModified = null,
-    )
-    {
+    ): self {
         return new self(
             $created ?? $this->created,
             $originalCreated ?? $this->originalCreated,
