@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\Neos\AssetUsage\Projection;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -180,11 +181,15 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
-        /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $propertyValue */
+        /** @var SerializedPropertyValue|null $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
+            // skip removed properties ({@see SerializedPropertyValues})
+            if ($propertyValue === null) {
+                continue;
+            }
             $extractedAssetIds = $this->extractAssetIds(
                 $propertyValue->type,
-                $propertyValue->value
+                $propertyValue->value,
             );
 
             $assetIds[$propertyName] = array_map(
