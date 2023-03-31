@@ -12,5 +12,4 @@ interface ContentRepositoryNodeInformationInterface
     public function getOriginDimensionSpacePointHash(): string;
 
     public function getNodeAggregateId(): NodeAggregateId;
-
 }
