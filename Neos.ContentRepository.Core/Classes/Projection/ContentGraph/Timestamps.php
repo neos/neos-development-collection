@@ -44,10 +44,7 @@ use DateTimeImmutable;
  * * {@see NodeAggregateNameWasChanged}
  * * {@see NodePropertiesWereSet}
  * * {@see NodeReferencesWereSet}
- * * {@see NodeAggregateWasEnabled}
  * * {@see NodeAggregateTypeWasChanged}
- * * {@see NodeAggregateWasMoved}
- * * {@see NodeAggregateWasDisabled}
  * the `lastModified` is set to the current date and time.
  * the `originalLastModified` value is also set to the current date and time if the node is modified in the original content stream.
  * Otherwise, it is copied over from the original event

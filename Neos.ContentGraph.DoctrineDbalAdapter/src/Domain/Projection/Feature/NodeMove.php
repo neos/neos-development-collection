@@ -35,15 +35,13 @@ trait NodeMove
 
     abstract protected function getTableNamePrefix(): string;
 
-    abstract protected function updateLastModifiedTimestamp(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePointSet $affectedDimensionSpacePoints, EventEnvelope $eventEnvelope): void;
-
     /**
      * @param NodeAggregateWasMoved $event
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event, EventEnvelope $eventEnvelope): void
+    private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        $this->transactional(function () use ($event, $eventEnvelope) {
+        $this->transactional(function () use ($event) {
 
             $dimensionSpacePoints = [];
 
@@ -107,7 +105,6 @@ trait NodeMove
                     );
                 }
             }
-            $this->updateLastModifiedTimestamp($event->nodeAggregateId, $event->contentStreamId, DimensionSpacePointSet::fromArray($dimensionSpacePoints), $eventEnvelope);
         });
     }
 
