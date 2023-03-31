@@ -3,7 +3,8 @@
 Feature: Find nodes using the findDescendantNodes query
 
   Background:
-    Given I have the following content dimensions:
+    Given the current date and time is "2023-03-16T12:00:00+01:00"
+    And I have the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And I have the following NodeTypes configuration:
@@ -79,24 +80,33 @@ Feature: Find nodes using the findDescendantNodes query
       | a2a1            | a2a1     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a1", "floatProperty": 123.46, "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13"}} | {}                                       |
       | a2a2            | a2a2     | Neos.ContentRepository.Testing:Page        | a2a                    | {"text": "a2a2", "dateProperty": {"__type": "DateTimeImmutable", "value": "1980-12-13 00:00:01"}}                 | {}                                       |
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}                                                                                                 | {}                                       |
+      | a2a2b           | a2a2b    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2b", "integerProperty": 125, "booleanProperty": true}                                                | {}                                       |
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3", "booleanProperty": false}                                                                          | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b", "stringProperty": "späCial characters"}                                                             | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1", "stringProperty": "true"}                                                                          | {}                                       |
+    And the current date and time is "2023-03-16T13:00:00+01:00"
+    And the command SetNodeProperties is executed with payload:
+      | Key             | Value                   |
+      | contentStreamId | "cs-identifier"         |
+      | nodeAggregateId | "a2a2b"                 |
+      | propertyValues  | {"integerProperty": 20} |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findDescendantNodes queries without results
+  Scenario:
+
+      # findDescendantNodes queries without results
     When I execute the findDescendantNodes query for entry node aggregate id "non-existing" I expect no nodes to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2a2a"}' I expect no nodes to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "string"}' I expect no nodes to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty > 124"}' I expect no nodes to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 125"}' I expect no nodes to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty < 123"}' I expect no nodes to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 122"}' I expect no nodes to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 122 OR integerProperty <= 121"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty > 125"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 126"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty < 20"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 19"}' I expect no nodes to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 19 OR integerProperty <= 18"}' I expect no nodes to be returned
     # The following should not return node "b1" because boolean true !== "true"
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty = true"}' I expect no nodes to be returned
     # The following should not return any node because date time properties are serialized into a full timestamp in the format "1980-12-13T00:00:00+00:00"
@@ -104,21 +114,23 @@ Feature: Find nodes using the findDescendantNodes query
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty <= \"1980-12-13\""}' I expect no nodes to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty > \"1980-12-14\""}' I expect no nodes to be returned
 
-  Scenario: findDescendantNodes queries with results
-    When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2" to be returned
+      # findDescendantNodes queries with results
+    When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2,a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2,a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\""}' I expect the nodes "a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\" OR text $= \"a1\""}' I expect the nodes "a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späci\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "booleanProperty = false"}' I expect the nodes "a3" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 123"}' I expect the nodes "a1,a2" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty > 123"}' I expect the nodes "a2" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 124"}' I expect the nodes "a1,a2" to be returned
-    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty < 124"}' I expect the nodes "a1" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty >= 20"}' I expect the nodes "a1,a2,a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty > 20"}' I expect the nodes "a1,a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty <= 21"}' I expect the nodes "a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "integerProperty < 21"}' I expect the nodes "a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "floatProperty >= 123.45"}' I expect the nodes "a2a,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "floatProperty > 123.45"}' I expect the nodes "a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "floatProperty = 123.45"}' I expect the nodes "a2a" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty >= \"1980-12-13\""}' I expect the nodes "a2a1,a2a2" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty > \"1980-12-13\""}' I expect the nodes "a2a1,a2a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}]}' I expect the nodes "a2a2b,a2,a1,terms,contact,a,b,b1,a3,a2a,a2a1,a2a2" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "terms,contact,b,a1,b1,a2,a2a,a2a1,a2a2,a3,a2a2b,a" to be returned

@@ -52,7 +52,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
-        if ($filter->pagination !== null || $filter->propertyValue !== null) {
+        if ($filter->pagination !== null || $filter->propertyValue !== null || $filter->ordering !== null) {
             return $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         }
         $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
