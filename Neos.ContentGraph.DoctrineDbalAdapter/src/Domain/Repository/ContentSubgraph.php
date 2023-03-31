@@ -18,23 +18,35 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\Exception as DbalDriverException;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\NegateCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueContains;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueEndsWith;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueEquals;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueGreaterThan;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueGreaterThanOrEqual;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThan;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueStartsWith;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -46,6 +58,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -76,6 +89,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class ContentSubgraph implements ContentSubgraphInterface
 {
+    private int $dynamicParameterCount = 0;
+
     public function __construct(
         private readonly ContentStreamId $contentStreamId,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
@@ -343,6 +358,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->client->getConnection()->createQueryBuilder();
     }
 
+    private function createUniqueParameterName(): string
+    {
+        return 'param_' . (++$this->dynamicParameterCount);
+    }
+
     private function addRestrictionRelationConstraints(QueryBuilder $queryBuilder, string $nodeTableAlias = 'n', string $hierarchyRelationTableAlias = 'h'): void
     {
         if ($this->visibilityConstraints->isDisabledContentShown()) {
@@ -388,6 +408,62 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
+    private function addPropertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): void
+    {
+        $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
+        $queryBuilder->andWhere($this->propertyValueConstraints($queryBuilder, $propertyValue, $nodeTablePrefix));
+    }
+
+    private function propertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTablePrefix): string
+    {
+        return match ($propertyValue::class) {
+            AndCriteria::class => (string)$queryBuilder->expr()->and($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTablePrefix), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTablePrefix)),
+            NegateCriteria::class => 'NOT (' . $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria, $nodeTablePrefix) . ')',
+            OrCriteria::class => (string)$queryBuilder->expr()->or($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTablePrefix), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTablePrefix)),
+            PropertyValueContains::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value . '%', $nodeTablePrefix),
+            PropertyValueEndsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value, $nodeTablePrefix),
+            PropertyValueEquals::class => is_string($propertyValue->value) ? $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, $nodeTablePrefix) : $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '=', $nodeTablePrefix),
+            PropertyValueGreaterThan::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '>', $nodeTablePrefix),
+            PropertyValueGreaterThanOrEqual::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '>=', $nodeTablePrefix),
+            PropertyValueLessThan::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '<', $nodeTablePrefix),
+            PropertyValueLessThanOrEqual::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '<=', $nodeTablePrefix),
+            PropertyValueStartsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value . '%', $nodeTablePrefix),
+            default => throw new \InvalidArgumentException(sprintf('Invalid/unsupported property value criteria "%s"', get_debug_type($propertyValue)), 1679561062),
+        };
+    }
+
+    private function comparePropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|int|float|bool $value, string $operator, string $nodeTablePrefix): string
+    {
+        try {
+            $escapedPropertyName = addslashes(json_encode($propertyName->value, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to escape property name: %s', $e->getMessage()), 1679394579, $e);
+        }
+        $paramName = $this->createUniqueParameterName();
+        $paramType = match (gettype($value)) {
+            'boolean' => ParameterType::BOOLEAN,
+            'integer' => ParameterType::INTEGER,
+            default => ParameterType::STRING,
+        };
+        $queryBuilder->setParameter($paramName, $value, $paramType);
+        return 'JSON_EXTRACT(' . $nodeTablePrefix . 'properties, \'$.' . $escapedPropertyName . '.value\') ' . $operator . ' :' . $paramName;
+    }
+
+    private function searchPropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|bool|int|float $value, string $nodeTablePrefix): string
+    {
+        try {
+            $escapedPropertyName = addslashes(json_encode($propertyName->value, JSON_THROW_ON_ERROR));
+        } catch (\JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to escape property name: %s', $e->getMessage()), 1679394579, $e);
+        }
+        if (is_bool($value)) {
+            return 'JSON_SEARCH(' . $nodeTablePrefix . 'properties, \'one\', \'' . ($value ? 'true' : 'false') . '\', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+        }
+        $paramName = $this->createUniqueParameterName();
+        $queryBuilder->setParameter($paramName, $value);
+        return 'JSON_SEARCH(' . $nodeTablePrefix . 'properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+    }
+
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder()
@@ -401,6 +477,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->orderBy('h.position', 'ASC');
         if ($filter->nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints);
+        }
+        if ($filter->propertyValue !== null) {
+            $this->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
         }
         $this->addRestrictionRelationConstraints($queryBuilder);
         return $queryBuilder;
@@ -514,6 +593,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
         if ($filter->searchTerm !== null) {
             $queryBuilderCte->andWhere('JSON_SEARCH(properties, "one", :searchTermPrefix, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPrefix', $filter->searchTerm->term . '%');
+        }
+        if ($filter->propertyValue !== null) {
+            $this->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue, '');
         }
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
