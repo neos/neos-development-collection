@@ -34,7 +34,7 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
     /**
      * @var array<string, AssetUsageRepository>
      */
-    private ?array $assetUsageRepositories = null;
+    private array $assetUsageRepositories = [];
 
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
@@ -53,7 +53,7 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
         foreach ($this->getContentRepositories() as $contentRepository) {
             $assetUsages[] = $contentRepository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
         }
-        return AssetUsages::fromArrayOfAssetUsages(array_merge(...$assetUsages));
+        return AssetUsages::fromArrayOfAssetUsages($assetUsages);
     }
 
     public function removeAssetUsageByAssetId(string $assetId): void
