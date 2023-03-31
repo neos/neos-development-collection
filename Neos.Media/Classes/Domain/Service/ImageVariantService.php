@@ -12,8 +12,9 @@ namespace Neos\Media\Domain\Service;
  * source code.
  */
 
-use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 use Neos\Flow\Annotations as Flow;
+use Neos\Media\Domain\ValueObject\Configuration\Variant;
+use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
 
 /**
  * An imageVariant service
@@ -51,7 +52,7 @@ class ImageVariantService
     /**
      * Return presets from 'Settings.Neos.Media.yaml' configuration
      *
-     * @return VariantPreset[]
+     * @return string[][]
      */
     public function getAllPresetsByConfiguration(): array
     {

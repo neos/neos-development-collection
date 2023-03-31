@@ -430,7 +430,7 @@ class MediaCommandController extends CommandController
                 }
             }
             $this->outputLine('There is a <b>configuration</b> with following <b>variant presets:</b>');
-            $this->output->outputTable($outputPresets, ['Configured Presets', 'Label of variant']);
+            $this->output->outputTable($outputPresets, ['Configured identifier', 'Variant label']);
         }
 
         $databaseVariants = $this->imageVariantRepository->findAllWithOutdatedPresets($currentPresets);
@@ -455,32 +455,32 @@ class MediaCommandController extends CommandController
                     $outputPresets[] = [$presetIdentifier, $key, $presetVariantNames[$key]];
                 }
             }
-            $this->outputLine('There is a <b>configuration</b> with following <b>variant presets:</b>');
-            $this->output->outputTable($outputPresets, ['Found Presets', 'Outdated variant label', 'Times found']);
+            $this->outputLine('There is <b>no configuration</b> for the following <b>variant presets:</b>');
+            $this->output->outputTable($outputPresets, ['Not configured identifier', 'Variant label', 'Times found']);
 
             $this->outputLine('To delete them, please use the <b>removeUnusedImageVariants</b> command.');
         }
     }
 
     /**
-     * Tidy up outdated imageVariants with provided identifier and variant name.
+     * Tidy up imageVariants with provided identifier and variant name.
+     * Still configured variants can be regenerated afterwords with the `media:renderVariants` command.
      *
-     * This command iterates over all existing asset variants with outdated preset.
-     * They can be deleted if not used.
+     * Selected imageVariants will be removed, doesn't matter if used or not.
      *
      * @param string $identifier Identifier of variants to remove.
-     * @param string $variantName Variants with this name will be removed (if exist).
+     * @param string $variantLabel Variants with this name will be removed (if exist).
      * @param bool $quiet If set, only errors and questions will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialog.
      * @param int|null $limit Limit the result of unused assets displayed and removed for this run.
      *
      * @throws StopCommandException
      */
-    public function removeOutdatedVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, int $limit = null)
+    public function removeVariantsCommand(string $identifier, string $variantLabel, bool $quiet = false, bool $assumeYes = false, int $limit = null)
     {
-        $variants = $this->imageVariantRepository->findOutdatedVariantsByName($identifier, $variantName, $limit);
+        $variants = $this->imageVariantRepository->findVariantsByName($identifier, $variantLabel, $limit);
         if (empty($variants)) {
-            !$quiet && $this->output->outputLine('<em>Not found any presets with name ' . $variantName . ' in ' . $identifier . '</em>');
+            !$quiet && $this->output->outputLine('<em>Not found any presets with name ' . $variantLabel . ' in ' . $identifier . '</em>');
             $this->quit(1);
         }
 
@@ -536,8 +536,23 @@ class MediaCommandController extends CommandController
         }
         !$quiet && $this->output->progressFinish();
 
+        $removedConfiguredVariant = false;
+        $currentPresets = $this->imageVariantService->getAllPresetsByConfiguration();
+
+        foreach ($currentPresets as $key => $currentPreset) {
+            foreach ($currentPreset as $preset) {
+                if ($key === $identifier && $preset === $variantLabel) {
+                    $removedConfiguredVariant = true;
+                    break 2;
+                }
+            }
+        }
+
         $readableStorageSize = Files::bytesToSizeString($outdatedVariantSize);
         $this->outputLine(PHP_EOL . '<success>Removed ' . $readableStorageSize . '</success>');
+        if ($removedConfiguredVariant) {
+            $this->outputLine(PHP_EOL . '<b>Please make sure to use `./flow media:renderVariants` to recreate missing variants</b>'. PHP_EOL);
+        }
     }
 
     /**

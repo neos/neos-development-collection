@@ -24,7 +24,7 @@ use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
  */
 class ImageVariantRepository extends AssetRepository
 {
-    public function findOutdatedVariantsByName(?string $identifier, ?string $variantName, int $limit = null): array
+    public function findVariantsByName(?string $identifier, ?string $variantName, int $limit = null): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select('iv')
