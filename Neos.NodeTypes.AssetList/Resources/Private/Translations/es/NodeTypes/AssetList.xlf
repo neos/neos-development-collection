@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Asset list</source>
-        <target state="translated">Activos</target>
+        <target state="translated">Listado de bienes</target>
       </trans-unit>
       <trans-unit id="groups.resources" xml:space="preserve">
 				<source>Resources</source>

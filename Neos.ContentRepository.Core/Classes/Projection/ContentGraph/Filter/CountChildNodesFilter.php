@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 
 /**
@@ -26,17 +28,18 @@ final class CountChildNodesFilter
      */
     private function __construct(
         public readonly ?NodeTypeConstraints $nodeTypeConstraints,
+        public readonly ?PropertyValueCriteriaInterface $propertyValue,
     ) {
     }
 
     public static function create(): self
     {
-        return new self(null);
+        return new self(null, null);
     }
 
     public static function fromFindChildNodesFilter(FindChildNodesFilter $filter): self
     {
-        return new self($filter->nodeTypeConstraints);
+        return new self($filter->nodeTypeConstraints, $filter->propertyValue);
     }
 
     /**
@@ -47,12 +50,17 @@ final class CountChildNodesFilter
      */
     public function with(
         NodeTypeConstraints|string $nodeTypeConstraints = null,
+        PropertyValueCriteriaInterface|string $propertyValue = null,
     ): self {
         if (is_string($nodeTypeConstraints)) {
             $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
         }
+        if (is_string($propertyValue)) {
+            $propertyValue = PropertyValueCriteriaParser::parse($propertyValue);
+        }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
+            $propertyValue ?? $this->propertyValue,
         );
     }
 
