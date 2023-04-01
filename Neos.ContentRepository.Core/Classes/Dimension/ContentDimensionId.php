@@ -27,20 +27,20 @@ final class ContentDimensionId implements \JsonSerializable
      * @throws ContentDimensionIdIsInvalid
      */
     public function __construct(
-        public readonly string $id
+        public readonly string $value
     ) {
-        if (empty($id)) {
+        if (empty($value)) {
             throw ContentDimensionIdIsInvalid::becauseItMustNotBeEmpty();
         }
     }
 
     public function equals(ContentDimensionId $other): bool
     {
-        return $this->id === $other->id;
+        return $this->value === $other->value;
     }
 
     public function jsonSerialize(): string
     {
-        return $this->id;
+        return $this->value;
     }
 }

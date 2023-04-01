@@ -24,25 +24,20 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 final class ContentStreamEventStreamName
 {
-    /**
-     * @var string
-     */
-    protected $eventStreamName;
-
     public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
 
-    protected function __construct(string $eventStreamName)
-    {
-        $this->eventStreamName = $eventStreamName;
+    private function __construct(
+        public readonly string $value
+    ) {
     }
 
     public static function fromContentStreamId(ContentStreamId $contentStreamId): self
     {
-        return new ContentStreamEventStreamName(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId);
+        return new ContentStreamEventStreamName(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
     }
 
     public function getEventStreamName(): StreamName
     {
-        return StreamName::fromString($this->eventStreamName);
+        return StreamName::fromString($this->value);
     }
 }
