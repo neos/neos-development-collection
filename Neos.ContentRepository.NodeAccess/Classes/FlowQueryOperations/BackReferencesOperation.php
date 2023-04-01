@@ -33,12 +33,12 @@ use Neos\Flow\Annotations as Flow;
  *
  *     $q{node).backReferences().get(0).name.value}
  *
- * The "property" operation can work on these to access any property on the reference relation:
+ * The {@see ReferencePropertyOperation} can be used to access any property on the reference relation:
  *
  *     ${q(node).backReferences("someReferenceName").property("somePropertyName")}
  *
  * @see ReferencesOperation
- * @see ContentSubgraphInterface::findBackReferences()
+ * @api To be used in Fusion, for PHP code {@see ContentSubgraphInterface::findBackReferences()} should be used instead
  */
 final class BackReferencesOperation implements OperationInterface
 {

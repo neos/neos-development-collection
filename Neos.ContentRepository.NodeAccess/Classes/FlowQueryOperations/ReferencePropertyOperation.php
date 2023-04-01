@@ -18,6 +18,13 @@ use Neos\Eel\FlowQuery\OperationInterface;
 
 /**
  * Used to access properties of a ContentRepository Reference
+ *
+ * This operation can be used to return the value of a node reference:
+ *
+ *     ${q(node).references("someReferenceName").property("somePropertyName")}
+ *
+ * @see ReferencesOperation, BackReferencesOperation
+ * @api To be used in Fusion, for PHP code {@see Reference::properties} should be used instead
  */
 final class ReferencePropertyOperation implements OperationInterface
 {
