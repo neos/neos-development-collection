@@ -23,7 +23,6 @@ use Neos\ContentRepository\Domain\Model\NodeType;
  */
 class NodeTypeConfigurationEnrichmentAspect
 {
-
     /**
      * @var array
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
