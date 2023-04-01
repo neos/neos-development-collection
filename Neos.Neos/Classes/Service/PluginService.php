@@ -33,6 +33,7 @@ use Neos\ContentRepository\Domain\Service\NodeTypeManager;
  * is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
  *
  * @Flow\Scope("singleton")
+ * @deprecated will be removed with Neos 9
  */
 class PluginService
 {
