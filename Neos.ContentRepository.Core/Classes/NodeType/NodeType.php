@@ -405,7 +405,8 @@ class NodeType
             } else {
                 // TODO
                 /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
-                $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
+                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator::class);
+                //$nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
             }
             $this->nodeLabelGenerator = $nodeLabelGenerator;
         }
@@ -713,14 +714,5 @@ class NodeType
     protected function setFullConfiguration(array $fullConfiguration): void
     {
         $this->fullConfiguration = $fullConfiguration;
-    }
-
-    /**
-     * Alias for name.
-     * @api
-     */
-    public function __toString(): string
-    {
-        return $this->name->value;
     }
 }

@@ -61,7 +61,7 @@ final class NodeAddress
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
-        return $this->workspaceName->name
+        return $this->workspaceName->value
             . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
             . '__' . $this->nodeAggregateId->jsonSerialize();
     }

@@ -19,16 +19,14 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  *
  * @api
  */
-final class WorkspaceDescription implements \JsonSerializable, \Stringable
+final class WorkspaceDescription implements \JsonSerializable
 {
-    protected string $description;
-
-    public function __construct(string $description)
-    {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{0,500}$/u', $description) !== 1) {
+    public function __construct(
+        public readonly string $value,
+    ) {
+        if (preg_match('/^[\p{L}\p{P}\d \.]{0,500}$/u', $this->value) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace description given.', 1505831660363);
         }
-        $this->description = $description;
     }
 
     public static function fromString(string $value): self
@@ -36,13 +34,8 @@ final class WorkspaceDescription implements \JsonSerializable, \Stringable
         return new self($value);
     }
 
-    public function __toString(): string
-    {
-        return $this->description;
-    }
-
     public function jsonSerialize(): string
     {
-        return $this->description;
+        return $this->value;
     }
 }

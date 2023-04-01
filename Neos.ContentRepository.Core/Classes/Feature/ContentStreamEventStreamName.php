@@ -45,9 +45,4 @@ final class ContentStreamEventStreamName
     {
         return StreamName::fromString($this->eventStreamName);
     }
-
-    public function __toString(): string
-    {
-        return $this->eventStreamName;
-    }
 }

@@ -615,7 +615,7 @@ class WorkspacesController extends AbstractModuleController
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->name]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**
@@ -638,8 +638,8 @@ class WorkspacesController extends AbstractModuleController
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenPublished',
             [
-                htmlspecialchars($workspace->workspaceName->name),
-                htmlspecialchars($baseWorkspaceName->name)
+                htmlspecialchars($workspace->workspaceName->value),
+                htmlspecialchars($baseWorkspaceName->value)
             ],
             null,
             null,
@@ -667,7 +667,7 @@ class WorkspacesController extends AbstractModuleController
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
-            [htmlspecialchars($workspace->name)],
+            [htmlspecialchars($workspace->value)],
             null,
             null,
             'Modules',

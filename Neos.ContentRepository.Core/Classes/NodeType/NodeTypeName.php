@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  *
  * @api
  */
-final class NodeTypeName implements \JsonSerializable, \Stringable
+final class NodeTypeName implements \JsonSerializable
 {
     public const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
 
@@ -52,11 +52,6 @@ final class NodeTypeName implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

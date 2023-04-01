@@ -28,7 +28,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @internal
  */
-final class ContentDimensionValueSpecializationDepth implements \JsonSerializable, \Stringable
+final class ContentDimensionValueSpecializationDepth implements \JsonSerializable
 {
     /**
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
@@ -69,10 +69,5 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
     public function jsonSerialize(): int
     {
         return $this->depth;
-    }
-
-    public function __toString(): string
-    {
-        return (string)$this->depth;
     }
 }

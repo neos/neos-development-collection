@@ -57,7 +57,7 @@ final class WorkspaceRuntimeCache
     public function setWorkspace(Workspace $workspace): void
     {
         if ($this->cacheEnabled === true) {
-            $this->cachedWorkspacesByName[$workspace->workspaceName->name] = $workspace;
+            $this->cachedWorkspacesByName[$workspace->workspaceName->value] = $workspace;
             $this->cachedWorkspacesByContentStreamId[
                 $workspace->currentContentStreamId->value
             ] = $workspace;

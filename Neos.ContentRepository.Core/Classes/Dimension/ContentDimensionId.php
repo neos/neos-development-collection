@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionIdIsInvalid;
  *
  * @api
  */
-final class ContentDimensionId implements \JsonSerializable, \Stringable
+final class ContentDimensionId implements \JsonSerializable
 {
     /**
      * @throws ContentDimensionIdIsInvalid
@@ -40,11 +40,6 @@ final class ContentDimensionId implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->id;
-    }
-
-    public function __toString(): string
     {
         return $this->id;
     }

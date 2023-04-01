@@ -123,7 +123,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         }
 
         $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->name);
+        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->value);
         $events = Events::with(
             $this->normalizeEvent(
                 new RootWorkspaceWasCreated(

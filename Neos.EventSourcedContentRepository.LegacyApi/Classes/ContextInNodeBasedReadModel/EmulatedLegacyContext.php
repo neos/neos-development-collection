@@ -75,7 +75,7 @@ class EmulatedLegacyContext
     {
         $this->legacyLogger->info('context.workspaceName called', LogEnvironment::fromMethodName(__METHOD__));
 
-        return $this->getNodeAddressOfContextNode()->workspaceName->name;
+        return $this->getNodeAddressOfContextNode()->workspaceName->value;
     }
 
     public function getWorkspace(): EmulatedLegacyWorkspace

@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\Dimension;
  * @see Dimension\ContentDimensionValueSpecializationDepth
  * @internal
  */
-final class ContentSubgraphVariationWeight implements \JsonSerializable, \Stringable
+final class ContentSubgraphVariationWeight implements \JsonSerializable
 {
     public function __construct(
         /**
@@ -107,7 +107,7 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable, \String
     /**
      * @throws \JsonException
      */
-    public function __toString(): string
+    public function toJson(): string
     {
         return json_encode($this, JSON_THROW_ON_ERROR);
     }

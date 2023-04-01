@@ -58,8 +58,11 @@ final class SerializedPropertyValue implements \JsonSerializable
         ];
     }
 
-    public function __toString(): string
+    public function __debugInfo(): array
     {
-        return json_encode($this->value, JSON_THROW_ON_ERROR) . ' (' . $this->type . ')';
+        return [
+            'type' => $this->type,
+            'value' => json_encode($this->value, JSON_THROW_ON_ERROR)
+        ];
     }
 }
