@@ -14,9 +14,12 @@ namespace Neos\Media\Domain\Repository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\Repository;
+use Neos\Media\Domain\Model\AssetCollection;
 
 /**
  * A repository for AssetCollections
+ *
+ * @method AssetCollection findOneByTitle(string $title)
  *
  * @Flow\Scope("singleton")
  */

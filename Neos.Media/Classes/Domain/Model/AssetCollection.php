@@ -45,6 +45,22 @@ class AssetCollection
     protected $tags;
 
     /**
+     * @var AssetCollection
+     * @ORM\ManyToOne(inversedBy="children", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Flow\Lazy
+     */
+    protected $parent;
+
+    /**
+     * @var Collection<AssetCollection>
+     * @ORM\OneToMany(mappedBy="parent", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OrderBy({"title"="ASC"})
+     * @Flow\Lazy
+     */
+    protected $children;
+
+    /**
      * @param string $title
      */
     public function __construct($title)
@@ -52,6 +68,7 @@ class AssetCollection
         $this->title = $title;
         $this->assets = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->children = new ArrayCollection();
     }
 
     /**
@@ -176,5 +193,61 @@ class AssetCollection
             return true;
         }
         return false;
+    }
+
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): void
+    {
+        $this->parent = $parent;
+
+        if ($parent) {
+            // Throw an error if a circular dependency has been detected
+            $parents = [$parent];
+            while ($parent !== null) {
+                $parent = $parent->getParent();
+                if (in_array($parent, $parents, true)) {
+                    throw new \InvalidArgumentException('Circular reference detected', 1680328041);
+                }
+            }
+        }
+    }
+
+    public function addChild(self $child): void
+    {
+        if (!$this->children->contains($child)) {
+            $this->children->add($child);
+        }
+    }
+
+    public function removeChild(self $child): void
+    {
+        if ($this->children->contains($child)) {
+            $this->children->removeElement($child);
+        }
+    }
+
+    /**
+     * @return Collection<self>
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children ?? new ArrayCollection();
+    }
+
+    /**
+     * @param Collection<self> $children
+     */
+    public function setChildren(Collection $children): void
+    {
+        foreach ($this->children as $child) {
+            $child->setParent(null);
+        }
+        foreach ($children as $child) {
+            $child->setParent($this);
+        }
     }
 }
