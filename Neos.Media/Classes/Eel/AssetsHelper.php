@@ -32,7 +32,6 @@ use Neos\Media\Domain\Repository\TagRepository;
  */
 class AssetsHelper implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
      * @var AssetRepository
