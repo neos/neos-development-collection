@@ -1449,6 +1449,46 @@ Render a human-readable description for the passed $dimensions
 
 
 
+
+
+
+.. _`Eel Helpers Reference: Neos.Media.Assets`:
+
+Neos.Media.Assets
+-----------------
+
+Implemented in: ``Neos\Media\Eel\AssetsHelper``
+
+Neos.Media.Assets.findByTag(tag)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``tag`` (Neos\Media\Domain\Model\Tag|string) The label of a tag or a ``Tag`` object
+
+**Return** (null|QueryResultInterface<AssetInterface>)
+
+Neos.Media.Assets.findByCollection(collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``collection`` (Neos\Media\Domain\Model\AssetCollection|string) The title of a collection or a ``AssetCollection`` object
+
+**Return** (null|QueryResultInterface<AssetInterface>)
+
+Neos.Media.Assets.findBySearchTerm(searchTerm, tags, collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``searchTerm`` (string) The search term to look for in the title, filename and caption of assets
+* ``tags`` (Neos\Media\Domain\Model\Tag[], optional) A list of ``Tag`` objects
+* ``collection`` (Neos\Media\Domain\Model\AssetCollection|string, optional) The title of a collection or a ``AssetCollection`` object
+
+**Return** (null|QueryResultInterface<AssetInterface>)
+
+
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Neos.Seo.Image`:
 
 Neos.Seo.Image
