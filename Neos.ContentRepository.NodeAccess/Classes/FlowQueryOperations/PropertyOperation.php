@@ -13,8 +13,6 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
@@ -66,7 +64,7 @@ class PropertyOperation extends AbstractOperation
      */
     public function canEvaluate($context): bool
     {
-        return (isset($context[0]) && ($context[0] instanceof Node || $context[0] instanceof Reference));
+        return (isset($context[0]) && $context[0] instanceof Node);
     }
 
     /**
@@ -90,11 +88,8 @@ class PropertyOperation extends AbstractOperation
             return null;
         }
 
-        /* @var $element Node|Reference */
+        /* @var $element Node */
         $element = $context[0];
-        if ($element instanceof Reference) {
-            return $element->properties[$propertyName];
-        }
         if ($propertyName === '_path') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return (string)$subgraph->retrieveNodePath($element->nodeAggregateId);
