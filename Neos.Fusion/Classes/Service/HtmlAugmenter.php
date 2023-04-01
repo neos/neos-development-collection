@@ -12,7 +12,6 @@ namespace Neos\Fusion\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Exception;
 
 /**
  * A tool that can augment HTML for example by adding arbitrary attributes.
@@ -29,6 +28,8 @@ use Neos\Neos\Exception;
  */
 class HtmlAugmenter
 {
+    use RenderAttributesTrait;
+
     /**
      * Adds the given $attributes to the $html by augmenting the root element.
      * Attributes are merged with the existing root element's attributes.
@@ -39,19 +40,19 @@ class HtmlAugmenter
      * @param array $attributes Attributes to be added to the root element in the format array('<attribute-name>' => '<attribute-value>', ...)
      * @param string $fallbackTagName The root element tag name if one needs to be added
      * @param array $exclusiveAttributes A list of lowercase(!) attribute names that should be exclusive to the root element. If the existing root element contains one of these a new root element is wrapped
-     * @return string
+     * @param bool $allowEmptyAttributes Allow empty attributes without a value
      */
-    public function addAttributes($html, array $attributes, $fallbackTagName = 'div', array $exclusiveAttributes = null)
+    public function addAttributes($html, array $attributes, $fallbackTagName = 'div', array $exclusiveAttributes = null, bool $allowEmptyAttributes = true)
     {
         if ($attributes === []) {
             return $html;
         }
         $rootElement = $this->getHtmlRootElement($html);
         if ($rootElement === null || $this->elementHasAttributes($rootElement, $exclusiveAttributes)) {
-            return sprintf('<%s%s>%s</%s>', $fallbackTagName, $this->renderAttributes($attributes), $html, $fallbackTagName);
+            return sprintf('<%s%s>%s</%s>', $fallbackTagName, $this->renderAttributes($attributes, $allowEmptyAttributes), $html, $fallbackTagName);
         }
         $this->mergeAttributes($rootElement, $attributes);
-        return preg_replace('/<(' . $rootElement->nodeName . ')\b[^>]*>/xi', '<$1' . addcslashes($this->renderAttributes($attributes), '\\\$') . '>', $html, 1);
+        return preg_replace('/<(' . $rootElement->nodeName . ')\b[^>]*>/xi', '<$1' . addcslashes($this->renderAttributes($attributes, $allowEmptyAttributes), '\\\$') . '>', $html, 1);
     }
 
     /**
@@ -97,43 +98,28 @@ class HtmlAugmenter
     {
         /** @var $attribute \DOMAttr */
         foreach ($element->attributes as $attribute) {
-            $oldAttributeValue = $attribute->hasChildNodes() ? $attribute->value : null;
-            $newAttributeValue = isset($newAttributes[$attribute->name]) ? $newAttributes[$attribute->name] : null;
-            $mergedAttributes = [];
-            if ($newAttributeValue !== null && $newAttributeValue !== $oldAttributeValue) {
-                $mergedAttributes[] = $newAttributeValue;
-            }
-            if ($oldAttributeValue !== null) {
-                $mergedAttributes[] = $oldAttributeValue;
-            }
-            $newAttributes[$attribute->name] = $mergedAttributes !== [] ? implode(' ', $mergedAttributes) : null;
-        }
-    }
+            $oldAttributeValue = $attribute->hasChildNodes() ? $attribute->value : true;
+            $hasNewAttributeValue = array_key_exists($attribute->name, $newAttributes);
+            $newAttributeValue = $newAttributes[$attribute->name] ?? null;
 
-    /**
-     * Renders the given key/value pair to a valid attribute string in the format <key1>="<value1>" <key2>="<value2>"...
-     *
-     * @param array $attributes The attributes to render in the format array('<attributeKey>' => '<attributeValue>', ...)
-     * @return string
-     * @throws Exception
-     */
-    protected function renderAttributes(array $attributes)
-    {
-        $renderedAttributes = '';
-        foreach ($attributes as $attributeName => $attributeValue) {
-            $encodedAttributeName = htmlspecialchars($attributeName, ENT_COMPAT, 'UTF-8');
-            if ($attributeValue === null) {
-                $renderedAttributes .= ' ' . $encodedAttributeName;
+            if ($hasNewAttributeValue === false) {
+                $combinedValue = $oldAttributeValue;
+            } elseif ($newAttributeValue === $oldAttributeValue) {
+                $combinedValue = $oldAttributeValue;
+            } elseif ($newAttributeValue === null || $newAttributeValue === false) {
+                $combinedValue = null;
+            } elseif ($newAttributeValue === true) {
+                $combinedValue = true;
+            } elseif (is_array($newAttributeValue)) {
+                $combinedValue = [...$newAttributeValue, $oldAttributeValue];
+            } elseif (is_object($newAttributeValue) && $newAttributeValue instanceof \Stringable) {
+                $combinedValue = [(string)$newAttributeValue, $oldAttributeValue];
             } else {
-                if (is_array($attributeValue) || (is_object($attributeValue) && !method_exists($attributeValue, '__toString'))) {
-                    throw new Exception(sprintf('Only attributes with string values can be rendered, attribute %s is of type %s', $attributeName, gettype($attributeValue)));
-                }
-
-                $encodedAttributeValue = htmlspecialchars((string)$attributeValue, ENT_COMPAT, 'UTF-8');
-                $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
+                $combinedValue = [$newAttributeValue, $oldAttributeValue];
             }
+
+            $newAttributes[$attribute->name] = $combinedValue;
         }
-        return $renderedAttributes;
     }
 
     /**
