@@ -32,7 +32,6 @@ use Neos\Media\Domain\Repository\TagRepository;
  */
 class AssetsHelper implements ProtectedContextAwareInterface
 {
-
     /**
      * @Flow\Inject
      * @var AssetRepository
@@ -54,55 +53,55 @@ class AssetsHelper implements ProtectedContextAwareInterface
     /**
      * @return QueryResultInterface<AssetInterface> | null
      */
-    public function findByTag(Tag|string $tag): ?QueryResultInterface
+    public function findByTag(?Tag $tag): ?QueryResultInterface
     {
-        if (is_string($tag)) {
-            $tag = $this->tagRepository->findOneByLabel($tag);
-        }
-
         if (!$tag) {
             return null;
         }
-
-        try {
-            return $this->assetRepository->findByTag($tag);
-        } catch (InvalidQueryException) {
-        }
-
-        return null;
+        return $this->assetRepository->findByTag($tag);
     }
 
     /**
      * @return QueryResultInterface<AssetInterface> | null
      */
-    public function findByCollection(AssetCollection|string $collection): ?QueryResultInterface
+    public function findByTagLabel(?string $tagLabel): ?QueryResultInterface
     {
-        if (is_string($collection)) {
-            $collection = $this->assetCollectionRepository->findOneByTitle($collection);
+        if (!$tagLabel) {
+            return null;
         }
+        $tag = $this->tagRepository->findOneByLabel($tagLabel);
+        return $this->findByTag($tag);
+    }
 
+    /**
+     * @return QueryResultInterface<AssetInterface> | null
+     */
+    public function findByCollection(?AssetCollection $collection): ?QueryResultInterface
+    {
         if (!$collection) {
             return null;
         }
+        return $this->assetRepository->findByAssetCollection($collection);
+    }
 
-        try {
-            return $this->assetRepository->findByAssetCollection($collection);
-        } catch (InvalidQueryException) {
+    /**
+     * @return QueryResultInterface<AssetInterface> | null
+     */
+    public function findByCollectionTitle(?string $collectionTitle): ?QueryResultInterface
+    {
+        if (!$collectionTitle) {
+            return null;
         }
-
-        return null;
+        $collection = $this->assetCollectionRepository->findOneByTitle($collectionTitle);
+        return $this->findByCollection($collection);
     }
 
     /**
      * @param Tag[] $tags
      * @return QueryResultInterface<AssetInterface> | null
      */
-    public function findBySearchTerm(string $searchTerm, array $tags = [], AssetCollection|string $collection = null): ?QueryResultInterface
+    public function search(string $searchTerm, array $tags = [], AssetCollection $collection = null): ?QueryResultInterface
     {
-        if (is_string($collection)) {
-            $collection = $this->assetCollectionRepository->findOneByTitle($collection);
-        }
-
         if (!$searchTerm) {
             return null;
         }
