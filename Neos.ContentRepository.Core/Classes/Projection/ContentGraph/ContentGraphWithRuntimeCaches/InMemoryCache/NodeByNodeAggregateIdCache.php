@@ -52,7 +52,7 @@ final class NodeByNodeAggregateIdCache
             return false;
         }
 
-        $key = (string)$nodeAggregateId;
+        $key = $nodeAggregateId->value;
         return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIds[$key]);
     }
 
@@ -62,7 +62,7 @@ final class NodeByNodeAggregateIdCache
             return;
         }
 
-        $key = (string)$nodeAggregateId;
+        $key = $nodeAggregateId->value;
         $this->nodes[$key] = $node;
     }
 
@@ -72,7 +72,7 @@ final class NodeByNodeAggregateIdCache
             return;
         }
 
-        $key = (string)$nodeAggregateId;
+        $key = $nodeAggregateId->value;
         $this->nonExistingNodeAggregateIds[$key] = true;
     }
 
@@ -82,7 +82,7 @@ final class NodeByNodeAggregateIdCache
             return null;
         }
 
-        $key = (string)$nodeAggregateId;
+        $key = $nodeAggregateId->value;
         return $this->nodes[$key] ?? null;
     }
 }

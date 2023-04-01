@@ -50,7 +50,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             WHERE workspaceName = :workspaceName
         ',
             [
-                ':workspaceName' => (string)$name
+                ':workspaceName' => $name->value
             ]
         )->fetchAssociative();
 
@@ -78,7 +78,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             WHERE currentContentStreamId = :currentContentStreamId
         ',
             [
-                ':currentContentStreamId' => (string)$contentStreamId
+                ':currentContentStreamId' => $contentStreamId->value
             ]
         )->fetchAssociative();
 
@@ -105,13 +105,13 @@ final class WorkspaceFinder implements ProjectionStateInterface
                 WHERE workspaceName LIKE :workspaceNameLike
             ',
             [
-                ':workspaceNameLike' => $prefix . '%'
+                ':workspaceNameLike' => $prefix->value . '%'
             ]
         )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
-            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
+            $result[$similarlyNamedWorkspace->workspaceName->value] = $similarlyNamedWorkspace;
         }
 
         return $result;
@@ -132,13 +132,13 @@ final class WorkspaceFinder implements ProjectionStateInterface
                 WHERE baseWorkspaceName = :workspaceName
             ',
             [
-                ':workspaceName' => (string)$baseWorkspace
+                ':workspaceName' => $baseWorkspace->value
             ]
         )->fetchAllAssociative();
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
-            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
+            $result[$similarlyNamedWorkspace->workspaceName->value] = $similarlyNamedWorkspace;
         }
 
         return $result;
@@ -177,7 +177,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
-            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
+            $result[$similarlyNamedWorkspace->workspaceName->value] = $similarlyNamedWorkspace;
         }
 
         return Workspaces::fromArray($result);
@@ -204,7 +204,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
         foreach ($workspaceRows as $workspaceRow) {
             $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
-            $result[(string)$similarlyNamedWorkspace->workspaceName] = $similarlyNamedWorkspace;
+            $result[$similarlyNamedWorkspace->workspaceName->value] = $similarlyNamedWorkspace;
         }
 
         return $result;

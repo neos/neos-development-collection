@@ -114,8 +114,8 @@ class ContentCacheFlusher
             }
             $processedNodeAggregateIds[$nodeAggregate->nodeAggregateId->value] = true;
 
-            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId
-                . '%_' . $nodeAggregate->nodeAggregateId;
+            $tagName = 'DescendantOf_%' . $nodeAggregate->contentStreamId->value
+                . '%_' . $nodeAggregate->nodeAggregateId->value;
             $tagsToFlush[$tagName] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName,
@@ -123,7 +123,7 @@ class ContentCacheFlusher
             );
 
             // Legacy
-            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateId;
+            $legacyTagName = 'DescendantOf_' . $nodeAggregate->nodeAggregateId->value;
             $tagsToFlush[$legacyTagName] = sprintf(
                 'which were tagged with legacy "%s" because node "%s" has changed.',
                 $legacyTagName,
@@ -156,7 +156,7 @@ class ContentCacheFlusher
         NodeAggregateId $nodeAggregateId,
         array &$tagsToFlush
     ): void {
-        $cacheIdentifier = '%' . $contentStreamId . '%_' . $nodeAggregateId;
+        $cacheIdentifier = '%' . $contentStreamId->value . '%_' . $nodeAggregateId->value;
         $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
             'which were tagged with "Node_%s" because that identifier has changed.',
             $cacheIdentifier
@@ -169,7 +169,7 @@ class ContentCacheFlusher
         );
 
         // Legacy
-        $cacheIdentifier = (string)$nodeAggregateId;
+        $cacheIdentifier = $nodeAggregateId->value;
         $tagsToFlush['Node_' . $cacheIdentifier] = sprintf(
             'which were tagged with "Node_%s" because that identifier has changed.',
             $cacheIdentifier
@@ -198,15 +198,15 @@ class ContentCacheFlusher
     ): void {
         try {
             $nodeTypesToFlush = $this->getAllImplementedNodeTypeNames(
-                $contentRepository->getNodeTypeManager()->getNodeType((string)$nodeTypeName)
+                $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName->value)
             );
         } catch (NodeTypeNotFoundException $e) {
             // as a fallback, we flush the single NodeType
-            $nodeTypesToFlush = [(string)$nodeTypeName];
+            $nodeTypesToFlush = [$nodeTypeName->value];
         }
 
         foreach ($nodeTypesToFlush as $nodeTypeNameToFlush) {
-            $tagsToFlush['NodeType_%' . $contentStreamId . '%_' . $nodeTypeNameToFlush] = sprintf(
+            $tagsToFlush['NodeType_%' . $contentStreamId->value . '%_' . $nodeTypeNameToFlush] = sprintf(
                 'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameToFlush,
                 ($referenceNodeIdentifier ?: ''),

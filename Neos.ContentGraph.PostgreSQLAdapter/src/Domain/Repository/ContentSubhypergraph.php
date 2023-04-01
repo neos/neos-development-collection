@@ -340,7 +340,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
     ): ?Subtree {
         $parameters = [
             'entryNodeAggregateId' => $entryNodeAggregateId->value,
-            'contentStreamId' => (string)$this->contentStreamId,
+            'contentStreamId' => $this->contentStreamId->value,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'maximumLevels' => $filter->maximumLevels
         ];
@@ -448,7 +448,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             AND h.dimensionspacepointhash = :dimensionSpacePointHash';
 
         $parameters = [
-            'contentStreamId' => (string)$this->contentStreamId,
+            'contentStreamId' => $this->contentStreamId->value,
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash
         ];
 

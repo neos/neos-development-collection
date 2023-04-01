@@ -138,9 +138,9 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeTypeName) {
             Assert::assertSame(
-                (string)$expectedNodeTypeName,
-                (string)$nodeAggregate->nodeTypeName,
-                'Node types do not match in adapter "' . $adapterName . '". Expected "' . $expectedNodeTypeName . '", got "' . $nodeAggregate->nodeTypeName . '".'
+                $expectedNodeTypeName->value,
+                $nodeAggregate->nodeTypeName->value,
+                'Node types do not match in adapter "' . $adapterName . '". Expected "' . $expectedNodeTypeName->value . '", got "' . $nodeAggregate->nodeTypeName->value . '".'
             );
         });
     }
@@ -163,7 +163,7 @@ trait ProjectedNodeAggregateTrait
     {
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeName) {
-            Assert::assertSame((string)$expectedNodeName, (string)$nodeAggregate->nodeName, 'Node names do not match in adapter "' . $adapterName . '", expected "' . $expectedNodeName . '", got "' . $nodeAggregate->nodeName . '".');
+            Assert::assertSame($expectedNodeName->value, $nodeAggregate->nodeName->value, 'Node names do not match in adapter "' . $adapterName . '", expected "' . $expectedNodeName->value . '", got "' . $nodeAggregate->nodeName->value . '".');
         });
     }
 
@@ -192,10 +192,10 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->contentStreamId . ';' . $nodeAggregateId;
+                return $this->contentStreamId . ';' . $nodeAggregateId->value;
             }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
-                return $parentNodeAggregate->contentStreamId . ';' . $parentNodeAggregate->nodeAggregateId;
+                return $parentNodeAggregate->contentStreamId->value . ';' . $parentNodeAggregate->nodeAggregateId->value;
             }, iterator_to_array(
                 $this->getActiveContentGraphs()[$adapterName]->findParentNodeAggregates(
                     $nodeAggregate->contentStreamId,
@@ -235,10 +235,10 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->contentStreamId . ':' . $nodeAggregateId;
+                return $this->contentStreamId . ':' . $nodeAggregateId->value;
             }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
-                return $parentNodeAggregate->contentStreamId . ':' . $parentNodeAggregate->nodeAggregateId;
+                return $parentNodeAggregate->contentStreamId->value . ':' . $parentNodeAggregate->nodeAggregateId->value;
             }, iterator_to_array($this->getActiveContentGraphs()[$adapterName]->findChildNodeAggregates(
                 $nodeAggregate->contentStreamId,
                 $nodeAggregate->nodeAggregateId

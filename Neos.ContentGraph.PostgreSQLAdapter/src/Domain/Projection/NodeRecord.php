@@ -93,11 +93,11 @@ final class NodeRecord
             'relationanchorpoint' => (string) $this->relationAnchorPoint,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-            'nodeaggregateid' => (string) $this->nodeAggregateId,
-            'nodetypename' => (string) $this->nodeTypeName,
+            'nodeaggregateid' => $this->nodeAggregateId->value,
+            'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
-            'nodename' => (string) $this->nodeName
+            'nodename' => $this->nodeName->value
         ]);
     }
 
@@ -111,11 +111,11 @@ final class NodeRecord
             [
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-                'nodeaggregateid' => (string) $this->nodeAggregateId,
-                'nodetypename' => (string) $this->nodeTypeName,
+                'nodeaggregateid' => $this->nodeAggregateId->value,
+                'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),
-                'nodename' => (string) $this->nodeName,
+                'nodename' => $this->nodeName->value,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint

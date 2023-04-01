@@ -165,7 +165,7 @@ class FusionService
 
     protected function getSiteForSiteNode(Node $siteNode): ?Site
     {
-        return $this->siteRepository->findOneByNodeName((string)$siteNode->nodeName);
+        return $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
     }
 
     /**

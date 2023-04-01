@@ -86,9 +86,9 @@ class ChildrenOperation extends AbstractOperation
             $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                 ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::create());
             foreach ($childNodes as $childNode) {
-                if (!isset($outputNodeAggregateIds[(string)$childNode->nodeAggregateId])) {
+                if (!isset($outputNodeAggregateIds[$childNode->nodeAggregateId->value])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIds[(string)$childNode->nodeAggregateId] = true;
+                    $outputNodeAggregateIds[$childNode->nodeAggregateId->value] = true;
                 }
             }
         }
@@ -151,10 +151,10 @@ class ChildrenOperation extends AbstractOperation
                         }
 
                         if (!is_null($resolvedNode) && !isset($filteredOutputNodeIdentifiers[
-                            (string)$resolvedNode->nodeAggregateId
+                            $resolvedNode->nodeAggregateId->value
                         ])) {
                             $filteredOutput[] = $resolvedNode;
-                            $filteredOutputNodeIdentifiers[(string)$resolvedNode->nodeAggregateId] = true;
+                            $filteredOutputNodeIdentifiers[$resolvedNode->nodeAggregateId->value] = true;
                         }
                     }
                 } elseif (count($instanceOfFilters) > 0) {
@@ -178,10 +178,10 @@ class ChildrenOperation extends AbstractOperation
 
                         foreach ($childNodes as $childNode) {
                             if (!isset($filteredOutputNodeIdentifiers[
-                                (string)$childNode->nodeAggregateId
+                                $childNode->nodeAggregateId->value
                             ])) {
                                 $filteredOutput[] = $childNode;
-                                $filteredOutputNodeIdentifiers[(string)$childNode->nodeAggregateId] = true;
+                                $filteredOutputNodeIdentifiers[$childNode->nodeAggregateId->value] = true;
                             }
                         }
                     }

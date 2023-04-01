@@ -93,7 +93,7 @@ class PropertyOperation extends AbstractOperation
             $element = $context[0];
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             if ($propertyPath === '_path') {
-                return (string)$subgraph->retrieveNodePath($element->nodeAggregateId);
+                return $subgraph->retrieveNodePath($element->nodeAggregateId)->value;
             } elseif ($propertyPath[0] === '_') {
                 return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
             } else {

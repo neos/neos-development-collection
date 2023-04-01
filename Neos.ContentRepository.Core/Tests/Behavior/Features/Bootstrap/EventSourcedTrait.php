@@ -548,7 +548,7 @@ trait EventSourcedTrait
                 Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
                 $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
                 $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
-                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId), 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
+                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId), 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
             }
         }
     }
@@ -596,7 +596,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
-        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId . '"');
+        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
             $this->contentStreamId,

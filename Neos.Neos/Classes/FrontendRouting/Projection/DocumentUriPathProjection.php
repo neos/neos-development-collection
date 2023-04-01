@@ -316,7 +316,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             }
 
             $nodeAggregateIdPath = $parentNode->getNodeAggregateIdPath()
-                . '/' . $event->nodeAggregateId;
+                . '/' . $event->nodeAggregateId->value;
             if ($parentNode->isRoot() && $event->nodeName !== null) {
                 $uriPath = '';
                 $siteNodeName = SiteNodeName::fromNodeName($event->nodeName);

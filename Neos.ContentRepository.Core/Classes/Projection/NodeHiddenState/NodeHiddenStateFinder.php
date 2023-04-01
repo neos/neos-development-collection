@@ -47,9 +47,9 @@ final class NodeHiddenStateFinder implements ProjectionStateInterface
                 AND nodeaggregateid = :nodeAggregateId
             ',
             [
-                'contentStreamId' => (string)$contentStreamId,
+                'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => (string)$nodeAggregateId,
+                'nodeAggregateId' => $nodeAggregateId->value,
             ]
         )->fetch();
 

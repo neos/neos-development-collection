@@ -43,8 +43,8 @@ class NodeAddressFactory
         );
         if ($workspace === null) {
             throw new \RuntimeException(
-                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->nodeAggregateId
-                . ', because the content stream ' . $node->subgraphIdentity->contentStreamId
+                'Cannot build a NodeAddress for traversable node of aggregate ' . $node->nodeAggregateId->value
+                . ', because the content stream ' . $node->subgraphIdentity->contentStreamId->value
                 . ' is not assigned to a workspace.'
             );
         }

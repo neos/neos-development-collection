@@ -113,7 +113,7 @@ class ExampleDimensionSource implements Dimension\ContentDimensionSourceInterfac
             $this->initializeDimensions();
         }
 
-        return $this->dimensions[(string)$dimensionId] ?? null;
+        return $this->dimensions[$dimensionId->value] ?? null;
     }
 
     /**

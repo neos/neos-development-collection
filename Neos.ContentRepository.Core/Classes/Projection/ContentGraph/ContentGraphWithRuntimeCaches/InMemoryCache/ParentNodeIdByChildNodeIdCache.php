@@ -48,7 +48,7 @@ final class ParentNodeIdByChildNodeIdCache
             return;
         }
 
-        $key = (string)$childNodeAggregateId;
+        $key = $childNodeAggregateId->value;
         $this->parentNodeAggregateIds[$key] = $parentNodeAggregateId;
     }
 
@@ -58,7 +58,7 @@ final class ParentNodeIdByChildNodeIdCache
             return false;
         }
 
-        $key = (string)$childNodeAggregateId;
+        $key = $childNodeAggregateId->value;
         return isset($this->parentNodeAggregateIds[$key]) || isset($this->nodesWithoutParentNode[$key]);
     }
 
@@ -68,7 +68,7 @@ final class ParentNodeIdByChildNodeIdCache
             return;
         }
 
-        $key = (string)$nodeAggregateId;
+        $key = $nodeAggregateId->value;
         $this->nodesWithoutParentNode[$key] = true;
     }
 
@@ -79,7 +79,7 @@ final class ParentNodeIdByChildNodeIdCache
             return null;
         }
 
-        $key = (string)$childNodeAggregateId;
+        $key = $childNodeAggregateId->value;
         return $this->parentNodeAggregateIds[$key] ?? null;
     }
 }

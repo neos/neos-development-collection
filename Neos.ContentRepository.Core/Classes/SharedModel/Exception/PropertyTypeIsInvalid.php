@@ -27,8 +27,8 @@ final class PropertyTypeIsInvalid extends \DomainException
     public static function becauseItIsReference(PropertyName $propertyName, NodeTypeName $nodeTypeName): self
     {
         return new self(
-            'Given property "' . $propertyName . '" is declared as "reference" in node type "'
-                . $nodeTypeName . '" and must be treated as such.',
+            'Given property "' . $propertyName->value . '" is declared as "reference" in node type "'
+                . $nodeTypeName->value . '" and must be treated as such.',
             1630063201
         );
     }
@@ -39,8 +39,8 @@ final class PropertyTypeIsInvalid extends \DomainException
         NodeTypeName $nodeTypeName
     ): self {
         return new self(
-            'Given property "' . $propertyName . '" is declared as undefined type "' . $declaredType
-                . '" in node type "' . $nodeTypeName . '"',
+            'Given property "' . $propertyName->value . '" is declared as undefined type "' . $declaredType
+                . '" in node type "' . $nodeTypeName->value . '"',
             1630063406
         );
     }

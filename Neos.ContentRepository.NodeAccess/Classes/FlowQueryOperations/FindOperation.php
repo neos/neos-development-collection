@@ -197,7 +197,7 @@ class FindOperation extends AbstractOperation
         foreach ($contextNodes as $contextNode) {
             assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamId
+            $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamId->value
                 . '@' . $contextNode->subgraphIdentity->dimensionSpacePoint);
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [

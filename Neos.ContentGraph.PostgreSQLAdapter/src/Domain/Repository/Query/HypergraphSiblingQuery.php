@@ -46,9 +46,9 @@ final class HypergraphSiblingQuery implements HypergraphQueryInterface
                 . $queryMode->renderCondition();
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
+            'contentStreamId' => $contentStreamId->value,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'nodeAggregateId' => (string)$nodeAggregateId
+            'nodeAggregateId' => $nodeAggregateId->value
         ];
 
         return new self($query, $parameters, $tableNamePrefix);

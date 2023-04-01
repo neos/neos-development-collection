@@ -53,7 +53,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             WHERE h.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId
+            'contentStreamId' => $contentStreamId->value
         ];
 
         return new self($query, $parameters, $tableNamePrefix);
@@ -87,7 +87,7 @@ final class HypergraphQuery implements HypergraphQueryInterface
             AND n.nodeaggregateid = :nodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['nodeAggregateId'] = (string)$nodeAggregateId;
+        $parameters['nodeAggregateId'] = $nodeAggregateId->value;
 
         return new self($query, $parameters, $this->tableNamePrefix);
     }

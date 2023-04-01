@@ -23,7 +23,7 @@ final class SitesNodeIsMissing extends \DomainException
     public static function butWasRequested(): self
     {
         return new self(
-            'The "' . NodeTypeNameFactory::forSites() . '" root node is missing.',
+            'The "' . NodeTypeNameFactory::forSites()->value . '" root node is missing.',
             1651956364
         );
     }

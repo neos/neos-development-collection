@@ -110,9 +110,9 @@ final class RestrictionHyperrelationRecord
             ) VALUES (?, ?, ?, ?)
             ON CONFLICT DO NOTHING',
             [
-                (string)$this->contentStreamId,
+                $this->contentStreamId->value,
                 $this->dimensionSpacePointHash,
-                (string)$this->originNodeAggregateId,
+                $this->originNodeAggregateId->value,
                 $this->affectedNodeAggregateIds->toDatabaseString()
             ]
         );
@@ -150,9 +150,9 @@ final class RestrictionHyperrelationRecord
     public function getDatabaseIdentifier(): array
     {
         return [
-            'contentstreamid' => (string)$this->contentStreamId,
+            'contentstreamid' => $this->contentStreamId->value,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
-            'originnodeaggregateid' => (string)$this->originNodeAggregateId
+            'originnodeaggregateid' => $this->originNodeAggregateId->value
         ];
     }
 }

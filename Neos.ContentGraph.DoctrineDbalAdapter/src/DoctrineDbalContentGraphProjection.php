@@ -330,7 +330,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ', [
                 'parentNodeAnchor' => (string)NodeRelationAnchorPoint::forRootEdge(),
                 'childNodeAnchor' => (string)$rootNodeAnchorPoint,
-                'contentStreamId' => (string)$event->contentStreamId
+                'contentStreamId' => $event->contentStreamId->value
             ]);
             // recreate hierarchy edges for the root node
             $this->connectHierarchy(
@@ -387,9 +387,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     n.nodeaggregateid = :nodeAggregateId
                     and h.contentstreamid = :contentStreamId
             ', [
-                'newName' => (string)$event->newNodeName,
-                'nodeAggregateId' => (string)$event->nodeAggregateId,
-                'contentStreamId' => (string)$event->contentStreamId
+                'newName' => $event->newNodeName->value,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
+                'contentStreamId' => $event->contentStreamId->value
             ]);
         });
     }
@@ -418,7 +418,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   r.contentstreamid,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateid,
-                  "' . $newlyCreatedNodeAggregateId . '" as affectednodeaggregateid
+                  "' . $newlyCreatedNodeAggregateId->value . '" as affectednodeaggregateid
                 FROM
                     ' . $this->tableNamePrefix . '_restrictionrelation r
                     WHERE
@@ -426,10 +426,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                         and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
                         and r.affectednodeaggregateid = :parentNodeAggregateId
             ', [
-            'sourceContentStreamId' => (string)$contentStreamId,
+            'sourceContentStreamId' => $contentStreamId->value,
             'visibleDimensionSpacePoints' => $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
                 ->getPointHashes(),
-            'parentNodeAggregateId' => (string)$parentNodeAggregateId
+            'parentNodeAggregateId' => $parentNodeAggregateId->value
         ], [
             'visibleDimensionSpacePoints' => Connection::PARAM_STR_ARRAY
         ]);
@@ -655,12 +655,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   h.position,
                   h.dimensionspacepoint,
                   h.dimensionspacepointhash,
-                  "' . $event->newContentStreamId . '" AS contentstreamid
+                  "' . $event->newContentStreamId->value . '" AS contentstreamid
                 FROM
                     ' . $this->tableNamePrefix . '_hierarchyrelation h
                     WHERE h.contentstreamid = :sourceContentStreamId
             ', [
-                'sourceContentStreamId' => (string)$event->sourceContentStreamId
+                'sourceContentStreamId' => $event->sourceContentStreamId->value
             ]);
 
             //
@@ -674,7 +674,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   affectednodeaggregateid
                 )
                 SELECT
-                  "' . $event->newContentStreamId . '" AS contentstreamid,
+                  "' . $event->newContentStreamId->value . '" AS contentstreamid,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateid,
                   r.affectednodeaggregateid
@@ -682,7 +682,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     ' . $this->tableNamePrefix . '_restrictionrelation r
                     WHERE r.contentstreamid = :sourceContentStreamId
             ', [
-                'sourceContentStreamId' => (string)$event->sourceContentStreamId
+                'sourceContentStreamId' => $event->sourceContentStreamId->value
             ]);
 
             // NOTE: as reference edges are attached to Relation Anchor Points (and they are lazily copy-on-written),
@@ -700,7 +700,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 WHERE
                     contentstreamid = :contentStreamId
             ', [
-                'contentStreamId' => (string)$event->contentStreamId
+                'contentStreamId' => $event->contentStreamId->value
             ]);
 
             // Drop non-referenced nodes (which do not have a hierarchy relation anymore)
@@ -731,7 +731,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 WHERE
                     contentstreamid = :contentStreamId
             ', [
-                'contentStreamId' => (string)$event->contentStreamId
+                'contentStreamId' => $event->contentStreamId->value
             ]);
         });
     }
@@ -766,8 +766,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     throw new \InvalidArgumentException(
                         'Could not apply event of type "' . get_class($event)
                         . '" since no anchor point could be resolved for node '
-                        . $event->getNodeAggregateId() . ' in content stream '
-                        . $event->getContentStreamId(),
+                        . $event->getNodeAggregateId()->value . ' in content stream '
+                        . $event->getContentStreamId()->value,
                         1658580583
                     );
                 }
@@ -867,7 +867,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                  -- create new restriction relations...
                  -- --------------------------------
             SELECT
-                "' . (string)$contentStreamId . '" as contentstreamid,
+                "' . $contentStreamId->value . '" as contentstreamid,
                 tree.dimensionspacepointhash,
                 originnodeaggregateid,
                 tree.nodeaggregateid as affectednodeaggregateid
@@ -883,9 +883,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 ) AS joinedrestrictingancestors
             ',
             [
-                'contentStreamId' => (string)$contentStreamId,
-                'parentNodeAggregateId' => (string)$parentNodeAggregateId,
-                'entryNodeAggregateId' => (string)$entryNodeAggregateId,
+                'contentStreamId' => $contentStreamId->value,
+                'parentNodeAggregateId' => $parentNodeAggregateId->value,
+                'entryNodeAggregateId' => $entryNodeAggregateId->value,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
                 'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
@@ -1069,7 +1069,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 [
                     'newNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
                     'originalNodeAnchor' => (string)$anchorPoint,
-                    'contentStreamId' => (string)$contentStreamIdWhereWriteOccurs
+                    'contentStreamId' => $contentStreamIdWhereWriteOccurs->value
                 ]
             );
 
@@ -1139,7 +1139,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 ',
                 [
                     'dimensionSpacePointHash' => $event->source->hash,
-                    'contentStreamId' => (string)$event->contentStreamId
+                    'contentStreamId' => $event->contentStreamId->value
                 ]
             );
             while ($res = $rel->fetchAssociative()) {
@@ -1169,7 +1169,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
                     'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
-                    'contentStreamId' => (string)$event->contentStreamId
+                    'contentStreamId' => $event->contentStreamId->value
                 ]
             );
 
@@ -1186,7 +1186,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'contentStreamId' => (string)$event->contentStreamId
+                    'contentStreamId' => $event->contentStreamId->value
                 ]
             );
         });
@@ -1246,7 +1246,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     AND r.dimensionspacepointhash = :sourceDimensionSpacePointHash
 
             ', [
-                'contentStreamId' => (string)$event->contentStreamId,
+                'contentStreamId' => $event->contentStreamId->value,
                 'sourceDimensionSpacePointHash' => $event->source->hash,
                 'targetDimensionSpacePointHash' => $event->target->hash
             ]);

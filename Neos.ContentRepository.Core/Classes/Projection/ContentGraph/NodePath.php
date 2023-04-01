@@ -73,7 +73,7 @@ final class NodePath implements \JsonSerializable
      */
     public function appendPathSegment(NodeName $nodeName): self
     {
-        return new self($this->value . '/' . $nodeName);
+        return new self($this->value . '/' . $nodeName->value);
     }
 
     /**

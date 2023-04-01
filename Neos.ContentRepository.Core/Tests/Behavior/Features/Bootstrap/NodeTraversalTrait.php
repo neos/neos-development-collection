@@ -327,7 +327,7 @@ trait NodeTraversalTrait
             if ($expectedExceptionMessage !== null) {
                 Assert::fail('Expected an exception but none was thrown');
             }
-            Assert::assertSame((string)$expectedNodePath, (string)$actualNodePath);
+            Assert::assertSame($expectedNodePath->value, $actualNodePath->value);
         }
     }
 

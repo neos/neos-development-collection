@@ -23,7 +23,7 @@ final class SiteNodeNameIsAlreadyInUseByAnotherSite extends \DomainException
     public static function butWasAttemptedToBeClaimed(NodeName $nodeName): self
     {
         return new self(
-            'Site node name ' . $nodeName . ' is already in use by another site',
+            'Site node name ' . $nodeName->value . ' is already in use by another site',
             1651962963
         );
     }

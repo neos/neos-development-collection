@@ -138,7 +138,7 @@ class WorkspacesController extends AbstractModuleController
             /** @var \Neos\ContentRepository\Core\Projection\Workspace\Workspace $workspace */
             // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
             if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace() || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
-                $workspaceName = (string)$workspace->workspaceName;
+                $workspaceName = $workspace->workspaceName->value;
                 $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
                 $workspacesAndCounts[$workspaceName]['changesCounts'] =
                     $this->computeChangesCount($workspace, $contentRepository);
@@ -220,12 +220,12 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceName = WorkspaceName::fromString(
-            Utility::renderValidNodeName((string)$title) . '-'
+            Utility::renderValidNodeName($title->value) . '-'
                 . substr(base_convert(microtime(false), 10, 36), -5, 5)
         );
         while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = WorkspaceName::fromString(
-                Utility::renderValidNodeName((string)$title) . '-'
+                Utility::renderValidNodeName($title->value) . '-'
                     . substr(base_convert(microtime(false), 10, 36), -5, 5)
             );
         }
@@ -318,7 +318,7 @@ class WorkspacesController extends AbstractModuleController
         #$this->workspaceFinder->update($workspace);
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenUpdated',
-            [(string)$workspace->workspaceTitle],
+            [$workspace->workspaceTitle->value],
             null,
             null,
             'Modules',
@@ -349,12 +349,12 @@ class WorkspacesController extends AbstractModuleController
             $dependentWorkspaceTitles = [];
             /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = (string)$dependentWorkspace->workspaceTitle;
+                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
             }
 
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [(string)$workspace->workspaceTitle, implode(', ', $dependentWorkspaceTitles)],
+                [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
                 null,
                 null,
                 'Modules',
@@ -383,7 +383,7 @@ class WorkspacesController extends AbstractModuleController
         //if ($nodesCount > 0) {
         $message = $this->translator->translateById(
             'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
-            [(string)$workspace->workspaceTitle, $nodesCount],
+            [$workspace->workspaceTitle->value, $nodesCount],
             $nodesCount,
             null,
             'Modules',
@@ -396,7 +396,7 @@ class WorkspacesController extends AbstractModuleController
         //$this->workspaceFinder->remove($workspace);
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
-            [(string)$workspace->workspaceTitle],
+            [$workspace->workspaceTitle->value],
             null,
             null,
             'Modules',
@@ -736,7 +736,7 @@ class WorkspacesController extends AbstractModuleController
 
             $node = $subgraph->findNodeById($change->nodeAggregateId);
             if ($node) {
-                $pathParts = explode('/', (string)$subgraph->retrieveNodePath($node->nodeAggregateId));
+                $pathParts = explode('/', $subgraph->retrieveNodePath($node->nodeAggregateId)->value);
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
                     $document = null;
@@ -757,12 +757,12 @@ class WorkspacesController extends AbstractModuleController
                         assert($document instanceof Node);
                         $documentPath = implode('/', array_slice(explode(
                             '/',
-                            (string)$subgraph->retrieveNodePath($document->nodeAggregateId)
+                            $subgraph->retrieveNodePath($document->nodeAggregateId)->value
                         ), 3));
                         $relativePath = str_replace(
                             sprintf('//%s/%s', $siteNodeName, $documentPath),
                             '',
-                            (string)$subgraph->retrieveNodePath($node->nodeAggregateId)
+                            $subgraph->retrieveNodePath($node->nodeAggregateId)->value
                         );
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                             $siteChanges[$siteNodeName]['siteNode']
@@ -1036,7 +1036,7 @@ class WorkspacesController extends AbstractModuleController
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
                 && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get($excludedWorkspace->workspaceName) === null)
             ) {
-                $baseWorkspaceOptions[(string)$workspace->workspaceName] = (string)$workspace->workspaceTitle;
+                $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
             }
         }
 

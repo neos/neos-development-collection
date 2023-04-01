@@ -276,8 +276,8 @@ class ChangeProjection implements ProjectionInterface
                         AND originDimensionSpacePointHash IN (:affectedDimensionSpacePointHashes)
                     ',
                 [
-                    'contentStreamId' => (string)$event->contentStreamId,
-                    'nodeAggregateId' => (string)$event->nodeAggregateId,
+                    'contentStreamId' => $event->contentStreamId->value,
+                    'nodeAggregateId' => $event->nodeAggregateId->value,
                     'affectedDimensionSpacePointHashes' => $event->affectedCoveredDimensionSpacePoints
                         ->getPointHashes()
                 ],
@@ -303,8 +303,8 @@ class ChangeProjection implements ProjectionInterface
                         )
                     ',
                     [
-                        'contentStreamId' => (string)$event->contentStreamId,
-                        'nodeAggregateId' => (string)$event->nodeAggregateId,
+                        'contentStreamId' => $event->contentStreamId->value,
+                        'nodeAggregateId' => $event->nodeAggregateId->value,
                         'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
                         'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
                         'removalAttachmentPoint' => $event->removalAttachmentPoint?->__toString()
@@ -331,7 +331,7 @@ class ChangeProjection implements ProjectionInterface
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
                     'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
-                    'contentStreamId' => (string)$event->contentStreamId
+                    'contentStreamId' => $event->contentStreamId->value
                 ]
             );
         });

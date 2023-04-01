@@ -30,7 +30,7 @@ final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint extends \Domai
         DimensionSpacePoint $coveredDimensionSpacePoint
     ): self {
         return new self(
-            'Node aggregate "' . $nodeAggregateId
+            'Node aggregate "' . $nodeAggregateId->value
                 . '" does currently not cover dimension space point ' . $coveredDimensionSpacePoint,
             1554902892
         );

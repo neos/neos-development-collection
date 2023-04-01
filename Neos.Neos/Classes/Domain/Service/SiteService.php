@@ -127,7 +127,7 @@ class SiteService
             return;
         }
 
-        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->nodeName);
+        $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
         if ($site === null) {
             return;
         }
@@ -164,7 +164,7 @@ class SiteService
         }
 
         // @todo use node aggregate identifier instead of node name
-        $site = new Site((string)$siteNodeName);
+        $site = new Site($siteNodeName->value);
         $site->setSiteResourcesPackageKey($packageKey);
         $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
         $site->setName($siteName);

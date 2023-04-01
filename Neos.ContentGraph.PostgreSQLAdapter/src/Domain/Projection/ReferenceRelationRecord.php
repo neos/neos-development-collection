@@ -59,12 +59,12 @@ final class ReferenceRelationRecord
     {
         $databaseConnection->insert($tableNamePrefix . '_referencerelation', [
             'sourcenodeanchor' => (string)$this->sourceNodeAnchor,
-            'name' => (string)$this->name,
+            'name' => $this->name->value,
             'position' => $this->position,
             'properties' => $this->properties
                 ? \json_encode($this->properties)
                 : null,
-            'targetnodeaggregateid' => (string)$this->targetNodeAggregateId
+            'targetnodeaggregateid' => $this->targetNodeAggregateId->value
         ]);
     }
 

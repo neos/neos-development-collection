@@ -402,7 +402,7 @@ class NodesController extends ActionController
             // so we need to load it from the source subgraph
             $sourceNode = $sourceSubgraph->findNodeById($identifier);
             if (!$sourceNode) {
-                throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier
+                throw new \RuntimeException('Source node for Node Aggregate ID ' . $identifier->value
                     . ' not found. This should never happen.', 1660905374);
             }
             $contentRepository->handle(

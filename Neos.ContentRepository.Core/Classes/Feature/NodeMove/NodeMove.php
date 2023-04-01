@@ -206,7 +206,7 @@ trait NodeMove
         $parentNode = $contentSubgraph->findNodeById($parentId);
         if ($parentNode === null) {
             throw new \InvalidArgumentException(
-                'Parent ' . $parentId . ' not found in subgraph ' . json_encode($contentSubgraph),
+                'Parent ' . $parentId->value . ' not found in subgraph ' . json_encode($contentSubgraph),
                 1667596931
             );
         }
@@ -247,7 +247,7 @@ trait NodeMove
             $parent = $contentSubgraph->findParentNode($siblingId);
             if (is_null($parent)) {
                 throw new \InvalidArgumentException(
-                    'Parent ' . $parentId . ' not found in subgraph ' . json_encode($contentSubgraph),
+                    'Parent ' . $parentId->value . ' not found in subgraph ' . json_encode($contentSubgraph),
                     1645366837
                 );
             }

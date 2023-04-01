@@ -89,8 +89,8 @@ class Change
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         $databaseConnection->insert($tableName, [
-            'contentStreamId' => (string)$this->contentStreamId,
-            'nodeAggregateId' => (string)$this->nodeAggregateId,
+            'contentStreamId' => $this->contentStreamId->value,
+            'nodeAggregateId' => $this->nodeAggregateId->value,
             'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
@@ -111,8 +111,8 @@ class Change
                 'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
             ],
             [
-                'contentStreamId' => (string)$this->contentStreamId,
-                'nodeAggregateId' => (string)$this->nodeAggregateId,
+                'contentStreamId' => $this->contentStreamId->value,
+                'nodeAggregateId' => $this->nodeAggregateId->value,
                 'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
                 'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             ]

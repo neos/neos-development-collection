@@ -271,9 +271,9 @@ trait ProjectionIntegrityViolationDetectionTrait
                             AND h.contentstreamid = :contentStreamId
                             AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamId' => (string)$contentStreamId,
+                'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => (string)$nodeAggregateId
+                'nodeAggregateId' => $nodeAggregateId->value
             ]
         )->fetchAssociative();
 

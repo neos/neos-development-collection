@@ -71,9 +71,9 @@ class PrevAllOperation extends AbstractOperation
         foreach ($flowQuery->getContext() as $contextNode) {
             foreach ($this->getPrevForNode($contextNode) as $prevNode) {
                 if ($prevNode !== null
-                    && !isset($outputNodeAggregateIds[(string)$prevNode->nodeAggregateId])
+                    && !isset($outputNodeAggregateIds[$prevNode->nodeAggregateId->value])
                 ) {
-                    $outputNodeAggregateIds[(string)$prevNode->nodeAggregateId] = true;
+                    $outputNodeAggregateIds[$prevNode->nodeAggregateId->value] = true;
                     $output[] = $prevNode;
                 }
             }

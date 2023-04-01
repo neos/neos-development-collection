@@ -85,7 +85,7 @@ final class UriPathResolver implements DimensionResolverInterface
             $contentDimension = $contentDimensionSource->getDimension($segment->dimensionIdentifier);
             if ($contentDimension === null) {
                 throw new UriPathResolverConfigurationException(
-                    'Content Dimension "' . $segment->dimensionIdentifier . '" does not exist.'
+                    'Content Dimension "' . $segment->dimensionIdentifier->value . '" does not exist.'
                 );
             }
 
@@ -93,7 +93,7 @@ final class UriPathResolver implements DimensionResolverInterface
                 if ($contentDimension->getValue($mappingElement->dimensionValue->value) === null) {
                     throw new UriPathResolverConfigurationException(
                         'Content Dimension Value "' . $mappingElement->dimensionValue->value
-                            . '" in dimension "' . $segment->dimensionIdentifier->id . '" does not exist.'
+                            . '" in dimension "' . $segment->dimensionIdentifier->value . '" does not exist.'
                     );
                 }
 
@@ -159,7 +159,7 @@ final class UriPathResolver implements DimensionResolverInterface
 
             foreach ($result as $product) {
                 foreach ($segment->uriPathSegmentMapping as $item) {
-                    $product[$segment->dimensionIdentifier->id] = $item;
+                    $product[$segment->dimensionIdentifier->value] = $item;
                     $append[] = $product;
                 }
             }
@@ -244,7 +244,7 @@ final class UriPathResolver implements DimensionResolverInterface
         foreach ($this->segments->segments as $segment) {
             $coordinateValue = $incoming->getCoordinate($segment->dimensionIdentifier);
             if ($coordinateValue !== null) {
-                $newCoordinates[$segment->dimensionIdentifier->id] = $coordinateValue;
+                $newCoordinates[$segment->dimensionIdentifier->value] = $coordinateValue;
             }
         }
         return DimensionSpacePoint::fromArray($newCoordinates);

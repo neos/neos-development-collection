@@ -48,7 +48,7 @@ final class NodeAggregateIds
             if (is_string($item)) {
                 $values[$item] = NodeAggregateId::fromString($item);
             } elseif ($item instanceof NodeAggregateId) {
-                $values[(string)$item] = $item;
+                $values[$item->value] = $item;
             } else {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIds can only consist of '
@@ -88,7 +88,7 @@ final class NodeAggregateIds
             $pivot = (int)array_search($succeedingSibling, $nodeAggregateIds);
             array_splice($nodeAggregateIds, $pivot, 0, $nodeAggregateId);
         } else {
-            $nodeAggregateIds[(string)$nodeAggregateId] = $nodeAggregateId;
+            $nodeAggregateIds[$nodeAggregateId->value] = $nodeAggregateId;
         }
 
         return new self($nodeAggregateIds);
@@ -97,8 +97,8 @@ final class NodeAggregateIds
     public function remove(NodeAggregateId $nodeAggregateId): self
     {
         $identifiers = $this->ids;
-        if (isset($identifiers[(string) $nodeAggregateId])) {
-            unset($identifiers[(string) $nodeAggregateId]);
+        if (isset($identifiers[$nodeAggregateId->value])) {
+            unset($identifiers[$nodeAggregateId->value]);
         }
 
         return new self($identifiers);

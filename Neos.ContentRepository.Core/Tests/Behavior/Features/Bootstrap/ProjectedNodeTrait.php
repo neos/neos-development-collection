@@ -124,7 +124,7 @@ trait ProjectedNodeTrait
         $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodesFromContentSubgraphs(function (ContentSubgraphInterface $subgraph, string $adapterName) use ($nodeAggregateId, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
             $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator) . ' in adapter "' . $adapterName . '"');
             return $currentNode;
@@ -143,7 +143,7 @@ trait ProjectedNodeTrait
             $nodeByAggregateId = $subgraph->findNodeById($nodeAggregateId);
             if (!is_null($nodeByAggregateId)) {
                 Assert::fail(
-                    'A node was found by node aggregate id "' . $nodeAggregateId
+                    'A node was found by node aggregate id "' . $nodeAggregateId->value
                     . '" in content subgraph {' . $this->dimensionSpacePoint . ',' . $this->contentStreamId
                     . '} and adapter "' . $adapterName . '"'
                 );
@@ -167,7 +167,7 @@ trait ProjectedNodeTrait
         $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodesFromContentSubgraphs(function (ContentSubgraphInterface $subgraph, string $adapterName) use ($nodePath, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->value . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
             $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator) . ' in adapter "' . $adapterName . '"');
             return $currentNode;
@@ -187,7 +187,7 @@ trait ProjectedNodeTrait
         $nodePath = NodePath::fromString($serializedNodePath);
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
             $nodeByPath = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNull($nodeByPath, 'A node was found by node path "' . $nodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
+            Assert::assertNull($nodeByPath, 'A node was found by node path "' . $nodePath->value . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
         }
     }
 
@@ -259,7 +259,7 @@ trait ProjectedNodeTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedNodeTypeName) {
             $actualNodeTypeName = $currentNode->nodeTypeName;
-            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName->value .'" does not match expected "' . $expectedNodeTypeName->value . '" in adapter "' . $adapterName . '"');
         });
     }
 
@@ -272,7 +272,7 @@ trait ProjectedNodeTrait
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedNodeName) {
             $actualNodeName = $currentNode->nodeName;
-            Assert::assertSame((string)$expectedNodeName, (string)$actualNodeName, 'Actual node name "' . $actualNodeName .'" does not match expected "' . $expectedNodeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeName->value, $actualNodeName->value, 'Actual node name "' . $actualNodeName->value .'" does not match expected "' . $expectedNodeName->value . '" in adapter "' . $adapterName . '"');
         });
     }
 
@@ -521,7 +521,7 @@ trait ProjectedNodeTrait
             foreach ($expectedChildNodesTable->getHash() as $index => $row) {
                 $expectedNodeName = NodeName::fromString($row['Name']);
                 $actualNodeName = $actualChildNodes[$index]->nodeName;
-                Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
+                Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: "' . $expectedNodeName->value . '" Actual: "' . $actualNodeName . '"');
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                     $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualChildNodes[$index]);

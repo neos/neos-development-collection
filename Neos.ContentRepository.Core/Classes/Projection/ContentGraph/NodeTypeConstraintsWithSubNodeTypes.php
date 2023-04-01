@@ -146,11 +146,11 @@ final class NodeTypeConstraintsWithSubNodeTypes
         }
 
         foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
-            $parts[] = '!' . $nodeTypeName;
+            $parts[] = '!' . $nodeTypeName->value;
         }
 
         foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {
-            $parts[] = (string)$nodeTypeName;
+            $parts[] = $nodeTypeName->value;
         }
 
         return implode(',', $parts);

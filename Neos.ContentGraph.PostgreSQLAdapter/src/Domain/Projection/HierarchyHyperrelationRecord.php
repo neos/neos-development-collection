@@ -168,7 +168,7 @@ final class HierarchyHyperrelationRecord
     public function getDatabaseIdentifier(): array
     {
         return [
-            'contentstreamid' => (string)$this->contentStreamId,
+            'contentstreamid' => $this->contentStreamId->value,
             'parentnodeanchor' => (string)$this->parentNodeAnchor,
             'dimensionspacepointhash' => $this->dimensionSpacePoint->hash
         ];

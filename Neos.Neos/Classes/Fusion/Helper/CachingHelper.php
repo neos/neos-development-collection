@@ -63,7 +63,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             if ($node instanceof Node) {
                 $prefixedNodeIdentifiers[] = $prefix . '_'
                     . $this->renderContentStreamIdTag($node->subgraphIdentity->contentStreamId)
-                    . '_' . $node->nodeAggregateId;
+                    . '_' . $node->nodeAggregateId->value;
             } else {
                 throw new Exception(sprintf(
                     'One of the elements in array passed to this helper was not a Node, but of type: "%s".',
@@ -188,7 +188,7 @@ class CachingHelper implements ProtectedContextAwareInterface
      */
     private function renderContentStreamIdTag(ContentStreamId $contentStreamId)
     {
-        return '%' . $contentStreamId . '%';
+        return '%' . $contentStreamId->value . '%';
     }
 
     /**
@@ -213,7 +213,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $workspaceChain = [];
         // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
-            $workspaceChain[(string)$currentWorkspace->workspaceName] = $currentWorkspace;
+            $workspaceChain[$currentWorkspace->workspaceName->value] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->baseWorkspaceName
                 ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)
                 : null;

@@ -54,7 +54,7 @@ final class ContentSubgraphVariationWeight implements \JsonSerializable
     public function getWeightInDimension(
         Dimension\ContentDimensionId $dimensionId
     ): ?Dimension\ContentDimensionValueSpecializationDepth {
-        return $this->weight[(string)$dimensionId] ?? null;
+        return $this->weight[$dimensionId->value] ?? null;
     }
 
     public function canBeComparedTo(ContentSubgraphVariationWeight $other): bool

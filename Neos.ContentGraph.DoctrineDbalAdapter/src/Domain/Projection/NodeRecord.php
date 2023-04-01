@@ -50,11 +50,11 @@ final class NodeRecord
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
             'relationanchorpoint' => (string)$this->relationAnchorPoint,
-            'nodeaggregateid' => (string)$this->nodeAggregateId,
+            'nodeaggregateid' => $this->nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string)$this->nodeTypeName,
+            'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value
         ]);
     }
@@ -68,11 +68,11 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
-                'nodeaggregateid' => (string)$this->nodeAggregateId,
+                'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
-                'nodetypename' => (string)$this->nodeTypeName,
+                'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value
             ],
             [
