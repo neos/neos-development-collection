@@ -328,9 +328,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     AND childnodeanchor = :childNodeAnchor
                     AND contentstreamid = :contentStreamId
             ', [
-                'parentNodeAnchor' => (string)NodeRelationAnchorPoint::forRootEdge(),
-                'childNodeAnchor' => (string)$rootNodeAnchorPoint,
-                'contentStreamId' => $event->contentStreamId->value
+                'parentNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value,
+                'childNodeAnchor' => $rootNodeAnchorPoint->value,
+                'contentStreamId' => $event->contentStreamId->value,
             ]);
             // recreate hierarchy edges for the root node
             $this->connectHierarchy(
@@ -617,7 +617,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $offset += self::RELATION_DEFAULT_OFFSET;
             if (
                 $succeedingSiblingAnchorPoint
-                && (string)$relation->childNodeAnchor === (string)$succeedingSiblingAnchorPoint
+                && $relation->childNodeAnchor->equals($succeedingSiblingAnchorPoint)
             ) {
                 $position = $offset;
                 $offset += self::RELATION_DEFAULT_OFFSET;
@@ -1067,9 +1067,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                       :originalNodeAnchor IN (h.childnodeanchor, h.parentnodeanchor)
                       AND h.contentstreamid = :contentStreamId',
                 [
-                    'newNodeAnchor' => (string)$copiedNode->relationAnchorPoint,
-                    'originalNodeAnchor' => (string)$anchorPoint,
-                    'contentStreamId' => $contentStreamIdWhereWriteOccurs->value
+                    'newNodeAnchor' => $copiedNode->relationAnchorPoint->value,
+                    'originalNodeAnchor' => $anchorPoint->value,
+                    'contentStreamId' => $contentStreamIdWhereWriteOccurs->value,
                 ]
             );
 
@@ -1113,8 +1113,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     ' . $this->tableNamePrefix . '_referencerelation ref
                     WHERE ref.nodeanchorpoint = :sourceNodeAnchorPoint
             ', [
-            'sourceNodeAnchorPoint' => (string)$sourceRelationAnchorPoint,
-            'destinationRelationAnchorPoint' => (string)$destinationRelationAnchorPoint
+            'sourceNodeAnchorPoint' => $sourceRelationAnchorPoint->value,
+            'destinationRelationAnchorPoint' => $destinationRelationAnchorPoint->value
         ]);
     }
 

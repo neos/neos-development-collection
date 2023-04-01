@@ -194,7 +194,7 @@ class TetheredNodeAdjustments
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType->name . '", but was "' . $node->nodeTypeName->value . '".'
+                'should be of type "' . $expectedNodeType->name->value . '", but was "' . $node->nodeTypeName->value . '".'
             );
         }
     }

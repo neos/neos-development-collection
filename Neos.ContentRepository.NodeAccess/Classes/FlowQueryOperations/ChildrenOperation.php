@@ -11,7 +11,6 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -201,8 +200,9 @@ class ChildrenOperation extends AbstractOperation
                 }
 
                 // Add filtered nodes to output
+                /** @var Node $filteredNode */
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodeAggregateIds[(string)$filteredNode->nodeAggregateId])) {
+                    if (!isset($outputNodeAggregateIds[$filteredNode->nodeAggregateId->value])) {
                         $output[] = $filteredNode;
                     }
                 }

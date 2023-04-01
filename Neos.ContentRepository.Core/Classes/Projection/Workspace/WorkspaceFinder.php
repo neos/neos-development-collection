@@ -44,13 +44,12 @@ final class WorkspaceFinder implements ProjectionStateInterface
         }
 
         $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery(
-            '
+        $workspaceRow = $connection->executeQuery('
             SELECT * FROM ' . $this->tableName . '
             WHERE workspaceName = :workspaceName
         ',
             [
-                ':workspaceName' => $name->value
+                'workspaceName' => $name->value,
             ]
         )->fetchAssociative();
 
@@ -78,7 +77,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
             WHERE currentContentStreamId = :currentContentStreamId
         ',
             [
-                ':currentContentStreamId' => $contentStreamId->value
+                'currentContentStreamId' => $contentStreamId->value
             ]
         )->fetchAssociative();
 
@@ -105,7 +104,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
                 WHERE workspaceName LIKE :workspaceNameLike
             ',
             [
-                ':workspaceNameLike' => $prefix->value . '%'
+                'workspaceNameLike' => $prefix->value . '%'
             ]
         )->fetchAllAssociative();
 
@@ -132,7 +131,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
                 WHERE baseWorkspaceName = :workspaceName
             ',
             [
-                ':workspaceName' => $baseWorkspace->value
+                'workspaceName' => $baseWorkspace->value,
             ]
         )->fetchAllAssociative();
 
@@ -153,7 +152,7 @@ final class WorkspaceFinder implements ProjectionStateInterface
                 WHERE workspaceOwner = :workspaceOwner
             ',
             [
-                ':workspaceOwner' => $owner
+                'workspaceOwner' => $owner
             ]
         )->fetchAssociative();
 
