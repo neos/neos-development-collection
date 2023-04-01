@@ -1,7 +1,7 @@
 name: Add Labels to Pull Request
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, reopened, synchronize, edited]
 
 jobs:
@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Maybe remove base branch label
         if: github.event.action == 'edited' && github.event.changes.base.ref.from != ''
         uses: actions-ecosystem/action-remove-labels@v1
