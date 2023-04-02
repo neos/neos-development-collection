@@ -64,7 +64,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
-                $command->getWorkspaceName()
+                $command->getWorkspaceName()->value
             ), 1611688225);
         }
 

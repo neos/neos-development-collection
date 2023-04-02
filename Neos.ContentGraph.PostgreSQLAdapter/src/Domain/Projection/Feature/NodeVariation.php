@@ -247,7 +247,7 @@ trait NodeVariation
             )';
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
-            'newNodeRelationAnchorPoint' => (string)$newNodeRelationAnchorPoint,
+            'newNodeRelationAnchorPoint' => $newNodeRelationAnchorPoint->value,
             'affectedNodeAggregateId' => $affectedNodeAggregateId->value
         ];
         foreach ($affectedDimensionSpacePointSet as $affectedDimensionSpacePoint) {

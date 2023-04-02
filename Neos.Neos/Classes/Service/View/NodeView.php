@@ -120,8 +120,8 @@ class NodeView extends JsonView
                     $this->systemLogger->info(sprintf(
                         'You have a node that is no longer connected to a document node ancestor.'
                             . ' Name: %s (Identifier: %s)',
-                        $node->nodeName,
-                        $node->nodeAggregateId
+                        $node->nodeName?->value,
+                        $node->nodeAggregateId->value
                     ), LogEnvironment::fromMethodName(__METHOD__));
                 }
             }

@@ -119,7 +119,7 @@ class ContentCacheFlusher
             $tagsToFlush[$tagName] = sprintf(
                 'which were tagged with "%s" because node "%s" has changed.',
                 $tagName,
-                $nodeAggregate->nodeAggregateId
+                $nodeAggregate->nodeAggregateId->value
             );
 
             // Legacy
@@ -127,7 +127,7 @@ class ContentCacheFlusher
             $tagsToFlush[$legacyTagName] = sprintf(
                 'which were tagged with legacy "%s" because node "%s" has changed.',
                 $legacyTagName,
-                $nodeAggregate->nodeAggregateId
+                $nodeAggregate->nodeAggregateId->value
             );
 
             foreach (
@@ -209,16 +209,16 @@ class ContentCacheFlusher
             $tagsToFlush['NodeType_%' . $contentStreamId->value . '%_' . $nodeTypeNameToFlush] = sprintf(
                 'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameToFlush,
-                ($referenceNodeIdentifier ?: ''),
-                $nodeTypeName
+                ($referenceNodeIdentifier?->value ?? ''),
+                $nodeTypeName->value
             );
 
             // Legacy, but still used
             $tagsToFlush['NodeType_' . $nodeTypeNameToFlush] = sprintf(
                 'which were tagged with "NodeType_%s" because node "%s" has changed and was of type "%s".',
                 $nodeTypeNameToFlush,
-                ($referenceNodeIdentifier ?: ''),
-                $nodeTypeName
+                ($referenceNodeIdentifier->value ?? ''),
+                $nodeTypeName->value
             );
         }
     }

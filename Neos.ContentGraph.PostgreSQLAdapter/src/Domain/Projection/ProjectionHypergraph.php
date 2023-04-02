@@ -52,7 +52,7 @@ final class ProjectionHypergraph
             WHERE n.relationanchorpoint = :relationAnchorPoint';
 
         $parameters = [
-            'relationAnchorPoint' => (string)$relationAnchorPoint
+            'relationAnchorPoint' => $relationAnchorPoint->value
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -215,7 +215,7 @@ final class ProjectionHypergraph
             AND :childNodeAnchor = ANY(h.childnodeanchors)';
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
-            'childNodeAnchor' => (string)$childNodeAnchor
+            'childNodeAnchor' => $childNodeAnchor->value
         ];
         $types = [];
 
@@ -250,7 +250,7 @@ final class ProjectionHypergraph
             AND h.parentnodeanchor = :parentNodeAnchor';
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
-            'parentNodeAnchor' => (string)$parentNodeAnchor
+            'parentNodeAnchor' => $parentNodeAnchor->value
         ];
         $types = [];
 
@@ -282,7 +282,7 @@ final class ProjectionHypergraph
             WHERE r.sourcenodeanchor = :sourceNodeAnchor';
 
         $parameters = [
-            'sourceNodeAnchor' => (string)$sourceNodeAnchor
+            'sourceNodeAnchor' => $sourceNodeAnchor->value
         ];
 
         $referenceHyperrelations = [];
@@ -312,7 +312,7 @@ final class ProjectionHypergraph
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'parentNodeAnchor' => (string)$parentNodeAnchor
+            'parentNodeAnchor' => $parentNodeAnchor->value
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -339,7 +339,7 @@ final class ProjectionHypergraph
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
             'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-            'childNodeAnchor' => (string)$childNodeAnchor
+            'childNodeAnchor' => $childNodeAnchor->value
         ];
 
         $result = $this->getDatabaseConnection()->executeQuery($query, $parameters)->fetchAssociative();
@@ -361,7 +361,7 @@ final class ProjectionHypergraph
             WHERE :childNodeAnchor = ANY(h.childnodeanchors)';
 
         $parameters = [
-            'childNodeAnchor' => (string)$childNodeAnchor
+            'childNodeAnchor' => $childNodeAnchor->value
         ];
 
         $hierarchyRelationRecords = [];
@@ -420,7 +420,7 @@ final class ProjectionHypergraph
             AND n.relationanchorpoint = :relationAnchorPoint';
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
-            'relationanchorpoint' => (string)$nodeRelationAnchorPoint
+            'relationanchorpoint' => $nodeRelationAnchorPoint->value
         ];
 
         $dimensionSpacePoints = [];
@@ -614,7 +614,7 @@ final class ProjectionHypergraph
             WHERE :anchorPoint = ANY(childnodeanchors)';
 
         $parameters = [
-            'anchorPoint' => (string)$anchorPoint
+            'anchorPoint' => $anchorPoint->value
         ];
 
         return (int)$this->getDatabaseConnection()->executeQuery($query, $parameters)->rowCount();

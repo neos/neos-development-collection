@@ -294,7 +294,7 @@ class NodeViewHelper extends AbstractViewHelper
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
-                    $documentNodeAddress->nodeAggregateId,
+                    $documentNodeAddress->nodeAggregateId->value,
                     json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601366598);
             }
@@ -316,7 +316,7 @@ class NodeViewHelper extends AbstractViewHelper
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
                 $path,
-                $documentNodeAddress->nodeAggregateId,
+                $documentNodeAddress->nodeAggregateId->value,
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789));
             return null;

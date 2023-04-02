@@ -44,10 +44,11 @@ final class WorkspaceFinder implements ProjectionStateInterface
         }
 
         $connection = $this->client->getConnection();
-        $workspaceRow = $connection->executeQuery('
-            SELECT * FROM ' . $this->tableName . '
-            WHERE workspaceName = :workspaceName
-        ',
+        $workspaceRow = $connection->executeQuery(
+            '
+                SELECT * FROM ' . $this->tableName . '
+                WHERE workspaceName = :workspaceName
+            ',
             [
                 'workspaceName' => $name->value,
             ]

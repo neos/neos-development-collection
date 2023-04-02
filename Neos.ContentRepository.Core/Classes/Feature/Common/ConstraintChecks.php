@@ -328,7 +328,7 @@ trait ConstraintChecks
             )
         ) {
             throw new NodeConstraintException(
-                'Node type "' . $nodeType->name->value . '" is not allowed below tethered child nodes "' . $parentNodeName->value
+                'Node type "' . $nodeType->name->value . '" is not allowed below tethered child nodes "' . $parentNodeName?->value
                     . '" of nodes of type "' . $grandParentsNodeType->name->value . '"',
                 1520011791
             );
@@ -415,7 +415,7 @@ trait ConstraintChecks
         if (!$parentNodeAggregate) {
             throw new NodeAggregateCurrentlyDoesNotExist(
                 'Parent node aggregate for ' . $childNodeAggregateId->value
-                    . ' does currently not exist in origin dimension space point ' . $childOriginDimensionSpacePoint
+                    . ' does currently not exist in origin dimension space point ' . $childOriginDimensionSpacePoint->toJson()
                     . ' and content stream ' . $contentStreamId->value,
                 1645368685
             );
@@ -540,7 +540,7 @@ trait ConstraintChecks
             throw new NodeNameIsAlreadyOccupied(
                 'Child node name "' . $nodeName->value . '" is already occupied for parent "'
                     . $parentNodeAggregateId->value . '" in dimension space points '
-                    . $dimensionSpacePointsOccupiedByChildNodeName
+                    . $dimensionSpacePointsOccupiedByChildNodeName->toJson()
             );
         }
     }
@@ -570,7 +570,7 @@ trait ConstraintChecks
             if (!$alreadyCoveredDimensionSpacePoints->isEmpty()) {
                 throw new NodeNameIsAlreadyCovered(
                     'Node name "' . $nodeName->value . '" is already covered in dimension space points '
-                        . $alreadyCoveredDimensionSpacePoints . ' by node aggregate "'
+                        . $alreadyCoveredDimensionSpacePoints->toJson() . ' by node aggregate "'
                         . $childNodeAggregate->nodeAggregateId->value . '".'
                 );
             }

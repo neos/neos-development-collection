@@ -395,7 +395,7 @@ trait NodeMove
                 $parentOfSucceedingSibling = $contentSubgraph->findParentNode($succeedingSibling->nodeAggregateId);
                 if ($parentOfSucceedingSibling === null) {
                     throw new \InvalidArgumentException(
-                        'Parent of succeeding sibling ' . $succeedingSibling->nodeAggregateId
+                        'Parent of succeeding sibling ' . $succeedingSibling->nodeAggregateId->value
                         . ' not found in subgraph ' . json_encode($contentSubgraph),
                         1667817639
                     );

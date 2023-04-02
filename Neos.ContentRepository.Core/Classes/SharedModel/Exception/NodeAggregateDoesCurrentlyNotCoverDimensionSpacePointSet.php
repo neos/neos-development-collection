@@ -32,7 +32,7 @@ final class NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet extends \Do
     ): NodeAggregateDoesCurrentlyNotCoverDimensionSpacePointSet {
         return new self(
             'Node aggregate "' . $nodeAggregateId->value . '" does not cover expected dimension space point set '
-                . $expectedCoveredDimensionSpacePointSet . ' but ' . $actualDimensionSpacePointSet . '.',
+                . $expectedCoveredDimensionSpacePointSet->toJson() . ' but ' . $actualDimensionSpacePointSet->toJson() . '.',
             1571134743
         );
     }

@@ -15,15 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds
-    as NodeAggregateIdCollection;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds as NodeAggregateIdCollection;
 
 /**
  * The node aggregate identifier value object collection
  *
  * @internal
+ * @implements \IteratorAggregate<NodeAggregateId>
  */
-final class NodeAggregateIds
+final class NodeAggregateIds implements \IteratorAggregate
 {
     /**
      * @var array<string,NodeAggregateId>
@@ -69,16 +69,6 @@ final class NodeAggregateIds
         );
     }
 
-    public static function fromDatabaseString(string $databaseString): self
-    {
-        return self::fromArray(\explode(',', \trim($databaseString, '{}')));
-    }
-
-    public function toDatabaseString(): string
-    {
-        return '{' . implode(',', $this->ids) .  '}';
-    }
-
     public function add(
         NodeAggregateId $nodeAggregateId,
         ?NodeAggregateId $succeedingSibling = null
@@ -107,5 +97,10 @@ final class NodeAggregateIds
     public function isEmpty(): bool
     {
         return count($this->ids) === 0;
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->ids);
     }
 }

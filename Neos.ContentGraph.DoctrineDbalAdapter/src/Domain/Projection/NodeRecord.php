@@ -49,7 +49,7 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => (string)$this->relationAnchorPoint,
+            'relationanchorpoint' => $this->relationAnchorPoint->value,
             'nodeaggregateid' => $this->nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,

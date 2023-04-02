@@ -90,14 +90,14 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => (string) $this->relationAnchorPoint,
+            'relationanchorpoint' => $this->relationAnchorPoint->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
             'nodeaggregateid' => $this->nodeAggregateId->value,
             'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
-            'nodename' => $this->nodeName->value
+            'nodename' => $this->nodeName?->value
         ]);
     }
 
@@ -115,7 +115,7 @@ final class NodeRecord
                 'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),
-                'nodename' => $this->nodeName->value,
+                'nodename' => $this->nodeName?->value,
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint

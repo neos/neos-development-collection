@@ -143,8 +143,8 @@ final class DimensionSpaceCommandHandler implements CommandHandlerInterface
         if ($subgraph->countNodes() > 0) {
             throw new DimensionSpacePointAlreadyExists(sprintf(
                 'the content stream %s already contained nodes in dimension space point %s - this is not allowed.',
-                $contentStreamId,
-                $dimensionSpacePoint
+                $contentStreamId->value,
+                $dimensionSpacePoint->toJson(),
             ), 1612898126);
         }
     }

@@ -101,9 +101,9 @@ trait ProjectedNodeTrait
             );
             Assert::assertNotNull(
                 $currentNode,
-                'Node with aggregate id "' . $nodeDiscriminator->getNodeAggregateId()
-                . '" and originating in dimension space point "' . $nodeDiscriminator->getOriginDimensionSpacePoint()
-                . '" was not found in content stream "' . $nodeDiscriminator->getContentStreamId() . '"'
+                'Node with aggregate id "' . $nodeDiscriminator->getNodeAggregateId()->value
+                . '" and originating in dimension space point "' . $nodeDiscriminator->getOriginDimensionSpacePoint()->toJson()
+                . '" was not found in content stream "' . $nodeDiscriminator->getContentStreamId()->value . '"'
                 . '" in adapter "' . $adapterName . '"'
             );
 

@@ -55,7 +55,7 @@ final class RestrictionHyperrelationRecord
             ContentStreamId::fromString($databaseRow['contentstreamid']),
             $databaseRow['dimensionspacepointhash'],
             NodeAggregateId::fromString($databaseRow['originnodeaggregateid']),
-            NodeAggregateIds::fromDatabaseString($databaseRow['affectednodeaggregateids'])
+            self::nodeAggregateIdsFromDatabaseString($databaseRow['affectednodeaggregateids'])
         );
     }
 
@@ -113,7 +113,7 @@ final class RestrictionHyperrelationRecord
                 $this->contentStreamId->value,
                 $this->dimensionSpacePointHash,
                 $this->originNodeAggregateId->value,
-                $this->affectedNodeAggregateIds->toDatabaseString()
+                self::nodeAggregateIdsToDatabaseString($this->affectedNodeAggregateIds),
             ]
         );
     }
@@ -129,7 +129,7 @@ final class RestrictionHyperrelationRecord
         $databaseConnection->update(
             $tableNamePrefix . '_restrictionhyperrelation',
             [
-                'affectednodeaggregateids' => $affectedNodeAggregateIds->toDatabaseString()
+                'affectednodeaggregateids' => self::nodeAggregateIdsToDatabaseString($affectedNodeAggregateIds),
             ],
             $this->getDatabaseIdentifier()
         );
@@ -154,5 +154,15 @@ final class RestrictionHyperrelationRecord
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'originnodeaggregateid' => $this->originNodeAggregateId->value
         ];
+    }
+
+    private static function nodeAggregateIdsFromDatabaseString(string $databaseString): NodeAggregateIds
+    {
+        return NodeAggregateIds::fromArray(\explode(',', \trim($databaseString, '{}')));
+    }
+
+    private static function nodeAggregateIdsToDatabaseString(NodeAggregateIds $ids): string
+    {
+        return '{' . implode(',', array_map(static fn (NodeAggregateId $id) => $id->value, iterator_to_array($ids))) .  '}';
     }
 }

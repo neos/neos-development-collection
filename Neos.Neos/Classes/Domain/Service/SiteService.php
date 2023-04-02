@@ -127,6 +127,9 @@ class SiteService
             return;
         }
 
+        if ($siteNode->nodeName === null) {
+            return;
+        }
         $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
         if ($site === null) {
             return;

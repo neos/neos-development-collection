@@ -207,7 +207,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to insert root content stream id of the root workspace "%s": %s',
-                $event->workspaceName,
+                $event->workspaceName->value,
                 $e->getMessage()
             ), 1599646608, $e);
         }
@@ -783,7 +783,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to update node "%s": %s',
-                $nodeAggregateId,
+                $nodeAggregateId->value,
                 $e->getMessage()
             ), 1599646777, $e);
         }
@@ -821,7 +821,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to delete node "%s": %s',
-                $nodeAggregateId,
+                $nodeAggregateId->value,
                 $e->getMessage()
             ), 1599655284, $e);
         }

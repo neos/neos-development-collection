@@ -318,7 +318,7 @@ class WorkspacesController extends AbstractModuleController
         #$this->workspaceFinder->update($workspace);
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenUpdated',
-            [$workspace->workspaceTitle->value],
+            [$workspace->workspaceTitle?->value],
             null,
             null,
             'Modules',
@@ -349,12 +349,12 @@ class WorkspacesController extends AbstractModuleController
             $dependentWorkspaceTitles = [];
             /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
+                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle?->value;
             }
 
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
+                [$workspace->workspaceTitle?->value, implode(', ', $dependentWorkspaceTitles)],
                 null,
                 null,
                 'Modules',
@@ -383,7 +383,7 @@ class WorkspacesController extends AbstractModuleController
         //if ($nodesCount > 0) {
         $message = $this->translator->translateById(
             'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
-            [$workspace->workspaceTitle->value, $nodesCount],
+            [$workspace->workspaceTitle?->value, $nodesCount],
             $nodesCount,
             null,
             'Modules',
@@ -396,7 +396,7 @@ class WorkspacesController extends AbstractModuleController
         //$this->workspaceFinder->remove($workspace);
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
-            [$workspace->workspaceTitle->value],
+            [$workspace->workspaceTitle?->value],
             null,
             null,
             'Modules',
@@ -1017,7 +1017,7 @@ class WorkspacesController extends AbstractModuleController
      *
      * @param ContentRepository $contentRepository
      * @param Workspace|null $excludedWorkspace
-     * @return array<string,string>
+     * @return array<string,?string>
      */
     protected function prepareBaseWorkspaceOptions(
         ContentRepository $contentRepository,
@@ -1036,7 +1036,7 @@ class WorkspacesController extends AbstractModuleController
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
                 && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get($excludedWorkspace->workspaceName) === null)
             ) {
-                $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
+                $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle?->value;
             }
         }
 

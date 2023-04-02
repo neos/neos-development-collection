@@ -73,7 +73,7 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->update(
             $tableNamePrefix . '_hierarchyhyperrelation',
             [
-                'parentnodeanchor' => (string)$newParentNodeAnchor
+                'parentnodeanchor' => $newParentNodeAnchor->value
             ],
             $this->getDatabaseIdentifier()
         );
@@ -169,7 +169,7 @@ final class HierarchyHyperrelationRecord
     {
         return [
             'contentstreamid' => $this->contentStreamId->value,
-            'parentnodeanchor' => (string)$this->parentNodeAnchor,
+            'parentnodeanchor' => $this->parentNodeAnchor->value,
             'dimensionspacepointhash' => $this->dimensionSpacePoint->hash
         ];
     }

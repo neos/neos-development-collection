@@ -220,7 +220,7 @@ class ProjectionContentGraph
             'SELECT n.* FROM ' . $this->tableNamePrefix . '_node n
  WHERE n.relationanchorpoint = :relationAnchorPoint',
             [
-                'relationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+                'relationAnchorPoint' => $nodeRelationAnchorPoint->value,
             ]
         )->fetchAssociative();
 
@@ -257,7 +257,7 @@ class ProjectionContentGraph
                           AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'succeedingSiblingAnchorPoint' => (string)$succeedingSiblingAnchorPoint,
+                    'succeedingSiblingAnchorPoint' => $succeedingSiblingAnchorPoint->value,
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
@@ -350,7 +350,7 @@ class ProjectionContentGraph
                           AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'parentAnchorPoint' => (string)$parentAnchorPoint,
+                    'parentAnchorPoint' => $parentAnchorPoint->value,
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
@@ -382,7 +382,7 @@ class ProjectionContentGraph
                           AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'childAnchorPoint' => (string)$childAnchorPoint,
+                    'childAnchorPoint' => $childAnchorPoint->value,
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
@@ -411,7 +411,7 @@ class ProjectionContentGraph
     WHERE h.childnodeanchor = :childAnchorPoint
     AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'childAnchorPoint' => (string)$childAnchorPoint,
+            'childAnchorPoint' => $childAnchorPoint->value,
             'contentStreamId' => $contentStreamId->value
         ];
         $types = [];
@@ -449,7 +449,7 @@ class ProjectionContentGraph
     WHERE h.parentnodeanchor = :parentAnchorPoint
     AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'parentAnchorPoint' => (string)$parentAnchorPoint,
+            'parentAnchorPoint' => $parentAnchorPoint->value,
             'contentStreamId' => $contentStreamId->value
         ];
         $types = [];
@@ -561,7 +561,7 @@ class ProjectionContentGraph
                           FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
                 [
-                    'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+                    'nodeRelationAnchorPoint' => $nodeRelationAnchorPoint->value,
                 ]
             )->fetchAllAssociative() as $row
         ) {

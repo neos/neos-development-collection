@@ -48,7 +48,7 @@ trait ProjectedNodeAggregateTrait
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $this->initializeCurrentNodeAggregates(function (ContentGraphInterface $contentGraph, string $adapterName) use ($nodeAggregateId) {
             $currentNodeAggregate = $contentGraph->findNodeAggregateById($this->contentStreamId, $nodeAggregateId);
-            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s" in adapter "%s".', $nodeAggregateId, $this->contentStreamId, $adapterName));
+            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s" in adapter "%s".', $nodeAggregateId->value, $this->contentStreamId, $adapterName));
             return $currentNodeAggregate;
         });
     }
@@ -75,7 +75,7 @@ trait ProjectedNodeAggregateTrait
                 $expectedOccupation,
                 $nodeAggregate->occupiedDimensionSpacePoints,
                 'Node aggregate origins do not match in adapter "' . $adapterName . '". Expected: ' .
-                $expectedOccupation . ', actual: ' . $nodeAggregate->occupiedDimensionSpacePoints
+                $expectedOccupation->toJson() . ', actual: ' . $nodeAggregate->occupiedDimensionSpacePoints->toJson()
             );
         });
     }
@@ -91,7 +91,7 @@ trait ProjectedNodeAggregateTrait
             Assert::assertEquals(
                 $expectedCoverage,
                 $nodeAggregate->coveredDimensionSpacePoints,
-                'Expected node aggregate coverage ' . $expectedCoverage . ', got ' . $nodeAggregate->coveredDimensionSpacePoints . ' in adapter "' . $adapterName . '"'
+                'Expected node aggregate coverage ' . $expectedCoverage->toJson() . ', got ' . $nodeAggregate->coveredDimensionSpacePoints->toJson() . ' in adapter "' . $adapterName . '"'
             );
         });
     }
@@ -107,8 +107,8 @@ trait ProjectedNodeAggregateTrait
             Assert::assertEquals(
                 $expectedDisabledDimensionSpacePoints,
                 $nodeAggregate->disabledDimensionSpacePoints,
-                'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints . ', got ' .
-                $nodeAggregate->disabledDimensionSpacePoints . ' in adapter "' . $adapterName . '"'
+                'Expected disabled dimension space point set ' . $expectedDisabledDimensionSpacePoints->toJson() . ', got ' .
+                $nodeAggregate->disabledDimensionSpacePoints->toJson() . ' in adapter "' . $adapterName . '"'
             );
         });
     }

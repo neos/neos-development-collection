@@ -58,6 +58,10 @@ final class SerializedPropertyValue implements \JsonSerializable
         ];
     }
 
+    /**
+     * @return array<string, string>
+     * @throws \JsonException
+     */
     public function __debugInfo(): array
     {
         return [

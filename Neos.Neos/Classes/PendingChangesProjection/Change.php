@@ -96,7 +96,7 @@ class Change
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+            'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
         ]);
     }
 
@@ -108,7 +108,7 @@ class Change
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
                 'deleted' => (int)$this->deleted,
-                'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+                'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
             ],
             [
                 'contentStreamId' => $this->contentStreamId->value,

@@ -162,7 +162,7 @@ final class ContentGraph implements ContentGraphInterface
 
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
-            'rootEdgeParentAnchorId' => (string)NodeRelationAnchorPoint::forRootEdge(),
+            'rootEdgeParentAnchorId' => NodeRelationAnchorPoint::forRootEdge()->value,
         ];
 
         if ($filter->nodeTypeName !== null) {

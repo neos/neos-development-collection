@@ -38,7 +38,7 @@ class EmulatedLegacyBaseWorkspace
             LogEnvironment::fromMethodName(__METHOD__)
         );
 
-        return $this->childWorkspace->baseWorkspaceName->value;
+        return $this->childWorkspace->baseWorkspaceName?->value ?? '';
     }
 
     /**

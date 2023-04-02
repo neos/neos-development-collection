@@ -382,7 +382,7 @@ trait NodeTypeChange
 
         foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
             /* @var $tetheredNodeAggregate NodeAggregate */
-            if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
+            if ($tetheredNodeAggregate->nodeName !== null && !isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
                 // this aggregate (or parts thereof) are DISALLOWED according to constraints.
                 // We now need to find out which edges we need to remove,
                 $dimensionSpacePointsToBeRemoved = $this->findDimensionSpacePointsConnectingParentAndChildAggregate(

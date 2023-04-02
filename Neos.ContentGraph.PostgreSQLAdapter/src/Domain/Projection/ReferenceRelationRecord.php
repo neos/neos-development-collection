@@ -58,7 +58,7 @@ final class ReferenceRelationRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_referencerelation', [
-            'sourcenodeanchor' => (string)$this->sourceNodeAnchor,
+            'sourcenodeanchor' => $this->sourceNodeAnchor->value,
             'name' => $this->name->value,
             'position' => $this->position,
             'properties' => $this->properties

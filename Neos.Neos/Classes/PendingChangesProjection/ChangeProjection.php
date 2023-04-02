@@ -322,7 +322,7 @@ class ChangeProjection implements ProjectionInterface
                         'nodeAggregateId' => $event->nodeAggregateId->value,
                         'originDimensionSpacePoint' => json_encode($occupiedDimensionSpacePoint),
                         'originDimensionSpacePointHash' => $occupiedDimensionSpacePoint->hash,
-                        'removalAttachmentPoint' => $event->removalAttachmentPoint?->__toString()
+                        'removalAttachmentPoint' => $event->removalAttachmentPoint?->value,
                     ]
                 );
             }

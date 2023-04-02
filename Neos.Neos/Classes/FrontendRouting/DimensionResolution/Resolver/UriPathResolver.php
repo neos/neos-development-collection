@@ -133,7 +133,7 @@ final class UriPathResolver implements DimensionResolverInterface
             if (isset($uriPathToDimensionSpacePoint[$uriPathSegment])) {
                 throw new UriPathResolverConfigurationException(
                     'Uri path segment "' . $uriPathSegment
-                        . '" already configured by dimension ' . $uriPathToDimensionSpacePoint[$uriPathSegment]
+                        . '" already configured by dimension ' . $uriPathToDimensionSpacePoint[$uriPathSegment]->toJson()
                         . '. Thus, we cannot use it for dimension ' . json_encode($dimensionSpacePointCoordinates)
                 );
             }
