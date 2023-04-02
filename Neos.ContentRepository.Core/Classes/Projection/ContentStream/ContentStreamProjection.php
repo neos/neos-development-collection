@@ -86,6 +86,13 @@ class ContentStreamProjection implements ProjectionInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
+        // MIGRATIONS
+        $currentSchema = $schemaManager->createSchema();
+        if ($currentSchema->hasTable($this->tableName)) {
+            // added 2023-04-01
+            $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
+        }
+
         $schema = new Schema();
         $contentStreamTable = $schema->createTable($this->tableName);
         $contentStreamTable->addColumn('contentStreamId', Types::STRING)
