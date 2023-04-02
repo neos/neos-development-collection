@@ -4,11 +4,11 @@
     <body>
       <trans-unit id="groups.image" xml:space="preserve">
 				<source>Image</source>
-        <target state="needs-translation">Image</target>
+        <target state="translated">Imagem</target>
       </trans-unit>
       <trans-unit id="properties.image" xml:space="preserve">
 				<source>Image</source>
-        <target state="needs-translation">Image</target>
+        <target state="translated">Imagem</target>
       </trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
