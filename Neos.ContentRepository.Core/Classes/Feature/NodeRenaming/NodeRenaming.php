@@ -14,8 +14,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
@@ -27,12 +29,19 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
  */
 trait NodeRenaming
 {
-    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command): EventsToPublish
+    use ConstraintChecks;
+
+    private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, ContentRepository $contentRepository): EventsToPublish
     {
 
-        // TODO: check if CS exists
-        // TODO: check if aggregate exists and delegate to it
-        // TODO: check if aggregate is root
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamId,
+            $command->nodeAggregateId,
+            $contentRepository
+        );
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
+
         $events = Events::with(
             new NodeAggregateNameWasChanged(
                 $command->contentStreamId,

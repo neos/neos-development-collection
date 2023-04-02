@@ -14,14 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\Fusion\Exception as FusionException;
 
 /**
@@ -137,9 +136,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     }
 
     /**
-     * @return array<int,Node>|null
+     * @return array<int,Node>|Nodes|null
      */
-    public function getItemCollection(): ?array
+    public function getItemCollection(): array|Nodes|null
     {
         return $this->fusionValue('itemCollection');
     }

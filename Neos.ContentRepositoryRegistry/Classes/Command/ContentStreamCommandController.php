@@ -120,13 +120,17 @@ class ContentStreamCommandController extends CommandController
      *
      *       To remove the deleted Content Streams, use `./flow contentStream:pruneRemovedFromEventStream` after running
      *       `./flow contentStream:prune`.
+     *
+     * By default, only content streams in STATE_NO_LONGER_IN_USE and STATE_REBASE_ERROR will be removed.
+     * If you also call with "--removeTemporary", will delete ALL content streams which are currently not assigned
+     * to a workspace (f.e. dangling ones in FORKED or CREATED.).
      */
-    public function pruneCommand(string $contentRepositoryIdentifier = 'default'): void
+    public function pruneCommand(string $contentRepositoryIdentifier = 'default', bool $removeTemporary = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryId, new ContentStreamPrunerFactory());
 
-        $unusedContentStreams = $contentStreamPruner->prune();
+        $unusedContentStreams = $contentStreamPruner->prune($removeTemporary);
         $unusedContentStreamsPresent = false;
         foreach ($unusedContentStreams as $contentStream) {
             $this->outputFormatted('Removed %s', [$contentStream]);
