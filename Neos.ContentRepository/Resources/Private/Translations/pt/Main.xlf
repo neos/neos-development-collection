@@ -4,10 +4,12 @@
     <body>
       <trans-unit id="next" xml:space="preserve">
 				<source>next</source>
-			<target state="needs-translation">next</target></trans-unit>
+        <target state="translated">próximo</target>
+      </trans-unit>
       <trans-unit id="previous" xml:space="preserve">
 				<source>previous</source>
-			<target state="needs-translation">previous</target></trans-unit>
+        <target state="translated">anterior</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
