@@ -418,13 +418,13 @@ class MediaCommandController extends CommandController
         } else {
             $outputPresets = [];
             foreach ($currentPresets as $presetIdentifier => $variantPreset) {
-                $variantLabels = array_keys($variantPreset->variants());
-                foreach ($variantLabels as $variantLabel) {
-                    $outputPresets[] = [$presetIdentifier, $variantLabel];
+                $variantNames = array_keys($variantPreset->variants());
+                foreach ($variantNames as $variantName) {
+                    $outputPresets[] = [$presetIdentifier, $variantName];
                 }
             }
             $this->outputLine('The following <b>configured variant presets</b> were found:');
-            $this->output->outputTable($outputPresets, ['Identifier', 'Variant label']);
+            $this->output->outputTable($outputPresets, ['Identifier', 'Variant name']);
         }
 
         $databaseVariants = $this->imageVariantRepository->findAllWithOutdatedPresets($currentPresets);
@@ -451,7 +451,7 @@ class MediaCommandController extends CommandController
             }
 
             $this->outputLine('<b>No configuration</b> for the following <b>variant presets</b> could be found:');
-            $this->output->outputTable($outputPresets, ['Identifier', 'Variant label', 'Times found']);
+            $this->output->outputTable($outputPresets, ['Identifier', 'Variant name', 'Occurrences']);
 
             $this->outputLine('To delete them, please use the <b>media:removeVariants</b> command.');
         }
@@ -460,23 +460,23 @@ class MediaCommandController extends CommandController
     /**
      * Cleanup imageVariants with provided identifier and variant name.
      * Image variants that are still configured are removed without usage check and
-     * can be regenerated afterwards with `media:rendervariants`.
+     * can be regenerated afterwards with `media:renderVariants`.
      *
      * This command will not remove any custom cropped image variants.
      *
      * @param string $identifier Identifier of variants to remove.
-     * @param string $variantLabel Variants with this name will be removed (if exist).
+     * @param string $variantName Variants with this name will be removed (if exist).
      * @param bool $quiet If set, only errors and questions will be displayed.
      * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialog.
      * @param int|null $limit Limit the result of unused assets displayed and removed for this run.
      *
      * @throws StopCommandException
      */
-    public function removeVariantsCommand(string $identifier, string $variantLabel, bool $quiet = false, bool $assumeYes = false, int $limit = null)
+    public function removeVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, int $limit = null)
     {
-        $variantsToRemove = $this->imageVariantRepository->findVariantsByName($identifier, $variantLabel, $limit);
+        $variantsToRemove = $this->imageVariantRepository->findVariantsByName($identifier, $variantName, $limit);
         if (empty($variantsToRemove)) {
-            !$quiet && $this->output->outputLine('<em>Did not find any variants with name ' . $variantLabel . ' in ' . $identifier . '</em>');
+            !$quiet && $this->output->outputLine('<em>Did not find any variants with name ' . $variantName . ' in ' . $identifier . '</em>');
             $this->quit(1);
         }
 
