@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-        <target state="needs-translation">Document</target>
+        <target state="translated">Documento</target>
       </trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
@@ -12,11 +12,11 @@
       </trans-unit>
       <trans-unit id="properties.uriPathSegment" xml:space="preserve">
 				<source>URL path segment</source>
-        <target state="needs-translation">URL path segment</target>
+        <target state="translated">Segmento de caminho de URL</target>
       </trans-unit>
       <trans-unit id="properties._hiddenInIndex" xml:space="preserve">
 				<source>Hide in menus</source>
-        <target state="needs-translation">Hide in menus</target>
+        <target state="translated">Ocultar em menus</target>
       </trans-unit>
       <trans-unit id="creationDialog.title" xml:space="preserve">
 				<source>Title</source>
