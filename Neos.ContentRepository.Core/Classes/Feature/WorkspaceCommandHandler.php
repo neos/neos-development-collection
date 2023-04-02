@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
@@ -554,6 +555,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->nodesToPublish,
             ),
         );
+
+        // to avoid dangling content streams, we need to remove our temporary content stream (whose events
+        // have already been published)
+        $contentRepository->handle(new RemoveContentStream(
+            $matchingContentStream
+        ));
 
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
