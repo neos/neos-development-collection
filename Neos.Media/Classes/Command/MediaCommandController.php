@@ -36,7 +36,6 @@ use Neos\Media\Domain\Repository\ImageVariantRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
 use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
-use Neos\Media\Domain\Service\ImageVariantService;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
 use Neos\Media\Exception\AssetServiceException;
@@ -96,12 +95,6 @@ class MediaCommandController extends CommandController
      * @var ThumbnailService
      */
     protected $thumbnailService;
-
-    /**
-     * @Flow\Inject
-     * @var ImageVariantService
-     */
-    protected $imageVariantService;
 
     /**
      * @Flow\InjectConfiguration("asyncThumbnails")
@@ -317,7 +310,7 @@ class MediaCommandController extends CommandController
      * Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
      * thumbnails for a specific thumbnail preset configuration.
      *
-     * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
+     * Additionally, accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
      * @param string|null $preset Preset name, if not provided thumbnails are created for all presets
      * @param bool $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
@@ -413,35 +406,36 @@ class MediaCommandController extends CommandController
     /**
      * List all configurations for your imageVariants.
      *
-     * Doesn't matter if configured in 'Settings.Neos.Media.yaml' or already deleted from this configuration.
+     * Doesn't matter if configured under 'Neos.Media.variantPresets' or already deleted from this configuration.
      * This command will find every single one for you.
      */
     public function listVariantPresetsCommand(): void
     {
-        $currentPresets = $this->imageVariantService->getAllPresetsByConfiguration();
+        $currentPresets = $this->assetVariantGenerator->getVariantPresets();
 
         if (empty($currentPresets)) {
-            $this->outputLine('There was <b>no configuration</b> for variant presets found...');
+            $this->outputLine('<b>No configuration</b> for variant presets was found.');
         } else {
             $outputPresets = [];
-            foreach ($currentPresets as $presetIdentifier => $presetVariantNames) {
-                foreach ($presetVariantNames as $variants) {
-                    $outputPresets[] = [$presetIdentifier, $variants];
+            foreach ($currentPresets as $presetIdentifier => $variantPreset) {
+                $variantLabels = array_keys($variantPreset->variants());
+                foreach ($variantLabels as $variantLabel) {
+                    $outputPresets[] = [$presetIdentifier, $variantLabel];
                 }
             }
-            $this->outputLine('There is a <b>configuration</b> with following <b>variant presets:</b>');
-            $this->output->outputTable($outputPresets, ['Configured identifier', 'Variant label']);
+            $this->outputLine('The following <b>configured variant presets</b> were found:');
+            $this->output->outputTable($outputPresets, ['Identifier', 'Variant label']);
         }
 
         $databaseVariants = $this->imageVariantRepository->findAllWithOutdatedPresets($currentPresets);
 
         if (empty($databaseVariants)) {
-            $this->outputLine('There were <b>no outdated variant presets</b> in your database...');
+            $this->outputLine('There were <b>no outdated variant presets</b> in your database.');
         } else {
             $formattedDatabaseVariants = [];
             foreach ($databaseVariants as $variant) {
                 if (!isset($formattedDatabaseVariants[$variant->getPresetIdentifier()][$variant->getPresetVariantName()])) {
-                    $formattedDatabaseVariants[$variant->getPresetIdentifier()] = [$variant->getPresetVariantName() => 1];
+                    $formattedDatabaseVariants[$variant->getPresetIdentifier()][$variant->getPresetVariantName()] = 1;
                 } else {
                     $formattedDatabaseVariants[$variant->getPresetIdentifier()][$variant->getPresetVariantName()]++;
                 }
@@ -455,18 +449,20 @@ class MediaCommandController extends CommandController
                     $outputPresets[] = [$presetIdentifier, $key, $presetVariantNames[$key]];
                 }
             }
-            $this->outputLine('There is <b>no configuration</b> for the following <b>variant presets:</b>');
-            $this->output->outputTable($outputPresets, ['Not configured identifier', 'Variant label', 'Times found']);
 
-            $this->outputLine('To delete them, please use the <b>removeUnusedImageVariants</b> command.');
+            $this->outputLine('<b>No configuration</b> for the following <b>variant presets</b> could be found:');
+            $this->output->outputTable($outputPresets, ['Identifier', 'Variant label', 'Times found']);
+
+            $this->outputLine('To delete them, please use the <b>media:removeVariants</b> command.');
         }
     }
 
     /**
-     * Tidy up imageVariants with provided identifier and variant name.
-     * Still configured variants can be regenerated afterwords with the `media:renderVariants` command.
+     * Cleanup imageVariants with provided identifier and variant name.
+     * Image variants that are still configured are removed without usage check and
+     * can be regenerated afterwards with `media:rendervariants`.
      *
-     * Selected imageVariants will be removed, doesn't matter if used or not.
+     * This command will not remove any custom cropped image variants.
      *
      * @param string $identifier Identifier of variants to remove.
      * @param string $variantLabel Variants with this name will be removed (if exist).
@@ -478,46 +474,31 @@ class MediaCommandController extends CommandController
      */
     public function removeVariantsCommand(string $identifier, string $variantLabel, bool $quiet = false, bool $assumeYes = false, int $limit = null)
     {
-        $variants = $this->imageVariantRepository->findVariantsByName($identifier, $variantLabel, $limit);
-        if (empty($variants)) {
-            !$quiet && $this->output->outputLine('<em>Not found any presets with name ' . $variantLabel . ' in ' . $identifier . '</em>');
-            $this->quit(1);
-        }
-
-        $outdatedVariants = [];
-        foreach ($variants as $variant) {
-            // check if necessary for current configuration
-            if (!empty($filterByAssetSourceIdentifier) && $variant->getAssetSourceIdentifier() !== $filterByAssetSourceIdentifier) {
-                continue;
-            }
-
-            $outdatedVariants[] = $variant;
-        }
-
-        if (empty($outdatedVariants)) {
-            !$quiet && $this->output->outputLine(PHP_EOL . PHP_EOL . '<em>No outdated variants found.</em>');
+        $variantsToRemove = $this->imageVariantRepository->findVariantsByName($identifier, $variantLabel, $limit);
+        if (empty($variantsToRemove)) {
+            !$quiet && $this->output->outputLine('<em>Did not find any variants with name ' . $variantLabel . ' in ' . $identifier . '</em>');
             $this->quit(1);
         }
 
         if (!$quiet) {
             $notLimitedDeletableOutput = '<b>There are %s asset variants ready to be deleted.</b>';
-            $this->outputLine($notLimitedDeletableOutput, [count($outdatedVariants)]);
+            $this->outputLine($notLimitedDeletableOutput, [count($variantsToRemove)]);
             if ($limit) {
                 $this->outputLine('<em> find more by running without the "--limit" parameter</em>');
             }
         }
 
         // if --assume-yes not used: user decision to delete variants
-        if (!$assumeYes && !$this->output->askConfirmation(PHP_EOL . 'Do you want to remove the selected outdated presets? [Y,n] ')) {
-            $this->output->outputLine(PHP_EOL . '<em>No variants have been deleted...</em>');
+        if (!$assumeYes && !$this->output->askConfirmation(PHP_EOL . 'Do you want to remove the found variants? [Y,n] ')) {
+            $this->output->outputLine(PHP_EOL . '<em>No variants have been deleted.</em>');
             $this->quit(1);
         }
 
-        !$quiet && $this->outputLine(PHP_EOL . '<b>Removing selected:</b>');
-        !$quiet && $this->output->progressStart(count($outdatedVariants));
+        !$quiet && $this->outputLine(PHP_EOL . '<b>Removing variants:</b>');
+        !$quiet && $this->output->progressStart(count($variantsToRemove));
 
         $outdatedVariantSize = 0;
-        foreach ($outdatedVariants as $variantToRemove) {
+        foreach ($variantsToRemove as $variantToRemove) {
             !$quiet && $this->output->progressAdvance();
             $variantSize = $variantToRemove->getResource()->getFileSize();
 
@@ -536,23 +517,8 @@ class MediaCommandController extends CommandController
         }
         !$quiet && $this->output->progressFinish();
 
-        $removedConfiguredVariant = false;
-        $currentPresets = $this->imageVariantService->getAllPresetsByConfiguration();
-
-        foreach ($currentPresets as $key => $currentPreset) {
-            foreach ($currentPreset as $preset) {
-                if ($key === $identifier && $preset === $variantLabel) {
-                    $removedConfiguredVariant = true;
-                    break 2;
-                }
-            }
-        }
-
         $readableStorageSize = Files::bytesToSizeString($outdatedVariantSize);
         $this->outputLine(PHP_EOL . '<success>Removed ' . $readableStorageSize . '</success>');
-        if ($removedConfiguredVariant) {
-            $this->outputLine(PHP_EOL . '<b>Please make sure to use `./flow media:renderVariants` to recreate missing variants</b>'. PHP_EOL);
-        }
     }
 
     /**

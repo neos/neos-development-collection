@@ -80,12 +80,12 @@ class ImageVariantRepository extends AssetRepository
             ->setParameter('configuredIdentifiers', $configuredIdentifiers);
 
         $i = 0;
-        foreach ($configuredPresets as $presetIdentifier => $presetVariantNames) {
+        foreach ($configuredPresets as $presetIdentifier => $variantPreset) {
             $queryBuilder
                 ->orWhere(
                     $queryBuilder->expr()->andX()
                         ->add($queryBuilder->expr()->eq('iv.presetIdentifier', sprintf(':presetIdentifier_%d', $i)))
-                        ->add($queryBuilder->expr()->notIn('iv.presetVariantName', $presetVariantNames))
+                        ->add($queryBuilder->expr()->notIn('iv.presetVariantName', array_keys($variantPreset->variants())))
                 )
                 ->setParameter(sprintf('presetIdentifier_%d', $i), $presetIdentifier);
             $i++;
