@@ -132,10 +132,21 @@ final class ContentStreamFinder implements ProjectionStateInterface
     }
 
     /**
+     * @param bool $findTemporaryContentStreams if TRUE, will find all content streams not bound to a workspace
      * @return array<int,ContentStreamId>
      */
-    public function findUnusedContentStreams(): iterable
+    public function findUnusedContentStreams(bool $findTemporaryContentStreams): iterable
     {
+        $states = [
+            self::STATE_NO_LONGER_IN_USE,
+            self::STATE_REBASE_ERROR,
+        ];
+
+        if ($findTemporaryContentStreams === true) {
+            $states[] = self::STATE_CREATED;
+            $states[] = self::STATE_FORKED;
+        }
+
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
@@ -144,10 +155,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
                 AND state IN (:state)
             ',
             [
-                'state' => [
-                    self::STATE_NO_LONGER_IN_USE,
-                    self::STATE_REBASE_ERROR,
-                ]
+                'state' => $states
             ],
             [
                 'state' => Connection::PARAM_STR_ARRAY
