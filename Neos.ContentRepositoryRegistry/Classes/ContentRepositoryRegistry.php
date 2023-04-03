@@ -88,6 +88,7 @@ final class ContentRepositoryRegistry
     }
 
     /**
+     * @param ContentRepositoryId $contentRepositoryId
      * @param ContentRepositoryServiceFactoryInterface<T> $contentRepositoryServiceFactory
      * @return T
      * @throws ContentRepositoryNotFound | InvalidConfigurationException

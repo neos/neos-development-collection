@@ -122,7 +122,8 @@ final class ContentRepositoryFactory
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->build(),
-            $this->buildEventPersister()
+            $this->buildEventPersister(),
+            $this->projections,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }
