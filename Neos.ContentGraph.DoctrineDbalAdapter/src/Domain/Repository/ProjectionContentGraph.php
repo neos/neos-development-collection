@@ -263,7 +263,7 @@ class ProjectionContentGraph
             )->fetchAssociative();
 
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
-            $parentAnchorPoint = $succeedingSiblingRelation['parentnodeanchor'];
+            $parentAnchorPoint = NodeRelationAnchorPoint::fromString($succeedingSiblingRelation['parentnodeanchor']);
 
             $precedingSiblingData = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
@@ -272,7 +272,7 @@ class ProjectionContentGraph
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.position < :position',
                 [
-                    'anchorPoint' => $parentAnchorPoint,
+                    'anchorPoint' => $parentAnchorPoint->value,
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     'position' => $succeedingSiblingPosition
@@ -297,7 +297,7 @@ class ProjectionContentGraph
                       AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                     [
-                        'childAnchorPoint' => $childAnchorPoint,
+                        'childAnchorPoint' => $childAnchorPoint?->value,
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
@@ -312,7 +312,7 @@ class ProjectionContentGraph
                       AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'parentAnchorPoint' => $parentAnchorPoint,
+                    'parentAnchorPoint' => $parentAnchorPoint->value,
                     'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]

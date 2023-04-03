@@ -282,7 +282,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         WorkspaceName $workspaceName
     ): void {
         $this->getDatabaseConnection()->update($this->tableName, [
-            'currentContentStreamId' => $contentStreamId
+            'currentContentStreamId' => $contentStreamId->value,
         ], [
             'workspaceName' => $workspaceName->value
         ]);

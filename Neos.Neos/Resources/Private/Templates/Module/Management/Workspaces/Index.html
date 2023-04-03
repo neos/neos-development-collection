@@ -79,7 +79,7 @@
 									</div>
 								</span>
 								<f:if condition="{changesCounts.total} != 0">
-									<f:link.action action="show" arguments="{workspace: workspace.workspaceName.name}" class="neos-button neos-button-primary">
+									<f:link.action action="show" arguments="{workspace: workspace.workspaceName.value}" class="neos-button neos-button-primary">
 									<i class="fas fa-review"></i>
 									{neos:backend.translate(id: 'workspaces.review', source: 'Modules', package: 'Neos.Neos')}
 									</f:link.action>
@@ -89,7 +89,7 @@
 						<td class="neos-action">
 							<div class="neos-pull-right">
 								<f:if condition="{canManage}">
-									<f:link.action action="edit" arguments="{workspace: workspace.workspaceName.name}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.workspaceTitle})}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
+									<f:link.action action="edit" arguments="{workspace: workspace.workspaceName.value}" class="neos-button neos-button-primary" title="{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.workspaceTitle})}" additionalAttributes="{data-neos-toggle: 'tooltip'}">
 										<i class="fas fa-pencil-alt icon-white"></i>
 									</f:link.action>
 								</f:if>
@@ -127,7 +127,7 @@
 																		</div>
 																		<div class="neos-modal-footer">
 																			<a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Modules', package: 'Neos.Neos')}</a>
-																			<f:form action="delete" arguments="{workspace: workspace.workspaceName.name}" class="neos-inline">
+																			<f:form action="delete" arguments="{workspace: workspace.workspaceName.value}" class="neos-inline">
 																				<button type="submit" class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'workspaces.deleteWorkspace', source: 'Modules', package: 'Neos.Neos')}">
 																					{neos:backend.translate(id: 'workspaces.yesDeleteWorkspace', source: 'Modules', package: 'Neos.Neos')}
 																				</button>

@@ -839,8 +839,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
                 // remove old
                 $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
-                    'nodeanchorpoint' => $nodeAnchorPoint,
-                    'name' => $event->referenceName
+                    'nodeanchorpoint' => $nodeAnchorPoint?->value,
+                    'name' => $event->referenceName->value
                 ]);
 
                 // set new
