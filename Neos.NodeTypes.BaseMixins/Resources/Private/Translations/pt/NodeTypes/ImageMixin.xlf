@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="properties.alternativeText" xml:space="preserve">
 				<source>Alternative text</source>
-        <target state="needs-translation">Alternative text</target>
+        <target state="translated">Texto alternativo</target>
       </trans-unit>
       <trans-unit id="properties.title" xml:space="preserve">
 				<source>Title</source>
