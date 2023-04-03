@@ -7,8 +7,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 final class CrCommandController extends CommandController
 {
