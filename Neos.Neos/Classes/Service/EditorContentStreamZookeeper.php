@@ -132,6 +132,7 @@ final class EditorContentStreamZookeeper
                             new WorkspaceTitle((string) $user->getName()),
                             new WorkspaceDescription(''),
                             $editorsNewContentStreamId,
+                            UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
                         )
                     )->block();
                 } else {
