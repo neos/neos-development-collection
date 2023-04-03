@@ -584,7 +584,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
                 'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]
         );
@@ -666,7 +666,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             ',
             /** @codingStandardsIgnoreEnd */
             [
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'newParentNodeAggregateIdPath' => $newParentNode->getNodeAggregateIdPath(),
                 'sourceNodeAggregateIdPathOffset'
                     => (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1,
@@ -736,7 +736,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         try {
             return $closure();
         } catch (NodeNotFoundException $_) {
-            /** @noinspection BadExceptionsProcessingInspection,PhpRedundantCatchClauseInspection */
+            /** @noinspection BadExceptionsProcessingInspection */
             return null;
         }
     }
