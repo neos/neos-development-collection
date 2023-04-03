@@ -8,7 +8,7 @@
       </trans-unit>
       <trans-unit id="groups.column" xml:space="preserve">
                 <source>Columns</source>
-        <target state="needs-translation">Columns</target>
+        <target state="translated">Colunas</target>
       </trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
                 <source>Layout</source>

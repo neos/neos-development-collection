@@ -65,7 +65,7 @@ final class Workspaces implements \IteratorAggregate, \Countable
 
     public function get(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->workspaces[$workspaceName->value];
+        return $this->workspaces[$workspaceName->value] ?? null;
     }
 
     /**
