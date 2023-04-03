@@ -69,6 +69,9 @@ final class OrderingField implements JsonSerializable
         return new self($field, $direction);
     }
 
+    /**
+     * @return array{type: 'propertyName'|'timestampField', field: mixed, direction: 'ASCENDING'|'DESCENDING'}
+     */
     public function jsonSerialize(): array
     {
         return [

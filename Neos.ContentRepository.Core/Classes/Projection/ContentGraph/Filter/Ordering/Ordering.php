@@ -66,6 +66,9 @@ final class Ordering implements IteratorAggregate, JsonSerializable
         return new ArrayIterator($this->fields);
     }
 
+    /**
+     * @return OrderingField[]
+     */
     public function jsonSerialize(): array
     {
         return $this->fields;
