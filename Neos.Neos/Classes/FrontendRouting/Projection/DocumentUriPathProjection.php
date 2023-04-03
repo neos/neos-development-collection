@@ -352,13 +352,13 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $this->updateNodeQuery('SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\'
                 WHERE nodeAggregateId = :nodeAggregateId
                     AND shortcuttarget IS NULL', [
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
             ]);
         } elseif ($this->isDocumentNodeType($event->newNodeTypeName)) {
             $this->updateNodeQuery('SET shortcuttarget = NULL
                 WHERE nodeAggregateId = :nodeAggregateId
                     AND shortcuttarget IS NOT NULL', [
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
             ]);
         }
     }
@@ -486,7 +486,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                         OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
                     )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]);
         }
