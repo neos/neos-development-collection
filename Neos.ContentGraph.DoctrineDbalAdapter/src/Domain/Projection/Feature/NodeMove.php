@@ -42,9 +42,6 @@ trait NodeMove
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
-
-            $dimensionSpacePoints = [];
-
             foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                 // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
                 /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveNodeMapping */
@@ -61,7 +58,6 @@ trait NodeMove
                 foreach ($moveNodeMapping->newLocations as $newLocation) {
                     assert($newLocation instanceof CoverageNodeMoveMapping);
 
-                    $dimensionSpacePoints[] = $newLocation->coveredDimensionSpacePoint;
                     $affectedDimensionSpacePoints = new DimensionSpacePointSet([
                         $newLocation->coveredDimensionSpacePoint
                     ]);
