@@ -455,7 +455,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                             OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
                         )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]);
         }
