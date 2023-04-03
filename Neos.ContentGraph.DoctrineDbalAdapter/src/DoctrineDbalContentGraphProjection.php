@@ -800,7 +800,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_referencerelation', [
                         'name' => $event->referenceName->value,
                         'position' => $position,
-                        'nodeanchorpoint' => $nodeAnchorPoint->value,
+                        'nodeanchorpoint' => $nodeAnchorPoint?->value,
                         'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
                         'properties' => $reference->properties
                             ? \json_encode($reference->properties, JSON_THROW_ON_ERROR)

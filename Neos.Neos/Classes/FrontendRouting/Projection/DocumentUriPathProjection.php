@@ -335,7 +335,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
                 'parentNodeAggregateId' => $parentNode->getNodeAggregateId()->value,
                 'precedingNodeAggregateId' => $precedingNode?->getNodeAggregateId()->value,
-                'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId->value,
+                'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
             ]);
         }
@@ -909,7 +909,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         $this->updateNode($node, [
             'parentNodeAggregateId' => $parentNodeAggregateId->value,
             'precedingNodeAggregateId' => $newPrecedingNode?->getNodeAggregateId()->value,
-            'succeedingNodeAggregateId' => $newSucceedingNodeAggregateId->value,
+            'succeedingNodeAggregateId' => $newSucceedingNodeAggregateId?->value,
         ]);
     }
 

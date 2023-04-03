@@ -45,7 +45,7 @@ final class HierarchyRelation
         $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
             'parentnodeanchor' => $this->parentNodeAnchor->value,
             'childnodeanchor' => $this->childNodeAnchor->value,
-            'name' => $this->name->value,
+            'name' => $this->name?->value,
             'contentstreamid' => $this->contentStreamId->value,
             'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,

@@ -200,7 +200,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'baseWorkspaceName' => $event->baseWorkspaceName->value,
             'workspaceTitle' => $event->workspaceTitle->value,
             'workspaceDescription' => $event->workspaceDescription->value,
-            'workspaceOwner' => $event->workspaceOwner->value,
+            'workspaceOwner' => $event->workspaceOwner?->value,
             'currentContentStreamId' => $event->newContentStreamId->value,
             'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
