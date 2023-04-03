@@ -72,9 +72,9 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
             $this->contentRepository->handle(
                 new CreateWorkspace(
-                    WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceName::fromString($contentStreamForWriting->value),
                     $workspace->workspaceName,
-                    WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceTitle::fromString($contentStreamForWriting->value),
                     WorkspaceDescription::fromString(''),
                     $contentStreamForWriting,
                 )

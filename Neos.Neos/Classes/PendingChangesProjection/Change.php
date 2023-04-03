@@ -91,7 +91,7 @@ class Change
         $databaseConnection->insert($tableName, [
             'contentStreamId' => $this->contentStreamId->value,
             'nodeAggregateId' => $this->nodeAggregateId->value,
-            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
@@ -113,7 +113,7 @@ class Change
             [
                 'contentStreamId' => $this->contentStreamId->value,
                 'nodeAggregateId' => $this->nodeAggregateId->value,
-                'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
                 'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             ]
         );

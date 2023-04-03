@@ -685,7 +685,7 @@ class UserService
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->workspaceName->jsonSerialize() === 'live') {
+        if ($workspace->workspaceName->isLive()) {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 

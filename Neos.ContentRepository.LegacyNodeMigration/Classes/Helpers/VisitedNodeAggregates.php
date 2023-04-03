@@ -41,7 +41,7 @@ final class VisitedNodeAggregates
         }
         foreach ($coveredDimensionSpacePoints as $dimensionSpacePoint) {
             $visitedNodeAggregate->addVariant(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint), $parentNodeAggregateId);
-            $pathAndDimensionSpacePointHash = $nodePath->jsonSerialize() . '__' . $dimensionSpacePoint->hash;
+            $pathAndDimensionSpacePointHash = $nodePath->value . '__' . $dimensionSpacePoint->hash;
             if (isset($this->byPathAndDimensionSpacePoint[$pathAndDimensionSpacePointHash])) {
                 throw new MigrationException(sprintf('Node "%s" with path "%s" and dimension space point "%s" was already visited before', $nodeAggregateId->value, $nodePath->value, $dimensionSpacePoint->toJson()), 1655900356);
             }
@@ -71,11 +71,11 @@ final class VisitedNodeAggregates
     public function findMostSpecificParentNodeInDimensionGraph(NodePath $nodePath, OriginDimensionSpacePoint $originDimensionSpacePoint, InterDimensionalVariationGraph $interDimensionalVariationGraph): ?VisitedNodeAggregate
     {
         $dimensionSpacePoint = $originDimensionSpacePoint->toDimensionSpacePoint();
-        $nodePathParts = $nodePath->getParts();
+        $nodePathParts = explode('/', ltrim($nodePath->value, '/'));
         array_pop($nodePathParts);
         $parentPath = NodePath::fromPathSegments($nodePathParts);
         while ($dimensionSpacePoint !== null) {
-            $parentPathAndDimensionSpacePointHash = strtolower($parentPath->jsonSerialize()) . '__' . $dimensionSpacePoint->hash;
+            $parentPathAndDimensionSpacePointHash = strtolower($parentPath->value) . '__' . $dimensionSpacePoint->hash;
             if (isset($this->byPathAndDimensionSpacePoint[$parentPathAndDimensionSpacePointHash])) {
                 return $this->byPathAndDimensionSpacePoint[$parentPathAndDimensionSpacePointHash];
             }

@@ -91,7 +91,7 @@ final class NodeRecord
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
             'relationanchorpoint' => $this->relationAnchorPoint->value,
-            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+            'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
             'nodeaggregateid' => $this->nodeAggregateId->value,
             'nodetypename' => $this->nodeTypeName->value,
@@ -109,7 +109,7 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
-                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+                'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
                 'nodeaggregateid' => $this->nodeAggregateId->value,
                 'nodetypename' => $this->nodeTypeName->value,
@@ -129,7 +129,7 @@ final class NodeRecord
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->delete($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }
 }

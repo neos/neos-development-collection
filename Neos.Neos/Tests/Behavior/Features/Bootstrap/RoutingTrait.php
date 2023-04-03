@@ -351,7 +351,7 @@ trait RoutingTrait
     {
         $expected = DimensionSpacePoint::fromJsonString($dimensionSpacePointString);
         $actual = $this->dimensionResolverContext->resolvedDimensionSpacePoint;
-        Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . json_encode($actual->jsonSerialize()));
+        Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . $actual->toJson());
 
         Assert::assertEquals($remainingUriPathString, $this->dimensionResolverContext->remainingUriPath, 'Remaining URI path does not match');
     }

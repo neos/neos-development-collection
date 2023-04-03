@@ -33,6 +33,7 @@ use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisa
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReference;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
@@ -794,12 +795,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
                 // set new
                 $position = 0;
+                /** @var SerializedNodeReference $reference */
                 foreach ($event->references as $reference) {
                     $this->getDatabaseConnection()->insert($this->tableNamePrefix . '_referencerelation', [
-                        'name' => $event->referenceName,
+                        'name' => $event->referenceName->value,
                         'position' => $position,
-                        'nodeanchorpoint' => $nodeAnchorPoint,
-                        'destinationnodeaggregateid' => $reference->targetNodeAggregateId,
+                        'nodeanchorpoint' => $nodeAnchorPoint->value,
+                        'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
                         'properties' => $reference->properties
                             ? \json_encode($reference->properties, JSON_THROW_ON_ERROR)
                             : null
@@ -957,7 +959,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $copy = new NodeRecord(
             $copyRelationAnchorPoint,
             $sourceNode->nodeAggregateId,
-            $originDimensionSpacePoint->jsonSerialize(),
+            $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
             $sourceNode->properties,
             $sourceNode->nodeTypeName,
@@ -1148,7 +1150,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $event->contentStreamId,
                     $relationAnchorPoint,
                     function (NodeRecord $nodeRecord) use ($event) {
-                        $nodeRecord->originDimensionSpacePoint = $event->target->jsonSerialize();
+                        $nodeRecord->originDimensionSpacePoint = $event->target->coordinates;
                         $nodeRecord->originDimensionSpacePointHash = $event->target->hash;
                     }
                 );
@@ -1168,7 +1170,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
+                    'newDimensionSpacePoint' => $event->target->toJson(),
                     'contentStreamId' => $event->contentStreamId->value
                 ]
             );
@@ -1220,10 +1222,10 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     WHERE h.contentstreamid = :contentStreamId
                     AND h.dimensionspacepointhash = :sourceDimensionSpacePointHash',
                 [
-                    'contentStreamId' => $event->contentStreamId->jsonSerialize(),
+                    'contentStreamId' => $event->contentStreamId->value,
                     'sourceDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
+                    'newDimensionSpacePoint' => $event->target->toJson(),
                 ]
             );
 

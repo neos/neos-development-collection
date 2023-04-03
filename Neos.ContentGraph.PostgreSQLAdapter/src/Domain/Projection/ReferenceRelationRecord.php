@@ -85,7 +85,7 @@ final class ReferenceRelationRecord
         string $tableNamePrefix
     ): void {
         $databaseConnection->delete($tableNamePrefix . '_referencerelation', [
-            'sourcenodeanchor' => $sourceNodeAnchor
+            'sourcenodeanchor' => $sourceNodeAnchor->value
         ]);
     }
 }

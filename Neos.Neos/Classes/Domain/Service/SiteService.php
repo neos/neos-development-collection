@@ -162,7 +162,7 @@ class SiteService
     ): Site {
         $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
 
-        if ($this->siteRepository->findOneByNodeName($siteNodeName->jsonSerialize())) {
+        if ($this->siteRepository->findOneByNodeName($siteNodeName->value)) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
         }
 

@@ -196,12 +196,12 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private function whenWorkspaceWasCreated(WorkspaceWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'workspaceName' => $event->workspaceName,
-            'baseWorkspaceName' => $event->baseWorkspaceName,
-            'workspaceTitle' => $event->workspaceTitle,
-            'workspaceDescription' => $event->workspaceDescription,
-            'workspaceOwner' => $event->workspaceOwner,
-            'currentContentStreamId' => $event->newContentStreamId,
+            'workspaceName' => $event->workspaceName->value,
+            'baseWorkspaceName' => $event->baseWorkspaceName->value,
+            'workspaceTitle' => $event->workspaceTitle->value,
+            'workspaceDescription' => $event->workspaceDescription->value,
+            'workspaceOwner' => $event->workspaceOwner->value,
+            'currentContentStreamId' => $event->newContentStreamId->value,
             'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
     }
@@ -209,10 +209,10 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'workspaceName' => $event->workspaceName,
-            'workspaceTitle' => $event->workspaceTitle,
-            'workspaceDescription' => $event->workspaceDescription,
-            'currentContentStreamId' => $event->newContentStreamId,
+            'workspaceName' => $event->workspaceName->value,
+            'workspaceTitle' => $event->workspaceTitle->value,
+            'workspaceDescription' => $event->workspaceDescription->value,
+            'currentContentStreamId' => $event->newContentStreamId->value,
             'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
     }
@@ -284,7 +284,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'currentContentStreamId' => $contentStreamId
         ], [
-            'workspaceName' => $workspaceName
+            'workspaceName' => $workspaceName->value
         ]);
     }
 
@@ -297,7 +297,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
                 workspacename = :workspaceName
         ', [
             'upToDate' => WorkspaceStatus::UP_TO_DATE->value,
-            'workspaceName' => $workspaceName->jsonSerialize()
+            'workspaceName' => $workspaceName->value
         ]);
     }
 
@@ -310,7 +310,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
                 baseworkspacename = :baseWorkspaceName
         ', [
             'outdated' => WorkspaceStatus::OUTDATED->value,
-            'baseWorkspaceName' => $baseWorkspaceName->jsonSerialize()
+            'baseWorkspaceName' => $baseWorkspaceName->value
         ]);
     }
 
@@ -324,7 +324,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
                 workspacename = :workspaceName
         ', [
             'outdatedConflict' => WorkspaceStatus::OUTDATED_CONFLICT->value,
-            'workspaceName' => $workspaceName->jsonSerialize()
+            'workspaceName' => $workspaceName->value
         ]);
     }
 

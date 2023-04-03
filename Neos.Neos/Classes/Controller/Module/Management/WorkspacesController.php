@@ -124,7 +124,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $workspacesAndCounts = [
-            $userWorkspace->workspaceName->jsonSerialize() => [
+            $userWorkspace->workspaceName->value => [
                 'workspace' => $userWorkspace,
                 'changesCounts' => $this->computeChangesCount($userWorkspace, $contentRepository),
                 'canPublish' => false,
@@ -503,7 +503,7 @@ class WorkspacesController extends AbstractModuleController
             'Modules',
             'Neos.Neos'
         ) ?: 'workspaces.selectedChangeHasBeenPublished');
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->jsonSerialize()]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**
@@ -541,7 +541,7 @@ class WorkspacesController extends AbstractModuleController
             'Modules',
             'Neos.Neos'
         ) ?: 'workspaces.selectedChangeHasBeenDiscarded');
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->jsonSerialize()]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**

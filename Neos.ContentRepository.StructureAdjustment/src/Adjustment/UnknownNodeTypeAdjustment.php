@@ -39,7 +39,7 @@ class UnknownNodeTypeAdjustment
             yield StructureAdjustment::createForNodeAggregate(
                 $nodeAggregate,
                 StructureAdjustment::NODE_TYPE_MISSING,
-                'The node type "' . $nodeTypeName->jsonSerialize()
+                'The node type "' . $nodeTypeName->value
                     . '" is not found; so the node should be removed (or converted)',
                 function () use ($nodeAggregate) {
                     return $this->removeNodeAggregate($nodeAggregate);

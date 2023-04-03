@@ -145,9 +145,9 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->insert(
             $tableNamePrefix . '_hierarchyhyperrelation',
             [
-                'contentstreamid' => $this->contentStreamId,
-                'parentnodeanchor' => $this->parentNodeAnchor,
-                'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
+                'contentstreamid' => $this->contentStreamId->value,
+                'parentnodeanchor' => $this->parentNodeAnchor->value,
+                'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
                 'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
                 'childnodeanchors' => $this->childNodeAnchors->toDatabaseString()
             ]

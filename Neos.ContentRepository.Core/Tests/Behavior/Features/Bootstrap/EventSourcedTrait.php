@@ -349,7 +349,7 @@ trait EventSourcedTrait
          * Catch Up process and the testcase reset.
          */
 
-        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId);
+        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId->value);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
         // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
@@ -676,7 +676,7 @@ trait EventSourcedTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState)
     {
-        $this->theContentStreamHasState($this->contentStreamId->jsonSerialize(), $expectedState);
+        $this->theContentStreamHasState($this->contentStreamId->value, $expectedState);
     }
 
     /**

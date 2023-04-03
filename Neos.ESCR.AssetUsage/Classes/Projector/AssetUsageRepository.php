@@ -105,8 +105,8 @@ final class AssetUsageRepository
                 try {
                     $this->dbal->insert(self::TABLE_NAME, [
                         'assetIdentifier' => $assetIdentifier,
-                        'contentStreamIdentifier' => $nodeAddress->contentStreamId,
-                        'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateId,
+                        'contentStreamIdentifier' => $nodeAddress->contentStreamId->value,
+                        'nodeAggregateIdentifier' => $nodeAddress->nodeAggregateId->value,
                         'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
                         'propertyName' => $propertyName,
                     ]);
@@ -119,7 +119,7 @@ final class AssetUsageRepository
 
     public function removeContentStream(ContentStreamId $contentStreamIdentifier): void
     {
-        $this->dbal->delete(self::TABLE_NAME, ['contentStreamIdentifier' => $contentStreamIdentifier]);
+        $this->dbal->delete(self::TABLE_NAME, ['contentStreamIdentifier' => $contentStreamIdentifier->value]);
     }
 
     public function copyContentStream(
@@ -133,8 +133,8 @@ final class AssetUsageRepository
             . ' FROM ' . self::TABLE_NAME
             . ' WHERE contentStreamIdentifier = :sourceContentStreamIdentifier',
             [
-                'sourceContentStreamIdentifier' => $sourceContentStreamIdentifier,
-                'targetContentStreamIdentifier' => $targetContentStreamIdentifier,
+                'sourceContentStreamIdentifier' => $sourceContentStreamIdentifier->value,
+                'targetContentStreamIdentifier' => $targetContentStreamIdentifier->value,
             ]
         );
     }
@@ -164,8 +164,8 @@ final class AssetUsageRepository
     {
         $this->dbal->delete(self::TABLE_NAME, [
             'assetIdentifier' => $usage->assetIdentifier,
-            'contentStreamIdentifier' => $usage->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => $usage->nodeAggregateIdentifier,
+            'contentStreamIdentifier' => $usage->contentStreamIdentifier->value,
+            'nodeAggregateIdentifier' => $usage->nodeAggregateIdentifier->value,
             'originDimensionSpacePointHash' => $usage->originDimensionSpacePoint,
             'propertyName' => $usage->propertyName,
         ]);
@@ -187,7 +187,7 @@ final class AssetUsageRepository
             . ' WHERE nodeAggregateIdentifier = :nodeAggregateIdentifier'
             . ' AND originDimensionSpacePointHash IN (:dimensionSpacePointHashes)',
             [
-                'nodeAggregateIdentifier' => $nodeAggregateIdentifier,
+                'nodeAggregateIdentifier' => $nodeAggregateIdentifier->value,
                 'dimensionSpacePointHashes' => $dimensionSpacePoints->getPointHashes(),
             ],
             [

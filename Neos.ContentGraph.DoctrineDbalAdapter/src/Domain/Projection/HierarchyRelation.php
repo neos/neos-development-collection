@@ -43,11 +43,11 @@ final class HierarchyRelation
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
-            'parentnodeanchor' => $this->parentNodeAnchor,
-            'childnodeanchor' => $this->childNodeAnchor,
-            'name' => $this->name,
-            'contentstreamid' => $this->contentStreamId,
-            'dimensionspacepoint' => json_encode($this->dimensionSpacePoint),
+            'parentnodeanchor' => $this->parentNodeAnchor->value,
+            'childnodeanchor' => $this->childNodeAnchor->value,
+            'name' => $this->name->value,
+            'contentstreamid' => $this->contentStreamId->value,
+            'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $this->dimensionSpacePointHash,
             'position' => $this->position
         ]);
@@ -73,7 +73,7 @@ final class HierarchyRelation
         $databaseConnection->update(
             $tableNamePrefix . '_hierarchyrelation',
             [
-                'childnodeanchor' => $childAnchorPoint
+                'childnodeanchor' => $childAnchorPoint->value
             ],
             $this->getDatabaseId()
         );
@@ -89,7 +89,7 @@ final class HierarchyRelation
         string $tableNamePrefix
     ): void {
         $data = [
-            'parentnodeanchor' => $parentAnchorPoint
+            'parentnodeanchor' => $parentAnchorPoint->value
         ];
         if (!is_null($position)) {
             $data['position'] = $position;
@@ -118,9 +118,9 @@ final class HierarchyRelation
     public function getDatabaseId(): array
     {
         return [
-            'parentnodeanchor' => $this->parentNodeAnchor,
-            'childnodeanchor' => $this->childNodeAnchor,
-            'contentstreamid' => $this->contentStreamId,
+            'parentnodeanchor' => $this->parentNodeAnchor->value,
+            'childnodeanchor' => $this->childNodeAnchor->value,
+            'contentstreamid' => $this->contentStreamId->value,
             'dimensionspacepointhash' => $this->dimensionSpacePointHash
         ];
     }

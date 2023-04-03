@@ -76,7 +76,7 @@ final class NodeRecord
                 'classification' => $this->classification->value
             ],
             [
-                'relationanchorpoint' => $this->relationAnchorPoint
+                'relationanchorpoint' => $this->relationAnchorPoint->value
             ]
         );
     }
@@ -89,7 +89,7 @@ final class NodeRecord
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->delete($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }
 

@@ -63,7 +63,7 @@ final class NodeAddress
         // when changing the serialization here
         return $this->workspaceName->value
             . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
-            . '__' . $this->nodeAggregateId->jsonSerialize();
+            . '__' . $this->nodeAggregateId->value;
     }
 
     public function isInLiveWorkspace(): bool

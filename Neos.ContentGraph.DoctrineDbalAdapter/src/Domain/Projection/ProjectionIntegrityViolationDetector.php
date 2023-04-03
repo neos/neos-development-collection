@@ -54,7 +54,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     OR c.relationanchorpoint IS NULL
                 )',
             [
-                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()
+                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
             ]
         );
 
@@ -89,7 +89,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 HAVING uniquenessCounter > 1
                 ',
             [
-                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()
+                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
             ]
         )->fetchAllAssociative();
 

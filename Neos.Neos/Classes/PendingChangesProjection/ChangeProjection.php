@@ -345,7 +345,7 @@ class ChangeProjection implements ProjectionInterface
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
+                    'newDimensionSpacePoint' => $event->target->toJson(),
                     'contentStreamId' => $event->contentStreamId->value
                 ]
             );
@@ -468,8 +468,8 @@ WHERE n.contentStreamId = :contentStreamId
 AND n.nodeAggregateId = :nodeAggregateId
 AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
             [
-                'contentStreamId' => $contentStreamId,
-                'nodeAggregateId' => $nodeAggregateId,
+                'contentStreamId' => $contentStreamId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetch();

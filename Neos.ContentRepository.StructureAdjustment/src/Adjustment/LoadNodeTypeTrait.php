@@ -23,7 +23,7 @@ trait LoadNodeTypeTrait
     {
         try {
             $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-            if ($nodeType->getName() !== $nodeTypeName->jsonSerialize()) {
+            if (!$nodeTypeName->equals($nodeType->name)) {
                 // the $nodeTypeName was different than the fetched node type; so that means
                 // that the FallbackNodeType has been returned.
                 return null;

@@ -242,7 +242,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
+                    'newDimensionSpacePoint' => $event->target->toJson(),
                     'contentStreamId' => $event->contentStreamId->value
                 ]
             );
