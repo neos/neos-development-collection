@@ -297,7 +297,7 @@ class ProjectionContentGraph
                       AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                     [
-                        'childAnchorPoint' => $childAnchorPoint?->value,
+                        'childAnchorPoint' => $childAnchorPoint->value,
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
