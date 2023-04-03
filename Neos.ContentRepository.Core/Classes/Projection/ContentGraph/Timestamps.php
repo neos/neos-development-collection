@@ -49,6 +49,8 @@ use DateTimeImmutable;
  * the `originalLastModified` value is also set to the current date and time if the node is modified in the original content stream.
  * Otherwise, it is copied over from the original event
  *
+ * To order nodes by their timestamps, the {@see TimestampField} can be used (@see Ordering)
+ *
  * @api
  */
 final class Timestamps
