@@ -134,7 +134,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
         };
     }
 
