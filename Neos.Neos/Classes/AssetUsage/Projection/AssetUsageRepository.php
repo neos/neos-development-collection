@@ -69,6 +69,8 @@ final class AssetUsageRepository
             ->setLength(255)
             ->setNotnull(true)
             ->setDefault('');
+        $table->addColumn('origindimensionspacepoint', Types::TEXT)
+            ->setNotnull(false);
         $table->addColumn('origindimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true)
@@ -129,12 +131,12 @@ final class AssetUsageRepository
                     get_debug_type($result)
                 ), 1646320966);
             }
-            /** @var array{assetid: string, contentstreamid: string, origindimensionspacepointhash: string, nodeaggregateid: string, propertyname: string} $row */
+            /** @var array{assetid: string, contentstreamid: string, origindimensionspacepointhash: string, origindimensionspacepoint: string, nodeaggregateid: string, propertyname: string} $row */
             foreach ($result->iterateAssociative() as $row) {
                 yield new AssetUsage(
                     $row['assetid'],
                     ContentStreamId::fromString($row['contentstreamid']),
-                    $row['origindimensionspacepointhash'],
+                    OriginDimensionSpacePoint::fromJsonString($row['origindimensionspacepoint']),
                     NodeAggregateId::fromString($row['nodeaggregateid']),
                     $row['propertyname']
                 );
@@ -151,22 +153,22 @@ final class AssetUsageRepository
 
     public function addUsagesForNode(NodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
     {
-        if ($assetIdsByProperty->hasPropertiesWithoutAssets()) {
-            $this->dbal->executeStatement('DELETE FROM ' . $this->tableNamePrefix
-                . ' WHERE contentStreamId = :contentStreamId'
-                . ' AND nodeAggregateId = :nodeAggregateId'
-                . ' AND originDimensionSpacePointHash = :originDimensionSpacePointHash'
-                . ' AND propertyName IN (:propertyNames)', [
-                'contentStreamId' => $nodeAddress->contentStreamId,
-                'nodeAggregateId' => $nodeAddress->nodeAggregateId,
-                'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
-                'propertyNames' => $assetIdsByProperty->propertyNamesWithoutAsset(),
-            ], [
-                'propertyNames' => Connection::PARAM_STR_ARRAY,
-            ]);
-        }
+        // Delete all asset usage entries for newly set properties to ensure that removed or replaced assets are reflected
+        $this->dbal->executeStatement('DELETE FROM ' . $this->tableNamePrefix
+            . ' WHERE contentStreamId = :contentStreamId'
+            . ' AND nodeAggregateId = :nodeAggregateId'
+            . ' AND originDimensionSpacePointHash = :originDimensionSpacePointHash'
+            . ' AND propertyName IN (:propertyNames)', [
+            'contentStreamId' => $nodeAddress->contentStreamId,
+            'nodeAggregateId' => $nodeAddress->nodeAggregateId,
+            'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
+            'propertyNames' => $assetIdsByProperty->propertyNames(),
+        ], [
+            'propertyNames' => Connection::PARAM_STR_ARRAY,
+        ]);
+
         foreach ($assetIdsByProperty as $propertyName => $assetIdAndOriginalAssetIds) {
-            /** @var AssetIdAndOriginalAssetId $assetIdAndOriginalAssetId  */
+            /** @var AssetIdAndOriginalAssetId $assetIdAndOriginalAssetId */
             foreach ($assetIdAndOriginalAssetIds as $assetIdAndOriginalAssetId) {
                 try {
                     $this->dbal->insert($this->tableNamePrefix, [
@@ -174,6 +176,7 @@ final class AssetUsageRepository
                         'originalAssetId' => $assetIdAndOriginalAssetId->originalAssetId,
                         'contentStreamId' => $nodeAddress->contentStreamId,
                         'nodeAggregateId' => $nodeAddress->nodeAggregateId,
+                        'originDimensionSpacePoint' => json_encode($nodeAddress->dimensionSpacePoint),
                         'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
                         'propertyName' => $propertyName,
                     ]);
@@ -196,7 +199,7 @@ final class AssetUsageRepository
         $this->dbal->executeStatement(
             'INSERT INTO ' . $this->tableNamePrefix
             . ' SELECT assetid, originalassetid, :targetContentStreamId AS contentstreamid,'
-            . ' nodeaggregateid, origindimensionspacepointhash, propertyname'
+            . ' nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname'
             . ' FROM ' . $this->tableNamePrefix
             . ' WHERE contentStreamId = :sourceContentStreamId',
             [
@@ -214,11 +217,13 @@ final class AssetUsageRepository
             $this->dbal->executeStatement(
                 'INSERT INTO ' . $this->tableNamePrefix
                 . ' SELECT assetid, originalassetid, contentstreamid, nodeaggregateid,'
+                . ' :targetOriginDimensionSpacePoint AS origindimensionspacepoint,'
                 . ' :targetOriginDimensionSpacePointHash AS origindimensionspacepointhash, propertyname'
                 . ' FROM ' . $this->tableNamePrefix
                 . ' WHERE originDimensionSpacePointHash = :sourceOriginDimensionSpacePointHash',
                 [
                     'sourceOriginDimensionSpacePointHash' => $sourceOriginDimensionSpacePoint->hash,
+                    'targetOriginDimensionSpacePoint' => json_encode($targetOriginDimensionSpacePoint),
                     'targetOriginDimensionSpacePointHash' => $targetOriginDimensionSpacePoint->hash,
                 ]
             );

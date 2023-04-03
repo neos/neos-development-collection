@@ -10,10 +10,10 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\AssetUsage\AssetUsageFinder;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
+use Neos\Neos\AssetUsage\Dto\AssetUsagesByContentRepository;
 
 /**
  * @internal
@@ -42,7 +42,7 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
     ) {
     }
 
-    public function findAssetUsageByAssetId(string $assetId): AssetUsages
+    public function findAssetUsageByAssetId(string $assetId): AssetUsagesByContentRepository
     {
         $filter = AssetUsageFilter::create()
             ->withAsset($assetId)
@@ -50,10 +50,10 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
             ->groupByNode();
 
         $assetUsages = [];
-        foreach ($this->getContentRepositories() as $contentRepository) {
-            $assetUsages[] = $contentRepository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
+        foreach ($this->getContentRepositories() as $contentRepositoryId => $contentRepository) {
+            $assetUsages[$contentRepositoryId] = $contentRepository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
         }
-        return AssetUsages::fromArrayOfAssetUsages($assetUsages);
+        return new AssetUsagesByContentRepository($assetUsages);
     }
 
     public function removeAssetUsageByAssetId(string $assetId): void

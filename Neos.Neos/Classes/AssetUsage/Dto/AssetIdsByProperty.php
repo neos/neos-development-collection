@@ -15,38 +15,19 @@ use Traversable;
 final class AssetIdsByProperty implements \IteratorAggregate
 {
     /**
-     * @var array<string>
-     */
-    private array $propertyNamesWithoutAssets = [];
-
-    /**
-     * @var array<string, array<AssetIdAndOriginalAssetId>>
-     */
-    private array $assetIds = [];
-
-    /**
      * @param array<string, array<AssetIdAndOriginalAssetId>> $assetIds
      */
-    public function __construct(array $assetIds)
-    {
-        foreach ($assetIds as $propertyName => $assetIdsForThisProperty) {
-            $assetIdsForThisProperty === []
-                ? $this->propertyNamesWithoutAssets[] = $propertyName
-                : $this->assetIds[$propertyName] = $assetIdsForThisProperty;
-        }
+    public function __construct(
+        private readonly array $assetIds,
+    ) {
     }
 
     /**
      * @return array<string>
      */
-    public function propertyNamesWithoutAsset(): array
+    public function propertyNames(): array
     {
-        return $this->propertyNamesWithoutAssets;
-    }
-
-    public function hasPropertiesWithoutAssets(): bool
-    {
-        return $this->propertyNamesWithoutAssets !== [];
+        return array_keys($this->assetIds);
     }
 
     public function getIterator(): Traversable

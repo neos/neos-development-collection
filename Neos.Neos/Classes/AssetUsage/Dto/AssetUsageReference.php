@@ -9,21 +9,28 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\ContentRepository\Core\SharedModel\ContentRepositoryNodeInformationInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
  * @Flow\Proxy(false)
  * @api
  */
-final class AssetUsageReference extends UsageReference implements ContentRepositoryNodeInformationInterface
+final class AssetUsageReference extends UsageReference
 {
     public function __construct(
         AssetInterface $asset,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly ContentStreamId $contentStreamId,
-        private readonly string $originDimensionSpacePointHash,
+        private readonly OriginDimensionSpacePoint $originDimensionSpacePointHash,
         private readonly NodeAggregateId $nodeAggregateId,
     ) {
         parent::__construct($asset);
+    }
+
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        return $this->contentRepositoryId;
     }
 
     public function getContentStreamId(): ContentStreamId
@@ -31,7 +38,7 @@ final class AssetUsageReference extends UsageReference implements ContentReposit
         return $this->contentStreamId;
     }
 
-    public function getOriginDimensionSpacePointHash(): string
+    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
     {
         return $this->originDimensionSpacePointHash;
     }

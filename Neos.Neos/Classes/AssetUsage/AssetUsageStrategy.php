@@ -13,6 +13,8 @@ use Neos\Neos\AssetUsage\Dto\AssetUsage;
 use Neos\Neos\AssetUsage\Service\GlobalAssetUsageService;
 use Neos\Neos\AssetUsage\Dto\AssetUsages;
 use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\Neos\AssetUsage\Dto\AssetUsagesByContentRepository;
 
 /**
  * Implementation of the Neos AssetUsageStrategyInterface in order to protect assets in use
@@ -24,7 +26,7 @@ use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 final class AssetUsageStrategy implements AssetUsageStrategyInterface
 {
     /**
-     * @var array<string, AssetUsages>
+     * @var array<string, AssetUsagesByContentRepository>
      */
     private array $runtimeCache = [];
 
@@ -50,7 +52,11 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
         if (!$this->enabled) {
             return 0;
         }
-        return $this->getUsages($asset)->count();
+        return (int)array_sum(
+            iterator_to_array(
+                $this->getUsages($asset)->map(fn(AssetUsages $assetUsages) => $assetUsages->count())
+            )
+        );
     }
 
     public function getUsageReferences(AssetInterface $asset): array
@@ -59,16 +65,21 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
             return [];
         }
         /** @var \IteratorAggregate<UsageReference> $convertedUsages */
-        $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new AssetUsageReference(
-            $asset,
-            $usage->contentStreamId,
-            $usage->originDimensionSpacePoint,
-            $usage->nodeAggregateId
-        ));
+        $convertedUsages = $this->getUsages($asset)->map(
+            fn(AssetUsages $assetUsages, string $contentRepositoryId) => $assetUsages->map(
+                fn(AssetUsage $usage) => new AssetUsageReference(
+                    $asset,
+                    ContentRepositoryId::fromString($contentRepositoryId),
+                    $usage->contentStreamId,
+                    $usage->originDimensionSpacePoint,
+                    $usage->nodeAggregateId
+                )
+            )
+        );
         return iterator_to_array($convertedUsages, false);
     }
 
-    private function getUsages(AssetInterface $asset): AssetUsages
+    private function getUsages(AssetInterface $asset): AssetUsagesByContentRepository
     {
         $assetId = $this->persistenceManager->getIdentifierByObject($asset);
         if (!is_string($assetId)) {

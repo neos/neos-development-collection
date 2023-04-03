@@ -35,8 +35,8 @@ final class AssetUsages implements \IteratorAggregate, \Countable
      */
     public function map(\Closure $callback): \Traversable
     {
-        foreach ($this as $usage) {
-            yield $callback($usage);
+        foreach ($this as $key => $usage) {
+            yield $callback($usage, $key);
         }
     }
 

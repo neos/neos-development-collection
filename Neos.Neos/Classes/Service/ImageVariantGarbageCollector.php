@@ -20,7 +20,7 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\ContentRepository\Core\SharedModel\ContentRepositoryNodeInformationInterface;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 
 /**
  * Takes care of cleaning up ImageVariants.
@@ -76,9 +76,9 @@ class ImageVariantGarbageCollector
                 // If the result contains exactly the node that got a new ImageVariant assigned
                 // then we are safe to remove the asset here.
                 if (
-                    $usageItem instanceof ContentRepositoryNodeInformationInterface
+                    $usageItem instanceof AssetUsageReference
                     && $usageItem->getContentStreamId()->equals($node->subgraphIdentity->contentStreamId)
-                    && $usageItem->getOriginDimensionSpacePointHash() === $node->originDimensionSpacePoint->hash
+                    && $usageItem->getOriginDimensionSpacePoint()->equals($node->originDimensionSpacePoint)
                     && $usageItem->getNodeAggregateId()->equals($node->nodeAggregateId)
                 ) {
                     $this->assetRepository->remove($oldValue);

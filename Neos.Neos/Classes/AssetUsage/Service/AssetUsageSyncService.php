@@ -23,11 +23,6 @@ use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 class AssetUsageSyncService implements ContentRepositoryServiceInterface
 {
     /**
-     * @var array<string, DimensionSpacePoint>|null
-     */
-    private ?array $dimensionSpacePointsByHash = null;
-
-    /**
      * @var array<string, bool>
      */
     private array $existingAssetsById = [];
@@ -35,7 +30,6 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly AssetUsageFinder $assetUsageFinder,
         private readonly ContentGraphInterface $contentGraph,
-        private readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         private readonly AssetRepository $assetRepository,
         private readonly AssetUsageRepository $assetUsageRepository,
     ) {
@@ -61,10 +55,8 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
         if ($this->existingAssetsById[$usage->assetId] === false) {
             return false;
         }
-        $dimensionSpacePoint = $this->getDimensionSpacePointByHash($usage->originDimensionSpacePoint);
-        if ($dimensionSpacePoint === null) {
-            return false;
-        }
+        $dimensionSpacePoint = $usage->originDimensionSpacePoint->toDimensionSpacePoint();
+
         $subGraph = $this->contentGraph->getSubgraph(
             $usage->contentStreamId,
             $dimensionSpacePoint,
@@ -72,15 +64,5 @@ class AssetUsageSyncService implements ContentRepositoryServiceInterface
         );
         $node = $subGraph->findNodeById($usage->nodeAggregateId);
         return $node !== null;
-    }
-
-    private function getDimensionSpacePointByHash(string $dimensionSpacePointHash): ?DimensionSpacePoint
-    {
-        if ($this->dimensionSpacePointsByHash === null) {
-            foreach ($this->contentDimensionZookeeper->getAllowedDimensionSubspace() as $dimensionSpacePoint) {
-                $this->dimensionSpacePointsByHash[$dimensionSpacePoint->hash] = $dimensionSpacePoint;
-            }
-        }
-        return $this->dimensionSpacePointsByHash[$dimensionSpacePointHash] ?? null;
     }
 }
