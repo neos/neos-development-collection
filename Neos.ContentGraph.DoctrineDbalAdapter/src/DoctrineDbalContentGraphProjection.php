@@ -776,8 +776,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             if (is_null($anchorPoint)) {
                 throw new \InvalidArgumentException(
                     'Cannot update node with copy on write since no anchor point could be resolved for node '
-                    . $event->getNodeAggregateId() . ' in content stream '
-                    . $event->getContentStreamId(),
+                    . $event->getNodeAggregateId()->value . ' in content stream '
+                    . $event->getContentStreamId()->value,
                     1645303332
                 );
             }
