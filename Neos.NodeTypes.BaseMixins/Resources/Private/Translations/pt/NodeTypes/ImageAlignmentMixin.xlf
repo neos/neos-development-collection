@@ -16,11 +16,11 @@
       </trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.left" xml:space="preserve">
 				<source>Left</source>
-        <target state="needs-translation">Left</target>
+        <target state="translated">Esquerda</target>
       </trans-unit>
       <trans-unit id="properties.alignment.selectBoxEditor.values.right" xml:space="preserve">
 				<source>Right</source>
-        <target state="needs-translation">Right</target>
+        <target state="translated">Direita</target>
       </trans-unit>
     </body>
   </file>

@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
                 <source>Column</source>
-        <target state="translated">Col.</target>
+        <target state="translated">Columna</target>
       </trans-unit>
       <trans-unit id="groups.column" xml:space="preserve">
                 <source>Columns</source>
@@ -12,7 +12,7 @@
       </trans-unit>
       <trans-unit id="properties.layout" xml:space="preserve">
                 <source>Layout</source>
-        <target state="translated">Disposición</target>
+        <target state="translated">Diseño</target>
       </trans-unit>
     </body>
   </file>
