@@ -12,20 +12,18 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClock;
 
 /**
- * The feature trait to test projected nodes
+ * The feature trait to simulate date and time
  */
-trait CurrentUserTrait
+trait CurrentDateTimeTrait
 {
     /**
-     * @Given /^I am user identified by "([^"]*)"$/
-     * @param string $userId
+     * @When the current date and time is :timestamp
      */
-    public function iAmUserIdentifiedBy(string $userId): void
+    public function theCurrentDateAndTimeIs(string $timestamp): void
     {
-        FakeUserIdProvider::setUserId(UserId::fromString($userId));
+        FakeClock::setNow(\DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $timestamp));
     }
 }

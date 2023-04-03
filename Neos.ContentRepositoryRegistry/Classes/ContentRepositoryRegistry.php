@@ -15,8 +15,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFound;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
+use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
@@ -28,6 +30,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\PositionalArraySorter;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -98,7 +101,6 @@ final class ContentRepositoryRegistry
         return $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)];
     }
 
-
     /**
      * @throws ContentRepositoryNotFound | InvalidConfigurationException
      */
@@ -126,29 +128,31 @@ final class ContentRepositoryRegistry
         assert(isset($this->settings['presets'][$contentRepositorySettings['preset']]) && is_array($this->settings['presets'][$contentRepositorySettings['preset']]), InvalidConfigurationException::missingPreset($contentRepositoryId, $contentRepositorySettings['preset']));
         $contentRepositoryPreset = $this->settings['presets'][$contentRepositorySettings['preset']];
         try {
+            $clock = $this->buildClock($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset);
             return new ContentRepositoryFactory(
                 $contentRepositoryId,
-                $this->buildEventStore($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset),
+                $this->buildEventStore($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset, $clock),
                 $this->buildNodeTypeManager($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildPropertySerializer($contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset),
+                $clock,
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
         }
     }
 
-    private function buildEventStore(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $contentRepositoryPreset): EventStoreInterface
+    private function buildEventStore(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $contentRepositoryPreset, ClockInterface $clock): EventStoreInterface
     {
         assert(isset($contentRepositoryPreset['eventStore']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have eventStore.factoryObjectName configured.', $contentRepositorySettings['preset']));
         $eventStoreFactory = $this->objectManager->get($contentRepositoryPreset['eventStore']['factoryObjectName']);
         if (!$eventStoreFactory instanceof EventStoreFactoryInterface) {
             throw new \RuntimeException(sprintf('eventStore.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, EventStoreFactoryInterface::class, get_debug_type($eventStoreFactory)));
         }
-        return $eventStoreFactory->build($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset['eventStore']);
+        return $eventStoreFactory->build($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset['eventStore'], $clock);
     }
 
     private function buildNodeTypeManager(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $contentRepositoryPreset): NodeTypeManager
@@ -238,5 +242,15 @@ final class ContentRepositoryRegistry
             throw new \RuntimeException(sprintf('userIdProvider.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, UserIdProviderFactoryInterface::class, get_debug_type($userIdProviderFactory)));
         }
         return $userIdProviderFactory->build($contentRepositoryId, $contentRepositorySettings, $contentRepositoryPreset);
+    }
+
+    private function buildClock(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $contentRepositoryPreset): ClockInterface
+    {
+        assert(isset($contentRepositoryPreset['clock']['factoryObjectName']), InvalidConfigurationException::fromMessage('Content repository preset "%s" does not have clock.factoryObjectName configured.', $contentRepositorySettings['preset']));
+        $clockFactory = $this->objectManager->get($contentRepositoryPreset['clock']['factoryObjectName']);
+        if (!$clockFactory instanceof ClockFactoryInterface) {
+            throw new \RuntimeException(sprintf('clock.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ClockFactoryInterface::class, get_debug_type($clockFactory)));
+        }
+        return $clockFactory->build($contentRepositoryIdentifier, $contentRepositorySettings, $contentRepositoryPreset);
     }
 }
