@@ -404,13 +404,11 @@ trait EventSourcedTrait
             if (strpos($line['Value'], '$this->') === 0) {
                 // Special case: Referencing stuff from the context here
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
-                if (method_exists($this, $propertyOrMethodName)) {
-                    // is method
-                    $value = (string)$this->$propertyOrMethodName();
-                } else {
-                    // is property
-                    $value = (string)$this->$propertyOrMethodName;
-                }
+                $value = match ($propertyOrMethodName) {
+                    'currentNodeAggregateId' => $this->currentNodeAggregateId()->value,
+                    'contentStreamId' => $this->contentStreamId->value,
+                    default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
+                };
             } else {
                 // default case
                 $value = json_decode($line['Value'], true);
