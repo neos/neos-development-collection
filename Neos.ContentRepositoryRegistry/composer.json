@@ -8,7 +8,8 @@
     "require": {
         "neos/flow": "*",
         "neos/contentrepository-core": "*",
-        "symfony/property-access": "*"
+        "symfony/property-access": "*",
+        "psr/clock": "^1"
     },
     "autoload": {
         "psr-4": {

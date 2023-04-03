@@ -40,6 +40,7 @@ use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\EventStore\ProvidesSetupInterface;
+use Psr\Clock\ClockInterface;
 
 /**
  * Main Entry Point to the system. Encapsulates the full event-sourced Content Repository.
@@ -65,7 +66,8 @@ final class ContentRepository
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
-        private readonly UserIdProviderInterface $userIdProvider
+        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly ClockInterface $clock,
     ) {
     }
 
@@ -87,7 +89,7 @@ final class ContentRepository
 
         // TODO meaningful exception message
         $initiatingUserId = $this->userIdProvider->getUserId();
-        $initiatingTimestamp = (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM);
+        $initiatingTimestamp = $this->clock->now()->format(\DateTimeInterface::ATOM);
 
         // Add "initiatingUserId" and "initiatingTimestamp" metadata to all events.
         //                        This is done in order to keep information about the _original_ metadata when an
@@ -115,20 +117,6 @@ final class ContentRepository
         );
 
         return $this->eventPersister->publishEvents($eventsToPublish);
-    }
-
-    public function withInitiatingUserId(UserId $userId): self
-    {
-        return new self(
-            $this->commandBus,
-            $this->eventStore,
-            $this->projections,
-            $this->eventPersister,
-            $this->nodeTypeManager,
-            $this->variationGraph,
-            $this->contentDimensionSource,
-            new StaticUserIdProvider($userId),
-        );
     }
 
     /**

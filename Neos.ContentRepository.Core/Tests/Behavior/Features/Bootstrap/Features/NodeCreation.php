@@ -44,8 +44,6 @@ trait NodeCreation
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserId(): ?UserId;
-
     abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;

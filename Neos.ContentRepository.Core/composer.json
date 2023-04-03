@@ -13,7 +13,8 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "doctrine/dbal": "^2.6",
-        "symfony/serializer": "*"
+        "symfony/serializer": "*",
+        "psr/clock": "^1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

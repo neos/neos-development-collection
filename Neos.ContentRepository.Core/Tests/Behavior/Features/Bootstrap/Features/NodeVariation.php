@@ -32,8 +32,6 @@ trait NodeVariation
 
     abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
-    abstract protected function getCurrentUserId(): ?UserId;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
