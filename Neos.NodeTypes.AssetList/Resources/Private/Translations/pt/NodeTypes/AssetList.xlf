@@ -16,7 +16,7 @@
       </trans-unit>
       <trans-unit id="content.emptyAssetList" xml:space="preserve">
 				<source>Empty asset list</source>
-        <target state="needs-translation">Empty asset list</target>
+        <target state="translated">Lista de ativos vazia</target>
       </trans-unit>
     </body>
   </file>
