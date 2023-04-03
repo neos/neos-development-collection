@@ -30,6 +30,9 @@ final class Pagination
         return new self($limit, $offset);
     }
 
+    /**
+     * @param array<string, mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         $limit = null;
