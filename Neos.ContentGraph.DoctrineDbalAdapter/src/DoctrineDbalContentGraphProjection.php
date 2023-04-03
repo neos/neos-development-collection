@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeDisabling;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
@@ -21,7 +22,6 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -45,6 +45,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -205,25 +206,25 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
 
         if ($eventInstance instanceof RootNodeAggregateWithNodeWasCreated) {
-            $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance);
+            $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof RootNodeAggregateDimensionsWereUpdated) {
             $this->whenRootNodeAggregateDimensionsWereUpdated($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWithNodeWasCreated) {
-            $this->whenNodeAggregateWithNodeWasCreated($eventInstance);
+            $this->whenNodeAggregateWithNodeWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodeAggregateNameWasChanged) {
-            $this->whenNodeAggregateNameWasChanged($eventInstance);
+            $this->whenNodeAggregateNameWasChanged($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof ContentStreamWasForked) {
             $this->whenContentStreamWasForked($eventInstance);
         } elseif ($eventInstance instanceof ContentStreamWasRemoved) {
             $this->whenContentStreamWasRemoved($eventInstance);
         } elseif ($eventInstance instanceof NodePropertiesWereSet) {
-            $this->whenNodePropertiesWereSet($eventInstance);
+            $this->whenNodePropertiesWereSet($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodeReferencesWereSet) {
-            $this->whenNodeReferencesWereSet($eventInstance);
+            $this->whenNodeReferencesWereSet($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodeAggregateWasEnabled) {
             $this->whenNodeAggregateWasEnabled($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateTypeWasChanged) {
-            $this->whenNodeAggregateTypeWasChanged($eventInstance);
+            $this->whenNodeAggregateTypeWasChanged($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof DimensionSpacePointWasMoved) {
             $this->whenDimensionSpacePointWasMoved($eventInstance);
         } elseif ($eventInstance instanceof DimensionShineThroughWasAdded) {
@@ -233,11 +234,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         } elseif ($eventInstance instanceof NodeAggregateWasMoved) {
             $this->whenNodeAggregateWasMoved($eventInstance);
         } elseif ($eventInstance instanceof NodeSpecializationVariantWasCreated) {
-            $this->whenNodeSpecializationVariantWasCreated($eventInstance);
+            $this->whenNodeSpecializationVariantWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodeGeneralizationVariantWasCreated) {
-            $this->whenNodeGeneralizationVariantWasCreated($eventInstance);
+            $this->whenNodeGeneralizationVariantWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodePeerVariantWasCreated) {
-            $this->whenNodePeerVariantWasCreated($eventInstance);
+            $this->whenNodePeerVariantWasCreated($eventInstance, $eventEnvelope);
         } elseif ($eventInstance instanceof NodeAggregateWasDisabled) {
             $this->whenNodeAggregateWasDisabled($eventInstance);
         } else {
@@ -276,7 +277,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
+    private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
@@ -287,7 +288,14 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $originDimensionSpacePoint->hash,
             SerializedPropertyValues::fromArray([]),
             $event->nodeTypeName,
-            $event->nodeAggregateClassification
+            $event->nodeAggregateClassification,
+            null,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+                null,
+                null,
+            ),
         );
 
         $this->transactional(function () use ($node, $event) {
@@ -346,9 +354,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
+    private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             $this->createNodeWithHierarchy(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
@@ -359,7 +367,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $event->initialPropertyValues,
                 $event->nodeAggregateClassification,
                 $event->succeedingNodeAggregateId,
-                $event->nodeName
+                $event->nodeName,
+                $eventEnvelope,
             );
 
             $this->connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
@@ -374,22 +383,30 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event): void
+    private function whenNodeAggregateNameWasChanged(NodeAggregateNameWasChanged $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
-            $this->getDatabaseConnection()->executeUpdate('
+        $this->transactional(function () use ($event, $eventEnvelope) {
+            $this->getDatabaseConnection()->executeStatement('
                 UPDATE ' . $this->tableNamePrefix . '_hierarchyrelation h
-                inner join ' . $this->tableNamePrefix . '_node n on
+                INNER JOIN ' . $this->tableNamePrefix . '_node n on
                     h.childnodeanchor = n.relationanchorpoint
                 SET
-                  h.name = :newName
+                  h.name = :newName,
+                  n.lastmodified = :lastModified,
+                  n.originallastmodified = :originalLastModified
+
                 WHERE
                     n.nodeaggregateid = :nodeAggregateId
                     and h.contentstreamid = :contentStreamId
             ', [
                 'newName' => (string)$event->newNodeName,
                 'nodeAggregateId' => (string)$event->nodeAggregateId,
-                'contentStreamId' => (string)$event->contentStreamId
+                'contentStreamId' => (string)$event->contentStreamId,
+                'lastModified' => $eventEnvelope->recordedAt,
+                'originalLastModified' => self::initiatingDateTime($eventEnvelope),
+            ], [
+                'lastModified' => Types::DATETIME_IMMUTABLE,
+                'originalLastModified' => Types::DATETIME_IMMUTABLE,
             ]);
         });
     }
@@ -447,8 +464,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         DimensionSpacePointSet $visibleInDimensionSpacePoints,
         SerializedPropertyValues $propertyDefaultValuesAndTypes,
         NodeAggregateClassification $nodeAggregateClassification,
-        NodeAggregateId $succeedingSiblingNodeAggregateId = null,
-        NodeName $nodeName = null
+        ?NodeAggregateId $succeedingSiblingNodeAggregateId,
+        ?NodeName $nodeName,
+        EventEnvelope $eventEnvelope,
     ): void {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $node = new NodeRecord(
@@ -459,7 +477,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $propertyDefaultValuesAndTypes,
             $nodeTypeName,
             $nodeAggregateClassification,
-            $nodeName
+            $nodeName,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+                null,
+                null,
+            ),
         );
 
         // reconnect parent relations
@@ -508,7 +532,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      * @param DimensionSpacePointSet $dimensionSpacePointSet
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function connectHierarchy(
+    private function connectHierarchy(
         ContentStreamId $contentStreamId,
         NodeRelationAnchorPoint $parentNodeAnchorPoint,
         NodeRelationAnchorPoint $childNodeAnchorPoint,
@@ -548,7 +572,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getRelationPosition(
+    private function getRelationPosition(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
@@ -585,7 +609,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function getRelationPositionAfterRecalculation(
+    private function getRelationPositionAfterRecalculation(
         ?NodeRelationAnchorPoint $parentAnchorPoint,
         ?NodeRelationAnchorPoint $childAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSiblingAnchorPoint,
@@ -631,7 +655,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    public function whenContentStreamWasForked(ContentStreamWasForked $event): void
+    private function whenContentStreamWasForked(ContentStreamWasForked $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -690,7 +714,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         });
     }
 
-    public function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
+    private function whenContentStreamWasRemoved(ContentStreamWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -739,21 +763,43 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    public function whenNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
-            $this->updateNodeWithCopyOnWrite($event, function (NodeRecord $node) use ($event) {
-                $node->properties = $node->properties->merge($event->propertyValues);
-            });
+        $this->transactional(function () use ($event, $eventEnvelope) {
+            $anchorPoint = $this->projectionContentGraph
+                ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
+                    $event->getNodeAggregateId(),
+                    $event->getOriginDimensionSpacePoint(),
+                    $event->getContentStreamId()
+                );
+            if (is_null($anchorPoint)) {
+                throw new \InvalidArgumentException(
+                    'Cannot update node with copy on write since no anchor point could be resolved for node '
+                    . $event->getNodeAggregateId() . ' in content stream '
+                    . $event->getContentStreamId(),
+                    1645303332
+                );
+            }
+            $this->updateNodeRecordWithCopyOnWrite(
+                $event->getContentStreamId(),
+                $anchorPoint,
+                function (NodeRecord $node) use ($event, $eventEnvelope) {
+                    $node->properties = $node->properties->merge($event->propertyValues);
+                    $node->timestamps = $node->timestamps->with(
+                        lastModified: $eventEnvelope->recordedAt,
+                        originalLastModified: self::initiatingDateTime($eventEnvelope)
+                    );
+                }
+            );
         });
     }
 
     /**
      * @throws \Throwable
      */
-    public function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
+    private function whenNodeReferencesWereSet(NodeReferencesWereSet $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
+        $this->transactional(function () use ($event, $eventEnvelope) {
             foreach ($event->affectedSourceOriginDimensionSpacePoints as $originDimensionSpacePoint) {
                 $nodeAnchorPoint = $this->projectionContentGraph
                     ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
@@ -775,7 +821,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $this->updateNodeRecordWithCopyOnWrite(
                     $event->contentStreamId,
                     $nodeAnchorPoint,
-                    function (NodeRecord $node) {
+                    function (NodeRecord $node) use ($eventEnvelope) {
+                        $node->timestamps = $node->timestamps->with(
+                            lastModified: $eventEnvelope->recordedAt,
+                            originalLastModified: self::initiatingDateTime($eventEnvelope)
+                        );
                     }
                 );
 
@@ -899,7 +949,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    public function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
@@ -951,7 +1001,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      */
     protected function copyNodeToDimensionSpacePoint(
         NodeRecord $sourceNode,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        EventEnvelope $eventEnvelope,
     ): NodeRecord {
         $copyRelationAnchorPoint = NodeRelationAnchorPoint::create();
         $copy = new NodeRecord(
@@ -962,76 +1013,40 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $sourceNode->properties,
             $sourceNode->nodeTypeName,
             $sourceNode->classification,
-            $sourceNode->nodeName
+            $sourceNode->nodeName,
+            Timestamps::create(
+                $eventEnvelope->recordedAt,
+                self::initiatingDateTime($eventEnvelope),
+                null,
+                null,
+            ),
         );
         $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         return $copy;
     }
 
-    public function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
+    private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event, EventEnvelope $eventEnvelope): void
     {
-        $this->transactional(function () use ($event) {
-            $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream(
-                $event->nodeAggregateId,
-                $event->contentStreamId
-            );
-
+        $this->transactional(function () use ($event, $eventEnvelope) {
+            $anchorPoints = $this->projectionContentGraph->getAnchorPointsForNodeAggregateInContentStream($event->nodeAggregateId, $event->contentStreamId);
             foreach ($anchorPoints as $anchorPoint) {
                 $this->updateNodeRecordWithCopyOnWrite(
                     $event->contentStreamId,
                     $anchorPoint,
-                    function (NodeRecord $node) use ($event) {
+                    function (NodeRecord $node) use ($event, $eventEnvelope) {
                         $node->nodeTypeName = $event->newNodeTypeName;
+                        $node->timestamps = $node->timestamps->with(
+                            lastModified: $eventEnvelope->recordedAt,
+                            originalLastModified: self::initiatingDateTime($eventEnvelope)
+                        );
                     }
                 );
             }
         });
     }
 
-    /**
-     * @throws \Doctrine\DBAL\DBALException
-     * @throws \Exception
-     */
-    protected function updateNodeWithCopyOnWrite(EventInterface $event, callable $operations): mixed
-    {
-        if (
-            method_exists($event, 'getNodeAggregateId')
-            && method_exists($event, 'getOriginDimensionSpacePoint')
-            && method_exists($event, 'getContentStreamId')
-        ) {
-            $anchorPoint = $this->projectionContentGraph
-                ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
-                    $event->getNodeAggregateId(),
-                    $event->getOriginDimensionSpacePoint(),
-                    $event->getContentStreamId()
-                );
-        } else {
-            throw new \InvalidArgumentException(
-                'Cannot update node with copy on write for events of type '
-                    . get_class($event) . ' since they provide no NodeAggregateId, '
-                    . 'OriginDimensionSpacePoint or ContentStreamId',
-                1645303167
-            );
-        }
-
-        if (is_null($anchorPoint)) {
-            throw new \InvalidArgumentException(
-                'Cannot update node with copy on write since no anchor point could be resolved for node '
-                . $event->getNodeAggregateId() . ' in content stream '
-                . $event->getContentStreamId(),
-                1645303332
-            );
-        }
-
-        return $this->updateNodeRecordWithCopyOnWrite(
-            $event->getContentStreamId(),
-            $anchorPoint,
-            $operations
-        );
-    }
-
-    protected function updateNodeRecordWithCopyOnWrite(
+    private function updateNodeRecordWithCopyOnWrite(
         ContentStreamId $contentStreamIdWhereWriteOccurs,
         NodeRelationAnchorPoint $anchorPoint,
         callable $operations
@@ -1093,7 +1108,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
 
-    protected function copyReferenceRelations(
+    private function copyReferenceRelations(
         NodeRelationAnchorPoint $sourceRelationAnchorPoint,
         NodeRelationAnchorPoint $destinationRelationAnchorPoint
     ): void {
@@ -1118,7 +1133,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ]);
     }
 
-    public function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
+    private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
         $this->transactional(function () use ($event) {
             // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
@@ -1192,7 +1207,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         });
     }
 
-    public function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
+    private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
             // 1) hierarchy relations
@@ -1256,13 +1271,22 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     /**
      * @throws \Throwable
      */
-    protected function transactional(\Closure $operations): void
+    private function transactional(\Closure $operations): void
     {
         $this->getDatabaseConnection()->transactional($operations);
     }
 
-    protected function getDatabaseConnection(): Connection
+    private function getDatabaseConnection(): Connection
     {
         return $this->dbalClient->getConnection();
+    }
+
+    private static function initiatingDateTime(EventEnvelope $eventEnvelope): \DateTimeImmutable
+    {
+        $result = $eventEnvelope->event->metadata->has('initiatingTimestamp') ? \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $eventEnvelope->event->metadata->get('initiatingTimestamp')) : $eventEnvelope->recordedAt;
+        if (!$result instanceof \DateTimeImmutable) {
+            throw new \RuntimeException(sprintf('Failed to extract initiating timestamp from event "%s"', $eventEnvelope->event->id->value), 1678902291);
+        }
+        return $result;
     }
 }

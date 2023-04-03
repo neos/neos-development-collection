@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -77,6 +78,12 @@ final class NodeFactory
             $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
+            Timestamps::create(
+                self::parseDateTimeString($nodeRow['created']),
+                self::parseDateTimeString($nodeRow['originalcreated']),
+                isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
+                isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
+            ),
         );
     }
 
@@ -305,5 +312,14 @@ final class NodeFactory
                 )
             );
         }
+    }
+
+    private static function parseDateTimeString(string $string): \DateTimeImmutable
+    {
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        if ($result === false) {
+            throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
+        }
+        return $result;
     }
 }

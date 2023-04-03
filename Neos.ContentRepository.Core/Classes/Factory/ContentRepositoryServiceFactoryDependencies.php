@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\EventStore\EventStoreInterface;
 
 /**
@@ -42,9 +43,9 @@ final class ContentRepositoryServiceFactoryDependencies
         public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public readonly PropertyConverter $propertyConverter,
         public readonly ContentRepository $contentRepository,
-        // we don't need Projections, because this is included in ContentRepository->getState()
         // we don't need CommandBus, because this is included in ContentRepository->handle()
         public readonly EventPersister $eventPersister,
+        public readonly Projections $projections,
     ) {
     }
 
@@ -55,6 +56,7 @@ final class ContentRepositoryServiceFactoryDependencies
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         ContentRepository $contentRepository,
         EventPersister $eventPersister,
+        Projections $projections,
     ): self {
         return new self(
             $projectionFactoryDependencies->contentRepositoryId,
@@ -66,7 +68,8 @@ final class ContentRepositoryServiceFactoryDependencies
             $projectionFactoryDependencies->interDimensionalVariationGraph,
             $projectionFactoryDependencies->propertyConverter,
             $contentRepository,
-            $eventPersister
+            $eventPersister,
+            $projections,
         );
     }
 }
