@@ -513,7 +513,9 @@ class WorkspacesController extends AbstractModuleController
                         $documentPath = implode('/', array_slice(explode('/', $document->getPath()), 3));
                         $documentDimension = '';
                         foreach ($document->getDimensions() as $dimension) {
-                            $documentDimension .= $dimension[0];
+                            if (isset($dimension[0])) {
+                                $documentDimension .= $dimension[0];
+                            }
                         }
                         $relativePath = str_replace(sprintf(SiteService::SITES_ROOT_PATH . '/%s/%s', $siteNodeName, $documentPath), '', $node->getPath());
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
@@ -540,8 +542,8 @@ class WorkspacesController extends AbstractModuleController
 
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
-            foreach ($site['documents'] as $documentDimension => $doc) {
-                foreach ($doc as $documentKey => $document) {
+            foreach ($site['documents'] as $documentDimension => $documentsPerDimension) {
+                foreach ($documentsPerDimension as $documentKey => $document) {
                     $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
                     $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isMoved'] = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
                     $siteChanges[$siteKey]['documents'][$documentDimension][$documentKey]['isNew'] = $liveDocumentNode === null;
