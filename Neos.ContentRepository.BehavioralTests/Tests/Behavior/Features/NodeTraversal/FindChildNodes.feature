@@ -103,19 +103,19 @@ Feature: Find nodes using the findChildNodes query
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExistingNodeType"}' I expect no nodes to be returned
 
      # Child nodes paginated
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"limit": 3}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"limit": 2, "offset": 2}' I expect the nodes "a,b" to be returned and the total count to be 4
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"offset": 1}' I expect the nodes "contact,a,b" to be returned and the total count to be 4
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"limit": 2, "offset": 2}}' I expect the nodes "a,b" to be returned and the total count to be 4
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"offset": 1}}' I expect the nodes "contact,a,b" to be returned and the total count to be 4
 
      # Child nodes filtered by node type, paginated
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage", "limit": 3}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin", "limit": 2, "offset": 1}' I expect the nodes "a,b" to be returned and the total count to be 3
-    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Contact", "limit": 5}' I expect the nodes "terms,a,b" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage", "pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin", "pagination": {"limit": 2, "offset": 1}}' I expect the nodes "a,b" to be returned and the total count to be 3
+    When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Contact", "pagination": {"limit": 5}}' I expect the nodes "terms,a,b" to be returned
 
      # Child nodes filtered by property value
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty ^= \"the\""}' I expect the nodes "a2a1,a2a2,a2a4" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty ^= \"the brown\""}' I expect the nodes "a2a1,a2a4" to be returned
-    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty *= \"the\"", "limit": 2}' I expect the nodes "a2a1,a2a2" to be returned and the total count to be 3
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty *= \"the\"", "pagination": {"limit": 2}}' I expect the nodes "a2a1,a2a2" to be returned and the total count to be 3
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "dateProperty > \"1980-12-13\""}' I expect the nodes "a2a1,a2a2" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "dateProperty < \"1980-12-13\""}' I expect the nodes "a2a4" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty ^= \"the\" AND (floatProperty = 12.345 OR integerProperty = 19)"}' I expect the nodes "a2a1,a2a4" to be returned
