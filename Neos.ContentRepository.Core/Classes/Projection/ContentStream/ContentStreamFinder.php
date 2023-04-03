@@ -25,14 +25,84 @@ use Neos\EventStore\Model\EventStream\MaybeVersion;
 /**
  * Internal - implementation detail of {@see ContentStreamPruner}
  *
+ * This projection tracks whether content streams are currently in use or not. Each content stream
+ * is first CREATED or FORKED, and then moves to the IN_USE or REBASE_ERROR states; or is removed directly
+ * in case of temporary content streams.
+ *
+ * FORKING: Content streams are forked from a base content stream. It can happen that the base content
+ * stream is NO_LONGER_IN_USE, but the child content stream is still IN_USE_BY_WORKSPACE. In this case,
+ * the base content stream can go to removed=1 (removed from all projections), but needs to be retained
+ * in the event store: If we do a full replay, we need the events of the base content stream before the
+ * fork happened to rebuild the child content stream.
+ * This logic is done in {@see findUnusedAndRemovedContentStreams}.
+ *
+ * TEMPORARY content streams: Projections should take care to dispose their temporary content streams,
+ * by triggering a ContentStreamWasRemoved event after the content stream is no longer used.
+ *
+ *           │                       │
+ *           │(for root              │during
+ *           │ content               │rebase
+ *           ▼ stream)               ▼
+ *     ┌──────────┐            ┌──────────┐             Temporary
+ *     │ CREATED  │            │  FORKED  │────┐          states
+ *     └──────────┘            └──────────┘    for
+ *           │                       │      temporary
+ *           ├───────────────────────┤       content
+ *           ▼                       ▼       streams
+ * ┌───────────────────┐     ┌──────────────┐  │
+ * │IN_USE_BY_WORKSPACE│     │ REBASE_ERROR │  │
+ * └───────────────────┘     └──────────────┘  │        Persistent
+ *           │                       │         │          States
+ *           ▼                       │         │
+ * ┌───────────────────┐             │         │
+ * │ NO_LONGER_IN_USE  │             │         │
+ * └───────────────────┘             │         │
+ *           │                       │         │
+ *           └──────────┬────────────┘         │
+ *                      ▼                      │
+ * ┌────────────────────────────────────────┐  │
+ * │               removed=1                │  │
+ * │ => removed from all other projections  │◀─┘
+ * └────────────────────────────────────────┘           Cleanup
+ *                      │
+ *                      ▼
+ * ┌────────────────────────────────────────┐
+ * │  completely deleted from event stream  │
+ * └────────────────────────────────────────┘
+ *
  * @internal
  */
 final class ContentStreamFinder implements ProjectionStateInterface
 {
+    /**
+     * the content stream was created, but not yet assigned to a workspace.
+     *
+     * **temporary state** which should not appear if the system is idle (for content streams which are used with workspaces).
+     */
     public const STATE_CREATED = 'CREATED';
+
+    /**
+     * STATE_FORKED means the content stream was forked from an existing content stream, but not yet assigned
+     * to a workspace.
+     *
+     * **temporary state** which should not appear if the system is idle (for content streams which are used with workspaces).
+     */
+    public const STATE_FORKED = 'FORKED';
+
+    /**
+     * the content stream is currently referenced as the "active" content stream by a workspace.
+     */
     public const STATE_IN_USE_BY_WORKSPACE = 'IN_USE_BY_WORKSPACE';
-    public const STATE_REBASING = 'REBASING';
+
+    /**
+     * a workspace was tried to be rebased, and during the rebase an error occured. This is the content stream
+     * which contains the errored state - so that we can recover content from it (probably manually)
+     */
     public const STATE_REBASE_ERROR = 'REBASE_ERROR';
+
+    /**
+     * the content stream is not used anymore, and can be removed.
+     */
     public const STATE_NO_LONGER_IN_USE = 'NO_LONGER_IN_USE';
 
     public function __construct(
@@ -54,7 +124,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
         )->fetchAllAssociative();
 
         return array_map(
-            fn (array $databaseRow): ContentStreamId => ContentStreamId::fromString(
+            fn(array $databaseRow): ContentStreamId => ContentStreamId::fromString(
                 $databaseRow['contentStreamId']
             ),
             $databaseRows
@@ -62,10 +132,21 @@ final class ContentStreamFinder implements ProjectionStateInterface
     }
 
     /**
+     * @param bool $findTemporaryContentStreams if TRUE, will find all content streams not bound to a workspace
      * @return array<int,ContentStreamId>
      */
-    public function findUnusedContentStreams(): iterable
+    public function findUnusedContentStreams(bool $findTemporaryContentStreams): iterable
     {
+        $states = [
+            self::STATE_NO_LONGER_IN_USE,
+            self::STATE_REBASE_ERROR,
+        ];
+
+        if ($findTemporaryContentStreams === true) {
+            $states[] = self::STATE_CREATED;
+            $states[] = self::STATE_FORKED;
+        }
+
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
@@ -74,10 +155,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
                 AND state IN (:state)
             ',
             [
-                'state' => [
-                    self::STATE_NO_LONGER_IN_USE,
-                    self::STATE_REBASE_ERROR,
-                ]
+                'state' => $states
             ],
             [
                 'state' => Connection::PARAM_STR_ARRAY

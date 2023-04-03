@@ -88,6 +88,21 @@ class ChangeProjection implements ProjectionInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
+        // MIGRATIONS
+        $currentSchema = $schemaManager->createSchema();
+        if ($currentSchema->hasTable($this->tableName)) {
+            $tableSchema = $currentSchema->getTable($this->tableName);
+            // added 2023-03-18
+            if ($tableSchema->hasColumn('nodeAggregateIdentifier')) {
+                // table in old format -> we migrate to new.
+                $connection->executeStatement(sprintf('ALTER TABLE %s RENAME COLUMN nodeAggregateIdentifier TO nodeAggregateId; ', $this->tableName));
+            }
+            // added 2023-03-18
+            if ($tableSchema->hasColumn('contentStreamIdentifier')) {
+                $connection->executeStatement(sprintf('ALTER TABLE %s RENAME COLUMN contentStreamIdentifier TO contentStreamId; ', $this->tableName));
+            }
+        }
+
         $schema = new Schema();
         $changeTable = $schema->createTable($this->tableName);
         $changeTable->addColumn('contentStreamId', Types::STRING)
