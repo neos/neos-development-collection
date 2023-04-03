@@ -42,6 +42,8 @@ final class FindPrecedingSiblingNodesFilter
      *
      * Note: The signature of this method might be extended in the future, so it should always be used with named arguments
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+     *
+     * @param Pagination|array<string, mixed>|null $pagination
      */
     public function with(
         NodeTypeConstraints|string $nodeTypeConstraints = null,
@@ -55,7 +57,7 @@ final class FindPrecedingSiblingNodesFilter
         }
         return new self(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
-                $pagination ?? $this->pagination,
+            $pagination ?? $this->pagination,
         );
     }
 

@@ -30,6 +30,9 @@ final class OrderingField implements JsonSerializable
         return new self($timestampField, $direction);
     }
 
+    /**
+     * @param array<string, mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         if (!isset($array['type']) || !in_array($array['type'], ['propertyName', 'timestampField'], true)) {

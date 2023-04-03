@@ -29,6 +29,9 @@ final class Ordering implements IteratorAggregate, JsonSerializable
         $this->fields = $fields;
     }
 
+    /**
+     * @param array<string, mixed> $array
+     */
     public static function fromArray(array $array): self
     {
         $fields = [];

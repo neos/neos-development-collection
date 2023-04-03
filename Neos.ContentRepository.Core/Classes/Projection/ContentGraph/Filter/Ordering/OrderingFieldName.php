@@ -15,7 +15,8 @@ final class OrderingFieldName implements JsonSerializable
 {
     public readonly string $value;
 
-    private function __construct(string $value) {
+    private function __construct(string $value)
+    {
         $this->value = trim($value);
         if ($this->value === '') {
             throw new \InvalidArgumentException('Ordering field value must not be empty', 1680269479);
