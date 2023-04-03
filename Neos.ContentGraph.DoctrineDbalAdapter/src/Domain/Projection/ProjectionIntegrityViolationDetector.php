@@ -353,7 +353,7 @@ WHERE
 	AND h.dimensionspacepointhash = :dimensionSpacePointHash
     AND relationanchorpoint NOT IN (SELECT * FROM subgraph)',
                     [
-                        'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge(),
+                        'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
                         'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]

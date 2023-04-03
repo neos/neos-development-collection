@@ -97,7 +97,7 @@ final class NodeRecord
             'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
-            'nodename' => $this->nodeName?->value
+            'nodename' => $this->nodeName?->value ?? '',
         ]);
     }
 
@@ -115,7 +115,7 @@ final class NodeRecord
                 'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),
-                'nodename' => $this->nodeName?->value,
+                'nodename' => $this->nodeName?->value ?? '',
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint

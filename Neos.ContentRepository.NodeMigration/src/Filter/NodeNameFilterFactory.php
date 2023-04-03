@@ -43,7 +43,7 @@ class NodeNameFilterFactory implements FilterFactoryInterface
                 if (!$nodeAggregate->nodeName) {
                     return false;
                 }
-                return $this->nodeName->value === $nodeAggregate->nodeName->value;
+                return $this->nodeName->equals($nodeAggregate->nodeName);
             }
         };
     }

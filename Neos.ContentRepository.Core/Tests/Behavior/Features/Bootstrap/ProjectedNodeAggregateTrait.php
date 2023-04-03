@@ -48,7 +48,7 @@ trait ProjectedNodeAggregateTrait
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $this->initializeCurrentNodeAggregates(function (ContentGraphInterface $contentGraph, string $adapterName) use ($nodeAggregateId) {
             $currentNodeAggregate = $contentGraph->findNodeAggregateById($this->contentStreamId, $nodeAggregateId);
-            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s" in adapter "%s".', $nodeAggregateId->value, $this->contentStreamId, $adapterName));
+            Assert::assertNotNull($currentNodeAggregate, sprintf('Node aggregate "%s" was not found in the current content stream "%s" in adapter "%s".', $nodeAggregateId->value, $this->contentStreamId->value, $adapterName));
             return $currentNodeAggregate;
         });
     }
@@ -192,7 +192,7 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->contentStreamId . ';' . $nodeAggregateId->value;
+                return $this->contentStreamId->value . ';' . $nodeAggregateId->value;
             }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
                 return $parentNodeAggregate->contentStreamId->value . ';' . $parentNodeAggregate->nodeAggregateId->value;
@@ -235,7 +235,7 @@ trait ProjectedNodeAggregateTrait
         $expectedNodeAggregateIds = NodeAggregateIds::fromJsonString($serializedExpectedNodeAggregateIds);
         $this->assertOnCurrentNodeAggregates(function (NodeAggregate $nodeAggregate, string $adapterName) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
-                return $this->contentStreamId . ':' . $nodeAggregateId->value;
+                return $this->contentStreamId->value . ':' . $nodeAggregateId->value;
             }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
             $actualDiscriminators = array_values(array_map(function (NodeAggregate $parentNodeAggregate) {
                 return $parentNodeAggregate->contentStreamId->value . ':' . $parentNodeAggregate->nodeAggregateId->value;

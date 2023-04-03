@@ -551,7 +551,7 @@ trait EventSourcedTrait
                 $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
                 $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
                 Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId),
-                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId->value . '" (adapter: ' . $adapterName . ')');
+                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '" (adapter: ' . $adapterName . ')');
             }
         }
     }
