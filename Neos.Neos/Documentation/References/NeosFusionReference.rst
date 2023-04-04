@@ -162,7 +162,7 @@ Neos.Fusion:Loop
 
 Render each item in ``items`` using ``itemRenderer``.
 
-:items: (array/Iterable, **required**) The array or iterable to iterate over
+:items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
@@ -196,7 +196,7 @@ Neos.Fusion:Map
 
 Render each item in ``items`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
 
-:items: (array/Iterable, **required**) The array or iterable to iterate over
+:items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
@@ -210,7 +210,7 @@ Neos.Fusion:Reduce
 
 Reduce the given items to a single value by using ``itemRenderer``.
 
-:items: (array/Iterable, **required**) The array or iterable to iterate over
+:items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :carryName: (string, defaults to ``carry``) Context variable that contains the result of the last iteration

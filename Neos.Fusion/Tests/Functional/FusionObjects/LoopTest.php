@@ -31,7 +31,7 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicLoopWorkWithIterator()
+    public function basicLoopWorksWithIterator()
     {
         $view = $this->buildView();
         $view->assign('items', new \ArrayIterator(['element1', 'element2']));
@@ -42,15 +42,10 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function basicLoopWorkWithIteratorThatDoesNotImplementCount()
+    public function basicLoopWorksWithIteratorThatDoesNotImplementCount()
     {
-        $generator = function (): iterable {
-            yield 'element1';
-            yield 'element2';
-        };
-
         $view = $this->buildView();
-        $view->assign('items', $generator);
+        $view->assign('items', new \IteratorIterator(new \ArrayIterator(['element1', 'element2'])));
         $view->setFusionPath('loop/basicLoop');
         self::assertEquals('Xelement1Xelement2', $view->render());
     }
