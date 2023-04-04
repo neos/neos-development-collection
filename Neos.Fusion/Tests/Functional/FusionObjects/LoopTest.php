@@ -44,7 +44,7 @@ class LoopTest extends AbstractFusionObjectTest
      */
     public function basicLoopWorkWithIteratorThatDoesNotImplementCount()
     {
-        $generator = function(): iterable {
+        $generator = function (): iterable {
             yield 'element1';
             yield 'element2';
         };

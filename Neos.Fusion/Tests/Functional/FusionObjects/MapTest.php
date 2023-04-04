@@ -44,7 +44,7 @@ class MapTest extends AbstractFusionObjectTest
      */
     public function basicMapWorkWithIteratorThatDoesNotImplementCount()
     {
-        $generator = function(): iterable {
+        $generator = function (): iterable {
             yield 'element1';
             yield 'element2';
         };
