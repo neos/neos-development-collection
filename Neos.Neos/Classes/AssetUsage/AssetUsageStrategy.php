@@ -64,19 +64,21 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
         if (!$this->enabled) {
             return [];
         }
-        /** @var \IteratorAggregate<UsageReference> $convertedUsages */
-        $convertedUsages = $this->getUsages($asset)->map(
-            fn(AssetUsages $assetUsages, string $contentRepositoryId) => $assetUsages->map(
-                fn(AssetUsage $usage) => new AssetUsageReference(
+
+        $convertedUsages = [];
+        foreach ($this->getUsages($asset) as $contentRepositoryId => $usages) {
+            foreach ($usages as $usage) {
+                $convertedUsages[] = new AssetUsageReference(
                     $asset,
                     ContentRepositoryId::fromString($contentRepositoryId),
                     $usage->contentStreamId,
                     $usage->originDimensionSpacePoint,
                     $usage->nodeAggregateId
-                )
-            )
-        );
-        return iterator_to_array($convertedUsages, false);
+                );
+            }
+        }
+
+        return $convertedUsages;
     }
 
     private function getUsages(AssetInterface $asset): AssetUsagesByContentRepository
