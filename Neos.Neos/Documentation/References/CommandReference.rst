@@ -28,6 +28,58 @@ Package *NEOS.CONTENTREPOSITORY*
 --------------------------------
 
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:show`:
+
+``neos.contentrepository:nodetypes:show``
+**************************************
+
+**Show NodeType Configuration**
+
+Shows the merged configuration (including supertypes) of a NodeType
+
+**Examples:**
+
+``./flow nodeTypes:show Vendor.Site:Content``
+
+``./flow nodeTypes:show Vendor.Site:Content --path="properties.bar"``
+
+
+Options
+^^^^^^^
+
+``--node-type-name``
+  The name of the NodeType to show
+``--path``
+  Optional path of the NodeType-configuration which will be shown
+
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:list`:
+
+``neos.contentrepository:nodetypes:list``
+**************************************
+
+**List NodeTypes**
+
+Lists all declared NodeTypes grouped by namespace
+
+**Examples:**
+
+``./flow nodeTypes:list --filter Vendor.Site:``
+
+``./flow nodeTypes:list --filter Vendor.Site:Document  --include-abstract``
+
+
+
+Options
+^^^^^^^
+
+``--filter``
+  Only NodeType-names containing this string will be listed
+``--include-abstract``
+  List abstract NodeTypes
+
+
 .. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:node:repair`:
 
 ``neos.contentrepository:node:repair``
