@@ -155,7 +155,7 @@ class NodeViewHelperTest extends FunctionalTestCase
         $targetNode = $propertyMapper->convert('/sites/example/home', Node::class);
 
         $result = $this->invoke(['node' => $targetNode]);
-        $this->assertOutputLinkValid('home.html', $result);
+        $this->assertOutputLinkValid('home', $result);
     }
 
     /**
@@ -164,11 +164,11 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaAbsoluteNodePathString(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home']);
-        $this->assertOutputLinkValid('en/home.html', $result);
+        $this->assertOutputLinkValid('en/home', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us']);
-        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us/mission']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
     /**
@@ -177,13 +177,13 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaStringStartingWithTilde(): void
     {
         $result = $this->invoke(['node' => '~']);
-        $this->assertOutputLinkValid('en/home.html', $result);
+        $this->assertOutputLinkValid('en/home', $result);
         $result = $this->invoke(['node' => '~/home']);
-        $this->assertOutputLinkValid('en/home.html', $result);
+        $this->assertOutputLinkValid('en/home', $result);
         $result = $this->invoke(['node' => '~/home/about-us']);
-        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us', $result);
         $result = $this->invoke(['node' => '~/home/about-us/mission']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
     /**
@@ -193,12 +193,12 @@ class NodeViewHelperTest extends FunctionalTestCase
     {
         $this->runtime->pushContext('documentNode', $this->contentContext->getCurrentSiteNode()->getNode('home/about-us/mission'));
         $result = $this->invoke(['node' => '../history']);
-        $this->assertOutputLinkValid('en/home/about-us/history.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/history', $result);
         $this->runtime->popContext();
         $result = $this->invoke(['node' => 'about-us/mission']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
         $result = $this->invoke(['node' => './about-us/mission']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
     /**
@@ -210,11 +210,11 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaContextNodePathString(): void
     {
         $result = $this->invoke(['node' => '/sites/example/home@live']);
-        $this->assertOutputLinkValid('en/home.html', $result);
+        $this->assertOutputLinkValid('en/home', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us@live']);
-        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us/mission@live']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
 
         // The tests should also work in a regular fluid view, so we set that and repeat the tests
         $mockView = $this->getAccessibleMock(TemplateView::class, [], [], '', false);
@@ -222,11 +222,11 @@ class NodeViewHelperTest extends FunctionalTestCase
         $viewHelperVariableContainer->setView($mockView);
         $this->inject($this->viewHelper, 'viewHelperVariableContainer', $viewHelperVariableContainer);
         $result = $this->invoke(['node' => '/sites/example/home@live']);
-        $this->assertOutputLinkValid('en/home.html', $result);
+        $this->assertOutputLinkValid('en/home', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us@live']);
-        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us', $result);
         $result = $this->invoke(['node' => '/sites/example/home/about-us/mission@live']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
     /**
@@ -235,11 +235,11 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRendersUriViaNodeUriPathString(): void
     {
         $result = $this->invoke(['node' => 'node://3239baee-3e7f-785c-0853-f4302ef32570']);
-        $this->assertOutputLinkValid('en/home.html', $result);
+        $this->assertOutputLinkValid('en/home', $result);
         $result = $this->invoke(['node' => 'node://30e893c1-caef-0ca5-b53d-e5699bb8e506']);
-        $this->assertOutputLinkValid('en/home/about-us.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us', $result);
         $result = $this->invoke(['node' => 'node://63b28f4d-8831-ecb0-f9a6-466d97ffe2c2']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
     /**
@@ -248,7 +248,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRespectsAbsoluteParameter(): void
     {
         $result = $this->invoke(['absolute' => true]);
-        $this->assertOutputLinkValid('http://neos.test/en/home.html', $result);
+        $this->assertOutputLinkValid('http://neos.test/en/home', $result);
     }
 
     /**
@@ -257,7 +257,7 @@ class NodeViewHelperTest extends FunctionalTestCase
     public function viewHelperRespectsBaseNodeNameParameter(): void
     {
         $result = $this->invoke(['baseNodeName' => 'alternativeDocumentNode']);
-        $this->assertOutputLinkValid('en/home/about-us/our-mission.html', $result);
+        $this->assertOutputLinkValid('en/home/about-us/our-mission', $result);
     }
 
     /**
@@ -269,7 +269,7 @@ class NodeViewHelperTest extends FunctionalTestCase
             'node' => '/sites/example/home@live',
             'arguments' => ['foo' => 'bar']
         ]);
-        $this->assertOutputLinkValid('en/home.html?foo=bar', $result);
+        $this->assertOutputLinkValid('en/home?foo=bar', $result);
     }
 
     /**
