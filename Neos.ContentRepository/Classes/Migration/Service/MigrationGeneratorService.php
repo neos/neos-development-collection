@@ -21,12 +21,10 @@ use Neos\Utility\Files;
  * Service for the Migration generator
  *
  */
-class GeneratorService
+class MigrationGeneratorService
 {
-
     /**
      * @Flow\Inject
-     * @var PackageManager
      */
     protected PackageManager $packageManager;
 
@@ -38,7 +36,7 @@ class GeneratorService
      * @throws UnknownPackageException
      * @throws FilesException
      */
-    public function createNodeMigration(string $packageKey): string
+    public function generateBoilerplateMigrationFileInPackage(string $packageKey): string
     {
         $templatePath = 'resource://Neos.ContentRepository/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
         $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';

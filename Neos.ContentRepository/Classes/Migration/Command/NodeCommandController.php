@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\Migration\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Migration\Service\GeneratorService;
+use Neos\ContentRepository\Migration\Service\MigrationGeneratorService;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Configuration\Source\YamlSource;
@@ -68,15 +68,13 @@ class NodeCommandController extends CommandController
 
     /**
      * @Flow\Inject
-     * @var PackageManager
      */
     protected PackageManager $packageManager;
 
     /**
      * @Flow\Inject
-     * @var GeneratorService
      */
-    protected GeneratorService $generatorService;
+    protected MigrationGeneratorService $generatorService;
 
     /**
      * Do the configured migrations in the given migration.
@@ -185,7 +183,7 @@ class NodeCommandController extends CommandController
             $this->quit(1);
         }
 
-        $createdMigration = $this->generatorService->createNodeMigration($packageKey);
+        $createdMigration = $this->generatorService->generateBoilerplateMigrationFileInPackage($packageKey);
         $this->outputLine($createdMigration);
         $this->outputLine('Your node migration has been created successfully.');
     }
