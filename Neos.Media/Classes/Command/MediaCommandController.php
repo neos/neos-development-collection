@@ -427,7 +427,7 @@ class MediaCommandController extends CommandController
             $this->output->outputTable($outputPresets, ['Identifier', 'Variant name']);
         }
 
-        $databaseVariants = $this->imageVariantRepository->findAllWithOutdatedPresets($currentPresets);
+        $databaseVariants = $this->imageVariantRepository->findAllWithOutdatedPresets();
 
         if (empty($databaseVariants)) {
             $this->outputLine('There were <b>no outdated variant presets</b> in your database.');
@@ -474,7 +474,7 @@ class MediaCommandController extends CommandController
      */
     public function removeVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, int $limit = null)
     {
-        $variantsToRemove = $this->imageVariantRepository->findVariantsByName($identifier, $variantName, $limit);
+        $variantsToRemove = $this->imageVariantRepository->findVariantsByIdentifierAndVariantName($identifier, $variantName, $limit);
         if (empty($variantsToRemove)) {
             !$quiet && $this->output->outputLine('<em>Did not find any variants with name ' . $variantName . ' in ' . $identifier . '</em>');
             $this->quit(1);

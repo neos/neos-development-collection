@@ -15,53 +15,52 @@ namespace Neos\Media\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\ImageVariant;
-use Neos\Media\Domain\ValueObject\Configuration\VariantPreset;
+use Neos\Media\Domain\Service\AssetVariantGenerator;
 
 /**
- * A repository for ImageVariants
- *
  * @Flow\Scope("singleton")
  */
 class ImageVariantRepository extends AssetRepository
 {
-    public function findVariantsByName(?string $identifier, ?string $variantName, int $limit = null): array
+    /**
+     * @Flow\Inject
+     * @var AssetVariantGenerator
+     */
+    protected $assetVariantGenerator;
+
+    /**
+     * @return ImageVariant[]
+     */
+    public function findVariantsByIdentifierAndVariantName(string $identifier, string $variantName, int $limit = null): array
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select('iv')
             ->from(ImageVariant::class, 'iv')
             ->setMaxResults($limit);
 
-        if (is_null($identifier) && is_null($variantName)) {
-            $queryBuilder
-                ->where('iv.presetIdentifier IS NULL')
-                ->andWhere('iv.presetVariantName IS NULL');
-        } else {
-            $queryBuilder
-                ->where('iv.presetIdentifier = (:configuredIdentifiers)')
-                ->setParameter('configuredIdentifiers', $identifier);
+        $queryBuilder
+            ->where('iv.presetIdentifier = (:configuredIdentifier)')
+            ->setParameter('configuredIdentifier', $identifier);
 
-            $queryBuilder
-                ->andWhere('iv.presetVariantName = (:configuredVariantName)')
-                ->setParameter('configuredVariantName', $variantName);
-        }
+        $queryBuilder
+            ->andWhere('iv.presetVariantName = (:configuredVariantName)')
+            ->setParameter('configuredVariantName', $variantName);
 
         return $queryBuilder->getQuery()->execute();
     }
 
     /**
-     * Returns array of ImageVariants with outdated presets
-     *
-     * @param VariantPreset[] $configuredPresets
-     * @param int|null $limit
      * @return ImageVariant[]
      */
-    public function findAllWithOutdatedPresets(array $configuredPresets, int $limit = null): array
+    public function findAllWithOutdatedPresets(int $limit = null): array
     {
-        $configuredIdentifiers = array_keys($configuredPresets);
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select('iv')
             ->from(ImageVariant::class, 'iv')
             ->setMaxResults($limit);
+
+        $configuredPresets = $this->assetVariantGenerator->getVariantPresets();
+        $configuredIdentifiers = array_keys($configuredPresets);
 
         /**
          * for completely outdated preset configurations
