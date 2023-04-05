@@ -197,7 +197,7 @@ final class AssetUsageRepository
         ContentStreamId $targetContentStreamId,
     ): void {
         $this->dbal->executeStatement(
-            'INSERT INTO ' . $this->tableNamePrefix
+            'INSERT INTO ' . $this->tableNamePrefix . ' (assetid, originalassetid, contentstreamid, nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname)'
             . ' SELECT assetid, originalassetid, :targetContentStreamId AS contentstreamid,'
             . ' nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname'
             . ' FROM ' . $this->tableNamePrefix
@@ -215,7 +215,7 @@ final class AssetUsageRepository
     ): void {
         try {
             $this->dbal->executeStatement(
-                'INSERT INTO ' . $this->tableNamePrefix
+                'INSERT INTO ' . $this->tableNamePrefix . ' (assetid, originalassetid, contentstreamid, nodeaggregateid, origindimensionspacepoint, origindimensionspacepointhash, propertyname)'
                 . ' SELECT assetid, originalassetid, contentstreamid, nodeaggregateid,'
                 . ' :targetOriginDimensionSpacePoint AS origindimensionspacepoint,'
                 . ' :targetOriginDimensionSpacePointHash AS origindimensionspacepointhash, propertyname'
