@@ -1,10 +1,10 @@
 {namespace neos=Neos\Neos\ViewHelpers}
-<f:for each="{node.dimensions}" key="dimensionName" as="dimension">
+<f:for each="{node.originDimensionSpacePoint.coordinates}" key="dimensionName" as="dimension">
 	<f:for each="{contentDimensions}" key="contentDimensionKey" as="contentDimension">
 		<f:if condition="{dimensionName} === {contentDimensionKey}">
-			<f:for each="{contentDimension.presets}" key="presetKey" as="preset">
-				<f:if condition="{presetKey} === {dimension.0}">
-					<span class="neos-label" title="<i class='{contentDimension.icon}'></i> {neos:backend.translate(id: contentDimension.label)}: {presetKey}" data-neos-toggle="tooltip" data-html="1">{neos:backend.translate(id: preset.label)}</span>
+			<f:for each="{contentDimension.values}" key="presetKey" as="preset">
+				<f:if condition="{presetKey} === {dimension}">
+					<i class="fas fa-{contentDimension.configuration.icon}"></i> <span class="neos-label" title="{neos:backend.translate(id: contentDimension.configuration.label)}: {presetKey}" data-neos-toggle="tooltip" data-html="1">{neos:backend.translate(id: preset.configuration.label)}</span>
 				</f:if>
 			</f:for>
 		</f:if>

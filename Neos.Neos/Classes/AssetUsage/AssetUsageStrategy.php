@@ -1,68 +1,66 @@
 <?php
+
 declare(strict_types=1);
 
-namespace Neos\ESCR\AssetUsage;
+namespace Neos\Neos\AssetUsage;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Media\Domain\Model\Dto\UsageReference;
 use Neos\Media\Domain\Strategy\AssetUsageStrategyInterface;
-use Neos\Flow\Annotations as Flow;
-use Neos\ESCR\AssetUsage\Dto\AssetUsage;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
+use Neos\Neos\AssetUsage\Dto\AssetUsagesByContentRepository;
 
 /**
  * Implementation of the Neos AssetUsageStrategyInterface in order to protect assets in use
  * to be deleted via the Media Module.
  *
- * @Flow\Scope("singleton")
+ * @api
  */
+#[Flow\Scope('singleton')]
 final class AssetUsageStrategy implements AssetUsageStrategyInterface
 {
     /**
-     * @var array<string, AssetUsages>
+     * @var array<string, AssetUsagesByContentRepository>
      */
     private array $runtimeCache = [];
 
-    /**
-     * @Flow\InjectConfiguration("enabled")
-     */
-    protected bool $enabled = false;
-
     public function __construct(
-        private readonly AssetUsageFinder $assetUsageFinder,
-        private readonly PersistenceManagerInterface $persistenceManager
+        private readonly GlobalAssetUsageService $globalAssetUsageService,
+        private readonly PersistenceManagerInterface $persistenceManager,
     ) {
     }
 
     public function isInUse(AssetInterface $asset): bool
     {
-        if (!$this->enabled) {
-            return false;
-        }
         return $this->getUsageCount($asset) > 0;
     }
 
     public function getUsageCount(AssetInterface $asset): int
     {
-        if (!$this->enabled) {
-            return 0;
-        }
         return $this->getUsages($asset)->count();
     }
 
     public function getUsageReferences(AssetInterface $asset): array
     {
-        if (!$this->enabled) {
-            return [];
+        $convertedUsages = [];
+        foreach ($this->getUsages($asset) as $contentRepositoryId => $usages) {
+            foreach ($usages as $usage) {
+                $convertedUsages[] = new AssetUsageReference(
+                    $asset,
+                    ContentRepositoryId::fromString($contentRepositoryId),
+                    $usage->contentStreamId,
+                    $usage->originDimensionSpacePoint,
+                    $usage->nodeAggregateId
+                );
+            }
         }
-        /** @var \IteratorAggregate<UsageReference> $convertedUsages */
-        $convertedUsages = $this->getUsages($asset)->map(fn(AssetUsage $usage) => new UsageReference($asset));
-        return iterator_to_array($convertedUsages);
+        return $convertedUsages;
     }
 
-    private function getUsages(AssetInterface $asset): AssetUsages
+    private function getUsages(AssetInterface $asset): AssetUsagesByContentRepository
     {
         $assetId = $this->persistenceManager->getIdentifierByObject($asset);
         if (!is_string($assetId)) {
@@ -71,8 +69,9 @@ final class AssetUsageStrategy implements AssetUsageStrategyInterface
         if (!isset($this->runtimeCache[$assetId])) {
             $filter = AssetUsageFilter::create()
                 ->withAsset($assetId)
+                ->includeVariantsOfAsset()
                 ->groupByNode();
-            $this->runtimeCache[$assetId] = $this->assetUsageFinder->findByFilter($filter);
+            $this->runtimeCache[$assetId] = $this->globalAssetUsageService->findByFilter($filter);
         }
         return $this->runtimeCache[$assetId];
     }

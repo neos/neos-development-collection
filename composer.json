@@ -168,9 +168,6 @@
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
             ],
-            "Neos\\ESCR\\AssetUsage\\": [
-                "Neos.ESCR.AssetUsage/Classes/"
-            ],
             "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
                 "Neos.EventSourcedContentRepository.LegacyApi/Classes"
             ],
