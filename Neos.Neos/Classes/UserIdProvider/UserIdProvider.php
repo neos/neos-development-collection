@@ -13,7 +13,6 @@ use Neos\Neos\Domain\Service\UserService;
  */
 final class UserIdProvider implements UserIdProviderInterface
 {
-
     public function __construct(
         private readonly UserService $userService
     ) {

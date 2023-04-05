@@ -24,6 +24,9 @@ final class UserIdProviderFactory implements UserIdProviderFactoryInterface
     ) {
     }
 
+    /**
+     * @param array<string, mixed> $options
+     */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): UserIdProviderInterface
     {
         return new UserIdProvider($this->userService);
