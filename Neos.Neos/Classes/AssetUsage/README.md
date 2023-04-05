@@ -1,43 +1,51 @@
-# Neos.AssetUsage
+# Neos asset usages
 
 Custom projection to effectively track the usage of assets within the Event Sourced Content Repository
 
-## Usage
-
-1. Install this package
-
-    composer require neos/asset-usage
-
-2. Apply doctrine migrations in order to create the read model table
-
-    ./flow doctrine:migrate
-
-3. And replay the projection
-
-    ./flow projection:replay assetusage
-
 ### Neos usage strategy
 
-This package comes with an implementation of the `\Neos\Media\Domain\Strategy\AssetUsageStrategyInterface` that
+This module comes with an implementation of the `\Neos\Media\Domain\Strategy\AssetUsageStrategyInterface` that
 will protect used assets from being removed via the Neos Media module.
 
-Currently, this needs no further configuration.
+By default, the asset usage tracking is active for the `default` Content Repository.
+You can activate it for additional Content Repositories via `Settings.yaml`:
+
+```yaml
+Neos:
+  Neos:
+    assetUsage:
+      contentRepositories:
+        'someContentRepository': true
+```
+
+You can also _disable_ asset usages for a Content Repository by setting the flag to `false`.
 
 ### Find usages
 
-The `AssetUsageFinder` is the central authority to find used assets.
-
-E.g. to find asset usages by a `contentStreamId` and group them by asset instance:
+To find asset usages for a given Content Repository, the `AssetUsageFinder` can be used:
 
 ```php
 $assetFilter = AssetUsageFilter::create()
    ->withContentStream($liveWorkspace->getCurrentContentStreamId())
    ->groupByAsset();
-$usages = $assetUsageFinder->findByFilter($assetFilter);
+$usages = $contentRepository->projectionState(AssetUsageProjection::class)->findByFilter($assetFilter);
 
 //$usages->count();
-foreach ($usages as $usage) {
-  // $usage->assetId;
+foreach ($usagesByContentRepository as $usage) {
+    // $usage->assetId;
+}
+```
+
+To look up asset usages for all configured Content Repositories, the `GlobalAssetUsageService` can be used instead:
+
+```php
+$usagesByContentRepository = $assetUsageService->findByFilter($assetFilter);
+
+//$usagesByContentRepository->count();
+foreach ($usagesByContentRepository as $contentRepositoryId => $usages) {
+  foreach ($usages as $usage) {
+    // $usage->assetId;
+  }
 }
 ```
 
@@ -49,30 +57,6 @@ In this version, usages are only removed if the corresponding node property is c
 It won't remove usages from child nodes if a parent node is deleted because we don't keep track of the
 full node hierarchy.
 
-We plan to implement a CLI command that allows to synchronize the removed nodes using the Content Graph.
+The `neos.neos.assetusage:assetusage:sync` command can be used to (re-)synchronize all assets:
 
-### Projection logic
-
-```mermaid
-flowchart LR
-    addUsagesForNode[Add usages for node]:::command
-    removeNode[Remove usages for node]:::command
-    copyDimensions[Duplicate usages from dimensions]:::command
-    copyContentStream[Duplicate usages from content stream]:::command
-    removeContentStream[Remove usages by content stream]:::command
-
-    NodeAggregateWithNodeWasCreated:::event-->addUsagesForNode
-    NodePropertiesWereSet:::event-->addUsagesForNode
-    NodeAggregateWasRemoved:::event-->removeNode
-    NodePeerVariantWasCreated:::event-->copyDimensions
-    ContentStreamWasForked:::event-->copyContentStream
-    WorkspaceWasDiscarded:::event-->removeContentStream
-    WorkspaceWasPartiallyDiscarded:::event-->removeContentStream
-    WorkspaceWasPartiallyPublished:::event-->removeContentStream
-    WorkspaceWasPublished:::event-->removeContentStream
-    WorkspaceWasRebased:::event-->removeContentStream
-    ContentStreamWasRemoved:::event-->removeContentStream
-
-    classDef event fill:#ffa336, color:#000, stroke: black, stroke-width: 1px;
-    classDef command fill:#20bde6, color:#000, stroke: black, stroke-width: 1px;
-```
+    ./flow assetusage:sync 

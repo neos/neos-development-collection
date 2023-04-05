@@ -2,53 +2,50 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\AssetUsage\Service;
+namespace Neos\Neos\AssetUsage;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\AssetUsage\AssetUsageFinder;
-use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
-use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Neos\AssetUsage\Dto\AssetUsagesByContentRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 
 /**
- * @internal
+ * Central authority to look up or remove asset usages in all configured Content Repositories
+ *
+ * @api This is used by the {@see AssetUsageStrategy}
  */
+#[Flow\Scope('singleton')]
 class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 {
-    /**
-     * @var array<string, mixed>
-     */
-    #[Flow\InjectConfiguration(path: "AssetUsage")]
-    protected array $flowSettings;
 
     /**
      * @var array<string, ContentRepository>
      */
-    private ?array $repositories = null;
+    private ?array $contentRepositories = null;
 
     /**
      * @var array<string, AssetUsageRepository>
      */
     private array $assetUsageRepositories = [];
 
+    /**
+     * @param array<string, bool> $contentRepositoryIds in the format ['<crId1>' => true, '<crId2>' => false]
+     */
     public function __construct(
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly AssetUsageRepositoryFactory $assetUsageRepositoryFactory,
+        private readonly array $contentRepositoryIds
     ) {
     }
 
-    public function findAssetUsageByAssetId(string $assetId): AssetUsagesByContentRepository
+    public function findByFilter(AssetUsageFilter $filter): AssetUsagesByContentRepository
     {
-        $filter = AssetUsageFilter::create()
-            ->withAsset($assetId)
-            ->includeVariantsOfAsset()
-            ->groupByNode();
-
         $assetUsages = [];
         foreach ($this->getContentRepositories() as $contentRepositoryId => $contentRepository) {
             $assetUsages[$contentRepositoryId] = $contentRepository->projectionState(AssetUsageFinder::class)->findByFilter($filter);
@@ -68,23 +65,22 @@ class GlobalAssetUsageService implements ContentRepositoryServiceInterface
      */
     private function getContentRepositories(): array
     {
-        if ($this->repositories === null) {
-            $this->repositories = [];
+        if ($this->contentRepositories === null) {
+            $this->contentRepositories = [];
 
-            $repositoryIds = $this->flowSettings['contentRepositories'];
-            foreach ($repositoryIds as $contentRepositoryId => $enabled) {
+            foreach ($this->contentRepositoryIds as $contentRepositoryId => $enabled) {
                 if ($enabled !== true) {
                     continue;
                 }
                 $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryId);
 
-                $this->repositories[$contentRepositoryId->value] = $this->contentRepositoryRegistry->get(
+                $this->contentRepositories[$contentRepositoryId->value] = $this->contentRepositoryRegistry->get(
                     $contentRepositoryId
                 );
             }
         }
 
-        return $this->repositories;
+        return $this->contentRepositories;
     }
 
     private function getAssetUsageRepository(ContentRepositoryId $contentRepositoryId): AssetUsageRepository

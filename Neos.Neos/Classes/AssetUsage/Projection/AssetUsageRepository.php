@@ -176,7 +176,7 @@ final class AssetUsageRepository
                         'originalAssetId' => $assetIdAndOriginalAssetId->originalAssetId,
                         'contentStreamId' => $nodeAddress->contentStreamId,
                         'nodeAggregateId' => $nodeAddress->nodeAggregateId,
-                        'originDimensionSpacePoint' => json_encode($nodeAddress->dimensionSpacePoint),
+                        'originDimensionSpacePoint' => json_encode($nodeAddress->dimensionSpacePoint, JSON_THROW_ON_ERROR),
                         'originDimensionSpacePointHash' => $nodeAddress->dimensionSpacePoint->hash,
                         'propertyName' => $propertyName,
                     ]);
@@ -223,7 +223,7 @@ final class AssetUsageRepository
                 . ' WHERE originDimensionSpacePointHash = :sourceOriginDimensionSpacePointHash',
                 [
                     'sourceOriginDimensionSpacePointHash' => $sourceOriginDimensionSpacePoint->hash,
-                    'targetOriginDimensionSpacePoint' => json_encode($targetOriginDimensionSpacePoint),
+                    'targetOriginDimensionSpacePoint' => json_encode($targetOriginDimensionSpacePoint, JSON_THROW_ON_ERROR),
                     'targetOriginDimensionSpacePointHash' => $targetOriginDimensionSpacePoint->hash,
                 ]
             );

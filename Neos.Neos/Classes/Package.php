@@ -32,7 +32,7 @@ use Neos\Neos\Fusion\Cache\ContentCacheFlusher;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Neos\Service\EditorContentStreamZookeeper;
 use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Neos\AssetUsage\Service\GlobalAssetUsageService;
+use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 /**

@@ -33,9 +33,9 @@ final class AssetUsageCommandController extends CommandController
      */
     public function syncCommand(string $contentRepository = 'default', bool $quiet = false): void
     {
-        $contentRepository = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $assetUsageSyncService = $this->contentRepositoryRegistry->getService(
-            $contentRepository,
+            $contentRepositoryId,
             new AssetUsageSyncServiceFactory(
                 $this->assetRepository,
                 $this->assetUsageRepositoryFactory

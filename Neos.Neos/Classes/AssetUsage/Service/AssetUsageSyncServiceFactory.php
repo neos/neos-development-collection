@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\Neos\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryDependencies;
 use Neos\Media\Domain\Repository\AssetRepository;
@@ -12,7 +12,7 @@ use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 
 /**
  * @implements ContentRepositoryServiceFactoryInterface<AssetUsageSyncService>
- * @api
+ * @internal
  */
 class AssetUsageSyncServiceFactory implements ContentRepositoryServiceFactoryInterface
 {

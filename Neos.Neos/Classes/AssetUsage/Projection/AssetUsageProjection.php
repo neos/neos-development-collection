@@ -28,7 +28,6 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
-use Neos\Neos\AssetUsage\AssetUsageFinder;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Doctrine\DBAL\Connection;
@@ -208,11 +207,11 @@ final class AssetUsageProjection implements ProjectionInterface
      */
     private function extractAssetIds(string $type, mixed $value): array
     {
-        if ($type === 'string' || is_subclass_of($type, \Stringable::class, true)) {
+        if ($type === 'string' || is_subclass_of($type, \Stringable::class)) {
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
-        if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
+        if (is_subclass_of($type, ResourceBasedInterface::class)) {
             return isset($value['__identifier']) ? [$value['__identifier']] : [];
         }
 
@@ -223,8 +222,8 @@ final class AssetUsageProjection implements ProjectionInterface
             return [];
         }
         if (
-            !is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class, true)
-            && !is_subclass_of($parsedType['elementType'], \Stringable::class, true)
+            !is_subclass_of($parsedType['elementType'], ResourceBasedInterface::class)
+            && !is_subclass_of($parsedType['elementType'], \Stringable::class)
         ) {
             return [];
         }

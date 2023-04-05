@@ -10,7 +10,7 @@ use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\Neos\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;

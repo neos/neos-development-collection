@@ -4,21 +4,19 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Service;
 
-use Neos\Neos\AssetUsage\AssetUsageFinder;
-use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
-use Neos\Neos\AssetUsage\Dto\AssetUsage;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\Neos\AssetUsage\Dto\AssetUsages;
-use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
-use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\AssetUsage\Dto\AssetUsage;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Dto\AssetUsages;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Projection\AssetUsageRepository;
 
 /**
- * @api
+ * @internal
  */
 class AssetUsageSyncService implements ContentRepositoryServiceInterface
 {

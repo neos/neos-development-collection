@@ -7,11 +7,11 @@ namespace Neos\Neos\AssetUsage\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<AssetUsages>
  * @api
  */
-final class AssetUsagesByContentRepository implements \IteratorAggregate
+#[Flow\Proxy(false)]
+final class AssetUsagesByContentRepository implements \IteratorAggregate, \Countable
 {
     /**
      * @param array<AssetUsages> $assetUsages
@@ -35,5 +35,10 @@ final class AssetUsagesByContentRepository implements \IteratorAggregate
         foreach ($this as $key => $usage) {
             yield $callback($usage, $key);
         }
+    }
+
+    public function count(): int
+    {
+        return (int)array_sum(array_map(static fn (AssetUsages $assetUsages) => $assetUsages->count(), $this->assetUsages));
     }
 }

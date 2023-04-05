@@ -8,10 +8,10 @@ use Neos\Flow\Annotations as Flow;
 use Traversable;
 
 /**
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<string, array<AssetIdAndOriginalAssetId>>
  * @internal
  */
+#[Flow\Proxy(false)]
 final class AssetIdsByProperty implements \IteratorAggregate
 {
     /**

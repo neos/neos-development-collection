@@ -7,9 +7,9 @@ namespace Neos\Neos\AssetUsage\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @internal
  */
+#[Flow\Proxy(false)]
 class AssetIdAndOriginalAssetId
 {
     public function __construct(

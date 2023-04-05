@@ -10,9 +10,9 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final class AssetUsage
 {
     public function __construct(

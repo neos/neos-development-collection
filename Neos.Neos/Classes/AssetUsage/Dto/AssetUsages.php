@@ -7,17 +7,17 @@ namespace Neos\Neos\AssetUsage\Dto;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @implements \IteratorAggregate<AssetUsage>
  * @api
  */
+#[Flow\Proxy(false)]
 final class AssetUsages implements \IteratorAggregate, \Countable
 {
     private ?int $countRuntimeCache = null;
 
     public function __construct(
-        private \Closure $generator,
-        private \Closure $counter,
+        private readonly \Closure $generator,
+        private readonly \Closure $counter,
     ) {
     }
 
@@ -57,7 +57,7 @@ final class AssetUsages implements \IteratorAggregate, \Countable
             function () use ($assetUsages) {
                 return array_reduce(
                     $assetUsages,
-                    function (\AppendIterator $globalAssetUsages, AssetUsages $assetUsage) {
+                    static function (\AppendIterator $globalAssetUsages, AssetUsages $assetUsage) {
                         $globalAssetUsages->append($assetUsage->getIterator());
                         return $globalAssetUsages;
                     },
@@ -67,7 +67,7 @@ final class AssetUsages implements \IteratorAggregate, \Countable
             function () use ($assetUsages) {
                 return array_reduce(
                     $assetUsages,
-                    fn($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
+                    static fn($globalCount, AssetUsages $assetUsage) => $globalCount + $assetUsage->count(),
                     0
                 );
             }

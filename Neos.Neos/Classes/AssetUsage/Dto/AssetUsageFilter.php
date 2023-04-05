@@ -8,9 +8,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final class AssetUsageFilter
 {
     private function __construct(

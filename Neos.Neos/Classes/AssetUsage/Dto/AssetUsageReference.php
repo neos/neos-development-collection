@@ -13,9 +13,9 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 
 /**
- * @Flow\Proxy(false)
  * @api
  */
+#[Flow\Proxy(false)]
 final class AssetUsageReference extends UsageReference
 {
     public function __construct(
