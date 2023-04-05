@@ -159,6 +159,10 @@
 				<source>Discard selected changes</source>
         <target state="final">Geselecteerde wijzigingen verwijderen</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve" approved="yes">
+				<source>Publish selected changes</source>
+        <target state="final">Geselecteerde wijzigingen publiceren</target>
+      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve" approved="yes">
 				<source>Discard all changes</source>
         <target state="final">Alle wijzigingen negeren</target>
@@ -1292,14 +1296,6 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
       <trans-unit id="users.lastLogin" xml:space="preserve">
 				<source>Last Login</source>
         <target state="translated">Laatste login</target>
-      </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
-				<source>Publish selected changes to {0}</source>
-        <target state="translated">Publiceer geselecteerde wijzigingen naar {0}</target>
-      </trans-unit>
-      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
-				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
-        <target state="translated">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace wilt weggooien?</target>
       </trans-unit>
       <trans-unit id="user.description" xml:space="preserve">
 				<source>Contains modules related to management of users</source>

@@ -105,7 +105,7 @@ class ReduceImplementation extends AbstractFusionObject
         }
         $itemKeyName = $this->getItemKey();
         $iterationName = $this->getIterationName();
-        $collectionTotalCount = count($items);
+        $collectionTotalCount = is_countable($items) ? count($items) : null;
         foreach ($items as $itemKey => $item) {
             $context = $this->runtime->getCurrentContext();
             $context[$itemName] = $item;
@@ -125,7 +125,7 @@ class ReduceImplementation extends AbstractFusionObject
     }
 
     /**
-     * @param integer $collectionCount
+     * @param integer|null $collectionCount
      * @return array
      */
     protected function prepareIterationInformation($collectionCount)
@@ -142,7 +142,7 @@ class ReduceImplementation extends AbstractFusionObject
         if ($this->numberOfRenderedNodes === 0) {
             $iteration['isFirst'] = true;
         }
-        if (($this->numberOfRenderedNodes + 1) === $collectionCount) {
+        if ($collectionCount && ($this->numberOfRenderedNodes + 1) === $collectionCount) {
             $iteration['isLast'] = true;
         }
         if (($this->numberOfRenderedNodes + 1) % 2 === 0) {

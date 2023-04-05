@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -10,9 +13,6 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;

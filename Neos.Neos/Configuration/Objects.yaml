@@ -8,15 +8,17 @@ Neos\Neos\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
           1:
             value: Neos_Neos_Configuration_Version
 
-Neos\Neos\Fusion\Cache\FusionCachingAspect:
-  properties:
-    fusionCache:
+Neos\Neos\Domain\Service\FusionConfigurationCache:
+  arguments:
+    1:
       object:
         factoryObjectName: Neos\Flow\Cache\CacheManager
         factoryMethodName: getCache
         arguments:
           1:
             value: Neos_Neos_Fusion
+    2:
+      setting: "Neos.Neos:fusion.enableObjectTreeCache"
 
 Neos\Neos\FrontendRouting\FrontendNodeRoutePartHandlerInterface:
   className: Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler

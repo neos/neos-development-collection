@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -9,10 +12,6 @@
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
 
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -25,6 +24,13 @@ use Neos\Neos\Service\NodeTypeSchemaBuilderFactory;
 #[Flow\Scope('singleton')]
 class SchemaController extends ActionController
 {
+
+    /**
+     * @var NodeTypeSchemaBuilder
+     * @Flow\Inject
+     */
+    protected $nodeTypeSchemaBuilder;
+
     /**
      * @Flow\Inject
      * @var VariableFrontend

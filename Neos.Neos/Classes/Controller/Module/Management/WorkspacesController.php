@@ -65,7 +65,20 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  */
 class WorkspacesController extends AbstractModuleController
 {
+
     use ModuleTranslationTrait;
+
+    /**
+     * @Flow\Inject
+     * @var PublishingService
+     */
+    protected $publishingService;
+
+    /**
+     * @Flow\Inject
+     * @var WorkspaceRepository
+     */
+    protected $workspaceRepository;
 
     /**
      * @Flow\Inject

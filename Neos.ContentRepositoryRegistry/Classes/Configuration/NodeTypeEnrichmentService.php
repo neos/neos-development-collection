@@ -29,7 +29,6 @@ use Neos\Utility\Arrays;
  */
 class NodeTypeEnrichmentService
 {
-
     /**
      * @Flow\Inject
      * @var ResourceManager

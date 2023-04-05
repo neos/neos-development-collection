@@ -1,4 +1,7 @@
 <?php
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -9,10 +12,6 @@
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
