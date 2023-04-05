@@ -2,6 +2,10 @@ Neos:
   ContentRepositoryRegistry:
     presets:
       'default':
+
+        userIdProvider:
+          factoryObjectName: Neos\Neos\UserIdProvider\UserIdProviderFactory
+
         projections:
           'Neos.Neos:DocumentUriPathProjection':
             factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory
