@@ -23,7 +23,6 @@ use Neos\Neos\AssetUsage\Projection\AssetUsageRepositoryFactory;
 #[Flow\Scope('singleton')]
 class GlobalAssetUsageService implements ContentRepositoryServiceInterface
 {
-
     /**
      * @var array<string, ContentRepository>
      */
