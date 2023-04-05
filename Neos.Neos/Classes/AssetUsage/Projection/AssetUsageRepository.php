@@ -81,7 +81,7 @@ final class AssetUsageRepository
             ->setDefault('');
 
         $table
-            ->addUniqueIndex(['assetid', 'contentstreamid', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'], 'assetperproperty')
+            ->addUniqueIndex(['assetid', 'originalassetid', 'contentstreamid', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'], 'assetperproperty')
             ->addIndex(['assetid'], 'assetid')
             ->addIndex(['originalassetid'], 'originalassetid')
             ->addIndex(['contentstreamid'], 'contentstreamid')
