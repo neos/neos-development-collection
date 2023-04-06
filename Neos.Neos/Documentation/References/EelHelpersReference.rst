@@ -1477,7 +1477,7 @@ Neos.Media.Assets.search(searchTerm, tags, collection)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``searchTerm`` (string) The search term to look for in the title, filename and caption of assets
-* ``tags`` (Neos\Media\Domain\Model\Tag[]|string[], optional) A list of ``Tag`` instances or tag labels as strings
+* ``tags`` (Neos\Media\Domain\Model\Tag[], optional) A list of ``Tag`` instances
 * ``collection`` (Neos\Media\Domain\Model\AssetCollection, optional) An ``AssetCollection`` instance
 
 **Return** (null|QueryResultInterface<AssetInterface>)
