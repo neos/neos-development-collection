@@ -4,14 +4,14 @@ namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
 use Neos\ContentRepository\Export\ProcessorInterface;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Model\Event\StreamName;
 
 /**
  * Processor that exports all events of the live workspace to an "events.jsonl" file
@@ -38,9 +38,7 @@ final class EventExportProcessor implements ProcessorInterface
         if ($liveWorkspace === null) {
             return ProcessorResult::error('Failed to find live workspace');
         }
-        $streamName = StreamName::fromString(
-            'ContentStream:' . $liveWorkspace->currentContentStreamId
-        );
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($liveWorkspace->currentContentStreamId)->getEventStreamName();
         $eventStream = $this->eventStore->load($streamName);
 
         $eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');

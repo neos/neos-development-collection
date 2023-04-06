@@ -35,7 +35,7 @@ use Neos\Utility\Files;
 class CrCommandController extends CommandController
 {
     /**
-     * @var array
+     * @var array<string|int,mixed>
      */
     #[Flow\InjectConfiguration(package: 'Neos.Flow')]
     protected array $flowSettings;
@@ -74,7 +74,6 @@ class CrCommandController extends CommandController
                 $contentRepository->getWorkspaceFinder(),
                 $this->assetRepository,
                 $this->assetUsageFinder,
-                $liveContentStreamIdentifier
             )
         );
         assert($exportService instanceof ExportService);
@@ -107,7 +106,13 @@ class CrCommandController extends CommandController
             )
         );
         assert($importService instanceof ImportService);
-        $importService->runAllProcessors($this->outputLine(...), $verbose);
+        try {
+            $importService->runAllProcessors($this->outputLine(...), $verbose);
+        } catch (\RuntimeException $exception) {
+            $this->outputLine('<error>Error: ' . $exception->getMessage() . '</error>');
+            $this->outputLine('<error>Import stopped.</error>');
+            return;
+        }
 
         $this->outputLine('Replaying projections');
         Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepositoryIdentifier' => $contentRepositoryIdentifier]);

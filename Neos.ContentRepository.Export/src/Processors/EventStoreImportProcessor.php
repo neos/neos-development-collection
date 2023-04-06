@@ -67,7 +67,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                 $keepStreamName = true;
             }
             if (!$keepStreamName) {
-                $event = $event->processPayload(fn (array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => (string)$this->contentStreamId] : $payload);
+                $event = $event->processPayload(fn (array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => (string) $this->contentStreamId] : $payload);
             }
             if (!$this->keepEventIds) {
                 try {
@@ -141,7 +141,6 @@ final class EventStoreImportProcessor implements ProcessorInterface
         } catch (ConcurrencyException $e) {
             return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $workspaceStreamName->value));
         }
-
 
         try {
             $this->eventStore->commit($contentStreamStreamName, Events::fromArray($domainEvents), ExpectedVersion::fromVersion($contentStreamCreationCommitResult->highestCommittedVersion));
