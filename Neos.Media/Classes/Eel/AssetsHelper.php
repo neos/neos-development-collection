@@ -92,6 +92,10 @@ class AssetsHelper implements ProtectedContextAwareInterface
             return null;
         }
 
+        if (is_string($collection)) {
+            $collection = $this->assetCollectionRepository->findOneByTitle($collection);
+        }
+
         try {
             return $this->assetRepository->findBySearchTermOrTags($searchTerm, $tags, $collection);
         } catch (InvalidQueryException) {
