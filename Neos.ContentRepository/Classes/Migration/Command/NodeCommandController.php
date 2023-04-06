@@ -86,9 +86,9 @@ class NodeCommandController extends CommandController
      * @param boolean $confirmation Confirm application of this migration, only needed if the given migration contains any warnings.
      * @param string $direction The direction to work in, MigrationStatus::DIRECTION_UP or MigrationStatus::DIRECTION_DOWN
      * @return void
-     * @see neos.contentrepository.migration:node:migrationstatus
+     * @see neos.contentrepository.migration:node:migrate
      */
-    public function migrateCommand($version, $confirmation = false, $direction = MigrationStatus::DIRECTION_UP)
+    public function migrateCommand(string $version, bool $confirmation = false, string $direction = MigrationStatus::DIRECTION_UP): void
     {
         try {
             $migrationConfiguration = $direction === MigrationStatus::DIRECTION_UP ?
@@ -123,9 +123,9 @@ class NodeCommandController extends CommandController
      * List available and applied migrations
      *
      * @return void
-     * @see neos.contentrepository.migration:node:migrate
+     * @see neos.contentrepository.migration:node:migrationstatus
      */
-    public function migrationStatusCommand()
+    public function migrationStatusCommand(): void
     {
         $this->outputLine();
 
