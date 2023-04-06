@@ -51,10 +51,15 @@ class AssetsHelper implements ProtectedContextAwareInterface
     protected $assetCollectionRepository;
 
     /**
-     * @return QueryResultInterface<AssetInterface> | null
+     * @return QueryResultInterface | null
+     * @throws InvalidQueryException
      */
-    public function findByTag(?Tag $tag): ?QueryResultInterface
+    public function findByTag(Tag|string|null $tag): ?QueryResultInterface
     {
+        if (is_string($tag)) {
+            $tag = $this->tagRepository->findOneByLabel($tag);
+        }
+
         if (!$tag) {
             return null;
         }
@@ -64,43 +69,24 @@ class AssetsHelper implements ProtectedContextAwareInterface
     /**
      * @return QueryResultInterface<AssetInterface> | null
      */
-    public function findByTagLabel(?string $tagLabel): ?QueryResultInterface
+    public function findByCollection(AssetCollection|string|null $collection): ?QueryResultInterface
     {
-        if (!$tagLabel) {
-            return null;
+        if (is_string($collection)) {
+            $collection = $this->assetCollectionRepository->findOneByTitle($collection);
         }
-        $tag = $this->tagRepository->findOneByLabel($tagLabel);
-        return $this->findByTag($tag);
-    }
 
-    /**
-     * @return QueryResultInterface<AssetInterface> | null
-     */
-    public function findByCollection(?AssetCollection $collection): ?QueryResultInterface
-    {
         if (!$collection) {
             return null;
         }
+
         return $this->assetRepository->findByAssetCollection($collection);
     }
 
     /**
+     * @param Tag[]|string[] $tags
      * @return QueryResultInterface<AssetInterface> | null
      */
-    public function findByCollectionTitle(?string $collectionTitle): ?QueryResultInterface
-    {
-        if (!$collectionTitle) {
-            return null;
-        }
-        $collection = $this->assetCollectionRepository->findOneByTitle($collectionTitle);
-        return $this->findByCollection($collection);
-    }
-
-    /**
-     * @param Tag[] $tags
-     * @return QueryResultInterface<AssetInterface> | null
-     */
-    public function search(string $searchTerm, array $tags = [], AssetCollection $collection = null): ?QueryResultInterface
+    public function search(?string $searchTerm, array $tags = [], AssetCollection|string $collection = null): ?QueryResultInterface
     {
         if (!$searchTerm) {
             return null;

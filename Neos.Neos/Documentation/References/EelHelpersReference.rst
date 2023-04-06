@@ -1462,28 +1462,14 @@ Implemented in: ``Neos\Media\Eel\AssetsHelper``
 Neos.Media.Assets.findByTag(tag)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``tag`` (Neos\Media\Domain\Model\Tag) A ``Tag`` instance
-
-**Return** (null|QueryResultInterface<AssetInterface>)
-
-Neos.Media.Assets.findByTagLabel(label)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``label`` (string) The label of a tag
+* ``tag`` (Neos\Media\Domain\Model\Tag|string) The label of a tag or an ``Tag`` instance
 
 **Return** (null|QueryResultInterface<AssetInterface>)
 
 Neos.Media.Assets.findByCollection(collection)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-* ``collection`` (Neos\Media\Domain\Model\AssetCollection) An ``AssetCollection`` instance
-
-**Return** (null|QueryResultInterface<AssetInterface>)
-
-Neos.Media.Assets.findByCollectionTitle(title)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``title`` (string) The title of a collection
+* ``collection`` (Neos\Media\Domain\Model\AssetCollection|string) The title of a collection or an ``AssetCollection`` instance
 
 **Return** (null|QueryResultInterface<AssetInterface>)
 
@@ -1491,7 +1477,7 @@ Neos.Media.Assets.search(searchTerm, tags, collection)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 * ``searchTerm`` (string) The search term to look for in the title, filename and caption of assets
-* ``tags`` (Neos\Media\Domain\Model\Tag[], optional) A list of ``Tag`` instances
+* ``tags`` (Neos\Media\Domain\Model\Tag[]|string[], optional) A list of ``Tag`` instances or tag labels as strings
 * ``collection`` (Neos\Media\Domain\Model\AssetCollection, optional) An ``AssetCollection`` instance
 
 **Return** (null|QueryResultInterface<AssetInterface>)
