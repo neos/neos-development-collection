@@ -51,11 +51,10 @@ class AssetCollectionTest extends AbstractTest
         $parent = new AssetCollection('parent');
 
         $child1->setParent($parent);
-        $child2->setParent($parent);
+        $parent->addChild($child2);
 
         $this->assetCollectionRepository->add($parent);
         $this->assetCollectionRepository->add($child1);
-        $this->assetCollectionRepository->add($child2);
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
@@ -75,7 +74,7 @@ class AssetCollectionTest extends AbstractTest
     /**
      * @test
      */
-    public function circularParentChildrenRelationThrowsError(): void
+    public function circularParentChildrenRelationThrowsErrorWhenSettingParent(): void
     {
         $child = new AssetCollection('child');
         $childOfChild = new AssetCollection('childOfChild');
@@ -86,6 +85,38 @@ class AssetCollectionTest extends AbstractTest
 
         $this->expectException(\InvalidArgumentException::class);
         $parent->setParent($childOfChild);
+    }
+
+    /**
+     * @test
+     */
+    public function circularParentChildrenRelationThrowsErrorWhenAddingChild(): void
+    {
+        $child = new AssetCollection('child');
+        $childOfChild = new AssetCollection('childOfChild');
+        $parent = new AssetCollection('parent');
+
+        $parent->addChild($child);
+        $child->addChild($childOfChild);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $childOfChild->addChild($parent);
+    }
+
+    /**
+     * @test
+     */
+    public function circularParentChildrenRelationThrowsErrorWhenSettingChildren(): void
+    {
+        $child = new AssetCollection('child');
+        $childOfChild = new AssetCollection('childOfChild');
+        $parent = new AssetCollection('parent');
+
+        $parent->setChildren(new ArrayCollection([$child]));
+        $child->setChildren(new ArrayCollection([$childOfChild]));
+
+        $this->expectException(\InvalidArgumentException::class);
+        $childOfChild->setChildren(new ArrayCollection([$parent]));
     }
 
     /**

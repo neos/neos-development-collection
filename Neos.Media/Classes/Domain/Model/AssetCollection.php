@@ -200,26 +200,33 @@ class AssetCollection
         return $this->parent;
     }
 
+    /**
+     * Throws an error if a circular dependency has been detected
+     * @throws \InvalidArgumentException
+     */
+    private function validateCircularHierarchy(): void
+    {
+        $parent = $this->parent;
+        $parents = [$parent];
+        while ($parent !== null) {
+            $parent = $parent->getParent();
+            if (in_array($parent, $parents, true)) {
+                throw new \InvalidArgumentException('Circular reference detected', 1680328041);
+            }
+        }
+    }
+
     public function setParent(?self $parent): void
     {
         $this->parent = $parent;
-
-        if ($parent) {
-            // Throw an error if a circular dependency has been detected
-            $parents = [$parent];
-            while ($parent !== null) {
-                $parent = $parent->getParent();
-                if (in_array($parent, $parents, true)) {
-                    throw new \InvalidArgumentException('Circular reference detected', 1680328041);
-                }
-            }
-        }
+        $this->validateCircularHierarchy();
     }
 
     public function addChild(self $child): void
     {
         if (!$this->children->contains($child)) {
             $this->children->add($child);
+            $child->setParent($this);
         }
     }
 
@@ -249,5 +256,6 @@ class AssetCollection
         foreach ($children as $child) {
             $child->setParent($this);
         }
+        $this->validateCircularHierarchy();
     }
 }
