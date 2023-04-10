@@ -173,6 +173,4 @@ class UsageController extends ActionController
             'userWorkspace' => $userWorkspace
         ]);
     }
-
-
 }
