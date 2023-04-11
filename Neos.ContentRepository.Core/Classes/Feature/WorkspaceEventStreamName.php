@@ -1,15 +1,5 @@
 <?php
 
-/*
- * This file is part of the Neos.ContentRepository package.
- *
- * (c) Contributors of the Neos Project - www.neos.io
- *
- * This package is Open Source Software. For the full copyright and license
- * information, please view the LICENSE file which was distributed with this
- * source code.
- */
-
 declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature;
@@ -27,7 +17,7 @@ final class WorkspaceEventStreamName
     private const EVENT_STREAM_NAME_PREFIX = 'Workspace:';
 
     private function __construct(
-        private readonly string $eventStreamName,
+        public readonly string $eventStreamName,
     ) {
     }
 
@@ -39,10 +29,5 @@ final class WorkspaceEventStreamName
     public function getEventStreamName(): StreamName
     {
         return StreamName::fromString($this->eventStreamName);
-    }
-
-    public function __toString(): string
-    {
-        return $this->eventStreamName;
     }
 }

@@ -21,7 +21,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 /**
  * Processor that exports all assets and resources used in the Neos live workspace to the file system
  *
- * Note: This processor requires the packages "neos/media" and "neos/escr-asset-usage" to be installed!
+ * Note: This processor requires the packages "neos/media" and "neos/neos" to be installed!
  */
 final class AssetExportProcessor implements ProcessorInterface
 {

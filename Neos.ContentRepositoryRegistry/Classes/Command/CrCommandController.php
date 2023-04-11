@@ -80,22 +80,22 @@ final class CrCommandController extends CommandController
         }
     }
 
-    public function pruneCommand(string $contentRepositoryIdentifier = 'default'): void
+    public function pruneCommand(string $contentRepository = 'default'): void
     {
-        if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepositoryIdentifier), false)) {
+        if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
             return;
         }
 
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = ContentRepositoryId::fromString($contentRepository);
 
         $contentStreamPruner = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepository,
             new ContentStreamPrunerFactory()
         );
         $contentStreamPruner->pruneAll();
 
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepository,
             new WorkspaceMaintenanceServiceFactory()
         );
         $workspaceMaintenanceService->pruneAll();
