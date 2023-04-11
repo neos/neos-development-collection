@@ -88,7 +88,7 @@ class NodeCommandController extends CommandController
      * @return void
      * @see neos.contentrepository.migration:node:migrate
      */
-    public function migrateCommand(string $version, bool $confirmation = false, string $direction = MigrationStatus::DIRECTION_UP): void
+    public function migrateCommand($version, $confirmation = false, $direction = MigrationStatus::DIRECTION_UP)
     {
         try {
             $migrationConfiguration = $direction === MigrationStatus::DIRECTION_UP ?
@@ -125,7 +125,7 @@ class NodeCommandController extends CommandController
      * @return void
      * @see neos.contentrepository.migration:node:migrationstatus
      */
-    public function migrationStatusCommand(): void
+    public function migrationStatusCommand()
     {
         $this->outputLine();
 
