@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageRepository;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\ImageVariant;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Service\AssetService;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
 
 /**
  * Takes care of cleaning up ImageVariants.
@@ -42,7 +42,7 @@ class ImageVariantGarbageCollector
     protected $persistenceManager;
 
     #[Flow\Inject]
-    protected AssetUsageRepository $assetUsageRepository;
+    protected AssetService $assetService;
 
     /**
      * Removes unused ImageVariants after a Node property changes to a different ImageVariant.
@@ -62,24 +62,24 @@ class ImageVariantGarbageCollector
         if ($oldValue === $value || (!$oldValue instanceof ImageVariant)) {
             return;
         }
-        $identifier = $this->persistenceManager->getIdentifierByObject($oldValue);
-        $usage = $this->assetUsageRepository->findUsages(AssetUsageFilter::create()->withAsset($identifier));
+        $usageCount = $this->assetService->getUsageCount($oldValue);
 
         // This case shouldn't happen as the query will usually find at least the node that triggered this call,
         // still if there is no relation we can remove the ImageVariant.
-        if ($usage->count() === 0) {
+        if ($usageCount === 0) {
             $this->assetRepository->remove($oldValue);
             return;
         }
 
-        if ($usage->count() === 1) {
-            foreach ($usage->getIterator() as $usageItem) {
+        if ($usageCount === 1) {
+            foreach ($this->assetService->getUsageReferences($oldValue) as $usageItem) {
                 // If the result contains exactly the node that got a new ImageVariant assigned
                 // then we are safe to remove the asset here.
                 if (
-                    $usageItem->contentStreamIdentifier === $node->subgraphIdentity->contentStreamId
-                    && $usageItem->originDimensionSpacePoint === $node->originDimensionSpacePoint->hash
-                    && $usageItem->nodeAggregateIdentifier === $node->nodeAggregateId
+                    $usageItem instanceof AssetUsageReference
+                    && $usageItem->getContentStreamId()->equals($node->subgraphIdentity->contentStreamId)
+                    && $usageItem->getOriginDimensionSpacePoint()->equals($node->originDimensionSpacePoint)
+                    && $usageItem->getNodeAggregateId()->equals($node->nodeAggregateId)
                 ) {
                     $this->assetRepository->remove($oldValue);
                 }
