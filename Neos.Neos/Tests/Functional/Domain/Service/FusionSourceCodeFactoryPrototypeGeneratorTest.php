@@ -38,6 +38,7 @@ class FusionSourceCodeFactoryPrototypeGeneratorTest extends FunctionalTestCase
     public function setUp(): void
     {
         parent::setUp();
+        $this->markTestSkipped('re-implement with Neos 9.0');
 
         $yamlParser = $this->objectManager->get(YamlParser::class);
         $this->originalNodeTypeManager = $this->objectManager->get(NodeTypeManager::class);

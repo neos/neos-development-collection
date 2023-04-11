@@ -13,8 +13,9 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\PackageManager;
 use Neos\Fusion\Core\FusionSourceCode;
@@ -29,7 +30,7 @@ class FusionSourceCodeFactory
     protected array $autoIncludeConfiguration = [];
 
     #[Flow\Inject]
-    protected NodeTypeManager $nodeTypeManager;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected PackageManager $packageManager;
@@ -62,10 +63,11 @@ class FusionSourceCodeFactory
      *
      * @throws NeosDomainException
      */
-    public function createFromNodeTypeDefinitions(): FusionSourceCodeCollection
+    public function createFromNodeTypeDefinitions(ContentRepositoryId $contentRepositoryId): FusionSourceCodeCollection
     {
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $fusion = [];
-        foreach ($this->nodeTypeManager->getNodeTypes(false) as $nodeType) {
+        foreach ($contentRepository->getNodeTypeManager()->getNodeTypes(false) as $nodeType) {
             $fusion[] = $this->tryCreateFromNodeTypeDefinition($nodeType);
         }
         return new FusionSourceCodeCollection(...array_filter($fusion));

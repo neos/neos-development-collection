@@ -109,7 +109,7 @@ class FusionService
             $siteRootFusionPathAndFilename = sprintf($this->siteRootFusionPattern, $siteResourcesPackageKey);
 
             return $this->fusionParser->parseFromSource(
-                $this->fusionSourceCodeFactory->createFromNodeTypeDefinitions()
+                $this->fusionSourceCodeFactory->createFromNodeTypeDefinitions($site->getConfiguration()->contentRepositoryId)
                     ->union(
                         $this->fusionSourceCodeFactory->createFromAutoIncludes()
                     )
