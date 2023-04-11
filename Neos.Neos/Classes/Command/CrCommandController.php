@@ -24,13 +24,16 @@ use Neos\ContentRepository\Export\ExportServiceFactory;
 use Neos\ContentRepository\Export\ImportService;
 use Neos\ContentRepository\Export\ImportServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Utility\Files;
+use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 class CrCommandController extends CommandController
 {
@@ -42,7 +45,9 @@ class CrCommandController extends CommandController
 
     public function __construct(
         private readonly AssetRepository $assetRepository,
-        private readonly AssetUsageFinder $assetUsageFinder,
+        private readonly ResourceRepository $resourceRepository,
+        private readonly ResourceManager $resourceManager,
+        private readonly PersistenceManagerInterface $persistenceManager,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
     ) {
         parent::__construct();
@@ -63,6 +68,7 @@ class CrCommandController extends CommandController
         $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
         $liveContentStreamIdentifier = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
         $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
+        $assetUsageFinder = $contentRepository->projectionState(AssetUsageFinder::class);
 
         Files::createDirectoryRecursively($path);
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
@@ -73,7 +79,7 @@ class CrCommandController extends CommandController
                 $filesystem,
                 $contentRepository->getWorkspaceFinder(),
                 $this->assetRepository,
-                $this->assetUsageFinder,
+                $assetUsageFinder,
             )
         );
         assert($exportService instanceof ExportService);
@@ -96,13 +102,15 @@ class CrCommandController extends CommandController
         $contentRepositoryIdentifier = ContentRepositoryId::fromString($cr);
         $contentStreamIdentifier = ContentStreamId::create();
 
-        $this->outputLine('Importing events');
-
         $importService = $this->contentRepositoryRegistry->getService(
             $contentRepositoryIdentifier,
             new ImportServiceFactory(
                 $filesystem,
-                $contentStreamIdentifier
+                $contentStreamIdentifier,
+                $this->assetRepository,
+                $this->resourceRepository,
+                $this->resourceManager,
+                $this->persistenceManager,
             )
         );
         assert($importService instanceof ImportService);

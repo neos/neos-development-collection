@@ -54,10 +54,10 @@ final class AssetExportProcessor implements ProcessorInterface
 
         foreach ($this->assetUsageFinder->findByFilter($assetFilter) as $assetUsage) {
             /** @var Asset|null $asset */
-            $asset = $this->assetRepository->findByIdentifier($assetUsage->assetIdentifier);
+            $asset = $this->assetRepository->findByIdentifier($assetUsage->assetId);
             if ($asset === null) {
                 $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Skipping asset "%s" because it does not exist in the database', $assetUsage->assetIdentifier);
+                $this->dispatch(Severity::ERROR, 'Skipping asset "%s" because it does not exist in the database', $assetUsage->assetId);
                 continue;
             }
 

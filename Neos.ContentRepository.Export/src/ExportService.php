@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Export\Processors\AssetExportProcessor;
 use Neos\ContentRepository\Export\Processors\EventExportProcessor;
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 

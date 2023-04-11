@@ -21,15 +21,24 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Export\Processors\EventStoreImportProcessor;
 use Neos\EventStore\EventStoreInterface;
+use Neos\ContentRepository\Export\Processors\AssetRepositoryImportProcessor;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Flow\ResourceManagement\ResourceRepository;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
 
 class ImportService implements ContentRepositoryServiceInterface
 {
 
     public function __construct(
         private readonly Filesystem $filesystem,
+        private readonly ContentStreamId $contentStreamIdentifier,
+        private readonly AssetRepository $assetRepository,
+        private readonly ResourceRepository $resourceRepository,
+        private readonly ResourceManager $resourceManager,
+        private readonly PersistenceManagerInterface $persistenceManager,
         private readonly EventNormalizer $eventNormalizer,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentStreamId $contentStreamIdentifier,
     ) {
     }
 
@@ -41,6 +50,13 @@ class ImportService implements ContentRepositoryServiceInterface
 
         /** @var ProcessorInterface[] $processors */
         $processors = [
+            'Importing assets' => new AssetRepositoryImportProcessor(
+                $this->filesystem,
+                $this->assetRepository,
+                $this->resourceRepository,
+                $this->resourceManager,
+                $this->persistenceManager,
+            ),
             'Importing events' => new  EventStoreImportProcessor(
                 false,
                 $this->filesystem,
@@ -52,7 +68,7 @@ class ImportService implements ContentRepositoryServiceInterface
 
         foreach ($processors as $label => $processor) {
             $outputLineFn($label . '...');
-            $verbose && $processor->onMessage(fn (Severity $severity, string $message) => $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
+            $verbose && $processor->onMessage(fn(Severity $severity, string $message) => $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
                 throw new \RuntimeException($label . ': ' . $result->message ?? '');
