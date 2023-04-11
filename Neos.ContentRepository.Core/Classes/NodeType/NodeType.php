@@ -37,12 +37,8 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  *
  * @api
  */
-class NodeType
+final class NodeType
 {
-    /**
-     * Name of this node type. Example: "ContentRepository:Folder"
-     */
-    public readonly NodeTypeName $name;
 
     /**
      * Configuration for this node type, can be an arbitrarily nested array. Does not include inherited configuration.
@@ -75,10 +71,7 @@ class NodeType
      */
     protected array $declaredSuperTypes;
 
-    /**
-     * @var NodeLabelGeneratorInterface
-     */
-    protected $nodeLabelGenerator;
+    protected ?NodeLabelGeneratorInterface $nodeLabelGenerator = null;
 
     /**
      * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
@@ -88,20 +81,18 @@ class NodeType
     /**
      * Constructs this node type
      *
-     * @param NodeTypeName $name Name of the node type
+     * @param NodeTypeName $name Name of the node type (Example: "ContentRepository:Folder")
      * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
      */
     public function __construct(
-        NodeTypeName $name,
+        public readonly NodeTypeName $name,
         array $declaredSuperTypes,
         array $configuration,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ObjectManagerInterface $objectManager
     ) {
-        $this->name = $name;
-
         foreach ($declaredSuperTypes as $type) {
             if ($type !== null && !$type instanceof NodeType) {
                 throw new \InvalidArgumentException(

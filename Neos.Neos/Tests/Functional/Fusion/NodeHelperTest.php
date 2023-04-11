@@ -13,6 +13,7 @@ namespace Neos\Neos\Tests\Functional\Fusion;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
@@ -24,6 +25,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -117,17 +119,9 @@ class NodeHelperTest extends AbstractFusionObjectTest
     {
         parent::setUp();
 
-        $nodeType = $this
-            ->getMockBuilder(NodeType::class)
-            ->setMethods(['getName', 'getLabel'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $nodeType
-            ->method('getName')
-            ->willReturn('Neos.Neos:Content.Text');
-        $nodeType
-            ->method('getLabel')
-            ->willReturn('Content.Text');
+        $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+        $nodeType = new NodeType(NodeTypeName::fromString('Neos.Neos:Content.Text'), [], ['ui' => ['label' => 'Content.Text']], $mockNodeTypeManager, $mockObjectManager);
 
         $textNodeProperties = $this
             ->getMockBuilder(PropertyCollectionInterface::class)

@@ -2,6 +2,9 @@
 namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -22,7 +25,9 @@ class CreationDialogPostprocessorTest extends UnitTestCase
     public function setUp(): void
     {
         $this->creationDialogPostprocessor = new CreationDialogPostprocessor();
-        $this->mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
+        $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
+        $mockObjectManager = $this->getMockBuilder(ObjectManagerInterface::class)->getMock();
+        $this->mockNodeType = new NodeType(NodeTypeName::fromString('Some.NodeType:Name'), [], [], $mockNodeTypeManager, $mockObjectManager);
     }
 
     /**
