@@ -70,18 +70,6 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * @Flow\Inject
-     * @var PublishingService
-     */
-    protected $publishingService;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
-
-    /**
-     * @Flow\Inject
      * @var SiteRepository
      */
     protected $siteRepository;
