@@ -1,7 +1,7 @@
 {
     "name": "neos/contentrepositoryregistry",
     "type": "neos-package",
-    "description": "Registry",
+    "description": "Global registry for Neos Content Repository instances",
     "license": [
         "GPL-3.0-or-later"
     ],
@@ -20,10 +20,6 @@
         "psr-4": {
             "Neos\\ContentRepositoryRegistry\\Tests\\": "Tests"
         }
-    },
-    "replace": {
-        "neos/content-repository": "self.version",
-        "neos/contentrepository": "self.version"
     },
     "extra": {
         "applied-flow-migrations": [
