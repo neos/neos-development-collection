@@ -23,6 +23,7 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
 /**
@@ -247,7 +248,7 @@ class FusionService
 
     private function findSiteBySiteNode(Node $siteNode): Site
     {
-        return $this->siteRepository->findOneByNodeName($siteNode->nodeName)
+        return $this->siteRepository->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
             ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName), 1677245517);
     }
 }
