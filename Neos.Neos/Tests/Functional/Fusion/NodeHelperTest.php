@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -148,6 +149,8 @@ class NodeHelperTest extends AbstractFusionObjectTest
                 return null;
             });
 
+        $now = new \DateTimeImmutable();
+
         $this->textNode = new Node(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString("cr"),
@@ -161,7 +164,8 @@ class NodeHelperTest extends AbstractFusionObjectTest
             NodeTypeName::fromString("nt"),
             $nodeType,
             $textNodeProperties,
-            null
+            null,
+            Timestamps::create($now, $now, null, null)
         );
     }
 }

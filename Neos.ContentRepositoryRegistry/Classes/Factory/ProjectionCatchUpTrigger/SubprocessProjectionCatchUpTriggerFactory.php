@@ -11,11 +11,11 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
  */
 class SubprocessProjectionCatchUpTriggerFactory implements ProjectionCatchUpTriggerFactoryInterface
 {
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): ProjectionCatchUpTriggerInterface
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): ProjectionCatchUpTriggerInterface
     {
         return new CatchUpTriggerWithSynchronousOption(
-            $contentRepositoryIdentifier,
-            new SubprocessProjectionCatchUpTrigger($contentRepositoryIdentifier)
+            $contentRepositoryId,
+            new SubprocessProjectionCatchUpTrigger($contentRepositoryId)
         );
     }
 }

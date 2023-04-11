@@ -1,0 +1,5 @@
+Neos:
+  Neos:
+    assetUsage:
+      contentRepositories:
+        'default': true

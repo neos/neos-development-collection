@@ -11,7 +11,7 @@ prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.N
   @cache {
     mode = 'cached'
     entryIdentifier {
-      node = ${node}
+      node = ${Neos.Caching.entryIdentifierForNode(node)}
     }
     entryTags {
       1 = ${Neos.Caching.nodeTag(node)}

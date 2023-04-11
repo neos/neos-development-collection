@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
@@ -137,8 +137,8 @@ class FindOperation extends AbstractOperation
             $filterResults = [];
             $generatedNodes = false;
             if (isset($filter['IdentifierFilter'])) {
-                $nodeAggregateIdentifier = NodeAggregateId::fromString($filter['IdentifierFilter']);
-                $filterResults = $this->addNodesByIdentifier($nodeAggregateIdentifier, $entryPoints, $filterResults);
+                $nodeAggregateId = NodeAggregateId::fromString($filter['IdentifierFilter']);
+                $filterResults = $this->addNodesById($nodeAggregateId, $entryPoints, $filterResults);
                 $generatedNodes = true;
             } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
                 $nodePath = NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
@@ -195,8 +195,9 @@ class FindOperation extends AbstractOperation
     {
         $entryPoints = [];
         foreach ($contextNodes as $contextNode) {
+            assert($contextNode instanceof Node);
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
-            $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamIdentifier
+            $subgraphIdentifier = md5($contextNode->subgraphIdentity->contentStreamId
                 . '@' . $contextNode->subgraphIdentity->dimensionSpacePoint);
             if (!isset($entryPoints[(string) $subgraphIdentifier])) {
                 $entryPoints[(string) $subgraphIdentifier] = [
@@ -215,15 +216,15 @@ class FindOperation extends AbstractOperation
      * @param array<int,Node> $result
      * @return array<int,Node>
      */
-    protected function addNodesByIdentifier(
-        NodeAggregateId $nodeAggregateIdentifier,
+    protected function addNodesById(
+        NodeAggregateId $nodeAggregateId,
         array $entryPoints,
         array $result
     ): array {
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
-            $nodeByIdentifier = $subgraph->findNodeById($nodeAggregateIdentifier);
+            $nodeByIdentifier = $subgraph->findNodeById($nodeAggregateId);
             if ($nodeByIdentifier) {
                 $result[] = $nodeByIdentifier;
             }
@@ -276,11 +277,11 @@ class FindOperation extends AbstractOperation
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
 
-            foreach ($subgraph->findDescendants(
-                NodeAggregateIds::fromArray($entryPoint['nodes']),
-                FindDescendantsFilter::nodeTypeConstraints($nodeTypeFilter)
-            ) as $descendant) {
-                $result[] = $descendant;
+            /** @var Node $node */
+            foreach ($entryPoints['nodes'] as $node) {
+                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::nodeTypeConstraints($nodeTypeFilter)) as $descendant) {
+                    $result[] = $descendant;
+                }
             }
         }
 

@@ -111,7 +111,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     $properties = $node->properties;
                     $currentProperty = $properties->serialized()->getProperty($this->propertyName);
                     /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $currentProperty safe since Node::hasProperty */
-                    $value = $currentProperty->getValue();
+                    $value = $currentProperty->value;
                     if (!is_string($value) && !is_array($value)) {
                         throw new \Exception(
                             'ChangePropertyValue can only be executed on properties'
@@ -138,7 +138,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                             SerializedPropertyValues::fromArray([
                                 $this->propertyName => new SerializedPropertyValue(
                                     $newValueWithReplacedSearch,
-                                    $currentProperty->getType()
+                                    $currentProperty->type
                                 )
                             ]),
                         )

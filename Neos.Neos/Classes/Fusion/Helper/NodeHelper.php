@@ -62,7 +62,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 return $subNode;
             } else {
                 $nodePathOfNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                    ->findNodePath($node->nodeAggregateId);
+                    ->retrieveNodePath($node->nodeAggregateId);
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
@@ -112,7 +112,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
 
-    public function nodeAddressToString(Node $node): string
+    public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->subgraphIdentity->contentRepositoryId

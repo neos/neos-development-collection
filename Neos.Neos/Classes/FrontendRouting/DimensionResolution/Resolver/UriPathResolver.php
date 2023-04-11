@@ -20,10 +20,12 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
+use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segment;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\SegmentMappingElement;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPathResolverConfigurationException;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 
 /**
  * URI path segment based dimension value resolver
@@ -38,6 +40,10 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPa
 final class UriPathResolver implements DimensionResolverInterface
 {
     /**
+     * @var DimensionSpacePoint default dimension space point reduced to the dimensions which this resolver is responsible for
+     */
+    private readonly DimensionSpacePoint $filteredDefaultDimensionSpacePoint;
+    /**
      * @param array<string,DimensionSpacePoint> $uriPathToDimensionSpacePoint
      * @param array<string,string> $dimensionSpacePointHashToUriPath
      * @param Segments $segments
@@ -46,13 +52,16 @@ final class UriPathResolver implements DimensionResolverInterface
         private readonly array $uriPathToDimensionSpacePoint,
         private readonly array $dimensionSpacePointHashToUriPath,
         private readonly Segments $segments,
+        DimensionSpacePoint $defaultDimensionSpacePoint,
     ) {
+        $this->filteredDefaultDimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($defaultDimensionSpacePoint);
     }
 
     public static function create(
         Segments $segments,
         Separator $separator,
-        ContentDimensionSourceInterface $contentDimensionSource
+        ContentDimensionSourceInterface $contentDimensionSource,
+        DimensionSpacePoint $defaultDimensionSpacePoint,
     ): self {
         self::validate($segments, $separator, $contentDimensionSource);
         list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths(
@@ -62,7 +71,8 @@ final class UriPathResolver implements DimensionResolverInterface
         return new self(
             $uriPathToDimensionSpacePoint,
             $dimensionSpacePointHashToUriPath,
-            $segments
+            $segments,
+            $defaultDimensionSpacePoint
         );
     }
 
@@ -164,18 +174,41 @@ final class UriPathResolver implements DimensionResolverInterface
         RequestToDimensionSpacePointContext $context
     ): RequestToDimensionSpacePointContext {
         $normalizedUriPath = trim($context->initialUriPath, '/');
-        $uriPathSegments = explode('/', $normalizedUriPath);
-        $firstUriPathSegment = array_shift($uriPathSegments);
+        $remainingUriPathSegments = explode('/', $normalizedUriPath);
+        $firstUriPathSegment = array_shift($remainingUriPathSegments);
 
-        if (isset($this->uriPathToDimensionSpacePoint[$firstUriPathSegment])) {
-            // match
-            $context = $context->withRemainingUriPath('/' . implode('/', $uriPathSegments));
-            $context = $context->withAddedDimensionSpacePoint(
+        if (!empty($firstUriPathSegment) && isset($this->uriPathToDimensionSpacePoint[$firstUriPathSegment])) {
+            // URL starts with /en_US (f.e.)
+            if (count($remainingUriPathSegments) === 0 && $this->uriPathToDimensionSpacePoint[$firstUriPathSegment]->hash === $this->filteredDefaultDimensionSpacePoint->hash) {
+                // user calls /en_US, but has this configured as default dimension space point.
+                // / should resolve to the language:en_US
+                // /en_US should NOT resolve. <----- WE ARE HERE
+                //
+                // this code is responsible for the last case ("/en_US should NOT resolve.").
+                // ("I don't know how to handle /en_US -> RoutePartHandler tries to resolve a node at /en_US/....
+                //  and (hopefully) won't find this node")
+                return $context;
+            }
+
+            // URL starts with /en_US (and we are NOT in the homepage-special-case above)
+            // -> we strip the /en_US segment from the URI path (for further processing)
+            // -> we store the resolved dimension space point in context.
+            $context = $context->withRemainingUriPath('/' . implode('/', $remainingUriPathSegments));
+            return $context->withAddedDimensionSpacePoint(
                 $this->uriPathToDimensionSpacePoint[$firstUriPathSegment]
             );
         } elseif (isset($this->uriPathToDimensionSpacePoint[''])) {
-            // Fall-through empty match (if configured)
-            $context = $context->withAddedDimensionSpacePoint($this->uriPathToDimensionSpacePoint['']);
+            // Fall-through empty match (if existing)
+            // (empty URL prefix should map to f.e. en_US -> so all URLs without a prefix end up here.)
+            return $context->withAddedDimensionSpacePoint($this->uriPathToDimensionSpacePoint['']);
+        } elseif ($firstUriPathSegment === "") {
+            // user calls /, and has configured a default DimensionSpacePoint without empty segments.
+            // / should resolve to the language:en_US <----- WE ARE HERE
+            // /en_US should NOT resolve.
+
+            // I am on the homepage
+            // -> fill with (filtered) default DSP
+            return $context->withAddedDimensionSpacePoint($this->filteredDefaultDimensionSpacePoint);
         }
 
         return $context;
@@ -183,13 +216,20 @@ final class UriPathResolver implements DimensionResolverInterface
 
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $dimensionSpacePoint,
-        SiteNodeName $targetSiteIdentifier,
+        DocumentNodeInfo $targetNodeInfo,
         UriConstraints $uriConstraints
     ): UriConstraints {
-        $dimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($dimensionSpacePoint);
+        $filteredDimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($dimensionSpacePoint);
+        unset($dimensionSpacePoint);
 
-        if (isset($this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash])) {
-            $uriPath = $this->dimensionSpacePointHashToUriPath[$dimensionSpacePoint->hash];
+        if ($targetNodeInfo->getUriPath() === '' && $filteredDimensionSpacePoint->hash === $this->filteredDefaultDimensionSpacePoint->hash) {
+            // link to homepage; AND default dimensions match:
+            // generate a link to "/" (by not modifying the UriConstraints)
+            return $uriConstraints;
+        }
+
+        if (isset($this->dimensionSpacePointHashToUriPath[$filteredDimensionSpacePoint->hash])) {
+            $uriPath = $this->dimensionSpacePointHashToUriPath[$filteredDimensionSpacePoint->hash];
             if (strlen($uriPath) > 0) {
                 return $uriConstraints->withPathPrefix($uriPath . '/', true);
             }

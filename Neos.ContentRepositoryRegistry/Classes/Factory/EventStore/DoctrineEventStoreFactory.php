@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\EventStore\DoctrineAdapter\DoctrineEventStore;
 use Neos\EventStore\EventStoreInterface;
+use Psr\Clock\ClockInterface;
 
 class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 {
@@ -16,16 +17,17 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $eventStorePreset): EventStoreInterface
+    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $eventStorePreset, ClockInterface $clock): EventStoreInterface
     {
         return new DoctrineEventStore(
             $this->connection,
-            self::databaseTableName($contentRepositoryIdentifier)
+            self::databaseTableName($contentRepositoryId),
+            $clock
         );
     }
 
-    public static function databaseTableName(ContentRepositoryId $contentRepositoryIdentifier): string
+    public static function databaseTableName(ContentRepositoryId $contentRepositoryId): string
     {
-        return sprintf('cr_%s_events', $contentRepositoryIdentifier);
+        return sprintf('cr_%s_events', $contentRepositoryId);
     }
 }

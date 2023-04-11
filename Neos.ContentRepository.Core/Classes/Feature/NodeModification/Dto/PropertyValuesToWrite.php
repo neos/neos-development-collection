@@ -27,16 +27,10 @@ namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 final class PropertyValuesToWrite
 {
     /**
-     * @var array<string,mixed>
-     */
-    private array $values;
-
-    /**
      * @param array<string,mixed> $values
      */
-    private function __construct(array $values)
+    private function __construct(public readonly array $values)
     {
-        $this->values = $values;
     }
 
     /**
@@ -65,14 +59,6 @@ final class PropertyValuesToWrite
 
     public function merge(self $other): self
     {
-        return new self(array_merge($this->values, $other->getValues()));
-    }
-
-    /**
-     * @return array<string,mixed>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
+        return new self(array_merge($this->values, $other->values));
     }
 }

@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -185,15 +186,15 @@ trait RoutingTrait
     }
 
     /**
-     * @Then the matched node should be :nodeAggregateIdentifier in content stream :contentStreamIdentifier and dimension :dimensionSpacePoint
+     * @Then the matched node should be :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint
      */
-    public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): void
+    public function theMatchedNodeShouldBeInContentStreamAndOriginDimension(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
     {
         $nodeAddress = $this->match($this->requestUrl);
         Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateIdentifier, (string)$nodeAddress->nodeAggregateId);
-        Assert::assertSame($contentStreamIdentifier, (string)$nodeAddress->contentStreamId);
+        Assert::assertSame($nodeAggregateId, (string)$nodeAddress->nodeAggregateId);
+        Assert::assertSame($contentStreamId, (string)$nodeAddress->contentStreamId);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             $nodeAddress->dimensionSpacePoint,
@@ -240,24 +241,24 @@ trait RoutingTrait
 
 
     /**
-     * @Then The node :nodeAggregateIdentifier in content stream :contentStreamIdentifier and dimension :dimensionSpacePoint should resolve to URL :url
+     * @Then The node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint should resolve to URL :url
      */
-    public function theNodeShouldResolveToUrl(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint, string $url): void
+    public function theNodeShouldResolveToUrl(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint, string $url): void
     {
-        $resolvedUrl = $this->resolveUrl($nodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
+        $resolvedUrl = $this->resolveUrl($nodeAggregateId, $contentStreamId, $dimensionSpacePoint);
         Assert::assertSame($url, (string)$resolvedUrl);
     }
 
 
     /**
-     * @Then The node :nodeAggregateIdentifier in content stream :contentStreamIdentifier and dimension :dimensionSpacePoint should not resolve to an URL
+     * @Then The node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint should not resolve to an URL
      */
-    public function theNodeShouldNotResolve(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): void
+    public function theNodeShouldNotResolve(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): void
     {
         $resolvedUrl = null;
         $exception = false;
         try {
-            $resolvedUrl = $this->resolveUrl($nodeAggregateIdentifier, $contentStreamIdentifier, $dimensionSpacePoint);
+            $resolvedUrl = $this->resolveUrl($nodeAggregateId, $contentStreamId, $dimensionSpacePoint);
         } catch (NoMatchingRouteException $exception) {
             $exception = true;
         }
@@ -284,16 +285,15 @@ trait RoutingTrait
         Assert::assertEquals($expectedResult, $actualResult);
     }
 
-    private function resolveUrl(string $nodeAggregateIdentifier, string $contentStreamIdentifier, string $dimensionSpacePoint): UriInterface
+    private function resolveUrl(string $nodeAggregateId, string $contentStreamId, string $dimensionSpacePoint): UriInterface
     {
         if ($this->requestUrl === null) {
             $this->iAmOnUrl('/');
         }
-        putenv('FLOW_REWRITEURLS=1');
         $nodeAddress = new NodeAddress(
-            ContentStreamId::fromString($contentStreamIdentifier),
+            ContentStreamId::fromString($contentStreamId),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            NodeAggregateId::fromString($nodeAggregateIdentifier),
+            NodeAggregateId::fromString($nodeAggregateId),
             WorkspaceName::forLive()
         );
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);
@@ -313,16 +313,18 @@ trait RoutingTrait
     private RequestToDimensionSpacePointContext $dimensionResolverContext;
 
     /**
-     * @When I invoke the Dimension Resolver :factoryClassName with options:
+     * @When I invoke the Dimension Resolver from site configuration:
      */
-    public function iInvokeTheDimensionResolverWithOptions(string $factoryClassName, PyStringNode $resolverOptionsYaml)
+    public function iInvokeTheDimensionResolverWithOptions(PyStringNode $rawSiteConfigurationYaml)
     {
-        $dimensionResolverFactory = $this->getObjectManager()->get($factoryClassName);
-        assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
-        $resolverOptions = Yaml::parse($resolverOptionsYaml->getRaw()) ?? [];
-        $dimensionResolver = $dimensionResolverFactory->create(ContentRepositoryId::fromString('default'), $resolverOptions);
+        $rawSiteConfiguration = Yaml::parse($rawSiteConfigurationYaml->getRaw()) ?? [];
+        $siteConfiguration = SiteConfiguration::fromArray($rawSiteConfiguration);
 
-        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), ContentRepositoryId::fromString("default"));
+        $dimensionResolverFactory = $this->getObjectManager()->get($siteConfiguration->contentDimensionResolverFactoryClassName);
+        assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
+        $dimensionResolver = $dimensionResolverFactory->create($siteConfiguration->contentRepositoryId, $siteConfiguration);
+
+        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), $siteConfiguration->contentRepositoryId);
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
         $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
@@ -331,12 +333,12 @@ trait RoutingTrait
     }
 
     /**
-     * @When I invoke the Dimension Resolver :factoryClassName with options and exceptions are caught:
+     * @When I invoke the Dimension Resolver from site configuration and exceptions are caught:
      */
-    public function iInvokeTheDimensionResolverWithOptionsAndExceptionsAreCaught(string $factoryClassName, PyStringNode $resolverOptionsYaml)
+    public function iInvokeTheDimensionResolverWithOptionsAndExceptionsAreCaught(PyStringNode $resolverOptionsYaml)
     {
         try {
-            $this->iInvokeTheDimensionResolverWithOptions($factoryClassName, $resolverOptionsYaml);
+            $this->iInvokeTheDimensionResolverWithOptions($resolverOptionsYaml);
         } catch (\Exception $e) {
             $this->lastCommandException = $e;
         }

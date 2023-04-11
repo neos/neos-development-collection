@@ -28,7 +28,9 @@ require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspacePublishing.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
@@ -37,7 +39,6 @@ require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ReadModelInstantiationTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
@@ -45,7 +46,6 @@ use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\ReadModelInstantiationTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -67,7 +67,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use EventSourcedTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
-    use ReadModelInstantiationTrait;
     use MigrationsTrait;
 
     /**

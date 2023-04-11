@@ -22,7 +22,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * Note: This implementation is meant to ease the transition to an event sourced content repository
  * but since it uses legacy classes (like \Neos\ContentRepository\Domain\Service\Context) it is
- * advised to use NodeAccessor::findDescendants() directly instead.
+ * advised to use ContentSubgraphInterface::findDescendantNodes() directly instead.
  *
  * @Flow\Scope("singleton")
  * @deprecated see above

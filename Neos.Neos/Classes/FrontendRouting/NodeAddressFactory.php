@@ -61,15 +61,15 @@ class NodeAddressFactory
         // the reverse method is {@link NodeAddress::serializeForUri} - ensure to adjust it
         // when changing the serialization here
 
-        list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdentifierSerialized)
+        list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdSerialized)
             = explode('__', $serializedNodeAddress);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
-        $nodeAggregateIdentifier = NodeAggregateId::fromString($nodeAggregateIdentifierSerialized);
+        $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
-        $contentStreamIdentifier = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
+        $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
             ?->currentContentStreamId;
-        if (is_null($contentStreamIdentifier)) {
+        if (is_null($contentStreamId)) {
             throw new \InvalidArgumentException(
                 'Could not resolve content stream identifier for node address ' . $serializedNodeAddress,
                 1645363784
@@ -77,9 +77,9 @@ class NodeAddressFactory
         }
 
         return new NodeAddress(
-            $contentStreamIdentifier,
+            $contentStreamId,
             $dimensionSpacePoint,
-            $nodeAggregateIdentifier,
+            $nodeAggregateId,
             $workspaceName
         );
     }

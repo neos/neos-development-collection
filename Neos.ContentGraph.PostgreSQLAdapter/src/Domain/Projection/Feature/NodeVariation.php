@@ -97,7 +97,7 @@ trait NodeVariation
                     $parentNode = $this->projectionHypergraph->findNodeRecordByCoverage(
                         $event->contentStreamId,
                         $specializedDimensionSpacePoint,
-                        $sourceParent->nodeAggregateIdentifier
+                        $sourceParent->nodeAggregateId
                     );
                     if (is_null($parentNode)) {
                         throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
@@ -214,7 +214,7 @@ trait NodeVariation
     ): NodeRecord {
         $copy = new NodeRecord(
             NodeRelationAnchorPoint::create(),
-            $sourceNode->nodeAggregateIdentifier,
+            $sourceNode->nodeAggregateId,
             $targetOrigin,
             $targetOrigin->hash,
             $sourceNode->properties,
@@ -231,8 +231,8 @@ trait NodeVariation
      * @throws \Doctrine\DBAL\Exception
      */
     protected function replaceNodeRelationAnchorPoint(
-        ContentStreamId $contentStreamIdentifier,
-        NodeAggregateId $affectedNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $affectedNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePointSet,
         NodeRelationAnchorPoint $newNodeRelationAnchorPoint
     ): void {
@@ -241,21 +241,21 @@ trait NodeVariation
                 SELECT relationanchorpoint FROM ' . $this->tableNamePrefix . '_node n
                     JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation p
                     ON n.relationanchorpoint = ANY(p.childnodeanchors)
-                WHERE p.contentstreamidentifier = :contentStreamIdentifier
+                WHERE p.contentstreamid = :contentStreamId
                 AND p.dimensionspacepointhash = :affectedDimensionSpacePointHash
-                AND n.nodeaggregateidentifier = :affectedNodeAggregateIdentifier
+                AND n.nodeaggregateid = :affectedNodeAggregateId
             )';
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
+            'contentStreamId' => (string)$contentStreamId,
             'newNodeRelationAnchorPoint' => (string)$newNodeRelationAnchorPoint,
-            'affectedNodeAggregateIdentifier' => (string)$affectedNodeAggregateIdentifier
+            'affectedNodeAggregateId' => (string)$affectedNodeAggregateId
         ];
         foreach ($affectedDimensionSpacePointSet as $affectedDimensionSpacePoint) {
             $parentStatement = /** @lang PostgreSQL */
                 $currentNodeAnchorPointStatement . '
                 UPDATE ' . $this->tableNamePrefix . '_hierarchyhyperrelation
                     SET parentnodeanchor = :newNodeRelationAnchorPoint
-                    WHERE contentstreamidentifier = :contentStreamIdentifier
+                    WHERE contentstreamid = :contentStreamId
                         AND dimensionspacepointhash = :affectedDimensionSpacePointHash
                         AND parentnodeanchor = (SELECT relationanchorpoint FROM currentNodeAnchorPoint)
                 ';
@@ -267,7 +267,7 @@ trait NodeVariation
                         (SELECT relationanchorpoint FROM currentNodeAnchorPoint),
                         :newNodeRelationAnchorPoint
                     )
-                    WHERE contentstreamidentifier = :contentStreamIdentifier
+                    WHERE contentstreamid = :contentStreamId
                         AND dimensionspacepointhash = :affectedDimensionSpacePointHash
                         AND (SELECT relationanchorpoint FROM currentNodeAnchorPoint) = ANY(childnodeanchors)
                 ';
@@ -278,33 +278,33 @@ trait NodeVariation
     }
 
     protected function addMissingHierarchyRelations(
-        ContentStreamId $contentStreamIdentifier,
-        NodeAggregateId $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         NodeRelationAnchorPoint $targetRelationAnchor,
         DimensionSpacePointSet $coverage,
         string $eventClassName
     ): void {
         $missingCoverage = $coverage->getDifference(
-            $this->getProjectionHyperGraph()->findCoverageByNodeAggregateIdentifier(
-                $contentStreamIdentifier,
-                $nodeAggregateIdentifier
+            $this->getProjectionHyperGraph()->findCoverageByNodeAggregateId(
+                $contentStreamId,
+                $nodeAggregateId
             )
         );
         if ($missingCoverage->count() > 0) {
             $sourceParentNode = $this->getProjectionHyperGraph()->findParentNodeRecordByOrigin(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $sourceOrigin,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             );
             if (!$sourceParentNode) {
                 throw EventCouldNotBeAppliedToContentGraph::becauseTheSourceParentNodeIsMissing($eventClassName);
             }
-            $parentNodeAggregateIdentifier = $sourceParentNode->nodeAggregateIdentifier;
+            $parentNodeAggregateId = $sourceParentNode->nodeAggregateId;
             $sourceSucceedingSiblingNode = $this->getProjectionHyperGraph()->findParentNodeRecordByOrigin(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $sourceOrigin,
-                $nodeAggregateIdentifier
+                $nodeAggregateId
             );
             foreach ($missingCoverage as $uncoveredDimensionSpacePoint) {
                 // The parent node aggregate might be varied as well,
@@ -312,17 +312,17 @@ trait NodeVariation
 
                 // First we check for an already existing hyperrelation
                 $hierarchyRelation = $this->getProjectionHyperGraph()->findChildHierarchyHyperrelationRecord(
-                    $contentStreamIdentifier,
+                    $contentStreamId,
                     $uncoveredDimensionSpacePoint,
-                    $parentNodeAggregateIdentifier
+                    $parentNodeAggregateId
                 );
 
                 if ($hierarchyRelation && $sourceSucceedingSiblingNode) {
                     // If it exists, we need to look for a succeeding sibling to keep some order of nodes
                     $targetSucceedingSibling = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
-                        $contentStreamIdentifier,
+                        $contentStreamId,
                         $uncoveredDimensionSpacePoint,
-                        $sourceSucceedingSiblingNode->nodeAggregateIdentifier
+                        $sourceSucceedingSiblingNode->nodeAggregateId
                     );
 
                     $hierarchyRelation->addChildNodeAnchor(
@@ -333,9 +333,9 @@ trait NodeVariation
                     );
                 } else {
                     $targetParentNode = $this->getProjectionHyperGraph()->findNodeRecordByCoverage(
-                        $contentStreamIdentifier,
+                        $contentStreamId,
                         $uncoveredDimensionSpacePoint,
-                        $parentNodeAggregateIdentifier
+                        $parentNodeAggregateId
                     );
                     if (!$targetParentNode) {
                         throw EventCouldNotBeAppliedToContentGraph::becauseTheTargetParentNodeIsMissing(
@@ -343,7 +343,7 @@ trait NodeVariation
                         );
                     }
                     $hierarchyRelation = new HierarchyHyperrelationRecord(
-                        $contentStreamIdentifier,
+                        $contentStreamId,
                         $targetParentNode->relationAnchorPoint,
                         $uncoveredDimensionSpacePoint,
                         NodeRelationAnchorPoints::fromArray([$targetRelationAnchor])
@@ -358,14 +358,14 @@ trait NodeVariation
      * @throws \Doctrine\DBAL\Exception
      */
     protected function assignNewChildNodeToAffectedHierarchyRelations(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeRelationAnchorPoint $oldChildAnchor,
         NodeRelationAnchorPoint $newChildAnchor,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
         foreach (
             $this->getProjectionHyperGraph()->findIngoingHierarchyHyperrelationRecords(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $oldChildAnchor,
                 $affectedDimensionSpacePoints
             ) as $ingoingHierarchyHyperrelationRecord
@@ -383,14 +383,14 @@ trait NodeVariation
      * @throws \Doctrine\DBAL\Exception
      */
     protected function assignNewParentNodeToAffectedHierarchyRelations(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeRelationAnchorPoint $oldParentAnchor,
         NodeRelationAnchorPoint $newParentAnchor,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
         foreach (
             $this->getProjectionHyperGraph()->findOutgoingHierarchyHyperrelationRecords(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $oldParentAnchor,
                 $affectedDimensionSpacePoints
             ) as $outgoingHierarchyHyperrelationRecord
@@ -416,14 +416,14 @@ trait NodeVariation
                   name,
                   position,
                   properties,
-                  targetnodeaggregateidentifier
+                  targetnodeaggregateid
                 )
                 SELECT
                   :newSourceRelationAnchorPoint AS sourcenodeanchor,
                   ref.name,
                   ref.position,
                   ref.properties,
-                  ref.targetnodeaggregateidentifier
+                  ref.targetnodeaggregateid
                 FROM
                     ' . $this->tableNamePrefix . '_referencerelation ref
                     WHERE ref.sourcenodeanchor = :sourceNodeAnchorPoint

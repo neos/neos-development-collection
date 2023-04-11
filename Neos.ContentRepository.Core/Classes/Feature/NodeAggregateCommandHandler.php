@@ -45,7 +45,8 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\NodeTypeChange;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeCreation;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -57,7 +58,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
 final class NodeAggregateCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
-    use RootNodeCreation;
+    use RootNodeHandling;
     use NodeCreation;
     use NodeDisabling;
     use NodeModification;
@@ -129,9 +130,11 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
             CreateRootNodeAggregateWithNode::class
                 => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            UpdateRootNodeAggregateDimensions::class
+                => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
         };
     }
 

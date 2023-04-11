@@ -4,7 +4,8 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Content Collection</source>
-			<target state="translated">Colección de contenido</target></trans-unit>
+        <target state="translated">Recopilación de contenido</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

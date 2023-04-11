@@ -11,9 +11,8 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
@@ -63,9 +62,9 @@ class PropertyOperation extends AbstractOperation
      * @param array $context $context onto which this operation should be applied (array or array-like object)
      * @return boolean
      */
-    public function canEvaluate($context)
+    public function canEvaluate($context): bool
     {
-        return (isset($context[0]) && ($context[0] instanceof Node));
+        return (isset($context[0]) && $context[0] instanceof Node);
     }
 
     /**
@@ -76,43 +75,48 @@ class PropertyOperation extends AbstractOperation
      * @return mixed
      * @throws FlowQueryException
      */
-    public function evaluate(FlowQuery $flowQuery, array $arguments)
+    public function evaluate(FlowQuery $flowQuery, array $arguments): mixed
     {
         if (empty($arguments[0])) {
             throw new FlowQueryException('property() does not support returning all attributes yet', 1332492263);
-        } else {
-            /** @var array<int,mixed> $context */
-            $context = $flowQuery->getContext();
-            $propertyPath = $arguments[0];
-
-            if (!isset($context[0])) {
-                return null;
-            }
-
-            /* @var $element Node */
-            $element = $context[0];
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            if ($propertyPath === '_path') {
-                return (string)$subgraph->findNodePath($element->nodeAggregateId);
-            } elseif ($propertyPath[0] === '_') {
-                return ObjectAccess::getPropertyPath($element, substr($propertyPath, 1));
-            } else {
-                if ($element->nodeType->getPropertyType($propertyPath) === 'reference') {
-                    return (
-                        $subgraph->findReferencedNodes(
-                            $element->nodeAggregateId,
-                            FindReferencedNodesFilter::referenceName($propertyPath)
-                        )[0] ?? null
-                    )?->node;
-                } elseif ($element->nodeType->getPropertyType($propertyPath) === 'references') {
-                    return $subgraph->findReferencedNodes(
-                        $element->nodeAggregateId,
-                        FindReferencedNodesFilter::referenceName($propertyPath)
-                    )->getNodes();
-                } else {
-                    return $element->getProperty($propertyPath);
-                }
-            }
         }
+        /** @var array<int,mixed> $context */
+        $context = $flowQuery->getContext();
+        $propertyName = $arguments[0];
+
+        if (!isset($context[0])) {
+            return null;
+        }
+
+        /* @var $element Node */
+        $element = $context[0];
+        if ($propertyName === '_path') {
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
+            return (string)$subgraph->retrieveNodePath($element->nodeAggregateId);
+        }
+
+        if ($propertyName[0] === '_') {
+            return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
+        }
+
+        if ($element->nodeType->getPropertyType($propertyName) === 'reference') {
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
+            return (
+                $subgraph->findReferences(
+                    $element->nodeAggregateId,
+                    FindReferencesFilter::referenceName($propertyName)
+                )[0] ?? null
+            )?->node;
+        }
+
+        if ($element->nodeType->getPropertyType($propertyName) === 'references') {
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
+            return $subgraph->findReferences(
+                $element->nodeAggregateId,
+                FindReferencesFilter::referenceName($propertyName)
+            )->getNodes();
+        }
+
+        return $element->getProperty($propertyName);
     }
 }

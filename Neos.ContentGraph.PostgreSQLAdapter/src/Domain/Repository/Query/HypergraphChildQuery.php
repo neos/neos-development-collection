@@ -37,29 +37,29 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
      * @param array<int,string>|null $fieldsToFetch
      */
     public static function create(
-        ContentStreamId $contentStreamIdentifier,
-        NodeAggregateId $parentNodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $parentNodeAggregateId,
         string $tableNamePrefix,
         ?array $fieldsToFetch = null
     ): self {
         $query = /** @lang PostgreSQL */
             'SELECT ' . ($fieldsToFetch
                 ? implode(', ', $fieldsToFetch)
-                : 'cn.origindimensionspacepoint, cn.nodeaggregateidentifier, cn.nodetypename,
+                : 'cn.origindimensionspacepoint, cn.nodeaggregateid, cn.nodetypename,
                     cn.classification, cn.properties, cn.nodename,
-                    ch.contentstreamidentifier, ch.dimensionspacepoint') . '
+                    ch.contentstreamid, ch.dimensionspacepoint') . '
             FROM ' . $tableNamePrefix . '_node pn
             JOIN (
                 SELECT *, unnest(childnodeanchors) AS childnodeanchor
                 FROM ' . $tableNamePrefix . '_hierarchyhyperrelation
             ) ch ON ch.parentnodeanchor = pn.relationanchorpoint
             JOIN ' . $tableNamePrefix . '_node cn ON cn.relationanchorpoint = ch.childnodeanchor
-            WHERE ch.contentstreamidentifier = :contentStreamIdentifier
-                AND pn.nodeaggregateidentifier = :parentNodeAggregateIdentifier';
+            WHERE ch.contentstreamid = :contentStreamId
+                AND pn.nodeaggregateid = :parentNodeAggregateId';
 
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamIdentifier,
-            'parentNodeAggregateIdentifier' => (string)$parentNodeAggregateIdentifier
+            'contentStreamId' => (string)$contentStreamId,
+            'parentNodeAggregateId' => (string)$parentNodeAggregateId
         ];
 
         return new self($query, $parameters, $tableNamePrefix);

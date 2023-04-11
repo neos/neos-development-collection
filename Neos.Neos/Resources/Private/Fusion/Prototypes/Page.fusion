@@ -85,7 +85,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
 
     tagName = 'script'
     attributes {
-      data-neos-node = ${Neos.Node.nodeAddressToString(node)}
+      data-neos-node = ${Neos.Node.serializedNodeAddress(node)}
       src = Neos.Fusion:ResourceUri {
         path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
       }

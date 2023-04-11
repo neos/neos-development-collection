@@ -8,7 +8,7 @@
       </trans-unit>
       <trans-unit id="groups.document" xml:space="preserve">
 				<source>Document</source>
-        <target state="needs-translation">Document</target>
+        <target state="translated">Documento</target>
       </trans-unit>
     </body>
   </file>

@@ -57,7 +57,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly EventNormalizer $eventNormalizer,
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
-        private readonly ContentStreamId $contentStreamIdentifier,
+        private readonly ContentStreamId $contentStreamId,
     )
     {
     }
@@ -76,7 +76,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             'Exporting assets' => new NodeDataToAssetsProcessor($this->nodeTypeManager, $assetExporter, new NodeDataLoader($this->connection)),
             'Exporting node data' => new NodeDataToEventsProcessor($this->nodeTypeManager, $this->propertyMapper, $this->propertyConverter, $this->interDimensionalVariationGraph, $this->eventNormalizer, $filesystem, new NodeDataLoader($this->connection)),
             'Importing assets' => new AssetRepositoryImportProcessor($filesystem, $this->assetRepository, $this->resourceRepository, $this->resourceManager, $this->persistenceManager),
-            'Importing events' => new EventStoreImportProcessor(true, $filesystem, $this->eventStore, $this->eventNormalizer, $this->contentStreamIdentifier),
+            'Importing events' => new EventStoreImportProcessor(true, $filesystem, $this->eventStore, $this->eventNormalizer, $this->contentStreamId),
         ];
 
         foreach ($processors as $label => $processor) {

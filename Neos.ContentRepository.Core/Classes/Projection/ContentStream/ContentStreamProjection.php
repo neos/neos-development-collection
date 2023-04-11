@@ -46,6 +46,8 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
+ * See {@see ContentStreamFinder} for explanation.
+ *
  * @internal
  * @implements ProjectionInterface<ContentStreamFinder>
  */
@@ -82,6 +84,13 @@ class ContentStreamProjection implements ProjectionInterface
         $schemaManager = $connection->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
+        }
+
+        // MIGRATIONS
+        $currentSchema = $schemaManager->createSchema();
+        if ($currentSchema->hasTable($this->tableName)) {
+            // added 2023-04-01
+            $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
         }
 
         $schema = new Schema();
@@ -219,7 +228,7 @@ class ContentStreamProjection implements ProjectionInterface
             'contentStreamId' => $event->newContentStreamId,
             'version' => self::extractVersion($eventEnvelope),
             'sourceContentStreamId' => $event->sourceContentStreamId,
-            'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
+            'state' => ContentStreamFinder::STATE_FORKED,
         ]);
     }
 

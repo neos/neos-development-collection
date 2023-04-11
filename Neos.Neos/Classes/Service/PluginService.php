@@ -16,7 +16,7 @@ namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\NodeType\NodeType;
@@ -67,9 +67,9 @@ class PluginService
     public function getPluginNodesWithViewDefinitions(
         WorkspaceName $workspaceName,
         DimensionSpacePoint $dimensionSpacePoint,
-        ContentRepositoryId $contentRepositoryIdentifier
+        ContentRepositoryId $contentRepositoryId
     ): Nodes {
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
@@ -77,7 +77,7 @@ class PluginService
         }
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             $workspace->currentContentStreamId,
             $dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
@@ -103,9 +103,9 @@ class PluginService
     protected function getNodes(Node $siteNode, NodeTypeNames $nodeTypeNames): Nodes
     {
         return $this->contentRepositoryRegistry->subgraphForNode($siteNode)
-            ->findDescendants(
-                NodeAggregateIds::create($siteNode->nodeAggregateId),
-                FindDescendantsFilter::nodeTypeConstraints(
+            ->findDescendantNodes(
+                $siteNode->nodeAggregateId,
+                FindDescendantNodesFilter::nodeTypeConstraints(
                     NodeTypeConstraints::create($nodeTypeNames, NodeTypeNames::createEmpty())
                 )
             );
@@ -180,11 +180,11 @@ class PluginService
      * @throws Neos\Exception if more than one PluginView matches the given controller/action pair
      */
     public function getPluginViewDefinitionByAction(
-        ContentRepositoryId $contentRepositoryIdentifier,
+        ContentRepositoryId $contentRepositoryId,
         $controllerObjectName,
         $actionName
     ): ?PluginViewDefinition {
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $pluginNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(
             'Neos.Neos:Plugin',
             false

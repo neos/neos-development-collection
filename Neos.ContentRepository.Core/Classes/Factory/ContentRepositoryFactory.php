@@ -27,12 +27,12 @@ use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\NodeDuplicationCommandHandler;
 use Neos\ContentRepository\Core\Feature\WorkspaceCommandHandler;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
+use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -54,6 +54,7 @@ final class ContentRepositoryFactory
         ProjectionsFactory $projectionsFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
+        private readonly ClockInterface $clock,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -97,7 +98,8 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
-                $this->userIdProvider
+                $this->userIdProvider,
+                $this->clock,
             );
         }
         return $this->contentRepository;
@@ -120,7 +122,8 @@ final class ContentRepositoryFactory
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
             $this->build(),
-            $this->buildEventPersister()
+            $this->buildEventPersister(),
+            $this->projections,
         );
         return $serviceFactory->build($serviceFactoryDependencies);
     }

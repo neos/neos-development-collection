@@ -24,7 +24,6 @@ Feature: Linking between multiple websites
     #        duke-of-contentshire (content node)
     #        earl-o-documentbourgh
     #
-    # NOTE: The "nodeName" column only exists because it's currently not possible to create unnamed nodes (see https://github.com/neos/contentrepository-development-collection/pull/162)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues                    | nodeName |

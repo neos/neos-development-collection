@@ -1,5 +1,0 @@
-Neos:
-  ESCR:
-    AssetUsage:
-      # workaround because all asset usage strategies are ALWAYS Loaded.
-      enabled: false

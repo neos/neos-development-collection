@@ -14,6 +14,6 @@ final class VisitedNodeVariant
 
     public function __construct(
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateId $parentNodeAggregateIdentifier
+        public readonly NodeAggregateId $parentNodeAggregateId
     ) {}
 }

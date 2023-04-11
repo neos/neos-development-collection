@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -42,8 +43,6 @@ trait NodeCreation
     abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
-
-    abstract protected function getCurrentUserId(): ?UserId;
 
     abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
 
@@ -104,6 +103,29 @@ trait NodeCreation
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 
         $this->publishEvent('RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
+        $this->rootNodeAggregateId = $nodeAggregateId;
+    }
+
+    /**
+     * @When /^the command UpdateRootNodeAggregateDimensions is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws ContentStreamDoesNotExistYet
+     * @throws \Exception
+     */
+    public function theCommandUpdateRootNodeAggregateDimensionsIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $contentStreamId = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
+        $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
+
+        $command = new UpdateRootNodeAggregateDimensions(
+            $contentStreamId,
+            $nodeAggregateId,
+        );
+
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
         $this->rootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -182,7 +204,7 @@ trait NodeCreation
                     ? NodeName::fromString($row['nodeName'])
                     : null,
                 isset($row['initialPropertyValues'])
-                    ? PropertyValuesToWrite::fromJsonString($row['initialPropertyValues'])
+                    ? $this->parsePropertyValuesJsonString($row['initialPropertyValues'])
                     : null,
                 isset($row['tetheredDescendantNodeAggregateIds'])
                     ? NodeAggregateIdsByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIds'])
@@ -192,6 +214,18 @@ trait NodeCreation
             $this->theGraphProjectionIsFullyUpToDate();
         }
     }
+
+    private function parsePropertyValuesJsonString(string $jsonString): PropertyValuesToWrite
+    {
+        $array = \json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
+        return PropertyValuesToWrite::fromArray(
+            array_map(
+                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
+                $array
+            )
+        );
+    }
+
     /**
      * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
      * @param TableNode $payloadTable

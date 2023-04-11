@@ -177,9 +177,8 @@ class ProjectionContentGraph
 
         if (count($rows) === 1) {
             return NodeRelationAnchorPoint::fromString($rows[0]['relationanchorpoint']);
-        } else {
-            return null;
         }
+        return null;
     }
 
     /**

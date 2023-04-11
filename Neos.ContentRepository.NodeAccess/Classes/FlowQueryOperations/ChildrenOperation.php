@@ -73,7 +73,7 @@ class ChildrenOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIds = [];
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
@@ -84,11 +84,11 @@ class ChildrenOperation extends AbstractOperation
         /** @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
             $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
-                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::all());
+                ->findChildNodes($contextNode->nodeAggregateId, FindChildNodesFilter::create());
             foreach ($childNodes as $childNode) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
+                if (!isset($outputNodeAggregateIds[(string)$childNode->nodeAggregateId])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId] = true;
+                    $outputNodeAggregateIds[(string)$childNode->nodeAggregateId] = true;
                 }
             }
         }
@@ -113,7 +113,7 @@ class ChildrenOperation extends AbstractOperation
     {
         $optimized = false;
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIds = [];
         foreach ($parsedFilter['Filters'] as $filter) {
             $instanceOfFilters = [];
             $attributeFilters = [];
@@ -202,7 +202,7 @@ class ChildrenOperation extends AbstractOperation
 
                 // Add filtered nodes to output
                 foreach ($filteredOutput as $filteredNode) {
-                    if (!isset($outputNodeAggregateIdentifiers[(string)$filteredNode->nodeAggregateId])) {
+                    if (!isset($outputNodeAggregateIds[(string)$filteredNode->nodeAggregateId])) {
                         $output[] = $filteredNode;
                     }
                 }

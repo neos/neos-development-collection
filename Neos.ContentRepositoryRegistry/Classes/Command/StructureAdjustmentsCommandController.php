@@ -31,8 +31,8 @@ final class StructureAdjustmentsCommandController extends CommandController
 
     public function detectCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new StructureAdjustmentServiceFactory());
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
             $errors = $structureAdjustmentService->findAdjustmentsForNodeType(
@@ -47,8 +47,8 @@ final class StructureAdjustmentsCommandController extends CommandController
 
     public function fixCommand(string $nodeType = null, string $contentRepositoryIdentifier = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryIdentifier, new StructureAdjustmentServiceFactory());
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $structureAdjustmentService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new StructureAdjustmentServiceFactory());
 
         if ($nodeType !== null) {
             $errors = $structureAdjustmentService->findAdjustmentsForNodeType(

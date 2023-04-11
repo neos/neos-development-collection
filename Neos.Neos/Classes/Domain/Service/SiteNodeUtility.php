@@ -57,8 +57,8 @@ final class SiteNodeUtility
     }
 
     public function findCurrentSiteNode(
-        ContentRepositoryId $contentRepositoryIdentifier,
-        ContentStreamId $contentStreamIdentifier,
+        ContentRepositoryId $contentRepositoryId,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
@@ -68,16 +68,16 @@ final class SiteNodeUtility
             : $this->siteRepository->findDefault();
 
         if ($site instanceof Site) {
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
             $subgraph = $contentRepository->getContentGraph()->getSubgraph(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints,
             );
 
             $rootNodeAggregate = $contentRepository->getContentGraph()
                 ->findRootNodeAggregateByType(
-                    $contentStreamIdentifier,
+                    $contentStreamId,
                     NodeTypeName::fromString('Neos.Neos:Sites')
                 );
             $sitesNode = $subgraph->findNodeById($rootNodeAggregate->nodeAggregateId);

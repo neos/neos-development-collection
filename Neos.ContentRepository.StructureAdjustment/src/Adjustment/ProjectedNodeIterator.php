@@ -37,8 +37,8 @@ class ProjectedNodeIterator
      */
     public function nodeAggregatesOfType(NodeTypeName $nodeTypeName): iterable
     {
-        $contentStreamIdentifier = $this->findLiveContentStream();
-        $nodeAggregates = $this->contentGraph->findNodeAggregatesByType($contentStreamIdentifier, $nodeTypeName);
+        $contentStreamId = $this->findLiveContentStream();
+        $nodeAggregates = $this->contentGraph->findNodeAggregatesByType($contentStreamId, $nodeTypeName);
         foreach ($nodeAggregates as $nodeAggregate) {
             yield $nodeAggregate;
         }

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\SiteDetection;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,7 +21,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * Is a planned extension point; feel free to override this.
  *
- * TODO: how to do reverse direction when generating links?
+ * When generating links, make sure to also replace the {@see CrossSiteLinkerInterface}.
  *
  * **See {@see EventSourcedFrontendNodeRoutePartHandler} documentation for a
  * detailed explanation of the Frontend Routing process.**
@@ -55,14 +55,7 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
         }
         assert($site instanceof Site);
 
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-                ?? throw new \RuntimeException(
-                    'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                        . ' Neos.Neos.sites.*.contentRepository'
-                )
-        );
-        $siteDetectionResult = SiteDetectionResult::create($site->getNodeName(), $contentRepositoryIdentifier);
+        $siteDetectionResult = SiteDetectionResult::create($site->getNodeName(), $site->getConfiguration()->contentRepositoryId);
         return $handler->handle($siteDetectionResult->storeInRequest($request));
     }
 }
