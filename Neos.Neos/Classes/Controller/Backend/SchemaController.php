@@ -19,17 +19,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
-use Neos\Neos\Service\NodeTypeSchemaBuilderFactory;
 
 #[Flow\Scope('singleton')]
 class SchemaController extends ActionController
 {
-
-    /**
-     * @var NodeTypeSchemaBuilder
-     * @Flow\Inject
-     */
-    protected $nodeTypeSchemaBuilder;
 
     /**
      * @Flow\Inject
