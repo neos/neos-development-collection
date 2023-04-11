@@ -86,16 +86,16 @@ final class CrCommandController extends CommandController
             return;
         }
 
-        $contentRepository = ContentRepositoryId::fromString($contentRepository);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
         $contentStreamPruner = $this->contentRepositoryRegistry->getService(
-            $contentRepository,
+            $contentRepositoryId,
             new ContentStreamPrunerFactory()
         );
         $contentStreamPruner->pruneAll();
 
         $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
-            $contentRepository,
+            $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
         $workspaceMaintenanceService->pruneAll();

@@ -44,32 +44,28 @@ class CrCommandController extends CommandController
     }
 
     /**
-     * Export the events from the specified cr
+     * Export the events from the specified content repository
      *
      * @param string $path The path for storing the result
-     * @param string $cr The content repository identifier
+     * @param string $contentRepository The content repository identifier
      * @param bool $verbose If set, all notices will be rendered
      * @throws \Exception
      */
-    public function exportCommand(string $path, string $cr = 'default', bool $verbose = false): void
+    public function exportCommand(string $path, string $contentRepository = 'default', bool $verbose = false): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($cr);
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamIdentifier = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
-        $assetUsageFinder = $contentRepository->projectionState(AssetUsageFinder::class);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         Files::createDirectoryRecursively($path);
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
 
         $exportService = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             new ExportServiceFactory(
                 $filesystem,
                 $contentRepository->getWorkspaceFinder(),
                 $this->assetRepository,
-                $assetUsageFinder,
+                $contentRepository->projectionState(AssetUsageFinder::class),
             )
         );
         assert($exportService instanceof ExportService);
@@ -78,22 +74,22 @@ class CrCommandController extends CommandController
     }
 
     /**
-     * Import the events from the path into the specified cr
+     * Import the events from the path into the specified content repository
      *
      * @param string $path The path for storing the result
-     * @param string $cr The content repository identifier
+     * @param string $contentRepository The content repository identifier
      * @param bool $verbose If set, all notices will be rendered
      * @throws \Exception
      */
-    public function importCommand(string $path, string $cr = 'default', bool $verbose = false,): void
+    public function importCommand(string $path, string $contentRepository = 'default', bool $verbose = false,): void
     {
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
 
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($cr);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamIdentifier = ContentStreamId::create();
 
         $importService = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             new ImportServiceFactory(
                 $filesystem,
                 $contentStreamIdentifier,
@@ -113,7 +109,7 @@ class CrCommandController extends CommandController
         }
 
         $this->outputLine('Replaying projections');
-        Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepositoryIdentifier' => $contentRepositoryIdentifier]);
+        Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepositoryIdentifier' => $contentRepositoryId->value]);
 
         $this->outputLine('<success>Done</success>');
     }
