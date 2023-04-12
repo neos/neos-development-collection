@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\User\StaticUserIdProvider;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
@@ -67,6 +68,7 @@ final class ContentRepository
         private readonly InterDimensionalVariationGraph $variationGraph,
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
+        private readonly PrivilegeProviderInterface $privilegeProvider,
         private readonly ClockInterface $clock,
     ) {
     }

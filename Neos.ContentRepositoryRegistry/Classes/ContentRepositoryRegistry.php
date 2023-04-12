@@ -15,12 +15,14 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFound;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
+use Neos\ContentRepositoryRegistry\Factory\PrivilegeProvider\PrivilegeProviderFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
@@ -138,6 +140,7 @@ final class ContentRepositoryRegistry
         }
         try {
             $clock = $this->buildClock($contentRepositoryId, $contentRepositorySettings);
+            $userIdProvider = $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings);
             return new ContentRepositoryFactory(
                 $contentRepositoryId,
                 $this->buildEventStore($contentRepositoryId, $contentRepositorySettings, $clock),
@@ -146,7 +149,8 @@ final class ContentRepositoryRegistry
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
-                $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
+                $userIdProvider,
+                $this->buildPrivilegeProvider($contentRepositoryId, $contentRepositorySettings, $userIdProvider, $this),
                 $clock,
             );
         } catch (\Exception $exception) {
@@ -246,6 +250,16 @@ final class ContentRepositoryRegistry
             throw InvalidConfigurationException::fromMessage('userIdProvider.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, UserIdProviderFactoryInterface::class, get_debug_type($userIdProviderFactory));
         }
         return $userIdProviderFactory->build($contentRepositoryId, $contentRepositorySettings['userIdProvider']['options'] ?? []);
+    }
+
+    private function buildPrivilegeProvider(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, UserIdProviderInterface $userIdProvider, self $contentRepositoryRegistry): PrivilegeProviderInterface
+    {
+        isset($contentRepositorySettings['privilegeProvider']['factoryObjectName']) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have privilegeProvider.factoryObjectName configured.', $contentRepositoryId->value);
+        $privilegeProviderFactory = $this->objectManager->get($contentRepositorySettings['privilegeProvider']['factoryObjectName']);
+        if (!$privilegeProviderFactory instanceof PrivilegeProviderFactoryInterface) {
+            throw InvalidConfigurationException::fromMessage('privilegeProvider.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryId->value, PrivilegeProviderFactoryInterface::class, get_debug_type($privilegeProviderFactory));
+        }
+        return $privilegeProviderFactory->build($contentRepositoryId, $contentRepositorySettings['userIdProvider']['options'] ?? [], $userIdProvider, $contentRepositoryRegistry);
     }
 
     private function buildClock(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings): ClockInterface

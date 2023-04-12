@@ -61,7 +61,8 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $tableNamePrefix
                 ),
                 $catchUpHookFactory,
-                $tableNamePrefix
+                $tableNamePrefix,
+                $projectionFactoryDependencies->privilegeProvider,
             )
         );
     }
