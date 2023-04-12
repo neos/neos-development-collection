@@ -26,6 +26,10 @@
 				<source>Type</source>
         <target state="translated">Tipo</target>
       </trans-unit>
+      <trans-unit id="groups.default" xml:space="preserve">
+				<source>General</source>
+        <target state="needs-translation">Geral</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
