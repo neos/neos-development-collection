@@ -56,6 +56,8 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWork
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -97,6 +99,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
             DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $contentRepository),
+            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $contentRepository),
         };
     }
 
@@ -153,8 +156,13 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
     }
 
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
     private function handleRenameWorkspace(RenameWorkspace $command, ContentRepository $contentRepository): EventsToPublish
     {
+        $this->requireWorkspace($command->workspaceName, $contentRepository);
+
         $events = Events::with(
             new WorkspaceWasRenamed(
                 $command->workspaceName,
@@ -718,9 +726,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
-     * @throws WorkspaceHasNoBaseWorkspaceName
      */
     private function handleDeleteWorkspace(
         DeleteWorkspace $command,
@@ -745,6 +751,30 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             $streamName,
             $events,
             ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
+    private function handleChangeWorkspaceOwner(
+        ChangeWorkspaceOwner $command,
+        ContentRepository $contentRepository,
+    ): EventsToPublish {
+        $this->requireWorkspace($command->workspaceName, $contentRepository);
+
+        $events = Events::with(
+            new WorkspaceOwnerWasChanged(
+                $command->workspaceName,
+                $command->workspaceOwner
+            )
+        );
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::STREAM_EXISTS()
         );
     }
 

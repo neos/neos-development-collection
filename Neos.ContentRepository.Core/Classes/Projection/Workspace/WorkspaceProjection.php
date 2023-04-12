@@ -35,6 +35,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
@@ -137,6 +138,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceWasRebased::class,
             WorkspaceRebaseFailed::class,
             WorkspaceWasDeleted::class,
+            WorkspaceOwnerWasChanged::class,
         ]);
     }
 
@@ -174,6 +176,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             $this->whenWorkspaceRebaseFailed($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceWasDeleted) {
             $this->whenWorkspaceWasDeleted($eventInstance);
+        } elseif ($eventInstance instanceof WorkspaceOwnerWasChanged) {
+            $this->whenWorkspaceOwnerWasChanged($eventInstance);
         } else {
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
@@ -216,10 +220,12 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     private function whenWorkspaceWasRenamed(WorkspaceWasRenamed $event): void
     {
-        $this->getDatabaseConnection()->update($this->tableName, [
-            'workspaceTitle' => $event->workspaceTitle->value,
-            'workspaceDescription' => $event->workspaceDescription->value,
-        ],
+        $this->getDatabaseConnection()->update(
+            $this->tableName,
+            [
+                'workspaceTitle' => $event->workspaceTitle->value,
+                'workspaceDescription' => $event->workspaceDescription->value,
+            ],
             ['workspaceName' => $event->workspaceName->value]
         );
     }
@@ -299,6 +305,15 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         $this->getDatabaseConnection()->delete(
             $this->tableName,
+            ['workspaceName' => $event->workspaceName->value]
+        );
+    }
+
+    private function whenWorkspaceOwnerWasChanged(WorkspaceOwnerWasChanged $event): void
+    {
+        $this->getDatabaseConnection()->update(
+            $this->tableName,
+            ['workspaceOwner' => $event->workspaceOwner],
             ['workspaceName' => $event->workspaceName->value]
         );
     }

@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFai
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventType;
@@ -94,6 +95,7 @@ final class EventNormalizer
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
             WorkspaceWasDeleted::class,
+            WorkspaceOwnerWasChanged::class,
         ];
 
         foreach ($supportedEventClassNames as $fullEventClassName) {
