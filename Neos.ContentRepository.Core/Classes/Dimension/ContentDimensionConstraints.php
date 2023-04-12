@@ -41,6 +41,6 @@ final class ContentDimensionConstraints
 
     public function allowsCombinationWith(ContentDimensionValue $dimensionValue): bool
     {
-        return $this->identifierRestrictions[(string)$dimensionValue] ?? $this->isWildcardAllowed;
+        return $this->identifierRestrictions[$dimensionValue->value] ?? $this->isWildcardAllowed;
     }
 }

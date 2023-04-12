@@ -17,7 +17,7 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings, array $eventStorePreset, ClockInterface $clock): EventStoreInterface
+    public function build(ContentRepositoryId $contentRepositoryId, array $options, ClockInterface $clock): EventStoreInterface
     {
         return new DoctrineEventStore(
             $this->connection,
@@ -28,6 +28,6 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 
     public static function databaseTableName(ContentRepositoryId $contentRepositoryId): string
     {
-        return sprintf('cr_%s_events', $contentRepositoryId);
+        return sprintf('cr_%s_events', $contentRepositoryId->value);
     }
 }

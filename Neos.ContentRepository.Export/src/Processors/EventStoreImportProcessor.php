@@ -67,7 +67,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                 $keepStreamName = true;
             }
             if (!$keepStreamName) {
-                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => (string)$this->contentStreamId] : $payload);
+                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => $this->contentStreamId->value] : $payload);
             }
             if (!$this->keepEventIds) {
                 try {

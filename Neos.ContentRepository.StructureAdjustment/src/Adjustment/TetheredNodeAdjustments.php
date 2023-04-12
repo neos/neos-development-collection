@@ -79,7 +79,7 @@ class TetheredNodeAdjustments
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::TETHERED_NODE_MISSING,
-                            'The tethered child node "' . $tetheredNodeName . '" is missing.',
+                            'The tethered child node "' . $tetheredNodeName->value . '" is missing.',
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $events = $this->createEventsForMissingTetheredNode(
                                     $nodeAggregate,
@@ -114,13 +114,13 @@ class TetheredNodeAdjustments
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 /* @var $tetheredNodeAggregate NodeAggregate */
-                if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->nodeName])) {
+                if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "'
-                            . $tetheredNodeAggregate->nodeName . '" should be removed.',
+                            . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
                         }
@@ -143,7 +143,7 @@ class TetheredNodeAdjustments
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
-                            $actualTetheredChildNodes[(string)$childNode->nodeName] = $childNode;
+                            $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
                         }
                     }
 
@@ -194,7 +194,7 @@ class TetheredNodeAdjustments
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType . '", but was "' . $node->nodeTypeName->value . '".'
+                'should be of type "' . $expectedNodeType->name->value . '", but was "' . $node->nodeTypeName->value . '".'
             );
         }
     }

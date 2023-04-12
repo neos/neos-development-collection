@@ -74,9 +74,9 @@ class ParentOperation extends AbstractOperation
                 continue;
             }
 
-            if (!isset($outputNodeAggregateIds[(string)$parentNode->nodeAggregateId])) {
+            if (!isset($outputNodeAggregateIds[$parentNode->nodeAggregateId->value])) {
                 $output[] = $parentNode;
-                $outputNodeAggregateIds[(string)$parentNode->nodeAggregateId] = true;
+                $outputNodeAggregateIds[$parentNode->nodeAggregateId->value] = true;
             }
         }
 

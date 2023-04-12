@@ -26,24 +26,18 @@ final class ContentStreamEventStreamName
 {
     public const EVENT_STREAM_NAME_PREFIX = 'ContentStream:';
 
-
     private function __construct(
-        private readonly string $eventStreamName,
+        public readonly string $value
     ) {
     }
 
     public static function fromContentStreamId(ContentStreamId $contentStreamId): self
     {
-        return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId);
+        return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
     }
 
     public function getEventStreamName(): StreamName
     {
-        return StreamName::fromString($this->eventStreamName);
-    }
-
-    public function __toString(): string
-    {
-        return $this->eventStreamName;
+        return StreamName::fromString($this->value);
     }
 }

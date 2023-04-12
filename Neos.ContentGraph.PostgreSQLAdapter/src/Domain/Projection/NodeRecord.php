@@ -90,14 +90,14 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => (string) $this->relationAnchorPoint,
-            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+            'relationanchorpoint' => $this->relationAnchorPoint->value,
+            'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-            'nodeaggregateid' => (string) $this->nodeAggregateId,
-            'nodetypename' => (string) $this->nodeTypeName,
+            'nodeaggregateid' => $this->nodeAggregateId->value,
+            'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
-            'nodename' => (string) $this->nodeName
+            'nodename' => $this->nodeName?->value ?? '',
         ]);
     }
 
@@ -109,13 +109,13 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
-                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+                'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-                'nodeaggregateid' => (string) $this->nodeAggregateId,
-                'nodetypename' => (string) $this->nodeTypeName,
+                'nodeaggregateid' => $this->nodeAggregateId->value,
+                'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),
-                'nodename' => (string) $this->nodeName,
+                'nodename' => $this->nodeName?->value ?? '',
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
@@ -129,7 +129,7 @@ final class NodeRecord
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->delete($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }
 }

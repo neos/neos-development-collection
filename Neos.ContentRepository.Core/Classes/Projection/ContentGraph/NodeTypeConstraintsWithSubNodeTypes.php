@@ -138,21 +138,21 @@ final class NodeTypeConstraintsWithSubNodeTypes
         return $this->isWildCardAllowed;
     }
 
-    public function __toString(): string
+    public function toFilterString(): string
     {
-        $legacyParts = [];
+        $parts = [];
         if ($this->isWildCardAllowed) {
-            $legacyParts[] = '*';
+            $parts[] = '*';
         }
 
         foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
-            $legacyParts[] = '!' . $nodeTypeName;
+            $parts[] = '!' . $nodeTypeName->value;
         }
 
         foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {
-            $legacyParts[] = (string)$nodeTypeName;
+            $parts[] = $nodeTypeName->value;
         }
 
-        return implode(',', $legacyParts);
+        return implode(',', $parts);
     }
 }

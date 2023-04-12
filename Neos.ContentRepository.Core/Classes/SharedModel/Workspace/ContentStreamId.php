@@ -22,7 +22,7 @@ use Neos\Flow\Utility\Algorithms;
  *
  * @api
  */
-final class ContentStreamId implements \JsonSerializable, \Stringable
+final class ContentStreamId implements \JsonSerializable
 {
     /**
      * @var array<string,self>
@@ -50,11 +50,6 @@ final class ContentStreamId implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

@@ -28,16 +28,16 @@ use Neos\Flow\Annotations as Flow;
  *
  * @internal
  */
-final class ContentDimensionValueSpecializationDepth implements \JsonSerializable, \Stringable
+final class ContentDimensionValueSpecializationDepth implements \JsonSerializable
 {
     /**
      * @throws ContentDimensionValueSpecializationDepthIsInvalid
      */
     public function __construct(
-        public readonly int $depth
+        public readonly int $value
     ) {
-        if ($depth < 0) {
-            throw ContentDimensionValueSpecializationDepthIsInvalid::becauseItMustBeNonNegative($depth);
+        if ($value < 0) {
+            throw ContentDimensionValueSpecializationDepthIsInvalid::becauseItMustBeNonNegative($value);
         }
     }
 
@@ -48,31 +48,26 @@ final class ContentDimensionValueSpecializationDepth implements \JsonSerializabl
 
     public function isGreaterThan(ContentDimensionValueSpecializationDepth $otherDepth): bool
     {
-        return $this->depth > $otherDepth->depth;
+        return $this->value > $otherDepth->value;
     }
 
     public function isZero(): bool
     {
-        return $this->depth === 0;
+        return $this->value === 0;
     }
 
     public function increment(): self
     {
-        return new self($this->depth + 1);
+        return new self($this->value + 1);
     }
 
     public function decreaseBy(ContentDimensionValueSpecializationDepth $other): self
     {
-        return new self($this->depth - $other->depth);
+        return new self($this->value - $other->value);
     }
 
     public function jsonSerialize(): int
     {
-        return $this->depth;
-    }
-
-    public function __toString(): string
-    {
-        return (string)$this->depth;
+        return $this->value;
     }
 }

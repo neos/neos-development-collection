@@ -89,14 +89,14 @@ class Change
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         $databaseConnection->insert($tableName, [
-            'contentStreamId' => (string)$this->contentStreamId,
-            'nodeAggregateId' => (string)$this->nodeAggregateId,
-            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'contentStreamId' => $this->contentStreamId->value,
+            'nodeAggregateId' => $this->nodeAggregateId->value,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+            'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
         ]);
     }
 
@@ -108,12 +108,12 @@ class Change
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
                 'deleted' => (int)$this->deleted,
-                'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+                'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
             ],
             [
-                'contentStreamId' => (string)$this->contentStreamId,
-                'nodeAggregateId' => (string)$this->nodeAggregateId,
-                'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+                'contentStreamId' => $this->contentStreamId->value,
+                'nodeAggregateId' => $this->nodeAggregateId->value,
+                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
                 'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             ]
         );

@@ -56,8 +56,8 @@ final class ContentDimension
         $generalizations = [];
         $specializations = [];
         foreach ($variationEdges as $variationEdge) {
-            $generalizations[(string)$variationEdge->specialization] = $variationEdge->generalization;
-            $specializations[(string)$variationEdge->generalization][(string)$variationEdge->specialization]
+            $generalizations[$variationEdge->specialization->value] = $variationEdge->generalization;
+            $specializations[$variationEdge->generalization->value][$variationEdge->specialization->value]
                 = $variationEdge->specialization;
         }
         $this->generalizations = $generalizations;
@@ -84,7 +84,7 @@ final class ContentDimension
 
     public function getGeneralization(ContentDimensionValue $dimensionValue): ?ContentDimensionValue
     {
-        return $this->generalizations[(string)$dimensionValue] ?? null;
+        return $this->generalizations[$dimensionValue->value] ?? null;
     }
 
     /**
@@ -92,7 +92,7 @@ final class ContentDimension
      */
     public function getSpecializations(ContentDimensionValue $dimensionValue): array
     {
-        return $this->specializations[(string)$dimensionValue] ?? [];
+        return $this->specializations[$dimensionValue->value] ?? [];
     }
 
     /**

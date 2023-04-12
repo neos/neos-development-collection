@@ -127,7 +127,10 @@ class SiteService
             return;
         }
 
-        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->nodeName);
+        if ($siteNode->nodeName === null) {
+            return;
+        }
+        $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
         if ($site === null) {
             return;
         }
@@ -159,12 +162,12 @@ class SiteService
     ): Site {
         $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
 
-        if ($this->siteRepository->findOneByNodeName($siteNodeName->jsonSerialize())) {
+        if ($this->siteRepository->findOneByNodeName($siteNodeName->value)) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
         }
 
         // @todo use node aggregate identifier instead of node name
-        $site = new Site((string)$siteNodeName);
+        $site = new Site($siteNodeName->value);
         $site->setSiteResourcesPackageKey($packageKey);
         $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
         $site->setName($siteName);

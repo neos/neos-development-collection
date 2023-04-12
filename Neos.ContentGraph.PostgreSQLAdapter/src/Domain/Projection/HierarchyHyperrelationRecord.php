@@ -73,7 +73,7 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->update(
             $tableNamePrefix . '_hierarchyhyperrelation',
             [
-                'parentnodeanchor' => (string)$newParentNodeAnchor
+                'parentnodeanchor' => $newParentNodeAnchor->value
             ],
             $this->getDatabaseIdentifier()
         );
@@ -145,9 +145,9 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->insert(
             $tableNamePrefix . '_hierarchyhyperrelation',
             [
-                'contentstreamid' => $this->contentStreamId,
-                'parentnodeanchor' => $this->parentNodeAnchor,
-                'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
+                'contentstreamid' => $this->contentStreamId->value,
+                'parentnodeanchor' => $this->parentNodeAnchor->value,
+                'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
                 'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
                 'childnodeanchors' => $this->childNodeAnchors->toDatabaseString()
             ]
@@ -168,8 +168,8 @@ final class HierarchyHyperrelationRecord
     public function getDatabaseIdentifier(): array
     {
         return [
-            'contentstreamid' => (string)$this->contentStreamId,
-            'parentnodeanchor' => (string)$this->parentNodeAnchor,
+            'contentstreamid' => $this->contentStreamId->value,
+            'parentnodeanchor' => $this->parentNodeAnchor->value,
             'dimensionspacepointhash' => $this->dimensionSpacePoint->hash
         ];
     }

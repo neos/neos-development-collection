@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  * @implements \IteratorAggregate<string,DimensionSpacePointSet>
  * @internal no part of public APIs
  */
-final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable, \Stringable
+final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable
 {
     /**
      * The actual coverage.
@@ -90,7 +90,7 @@ final class CoverageByOrigin implements \IteratorAggregate, \JsonSerializable, \
         return $this->coverage;
     }
 
-    public function __toString(): string
+    public function toJson(): string
     {
         return json_encode($this, JSON_THROW_ON_ERROR);
     }

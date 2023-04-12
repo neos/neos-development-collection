@@ -49,7 +49,7 @@ trait NodeModification
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         if (!isset($commandArguments['contentStreamId'])) {
-            $commandArguments['contentStreamId'] = (string)$this->getCurrentContentStreamId();
+            $commandArguments['contentStreamId'] = $this->getCurrentContentStreamId()->value;
         }
         if (!isset($commandArguments['originDimensionSpacePoint'])) {
             $commandArguments['originDimensionSpacePoint'] = $this->getCurrentDimensionSpacePoint()->jsonSerialize();

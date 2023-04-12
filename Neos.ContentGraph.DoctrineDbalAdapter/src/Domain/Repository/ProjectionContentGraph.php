@@ -63,8 +63,8 @@ class ProjectionContentGraph
         ?DimensionSpacePoint $coveredDimensionSpacePoint = null
     ): ?NodeRecord {
         $params = [
-            'contentStreamId' => (string)$contentStreamId,
-            'childNodeAggregateId' => (string)$childNodeAggregateId,
+            'contentStreamId' => $contentStreamId->value,
+            'childNodeAggregateId' => $childNodeAggregateId->value,
             'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
             'coveredDimensionSpacePointHash' => $coveredDimensionSpacePoint
                 ? $coveredDimensionSpacePoint->hash
@@ -107,8 +107,8 @@ class ProjectionContentGraph
  AND h.contentstreamid = :contentStreamId
  AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamId' => (string)$contentStreamId,
-                'nodeAggregateId' => (string)$nodeAggregateId,
+                'contentStreamId' => $contentStreamId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
                 'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash
             ]
         )->fetchAssociative();
@@ -135,8 +135,8 @@ class ProjectionContentGraph
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND h.contentstreamid = :contentStreamId',
             [
-                'contentStreamId' => (string)$contentStreamId,
-                'nodeAggregateId' => (string)$nodeAggregateId,
+                'contentStreamId' => $contentStreamId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash
             ]
         )->fetchAssociative();
@@ -163,9 +163,9 @@ class ProjectionContentGraph
  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
  AND h.contentstreamid = :contentStreamId',
             [
-                'nodeAggregateId' => (string)$nodeAggregateId,
+                'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'contentStreamId' => (string)$contentStreamId,
+                'contentStreamId' => $contentStreamId->value,
             ]
         )->fetchAllAssociative();
 
@@ -197,8 +197,8 @@ class ProjectionContentGraph
  WHERE n.nodeaggregateid = :nodeAggregateId
  AND h.contentstreamid = :contentStreamId',
             [
-                'nodeAggregateId' => (string)$nodeAggregateId,
-                'contentStreamId' => (string)$contentStreamId,
+                'nodeAggregateId' => $nodeAggregateId->value,
+                'contentStreamId' => $contentStreamId->value,
             ]
         )->fetchAllAssociative();
 
@@ -219,7 +219,7 @@ class ProjectionContentGraph
             'SELECT n.* FROM ' . $this->tableNamePrefix . '_node n
  WHERE n.relationanchorpoint = :relationAnchorPoint',
             [
-                'relationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+                'relationAnchorPoint' => $nodeRelationAnchorPoint->value,
             ]
         )->fetchAssociative();
 
@@ -256,14 +256,14 @@ class ProjectionContentGraph
                           AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'succeedingSiblingAnchorPoint' => (string)$succeedingSiblingAnchorPoint,
-                    'contentStreamId' => (string)$contentStreamId,
+                    'succeedingSiblingAnchorPoint' => $succeedingSiblingAnchorPoint->value,
+                    'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAssociative();
 
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
-            $parentAnchorPoint = $succeedingSiblingRelation['parentnodeanchor'];
+            $parentAnchorPoint = NodeRelationAnchorPoint::fromString($succeedingSiblingRelation['parentnodeanchor']);
 
             $precedingSiblingData = $this->getDatabaseConnection()->executeQuery(
                 'SELECT MAX(h.position) AS position FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
@@ -272,8 +272,8 @@ class ProjectionContentGraph
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash
                           AND h.position < :position',
                 [
-                    'anchorPoint' => $parentAnchorPoint,
-                    'contentStreamId' => (string)$contentStreamId,
+                    'anchorPoint' => $parentAnchorPoint->value,
+                    'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                     'position' => $succeedingSiblingPosition
                 ]
@@ -297,8 +297,8 @@ class ProjectionContentGraph
                       AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                     [
-                        'childAnchorPoint' => $childAnchorPoint,
-                        'contentStreamId' => (string)$contentStreamId,
+                        'childAnchorPoint' => $childAnchorPoint->value,
+                        'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAssociative();
@@ -312,8 +312,8 @@ class ProjectionContentGraph
                       AND h.contentstreamid = :contentStreamId
                       AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'parentAnchorPoint' => $parentAnchorPoint,
-                    'contentStreamId' => (string)$contentStreamId,
+                    'parentAnchorPoint' => $parentAnchorPoint->value,
+                    'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAssociative();
@@ -349,8 +349,8 @@ class ProjectionContentGraph
                           AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'parentAnchorPoint' => (string)$parentAnchorPoint,
-                    'contentStreamId' => (string)$contentStreamId,
+                    'parentAnchorPoint' => $parentAnchorPoint->value,
+                    'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAllAssociative() as $relationData
@@ -381,8 +381,8 @@ class ProjectionContentGraph
                           AND h.contentstreamid = :contentStreamId
                           AND h.dimensionspacepointhash = :dimensionSpacePointHash',
                 [
-                    'childAnchorPoint' => (string)$childAnchorPoint,
-                    'contentStreamId' => (string)$contentStreamId,
+                    'childAnchorPoint' => $childAnchorPoint->value,
+                    'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                 ]
             )->fetchAllAssociative() as $relationData
@@ -410,8 +410,8 @@ class ProjectionContentGraph
     WHERE h.childnodeanchor = :childAnchorPoint
     AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'childAnchorPoint' => (string)$childAnchorPoint,
-            'contentStreamId' => (string)$contentStreamId
+            'childAnchorPoint' => $childAnchorPoint->value,
+            'contentStreamId' => $contentStreamId->value
         ];
         $types = [];
 
@@ -448,8 +448,8 @@ class ProjectionContentGraph
     WHERE h.parentnodeanchor = :parentAnchorPoint
     AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'parentAnchorPoint' => (string)$parentAnchorPoint,
-            'contentStreamId' => (string)$contentStreamId
+            'parentAnchorPoint' => $parentAnchorPoint->value,
+            'contentStreamId' => $contentStreamId->value
         ];
         $types = [];
 
@@ -490,8 +490,8 @@ class ProjectionContentGraph
      AND h.contentstreamid = :contentStreamId
      AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)',
                 [
-                    'nodeAggregateId' => (string)$nodeAggregateId,
-                    'contentStreamId' => (string)$contentStreamId,
+                    'nodeAggregateId' => $nodeAggregateId->value,
+                    'contentStreamId' => $contentStreamId->value,
                     'dimensionSpacePointHashes' => $dimensionSpacePointSet->getPointHashes()
                 ],
                 [
@@ -524,8 +524,8 @@ class ProjectionContentGraph
             WHERE n.nodeaggregateid = :nodeAggregateId
             AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'nodeAggregateId' => (string)$nodeAggregateId,
-            'contentStreamId' => (string)$contentStreamId,
+            'nodeAggregateId' => $nodeAggregateId->value,
+            'contentStreamId' => $contentStreamId->value,
         ];
         $types = [];
 
@@ -560,7 +560,7 @@ class ProjectionContentGraph
                           FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                           WHERE h.childnodeanchor = :nodeRelationAnchorPoint',
                 [
-                    'nodeRelationAnchorPoint' => (string)$nodeRelationAnchorPoint,
+                    'nodeRelationAnchorPoint' => $nodeRelationAnchorPoint->value,
                 ]
             )->fetchAllAssociative() as $row
         ) {
@@ -625,8 +625,8 @@ class ProjectionContentGraph
             select nodeaggregateid, dimensionspacepointhash from nestedNodes
             ',
             [
-                'entryNodeAggregateId' => (string)$entryNodeAggregateId,
-                'contentStreamId' => (string)$contentStreamId,
+                'entryNodeAggregateId' => $entryNodeAggregateId->value,
+                'contentStreamId' => $contentStreamId->value,
                 'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [

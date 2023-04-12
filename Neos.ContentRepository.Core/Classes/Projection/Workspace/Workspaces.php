@@ -44,7 +44,7 @@ final class Workspaces implements \IteratorAggregate, \Countable
                     1677833509
                 );
             }
-            $workspaces[$item->workspaceName->name] = $item;
+            $workspaces[$item->workspaceName->value] = $item;
         }
 
         $this->workspaces = $workspaces;
@@ -65,7 +65,7 @@ final class Workspaces implements \IteratorAggregate, \Countable
 
     public function get(WorkspaceName $workspaceName): ?Workspace
     {
-        return $this->workspaces[$workspaceName->name] ?? null;
+        return $this->workspaces[$workspaceName->value] ?? null;
     }
 
     /**

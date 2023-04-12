@@ -48,7 +48,7 @@ final class VisualInterDimensionalVariationGraph
         $height = 0;
 
         foreach ($contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-            $identifier = (string)$contentDimension->id;
+            $identifier = $contentDimension->id->value;
             $offsets[$identifier] = self::resolveOffsets($contentDimension);
         }
 
@@ -61,7 +61,7 @@ final class VisualInterDimensionalVariationGraph
             $previousDepthFactor = 1;
             $previousWidthFactor = 1;
             foreach (array_reverse($dimensionSpacePoint->dimensionValues) as $dimensionIdentifier => $dimensionValue) {
-                $y += $dimensionValue->specializationDepth->depth * $previousDepthFactor;
+                $y += $dimensionValue->specializationDepth->value * $previousDepthFactor;
                 $previousDepthFactor *= $offsets[$dimensionIdentifier]['_height'];
 
                 $x += $offsets[$dimensionIdentifier][$dimensionValue->value]['x'] * $previousWidthFactor;

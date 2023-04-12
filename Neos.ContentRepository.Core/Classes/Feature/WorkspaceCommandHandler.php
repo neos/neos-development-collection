@@ -107,7 +107,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
-                $command->workspaceName
+                $command->workspaceName->value
             ), 1505830958921);
         }
 
@@ -115,8 +115,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf(
                 'The workspace %s (base workspace of %s) does not exist',
-                $command->baseWorkspaceName,
-                $command->workspaceName
+                $command->baseWorkspaceName->value,
+                $command->workspaceName->value
             ), 1513890708);
         }
 
@@ -160,7 +160,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
-                $command->workspaceName
+                $command->workspaceName->value
             ), 1505848624450);
         }
 
@@ -267,7 +267,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             if ($event instanceof ContentStreamWasForked) {
                 if ($contentStreamWasForkedEvent !== null) {
                     throw new \RuntimeException(
-                        'Invariant violation: The content stream "' . $contentStreamId
+                        'Invariant violation: The content stream "' . $contentStreamId->value
                         . '" has two forked events.',
                         1658740373
                     );
@@ -286,7 +286,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if ($contentStreamWasForkedEvent === null) {
-            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamId
+            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamId->value
                 . '" has NO forked event.', 1658740407);
         }
 
@@ -306,7 +306,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 'The base workspace has been modified in the meantime; please rebase.'
                 . ' Expected version %d of source content stream %s',
                 $contentStreamWasForkedEvent->versionOfSourceContentStream->value,
-                $baseContentStreamId
+                $baseContentStreamId->value
             ));
         }
     }
@@ -368,13 +368,13 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
                 $rebaseStatistics->commandRebaseError(sprintf(
                     "The content stream %s cannot be rebased. Error with command %d (%s)"
-                    . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
-                    . "\n The full list of commands applied so far is: %s",
-                    $workspaceContentStreamName,
+                        . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
+                        . "\n The full list of commands applied so far is: %s",
+                    $workspaceContentStreamName->value,
                     $i,
                     get_class($commandToRebase),
-                    $baseWorkspace->workspaceName,
-                    $baseWorkspace->currentContentStreamId,
+                    $baseWorkspace->workspaceName->value,
+                    $baseWorkspace->currentContentStreamId->value,
                     $fullCommandListSoFar
                 ), $e);
             }

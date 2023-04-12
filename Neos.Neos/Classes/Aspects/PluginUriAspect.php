@@ -81,7 +81,7 @@ class PluginUriAspect
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($targetNode);
             $documentNode = $targetNode;
             while ($documentNode instanceof Node) {
-                if ($documentNode->nodeType->isOfType((string)NodeTypeNameFactory::forDocument())) {
+                if ($documentNode->nodeType->isOfType(NodeTypeNameFactory::forDocument()->value)) {
                     break;
                 }
                 $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateId);

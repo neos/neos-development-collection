@@ -54,7 +54,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                     OR c.relationanchorpoint IS NULL
                 )',
             [
-                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()
+                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
             ]
         );
 
@@ -89,7 +89,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 HAVING uniquenessCounter > 1
                 ',
             [
-                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()
+                'rootNodeAnchor' => NodeRelationAnchorPoint::forRootEdge()->value
             ]
         )->fetchAllAssociative();
 
@@ -353,8 +353,8 @@ WHERE
 	AND h.dimensionspacepointhash = :dimensionSpacePointHash
     AND relationanchorpoint NOT IN (SELECT * FROM subgraph)',
                     [
-                        'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge(),
-                        'contentStreamId' => (string)$contentStreamId,
+                        'rootAnchorPoint' => NodeRelationAnchorPoint::forRootEdge()->value,
+                        'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAllAssociative();
@@ -365,8 +365,8 @@ WHERE
                     }, $nodeAggregateIdsInCycles);
 
                     $result->addError(new Error(
-                        'Subgraph defined by content strean ' . $contentStreamId
-                        . ' and dimension space point ' . (string) $dimensionSpacePoint
+                        'Subgraph defined by content strean ' . $contentStreamId->value
+                        . ' and dimension space point ' . $dimensionSpacePoint->toJson()
                         . ' is cyclic for node aggregates '
                         . implode(',', $nodeAggregateIdsInCycles),
                         self::ERROR_CODE_NODE_IS_DISCONNECTED_FROM_THE_ROOT
@@ -407,7 +407,7 @@ WHERE
                     GROUP BY n.nodeaggregateid
                     HAVING COUNT(DISTINCT(n.relationanchorpoint)) > 1',
                     [
-                        'contentStreamId' => (string)$contentStreamId,
+                        'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAllAssociative();
@@ -415,8 +415,8 @@ WHERE
                 foreach ($ambiguousNodeAggregateRecords as $ambiguousRecord) {
                     $result->addError(new Error(
                         'Node aggregate ' . $ambiguousRecord['nodeaggregateid']
-                        . ' is ambiguous in content stream ' . $contentStreamId
-                        . ' and dimension space point ' . (string) $dimensionSpacePoint,
+                        . ' is ambiguous in content stream ' . $contentStreamId->value
+                        . ' and dimension space point ' . $dimensionSpacePoint->toJson(),
                         self::ERROR_CODE_AMBIGUOUS_NODE_AGGREGATE_IN_SUBGRAPH
                     ));
                 }
@@ -444,7 +444,7 @@ WHERE
                     GROUP BY c.relationanchorpoint
                     HAVING COUNT(DISTINCT(h.parentnodeanchor)) > 1',
                     [
-                        'contentStreamId' => (string)$contentStreamId,
+                        'contentStreamId' => $contentStreamId->value,
                         'dimensionSpacePointHash' => $dimensionSpacePoint->hash
                     ]
                 )->fetchAllAssociative();
@@ -452,8 +452,8 @@ WHERE
                 foreach ($nodeRecordsWithMultipleParents as $record) {
                     $result->addError(new Error(
                         'Node aggregate ' . $record['nodeaggregateid']
-                        . ' has multiple parents in content stream ' . $contentStreamId
-                        . ' and dimension space point ' . (string) $dimensionSpacePoint,
+                        . ' has multiple parents in content stream ' . $contentStreamId->value
+                        . ' and dimension space point ' . $dimensionSpacePoint->toJson(),
                         self::ERROR_CODE_NODE_HAS_MULTIPLE_PARENTS
                     ));
                 }
@@ -482,15 +482,15 @@ WHERE
                         WHERE h.contentstreamid = :contentStreamId
                         AND n.nodeaggregateid = :nodeAggregateId',
                     [
-                        'contentStreamId' => (string)$contentStreamId,
-                        'nodeAggregateId' => (string)$nodeAggregateId
+                        'contentStreamId' => $contentStreamId->value,
+                        'nodeAggregateId' => $nodeAggregateId->value
                     ]
                 )->fetchAllAssociative();
 
                 if (count($nodeAggregateRecords) > 1) {
                     $result->addError(new Error(
-                        'Node aggregate ' . $nodeAggregateId
-                        . ' in content stream ' . $contentStreamId
+                        'Node aggregate ' . $nodeAggregateId->value
+                        . ' in content stream ' . $contentStreamId->value
                         . ' is of ambiguous type ("' . implode('","', array_map(
                             function (array $record) {
                                 return $record['nodetypename'];
@@ -525,15 +525,15 @@ WHERE
                         WHERE h.contentstreamid = :contentStreamId
                         AND n.nodeaggregateid = :nodeAggregateId',
                     [
-                        'contentStreamId' => (string)$contentStreamId,
-                        'nodeAggregateId' => (string)$nodeAggregateId
+                        'contentStreamId' => $contentStreamId->value,
+                        'nodeAggregateId' => $nodeAggregateId->value
                     ]
                 )->fetchAllAssociative();
 
                 if (count($nodeAggregateRecords) > 1) {
                     $result->addError(new Error(
-                        'Node aggregate ' . $nodeAggregateId
-                        . ' in content stream ' . $contentStreamId
+                        'Node aggregate ' . $nodeAggregateId->value
+                        . ' in content stream ' . $contentStreamId->value
                         . ' is ambiguously classified ("' . implode('","', array_map(
                             function (array $record) {
                                 return $record['classification'];
@@ -568,14 +568,14 @@ WHERE
                     AND c.dimensionspacepointhash = p.dimensionspacepointhash
                     AND p.childnodeanchor IS NULL',
                 [
-                    'contentStreamId' => (string)$contentStreamId
+                    'contentStreamId' => $contentStreamId->value
                 ]
             )->fetchAllAssociative();
 
             foreach ($excessivelyCoveringNodeRecords as $excessivelyCoveringNodeRecord) {
                 $result->addError(new Error(
                     'Node aggregate ' . $excessivelyCoveringNodeRecord['nodeaggregateid']
-                    . ' in content stream ' . $contentStreamId
+                    . ' in content stream ' . $contentStreamId->value
                     . ' covers dimension space point ' . $excessivelyCoveringNodeRecord['dimensionspacepoint']
                     . ' but its parent does not.',
                     self::ERROR_CODE_CHILD_NODE_COVERAGE_IS_NO_SUBSET_OF_PARENT_NODE_COVERAGE
@@ -611,7 +611,7 @@ WHERE
                     )
                     AND classification != :rootClassification',
                 [
-                    'contentStreamId' => (string)$contentStreamId,
+                    'contentStreamId' => $contentStreamId->value,
                     'rootClassification' => NodeAggregateClassification::CLASSIFICATION_ROOT->value
                 ]
             )->fetchAllAssociative();
@@ -619,7 +619,7 @@ WHERE
             foreach ($nodeRecordsWithMissingOriginCoverage as $nodeRecord) {
                 $result->addError(new Error(
                     'Node aggregate ' . $nodeRecord['nodeaggregateid']
-                    . ' in content stream ' . $contentStreamId
+                    . ' in content stream ' . $contentStreamId->value
                     . ' does not cover its origin dimension space point ' . $nodeRecord['origindimensionspacepoint']
                     . '.',
                     self::ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN

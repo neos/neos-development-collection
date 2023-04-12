@@ -294,7 +294,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
         if ($resolvedNode === null) {
             $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                 'Failed to resolve node "%s" on subgraph "%s"',
-                $nodeAddress->nodeAggregateId,
+                $nodeAddress->nodeAggregateId->value,
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444));
         }
@@ -311,7 +311,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             } catch (NodeNotFoundException | InvalidShortcutException $e) {
                 $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
                     'Failed to resolve shortcut node "%s" on subgraph "%s"',
-                    $resolvedNode->nodeAggregateId,
+                    $resolvedNode->nodeAggregateId->value,
                     json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601370239, $e));
             }
@@ -391,7 +391,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             if ($siteNode === null) {
                 throw new ViewHelperException(sprintf(
                     'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
-                    $documentNodeAddress->nodeAggregateId,
+                    $documentNodeAddress->nodeAggregateId->value,
                     json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
                 ), 1601366598);
             }
@@ -413,7 +413,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
             throw new ViewHelperException(sprintf(
                 'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
                 $path,
-                $documentNodeAddress->nodeAggregateId,
+                $documentNodeAddress->nodeAggregateId->value,
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601311789);
         }

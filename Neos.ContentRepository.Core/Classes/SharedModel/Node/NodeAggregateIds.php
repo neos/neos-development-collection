@@ -60,7 +60,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
         $nodeAggregateIds = [];
         foreach ($array as $serializedNodeAggregateId) {
             if ($serializedNodeAggregateId instanceof NodeAggregateId) {
-                $nodeAggregateIds[(string)$serializedNodeAggregateId] = $serializedNodeAggregateId;
+                $nodeAggregateIds[$serializedNodeAggregateId->value] = $serializedNodeAggregateId;
             } else {
                 $nodeAggregateIds[$serializedNodeAggregateId] = NodeAggregateId::fromString($serializedNodeAggregateId);
             }
@@ -100,7 +100,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
         return $this->nodeAggregateIds;
     }
 
-    public function __toString(): string
+    public function toJson(): string
     {
         return \json_encode($this, JSON_THROW_ON_ERROR);
     }

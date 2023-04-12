@@ -352,7 +352,7 @@ trait EventSourcedTrait
          * Catch Up process and the testcase reset.
          */
 
-        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId);
+        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId->value);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
         // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
@@ -404,13 +404,11 @@ trait EventSourcedTrait
             if (strpos($line['Value'], '$this->') === 0) {
                 // Special case: Referencing stuff from the context here
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
-                if (method_exists($this, $propertyOrMethodName)) {
-                    // is method
-                    $value = (string)$this->$propertyOrMethodName();
-                } else {
-                    // is property
-                    $value = (string)$this->$propertyOrMethodName;
-                }
+                $value = match ($propertyOrMethodName) {
+                    'currentNodeAggregateId' => $this->currentNodeAggregateId()->value,
+                    'contentStreamId' => $this->contentStreamId->value,
+                    default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
+                };
             } else {
                 // default case
                 $value = json_decode($line['Value'], true);
@@ -551,7 +549,7 @@ trait EventSourcedTrait
                 $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
                 $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
                 Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId),
-                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
+                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '" (adapter: ' . $adapterName . ')');
             }
         }
     }
@@ -599,7 +597,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
-        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId . '"');
+        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
             $this->contentStreamId,
@@ -679,7 +677,7 @@ trait EventSourcedTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState)
     {
-        $this->theContentStreamHasState($this->contentStreamId->jsonSerialize(), $expectedState);
+        $this->theContentStreamHasState($this->contentStreamId->value, $expectedState);
     }
 
     /**
