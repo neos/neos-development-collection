@@ -120,7 +120,7 @@ class ContextOperation extends AbstractOperation
                 )
                 ->findNodeById($contextNode->nodeAggregateId);
             if ($nodeInModifiedSubgraph !== null) {
-                $output[$nodeInModifiedSubgraph->nodeAggregateId->__toString()] = $nodeInModifiedSubgraph;
+                $output[$nodeInModifiedSubgraph->nodeAggregateId->value] = $nodeInModifiedSubgraph;
             }
         }
 

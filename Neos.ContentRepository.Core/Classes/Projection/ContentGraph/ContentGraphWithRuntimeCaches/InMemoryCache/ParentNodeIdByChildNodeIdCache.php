@@ -48,8 +48,7 @@ final class ParentNodeIdByChildNodeIdCache
             return;
         }
 
-        $key = (string)$childNodeAggregateId;
-        $this->parentNodeAggregateIds[$key] = $parentNodeAggregateId;
+        $this->parentNodeAggregateIds[$childNodeAggregateId->value] = $parentNodeAggregateId;
     }
 
     public function knowsAbout(NodeAggregateId $childNodeAggregateId): bool
@@ -58,8 +57,7 @@ final class ParentNodeIdByChildNodeIdCache
             return false;
         }
 
-        $key = (string)$childNodeAggregateId;
-        return isset($this->parentNodeAggregateIds[$key]) || isset($this->nodesWithoutParentNode[$key]);
+        return isset($this->parentNodeAggregateIds[$childNodeAggregateId->value]) || isset($this->nodesWithoutParentNode[$childNodeAggregateId->value]);
     }
 
     public function rememberNonExistingParentNode(NodeAggregateId $nodeAggregateId): void
@@ -68,8 +66,7 @@ final class ParentNodeIdByChildNodeIdCache
             return;
         }
 
-        $key = (string)$nodeAggregateId;
-        $this->nodesWithoutParentNode[$key] = true;
+        $this->nodesWithoutParentNode[$nodeAggregateId->value] = true;
     }
 
 
@@ -79,7 +76,6 @@ final class ParentNodeIdByChildNodeIdCache
             return null;
         }
 
-        $key = (string)$childNodeAggregateId;
-        return $this->parentNodeAggregateIds[$key] ?? null;
+        return $this->parentNodeAggregateIds[$childNodeAggregateId->value] ?? null;
     }
 }

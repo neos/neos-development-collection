@@ -53,7 +53,7 @@ final class NamedChildNodeByNodeIdCache
             return;
         }
 
-        $this->nodes[(string)$parentNodeAggregateId][(string)$nodeName] = $node;
+        $this->nodes[$parentNodeAggregateId->value][$nodeName->value] = $node;
     }
 
     public function contains(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): bool
@@ -62,7 +62,7 @@ final class NamedChildNodeByNodeIdCache
             return false;
         }
 
-        return isset($this->nodes[(string)$parentNodeAggregateId][(string)$nodeName]);
+        return isset($this->nodes[$parentNodeAggregateId->value][$nodeName->value]);
     }
 
     public function get(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
@@ -71,6 +71,6 @@ final class NamedChildNodeByNodeIdCache
             return null;
         }
 
-        return $this->nodes[(string)$parentNodeAggregateId][(string)$nodeName] ?? null;
+        return $this->nodes[$parentNodeAggregateId->value][$nodeName->value] ?? null;
     }
 }

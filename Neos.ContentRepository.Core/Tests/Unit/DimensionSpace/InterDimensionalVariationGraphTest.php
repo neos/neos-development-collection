@@ -638,7 +638,7 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
             $dimensionZookeeper
         ]);
 
-        $this->assertSame(max($firstDepth->depth, $secondDepth->depth) + 1, $graph->_call('determineWeightNormalizationBase'));
+        $this->assertSame(max($firstDepth->value, $secondDepth->value) + 1, $graph->_call('determineWeightNormalizationBase'));
     }
 
     public function testGetVariantTypeCorrectlyDeterminesTheVariantType()

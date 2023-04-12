@@ -32,7 +32,7 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
     public static function graphProjectionTableNamePrefix(
         ContentRepositoryId $contentRepositoryId
     ): string {
-        return sprintf('cr_%s_p_graph', $contentRepositoryId);
+        return sprintf('cr_%s_p_graph', $contentRepositoryId->value);
     }
 
     public function build(

@@ -31,9 +31,9 @@ final class NodeAddress
     {
         return sprintf(
             'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s]',
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->nodeAggregateId
+            $this->contentStreamId->value,
+            $this->dimensionSpacePoint->toJson(),
+            $this->nodeAggregateId->value
         );
     }
 }

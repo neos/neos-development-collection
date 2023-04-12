@@ -116,7 +116,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
         return isset($this->points[$point->hash]);
     }
 
-    public function __toString(): string
+    public function toJson(): string
     {
         return json_encode($this, JSON_THROW_ON_ERROR);
     }

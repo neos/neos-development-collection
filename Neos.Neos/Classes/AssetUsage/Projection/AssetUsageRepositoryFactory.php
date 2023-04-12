@@ -21,7 +21,7 @@ final class AssetUsageRepositoryFactory
     {
         return new AssetUsageRepository(
             $this->dbal,
-            sprintf('cr_%s_p_neos_%s', $contentRepositoryId, 'asset_usage')
+            sprintf('cr_%s_p_neos_%s', $contentRepositoryId->value, 'asset_usage')
         );
     }
 }

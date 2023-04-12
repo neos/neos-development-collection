@@ -68,9 +68,9 @@ class NodeHelper implements ProtectedContextAwareInterface
                     . ' You might want to adjust your node type configuration and create the missing child node'
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $nodePathOfNode,
+                    $nodePathOfNode->value,
                     $nodePath,
-                    $node->nodeType
+                    $node->nodeType->name->value
                 ), 1389352984);
             }
         }

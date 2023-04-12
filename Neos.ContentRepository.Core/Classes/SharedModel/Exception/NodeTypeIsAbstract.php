@@ -23,6 +23,6 @@ final class NodeTypeIsAbstract extends \DomainException
 {
     public static function butWasNotSupposedToBe(NodeTypeName $nodeTypeName): self
     {
-        return new self('Given node type "' . $nodeTypeName . '" is abstract.', 1630061720);
+        return new self('Given node type "' . $nodeTypeName->value . '" is abstract.', 1630061720);
     }
 }

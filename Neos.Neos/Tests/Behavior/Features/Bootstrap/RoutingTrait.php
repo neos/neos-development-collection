@@ -193,14 +193,14 @@ trait RoutingTrait
         $nodeAddress = $this->match($this->requestUrl);
         Assert::assertNotNull($nodeAddress, 'Routing result does not have "node" key - this probably means that the FrontendNodeRoutePartHandler did not properly resolve the result.');
         Assert::assertTrue($nodeAddress->isInLiveWorkspace());
-        Assert::assertSame($nodeAggregateId, (string)$nodeAddress->nodeAggregateId);
-        Assert::assertSame($contentStreamId, (string)$nodeAddress->contentStreamId);
+        Assert::assertSame($nodeAggregateId, $nodeAddress->nodeAggregateId->value);
+        Assert::assertSame($contentStreamId, $nodeAddress->contentStreamId->value);
         Assert::assertSame(
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
             $nodeAddress->dimensionSpacePoint,
             sprintf(
                 'Dimension space point "%s" did not match the expected "%s"',
-                json_encode($nodeAddress->dimensionSpacePoint),
+                $nodeAddress->dimensionSpacePoint->toJson(),
                 $dimensionSpacePoint
             )
         );
@@ -351,7 +351,7 @@ trait RoutingTrait
     {
         $expected = DimensionSpacePoint::fromJsonString($dimensionSpacePointString);
         $actual = $this->dimensionResolverContext->resolvedDimensionSpacePoint;
-        Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . json_encode($actual->jsonSerialize()));
+        Assert::assertTrue($expected->equals($actual), 'Resolved dimension does not match - actual: ' . $actual->toJson());
 
         Assert::assertEquals($remainingUriPathString, $this->dimensionResolverContext->remainingUriPath, 'Remaining URI path does not match');
     }

@@ -92,7 +92,7 @@ trait NodeCreation
 
     private function deserializeDefaultProperties(NodeTypeName $nodeTypeName): PropertyValuesToWrite
     {
-        $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
         $defaultValues = [];
         foreach ($nodeType->getDefaultValuesForProperties() as $propertyName => $defaultValue) {
             $propertyType = PropertyType::fromNodeTypeDeclaration(
@@ -121,7 +121,7 @@ trait NodeCreation
             return;
         }
 
-        $nodeType = $this->nodeTypeManager->getNodeType((string) $nodeTypeName);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
         foreach ($propertyValues->values as $propertyName => $propertyValue) {
             if (!isset($nodeType->getProperties()[$propertyName])) {
                 throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
@@ -299,7 +299,7 @@ trait NodeCreation
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath
                 ? $nodePath->appendPathSegment($nodeName)
-                : NodePath::fromString((string) $nodeName);
+                : NodePath::fromString($nodeName->value);
             $childNodeAggregateId = $nodeAggregateIds->getNodeAggregateId($childNodePath)
                 ?? NodeAggregateId::create();
             $initialPropertyValues = SerializedPropertyValues::defaultFromNodeType($childNodeType);
@@ -370,7 +370,7 @@ trait NodeCreation
             $childName = NodeName::fromString($rawChildName);
             $childPath = $childPath
                 ? $childPath->appendPathSegment($childName)
-                : NodePath::fromString((string) $childName);
+                : NodePath::fromString($childName->value);
             if (!$nodeAggregateIds->getNodeAggregateId($childPath)) {
                 $nodeAggregateIds = $nodeAggregateIds->add(
                     $childPath,

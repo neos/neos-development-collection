@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  *
  * @api
  */
-final class WorkspaceName implements \JsonSerializable, \Stringable
+final class WorkspaceName implements \JsonSerializable
 {
     public const WORKSPACE_NAME_LIVE = 'live';
 
@@ -29,9 +29,9 @@ final class WorkspaceName implements \JsonSerializable, \Stringable
     private static array $instances = [];
 
     private function __construct(
-        public readonly string $name
+        public readonly string $value
     ) {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $name) !== 1) {
+        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $value) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace name given.', 1505826610318);
         }
     }
@@ -53,16 +53,16 @@ final class WorkspaceName implements \JsonSerializable, \Stringable
 
     public function isLive(): bool
     {
-        return $this->name === self::WORKSPACE_NAME_LIVE;
-    }
-
-    public function __toString(): string
-    {
-        return $this->name;
+        return $this->value === self::WORKSPACE_NAME_LIVE;
     }
 
     public function jsonSerialize(): string
     {
-        return $this->name;
+        return $this->value;
+    }
+
+    public function equals(self $other): bool
+    {
+        return $this === $other;
     }
 }
