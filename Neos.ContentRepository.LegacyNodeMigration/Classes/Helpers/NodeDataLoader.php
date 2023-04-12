@@ -15,18 +15,22 @@ final class NodeDataLoader implements \IteratorAggregate
 
     public function getIterator(): Traversable
     {
+        $platform = $this->connection->getDatabasePlatform() ? $this->connection->getDatabasePlatform()->getName() : '';
+        $removed = $platform === 'postgresql' ? 'FALSE' : 0;
+
         $query = $this->connection->executeQuery('
             SELECT
                 *
             FROM
                 neos_contentrepository_domain_model_nodedata
             WHERE
-                workspace = "live"
-                AND (movedto IS NULL OR removed=0)
-                AND path != "/"
+                "workspace" = \'live\'
+                AND ("movedto" IS NULL OR "removed"=:removed)
+                AND "path" != \'/\'
             ORDER BY
                 parentpath, sortingindex, path
-        ');
+        ', ['removed' => $removed]);
+
         return $query->iterateAssociative();
     }
 }
