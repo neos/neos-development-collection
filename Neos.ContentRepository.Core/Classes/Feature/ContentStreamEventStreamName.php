@@ -33,7 +33,7 @@ final class ContentStreamEventStreamName
 
     public static function fromContentStreamId(ContentStreamId $contentStreamId): self
     {
-        return new ContentStreamEventStreamName(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
+        return new self(self::EVENT_STREAM_NAME_PREFIX . $contentStreamId->value);
     }
 
     public function getEventStreamName(): StreamName

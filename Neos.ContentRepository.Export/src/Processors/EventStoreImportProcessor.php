@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace Neos\ContentRepository\Export\Processors;
 
 use League\Flysystem\Filesystem;
@@ -7,23 +8,23 @@ use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
-use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
-use Neos\ContentRepository\Export\ProcessorInterface;
-use Neos\ContentRepository\Export\ProcessorResult;
-use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Feature\WorkspaceEventStreamName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvent;
+use Neos\ContentRepository\Export\ProcessorInterface;
+use Neos\ContentRepository\Export\ProcessorResult;
+use Neos\ContentRepository\Export\Severity;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
-use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 use Neos\Flow\Utility\Algorithms;
@@ -41,7 +42,8 @@ final class EventStoreImportProcessor implements ProcessorInterface
         private readonly EventStoreInterface $eventStore,
         private readonly EventNormalizer $eventNormalizer,
         private ?ContentStreamId $contentStreamId,
-    ) {}
+    ) {
+    }
 
     public function onMessage(\Closure $callback): void
     {
@@ -76,7 +78,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                 $eventIdMap[$event->identifier] = $newEventId;
                 $event = $event
                     ->withIdentifier($newEventId)
-                    ->processMetadata(static function(array $metadata) use ($eventIdMap) {
+                    ->processMetadata(static function (array $metadata) use ($eventIdMap) {
                         $processedMetadata = $metadata;
                         /** @var string|null $causationId */
                         $causationId = $processedMetadata['causationId'] ?? null;
@@ -108,7 +110,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
         assert($this->contentStreamId !== null);
 
-        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamId->value);
+        $contentStreamStreamName = ContentStreamEventStreamName::fromContentStreamId($this->contentStreamId)->getEventStreamName();
         $events = Events::with(
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
@@ -123,7 +125,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         }
 
         $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->value);
+        $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName($workspaceName)->getEventStreamName();
         $events = Events::with(
             $this->normalizeEvent(
                 new RootWorkspaceWasCreated(
@@ -139,7 +141,6 @@ final class EventStoreImportProcessor implements ProcessorInterface
         } catch (ConcurrencyException $e) {
             return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $workspaceStreamName->value));
         }
-
 
         try {
             $this->eventStore->commit($contentStreamStreamName, Events::fromArray($domainEvents), ExpectedVersion::fromVersion($contentStreamCreationCommitResult->highestCommittedVersion));
