@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
@@ -26,6 +27,9 @@ use Neos\Flow\Annotations as Flow;
 
 class FusionSourceCodeFactory
 {
+    /**
+     * @var array<string, mixed>
+     */
     #[Flow\InjectConfiguration("fusion.autoInclude")]
     protected array $autoIncludeConfiguration = [];
 

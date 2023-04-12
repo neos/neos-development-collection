@@ -42,7 +42,6 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
  */
 class WorkspaceCommandController extends CommandController
 {
-
     /**
      * @Flow\Inject
      * @var UserService

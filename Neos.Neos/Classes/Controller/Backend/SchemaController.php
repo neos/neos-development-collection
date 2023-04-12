@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Backend;
@@ -23,7 +24,6 @@ use Neos\Neos\Service\NodeTypeSchemaBuilder;
 #[Flow\Scope('singleton')]
 class SchemaController extends ActionController
 {
-
     /**
      * @Flow\Inject
      * @var VariableFrontend

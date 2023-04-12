@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
@@ -248,6 +249,9 @@ class FusionService
 
     private function findSiteBySiteNode(Node $siteNode): Site
     {
+        if ($siteNode->nodeName === null) {
+            throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->nodeAggregateId->value), 1681286146);
+        }
         return $this->siteRepository->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
             ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName), 1677245517);
     }

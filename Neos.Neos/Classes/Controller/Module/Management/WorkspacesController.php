@@ -65,7 +65,6 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
  */
 class WorkspacesController extends AbstractModuleController
 {
-
     use ModuleTranslationTrait;
 
     /**
