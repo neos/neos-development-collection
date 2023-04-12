@@ -22,7 +22,7 @@ use Neos\Utility\Arrays;
  * A content dimension value in a single ContentDimension; e.g. the value "de" in the dimension "language".
  * @api
  */
-final class ContentDimensionValue implements \Stringable
+final class ContentDimensionValue
 {
     /**
      * @throws ContentDimensionValueIsInvalid
@@ -63,10 +63,5 @@ final class ContentDimensionValue implements \Stringable
         $configuration = $this->configuration;
 
         return Arrays::getValueByPath($configuration, $path);
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
     }
 }

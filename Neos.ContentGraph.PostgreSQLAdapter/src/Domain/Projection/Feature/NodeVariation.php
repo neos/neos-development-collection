@@ -246,9 +246,9 @@ trait NodeVariation
                 AND n.nodeaggregateid = :affectedNodeAggregateId
             )';
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'newNodeRelationAnchorPoint' => (string)$newNodeRelationAnchorPoint,
-            'affectedNodeAggregateId' => (string)$affectedNodeAggregateId
+            'contentStreamId' => $contentStreamId->value,
+            'newNodeRelationAnchorPoint' => $newNodeRelationAnchorPoint->value,
+            'affectedNodeAggregateId' => $affectedNodeAggregateId->value
         ];
         foreach ($affectedDimensionSpacePointSet as $affectedDimensionSpacePoint) {
             $parentStatement = /** @lang PostgreSQL */

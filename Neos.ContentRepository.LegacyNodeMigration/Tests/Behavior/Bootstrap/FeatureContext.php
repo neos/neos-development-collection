@@ -96,7 +96,7 @@ class FeatureContext implements Context
             return [
                 'path' => $row['Path'],
                 'parentpath' => implode('/', array_slice(explode('/', $row['Path']), 0, -1)) ?: '/',
-                'identifier' => $row['Identifier'] ?? (string)NodeAggregateId::create(),
+                'identifier' => $row['Identifier'] ?? NodeAggregateId::create()->value,
                 'nodetype' => $row['Node Type'] ?? 'unstructured',
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',

@@ -21,10 +21,10 @@ use Neos\Flow\Utility\Algorithms;
  *
  * @internal
  */
-class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
+class NodeRelationAnchorPoint implements \JsonSerializable
 {
     private function __construct(
-        private string $value
+        public readonly string $value
     ) {
     }
 
@@ -48,8 +48,8 @@ class NodeRelationAnchorPoint implements \JsonSerializable, \Stringable
         return $this->value;
     }
 
-    public function __toString(): string
+    public function equals(self $other): bool
     {
-        return $this->value;
+        return $other->value === $this->value;
     }
 }

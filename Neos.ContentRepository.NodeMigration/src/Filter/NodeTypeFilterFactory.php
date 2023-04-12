@@ -72,18 +72,18 @@ class NodeTypeFilterFactory implements FilterFactoryInterface
 
             public function matches(NodeAggregate $nodeAggregate): bool
             {
-                $nodeTypes = [$this->nodeTypeName];
+                $nodeTypes = [$this->nodeTypeName->value];
                 if ($this->withSubTypes) {
                     foreach ($this->nodeTypeManager->getSubNodeTypes($this->nodeTypeName) as $nodeType) {
-                        $nodeTypes[] = $nodeType->getName();
+                        $nodeTypes[] = $nodeType->name->value;
                     }
                 }
 
                 if ($this->exclude) {
-                    return !in_array($nodeAggregate->nodeTypeName->value, $nodeTypes);
+                    return !in_array($nodeAggregate->nodeTypeName->value, $nodeTypes, true);
                 } else {
                     // non-negated
-                    return in_array($nodeAggregate->nodeTypeName->value, $nodeTypes);
+                    return in_array($nodeAggregate->nodeTypeName->value, $nodeTypes, true);
                 }
             }
         };

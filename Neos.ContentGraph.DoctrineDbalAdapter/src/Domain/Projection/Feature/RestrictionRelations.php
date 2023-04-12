@@ -40,8 +40,8 @@ WHERE r.contentstreamid = :contentStreamId
 AND r.originnodeaggregateid = :originNodeAggregateId
 AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
             [
-                'contentStreamId' => (string)$contentStreamId,
-                'originNodeAggregateId' => (string)$originNodeAggregateId,
+                'contentStreamId' => $contentStreamId->value,
+                'originNodeAggregateId' => $originNodeAggregateId->value,
                 'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],
             [
@@ -111,8 +111,8 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                     and r.affectednodeaggregateid = tree.nodeaggregateid
             ',
             [
-                'entryNodeAggregateId' => (string)$nodeAggregateId,
-                'contentStreamId' => (string)$contentStreamId,
+                'entryNodeAggregateId' => $nodeAggregateId->value,
+                'contentStreamId' => $contentStreamId->value,
             ]
         );
     }
@@ -143,7 +143,7 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                     AND r.affectednodeaggregateid IN (:descendantNodeAggregateIds)
                     AND r.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)',
             [
-                'contentStreamId' => (string)$contentStreamId,
+                'contentStreamId' => $contentStreamId->value,
                 'descendantNodeAggregateIds' => array_keys($descendantNodeAggregateIds),
                 'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
             ],

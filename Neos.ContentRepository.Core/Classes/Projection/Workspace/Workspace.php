@@ -52,7 +52,7 @@ class Workspace
      */
     public function isPersonalWorkspace(): bool
     {
-        return str_starts_with($this->workspaceName->name, static::PERSONAL_WORKSPACE_PREFIX);
+        return str_starts_with($this->workspaceName->value, static::PERSONAL_WORKSPACE_PREFIX);
     }
 
     /**

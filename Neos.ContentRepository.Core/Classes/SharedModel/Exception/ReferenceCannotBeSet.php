@@ -30,8 +30,8 @@ final class ReferenceCannotBeSet extends \DomainException
         NodeTypeName $nodeTypeName
     ): self {
         return new self(
-            'Reference "' . $propertyName . '" cannot be set because node type "'
-                . $nodeTypeName . '" does not declare it.',
+            'Reference "' . $propertyName->value . '" cannot be set because node type "'
+                . $nodeTypeName->value . '" does not declare it.',
             1618670106
         );
     }
@@ -42,8 +42,8 @@ final class ReferenceCannotBeSet extends \DomainException
         NodeTypeName $nameOfAttemptedType
     ): self {
         return new self(
-            'Reference "' . $referenceName . '" cannot be set for node type "'
-            . $nodeTypeName . '" because the constraints do not allow nodes of type "' . $nameOfAttemptedType . '"',
+            'Reference "' . $referenceName->value . '" cannot be set for node type "'
+            . $nodeTypeName->value . '" because the constraints do not allow nodes of type "' . $nameOfAttemptedType->value . '"',
             1648502149
         );
     }
@@ -54,8 +54,8 @@ final class ReferenceCannotBeSet extends \DomainException
         PropertyName $propertyName
     ): self {
         return new self(
-            'Reference "' . $referenceName . '" cannot be set for node type "'
-            . $nodeTypeName . '" because it does not declare given property "' . $propertyName . '"',
+            'Reference "' . $referenceName->value . '" cannot be set for node type "'
+            . $nodeTypeName->value . '" because it does not declare given property "' . $propertyName->value . '"',
             1658406662
         );
     }
@@ -68,8 +68,8 @@ final class ReferenceCannotBeSet extends \DomainException
         string $configuredType
     ): self {
         return new self(
-            'Reference "' . $referenceName . '" cannot be set for node type "' . $nodeTypeName
-            . '" because its property "' . $propertyName . '" cannot be set to a value of type "' . $attemptedType
+            'Reference "' . $referenceName->value . '" cannot be set for node type "' . $nodeTypeName->value
+            . '" because its property "' . $propertyName->value . '" cannot be set to a value of type "' . $attemptedType
             . '", must be of type "' . $configuredType . '".',
             1658406762
         );

@@ -9,8 +9,8 @@
 	<f:if condition="{siteChanges}">
 		<f:then>
 			<f:form id="publishOrDiscardNodes" action="publishOrDiscardNodes">
-				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace.workspaceName.name}"/>
-				<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+				<f:form.hidden name="selectedWorkspace" value="{selectedWorkspace.workspaceName.value}"/>
+				<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel.value})}</legend>
 				<br />
 				<div class="neos-row-fluid">
 					<table class="neos-table">
@@ -49,7 +49,7 @@
 											<div class="neos-span2 neos-pull-right neos-aRight">
 												<f:if condition="{document.documentNode.removed}">
 													<f:else>
-														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel})}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="fas fa-external-link-alt icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'Neos.Neos', value: 'Edit')}" data-neos-toggle="tooltip"><i class="fas fa-pencil-alt icon-white"></i></button>
+														<neos:link.node node="{document.documentNode}" absolute="1" target="neosPreview" class="neos-button" title="{neos:backend.translate(id: 'workspaces.openPageInWorkspace', source: 'Modules', package: 'Neos.Neos', value: 'Open page in \"{0}\" workspace', arguments: {0: selectedWorkspaceLabel.value})}" additionalAttributes="{data-neos-toggle: 'tooltip'}"><i class="fas fa-external-link-alt icon-white"></i></neos:link.node><button form="postHelper" formaction="{f:uri.action(action: 'rebaseAndRedirect', arguments: {targetNode: document.documentNode, targetWorkspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button" title="{neos:backend.translate(id: 'edit', source: 'Main', package: 'Neos.Neos', value: 'Edit')}" data-neos-toggle="tooltip"><i class="fas fa-pencil-alt icon-white"></i></button>
 													</f:else>
 												</f:if>
 											</div>
@@ -69,11 +69,11 @@
 										</td>
 										<td class="neos-action">
 											<f:if condition="{canPublishToBaseWorkspace}">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {nodeAddress: change.serializedNodeAddress, selectedWorkspace: selectedWorkspace.workspaceName.name})}" type="submit" class="neos-button neos-button-primary neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip">
+												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {nodeAddress: change.serializedNodeAddress, selectedWorkspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button neos-button-primary neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip">
 													<i class="fas fa-check icon-white"></i>
 												</button>
 											</f:if>
-											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {nodeAddress: change.serializedNodeAddress, selectedWorkspace: selectedWorkspace.workspaceName.name})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
+											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {nodeAddress: change.serializedNodeAddress, selectedWorkspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
 												<i class="fas fa-trash-alt icon-white"></i>
 											</button>
 										</td>
@@ -92,11 +92,11 @@
 					<div class="neos-modal-content">
 						<div class="neos-modal-header">
 							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'Neos.Neos')}</div>
+							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardAllChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel.value}, source: 'Modules', package: 'Neos.Neos')}</div>
 						</div>
 						<div class="neos-modal-footer">
 							<button href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'Neos.Neos')}</button>
-							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace.workspaceName.name})}" type="submit" class="neos-button neos-button-danger">
+							<button form="postHelper" formaction="{f:uri.action(action: 'discardWorkspace', arguments: {workspace: selectedWorkspace.workspaceName.value})}" type="submit" class="neos-button neos-button-danger">
 								<i class="fas fa-trash-alt icon-white"></i>
 								{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
 							</button>
@@ -111,7 +111,7 @@
 					<div class="neos-modal-content">
 						<div class="neos-modal-header">
 							<button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardSelectedChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel}, source: 'Modules', package: 'Neos.Neos')}</div>
+							<div class="neos-header">{neos:backend.translate(id: 'workspaces.discardSelectedChangesInWorkspaceConfirmation', arguments: {0: selectedWorkspaceLabel.value}, source: 'Modules', package: 'Neos.Neos')}</div>
 						</div>
 						<div class="neos-modal-footer">
 							<button href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', source: 'Main', package: 'Neos.Neos')}</button>
@@ -184,7 +184,7 @@
 
 		</f:then>
 		<f:else>
-			<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel})}</legend>
+			<legend>{neos:backend.translate(id: 'workspaces.unpublishedChanges', source: 'Modules', package: 'Neos.Neos', arguments: {0: selectedWorkspaceLabel.value})}</legend>
 			<p>{neos:backend.translate(id: 'workspaces.thereAreNoUnpublishedChanges', source: 'Modules', package: 'Neos.Neos')}</p>
 			<div class="neos-footer">
 				<div class="pull-left">
@@ -207,9 +207,9 @@
 						<i class="fas fa-trash-alt icon-white"></i>
 						{neos:backend.translate(id: 'workspaces.discardAllChanges', source: 'Modules', package: 'Neos.Neos')}
 					</button>
-					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace.workspaceName.name})}" type="submit" class="review-button-action neos-button neos-button-primary">
+					<button form="postHelper" formaction="{f:uri.action(action: 'publishWorkspace', arguments: {workspace: selectedWorkspace.workspaceName.value})}" type="submit" class="review-button-action neos-button neos-button-primary">
 						<i class="fas fa-check-double icon-white"></i>
-						{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
+						{neos:backend.translate(id: 'workspaces.publishAllChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel.value})}
 					</button>
 					<button type="submit" name="moduleArguments[action]" value="discard" class="neos-button neos-button-danger neos-hidden neos-disabled batch-action" disabled="disabled" data-toggle="modal" href="#discardSelected">
 						<i class="fas fa-trash-alt icon-white"></i>
@@ -217,7 +217,7 @@
 					</button>
 					<button type="submit" name="moduleArguments[action]" value="publish" class="neos-button neos-button-primary neos-hidden neos-disabled batch-action" disabled="disabled">
 						<i class="fas fa-check icon-white"></i>
-						{neos:backend.translate(id: 'workspaces.publishSelectedChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel})}
+						{neos:backend.translate(id: 'workspaces.publishSelectedChangesTo', source: 'Modules', package: 'Neos.Neos', arguments: {0: baseWorkspaceLabel.value})}
 					</button>
 				</f:then>
 				<f:else>

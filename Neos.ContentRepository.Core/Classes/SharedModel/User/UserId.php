@@ -19,7 +19,7 @@ use Neos\Flow\Utility\Algorithms;
 /**
  * @api
  */
-final class UserId implements \JsonSerializable, \Stringable
+final class UserId implements \JsonSerializable
 {
     private const SYSTEM_USER_ID = 'system';
 
@@ -67,11 +67,6 @@ final class UserId implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

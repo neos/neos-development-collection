@@ -73,7 +73,7 @@ trait ConstraintChecks
     ): void {
         if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId . '" does not exist yet.',
+                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
             );
         }
@@ -98,10 +98,10 @@ trait ConstraintChecks
     protected function requireNodeType(NodeTypeName $nodeTypeName): NodeType
     {
         try {
-            return $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
+            return $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
         } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFound(
-                'Node type "' . $nodeTypeName . '" is unknown to the node type manager.',
+                'Node type "' . $nodeTypeName->value . '" is unknown to the node type manager.',
                 1541671070
             );
         }
@@ -121,7 +121,7 @@ trait ConstraintChecks
     protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void
     {
         if (!$nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
-            throw new NodeTypeIsNotOfTypeRoot('Node type "' . $nodeType . '" is not of type root.', 1541765701);
+            throw new NodeTypeIsNotOfTypeRoot('Node type "' . $nodeType->name->value . '" is not of type root.', 1541765701);
         }
     }
 
@@ -133,7 +133,7 @@ trait ConstraintChecks
     {
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
             throw new NodeTypeIsOfTypeRoot(
-                'Node type "' . $nodeType->name . '" is of type root.',
+                'Node type "' . $nodeType->name->value . '" is of type root.',
                 1541765806
             );
         }
@@ -159,7 +159,7 @@ trait ConstraintChecks
         foreach ($nodeType->getAutoCreatedChildNodes() as $tetheredChildNodeType) {
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
-                    'Node type "' . $nodeType->name . '" for tethered descendant is of type root.',
+                    'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',
                     1541767062
                 );
             }
@@ -169,16 +169,16 @@ trait ConstraintChecks
 
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType((string) $nodeTypeName);
-        if (!isset($nodeType->getProperties()[(string)$propertyName])) {
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        if (!isset($nodeType->getProperties()[$propertyName->value])) {
         }
     }
 
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $propertyName): void
     {
-        $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
-        if (isset($nodeType->getProperties()[(string)$propertyName])) {
-            $propertyType = $nodeType->getPropertyType((string)$propertyName);
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        if (isset($nodeType->getProperties()[$propertyName->value])) {
+            $propertyType = $nodeType->getPropertyType($propertyName->value);
             if ($propertyType === 'reference' || $propertyType === 'references') {
                 return;
             }
@@ -191,8 +191,8 @@ trait ConstraintChecks
         ReferenceName $referenceName,
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
-        $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
-        $propertyDeclaration = $nodeType->getProperties()[(string)$referenceName] ?? null;
+        $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+        $propertyDeclaration = $nodeType->getProperties()[$referenceName->value] ?? null;
         if (is_null($propertyDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
@@ -275,8 +275,8 @@ trait ConstraintChecks
         // !!! IF YOU ADJUST THIS METHOD, also adjust the method below.
         if (!$parentsNodeType->allowsChildNodeType($nodeType)) {
             throw new NodeConstraintException(
-                'Node type "' . $nodeType . '" is not allowed for child nodes of type '
-                    . $parentsNodeType->name
+                'Node type "' . $nodeType->name->value . '" is not allowed for child nodes of type '
+                    . $parentsNodeType->name->value
             );
         }
         if (
@@ -285,10 +285,10 @@ trait ConstraintChecks
             && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
         ) {
             throw new NodeConstraintException(
-                'Node type "' . $nodeType . '" does not match configured "'
-                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name
-                    . '" for auto created child nodes for parent type "' . $parentsNodeType
-                    . '" with name "' . $nodeName . '"'
+                'Node type "' . $nodeType->name->value . '" does not match configured "'
+                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->value
+                    . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
+                    . '" with name "' . $nodeName->value . '"'
             );
         }
     }
@@ -328,8 +328,8 @@ trait ConstraintChecks
             )
         ) {
             throw new NodeConstraintException(
-                'Node type "' . $nodeType . '" is not allowed below tethered child nodes "' . $parentNodeName
-                    . '" of nodes of type "' . $grandParentsNodeType->name . '"',
+                'Node type "' . $nodeType->name->value . '" is not allowed below tethered child nodes "' . $parentNodeName?->value
+                    . '" of nodes of type "' . $grandParentsNodeType->name->value . '"',
                 1520011791
             );
         }
@@ -343,7 +343,7 @@ trait ConstraintChecks
         if (
             $parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
-            && !$grandParentsNodeType->allowsGrandchildNodeType((string)$parentNodeName, $nodeType)
+            && !$grandParentsNodeType->allowsGrandchildNodeType($parentNodeName->value, $nodeType)
         ) {
             return false;
         }
@@ -366,7 +366,7 @@ trait ConstraintChecks
 
         if (!$nodeAggregate) {
             throw new NodeAggregateCurrentlyDoesNotExist(
-                'Node aggregate "' . $nodeAggregateId . '" does currently not exist.',
+                'Node aggregate "' . $nodeAggregateId->value . '" does currently not exist.',
                 1541678486
             );
         }
@@ -390,7 +390,7 @@ trait ConstraintChecks
 
         if ($nodeAggregate) {
             throw new NodeAggregateCurrentlyExists(
-                'Node aggregate "' . $nodeAggregateId . '" does currently exist, but should not.',
+                'Node aggregate "' . $nodeAggregateId->value . '" does currently exist, but should not.',
                 1541687645
             );
         }
@@ -414,9 +414,9 @@ trait ConstraintChecks
 
         if (!$parentNodeAggregate) {
             throw new NodeAggregateCurrentlyDoesNotExist(
-                'Parent node aggregate for ' . $childNodeAggregateId
-                    . ' does currently not exist in origin dimension space point ' . $childOriginDimensionSpacePoint
-                    . ' and content stream ' . $contentStreamId,
+                'Parent node aggregate for ' . $childNodeAggregateId->value
+                    . ' does currently not exist in origin dimension space point ' . $childOriginDimensionSpacePoint->toJson()
+                    . ' and content stream ' . $contentStreamId->value,
                 1645368685
             );
         }
@@ -433,7 +433,7 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
                     . '" does currently not cover dimension space point '
                     . json_encode($dimensionSpacePoint) . '.',
                 1541678877
@@ -464,7 +464,7 @@ trait ConstraintChecks
     {
         if ($nodeAggregate->classification->isRoot()) {
             throw new NodeAggregateIsRoot(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId . '" is classified as root  ' . $extraReason,
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value . '" is classified as root  ' . $extraReason,
                 1554586860
             );
         }
@@ -477,7 +477,7 @@ trait ConstraintChecks
     {
         if ($nodeAggregate->classification->isTethered()) {
             throw new NodeAggregateIsTethered(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId . '" is classified as tethered.',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value . '" is classified as tethered.',
                 1554587288
             );
         }
@@ -494,8 +494,8 @@ trait ConstraintChecks
     ): void {
         if ($nodeAggregate->nodeAggregateId->equals($referenceNodeAggregate->nodeAggregateId)) {
             throw new NodeAggregateIsDescendant(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId
-                    . '" is descendant of node aggregate "' . $referenceNodeAggregate->nodeAggregateId . '"',
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
+                    . '" is descendant of node aggregate "' . $referenceNodeAggregate->nodeAggregateId->value . '"',
                 1554971124
             );
         }
@@ -538,9 +538,9 @@ trait ConstraintChecks
             );
         if (count($dimensionSpacePointsOccupiedByChildNodeName) > 0) {
             throw new NodeNameIsAlreadyOccupied(
-                'Child node name "' . $nodeName . '" is already occupied for parent "'
-                    . $parentNodeAggregateId . '" in dimension space points '
-                    . $dimensionSpacePointsOccupiedByChildNodeName
+                'Child node name "' . $nodeName->value . '" is already occupied for parent "'
+                    . $parentNodeAggregateId->value . '" in dimension space points '
+                    . $dimensionSpacePointsOccupiedByChildNodeName->toJson()
             );
         }
     }
@@ -569,9 +569,9 @@ trait ConstraintChecks
                 ->getIntersection($dimensionSpacePointsToBeCovered);
             if (!$alreadyCoveredDimensionSpacePoints->isEmpty()) {
                 throw new NodeNameIsAlreadyCovered(
-                    'Node name "' . $nodeName . '" is already covered in dimension space points '
-                        . $alreadyCoveredDimensionSpacePoints . ' by node aggregate "'
-                        . $childNodeAggregate->nodeAggregateId . '".'
+                    'Node name "' . $nodeName->value . '" is already covered in dimension space points '
+                        . $alreadyCoveredDimensionSpacePoints->toJson() . ' by node aggregate "'
+                        . $childNodeAggregate->nodeAggregateId->value . '".'
                 );
             }
         }
@@ -587,7 +587,7 @@ trait ConstraintChecks
         if (!$nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsNotYetOccupied(
                 'Dimension space point ' . json_encode($originDimensionSpacePoint)
-                    . ' is not yet occupied by node aggregate "' . $nodeAggregate->nodeAggregateId . '"',
+                    . ' is not yet occupied by node aggregate "' . $nodeAggregate->nodeAggregateId->value . '"',
                 1552595396
             );
         }
@@ -603,7 +603,7 @@ trait ConstraintChecks
         if ($nodeAggregate->occupiesDimensionSpacePoint($originDimensionSpacePoint)) {
             throw new DimensionSpacePointIsAlreadyOccupied(
                 'Dimension space point ' . json_encode($originDimensionSpacePoint)
-                    . ' is already occupied by node aggregate "' . $nodeAggregate->nodeAggregateId . '"',
+                    . ' is already occupied by node aggregate "' . $nodeAggregate->nodeAggregateId->value . '"',
                 1552595441
             );
         }
@@ -618,7 +618,7 @@ trait ConstraintChecks
     ): void {
         if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
                     . '" currently does not disable dimension space point '
                     . json_encode($dimensionSpacePoint) . '.',
                 1557735431
@@ -635,7 +635,7 @@ trait ConstraintChecks
     ): void {
         if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
             throw new NodeAggregateCurrentlyDisablesDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId
+                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
                     . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.',
                 1555179563
             );
@@ -647,10 +647,10 @@ trait ConstraintChecks
         PropertyValuesToWrite $referenceProperties,
         NodeTypeName $nodeTypeName
     ): void {
-        $nodeType = $this->nodeTypeManager->getNodeType((string)$nodeTypeName);
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
-            $referencePropertyConfig = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]
+            $referencePropertyConfig = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]
                 ?? null;
 
             if (is_null($referencePropertyConfig)) {

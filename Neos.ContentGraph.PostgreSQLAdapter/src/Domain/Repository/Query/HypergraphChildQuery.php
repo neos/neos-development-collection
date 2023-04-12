@@ -58,8 +58,8 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
                 AND pn.nodeaggregateid = :parentNodeAggregateId';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'parentNodeAggregateId' => (string)$parentNodeAggregateId
+            'contentStreamId' => $contentStreamId->value,
+            'parentNodeAggregateId' => $parentNodeAggregateId->value
         ];
 
         return new self($query, $parameters, $tableNamePrefix);
@@ -106,7 +106,7 @@ final class HypergraphChildQuery implements HypergraphQueryInterface
             AND cn.nodename = :childNodeName';
 
         $parameters = $this->parameters;
-        $parameters['childNodeName'] = (string)$childNodeName;
+        $parameters['childNodeName'] = $childNodeName->value;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }

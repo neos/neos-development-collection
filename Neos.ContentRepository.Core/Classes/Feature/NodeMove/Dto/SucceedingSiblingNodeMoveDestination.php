@@ -92,7 +92,7 @@ final class SucceedingSiblingNodeMoveDestination implements \JsonSerializable
         ];
     }
 
-    public function __toString(): string
+    public function toJson(): string
     {
         return json_encode($this, JSON_THROW_ON_ERROR);
     }

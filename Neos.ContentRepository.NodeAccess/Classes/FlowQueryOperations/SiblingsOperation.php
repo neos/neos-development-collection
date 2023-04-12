@@ -68,7 +68,7 @@ class SiblingsOperation extends AbstractOperation
         $outputNodeAggregateIds = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var Node $contextNode */
-            $outputNodeAggregateIds[(string)$contextNode->nodeAggregateId] = true;
+            $outputNodeAggregateIds[$contextNode->nodeAggregateId->value] = true;
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
@@ -83,9 +83,9 @@ class SiblingsOperation extends AbstractOperation
             foreach (
                 $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create()) as $childNode
             ) {
-                if (!isset($outputNodeAggregateIds[(string)$childNode->nodeAggregateId])) {
+                if (!isset($outputNodeAggregateIds[$childNode->nodeAggregateId->value])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIds[(string)$childNode->nodeAggregateId] = true;
+                    $outputNodeAggregateIds[$childNode->nodeAggregateId->value] = true;
                 }
             }
         }

@@ -111,7 +111,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
-                $command->workspaceName
+                $command->workspaceName->value
             ), 1505830958921);
         }
 
@@ -119,8 +119,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($baseWorkspace === null) {
             throw new BaseWorkspaceDoesNotExist(sprintf(
                 'The workspace %s (base workspace of %s) does not exist',
-                $command->baseWorkspaceName,
-                $command->workspaceName
+                $command->baseWorkspaceName->value,
+                $command->workspaceName->value
             ), 1513890708);
         }
 
@@ -144,7 +144,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         return new EventsToPublish(
-            StreamName::fromString('Workspace:' . $command->workspaceName),
+            StreamName::fromString('Workspace:' . $command->workspaceName->value),
             $events,
             ExpectedVersion::ANY()
         );
@@ -164,7 +164,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         if ($existingWorkspace !== null) {
             throw new WorkspaceAlreadyExists(sprintf(
                 'The workspace %s already exists',
-                $command->workspaceName
+                $command->workspaceName->value
             ), 1505848624450);
         }
 
@@ -185,7 +185,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         return new EventsToPublish(
-            StreamName::fromString('Workspace:' . $command->workspaceName),
+            StreamName::fromString('Workspace:' . $command->workspaceName->value),
             $events,
             ExpectedVersion::ANY()
         );
@@ -221,7 +221,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             )
         )->block();
 
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName->value);
         $events = Events::with(
             new WorkspaceWasPublished(
                 $command->workspaceName,
@@ -272,7 +272,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             if ($event instanceof ContentStreamWasForked) {
                 if ($contentStreamWasForkedEvent !== null) {
                     throw new \RuntimeException(
-                        'Invariant violation: The content stream "' . $contentStreamId
+                        'Invariant violation: The content stream "' . $contentStreamId->value
                         . '" has two forked events.',
                         1658740373
                     );
@@ -291,7 +291,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         if ($contentStreamWasForkedEvent === null) {
-            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamId
+            throw new \RuntimeException('Invariant violation: The content stream "' . $contentStreamId->value
                 . '" has NO forked event.', 1658740407);
         }
 
@@ -311,7 +311,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 'The base workspace has been modified in the meantime; please rebase.'
                     . ' Expected version %d of source content stream %s',
                 $contentStreamWasForkedEvent->versionOfSourceContentStream->value,
-                $baseContentStreamId
+                $baseContentStreamId->value
             ));
         }
     }
@@ -375,17 +375,17 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     "The content stream %s cannot be rebased. Error with command %d (%s)"
                         . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
                         . "\n The full list of commands applied so far is: %s",
-                    $workspaceContentStreamName,
+                    $workspaceContentStreamName->value,
                     $i,
                     get_class($commandToRebase),
-                    $baseWorkspace->workspaceName,
-                    $baseWorkspace->currentContentStreamId,
+                    $baseWorkspace->workspaceName->value,
+                    $baseWorkspace->currentContentStreamId->value,
                     $fullCommandListSoFar
                 ), $e);
             }
         }
 
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName->value);
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if (!$rebaseStatistics->hasErrors()) {
@@ -545,7 +545,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 6) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName->value);
         $events = Events::with(
             new WorkspaceWasPartiallyPublished(
                 $command->workspaceName,
@@ -633,7 +633,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // 3) switch content stream to forked WS.
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName->value);
         $events = Events::with(
             new WorkspaceWasPartiallyDiscarded(
                 $command->workspaceName,
@@ -686,7 +686,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         )->block();
 
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
-        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName);
+        $streamName = StreamName::fromString('Workspace:' . $command->workspaceName->value);
         $events = Events::with(
             new WorkspaceWasDiscarded(
                 $command->workspaceName,

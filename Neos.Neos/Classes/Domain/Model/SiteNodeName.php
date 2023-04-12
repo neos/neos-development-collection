@@ -33,7 +33,7 @@ final class SiteNodeName
 
     public static function fromNodeName(NodeName $siteNodeName): self
     {
-        return new self($siteNodeName->jsonSerialize());
+        return new self($siteNodeName->value);
     }
 
     public static function fromString(string $siteNodeName): self

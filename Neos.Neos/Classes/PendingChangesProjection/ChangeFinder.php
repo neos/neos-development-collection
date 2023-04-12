@@ -50,7 +50,7 @@ final class ChangeFinder implements ProjectionStateInterface
                 WHERE contentStreamId = :contentStreamId
             ',
             [
-                ':contentStreamId' => (string)$contentStreamId
+                ':contentStreamId' => $contentStreamId->value
             ]
         )->fetchAll();
         $changes = [];
@@ -69,7 +69,7 @@ final class ChangeFinder implements ProjectionStateInterface
                 WHERE contentStreamId = :contentStreamId
             ',
             [
-                ':contentStreamId' => (string)$contentStreamId
+                ':contentStreamId' => $contentStreamId->value
             ]
         )->rowCount();
     }

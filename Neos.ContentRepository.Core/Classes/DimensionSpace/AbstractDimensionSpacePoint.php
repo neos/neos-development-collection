@@ -22,9 +22,7 @@ use Neos\ContentRepository\Core\Dimension;
  *
  * @api
  */
-abstract class AbstractDimensionSpacePoint implements
-    \JsonSerializable,
-    \Stringable
+abstract class AbstractDimensionSpacePoint implements \JsonSerializable
 {
     protected function __construct(
         /**
@@ -91,28 +89,28 @@ abstract class AbstractDimensionSpacePoint implements
             return false;
         }
         if (
-            $this->coordinates[(string)$contentDimensionId]
-            === $other->coordinates[(string)$contentDimensionId]
+            $this->coordinates[$contentDimensionId->value]
+            === $other->coordinates[$contentDimensionId->value]
         ) {
             return false;
         }
 
         $theseCoordinates = $this->coordinates;
         $otherCoordinates = $other->coordinates;
-        unset($theseCoordinates[(string)$contentDimensionId]);
-        unset($otherCoordinates[(string)$contentDimensionId]);
+        unset($theseCoordinates[$contentDimensionId->value]);
+        unset($otherCoordinates[$contentDimensionId->value]);
 
         return $theseCoordinates === $otherCoordinates;
     }
 
     final public function hasCoordinate(Dimension\ContentDimensionId $dimensionId): bool
     {
-        return isset($this->coordinates[(string)$dimensionId]);
+        return isset($this->coordinates[$dimensionId->value]);
     }
 
     final public function getCoordinate(Dimension\ContentDimensionId $dimensionId): ?string
     {
-        return $this->coordinates[(string)$dimensionId] ?? null;
+        return $this->coordinates[$dimensionId->value] ?? null;
     }
 
     /**
@@ -149,7 +147,7 @@ abstract class AbstractDimensionSpacePoint implements
     /**
      * @throws \JsonException
      */
-    final public function __toString(): string
+    final public function toJson(): string
     {
         return json_encode($this, JSON_THROW_ON_ERROR);
     }

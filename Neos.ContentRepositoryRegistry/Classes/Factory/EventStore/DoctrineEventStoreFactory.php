@@ -28,6 +28,6 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
 
     public static function databaseTableName(ContentRepositoryId $contentRepositoryId): string
     {
-        return sprintf('cr_%s_events', $contentRepositoryId);
+        return sprintf('cr_%s_events', $contentRepositoryId->value);
     }
 }

@@ -47,7 +47,7 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_%s',
-                $projectionFactoryDependencies->contentRepositoryId,
+                $projectionFactoryDependencies->contentRepositoryId->value,
                 $projectionShortName
             ),
         );
