@@ -23,7 +23,7 @@ final class WorkspaceEventStreamName
 
     public static function fromWorkspaceName(WorkspaceName $workspaceName): self
     {
-        return new self(self::EVENT_STREAM_NAME_PREFIX . $workspaceName->name);
+        return new self(self::EVENT_STREAM_NAME_PREFIX . $workspaceName->value);
     }
 
     public function getEventStreamName(): StreamName
