@@ -32,6 +32,8 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
 use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventType;
@@ -85,11 +87,13 @@ final class EventNormalizer
             RootNodeAggregateDimensionsWereUpdated::class,
             WorkspaceRebaseFailed::class,
             WorkspaceWasCreated::class,
+            WorkspaceWasRenamed::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasPartiallyDiscarded::class,
             WorkspaceWasPartiallyPublished::class,
             WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class
+            WorkspaceWasRebased::class,
+            WorkspaceWasDeleted::class,
         ];
 
         foreach ($supportedEventClassNames as $fullEventClassName) {

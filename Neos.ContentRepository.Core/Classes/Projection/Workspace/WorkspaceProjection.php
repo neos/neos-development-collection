@@ -33,6 +33,8 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
@@ -126,6 +128,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $eventClassName = $this->eventNormalizer->getEventClassName($event);
         return in_array($eventClassName, [
             WorkspaceWasCreated::class,
+            WorkspaceWasRenamed::class,
             RootWorkspaceWasCreated::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasPartiallyDiscarded::class,
@@ -133,6 +136,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
             WorkspaceRebaseFailed::class,
+            WorkspaceWasDeleted::class,
         ]);
     }
 
@@ -152,6 +156,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
         if ($eventInstance instanceof WorkspaceWasCreated) {
             $this->whenWorkspaceWasCreated($eventInstance);
+        } elseif ($eventInstance instanceof WorkspaceWasRenamed) {
+            $this->whenWorkspaceWasRenamed($eventInstance);
         } elseif ($eventInstance instanceof RootWorkspaceWasCreated) {
             $this->whenRootWorkspaceWasCreated($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceWasDiscarded) {
@@ -166,6 +172,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             $this->whenWorkspaceWasRebased($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceRebaseFailed) {
             $this->whenWorkspaceRebaseFailed($eventInstance);
+        } elseif ($eventInstance instanceof WorkspaceWasDeleted) {
+            $this->whenWorkspaceWasDeleted($eventInstance);
         } else {
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
@@ -204,6 +212,16 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             'currentContentStreamId' => $event->newContentStreamId->value,
             'status' => WorkspaceStatus::UP_TO_DATE->value
         ]);
+    }
+
+    private function whenWorkspaceWasRenamed(WorkspaceWasRenamed $event): void
+    {
+        $this->getDatabaseConnection()->update($this->tableName, [
+            'workspaceTitle' => $event->workspaceTitle->value,
+            'workspaceDescription' => $event->workspaceDescription->value,
+        ],
+            ['workspaceName' => $event->workspaceName->value]
+        );
     }
 
     private function whenRootWorkspaceWasCreated(RootWorkspaceWasCreated $event): void
@@ -277,9 +295,17 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
     }
 
+    private function whenWorkspaceWasDeleted(WorkspaceWasDeleted $event): void
+    {
+        $this->getDatabaseConnection()->delete(
+            $this->tableName,
+            ['workspaceName' => $event->workspaceName->value]
+        );
+    }
+
     private function updateContentStreamId(
         ContentStreamId $contentStreamId,
-        WorkspaceName $workspaceName
+        WorkspaceName $workspaceName,
     ): void {
         $this->getDatabaseConnection()->update($this->tableName, [
             'currentContentStreamId' => $contentStreamId->value,

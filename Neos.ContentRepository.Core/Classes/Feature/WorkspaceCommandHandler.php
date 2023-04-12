@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistic
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
@@ -51,6 +52,10 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -84,12 +89,14 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
+            RenameWorkspace::class => $this->handleRenameWorkspace($command, $contentRepository),
             CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
             PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
             RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
             PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
+            DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $contentRepository),
         };
     }
 
@@ -143,6 +150,23 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
             $events,
             ExpectedVersion::ANY()
+        );
+    }
+
+    private function handleRenameWorkspace(RenameWorkspace $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        $events = Events::with(
+            new WorkspaceWasRenamed(
+                $command->workspaceName,
+                $command->workspaceTitle,
+                $command->workspaceDescription,
+            )
+        );
+
+        return new EventsToPublish(
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            $events,
+            ExpectedVersion::STREAM_EXISTS()
         );
     }
 
@@ -368,8 +392,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
                 $rebaseStatistics->commandRebaseError(sprintf(
                     "The content stream %s cannot be rebased. Error with command %d (%s)"
-                        . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
-                        . "\n The full list of commands applied so far is: %s",
+                    . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
+                    . "\n The full list of commands applied so far is: %s",
                     $workspaceContentStreamName->value,
                     $i,
                     get_class($commandToRebase),
@@ -686,6 +710,37 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws WorkspaceDoesNotExist
+     * @throws WorkspaceHasNoBaseWorkspaceName
+     */
+    private function handleDeleteWorkspace(
+        DeleteWorkspace $command,
+        ContentRepository $contentRepository,
+    ): EventsToPublish {
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+
+        $contentRepository->handle(
+            new RemoveContentStream(
+                $workspace->currentContentStreamId
+            )
+        )->block();
+
+        $events = Events::with(
+            new WorkspaceWasDeleted(
+                $command->workspaceName,
+            )
+        );
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
         return new EventsToPublish(
             $streamName,
             $events,
