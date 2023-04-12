@@ -65,7 +65,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                 $keepStreamName = true;
             }
             if (!$keepStreamName) {
-                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => (string)$this->contentStreamId] : $payload);
+                $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => $this->contentStreamId->value] : $payload);
             }
             if (!$this->keepEventIds) {
                 try {
@@ -108,7 +108,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
         assert($this->contentStreamId !== null);
 
-        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamId);
+        $contentStreamStreamName = StreamName::fromString('ContentStream:' . $this->contentStreamId->value);
         $events = Events::with(
             $this->normalizeEvent(
                 new ContentStreamWasCreated(
@@ -123,7 +123,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         }
 
         $workspaceName = WorkspaceName::forLive();
-        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->name);
+        $workspaceStreamName = StreamName::fromString('Workspace:' . $workspaceName->value);
         $events = Events::with(
             $this->normalizeEvent(
                 new RootWorkspaceWasCreated(

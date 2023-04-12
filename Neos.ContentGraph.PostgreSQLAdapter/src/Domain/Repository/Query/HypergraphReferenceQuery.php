@@ -48,7 +48,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
      WHERE srch.contentstreamid = :contentStreamId
      AND tarh.contentstreamid = :contentStreamId';
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
+            'contentStreamId' => $contentStreamId->value,
         ];
 
         return new self(
@@ -78,7 +78,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     AND srcn.nodeaggregateid = :sourceNodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['sourceNodeAggregateId'] = (string)$sourceNodeAggregateId;
+        $parameters['sourceNodeAggregateId'] = $sourceNodeAggregateId->value;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
@@ -91,7 +91,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     AND tarn.nodeaggregateid = :targetNodeAggregateId';
 
         $parameters = $this->parameters;
-        $parameters['targetNodeAggregateId'] = (string)$targetNodeAggregateId;
+        $parameters['targetNodeAggregateId'] = $targetNodeAggregateId->value;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }
@@ -103,7 +103,7 @@ final class HypergraphReferenceQuery implements HypergraphQueryInterface
     AND r.name = :referenceName';
 
         $parameters = $this->parameters;
-        $parameters['referenceName'] = (string)$referenceName;
+        $parameters['referenceName'] = $referenceName->value;
 
         return new self($query, $parameters, $this->tableNamePrefix, $this->types);
     }

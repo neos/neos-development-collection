@@ -31,16 +31,16 @@ final class AssetExtractor
                 // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
                 $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
             } catch (\Throwable $e) {
-                throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeTypeName, $e->getMessage()), 1656057030, $e);
+                throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeTypeName->value, $e->getMessage()), 1656057030, $e);
             }
             if (!is_array($decodedProperties)) {
-                throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s")', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeTypeName), 1656057035);
+                throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s")', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeTypeName->value), 1656057035);
             }
             foreach ($decodedProperties as $propertyName => $propertyValue) {
                 try {
                     yield from $this->extractAssets($propertyValue);
                 } catch (\Throwable $e) {
-                    throw new MigrationException(sprintf('Failed to extract assets from property "%s" of node "%s" (type: "%s"): %s', $propertyName, $nodeDataRow['identifier'], $nodeTypeName, $e->getMessage()), 1656931260, $e);
+                    throw new MigrationException(sprintf('Failed to extract assets from property "%s" of node "%s" (type: "%s"): %s', $propertyName, $nodeDataRow['identifier'], $nodeTypeName->value, $e->getMessage()), 1656931260, $e);
                 }
             }
         }

@@ -21,14 +21,12 @@ namespace Neos\ContentRepository\Core\SharedModel\Workspace;
  */
 final class WorkspaceTitle implements \JsonSerializable
 {
-    protected string $title;
-
-    public function __construct(string $title)
-    {
-        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $title) !== 1) {
+    public function __construct(
+        public readonly string $value
+    ) {
+        if (preg_match('/^[\p{L}\p{P}\d \.]{1,200}$/u', $this->value) !== 1) {
             throw new \InvalidArgumentException('Invalid workspace title given.', 1505827170288);
         }
-        $this->title = $title;
     }
 
     public static function fromString(string $value): self
@@ -36,13 +34,13 @@ final class WorkspaceTitle implements \JsonSerializable
         return new self($value);
     }
 
-    public function __toString(): string
-    {
-        return $this->title;
-    }
-
     public function jsonSerialize(): string
     {
-        return $this->title;
+        return $this->value;
+    }
+
+    public function equals(self $other): bool
+    {
+        return $this->value === $other->value;
     }
 }

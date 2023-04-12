@@ -115,8 +115,8 @@ class UsageController extends ActionController
             $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
-            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId();
-            $inaccessibleRelation['workspaceName'] = $workspace->workspaceName->name;
+            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
+            $inaccessibleRelation['workspaceName'] = $workspace->workspaceName->value;
             $inaccessibleRelation['workspace'] = $workspace;
             $inaccessibleRelation['nodeType'] = $nodeType;
             $inaccessibleRelation['accessible'] = $accessible;

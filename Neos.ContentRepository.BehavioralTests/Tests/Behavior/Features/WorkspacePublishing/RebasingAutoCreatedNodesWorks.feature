@@ -69,7 +69,7 @@ Feature: Rebasing auto-created nodes works
     When the command "SetSerializedNodeProperties" is executed with payload:
       | Key                       | Value                                          |
       | contentStreamId   | "user-cs-identifier"                           |
-      | nodeAggregateId   | $this->currentnodeAggregateId          |
+      | nodeAggregateId   | $this->currentNodeAggregateId          |
       | originDimensionSpacePoint | {}                                             |
       | propertyValues            | {"text": {"value":"Modified","type":"string"}} |
     And the graph projection is fully up to date

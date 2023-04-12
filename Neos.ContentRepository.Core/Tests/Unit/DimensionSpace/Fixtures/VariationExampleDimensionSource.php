@@ -74,7 +74,7 @@ class VariationExampleDimensionSource implements Dimension\ContentDimensionSourc
             $this->initializeDimensions();
         }
 
-        return $this->dimensions[(string)$dimensionId] ?? null;
+        return $this->dimensions[$dimensionId->value] ?? null;
     }
 
     /**

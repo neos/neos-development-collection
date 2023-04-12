@@ -22,26 +22,24 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * It describes the hierarchy path of a node to a root node in a subgraph.
  * @api
  */
-final class NodePath implements \JsonSerializable, \Stringable
+final class NodePath implements \JsonSerializable
 {
-    private string $path;
-
-    private function __construct(string $path)
-    {
-        if ($path !== '/') {
-            $pathParts = explode('/', ltrim($path, '/'));
+    private function __construct(
+        public readonly string $value
+    ) {
+        if ($this->value !== '/') {
+            $pathParts = explode('/', ltrim($this->value, '/'));
             foreach ($pathParts as $pathPart) {
                 if (preg_match(NodeName::PATTERN, $pathPart) !== 1) {
                     throw new \InvalidArgumentException(sprintf(
                         'The path "%s" is no valid NodePath because it contains a segment "%s"'
                             . ' that is no valid NodeName',
-                        $path,
+                        $this->value,
                         $pathPart
                     ), 1548157108);
                 }
             }
         }
-        $this->path = $path;
     }
 
     public static function fromString(string $path): self
@@ -62,12 +60,12 @@ final class NodePath implements \JsonSerializable, \Stringable
 
     public function isRoot(): bool
     {
-        return $this->path === '/';
+        return $this->value === '/';
     }
 
     public function isAbsolute(): bool
     {
-        return strpos($this->path, '/') === 0;
+        return strpos($this->value, '/') === 0;
     }
 
     /**
@@ -75,7 +73,7 @@ final class NodePath implements \JsonSerializable, \Stringable
      */
     public function appendPathSegment(NodeName $nodeName): self
     {
-        return new self($this->path . '/' . $nodeName);
+        return new self($this->value . '/' . $nodeName->value);
     }
 
     /**
@@ -83,11 +81,8 @@ final class NodePath implements \JsonSerializable, \Stringable
      */
     public function getParts(): array
     {
-        $pathParts = explode('/', ltrim($this->path, '/'));
-
-        return array_map(function (string $pathPart) {
-            return NodeName::fromString($pathPart);
-        }, $pathParts);
+        $pathParts = explode('/', ltrim($this->value, '/'));
+        return array_map(static fn (string $pathPart) => NodeName::fromString($pathPart), $pathParts);
     }
 
     public function getDepth(): int
@@ -95,7 +90,7 @@ final class NodePath implements \JsonSerializable, \Stringable
         if (!$this->isAbsolute()) {
             throw new \RuntimeException(sprintf(
                 'Depth of relative node path "%s" cannot be determined',
-                $this->path
+                $this->value
             ), 1548162166);
         }
         return count($this->getParts());
@@ -103,16 +98,11 @@ final class NodePath implements \JsonSerializable, \Stringable
 
     public function equals(NodePath $other): bool
     {
-        return (string) $this === (string) $other;
+        return $this->value === $other->value;
     }
 
     public function jsonSerialize(): string
     {
-        return $this->path;
-    }
-
-    public function __toString(): string
-    {
-        return $this->path;
+        return $this->value;
     }
 }

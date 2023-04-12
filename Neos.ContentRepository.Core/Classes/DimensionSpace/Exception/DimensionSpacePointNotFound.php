@@ -26,7 +26,7 @@ class DimensionSpacePointNotFound extends \DomainException
         DimensionSpacePoint $dimensionSpacePoint
     ): self {
         return new self(
-            sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint),
+            sprintf('%s was not found in the allowed dimension subspace', $dimensionSpacePoint->toJson()),
             1505929456
         );
     }

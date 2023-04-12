@@ -206,7 +206,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function determineLabel(?Node $variant = null, array $metadata = []): string
     {
         if ($this->getContentDimensionIdentifierToLimitTo()) {
-            return $metadata[(string)$this->getContentDimensionIdentifierToLimitTo()]['label'] ?: '';
+            return $metadata[$this->getContentDimensionIdentifierToLimitTo()->value]['label'] ?: '';
         } else {
             if ($variant) {
                 return $variant->getLabel() ?: '';

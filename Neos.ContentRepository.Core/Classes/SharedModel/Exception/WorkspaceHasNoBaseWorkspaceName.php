@@ -25,7 +25,7 @@ final class WorkspaceHasNoBaseWorkspaceName extends \DomainException
     {
         return new self(sprintf(
             'The workspace %s has no base workspace name.',
-            $name
+            $name->value
         ), 1645381818);
     }
 }

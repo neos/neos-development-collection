@@ -72,9 +72,9 @@ class NodeHiddenStateRecord
             );
         }
         $databaseConnection->insert($tableName, [
-            'contentStreamId' => (string)$this->contentStreamId,
-            'nodeAggregateId' => (string)$this->nodeAggregateId,
-            'dimensionSpacePoint' => json_encode($this->dimensionSpacePoint),
+            'contentStreamId' => $this->contentStreamId->value,
+            'nodeAggregateId' => $this->nodeAggregateId->value,
+            'dimensionSpacePoint' => $this->dimensionSpacePoint->toJson(),
             'dimensionSpacePointHash' => $this->dimensionSpacePoint->hash,
             'hidden' => (int)$this->hidden,
         ]);

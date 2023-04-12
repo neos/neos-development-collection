@@ -42,7 +42,7 @@ final class AllChildNodesByNodeIdCache
             return;
         }
 
-        $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
+        $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? $nodeTypeConstraints->toFilterString() : '*';
         $this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey] = $childNodes;
     }
 
@@ -54,7 +54,7 @@ final class AllChildNodesByNodeIdCache
             return false;
         }
 
-        $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
+        $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? $nodeTypeConstraints->toFilterString() : '*';
         return isset($this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey]);
     }
 
@@ -65,7 +65,7 @@ final class AllChildNodesByNodeIdCache
         if ($this->isEnabled === false) {
             return Nodes::createEmpty();
         }
-        $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? (string)$nodeTypeConstraints : '*';
+        $nodeTypeConstraintsKey = $nodeTypeConstraints !== null ? $nodeTypeConstraints->toFilterString() : '*';
         return $this->childNodes[$parentNodeAggregateId->value][$nodeTypeConstraintsKey] ?? Nodes::createEmpty();
     }
 

@@ -37,13 +37,13 @@ final class VisitedNodeAggregates
     {
         $visitedNodeAggregate = $this->byNodeAggregateId[$nodeAggregateId->value] ?? new VisitedNodeAggregate($nodeAggregateId, $nodeTypeName);
         if (!$nodeTypeName->equals($visitedNodeAggregate->nodeTypeName)) {
-            throw new MigrationException(sprintf('Node aggregate with id "%s" has a type of "%s" in content dimension %s. I was visited previously for content dimension %s with the type "%s". Node variants must not have different types', $nodeAggregateId, $nodeTypeName, $coveredDimensionSpacePoints, $visitedNodeAggregate->getOriginDimensionSpacePoints(), $visitedNodeAggregate->nodeTypeName), 1655913685);
+            throw new MigrationException(sprintf('Node aggregate with id "%s" has a type of "%s" in content dimension %s. I was visited previously for content dimension %s with the type "%s". Node variants must not have different types', $nodeAggregateId->value, $nodeTypeName->value, $coveredDimensionSpacePoints->toJson(), $visitedNodeAggregate->getOriginDimensionSpacePoints()->toJson(), $visitedNodeAggregate->nodeTypeName->value), 1655913685);
         }
         foreach ($coveredDimensionSpacePoints as $dimensionSpacePoint) {
             $visitedNodeAggregate->addVariant(OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint), $parentNodeAggregateId);
-            $pathAndDimensionSpacePointHash = $nodePath->jsonSerialize() . '__' . $dimensionSpacePoint->hash;
+            $pathAndDimensionSpacePointHash = $nodePath->value . '__' . $dimensionSpacePoint->hash;
             if (isset($this->byPathAndDimensionSpacePoint[$pathAndDimensionSpacePointHash])) {
-                throw new MigrationException(sprintf('Node "%s" with path "%s" and dimension space point "%s" was already visited before', $nodeAggregateId, $nodePath, $dimensionSpacePoint), 1655900356);
+                throw new MigrationException(sprintf('Node "%s" with path "%s" and dimension space point "%s" was already visited before', $nodeAggregateId->value, $nodePath->value, $dimensionSpacePoint->toJson()), 1655900356);
             }
             $this->byPathAndDimensionSpacePoint[$pathAndDimensionSpacePointHash] = $visitedNodeAggregate;
         }
@@ -58,7 +58,7 @@ final class VisitedNodeAggregates
     public function getByNodeAggregateId(NodeAggregateId $nodeAggregateId): VisitedNodeAggregate
     {
         if (!isset($this->byNodeAggregateId[$nodeAggregateId->value])) {
-            throw new \InvalidArgumentException(sprintf('Node aggregate with id "%s" has not been visited before', $nodeAggregateId), 1655912733);
+            throw new \InvalidArgumentException(sprintf('Node aggregate with id "%s" has not been visited before', $nodeAggregateId->value), 1655912733);
         }
         return $this->byNodeAggregateId[$nodeAggregateId->value];
     }
@@ -71,11 +71,11 @@ final class VisitedNodeAggregates
     public function findMostSpecificParentNodeInDimensionGraph(NodePath $nodePath, OriginDimensionSpacePoint $originDimensionSpacePoint, InterDimensionalVariationGraph $interDimensionalVariationGraph): ?VisitedNodeAggregate
     {
         $dimensionSpacePoint = $originDimensionSpacePoint->toDimensionSpacePoint();
-        $nodePathParts = $nodePath->getParts();
+        $nodePathParts = explode('/', ltrim($nodePath->value, '/'));
         array_pop($nodePathParts);
         $parentPath = NodePath::fromPathSegments($nodePathParts);
         while ($dimensionSpacePoint !== null) {
-            $parentPathAndDimensionSpacePointHash = strtolower($parentPath->jsonSerialize()) . '__' . $dimensionSpacePoint->hash;
+            $parentPathAndDimensionSpacePointHash = strtolower($parentPath->value) . '__' . $dimensionSpacePoint->hash;
             if (isset($this->byPathAndDimensionSpacePoint[$parentPathAndDimensionSpacePointHash])) {
                 return $this->byPathAndDimensionSpacePoint[$parentPathAndDimensionSpacePointHash];
             }

@@ -50,7 +50,7 @@ class EmulatedLegacySite
         $siteNodeName = $siteNode->nodeName;
 
         /* @var ?Site $site */
-        $site = $siteNodeName ? $this->siteRepository->findOneByNodeName((string)$siteNodeName) : null;
+        $site = $siteNodeName ? $this->siteRepository->findOneByNodeName($siteNodeName->value) : null;
 
         return $site?->getSiteResourcesPackageKey();
     }

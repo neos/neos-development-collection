@@ -226,7 +226,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
         return [
             'contentstreamid' => $dataset['contentStreamId'],
-            'dimensionspacepoint' => \json_encode($dimensionSpacePoint),
+            'dimensionspacepoint' => $dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentNodeAggregateId->isNonExistent()
                 ? Algorithms::generateUUID()
@@ -271,9 +271,9 @@ trait ProjectionIntegrityViolationDetectionTrait
                             AND h.contentstreamid = :contentStreamId
                             AND h.dimensionspacepointhash = :dimensionSpacePointHash',
             [
-                'contentStreamId' => (string)$contentStreamId,
+                'contentStreamId' => $contentStreamId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => (string)$nodeAggregateId
+                'nodeAggregateId' => $nodeAggregateId->value
             ]
         )->fetchAssociative();
 

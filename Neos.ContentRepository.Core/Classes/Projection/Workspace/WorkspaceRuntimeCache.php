@@ -48,8 +48,8 @@ final class WorkspaceRuntimeCache
 
     public function getWorkspaceByName(WorkspaceName $name): ?Workspace
     {
-        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByName[(string)$name])) {
-            return $this->cachedWorkspacesByName[(string)$name];
+        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByName[$name->value])) {
+            return $this->cachedWorkspacesByName[$name->value];
         }
         return null;
     }
@@ -57,7 +57,7 @@ final class WorkspaceRuntimeCache
     public function setWorkspace(Workspace $workspace): void
     {
         if ($this->cacheEnabled === true) {
-            $this->cachedWorkspacesByName[$workspace->workspaceName->name] = $workspace;
+            $this->cachedWorkspacesByName[$workspace->workspaceName->value] = $workspace;
             $this->cachedWorkspacesByContentStreamId[
                 $workspace->currentContentStreamId->value
             ] = $workspace;
@@ -68,9 +68,9 @@ final class WorkspaceRuntimeCache
     {
         if (
             $this->cacheEnabled === true
-            && isset($this->cachedWorkspacesByContentStreamId[(string)$contentStreamId])
+            && isset($this->cachedWorkspacesByContentStreamId[$contentStreamId->value])
         ) {
-            return $this->cachedWorkspacesByContentStreamId[(string)$contentStreamId];
+            return $this->cachedWorkspacesByContentStreamId[$contentStreamId->value];
         }
         return null;
     }

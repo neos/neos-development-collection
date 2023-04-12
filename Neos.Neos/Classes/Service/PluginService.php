@@ -74,7 +74,7 @@ class PluginService
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
-            throw new \InvalidArgumentException('Could not find workspace "' . $workspaceName . '"');
+            throw new \InvalidArgumentException('Could not find workspace "' . $workspaceName->value . '"');
         }
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
@@ -225,7 +225,7 @@ class PluginService
             ])) as $pluginViewNode
         ) {
             if (
-                $pluginViewNode->getProperty('plugin') === (string)$node->nodeAggregateId
+                $pluginViewNode->getProperty('plugin') === $node->nodeAggregateId->value
                 && $pluginViewNode->getProperty('view') === $viewName
             ) {
                 return $pluginViewNode;

@@ -40,7 +40,7 @@ final class VisualIntraDimensionalVariationGraph
         $height = 0;
 
         foreach ($contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-            $dimensions[(string)$contentDimension->id] = VisualContentDimension::fromContentDimension(
+            $dimensions[$contentDimension->id->value] = VisualContentDimension::fromContentDimension(
                 $contentDimension,
                 $horizontalOffset,
                 $counter,

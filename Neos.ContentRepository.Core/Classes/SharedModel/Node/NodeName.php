@@ -22,16 +22,16 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
  *
  * @api
  */
-final class NodeName implements \JsonSerializable, \Stringable
+final class NodeName implements \JsonSerializable
 {
     public const PATTERN = '/^[a-z0-9\-]+$/';
 
     private function __construct(
-        private string $value
+        public readonly string $value
     ) {
-        if (preg_match(self::PATTERN, $value) !== 1) {
+        if (preg_match(self::PATTERN, $this->value) !== 1) {
             throw new \InvalidArgumentException(
-                'Invalid node name "' . $value
+                'Invalid node name "' . $this->value
                     . '" (a node name must only contain lowercase characters, numbers and the "-" sign).',
                 1364290748
             );
@@ -44,11 +44,6 @@ final class NodeName implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

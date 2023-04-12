@@ -47,7 +47,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
                 AND siteNodeName = :siteNodeName
                 AND uriPath = :uriPath
                 AND disabled = 0',
-            compact('dimensionSpacePointHash', 'siteNodeName', 'uriPath')
+            [
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                'siteNodeName' => $siteNodeName->value,
+                'uriPath' => $uriPath,
+            ]
         );
     }
 
@@ -70,7 +74,10 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         return $this->fetchSingle(
             'nodeAggregateId = :nodeAggregateId
                 AND dimensionSpacePointHash = :dimensionSpacePointHash',
-            compact('nodeAggregateId', 'dimensionSpacePointHash')
+            [
+                'nodeAggregateId' => $nodeAggregateId->value,
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+            ]
         );
     }
 
@@ -117,11 +124,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
                 AND succeedingNodeAggregateId = :succeedingNodeAggregateId',
-            compact(
-                'dimensionSpacePointHash',
-                'parentNodeAggregateId',
-                'succeedingNodeAggregateId'
-            )
+            [
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                'parentNodeAggregateId' => $parentNodeAggregateId->value,
+                'succeedingNodeAggregateId' => $succeedingNodeAggregateId->value,
+            ]
         );
     }
 
@@ -145,7 +152,10 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
                 AND parentNodeAggregateId = :parentNodeAggregateId
                 AND precedingNodeAggregateId IS NULL
                 AND disabled = 0',
-            compact('dimensionSpacePointHash', 'parentNodeAggregateId')
+            [
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                'parentNodeAggregateId' => $parentNodeAggregateId->value,
+            ]
         );
     }
 
@@ -164,7 +174,10 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             'dimensionSpacePointHash = :dimensionSpacePointHash
                 AND parentNodeAggregateId = :parentNodeAggregateId
                 AND succeedingNodeAggregateId IS NULL',
-            compact('dimensionSpacePointHash', 'parentNodeAggregateId')
+            [
+                'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                'parentNodeAggregateId' => $parentNodeAggregateId->value,
+            ]
         );
     }
 
@@ -207,7 +220,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         # NOTE: "LIMIT 1" in the following query is just a performance optimization
         # since Connection::fetchAssoc() only returns the first result anyways
         try {
-            $row = $this->dbal->fetchAssoc(
+            $row = $this->dbal->fetchAssociative(
                 'SELECT * FROM ' . $this->tableNamePrefix . '_uri
                      WHERE ' . $where . ' LIMIT 1',
                 $parameters,

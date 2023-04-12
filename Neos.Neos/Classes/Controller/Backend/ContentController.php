@@ -484,7 +484,7 @@ class ContentController extends ActionController
                 continue;
             }
             $translationHelper = new TranslationHelper();
-            $masterPlugins[(string)$pluginNode->nodeAggregateId] = $translationHelper->translate(
+            $masterPlugins[$pluginNode->nodeAggregateId->value] = $translationHelper->translate(
                 'masterPlugins.nodeTypeOnPageLabel',
                 null,
                 [

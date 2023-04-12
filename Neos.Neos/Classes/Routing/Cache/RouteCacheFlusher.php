@@ -46,7 +46,7 @@ class RouteCacheFlusher
      */
     public function registerNodeChange(Node $node)
     {
-        $identifier = (string)$node->nodeAggregateId;
+        $identifier = $node->nodeAggregateId->value;
         if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
@@ -72,7 +72,7 @@ class RouteCacheFlusher
         Workspace $oldBaseWorkspace = null,
         Workspace $newBaseWorkspace = null
     ) {
-        $identifier = (string)$workspace->workspaceName;
+        $identifier = $workspace->workspaceName->value;
         if (!in_array($identifier, $this->tagsToFlush)) {
             $this->tagsToFlush[] = $identifier;
         }
