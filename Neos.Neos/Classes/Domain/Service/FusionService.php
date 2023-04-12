@@ -253,6 +253,6 @@ class FusionService
             throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->nodeAggregateId->value), 1681286146);
         }
         return $this->siteRepository->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
-            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName), 1677245517);
+            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName->value), 1677245517);
     }
 }
