@@ -133,7 +133,7 @@ class ContentStreamCommandController extends CommandController
         $unusedContentStreams = $contentStreamPruner->prune($removeTemporary);
         $unusedContentStreamsPresent = false;
         foreach ($unusedContentStreams as $contentStream) {
-            $this->outputFormatted('Removed %s', [$contentStream]);
+            $this->outputFormatted('Removed %s', [$contentStream->value]);
             $unusedContentStreamsPresent = true;
         }
         if (!$unusedContentStreamsPresent) {
@@ -152,7 +152,7 @@ class ContentStreamCommandController extends CommandController
         $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();
         $unusedContentStreamsPresent = false;
         foreach ($unusedContentStreams as $contentStream) {
-            $this->outputFormatted('Removed events for %s', [$contentStream]);
+            $this->outputFormatted('Removed events for %s', [$contentStream->value]);
             $unusedContentStreamsPresent = true;
         }
         if (!$unusedContentStreamsPresent) {
