@@ -27,7 +27,7 @@ use Neos\Media\Tests\Functional\AbstractTest;
  * Testcase for the asset helper
  *
  */
-class AssetHelperTest extends AbstractTest
+class AssetsHelperTest extends AbstractTest
 {
     /**
      * @var boolean
@@ -49,9 +49,6 @@ class AssetHelperTest extends AbstractTest
      */
     protected $assetCollectionRepository;
 
-    /**
-     * @return void
-     */
     public function setUp(): void
     {
         parent::setUp();
@@ -66,9 +63,6 @@ class AssetHelperTest extends AbstractTest
         $this->assetCollectionRepository = $this->objectManager->get(AssetCollectionRepository::class);
     }
 
-    /**
-     * @return void
-     */
     public function tearDown(): void
     {
         parent::tearDown();
@@ -79,15 +73,15 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function findByTagFindAssetsByTagLabel()
+    public function findByTagFindAssetsByTagLabel(): void
     {
-        $fooTag = new Tag('foo');
-        $this->tagRepository->add($fooTag);
+        $tagA = new Tag('tagA');
+        $this->tagRepository->add($tagA);
 
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
         $asset = new Asset($resource);
         $asset->setTitle('asset for homepage');
-        $asset->addTag($fooTag);
+        $asset->addTag($tagA);
 
         $this->assetRepository->add($asset);
 
@@ -95,8 +89,8 @@ class AssetHelperTest extends AbstractTest
         $this->persistenceManager->clearState();
 
         $helper = new AssetsHelper();
-        self::assertCount(1, $helper->findByTag('foo'));
-        self::assertNull($helper->findByTag('bar'));
+        self::assertCount(1, $helper->findByTag('tagA'));
+        self::assertNull($helper->findByTag('tagB'));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
@@ -107,18 +101,18 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function findByTagFindAssetsByTagInstace()
+    public function findByTagFindAssetsByTagInstance(): void
     {
-        $fooTag = new Tag('foo');
-        $this->tagRepository->add($fooTag);
+        $tagA = new Tag('tagA');
+        $this->tagRepository->add($tagA);
 
-        $barTag = new Tag('bar');
-        $this->tagRepository->add($barTag);
+        $tagB = new Tag('tagB');
+        $this->tagRepository->add($tagB);
 
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
         $asset = new Asset($resource);
         $asset->setTitle('asset for homepage');
-        $asset->addTag($fooTag);
+        $asset->addTag($tagA);
 
         $this->assetRepository->add($asset);
 
@@ -126,8 +120,8 @@ class AssetHelperTest extends AbstractTest
         $this->persistenceManager->clearState();
 
         $helper = new AssetsHelper();
-        self::assertCount(1, $helper->findByTag($fooTag));
-        self::assertCount(0, $helper->findByTag($barTag));
+        self::assertCount(1, $helper->findByTag($tagA));
+        self::assertCount(0, $helper->findByTag($tagB));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
@@ -138,7 +132,7 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function findByTagReturnsNullIfTagIsNull()
+    public function findByTagReturnsNullIfTagIsNull(): void
     {
         $helper = new AssetsHelper();
         self::assertNull($helper->findByTag(null));
@@ -147,57 +141,57 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function findByCollectionReturnsAssetsForCollectionLabel()
+    public function findByCollectionReturnsAssetsForCollectionLabel(): void
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
         $asset = new Asset($resource);
-        $asset->setTitle('asset for foo');
+        $asset->setTitle('asset for tagA');
         $this->assetRepository->add($asset);
 
-        $fooCollection = new AssetCollection('foo');
-        $barCollection = new AssetCollection('bar');
-        $fooCollection->addAsset($asset);
-        $this->assetCollectionRepository->add($fooCollection);
-        $this->assetCollectionRepository->add($barCollection);
+        $tagACollection = new AssetCollection('tagA');
+        $tagBCollection = new AssetCollection('tagB');
+        $tagACollection->addAsset($asset);
+        $this->assetCollectionRepository->add($tagACollection);
+        $this->assetCollectionRepository->add($tagBCollection);
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
         $helper = new AssetsHelper();
-        self::assertCount(1, $helper->findByCollection('foo'));
-        self::assertCount(0, $helper->findByCollection('bar'));
+        self::assertCount(1, $helper->findByCollection('tagA'));
+        self::assertCount(0, $helper->findByCollection('tagB'));
         self::assertNull($helper->findByCollection(''));
     }
 
     /**
      * @test
      */
-    public function findByCollectionReturnsAssetsForCollectionInstace()
+    public function findByCollectionReturnsAssetsForCollectionInstace(): void
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
         $asset = new Asset($resource);
-        $asset->setTitle('asset for foo');
+        $asset->setTitle('asset for tagA');
         $this->assetRepository->add($asset);
 
-        $fooCollection = new AssetCollection('foo');
-        $barCollection = new AssetCollection('bar');
-        $fooCollection->addAsset($asset);
-        $this->assetCollectionRepository->add($fooCollection);
-        $this->assetCollectionRepository->add($barCollection);
+        $tagACollection = new AssetCollection('tagA');
+        $tagBCollection = new AssetCollection('tagB');
+        $tagACollection->addAsset($asset);
+        $this->assetCollectionRepository->add($tagACollection);
+        $this->assetCollectionRepository->add($tagBCollection);
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
         $helper = new AssetsHelper();
-        self::assertCount(1, $helper->findByCollection($fooCollection));
-        self::assertCount(0, $helper->findByCollection($barCollection));
+        self::assertCount(1, $helper->findByCollection($tagACollection));
+        self::assertCount(0, $helper->findByCollection($tagBCollection));
         self::assertNull($helper->findByCollection(null));
     }
 
     /**
      * @test
      */
-    public function findByCollectionReturnsNullIfCollectionIsNull()
+    public function findByCollectionReturnsNullIfCollectionIsNull(): void
     {
         $helper = new AssetsHelper();
         self::assertNull($helper->findByCollection(null));
@@ -207,7 +201,7 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function searchWithoutSearchTermReturnsNull()
+    public function searchWithoutSearchTermReturnsNull(): void
     {
         $helper = new AssetsHelper();
         self::assertNull($helper->search(null));
@@ -217,22 +211,25 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function searchWithSearchTermAndTagFindsAsset()
+    public function searchWithSearchTermAndTagFindsAsset(): void
     {
-        $fooTag = new Tag('foo');
-        $this->tagRepository->add($fooTag);
+        $tagA = new Tag('tagA');
+        $this->tagRepository->add($tagA);
 
-        $barTag = new Tag('bar');
-        $this->tagRepository->add($barTag);
+        $tagB = new Tag('tagB');
+        $this->tagRepository->add($tagB);
+
+        $tagC = new Tag('tagC');
+        $this->tagRepository->add($tagC);
 
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
         $resource2 = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/417px-Mihaly_Csikszentmihalyi.jpg');
         $asset = new Asset($resource);
-        $asset->setTitle('asset for foo');
-        $asset->addTag($fooTag);
+        $asset->setTitle('asset for tagA');
+        $asset->addTag($tagA);
         $asset2 = new Asset($resource2);
         $asset2->setTitle('Another asset');
-        $asset2->addTag($barTag);
+        $asset2->addTag($tagB);
 
         $this->assetRepository->add($asset);
         $this->assetRepository->add($asset2);
@@ -241,12 +238,12 @@ class AssetHelperTest extends AbstractTest
         $this->persistenceManager->clearState();
 
         $helper = new AssetsHelper();
-        self::assertCount(1, $helper->search('foo', [$fooTag]));
-        self::assertCount(2, $helper->search('asset', [$fooTag]));
+        self::assertCount(1, $helper->search('tagA', [$tagA]));
+        self::assertCount(2, $helper->search('asset', [$tagA->getLabel()]));
         self::assertCount(2, $helper->search('asset'));
-        self::assertCount(1, $helper->search('bar', [$barTag]));
-        self::assertCount(1, $helper->search('baz', [$barTag]));
-        self::assertCount(0, $helper->search('baz'));
+        self::assertCount(1, $helper->search('tagB', [$tagB]));
+        self::assertCount(1, $helper->search('tagB', [$tagB->getLabel()]));
+        self::assertCount(0, $helper->search('tagD'));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {
@@ -257,29 +254,29 @@ class AssetHelperTest extends AbstractTest
     /**
      * @test
      */
-    public function searchWithSearchTermAndCollectionFindsAsset()
+    public function searchWithSearchTermAndCollectionFindsAsset(): void
     {
         $resource = $this->resourceManager->importResource(__DIR__ . '/../Fixtures/Resources/license.txt');
         $asset = new Asset($resource);
-        $asset->setTitle('asset for foo');
+        $asset->setTitle('asset for tagA');
         $this->assetRepository->add($asset);
 
-        $fooCollection = new AssetCollection('foo');
-        $barCollection = new AssetCollection('bar');
-        $fooCollection->addAsset($asset);
-        $this->assetCollectionRepository->add($fooCollection);
-        $this->assetCollectionRepository->add($barCollection);
+        $tagACollection = new AssetCollection('tagA');
+        $tagBCollection = new AssetCollection('tagB');
+        $tagACollection->addAsset($asset);
+        $this->assetCollectionRepository->add($tagACollection);
+        $this->assetCollectionRepository->add($tagBCollection);
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
 
         $helper = new AssetsHelper();
-        self::assertCount(1, $helper->search('foo', [], $fooCollection));
-        self::assertCount(1, $helper->search('foo', [], 'foo'));
-        self::assertCount(0, $helper->search('foo', [], $barCollection));
+        self::assertCount(1, $helper->search('tagA', [], $tagACollection));
+        self::assertCount(1, $helper->search('tagA', [], 'tagA'));
+        self::assertCount(0, $helper->search('tagA', [], $tagBCollection));
         self::assertCount(1, $helper->search('asset', [], null));
         self::assertCount(1, $helper->search('asset'));
-        self::assertCount(0, $helper->search('baz'));
+        self::assertCount(0, $helper->search('tagC'));
 
         // This is necessary to initialize all resource instances before the tables are deleted
         foreach ($this->assetRepository->findAll() as $asset) {

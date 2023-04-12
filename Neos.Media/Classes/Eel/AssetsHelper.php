@@ -83,7 +83,7 @@ class AssetsHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param Tag[] $tags
+     * @param Tag[]|string[] $tags
      * @return QueryResultInterface<AssetInterface> | null
      */
     public function search(?string $searchTerm, array $tags = [], AssetCollection|string $collection = null): ?QueryResultInterface
@@ -91,6 +91,13 @@ class AssetsHelper implements ProtectedContextAwareInterface
         if (!$searchTerm) {
             return null;
         }
+
+        $tags = array_map(function ($tag) {
+            if (is_string($tag)) {
+                return $this->tagRepository->findOneByLabel($tag);
+            }
+            return $tag;
+        }, $tags);
 
         if (is_string($collection)) {
             $collection = $this->assetCollectionRepository->findOneByTitle($collection);
