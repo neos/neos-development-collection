@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Neos\Neos\EventLog\Domain\Model;
+
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -10,13 +14,12 @@
  * source code.
  */
 
-declare(strict_types=1);
 
-namespace Neos\Neos\EventLog\Domain\Model;
 
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Utility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Utility\Arrays;
@@ -34,7 +37,8 @@ use Neos\Neos\Service\UserService;
  * @ORM\Table(
  *    indexes={
  *      @ORM\Index(name="documentnodeidentifier", columns={"documentnodeidentifier"}),
- *      @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"})
+ *      @ORM\Index(name="workspacename_parentevent", columns={"workspacename", "parentevent"}),
+ *      @ORM\Index(name="dimensionshashindex", columns={"dimensionshash"})
  *    }
  * )
  * @todo implement me as a projection
@@ -69,6 +73,14 @@ class NodeEvent extends Event
      * @var array<mixed>
      */
     protected $dimension;
+
+    /**
+     * MD5 hash of the content dimensions
+     *
+     * @var string
+     * @ORM\Column(length=32)
+     */
+    protected $dimensionsHash;
 
     /**
      * @Flow\Inject
@@ -134,9 +146,12 @@ class NodeEvent extends Event
      */
     /*public function setNode(Node $node)
     {
+        $dimensionsArray = $node->getContext()->getDimensions();
+
         $this->nodeIdentifier = $node->getIdentifier();
         $this->workspaceName = $node->getContext()->getWorkspaceName();
-        $this->dimension = $node->getContext()->getDimensions();
+        $this->dimension = $dimensionsArray;
+        $this->dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionsArray);
 
         $context = $node->getContext();
         if ($context instanceof ContentContext && $context->getCurrentSite() !== null) {
@@ -256,5 +271,13 @@ class NodeEvent extends Event
     public function __toString()
     {
         return sprintf('NodeEvent[%s, %s]', $this->eventType, $this->nodeIdentifier);
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimensionsHash(): string
+    {
+        return $this->dimensionsHash;
     }
 }
