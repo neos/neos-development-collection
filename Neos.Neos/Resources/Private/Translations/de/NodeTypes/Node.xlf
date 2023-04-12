@@ -4,22 +4,32 @@
     <body>
       <trans-unit id="tabs.default" xml:space="preserve" approved="yes">
 				<source>General</source>
-			<target state="final">Allgemeines</target></trans-unit>
+        <target state="final">Allgemeines</target>
+      </trans-unit>
       <trans-unit id="tabs.meta" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="final">Metadaten</target></trans-unit>
+        <target state="final">Metadaten</target>
+      </trans-unit>
       <trans-unit id="views.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Metadata</source>
-			<target state="final">Metadaten</target></trans-unit>
+        <target state="final">Metadaten</target>
+      </trans-unit>
       <trans-unit id="groups.nodeInfo" xml:space="preserve" approved="yes">
 				<source>Additional info</source>
-			<target state="final">Zusätzliche Informationen</target></trans-unit>
+        <target state="final">Zusätzliche Informationen</target>
+      </trans-unit>
       <trans-unit id="groups.type" xml:space="preserve" approved="yes">
 				<source>Change type</source>
-			<target state="final">Typ ändern</target></trans-unit>
+        <target state="final">Typ ändern</target>
+      </trans-unit>
       <trans-unit id="properties._nodeType" xml:space="preserve" approved="yes">
 				<source>Type</source>
-			<target state="final">Typ</target></trans-unit>
+        <target state="final">Typ</target>
+      </trans-unit>
+      <trans-unit id="groups.default" xml:space="preserve">
+				<source>General</source>
+        <target state="needs-translation">Allgemeines</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1,8 +1,4 @@
 Neos:
-  EventSourcedNeosAdjustments:
-    # TODO: re-enable cache!!
-    fusion:
-      enableObjectTreeCache: false
   Flow:
     error:
       debugger:
