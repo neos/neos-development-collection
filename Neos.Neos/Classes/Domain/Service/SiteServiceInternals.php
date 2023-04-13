@@ -59,7 +59,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         $arbitraryDimensionSpacePoint = reset($dimensionSpacePoints) ?: null;
         if (!$arbitraryDimensionSpacePoint instanceof DimensionSpacePoint) {
             throw new \InvalidArgumentException(
-                'Cannot prune site "' . $siteNodeName->toNodeName()
+                'Cannot prune site "' . $siteNodeName->toNodeName()->value
                 . '" due to the dimension space being empty',
                 1651921482
             );

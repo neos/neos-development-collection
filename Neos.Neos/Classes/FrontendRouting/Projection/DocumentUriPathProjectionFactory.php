@@ -32,7 +32,7 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
             )
         );
 
-        return sprintf('cr_%s_p_neos_%s', $contentRepositoryId, $projectionShortName);
+        return sprintf('cr_%s_p_neos_%s', $contentRepositoryId->value, $projectionShortName);
     }
 
 

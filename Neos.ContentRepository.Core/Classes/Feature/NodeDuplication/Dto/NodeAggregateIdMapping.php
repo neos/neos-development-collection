@@ -49,7 +49,7 @@ final class NodeAggregateIdMapping implements \JsonSerializable
                 );
             }
 
-            $this->nodeAggregateIds[(string)$oldNodeAggregateId] = $newNodeAggregateId;
+            $this->nodeAggregateIds[$oldNodeAggregateId->value] = $newNodeAggregateId;
         }
     }
 
@@ -62,7 +62,7 @@ final class NodeAggregateIdMapping implements \JsonSerializable
         $nodeSubtreeSnapshot->walk(
             function (NodeSubtreeSnapshot $nodeSubtreeSnapshot) use (&$nodeAggregateIdMapping) {
                 // here, we create new random NodeAggregateIds.
-                $nodeAggregateIdMapping[(string)$nodeSubtreeSnapshot->nodeAggregateId] = NodeAggregateId::create();
+                $nodeAggregateIdMapping[$nodeSubtreeSnapshot->nodeAggregateId->value] = NodeAggregateId::create();
             }
         );
 
@@ -85,7 +85,7 @@ final class NodeAggregateIdMapping implements \JsonSerializable
     public function getNewNodeAggregateId(
         NodeAggregateId $oldNodeAggregateId
     ): ?NodeAggregateId {
-        return $this->nodeAggregateIds[(string)$oldNodeAggregateId] ?? null;
+        return $this->nodeAggregateIds[$oldNodeAggregateId->value] ?? null;
     }
 
     /**

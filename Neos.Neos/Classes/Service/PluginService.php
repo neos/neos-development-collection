@@ -43,6 +43,7 @@ use Neos\Neos\Domain\Service\SiteNodeUtility;
  * If no node is available (e.g. for CLI requests) the ContentContextFactory can be used to create a context instance.
  *
  * @Flow\Scope("singleton")
+ * @deprecated will be removed with Neos 9
  */
 class PluginService
 {
@@ -73,7 +74,7 @@ class PluginService
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
-            throw new \InvalidArgumentException('Could not find workspace "' . $workspaceName . '"');
+            throw new \InvalidArgumentException('Could not find workspace "' . $workspaceName->value . '"');
         }
 
         $siteNode = $this->siteNodeUtility->findCurrentSiteNode(
@@ -224,7 +225,7 @@ class PluginService
             ])) as $pluginViewNode
         ) {
             if (
-                $pluginViewNode->getProperty('plugin') === (string)$node->nodeAggregateId
+                $pluginViewNode->getProperty('plugin') === $node->nodeAggregateId->value
                 && $pluginViewNode->getProperty('view') === $viewName
             ) {
                 return $pluginViewNode;

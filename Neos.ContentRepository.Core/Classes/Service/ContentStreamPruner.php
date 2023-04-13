@@ -24,7 +24,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly EventStoreInterface $eventStore
+        private readonly EventStoreInterface $eventStore,
     ) {
     }
 
@@ -84,6 +84,16 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         }
 
         return $removedContentStreams;
+    }
+
+    public function pruneAll(): void
+    {
+        $contentStreamIds = $this->contentRepository->getContentStreamFinder()->findAllIds();
+
+        foreach ($contentStreamIds as $contentStreamId) {
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
+            $this->eventStore->deleteStream($streamName);
+        }
     }
 
     public function getLastCommandResult(): ?CommandResult

@@ -28,7 +28,7 @@ class ContentSubgraphVariationWeightsAreIncomparable extends \DomainException
         ContentSubgraphVariationWeight $second
     ): self {
         return new self(
-            'Weights ' . $first . ' and ' . $second . ' cannot be compared.',
+            'Weights ' . $first->toJson() . ' and ' . $second->toJson() . ' cannot be compared.',
             1517474233
         );
     }

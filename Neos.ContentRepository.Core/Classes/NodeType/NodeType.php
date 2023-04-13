@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\NodeType;
+
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -10,9 +14,6 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -405,7 +406,8 @@ class NodeType
             } else {
                 // TODO
                 /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
-                $nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
+                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator::class);
+                //$nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
             }
             $this->nodeLabelGenerator = $nodeLabelGenerator;
         }
@@ -506,7 +508,7 @@ class NodeType
     public function hasAutoCreatedChildNode(NodeName $nodeName): bool
     {
         $this->initialize();
-        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+        return isset($this->fullConfiguration['childNodes'][$nodeName->value]);
     }
 
     /**
@@ -514,8 +516,8 @@ class NodeType
      */
     public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
     {
-        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
-            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
+        return isset($this->fullConfiguration['childNodes'][$nodeName->value]['type'])
+            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][$nodeName->value]['type'])
             : null;
     }
 
@@ -713,14 +715,5 @@ class NodeType
     protected function setFullConfiguration(array $fullConfiguration): void
     {
         $this->fullConfiguration = $fullConfiguration;
-    }
-
-    /**
-     * Alias for name.
-     * @api
-     */
-    public function __toString(): string
-    {
-        return $this->name->value;
     }
 }

@@ -52,12 +52,12 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => (string)$this->relationAnchorPoint,
-            'nodeaggregateid' => (string)$this->nodeAggregateId,
+            'relationanchorpoint' => $this->relationAnchorPoint->value,
+            'nodeaggregateid' => $this->nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string)$this->nodeTypeName,
+            'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value,
             'created' => $this->timestamps->created,
             'originalcreated' => $this->timestamps->originalCreated,
@@ -80,17 +80,17 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
-                'nodeaggregateid' => (string)$this->nodeAggregateId,
+                'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
-                'nodetypename' => (string)$this->nodeTypeName,
+                'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'lastmodified' => $this->timestamps->lastModified,
                 'originallastmodified' => $this->timestamps->originalLastModified,
             ],
             [
-                'relationanchorpoint' => $this->relationAnchorPoint
+                'relationanchorpoint' => $this->relationAnchorPoint->value
             ],
             [
                 'lastmodified' => Types::DATETIME_IMMUTABLE,
@@ -107,7 +107,7 @@ final class NodeRecord
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->delete($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }
 

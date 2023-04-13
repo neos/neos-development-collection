@@ -52,8 +52,7 @@ final class NodeByNodeAggregateIdCache
             return false;
         }
 
-        $key = (string)$nodeAggregateId;
-        return isset($this->nodes[$key]) || isset($this->nonExistingNodeAggregateIds[$key]);
+        return isset($this->nodes[$nodeAggregateId->value]) || isset($this->nonExistingNodeAggregateIds[$nodeAggregateId->value]);
     }
 
     public function add(NodeAggregateId $nodeAggregateId, Node $node): void
@@ -62,8 +61,7 @@ final class NodeByNodeAggregateIdCache
             return;
         }
 
-        $key = (string)$nodeAggregateId;
-        $this->nodes[$key] = $node;
+        $this->nodes[$nodeAggregateId->value] = $node;
     }
 
     public function rememberNonExistingNodeAggregateId(NodeAggregateId $nodeAggregateId): void
@@ -72,8 +70,7 @@ final class NodeByNodeAggregateIdCache
             return;
         }
 
-        $key = (string)$nodeAggregateId;
-        $this->nonExistingNodeAggregateIds[$key] = true;
+        $this->nonExistingNodeAggregateIds[$nodeAggregateId->value] = true;
     }
 
     public function get(NodeAggregateId $nodeAggregateId): ?Node
@@ -82,7 +79,6 @@ final class NodeByNodeAggregateIdCache
             return null;
         }
 
-        $key = (string)$nodeAggregateId;
-        return $this->nodes[$key] ?? null;
+        return $this->nodes[$nodeAggregateId->value] ?? null;
     }
 }

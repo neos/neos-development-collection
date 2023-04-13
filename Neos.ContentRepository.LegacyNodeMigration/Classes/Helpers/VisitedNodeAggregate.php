@@ -29,7 +29,7 @@ final class VisitedNodeAggregate
     public function addVariant(OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId): void
     {
         if (isset($this->variants[$originDimensionSpacePoint->hash])) {
-            throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateId, $originDimensionSpacePoint), 1653050442);
+            throw new MigrationException(sprintf('Node "%s" with dimension space point "%s" was already visited before', $this->nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1653050442);
         }
         $this->variants[$originDimensionSpacePoint->hash] = new VisitedNodeVariant($originDimensionSpacePoint, $parentNodeAggregateId);
     }
@@ -42,7 +42,7 @@ final class VisitedNodeAggregate
     public function getVariant(OriginDimensionSpacePoint $originDimensionSpacePoint): VisitedNodeVariant
     {
         if (!isset($this->variants[$originDimensionSpacePoint->hash])) {
-            throw new \InvalidArgumentException(sprintf('Variant %s of node "%s" has not been visited before', $originDimensionSpacePoint, $this->nodeAggregateId), 1656058159);
+            throw new \InvalidArgumentException(sprintf('Variant %s of node "%s" has not been visited before', $originDimensionSpacePoint->toJson(), $this->nodeAggregateId->value), 1656058159);
         }
         return $this->variants[$originDimensionSpacePoint->hash];
     }

@@ -53,8 +53,8 @@ trait NodeReferencing
 
                     // remove old
                     $this->getDatabaseConnection()->delete($this->tableNamePrefix . '_referencerelation', [
-                        'sourcenodeanchor' => $anchorPoint,
-                        'name' => $event->referenceName
+                        'sourcenodeanchor' => $anchorPoint->value,
+                        'name' => $event->referenceName->value
                     ]);
 
                     // set new

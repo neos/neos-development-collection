@@ -193,7 +193,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray($dimensionArray);
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
         if ($parentNodeAggregate === null) {
-            throw new MigrationException(sprintf('Failed to find parent node for node with id "%s" and dimensions: %s. Did you properly configure your dimensions setup to be in sync with the old setup?', $nodeAggregateId, $originDimensionSpacePoint), 1655980069);
+            throw new MigrationException(sprintf('Failed to find parent node for node with id "%s" and dimensions: %s. Did you properly configure your dimensions setup to be in sync with the old setup?', $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1655980069);
         }
         $pathParts = $nodePath->getParts();
         $nodeName = end($pathParts);
@@ -232,7 +232,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
         $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
         if (!is_array($decodedProperties)) {
-            throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s")', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType), 1656057035);
+            throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s")', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value), 1656057035);
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
@@ -292,7 +292,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             }
         }
         if ($variantCreatedEvent === null) {
-            throw new MigrationException(sprintf('Node "%s" for dimension %s was already created previously', $nodeAggregateId, $originDimensionSpacePoint), 1656057201);
+            throw new MigrationException(sprintf('Node "%s" for dimension %s was already created previously', $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1656057201);
         }
         $this->exportEvent($variantCreatedEvent);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0) {

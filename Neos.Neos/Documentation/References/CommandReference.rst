@@ -160,8 +160,32 @@ Options
   Only execute the given check or checks (comma separated)
 
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION`:
 
+Package *NEOS.CONTENTREPOSITORY.MIGRATION*
+-------------------
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrationcreate`:
+
+``neos.contentrepository.migration:node:migrationcreate``
+*************************
+
+**Create a node migration for the given package key**
+
+You can specify the ``packageKey`` of your desired package. A node migration will be created in the specified package under ``/Migrations/ContentRepository/``.
+The newly created node migration contains a small template to help you to get started, and also a link to the Neos documentation about how node migrations work in Neos.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The key for your package (for example ``Neos.Demo``)
+
+Example
+^^^^^^^
+
+.. code-block:: bash
+  ./flow node:migrationcreate --package-key Neos.Demo
 
 .. _`Neos Command Reference: NEOS.FLOW`:
 

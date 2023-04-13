@@ -51,6 +51,8 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
 
     protected int $currentObjectStatementCursor;
 
+    private bool $isInsidePrototypeDeclaration = false;
+
     public function __construct(
         protected MergedArrayTree $mergedArrayTree,
         protected \Closure $handleFileInclude,
@@ -77,6 +79,19 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         ($this->handleFileInclude)($this->mergedArrayTree, $includeStatement->filePattern, $this->contextPathAndFilename);
     }
 
+    private function isRootPrototypeDeclaration(ObjectStatement $objectStatement): bool
+    {
+        if (!$objectStatement->operation instanceof ValueCopy) {
+            return false;
+        }
+
+        $prototypePath = $objectStatement->path;
+        $inheritingPrototypePath = $objectStatement->operation->assignedObjectPath->objectPath;
+
+        return \count($prototypePath->segments) === 1 && $prototypePath->segments[0] instanceof PrototypePathSegment
+            && \count($inheritingPrototypePath->segments) === 1 && $inheritingPrototypePath->segments[0] instanceof PrototypePathSegment;
+    }
+
     public function visitObjectStatement(ObjectStatement $objectStatement)
     {
         $this->currentObjectStatementCursor = $objectStatement->cursor;
@@ -84,7 +99,13 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
         $currentPath = $objectStatement->path->visit($this, $this->getCurrentObjectPathPrefix());
 
         $objectStatement->operation?->visit($this, $currentPath);
+
+        $wasPreviouslyInPrototypeDeclaration = $this->isInsidePrototypeDeclaration;
+        $this->isInsidePrototypeDeclaration = $this->isRootPrototypeDeclaration($objectStatement);
+
         $objectStatement->block?->visit($this, $currentPath);
+
+        $this->isInsidePrototypeDeclaration = $wasPreviouslyInPrototypeDeclaration;
     }
 
     public function visitBlock(Block $block, array $currentPath = null)
@@ -109,6 +130,12 @@ class MergedArrayTreeVisitor implements AstNodeVisitorInterface
 
     public function visitMetaPathSegment(MetaPathSegment $metaPathSegment): array
     {
+        if ($metaPathSegment->identifier === "private" && !$this->isInsidePrototypeDeclaration) {
+            throw $this->prepareParserException(new ParserException())
+                ->setCode(1677101592)
+                ->setMessage("@private can only be declared inside a root prototype declaration.")
+                ->build();
+        }
         return ['__meta', $metaPathSegment->identifier];
     }
 

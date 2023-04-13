@@ -10,7 +10,7 @@ use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryI
 final class FakeUserIdProviderFactory implements UserIdProviderFactoryInterface
 {
 
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $projectionCatchUpTriggerPreset): UserIdProviderInterface
+    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $options): UserIdProviderInterface
     {
         return new FakeUserIdProvider();
     }

@@ -31,6 +31,28 @@ class LoopTest extends AbstractFusionObjectTest
     /**
      * @test
      */
+    public function basicLoopWorksWithIterator()
+    {
+        $view = $this->buildView();
+        $view->assign('items', new \ArrayIterator(['element1', 'element2']));
+        $view->setFusionPath('loop/basicLoop');
+        self::assertEquals('Xelement1Xelement2', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function basicLoopWorksWithIteratorThatDoesNotImplementCount()
+    {
+        $view = $this->buildView();
+        $view->assign('items', new \IteratorIterator(new \ArrayIterator(['element1', 'element2'])));
+        $view->setFusionPath('loop/basicLoop');
+        self::assertEquals('Xelement1Xelement2', $view->render());
+    }
+
+    /**
+     * @test
+     */
     public function basicLoopWorksWithGlue()
     {
         $view = $this->buildView();

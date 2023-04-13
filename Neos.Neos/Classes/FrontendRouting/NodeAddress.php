@@ -61,9 +61,9 @@ final class NodeAddress
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
-        return $this->workspaceName->name
+        return $this->workspaceName->value
             . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
-            . '__' . $this->nodeAggregateId->jsonSerialize();
+            . '__' . $this->nodeAggregateId->value;
     }
 
     public function isInLiveWorkspace(): bool
@@ -75,10 +75,10 @@ final class NodeAddress
     {
         return sprintf(
             'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->nodeAggregateId,
-            $this->workspaceName
+            $this->contentStreamId->value,
+            $this->dimensionSpacePoint->toJson(),
+            $this->nodeAggregateId->value,
+            $this->workspaceName->value
         );
     }
 }

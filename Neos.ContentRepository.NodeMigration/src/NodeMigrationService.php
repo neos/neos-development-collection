@@ -64,7 +64,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
-                $command->getWorkspaceName()
+                $command->getWorkspaceName()->value
             ), 1611688225);
         }
 
@@ -72,9 +72,9 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
             $this->contentRepository->handle(
                 new CreateWorkspace(
-                    WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceName::fromString($contentStreamForWriting->value),
                     $workspace->workspaceName,
-                    WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceTitle::fromString($contentStreamForWriting->value),
                     WorkspaceDescription::fromString(''),
                     $contentStreamForWriting,
                 )

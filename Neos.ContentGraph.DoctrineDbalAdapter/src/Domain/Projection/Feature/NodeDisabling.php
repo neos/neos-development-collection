@@ -76,15 +76,15 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     )
 
     select
-        "' . $event->contentStreamId . '" as contentstreamid,
+        "' . $event->contentStreamId->value . '" as contentstreamid,
         dimensionspacepointhash,
-        "' . $event->nodeAggregateId . '" as originnodeaggregateid,
+        "' . $event->nodeAggregateId->value . '" as originnodeaggregateid,
         nodeaggregateid as affectednodeaggregateid
     from tree
             ',
                 [
-                    'entryNodeAggregateId' => (string)$event->nodeAggregateId,
-                    'contentStreamId' => (string)$event->contentStreamId,
+                    'entryNodeAggregateId' => $event->nodeAggregateId->value,
+                    'contentStreamId' => $event->contentStreamId->value,
                     'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
                 ],
                 [

@@ -1,5 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
+
 /*
  * This file is part of the Neos.Neos package.
  *
@@ -10,17 +14,12 @@
  * source code.
  */
 
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
-
 use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\NodeTypeSchemaBuilder;
-use Neos\Neos\Service\NodeTypeSchemaBuilderFactory;
 
 #[Flow\Scope('singleton')]
 class SchemaController extends ActionController

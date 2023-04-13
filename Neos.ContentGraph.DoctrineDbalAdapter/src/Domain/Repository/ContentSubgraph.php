@@ -214,7 +214,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('h.name = :edgeName')->setParameter('edgeName', (string)$edgeName);
+            ->andWhere('h.name = :edgeName')->setParameter('edgeName', $edgeName->value);
         $this->addRestrictionRelationConstraints($queryBuilder, 'cn');
         return $this->fetchNode($queryBuilder);
     }

@@ -185,7 +185,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
                 AND removed = FALSE
             ',
             [
-                'contentStreamId' => $contentStreamId->jsonSerialize()
+                'contentStreamId' => $contentStreamId->value,
             ]
         )->fetchColumn();
 
@@ -254,7 +254,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
                 WHERE contentStreamId = :contentStreamId
             ',
             [
-                'contentStreamId' => $contentStreamId->jsonSerialize()
+                'contentStreamId' => $contentStreamId->value,
             ]
         )->fetchOne();
 
@@ -275,7 +275,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
                 WHERE contentStreamId = :contentStreamId
             ',
             [
-                'contentStreamId' => $contentStreamId->jsonSerialize()
+                'contentStreamId' => $contentStreamId->value
             ]
         )->fetchOne();
 

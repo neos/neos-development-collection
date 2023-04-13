@@ -201,13 +201,13 @@ final class DocumentUriPathProjection implements ProjectionInterface
     {
         try {
             $this->dbal->insert($this->tableNamePrefix . '_livecontentstreams', [
-                'contentStreamId' => $event->newContentStreamId,
-                'workspaceName' => $event->workspaceName,
+                'contentStreamId' => $event->newContentStreamId->value,
+                'workspaceName' => $event->workspaceName->value,
             ]);
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to insert root content stream id of the root workspace "%s": %s',
-                $event->workspaceName,
+                $event->workspaceName->value,
                 $e->getMessage()
             ), 1599646608, $e);
         }
@@ -221,9 +221,9 @@ final class DocumentUriPathProjection implements ProjectionInterface
         foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
             $this->insertNode([
                 'uriPath' => '',
-                'nodeAggregateIdPath' => $event->nodeAggregateId,
+                'nodeAggregateIdPath' => $event->nodeAggregateId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
             ]);
         }
     }
@@ -237,16 +237,16 @@ final class DocumentUriPathProjection implements ProjectionInterface
         $this->dbal->delete(
             $this->tableNamePrefix . '_uri',
             [
-                'nodeAggregateId' => $event->nodeAggregateId
+                'nodeAggregateId' => $event->nodeAggregateId->value
             ]
         );
 
         foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
             $this->insertNode([
                 'uriPath' => '',
-                'nodeAggregateIdPath' => $event->nodeAggregateId,
+                'nodeAggregateIdPath' => $event->nodeAggregateId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
             ]);
         }
     }
@@ -292,7 +292,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                     // make the new node the new succeeding node of the previously last child
                     // (= insert at the end of all children)
                     $this->updateNode($precedingNode, [
-                        'succeedingNodeAggregateId' => $event->nodeAggregateId
+                        'succeedingNodeAggregateId' => $event->nodeAggregateId->value
                     ]);
                 }
             } else {
@@ -305,18 +305,18 @@ final class DocumentUriPathProjection implements ProjectionInterface
                     // make the new node the new succeeding node of the previously preceding node
                     // of the specified succeeding node (= re-wire <preceding>-<succeeding> to <preceding>-<new node>)
                     $this->updateNode($precedingNode, [
-                        'succeedingNodeAggregateId' => $event->nodeAggregateId
+                        'succeedingNodeAggregateId' => $event->nodeAggregateId->value
                     ]);
                 }
                 $this->updateNodeByIdAndDimensionSpacePointHash(
                     $event->succeedingNodeAggregateId,
                     $dimensionSpacePoint->hash,
-                    ['precedingNodeAggregateId' => $event->nodeAggregateId]
+                    ['precedingNodeAggregateId' => $event->nodeAggregateId->value]
                 );
             }
 
             $nodeAggregateIdPath = $parentNode->getNodeAggregateIdPath()
-                . '/' . $event->nodeAggregateId;
+                . '/' . $event->nodeAggregateId->value;
             if ($parentNode->isRoot() && $event->nodeName !== null) {
                 $uriPath = '';
                 $siteNodeName = SiteNodeName::fromNodeName($event->nodeName);
@@ -327,15 +327,15 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 $siteNodeName = $parentNode->getSiteNodeName();
             }
             $this->insertNode([
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
                 'uriPath' => $uriPath,
                 'nodeAggregateIdPath' => $nodeAggregateIdPath,
-                'siteNodeName' => $siteNodeName,
+                'siteNodeName' => $siteNodeName->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'originDimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'parentNodeAggregateId' => $parentNode->getNodeAggregateId(),
-                'precedingNodeAggregateId' => $precedingNode?->getNodeAggregateId(),
-                'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId,
+                'parentNodeAggregateId' => $parentNode->getNodeAggregateId()->value,
+                'precedingNodeAggregateId' => $precedingNode?->getNodeAggregateId()->value,
+                'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
             ]);
         }
@@ -352,13 +352,13 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $this->updateNodeQuery('SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\'
                 WHERE nodeAggregateId = :nodeAggregateId
                     AND shortcuttarget IS NULL', [
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
             ]);
         } elseif ($this->isDocumentNodeType($event->newNodeTypeName)) {
             $this->updateNodeQuery('SET shortcuttarget = NULL
                 WHERE nodeAggregateId = :nodeAggregateId
                     AND shortcuttarget IS NOT NULL', [
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
             ]);
         }
     }
@@ -455,7 +455,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                             OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
                         )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $event->nodeAggregateId,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]);
         }
@@ -486,7 +486,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                         OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
                     )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]);
         }
@@ -515,7 +515,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                         OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
                     )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]);
         }
@@ -584,7 +584,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
                 'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]
         );
@@ -666,7 +666,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             ',
             /** @codingStandardsIgnoreEnd */
             [
-                'nodeAggregateId' => $node->getNodeAggregateId(),
+                'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'newParentNodeAggregateIdPath' => $newParentNode->getNodeAggregateIdPath(),
                 'sourceNodeAggregateIdPathOffset'
                     => (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1,
@@ -736,7 +736,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
         try {
             return $closure();
         } catch (NodeNotFoundException $_) {
-            /** @noinspection BadExceptionsProcessingInspection,PhpRedundantCatchClauseInspection */
+            /** @noinspection BadExceptionsProcessingInspection */
             return null;
         }
     }
@@ -777,13 +777,16 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $this->dbal->update(
                 $this->tableNamePrefix . '_uri',
                 $data,
-                compact('nodeAggregateId', 'dimensionSpacePointHash'),
+                [
+                    'nodeAggregateId' => $nodeAggregateId->value,
+                    'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                ],
                 self::COLUMN_TYPES_DOCUMENT_URIS
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to update node "%s": %s',
-                $nodeAggregateId,
+                $nodeAggregateId->value,
                 $e->getMessage()
             ), 1599646777, $e);
         }
@@ -815,13 +818,16 @@ final class DocumentUriPathProjection implements ProjectionInterface
         try {
             $this->dbal->delete(
                 $this->tableNamePrefix . '_uri',
-                compact('nodeAggregateId', 'dimensionSpacePointHash'),
+                [
+                    'nodeAggregateId' => $nodeAggregateId->value,
+                    'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                ],
                 self::COLUMN_TYPES_DOCUMENT_URIS
             );
         } catch (DBALException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to delete node "%s": %s',
-                $nodeAggregateId,
+                $nodeAggregateId->value,
                 $e->getMessage()
             ), 1599655284, $e);
         }
@@ -853,7 +859,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 $node->getPrecedingNodeAggregateId(),
                 $node->getDimensionSpacePointHash(),
                 ['succeedingNodeAggregateId' =>
-                    $node->hasSucceedingNodeAggregateId() ? $node->getSucceedingNodeAggregateId() : null
+                    $node->hasSucceedingNodeAggregateId() ? $node->getSucceedingNodeAggregateId()->value : null
                 ]
             );
         }
@@ -862,7 +868,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
                 $node->getSucceedingNodeAggregateId(),
                 $node->getDimensionSpacePointHash(),
                 ['precedingNodeAggregateId' =>
-                    $node->hasPrecedingNodeAggregateId() ? $node->getPrecedingNodeAggregateId() : null
+                    $node->hasPrecedingNodeAggregateId() ? $node->getPrecedingNodeAggregateId()->value : null
                 ]
             );
         }
@@ -884,7 +890,7 @@ final class DocumentUriPathProjection implements ProjectionInterface
             $this->updateNodeByIdAndDimensionSpacePointHash(
                 $newSucceedingNodeAggregateId,
                 $node->getDimensionSpacePointHash(),
-                ['precedingNodeAggregateId' => $node->getNodeAggregateId()]
+                ['precedingNodeAggregateId' => $node->getNodeAggregateId()->value]
             );
         } else {
             $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getLastChildNode(
@@ -895,15 +901,15 @@ final class DocumentUriPathProjection implements ProjectionInterface
         if ($newPrecedingNode !== null) {
             $this->updateNode(
                 $newPrecedingNode,
-                ['succeedingNodeAggregateId' => $node->getNodeAggregateId()]
+                ['succeedingNodeAggregateId' => $node->getNodeAggregateId()->value]
             );
         }
 
         // update node itself
         $this->updateNode($node, [
-            'parentNodeAggregateId' => $parentNodeAggregateId,
-            'precedingNodeAggregateId' => $newPrecedingNode?->getNodeAggregateId(),
-            'succeedingNodeAggregateId' => $newSucceedingNodeAggregateId,
+            'parentNodeAggregateId' => $parentNodeAggregateId->value,
+            'precedingNodeAggregateId' => $newPrecedingNode?->getNodeAggregateId()->value,
+            'succeedingNodeAggregateId' => $newSucceedingNodeAggregateId?->value,
         ]);
     }
 

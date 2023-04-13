@@ -15,15 +15,15 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds
-    as NodeAggregateIdCollection;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds as NodeAggregateIdCollection;
 
 /**
  * The node aggregate identifier value object collection
  *
  * @internal
+ * @implements \IteratorAggregate<NodeAggregateId>
  */
-final class NodeAggregateIds
+final class NodeAggregateIds implements \IteratorAggregate
 {
     /**
      * @var array<string,NodeAggregateId>
@@ -48,7 +48,7 @@ final class NodeAggregateIds
             if (is_string($item)) {
                 $values[$item] = NodeAggregateId::fromString($item);
             } elseif ($item instanceof NodeAggregateId) {
-                $values[(string)$item] = $item;
+                $values[$item->value] = $item;
             } else {
                 throw new \InvalidArgumentException(
                     'NodeAggregateIds can only consist of '
@@ -69,16 +69,6 @@ final class NodeAggregateIds
         );
     }
 
-    public static function fromDatabaseString(string $databaseString): self
-    {
-        return self::fromArray(\explode(',', \trim($databaseString, '{}')));
-    }
-
-    public function toDatabaseString(): string
-    {
-        return '{' . implode(',', $this->ids) .  '}';
-    }
-
     public function add(
         NodeAggregateId $nodeAggregateId,
         ?NodeAggregateId $succeedingSibling = null
@@ -88,7 +78,7 @@ final class NodeAggregateIds
             $pivot = (int)array_search($succeedingSibling, $nodeAggregateIds);
             array_splice($nodeAggregateIds, $pivot, 0, $nodeAggregateId);
         } else {
-            $nodeAggregateIds[(string)$nodeAggregateId] = $nodeAggregateId;
+            $nodeAggregateIds[$nodeAggregateId->value] = $nodeAggregateId;
         }
 
         return new self($nodeAggregateIds);
@@ -97,8 +87,8 @@ final class NodeAggregateIds
     public function remove(NodeAggregateId $nodeAggregateId): self
     {
         $identifiers = $this->ids;
-        if (isset($identifiers[(string) $nodeAggregateId])) {
-            unset($identifiers[(string) $nodeAggregateId]);
+        if (isset($identifiers[$nodeAggregateId->value])) {
+            unset($identifiers[$nodeAggregateId->value]);
         }
 
         return new self($identifiers);
@@ -107,5 +97,10 @@ final class NodeAggregateIds
     public function isEmpty(): bool
     {
         return count($this->ids) === 0;
+    }
+
+    public function getIterator(): \Traversable
+    {
+        return new \ArrayIterator($this->ids);
     }
 }

@@ -194,7 +194,7 @@ class ContentElementWrappingService
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
         $attributes['typeof'] = 'typo3:' . $node->nodeType->getName();
         $attributes['about'] = $nodeAddress->serializeForUri();
-        $attributes['data-node-_identifier'] = (string)$node->nodeAggregateId;
+        $attributes['data-node-_identifier'] = $node->nodeAggregateId->value;
         $attributes['data-node-__workspace-name'] = $nodeAddress->workspaceName;
         $attributes['data-node-__label'] = $node->getLabel();
 
@@ -372,7 +372,7 @@ class ContentElementWrappingService
                 continue;
             }
 
-            if (isset($this->renderedNodes[(string)$node->nodeAggregateId]) === false) {
+            if (isset($this->renderedNodes[$node->nodeAggregateId->value]) === false) {
                 $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
                 $nodeContextPath = $nodeAddressFactory->createFromNode($node)->serializeForUri();
                 /** @codingStandardsIgnoreStart */

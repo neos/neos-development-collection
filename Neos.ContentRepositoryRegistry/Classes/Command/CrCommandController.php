@@ -7,6 +7,8 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Cli\CommandController;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 
 final class CrCommandController extends CommandController
 {
@@ -76,5 +78,28 @@ final class CrCommandController extends CommandController
             // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');
         }
+    }
+
+    public function pruneCommand(string $contentRepository = 'default'): void
+    {
+        if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
+            return;
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        $contentStreamPruner = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryId,
+            new ContentStreamPrunerFactory()
+        );
+        $contentStreamPruner->pruneAll();
+
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryId,
+            new WorkspaceMaintenanceServiceFactory()
+        );
+        $workspaceMaintenanceService->pruneAll();
+
+        $this->replayAllCommand();
     }
 }

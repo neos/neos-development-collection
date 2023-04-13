@@ -85,12 +85,12 @@ final class PropertyConverter
 
             return new SerializedPropertyValue(
                 $propertyValue,
-                (string)$propertyType
+                $propertyType->value
             );
         } else {
             // $propertyValue == null and defined in node types (we have a resolved type)
             // -> we want to set the $propertyName to NULL
-            return new SerializedPropertyValue(null, (string)$propertyType);
+            return new SerializedPropertyValue(null, $propertyType->value);
         }
     }
 
@@ -104,7 +104,7 @@ final class PropertyConverter
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
             // reference properties are always completely overwritten,
             // so we don't need the node properties' unset option
-            $declaredType = $nodeType->getProperties()[(string)$referenceName]['properties'][$propertyName]['type'];
+            $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 $declaredType,

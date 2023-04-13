@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Presentation\Dimensions;
 
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\WeightedDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
@@ -45,8 +46,9 @@ final class VisualWeightedDimensionSpacePoint
         int &$height
     ): self {
         $depth = 0;
-        foreach ($dimensionSpacePoint->weight->weight as $weight) {
-            $depth += $weight->depth;
+        /** @var ContentDimensionValueSpecializationDepth $weight */
+        foreach ($dimensionSpacePoint->weight->value as $weight) {
+            $depth += $weight->value;
         }
         $previousY = $y;
         $y = $depth * 110 + 42;

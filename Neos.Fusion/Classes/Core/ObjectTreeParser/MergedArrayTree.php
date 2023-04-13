@@ -19,7 +19,7 @@ use Neos\Utility\Arrays;
 class MergedArrayTree
 {
     public function __construct(
-        protected array $tree = []
+        protected array $tree
     ) {
     }
 

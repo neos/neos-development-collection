@@ -27,8 +27,8 @@ class DimensionSpacePointIsNoSpecialization extends \DomainException
     {
         return new self(sprintf(
             'The Dimension space point %s is no specialization of %s.',
-            $target,
-            $source
+            $target->toJson(),
+            $source->toJson()
         ), 1617275140);
     }
 }

@@ -12,6 +12,7 @@ namespace Neos\Fusion\FusionObjects;
  */
 
 use Neos\Fusion\FusionObjects\Helpers\LazyProps;
+use Neos\Fusion\FusionObjects\Helpers\LazySelfReferentialProps;
 
 /**
  * A Fusion Component-Object
@@ -55,6 +56,7 @@ class ComponentImplementation extends AbstractArrayFusionObject
     protected function prepare(array $context): array
     {
         $context['props'] = $this->getProps($context);
+        $context['private'] = $this->getPrivateProps($context);
         return $context;
     }
 
@@ -69,6 +71,16 @@ class ComponentImplementation extends AbstractArrayFusionObject
         $sortedChildFusionKeys = $this->preparePropertyKeys($this->properties, $this->ignoreProperties);
         $props = new LazyProps($this, $this->path, $this->runtime, $sortedChildFusionKeys, $context);
         return $props;
+    }
+
+    protected function getPrivateProps(array $context): \ArrayAccess
+    {
+        return new LazySelfReferentialProps(
+            $this->path . '/__meta/private',
+            $this->runtime,
+            $context,
+            "private"
+        );
     }
 
     /**

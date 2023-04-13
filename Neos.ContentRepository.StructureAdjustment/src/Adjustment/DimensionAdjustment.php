@@ -51,8 +51,8 @@ class DimensionAdjustment
 
                                 You need to write a node migration to update the database to fix this case.
                             ',
-                            json_encode($node->originDimensionSpacePoint->jsonSerialize()),
-                            json_encode($coveredDimensionSpacePoint->jsonSerialize()),
+                            $node->originDimensionSpacePoint->toJson(),
+                            $coveredDimensionSpacePoint->toJson(),
                             strtoupper($variantType->value)
                         );
 

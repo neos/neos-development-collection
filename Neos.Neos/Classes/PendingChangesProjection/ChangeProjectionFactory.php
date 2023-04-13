@@ -53,7 +53,7 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
             $workspaceFinder,
             sprintf(
                 'cr_%s_p_neos_%s',
-                $projectionFactoryDependencies->contentRepositoryId,
+                $projectionFactoryDependencies->contentRepositoryId->value,
                 $projectionShortName
             ),
         );

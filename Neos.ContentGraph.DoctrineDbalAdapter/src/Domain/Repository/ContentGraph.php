@@ -65,7 +65,7 @@ final class ContentGraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $contentStreamId . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
+        $index = $contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
                 new ContentSubgraph(
@@ -104,9 +104,9 @@ final class ContentGraph implements ContentGraphInterface
                   AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
                   AND h.contentstreamid = :contentStreamId',
             [
-                'nodeAggregateId' => (string)$nodeAggregateId,
+                'nodeAggregateId' => $nodeAggregateId->value,
                 'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'contentStreamId' => (string)$contentStreamId
+                'contentStreamId' => $contentStreamId->value
             ]
         )->fetchAssociative();
 
@@ -161,13 +161,13 @@ final class ContentGraph implements ContentGraphInterface
                         AND h.parentnodeanchor = :rootEdgeParentAnchorId ';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'rootEdgeParentAnchorId' => (string)NodeRelationAnchorPoint::forRootEdge(),
+            'contentStreamId' => $contentStreamId->value,
+            'rootEdgeParentAnchorId' => NodeRelationAnchorPoint::forRootEdge()->value,
         ];
 
         if ($filter->nodeTypeName !== null) {
             $query .= ' AND n.nodetypename = :nodeTypeName';
-            $parameters['nodeTypeName'] = (string)$filter->nodeTypeName;
+            $parameters['nodeTypeName'] = $filter->nodeTypeName->value;
         }
 
 
@@ -197,8 +197,8 @@ final class ContentGraph implements ContentGraphInterface
                     AND n.nodetypename = :nodeTypeName';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'nodeTypeName' => (string)$nodeTypeName,
+            'contentStreamId' => $contentStreamId->value,
+            'nodeTypeName' => $nodeTypeName->value,
         ];
 
         $resultStatement = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -232,8 +232,8 @@ final class ContentGraph implements ContentGraphInterface
                       WHERE n.nodeaggregateid = :nodeAggregateId
                       AND h.contentstreamid = :contentStreamId';
         $parameters = [
-            'nodeAggregateId' => (string)$nodeAggregateId,
-            'contentStreamId' => (string)$contentStreamId
+            'nodeAggregateId' => $nodeAggregateId->value,
+            'contentStreamId' => $contentStreamId->value
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -273,8 +273,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND ph.contentstreamid = :contentStreamId
                       AND ch.contentstreamid = :contentStreamId';
         $parameters = [
-            'nodeAggregateId' => (string)$childNodeAggregateId,
-            'contentStreamId' => (string)$contentStreamId
+            'nodeAggregateId' => $childNodeAggregateId->value,
+            'contentStreamId' => $contentStreamId->value
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -321,8 +321,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND h.contentstreamid = :contentStreamId';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'childNodeAggregateId' => (string)$childNodeAggregateId,
+            'contentStreamId' => $contentStreamId->value,
+            'childNodeAggregateId' => $childNodeAggregateId->value,
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash,
         ];
 
@@ -347,8 +347,8 @@ final class ContentGraph implements ContentGraphInterface
         $query = $this->createChildNodeAggregateQuery();
 
         $parameters = [
-            'parentNodeAggregateId' => (string) $parentNodeAggregateId,
-            'contentStreamId' => (string) $contentStreamId
+            'parentNodeAggregateId' => $parentNodeAggregateId->value,
+            'contentStreamId' => $contentStreamId->value
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -374,9 +374,9 @@ final class ContentGraph implements ContentGraphInterface
                       AND ch.name = :relationName';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'parentNodeAggregateId' => (string)$parentNodeAggregateId,
-            'relationName' => (string)$name
+            'contentStreamId' => $contentStreamId->value,
+            'parentNodeAggregateId' => $parentNodeAggregateId->value,
+            'relationName' => $name->value
         ];
 
         $nodeRows = $connection->executeQuery($query, $parameters)->fetchAllAssociative();
@@ -401,8 +401,8 @@ final class ContentGraph implements ContentGraphInterface
                       AND c.classification = :tetheredClassification';
 
         $parameters = [
-            'contentStreamId' => (string)$contentStreamId,
-            'parentNodeAggregateId' => (string)$parentNodeAggregateId,
+            'contentStreamId' => $contentStreamId->value,
+            'parentNodeAggregateId' => $parentNodeAggregateId->value,
             'tetheredClassification' => NodeAggregateClassification::CLASSIFICATION_TETHERED->value
         ];
 
@@ -467,11 +467,11 @@ final class ContentGraph implements ContentGraphInterface
                       AND h.dimensionspacepointhash IN (:dimensionSpacePointHashes)
                       AND h.name = :nodeName';
         $parameters = [
-            'parentNodeAggregateId' => (string)$parentNodeAggregateId,
+            'parentNodeAggregateId' => $parentNodeAggregateId->value,
             'parentNodeOriginDimensionSpacePointHash' => $parentNodeOriginDimensionSpacePoint->hash,
-            'contentStreamId' => (string) $contentStreamId,
+            'contentStreamId' => $contentStreamId->value,
             'dimensionSpacePointHashes' => $dimensionSpacePointsToCheck->getPointHashes(),
-            'nodeName' => (string) $nodeName
+            'nodeName' => $nodeName->value
         ];
         $types = [
             'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
