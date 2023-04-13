@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2023-04-11
+This reference was automatically generated from code on 2023-04-13
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -2324,6 +2324,15 @@ Get the class name of the given variable or NULL if it wasn't an object
 * ``variable`` (object)
 
 **Return** (string|NULL)
+
+Type.debugType(variable)
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the classname for objects or type for other values
+
+* ``variable`` (mixed)
+
+**Return** (string)
 
 Type.getType(variable)
 ^^^^^^^^^^^^^^^^^^^^^^
