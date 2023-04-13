@@ -137,11 +137,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
 
     public function getProperty(string $propertyName): ?SerializedPropertyValue
     {
-        if (!isset($this->values[$propertyName])) {
-            return null;
-        }
-
-        return $this->values[$propertyName];
+        return $this->values[$propertyName] ?? null;
     }
 
     /**

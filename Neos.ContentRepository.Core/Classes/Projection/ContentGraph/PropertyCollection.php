@@ -29,9 +29,9 @@ final class PropertyCollection implements PropertyCollectionInterface
     private SerializedPropertyValues $serializedPropertyValues;
 
     /**
-     * @var ?array<string,mixed>
+     * @var array<string,mixed>
      */
-    private ?array $deserializedPropertyValues = null;
+    private array $deserializedPropertyValuesRuntimeCache = [];
 
     private PropertyConverter $propertyConverter;
 
@@ -53,19 +53,14 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     public function offsetGet($offset): mixed
     {
-        if (!$this->offsetExists($offset)) {
-            return null;
-        }
-        if (!isset($this->deserializedPropertyValues[$offset])) {
+        if (!isset($this->deserializedPropertyValuesRuntimeCache[$offset])) {
             $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
-            if (!is_null($serializedProperty)) {
-                $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
-                    $serializedProperty
-                );
-            }
+            $this->deserializedPropertyValuesRuntimeCache[$offset] = $serializedProperty === null
+                ? null
+                : $this->propertyConverter->deserializePropertyValue($serializedProperty);
         }
 
-        return $this->deserializedPropertyValues[$offset];
+        return $this->deserializedPropertyValuesRuntimeCache[$offset];
     }
 
     public function offsetSet($offset, $value): never
