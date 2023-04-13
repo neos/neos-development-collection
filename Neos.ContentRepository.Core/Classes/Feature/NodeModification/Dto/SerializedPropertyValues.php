@@ -14,9 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
@@ -53,6 +50,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         $values = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
+            if (!is_string($propertyName)) {
+                throw new \InvalidArgumentException(sprintf('Invalid property name. Expected string, got: %s', get_debug_type($propertyName)), 1681326239);
+            }
             if ($propertyValue === null) {
                 // this case means we want to un-set a property.
                 $values[$propertyName] = null;
@@ -61,11 +61,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
             } else {
-                throw new \InvalidArgumentException(sprintf(
-                    'Invalid property value. Expected instance of %s, got: %s',
-                    SerializedPropertyValue::class,
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)
-                ), 1546524480);
+                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', SerializedPropertyValue::class, get_debug_type($propertyValue)), 1546524480);
             }
         }
 

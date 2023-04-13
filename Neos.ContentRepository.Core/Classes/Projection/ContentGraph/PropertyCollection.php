@@ -29,9 +29,9 @@ final class PropertyCollection implements PropertyCollectionInterface
     private SerializedPropertyValues $serializedPropertyValues;
 
     /**
-     * @var array<string,mixed>
+     * @var ?array<string,mixed>
      */
-    private array $deserializedPropertyValues;
+    private ?array $deserializedPropertyValues = null;
 
     private PropertyConverter $propertyConverter;
 
@@ -83,7 +83,7 @@ final class PropertyCollection implements PropertyCollectionInterface
      */
     public function getIterator(): \Generator
     {
-        foreach (array_keys($this->deserializedPropertyValues) as $propertyName) {
+        foreach ($this->serializedPropertyValues as $propertyName => $_) {
             yield $propertyName => $this->offsetGet($propertyName);
         }
     }
