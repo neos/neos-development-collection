@@ -1,0 +1,9 @@
+`8.3.0 (2023-04-13) <https://github.com/neos/neos-development-collection/releases/tag/8.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.6...8.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
