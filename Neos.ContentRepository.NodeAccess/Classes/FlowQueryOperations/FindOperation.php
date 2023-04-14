@@ -172,12 +172,7 @@ class FindOperation extends AbstractOperation
         $uniqueResult = [];
         $usedKeys = [];
         foreach ($result as $item) {
-            $identifier = (string) new NodeAddress(
-                $item->subgraphIdentity->contentStreamId,
-                $item->subgraphIdentity->dimensionSpacePoint,
-                $item->nodeAggregateId,
-                null
-            );
+            $identifier = $item->subgraphIdentity->contentStreamId->value . '@' . $item->subgraphIdentity->dimensionSpacePoint->hash . '@' . $item->nodeAggregateId->value;
             if (!isset($usedKeys[$identifier])) {
                 $uniqueResult[] = $item;
                 $usedKeys[$identifier] = $identifier;
@@ -278,7 +273,7 @@ class FindOperation extends AbstractOperation
             $subgraph = $entryPoint['subgraph'];
 
             /** @var Node $node */
-            foreach ($entryPoints['nodes'] as $node) {
+            foreach ($entryPoint['nodes'] as $node) {
                 foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::nodeTypeConstraints($nodeTypeFilter)) as $descendant) {
                     $result[] = $descendant;
                 }
