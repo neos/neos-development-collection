@@ -103,7 +103,7 @@ class ParentsUntilOperation extends AbstractOperation
         $node = $contextNode;
         do {
             $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node);
+                ->findParentNode($node->nodeAggregateId);
             if ($node === null) {
                 // no parent found
                 break;
