@@ -21,7 +21,6 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
@@ -36,6 +35,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -152,6 +152,7 @@ class ChangeProjection implements ProjectionInterface
         return in_array($eventClassName, [
             NodeAggregateWasMoved::class,
             NodePropertiesWereSet::class,
+            NodeReferencesWereSet::class,
             NodeAggregateWithNodeWasCreated::class,
             NodeAggregateWasDisabled::class,
             NodeAggregateWasEnabled::class,
@@ -181,6 +182,8 @@ class ChangeProjection implements ProjectionInterface
             $this->whenNodeAggregateWasMoved($eventInstance);
         } elseif ($eventInstance instanceof NodePropertiesWereSet) {
             $this->whenNodePropertiesWereSet($eventInstance);
+        } elseif ($eventInstance instanceof NodeReferencesWereSet) {
+            $this->whenNodeReferencesWereSet($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWithNodeWasCreated) {
             $this->whenNodeAggregateWithNodeWasCreated($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWasDisabled) {
@@ -239,6 +242,17 @@ class ChangeProjection implements ProjectionInterface
             $event->nodeAggregateId,
             $event->originDimensionSpacePoint
         );
+    }
+
+    private function whenNodeReferencesWereSet(NodeReferencesWereSet $event): void
+    {
+        foreach ($event->affectedSourceOriginDimensionSpacePoints as $dimensionSpacePoint) {
+            $this->markAsChanged(
+                $event->contentStreamId,
+                $event->sourceNodeAggregateId,
+                $dimensionSpacePoint
+            );
+        }
     }
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
@@ -383,7 +397,7 @@ class ChangeProjection implements ProjectionInterface
     private function markAsChanged(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): void {
         $this->transactional(function () use (
             $contentStreamId,
@@ -423,7 +437,7 @@ class ChangeProjection implements ProjectionInterface
     private function markAsMoved(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): void {
         $this->transactional(function () use (
             $contentStreamId,
@@ -460,7 +474,7 @@ class ChangeProjection implements ProjectionInterface
     private function getChange(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): ?Change {
         $changeRow = $this->getDatabaseConnection()->executeQuery(
             'SELECT n.* FROM ' . $this->tableName . ' n
