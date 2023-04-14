@@ -603,7 +603,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints);
         }
         if ($filter->searchTerm !== null) {
-            $queryBuilderCte->andWhere('JSON_SEARCH(properties, "one", :searchTermPrefix, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPrefix', $filter->searchTerm->term . '%');
+            $queryBuilderCte->andWhere('JSON_SEARCH(properties, "one", :searchTermPrefix, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPrefix', '%'. $filter->searchTerm->term . '%');
         }
         if ($filter->propertyValue !== null) {
             $this->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue);
