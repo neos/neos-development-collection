@@ -100,7 +100,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $sourceContentStreamVersion->unwrap(),
                 ),
             ),
-            ExpectedVersion::ANY()
+            ExpectedVersion::NO_STREAM()
         );
     }
 

@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
@@ -139,6 +140,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceRebaseFailed::class,
             WorkspaceWasDeleted::class,
             WorkspaceOwnerWasChanged::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
         ]);
     }
 
@@ -178,6 +180,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             $this->whenWorkspaceWasDeleted($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceOwnerWasChanged) {
             $this->whenWorkspaceOwnerWasChanged($eventInstance);
+        } elseif ($eventInstance instanceof WorkspaceBaseWorkspaceWasChanged) {
+            $this->whenWorkspaceBaseWorkspaceWasChanged($eventInstance);
         } else {
             throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
         }
@@ -314,6 +318,18 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->getDatabaseConnection()->update(
             $this->tableName,
             ['workspaceOwner' => $event->workspaceOwner],
+            ['workspaceName' => $event->workspaceName->value]
+        );
+    }
+
+    private function whenWorkspaceBaseWorkspaceWasChanged(WorkspaceBaseWorkspaceWasChanged $event): void
+    {
+        $this->getDatabaseConnection()->update(
+            $this->tableName,
+            [
+                'baseWorkspaceName' => $event->baseWorkspaceName->value,
+                'currentContentStreamId' => $event->newContentStreamId->value,
+            ],
             ['workspaceName' => $event->workspaceName->value]
         );
     }

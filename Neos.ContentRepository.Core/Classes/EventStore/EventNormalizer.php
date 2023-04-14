@@ -38,6 +38,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwn
 use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventType;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 
 /**
  * Central authority to convert Content Repository domain events to Event Store EventData and EventType, vice versa.
@@ -96,6 +97,7 @@ final class EventNormalizer
             WorkspaceWasRebased::class,
             WorkspaceWasDeleted::class,
             WorkspaceOwnerWasChanged::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
         ];
 
         foreach ($supportedEventClassNames as $fullEventClassName) {

@@ -58,6 +58,11 @@ use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWas
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\WorkspaceIsNotEmptyException;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\BaseWorkspaceEqualsWorkspaceException;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\CircularRelationBetweenWorkspacesException;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -100,6 +105,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
             DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $contentRepository),
             ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $contentRepository),
+            ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $contentRepository),
         };
     }
 
@@ -726,6 +732,53 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws WorkspaceDoesNotExist
+     * @throws WorkspaceHasNoBaseWorkspaceName
+     * @throws BaseWorkspaceEqualsWorkspaceException
+     * @throws CircularRelationBetweenWorkspacesException
+     */
+    private function handleChangeBaseWorkspace(
+        ChangeBaseWorkspace $command,
+        ContentRepository $contentRepository,
+    ): EventsToPublish {
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $this->requireBaseWorkspace($workspace, $contentRepository);
+
+        $baseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $contentRepository);
+
+        $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $contentRepository);
+
+        // TODO Check workspace is empty before forking
+        $changedNodes = 0;
+        if ($changedNodes > 0) {
+            throw new WorkspaceIsNotEmptyException('The user workspace needs to be empty before forking.', 1681455989);
+        }
+
+        $contentRepository->handle(
+            new ForkContentStream(
+                $command->newContentStreamId,
+                $baseWorkspace->currentContentStreamId,
+            )
+        )->block();
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        $events = Events::with(
+            new WorkspaceBaseWorkspaceWasChanged(
+                $command->workspaceName,
+                $command->baseWorkspaceName,
+                $command->newContentStreamId,
+            )
+        );
+
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
+    }
+
+    /**
      * @throws WorkspaceDoesNotExist
      */
     private function handleDeleteWorkspace(
@@ -807,5 +860,24 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return $baseWorkspace;
+    }
+
+    /**
+     * @throws BaseWorkspaceEqualsWorkspaceException
+     * @throws CircularRelationBetweenWorkspacesException
+     */
+    private function requireNonCircularRelationBetweenWorkspaces(Workspace $workspace, Workspace $baseWorkspace, ContentRepository $contentRepository): void
+    {
+        if ($workspace->workspaceName->equals($baseWorkspace->workspaceName)) {
+            throw new BaseWorkspaceEqualsWorkspaceException(sprintf('The base workspace of the target must be different from the given workspace "%s".', $workspace->workspaceName->value));
+        }
+
+        $nextBaseWorkspace = $baseWorkspace;
+        while ($nextBaseWorkspace?->baseWorkspaceName !== null) {
+            if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
+                throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
+            }
+            $nextBaseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($nextBaseWorkspace->baseWorkspaceName);
+        }
     }
 }
