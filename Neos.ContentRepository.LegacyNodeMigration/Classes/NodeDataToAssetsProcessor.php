@@ -49,7 +49,7 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {
                 $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Failed to JSON-decode properties %s of node "%s" (type: "%s"): %s', $nodeDataRow['properties'], $nodeDataRow['identifier'], $nodeTypeName, $exception->getMessage());
+                $this->dispatch(Severity::ERROR, 'Failed to JSON-decode properties %s of node "%s" (type: "%s"): %s', $nodeDataRow['properties'], $nodeDataRow['identifier'], $nodeTypeName->value, $exception->getMessage());
                 continue;
             }
             foreach ($properties as $propertyName => $propertyValue) {
@@ -63,7 +63,7 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                         $this->assetExporter->exportAsset($assetId);
                     } catch (\Exception $exception) {
                         $numberOfErrors ++;
-                        $this->dispatch(Severity::ERROR, 'Failed to extract assets of property "%s" of node "%s" (type: "%s"): %s', $propertyName, $nodeDataRow['identifier'], $nodeTypeName, $exception->getMessage());
+                        $this->dispatch(Severity::ERROR, 'Failed to extract assets of property "%s" of node "%s" (type: "%s"): %s', $propertyName, $nodeDataRow['identifier'], $nodeTypeName->value, $exception->getMessage());
                     }
                 }
             }
