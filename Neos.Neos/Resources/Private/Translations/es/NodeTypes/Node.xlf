@@ -28,7 +28,7 @@
       </trans-unit>
       <trans-unit id="groups.default" xml:space="preserve">
 				<source>General</source>
-        <target state="needs-translation">General</target>
+        <target state="translated">En General</target>
       </trans-unit>
     </body>
   </file>

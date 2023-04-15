@@ -1297,6 +1297,14 @@ Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga c
 				<source>Contains modules related to management of users</source>
         <target state="translated">Contiene módulos relacionados con la gestión de usuarios</target>
       </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="translated">¿Realmente deseas descartar los cambios seleccionados en el espacio de trabajo "{0}"?</target>
+      </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+				<source>Publish selected changes to {0}</source>
+        <target state="translated">Publica los cambios seleccionados en {0}</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
