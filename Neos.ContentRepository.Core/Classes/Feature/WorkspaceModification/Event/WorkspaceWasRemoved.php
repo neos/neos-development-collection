@@ -8,11 +8,11 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
- * Event triggered to indicate that a workspace got deleted.
+ * Event triggered to indicate that a workspace got removed.
  *
  * @api events are the persistence-API of the content repository
  */
-final class WorkspaceWasDeleted implements EventInterface
+final class WorkspaceWasRemoved implements EventInterface
 {
     public function __construct(
         public readonly WorkspaceName $workspaceName,

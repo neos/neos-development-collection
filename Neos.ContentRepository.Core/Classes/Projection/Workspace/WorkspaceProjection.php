@@ -34,7 +34,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -138,7 +138,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
             WorkspaceRebaseFailed::class,
-            WorkspaceWasDeleted::class,
+            WorkspaceWasRemoved::class,
             WorkspaceOwnerWasChanged::class,
             WorkspaceBaseWorkspaceWasChanged::class,
         ]);
@@ -176,8 +176,8 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             $this->whenWorkspaceWasRebased($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceRebaseFailed) {
             $this->whenWorkspaceRebaseFailed($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasDeleted) {
-            $this->whenWorkspaceWasDeleted($eventInstance);
+        } elseif ($eventInstance instanceof WorkspaceWasRemoved) {
+            $this->whenWorkspaceWasRemoved($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceOwnerWasChanged) {
             $this->whenWorkspaceOwnerWasChanged($eventInstance);
         } elseif ($eventInstance instanceof WorkspaceBaseWorkspaceWasChanged) {
@@ -305,7 +305,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->markWorkspaceAsOutdatedConflict($event->workspaceName);
     }
 
-    private function whenWorkspaceWasDeleted(WorkspaceWasDeleted $event): void
+    private function whenWorkspaceWasRemoved(WorkspaceWasRemoved $event): void
     {
         $this->getDatabaseConnection()->delete(
             $this->tableName,

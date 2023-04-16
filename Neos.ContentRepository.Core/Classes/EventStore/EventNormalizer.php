@@ -33,7 +33,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
@@ -95,7 +95,7 @@ final class EventNormalizer
             WorkspaceWasPartiallyPublished::class,
             WorkspaceWasPublished::class,
             WorkspaceWasRebased::class,
-            WorkspaceWasDeleted::class,
+            WorkspaceWasRemoved::class,
             WorkspaceOwnerWasChanged::class,
             WorkspaceBaseWorkspaceWasChanged::class,
         ];

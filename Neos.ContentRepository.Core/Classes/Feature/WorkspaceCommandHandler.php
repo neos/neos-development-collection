@@ -54,7 +54,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Exception\BaseWorks
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasDeleted;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
 use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
@@ -794,7 +794,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         )->block();
 
         $events = Events::with(
-            new WorkspaceWasDeleted(
+            new WorkspaceWasRemoved(
                 $command->workspaceName,
             )
         );
