@@ -73,6 +73,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\EventStore\Model\Event\EventType;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -735,6 +736,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws WorkspaceHasNoBaseWorkspaceName
+     * @throws WorkspaceIsNotEmptyException
      * @throws BaseWorkspaceEqualsWorkspaceException
      * @throws CircularRelationBetweenWorkspacesException
      */
@@ -743,17 +745,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         ContentRepository $contentRepository,
     ): EventsToPublish {
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $this->requireEmptyWorkspace($workspace);
         $this->requireBaseWorkspace($workspace, $contentRepository);
 
         $baseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $contentRepository);
 
         $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $contentRepository);
-
-        // TODO Check workspace is empty before forking
-        $changedNodes = 0;
-        if ($changedNodes > 0) {
-            throw new WorkspaceIsNotEmptyException('The user workspace needs to be empty before forking.', 1681455989);
-        }
 
         $contentRepository->handle(
             new ForkContentStream(
@@ -879,5 +876,39 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             }
             $nextBaseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($nextBaseWorkspace->baseWorkspaceName);
         }
+    }
+
+    /**
+     * @throws WorkspaceIsNotEmptyException
+     */
+    private function requireEmptyWorkspace(Workspace $workspace): void
+    {
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $workspace->currentContentStreamId
+        );
+        if ($this->hasEventsInContentStreamExceptForking($workspaceContentStreamName)) {
+            throw new WorkspaceIsNotEmptyException('The user workspace needs to be empty before switching the base workspace.', 1681455989);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasEventsInContentStreamExceptForking(
+        ContentStreamEventStreamName $workspaceContentStreamName,
+    ): bool {
+        $workspaceContentStream = $this->eventStore->load($workspaceContentStreamName->getEventStreamName());
+
+        $fullQualifiedEventClassName = ContentStreamWasForked::class;
+        $shortEventClassName = substr($fullQualifiedEventClassName, strrpos($fullQualifiedEventClassName, '\\') + 1);
+
+        foreach ($workspaceContentStream as $eventEnvelope) {
+            if ($eventEnvelope->event->type->value === EventType::fromString($shortEventClassName)->value) {
+                continue;
+            }
+            return true;
+        }
+
+        return false;
     }
 }
