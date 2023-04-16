@@ -819,7 +819,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $events = Events::with(
             new WorkspaceOwnerWasChanged(
                 $command->workspaceName,
-                $command->workspaceOwner
+                $command->newWorkspaceOwner
             )
         );
 

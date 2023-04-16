@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * Changes the base workspace of a given workspace.
+ * Changes the base workspace of a given workspace, identified by $workspaceName.
  *
  * @api commands are the write-API of the ContentRepository
  */

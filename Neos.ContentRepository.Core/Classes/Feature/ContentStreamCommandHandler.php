@@ -100,6 +100,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $sourceContentStreamVersion->unwrap(),
                 ),
             ),
+            // NO_STREAM to ensure the "fork" happens as the first event of the new content stream
             ExpectedVersion::NO_STREAM()
         );
     }

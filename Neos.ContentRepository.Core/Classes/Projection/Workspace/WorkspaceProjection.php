@@ -317,7 +317,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         $this->getDatabaseConnection()->update(
             $this->tableName,
-            ['workspaceOwner' => $event->workspaceOwner],
+            ['workspaceOwner' => $event->newWorkspaceOwner],
             ['workspaceName' => $event->workspaceName->value]
         );
     }

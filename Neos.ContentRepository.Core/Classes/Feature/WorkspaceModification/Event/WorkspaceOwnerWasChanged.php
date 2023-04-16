@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 
 /**
  * Event triggered to indicate that the owner of a workspace has changed.
+ * Setting $newWorkspaceOwner to null, removes the current workspace owner.
  *
  * @api events are the persistence-API of the content repository
  */
@@ -16,7 +17,7 @@ final class WorkspaceOwnerWasChanged implements EventInterface
 {
     public function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly ?string $workspaceOwner,
+        public readonly ?string $newWorkspaceOwner,
     ) {
     }
 
@@ -24,7 +25,7 @@ final class WorkspaceOwnerWasChanged implements EventInterface
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
-            $values['workspaceOwner'],
+            $values['newWorkspaceOwner'],
         );
     }
 

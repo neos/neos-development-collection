@@ -8,7 +8,8 @@ use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * Change the title or description of a workspace
+ * Change workspace owner of a workspace, identified by $workspaceName.
+ * Setting $newWorkspaceOwner to null, removes the current workspace owner.
  *
  * @api commands are the write-API of the ContentRepository
  */
@@ -16,7 +17,7 @@ final class ChangeWorkspaceOwner implements CommandInterface
 {
     public function __construct(
         public readonly WorkspaceName $workspaceName,
-        public readonly ?string $workspaceOwner,
+        public readonly ?string $newWorkspaceOwner,
     ) {
     }
 }
