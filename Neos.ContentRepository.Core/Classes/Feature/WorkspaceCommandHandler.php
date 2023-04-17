@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\WorkspaceRebaseStatistic
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Command\CreateContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
+use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
@@ -51,6 +52,17 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Exception\BaseWorkspaceHasBeenModifiedInTheMeantime;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\RenameWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeWorkspaceOwner;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\ChangeBaseWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\WorkspaceIsNotEmptyException;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\BaseWorkspaceEqualsWorkspaceException;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Exception\CircularRelationBetweenWorkspacesException;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceHasNoBaseWorkspaceName;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -61,6 +73,7 @@ use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
+use Neos\EventStore\Model\Event\EventType;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -84,12 +97,16 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         /** @phpstan-ignore-next-line */
         return match ($command::class) {
             CreateWorkspace::class => $this->handleCreateWorkspace($command, $contentRepository),
+            RenameWorkspace::class => $this->handleRenameWorkspace($command, $contentRepository),
             CreateRootWorkspace::class => $this->handleCreateRootWorkspace($command, $contentRepository),
             PublishWorkspace::class => $this->handlePublishWorkspace($command, $contentRepository),
             RebaseWorkspace::class => $this->handleRebaseWorkspace($command, $contentRepository),
             PublishIndividualNodesFromWorkspace::class => $this->handlePublishIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardIndividualNodesFromWorkspace::class => $this->handleDiscardIndividualNodesFromWorkspace($command, $contentRepository),
             DiscardWorkspace::class => $this->handleDiscardWorkspace($command, $contentRepository),
+            DeleteWorkspace::class => $this->handleDeleteWorkspace($command, $contentRepository),
+            ChangeWorkspaceOwner::class => $this->handleChangeWorkspaceOwner($command, $contentRepository),
+            ChangeBaseWorkspace::class => $this->handleChangeBaseWorkspace($command, $contentRepository),
         };
     }
 
@@ -143,6 +160,28 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
             $events,
             ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
+    private function handleRenameWorkspace(RenameWorkspace $command, ContentRepository $contentRepository): EventsToPublish
+    {
+        $this->requireWorkspace($command->workspaceName, $contentRepository);
+
+        $events = Events::with(
+            new WorkspaceWasRenamed(
+                $command->workspaceName,
+                $command->workspaceTitle,
+                $command->workspaceDescription,
+            )
+        );
+
+        return new EventsToPublish(
+            WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName(),
+            $events,
+            ExpectedVersion::STREAM_EXISTS()
         );
     }
 
@@ -368,8 +407,8 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
                 $rebaseStatistics->commandRebaseError(sprintf(
                     "The content stream %s cannot be rebased. Error with command %d (%s)"
-                        . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
-                        . "\n The full list of commands applied so far is: %s",
+                    . " - see nested exception for details.\n\n The base workspace %s is at content stream %s."
+                    . "\n The full list of commands applied so far is: %s",
                     $workspaceContentStreamName->value,
                     $i,
                     get_class($commandToRebase),
@@ -694,6 +733,102 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
+     * @throws BaseWorkspaceDoesNotExist
+     * @throws WorkspaceDoesNotExist
+     * @throws WorkspaceHasNoBaseWorkspaceName
+     * @throws WorkspaceIsNotEmptyException
+     * @throws BaseWorkspaceEqualsWorkspaceException
+     * @throws CircularRelationBetweenWorkspacesException
+     */
+    private function handleChangeBaseWorkspace(
+        ChangeBaseWorkspace $command,
+        ContentRepository $contentRepository,
+    ): EventsToPublish {
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+        $this->requireEmptyWorkspace($workspace);
+        $this->requireBaseWorkspace($workspace, $contentRepository);
+
+        $baseWorkspace = $this->requireWorkspace($command->baseWorkspaceName, $contentRepository);
+
+        $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $contentRepository);
+
+        $contentRepository->handle(
+            new ForkContentStream(
+                $command->newContentStreamId,
+                $baseWorkspace->currentContentStreamId,
+            )
+        )->block();
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        $events = Events::with(
+            new WorkspaceBaseWorkspaceWasChanged(
+                $command->workspaceName,
+                $command->baseWorkspaceName,
+                $command->newContentStreamId,
+            )
+        );
+
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
+    private function handleDeleteWorkspace(
+        DeleteWorkspace $command,
+        ContentRepository $contentRepository,
+    ): EventsToPublish {
+        $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
+
+        $contentRepository->handle(
+            new RemoveContentStream(
+                $workspace->currentContentStreamId
+            )
+        )->block();
+
+        $events = Events::with(
+            new WorkspaceWasRemoved(
+                $command->workspaceName,
+            )
+        );
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::ANY()
+        );
+    }
+
+    /**
+     * @throws WorkspaceDoesNotExist
+     */
+    private function handleChangeWorkspaceOwner(
+        ChangeWorkspaceOwner $command,
+        ContentRepository $contentRepository,
+    ): EventsToPublish {
+        $this->requireWorkspace($command->workspaceName, $contentRepository);
+
+        $events = Events::with(
+            new WorkspaceOwnerWasChanged(
+                $command->workspaceName,
+                $command->newWorkspaceOwner
+            )
+        );
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+        return new EventsToPublish(
+            $streamName,
+            $events,
+            ExpectedVersion::STREAM_EXISTS()
+        );
+    }
+
+    /**
      * @throws WorkspaceDoesNotExist
      */
     private function requireWorkspace(WorkspaceName $workspaceName, ContentRepository $contentRepository): Workspace
@@ -722,5 +857,58 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return $baseWorkspace;
+    }
+
+    /**
+     * @throws BaseWorkspaceEqualsWorkspaceException
+     * @throws CircularRelationBetweenWorkspacesException
+     */
+    private function requireNonCircularRelationBetweenWorkspaces(Workspace $workspace, Workspace $baseWorkspace, ContentRepository $contentRepository): void
+    {
+        if ($workspace->workspaceName->equals($baseWorkspace->workspaceName)) {
+            throw new BaseWorkspaceEqualsWorkspaceException(sprintf('The base workspace of the target must be different from the given workspace "%s".', $workspace->workspaceName->value));
+        }
+
+        $nextBaseWorkspace = $baseWorkspace;
+        while ($nextBaseWorkspace?->baseWorkspaceName !== null) {
+            if ($workspace->workspaceName->equals($nextBaseWorkspace->baseWorkspaceName)) {
+                throw new CircularRelationBetweenWorkspacesException(sprintf('The workspace "%s" is already on the path of the target workspace "%s".', $workspace->workspaceName->value, $baseWorkspace->workspaceName->value));
+            }
+            $nextBaseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($nextBaseWorkspace->baseWorkspaceName);
+        }
+    }
+
+    /**
+     * @throws WorkspaceIsNotEmptyException
+     */
+    private function requireEmptyWorkspace(Workspace $workspace): void
+    {
+        $workspaceContentStreamName = ContentStreamEventStreamName::fromContentStreamId(
+            $workspace->currentContentStreamId
+        );
+        if ($this->hasEventsInContentStreamExceptForking($workspaceContentStreamName)) {
+            throw new WorkspaceIsNotEmptyException('The user workspace needs to be empty before switching the base workspace.', 1681455989);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasEventsInContentStreamExceptForking(
+        ContentStreamEventStreamName $workspaceContentStreamName,
+    ): bool {
+        $workspaceContentStream = $this->eventStore->load($workspaceContentStreamName->getEventStreamName());
+
+        $fullQualifiedEventClassName = ContentStreamWasForked::class;
+        $shortEventClassName = substr($fullQualifiedEventClassName, strrpos($fullQualifiedEventClassName, '\\') + 1);
+
+        foreach ($workspaceContentStream as $eventEnvelope) {
+            if ($eventEnvelope->event->type->value === EventType::fromString($shortEventClassName)->value) {
+                continue;
+            }
+            return true;
+        }
+
+        return false;
     }
 }
