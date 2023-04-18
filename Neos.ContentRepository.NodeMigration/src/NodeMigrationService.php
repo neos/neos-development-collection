@@ -64,17 +64,17 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         if ($workspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
-                $command->getWorkspaceName()
+                $command->getWorkspaceName()->value
             ), 1611688225);
         }
 
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
-            $contentStreamForWriting = $command->getOrCreateContentStreamIdentifierForWriting($step);
+            $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
             $this->contentRepository->handle(
                 new CreateWorkspace(
-                    WorkspaceName::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceName::fromString($contentStreamForWriting->value),
                     $workspace->workspaceName,
-                    WorkspaceTitle::fromString($contentStreamForWriting->jsonSerialize()),
+                    WorkspaceTitle::fromString($contentStreamForWriting->value),
                     WorkspaceDescription::fromString(''),
                     $contentStreamForWriting,
                 )
@@ -155,7 +155,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                     if ($filters->matchesNodeAggregate($nodeAggregate)) {
                         foreach ($nodeAggregate->occupiedDimensionSpacePoints as $originDimensionSpacePoint) {
                             $node = $nodeAggregate->getNodeByOccupiedDimensionSpacePoint($originDimensionSpacePoint);
-                            // The node at $contentStreamIdentifier and $originDimensionSpacePoint
+                            // The node at $contentStreamId and $originDimensionSpacePoint
                             // *really* exists at this point, and is no shine-through.
 
                             $coveredDimensionSpacePoints = $nodeAggregate->getCoverageByOccupant(

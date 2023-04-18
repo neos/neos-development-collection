@@ -14,22 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Administration;
 
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
-use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Session\SessionInterface;
@@ -44,7 +39,6 @@ use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteService;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\SiteKickstarter\Generator\SitePackageGeneratorInterface;
@@ -178,66 +172,59 @@ class SitesController extends AbstractModuleController
      */
     public function updateSiteAction(Site $site, $newSiteNodeName)
     {
-        if ($site->getNodeName() !== $newSiteNodeName) {
-            $this->redirect('index');
-        }
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-            ?? throw new \RuntimeException(
-                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                . ' Neos.Neos.sites.*.contentRepository'
-            )
-        );
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        if ($site->getNodeName()->value !== $newSiteNodeName) {
+            $contentRepository = $this->contentRepositoryRegistry->get($site->getConfiguration()->contentRepositoryId);
 
-        $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-        if (!$liveWorkspace instanceof Workspace) {
-            throw new \InvalidArgumentException(
-                'Cannot update a site without the live workspace being present.',
-                1651958443
-            );
-        }
-
-        try {
-            $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
-                $liveWorkspace->currentContentStreamId,
-                NodeTypeName::fromString('Neos.Neos:Sites')
-            );
-        } catch (\Exception $exception) {
-            throw new \InvalidArgumentException(
-                'Cannot update a site without the sites note being present.',
-                1651958452
-            );
-        }
-
-        $currentUser = $this->domainUserService->getCurrentUser();
-        if (is_null($currentUser)) {
-            throw new \InvalidArgumentException(
-                'Cannot update a site without a current user',
-                1651958722
-            );
-        }
-
-        foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-            // technically, due to the name being the "identifier", there might be more than one :/
-            /** @var NodeAggregate[] $siteNodeAggregates */
-            /** @var Workspace $workspace */
-            $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-                $workspace->currentContentStreamId,
-                $sitesNode->nodeAggregateId,
-                $site->getNodeName()->toNodeName()
-            );
-
-            foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                $contentRepository->handle(new ChangeNodeAggregateName(
-                    $workspace->currentContentStreamId,
-                    $siteNodeAggregate->nodeAggregateId,
-                    NodeName::fromString($newSiteNodeName),
-                ));
+            $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+            if (!$liveWorkspace instanceof Workspace) {
+                throw new \InvalidArgumentException(
+                    'Cannot update a site without the live workspace being present.',
+                    1651958443
+                );
             }
+
+            try {
+                $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
+                    $liveWorkspace->currentContentStreamId,
+                    NodeTypeName::fromString('Neos.Neos:Sites')
+                );
+            } catch (\Exception $exception) {
+                throw new \InvalidArgumentException(
+                    'Cannot update a site without the sites note being present.',
+                    1651958452
+                );
+            }
+
+            $currentUser = $this->domainUserService->getCurrentUser();
+            if (is_null($currentUser)) {
+                throw new \InvalidArgumentException(
+                    'Cannot update a site without a current user',
+                    1651958722
+                );
+            }
+
+            foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
+                // technically, due to the name being the "identifier", there might be more than one :/
+                /** @var NodeAggregate[] $siteNodeAggregates */
+                /** @var Workspace $workspace */
+                $siteNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+                    $workspace->currentContentStreamId,
+                    $sitesNode->nodeAggregateId,
+                    $site->getNodeName()->toNodeName()
+                );
+
+                foreach ($siteNodeAggregates as $siteNodeAggregate) {
+                    $contentRepository->handle(new ChangeNodeAggregateName(
+                        $workspace->currentContentStreamId,
+                        $siteNodeAggregate->nodeAggregateId,
+                        NodeName::fromString($newSiteNodeName),
+                    ));
+                }
+            }
+
+            $site->setNodeName($newSiteNodeName);
         }
 
-        $site->setNodeName($newSiteNodeName);
         $this->siteRepository->update($site);
 
         $this->addFlashMessage(
@@ -260,9 +247,9 @@ class SitesController extends AbstractModuleController
     public function newSiteAction(Site $site = null)
     {
         // This is not 100% correct, but it is as good as we can get it to work right now
-        $contentRepositoryIdentifier = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
@@ -436,7 +423,7 @@ class SitesController extends AbstractModuleController
         $this->addFlashMessage(
             $this->getModuleLabel(
                 'sites.successfullyCreatedSite.body',
-                [$site->getName(), $site->getNodeName(), $nodeType, $packageKey]
+                [$site->getName(), $site->getNodeName()->value, $nodeType, $packageKey]
             ),
             '',
             Message::SEVERITY_OK,

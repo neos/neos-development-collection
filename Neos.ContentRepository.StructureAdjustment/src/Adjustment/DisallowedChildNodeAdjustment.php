@@ -87,7 +87,7 @@ class DisallowedChildNodeAdjustment
                     $grandparentNodeType = $this->loadNodeType($grandparentNode->nodeTypeName);
                     if ($grandparentNodeType !== null) {
                         $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->nodeName->jsonSerialize(),
+                            $parentNode->nodeName->value,
                             $nodeType
                         );
                     }
@@ -105,10 +105,10 @@ class DisallowedChildNodeAdjustment
                         and the grandparent node type "%s" is not allowing grandchildren of type "%s".
                         Thus, the node is invalid at this location and should be removed.
                     ',
-                        $parentNodeType !== null ? $parentNodeType->getName() : '',
-                        $node->nodeTypeName->jsonSerialize(),
-                        $grandparentNodeType !== null ? $grandparentNodeType->getName() : '',
-                        $node->nodeTypeName->jsonSerialize(),
+                        $parentNodeType !== null ? $parentNodeType->name->value : '',
+                        $node->nodeTypeName->value,
+                        $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
+                        $node->nodeTypeName->value,
                     );
 
                     yield StructureAdjustment::createForNode(

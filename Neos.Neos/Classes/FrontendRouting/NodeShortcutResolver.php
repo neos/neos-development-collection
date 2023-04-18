@@ -113,14 +113,14 @@ class NodeShortcutResolver
                         throw new InvalidShortcutException(sprintf(
                             'Shortcut Node "%s" points to a non-existing parent node "%s"',
                             $documentNodeInfo,
-                            $documentNodeInfo->getNodeAggregateId()
+                            $documentNodeInfo->getNodeAggregateId()->value
                         ), 1599669406, $e);
                     }
                     if ($documentNodeInfo->isDisabled()) {
                         throw new InvalidShortcutException(sprintf(
                             'Shortcut Node "%s" points to disabled parent node "%s"',
                             $documentNodeInfo,
-                            $documentNodeInfo->getNodeAggregateId()
+                            $documentNodeInfo->getNodeAggregateId()->value
                         ), 1599664517);
                     }
                     continue 2;
@@ -166,7 +166,7 @@ class NodeShortcutResolver
                             throw new InvalidShortcutException(sprintf(
                                 'Shortcut target in Node "%s" points to disabled node "%s"',
                                 $documentNodeInfo,
-                                $documentNodeInfo->getNodeAggregateId()
+                                $documentNodeInfo->getNodeAggregateId()->value
                             ), 1599664423);
                         }
                         continue 2;

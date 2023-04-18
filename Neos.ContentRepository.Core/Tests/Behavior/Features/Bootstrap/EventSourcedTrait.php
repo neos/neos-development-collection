@@ -34,30 +34,23 @@ use GuzzleHttp\Psr7\Uri;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -76,13 +69,20 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\Works
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\MutableClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -92,6 +92,8 @@ trait EventSourcedTrait
 {
     use CurrentSubgraphTrait;
     use CurrentUserTrait;
+    use CurrentDateTimeTrait;
+    use NodeTraversalTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
     use GenericCommandExecutionAndEventPublication;
@@ -139,8 +141,7 @@ trait EventSourcedTrait
 
     protected function getContentRepository(): ContentRepository
     {
-        $currentUserId = $this->getCurrentUserId();
-        return $currentUserId === null ? $this->contentRepository : $this->contentRepository->withInitiatingUserId($currentUserId);
+        return $this->contentRepository;
     }
 
     /**
@@ -241,13 +242,16 @@ trait EventSourcedTrait
             //
             // This is to make the testcases more stable and deterministic. We can remove this workaround
             // once the Postgres adapter is fully ready.
-            unset($registrySettings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
+            unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
         }
+        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
+        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
 
         $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
             $registrySettings,
             $this->getObjectManager()
         );
+
 
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
@@ -348,7 +352,7 @@ trait EventSourcedTrait
          * Catch Up process and the testcase reset.
          */
 
-        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId);
+        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId->value);
         $connection->executeStatement('TRUNCATE ' . $eventTableName);
 
         // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
@@ -372,7 +376,7 @@ trait EventSourcedTrait
 
                 // if we end up here without exception, we know the projection states were properly reset.
                 $projectionsWereReset = true;
-            } catch(CheckpointException $checkpointException) {
+            } catch (CheckpointException $checkpointException) {
                 // TODO: HACK: UGLY CODE!!!
                 if ($checkpointException->getCode() === 1652279016 && $retryCount < 20) { // we wait for 10 seconds max.
                     // another process is in the critical section; a.k.a.
@@ -400,13 +404,11 @@ trait EventSourcedTrait
             if (strpos($line['Value'], '$this->') === 0) {
                 // Special case: Referencing stuff from the context here
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
-                if (method_exists($this, $propertyOrMethodName)) {
-                    // is method
-                    $value = (string)$this->$propertyOrMethodName();
-                } else {
-                    // is property
-                    $value = (string)$this->$propertyOrMethodName;
-                }
+                $value = match ($propertyOrMethodName) {
+                    'currentNodeAggregateId' => $this->currentNodeAggregateId()->value,
+                    'contentStreamId' => $this->contentStreamId->value,
+                    default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
+                };
             } else {
                 // default case
                 $value = json_decode($line['Value'], true);
@@ -483,8 +485,8 @@ trait EventSourcedTrait
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
-                $workspaceA->currentContentStreamId->getValue(),
-                $workspaceB->currentContentStreamId->getValue(),
+                $workspaceA->currentContentStreamId->value,
+                $workspaceB->currentContentStreamId->value,
                 'Workspace "' . $rawWorkspaceNameA . '" points to the same content stream as "' . $rawWorkspaceNameB . '"'
             );
         }
@@ -520,22 +522,23 @@ trait EventSourcedTrait
         string $serializedNodeTypeConstraints,
         int $maximumLevels,
         TableNode $table
-    ): void
-    {
+    ): void {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
         foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
             assert($contentGraph instanceof ContentGraphInterface);
             $expectedRows = $table->getHash();
 
-            $subtrees = $contentGraph
+            $subtree = $contentGraph
                 ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
-                ->findSubtrees(NodeAggregateIds::fromArray([$nodeAggregateId]),
-                    FindSubtreesFilter::nodeTypeConstraints($nodeTypeConstraints)->withMaximumLevels($maximumLevels));
+                ->findSubtree($nodeAggregateId,
+                    FindSubtreeFilter::nodeTypeConstraints($nodeTypeConstraints)->withMaximumLevels($maximumLevels));
 
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];
-            self::flattenSubtreeForComparison($subtrees, $flattenedSubtree);
+            if ($subtree !== null) {
+                self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
+            }
 
             Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match (adapter: ' . $adapterName . ')');
 
@@ -545,23 +548,17 @@ trait EventSourcedTrait
                 Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
                 $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
                 $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
-                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId), 'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId . '", actual: "' . $actualNodeAggregateId . '" (adapter: ' . $adapterName . ')');
+                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId),
+                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '" (adapter: ' . $adapterName . ')');
             }
         }
     }
 
-    private static function flattenSubtreeForComparison(Subtree|Subtrees $subtree, array &$result)
+    private static function flattenSubtreeForComparison(Subtree $subtree, array &$result): void
     {
-        if ($subtree instanceof Subtrees) {
-            foreach ($subtree as $childSubtree) {
-                self::flattenSubtreeForComparison($childSubtree, $result);
-            }
-        } else {
-            $result[] = $subtree;
-
-            foreach ($subtree->children as $childSubtree) {
-                self::flattenSubtreeForComparison($childSubtree, $result);
-            }
+        $result[] = $subtree;
+        foreach ($subtree->children as $childSubtree) {
+            self::flattenSubtreeForComparison($childSubtree, $result);
         }
     }
 
@@ -600,7 +597,7 @@ trait EventSourcedTrait
         $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
-        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId . '"');
+        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
             $this->contentStreamId,
@@ -680,7 +677,7 @@ trait EventSourcedTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState)
     {
-        $this->theContentStreamHasState($this->contentStreamId->jsonSerialize(), $expectedState);
+        $this->theContentStreamHasState($this->contentStreamId->value, $expectedState);
     }
 
     /**

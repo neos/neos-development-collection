@@ -190,8 +190,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
                     AND dimensionspacepointhash IN (:dimensionSpacePointHashes)
             ',
             [
-                'contentStreamId' => (string)$event->contentStreamId,
-                'nodeAggregateId' => (string)$event->nodeAggregateId,
+                'contentStreamId' => $event->contentStreamId->value,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
                 'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
             ],
             [
@@ -212,7 +212,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
                     hidden
                 )
                 SELECT
-                  "' . (string)$event->newContentStreamId . '" AS contentstreamid,
+                  "' . $event->newContentStreamId->value . '" AS contentstreamid,
                   nodeaggregateid,
                   dimensionspacepoint,
                   dimensionspacepointhash,
@@ -221,7 +221,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
                     ' . $this->tableName . ' h
                     WHERE h.contentstreamid = :sourceContentStreamId
             ', [
-                'sourceContentStreamId' => (string)$event->sourceContentStreamId
+                'sourceContentStreamId' => $event->sourceContentStreamId->value
             ]);
         });
     }
@@ -242,8 +242,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => json_encode($event->target->jsonSerialize()),
-                    'contentStreamId' => (string)$event->contentStreamId
+                    'newDimensionSpacePoint' => $event->target->toJson(),
+                    'contentStreamId' => $event->contentStreamId->value
                 ]
             );
         });

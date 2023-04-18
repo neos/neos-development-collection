@@ -38,14 +38,10 @@ final class PropertyType
 
     public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
-    private string $value;
-
-    private bool $isNullable;
-
-    private function __construct(string $value, bool $isNullable)
-    {
-        $this->value = $value;
-        $this->isNullable = $isNullable;
+    private function __construct(
+        public readonly string $value,
+        public readonly bool $isNullable
+    ) {
     }
 
     /**
@@ -171,11 +167,6 @@ final class PropertyType
         return $this->value;
     }
 
-    public function isNullable(): bool
-    {
-        return $this->isNullable;
-    }
-
     public function getArrayOfClassName(): string
     {
         return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
@@ -224,11 +215,6 @@ final class PropertyType
     }
 
     public function getSerializationType(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

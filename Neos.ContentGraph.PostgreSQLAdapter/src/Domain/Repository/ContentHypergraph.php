@@ -25,6 +25,8 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Dto\DescendantAssignment;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Dto\DescendantAssignments;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -69,7 +71,7 @@ final class ContentHypergraph implements ContentGraphInterface
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): ContentSubgraphInterface {
-        $index = $contentStreamId . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
+        $index = $contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subhypergraphs[$index])) {
             $this->subhypergraphs[$index] = new ContentSubhypergraph(
                 $contentStreamId,
@@ -92,7 +94,7 @@ final class ContentHypergraph implements ContentGraphInterface
     ): ?Node {
         $query = HypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
         $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateId);
+        $query = $query->withNodeAggregateId($nodeAggregateId);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -107,7 +109,37 @@ final class ContentHypergraph implements ContentGraphInterface
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName
     ): NodeAggregate {
-        throw new \BadMethodCallException('method findRootNodeAggregateByType is not implemented yet.', 1645782874);
+        $rootNodeAggregates = $this->findRootNodeAggregates(
+            $contentStreamId,
+            FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
+        );
+
+        if ($rootNodeAggregates->count() > 1) {
+            $ids = [];
+            foreach ($rootNodeAggregates as $rootNodeAggregate) {
+                $ids[] = $rootNodeAggregate->nodeAggregateId->value;
+            }
+            throw new \RuntimeException(sprintf(
+                'More than one root node aggregate of type "%s" found (IDs: %s).',
+                $nodeTypeName->value,
+                implode(', ', $ids)
+            ));
+        }
+
+        $rootNodeAggregate = $rootNodeAggregates->first();
+
+        if ($rootNodeAggregate === null) {
+            throw new \RuntimeException('Root Node Aggregate not found');
+        }
+
+        return $rootNodeAggregate;
+    }
+
+    public function findRootNodeAggregates(
+        ContentStreamId $contentStreamId,
+        FindRootNodeAggregatesFilter $filter,
+    ): NodeAggregates {
+        throw new \BadMethodCallException('method findRootNodeAggregates is not implemented yet.', 1645782874);
     }
 
     /**
@@ -125,7 +157,7 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateId $nodeAggregateId
     ): ?NodeAggregate {
         $query = HypergraphQuery::create($contentStreamId, $this->tableNamePrefix, true);
-        $query = $query->withNodeAggregateIdentifier($nodeAggregateId);
+        $query = $query->withNodeAggregateId($nodeAggregateId);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 
@@ -141,25 +173,25 @@ final class ContentHypergraph implements ContentGraphInterface
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
     ): ?NodeAggregate {
         $query = /** @lang PostgreSQL */ '
-            SELECT n.origindimensionspacepoint, n.nodeaggregateidentifier, n.nodetypename,
-                   n.classification, n.properties, n.nodename, ph.contentstreamidentifier, ph.dimensionspacepoint
+            SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename,
+                   n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint
                 FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
                 JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
-            WHERE ph.contentstreamidentifier = :contentStreamIdentifier
-                AND n.nodeaggregateidentifier = (
-                    SELECT pn.nodeaggregateidentifier
+            WHERE ph.contentstreamid = :contentStreamId
+                AND n.nodeaggregateid = (
+                    SELECT pn.nodeaggregateid
                         FROM ' . $this->tableNamePrefix . '_node pn
                         JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation ch
                             ON pn.relationanchorpoint = ch.parentnodeanchor
                         JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
-                    WHERE cn.nodeaggregateidentifier = :childNodeAggregateIdentifier
+                    WHERE cn.nodeaggregateid = :childNodeAggregateId
                         AND cn.origindimensionspacepointhash = :childOriginDimensionSpacePointHash
                         AND ch.dimensionspacepointhash = :childOriginDimensionSpacePointHash
-                        AND ch.contentstreamidentifier = :contentStreamIdentifier
+                        AND ch.contentstreamid = :contentStreamId
                 )';
         $parameters = [
-            'contentStreamIdentifier' => (string)$contentStreamId,
-            'childNodeAggregateIdentifier' => (string)$childNodeAggregateId,
+            'contentStreamId' => $contentStreamId->value,
+            'childNodeAggregateId' => $childNodeAggregateId->value,
             'childOriginDimensionSpacePointHash' => $childOriginDimensionSpacePoint->hash
         ];
 
@@ -221,7 +253,7 @@ final class ContentHypergraph implements ContentGraphInterface
         NodeAggregateId $childNodeAggregateId
     ): iterable {
         $query = HypergraphParentQuery::create($contentStreamId, $this->tableNamePrefix);
-        $query = $query->withChildNodeAggregateIdentifier($childNodeAggregateId);
+        $query = $query->withChildNodeAggregateId($childNodeAggregateId);
 
         $nodeRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 

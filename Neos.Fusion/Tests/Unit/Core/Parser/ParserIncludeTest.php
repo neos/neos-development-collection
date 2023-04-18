@@ -199,7 +199,9 @@ class ParserIncludeTest extends UnitTestCase
      */
     public function fusionParseMethodIsCalledCorrectlyWithFilesOfPattern($contextPathAndFilename, $fusionCode, $expectedFusionAst): void
     {
-        $actualFusionAst = $this->parser->parse($fusionCode, $contextPathAndFilename);
+        $actualFusionAst = $this->parser->parseFromSource(new Fusion\Core\FusionSourceCodeCollection(
+            Fusion\Core\FusionSourceCode::fromDangerousPotentiallyDifferingSourceCodeAndFilePath($fusionCode, $contextPathAndFilename)
+        ))->toArray();
 
         self::assertSame($expectedFusionAst, $actualFusionAst);
     }
@@ -216,7 +218,7 @@ class ParserIncludeTest extends UnitTestCase
         include: /**/*
         Fusion;
 
-        $this->parser->parse($fusionCode);
+        $this->parser->parseFromSource(Fusion\Core\FusionSourceCodeCollection::fromString($fusionCode))->toArray();
     }
 
     public function weirdFusionIncludeValuesAreHandedOver(): \Generator
@@ -248,7 +250,7 @@ class ParserIncludeTest extends UnitTestCase
             ->method('handleFileInclude')
             ->withConsecutive([self::anything(), $includePattern]);
 
-        $parser->parse($fusion);
+        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
     public function throwsFusionIncludesWithSpaces(): \Generator
@@ -285,7 +287,7 @@ class ParserIncludeTest extends UnitTestCase
             ->expects(self::never())
             ->method('handleFileInclude');
 
-        $parser->parse($fusion);
+        $parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusion))->toArray();
     }
 
     /**
@@ -323,7 +325,7 @@ class ParserIncludeTest extends UnitTestCase
         include: vfs://fusion/$pattern
         Fusion;
 
-        $this->parser->parse($fusionCode);
+        $this->parser->parseFromSource(\Neos\Fusion\Core\FusionSourceCodeCollection::fromString($fusionCode))->toArray();
     }
 
     /**

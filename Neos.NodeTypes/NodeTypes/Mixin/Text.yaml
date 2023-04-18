@@ -1,0 +1,5 @@
+# To prevent any breaking change, we map the separate packages the old NodeTypes package
+'Neos.NodeTypes:TextMixin':
+  abstract: true
+  superTypes:
+    'Neos.NodeTypes.BaseMixins:TextMixin': true

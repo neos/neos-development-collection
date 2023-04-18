@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDe
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeMove projection feature trait
@@ -57,13 +58,15 @@ trait NodeMove
                 foreach ($moveNodeMapping->newLocations as $newLocation) {
                     assert($newLocation instanceof CoverageNodeMoveMapping);
 
+                    $affectedDimensionSpacePoints = new DimensionSpacePointSet([
+                        $newLocation->coveredDimensionSpacePoint
+                    ]);
+
                     // remove restriction relations by ancestors. We will reconnect them back after the move.
                     $this->removeAllRestrictionRelationsInSubtreeImposedByAncestors(
                         $event->contentStreamId,
                         $event->nodeAggregateId,
-                        new DimensionSpacePointSet([
-                            $newLocation->coveredDimensionSpacePoint
-                        ])
+                        $affectedDimensionSpacePoints
                     );
 
                     // do the move (depending on how the move target is specified)
@@ -94,9 +97,7 @@ trait NodeMove
                         $event->contentStreamId,
                         $newParentNodeAggregateId,
                         $event->nodeAggregateId,
-                        new DimensionSpacePointSet([
-                            $newLocation->coveredDimensionSpacePoint
-                        ])
+                        $affectedDimensionSpacePoints
                     );
                 }
             }

@@ -88,8 +88,8 @@ class PrevUntilOperation extends AbstractOperation
 
             foreach ($prevNodes as $prevNode) {
                 if ($prevNode !== null &&
-                    !isset($outputNodeIdentifiers[(string)$prevNode->nodeAggregateId])) {
-                    $outputNodeIdentifiers[(string)$prevNode->nodeAggregateId] = true;
+                    !isset($outputNodeIdentifiers[$prevNode->nodeAggregateId->value])) {
+                    $outputNodeIdentifiers[$prevNode->nodeAggregateId->value] = true;
                     $output[] = $prevNode;
                 }
             }
@@ -114,7 +114,7 @@ class PrevUntilOperation extends AbstractOperation
             return Nodes::createEmpty();
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all())
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
             ->previousAll($contextNode);
     }
 }

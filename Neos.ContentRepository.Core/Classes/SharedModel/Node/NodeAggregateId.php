@@ -21,7 +21,7 @@ use Neos\Flow\Utility\Algorithms;
  *
  * @api
  */
-final class NodeAggregateId implements \JsonSerializable, \Stringable
+final class NodeAggregateId implements \JsonSerializable
 {
     /**
      * A preg pattern to match against node aggregate identifiers
@@ -29,7 +29,7 @@ final class NodeAggregateId implements \JsonSerializable, \Stringable
     public const PATTERN = '/^([a-z0-9\-]{1,255})$/';
 
     private function __construct(
-        private string $value
+        public readonly string $value
     ) {
         if (!preg_match(self::PATTERN, $value)) {
             throw new \InvalidArgumentException(
@@ -56,16 +56,6 @@ final class NodeAggregateId implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
-    {
-        return $this->value;
-    }
-
-    public function getValue(): string
     {
         return $this->value;
     }

@@ -28,7 +28,7 @@ class FilterOperationTest extends AbstractQueryOperationsTest
         /**
      * @test
      */
-    public function filterWithIdentifierUsesNodeAggregateIdentifier()
+    public function filterWithIdentifierUsesNodeAggregateIds()
     {
         $node1 = $this->mockNode('node1-identifier-uuid');
         $node2 = $this->mockNode('node2-identifier-uuid');

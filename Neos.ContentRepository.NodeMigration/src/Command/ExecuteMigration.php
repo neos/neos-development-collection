@@ -51,22 +51,22 @@ final class ExecuteMigration
      *
      * @var ContentStreamId[]
      */
-    private $contentStreamIdentifiersForWriting;
+    private $contentStreamIdsForWriting;
 
     /**
      * ExecuteMigration constructor.
      * @param MigrationConfiguration $migrationConfiguration
      * @param WorkspaceName $workspaceName
-     * @param ContentStreamId[] $contentStreamIdentifiersForWriting
+     * @param ContentStreamId[] $contentStreamIdsForWriting
      */
     public function __construct(
         MigrationConfiguration $migrationConfiguration,
         WorkspaceName $workspaceName,
-        array $contentStreamIdentifiersForWriting = []
+        array $contentStreamIdsForWriting = []
     ) {
         $this->migrationConfiguration = $migrationConfiguration;
         $this->workspaceName = $workspaceName;
-        $this->contentStreamIdentifiersForWriting = array_values($contentStreamIdentifiersForWriting);
+        $this->contentStreamIdsForWriting = array_values($contentStreamIdsForWriting);
     }
 
     /**
@@ -85,10 +85,10 @@ final class ExecuteMigration
         return $this->workspaceName;
     }
 
-    public function getOrCreateContentStreamIdentifierForWriting(int $index): ContentStreamId
+    public function getOrCreateContentStreamIdForWriting(int $index): ContentStreamId
     {
-        if (isset($this->contentStreamIdentifiersForWriting[$index])) {
-            return $this->contentStreamIdentifiersForWriting[$index];
+        if (isset($this->contentStreamIdsForWriting[$index])) {
+            return $this->contentStreamIdsForWriting[$index];
         }
 
         return ContentStreamId::create();

@@ -8,12 +8,14 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\EventStore\EventStoreInterface;
 
 /**
+ * For internal implementation details, see {@see ContentStreamFinder}.
+ *
  * @api
  */
 class ContentStreamPruner implements ContentRepositoryServiceInterface
@@ -22,7 +24,7 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly EventStoreInterface $eventStore
+        private readonly EventStoreInterface $eventStore,
     ) {
     }
 
@@ -35,11 +37,18 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
      *       To remove the deleted Content Streams,
      *       call {@see ContentStreamPruner::pruneRemovedFromEventStream()} afterwards.
      *
+     * By default, only content streams in STATE_NO_LONGER_IN_USE and STATE_REBASE_ERROR will be removed.
+     * If you also call with $removeTemporary=true, will delete ALL content streams which are currently not assigned
+     * to a workspace (f.e. dangling ones in FORKED or CREATED.).
+     *
+     * @param bool $removeTemporary if TRUE, will delete ALL content streams not bound to a workspace
      * @return iterable<int,ContentStreamId> the identifiers of the removed content streams
      */
-    public function prune(): iterable
+    public function prune(bool $removeTemporary = false): iterable
     {
-        $unusedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedContentStreams();
+        $unusedContentStreams = $this->contentRepository->getContentStreamFinder()->findUnusedContentStreams(
+            $removeTemporary
+        );
 
         foreach ($unusedContentStreams as $contentStream) {
             $this->lastCommandResult = $this->contentRepository->handle(
@@ -75,6 +84,16 @@ class ContentStreamPruner implements ContentRepositoryServiceInterface
         }
 
         return $removedContentStreams;
+    }
+
+    public function pruneAll(): void
+    {
+        $contentStreamIds = $this->contentRepository->getContentStreamFinder()->findAllIds();
+
+        foreach ($contentStreamIds as $contentStreamId) {
+            $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName();
+            $this->eventStore->deleteStream($streamName);
+        }
     }
 
     public function getLastCommandResult(): ?CommandResult

@@ -100,7 +100,8 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
                     $sourceContentStreamVersion->unwrap(),
                 ),
             ),
-            ExpectedVersion::ANY()
+            // NO_STREAM to ensure the "fork" happens as the first event of the new content stream
+            ExpectedVersion::NO_STREAM()
         );
     }
 
@@ -135,7 +136,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     ): void {
         if ($contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamAlreadyExists(
-                'Content stream "' . $contentStreamId . '" already exists.',
+                'Content stream "' . $contentStreamId->value . '" already exists.',
                 1521386345
             );
         }
@@ -151,7 +152,7 @@ final class ContentStreamCommandHandler implements CommandHandlerInterface
     ): void {
         if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId . '" does not exist yet.',
+                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
                 1521386692
             );
         }

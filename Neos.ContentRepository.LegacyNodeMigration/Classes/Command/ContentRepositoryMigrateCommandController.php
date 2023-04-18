@@ -115,15 +115,13 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $this->siteRepository->add($site);
         $this->persistenceManager->persistAll();
 
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository'] ?? throw new \RuntimeException('There is no content repository identifier configured in Sites configuration in Settings.yaml: Neos.Neos.sites.*.contentRepository')
-        );
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
+        $contentRepositoryId = $site->getConfiguration()->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamIdentifier = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamIdentifier, NodeTypeNameFactory::forSites());
+        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
+        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
 
-        $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryIdentifier);
+        $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryId);
         $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE [n]? ', $eventTableName), false);
         if (!$confirmed) {
             $this->outputLine('Cancelled...');
@@ -133,7 +131,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
         $this->outputLine('Truncated events');
 
         $legacyMigrationService = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $contentRepositoryId,
             new LegacyMigrationServiceFactory(
                 $connection,
                 $resourcesPath,
@@ -143,7 +141,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
                 $this->resourceRepository,
                 $this->resourceManager,
                 $this->propertyMapper,
-                $liveContentStreamIdentifier
+                $liveContentStreamId
             )
         );
         assert($legacyMigrationService instanceof LegacyMigrationService);

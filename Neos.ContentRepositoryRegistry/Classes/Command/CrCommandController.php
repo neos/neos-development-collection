@@ -3,95 +3,103 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
-use Neos\Neos\PendingChangesProjection\ChangeProjection;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
-use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjection;
-use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ESCR\AssetUsage\Projector\AssetUsageProjection;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\Flow\Cli\CommandController;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 
-class CrCommandController extends CommandController
+final class CrCommandController extends CommandController
 {
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
-
-
-
-    public function setupCommand(string $contentRepositoryIdentifier = 'default')
-    {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-        $contentRepository->setUp();
-        $this->outputLine('Content Repository tables "' . $contentRepositoryIdentifier . '" set up.');
+    public function __construct(
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        private readonly ProjectionReplayServiceFactory $projectionServiceFactory,
+    ) {
+        parent::__construct();
     }
 
-    public function replayCommand(string $projectionName, string $contentRepositoryIdentifier = 'default', int $maximumSequenceNumber = null, bool $quiet = false)
+    /**
+     * Sets up and checks required dependencies for a Content Repository instance
+     * Like event store and projection database tables.
+     *
+     * Note: This command is non-destructive, i.e. it can be executed without side effects even if all dependencies are up-to-date
+     * Therefore it makes sense to include this command into the Continuous Integration
+     *
+     * @param string $contentRepository Identifier of the Content Repository to set up
+     */
+    public function setupCommand(string $contentRepository = 'default'): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $this->contentRepositoryRegistry->get($contentRepositoryId)->setUp();
+        $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
+    }
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryIdentifier);
-
-        if ($projectionName === 'graph') {
-            $projectionName = ContentGraphProjection::class;
-        } elseif ($projectionName === 'nodeHiddenState') {
-            $projectionName = NodeHiddenStateProjection::class;  // TODO
-        } elseif ($projectionName === 'documentUriPath') {
-            $projectionName = DocumentUriPathProjection::class;
-        } elseif ($projectionName === 'change') {
-            $projectionName = ChangeProjection::class;
-        } elseif ($projectionName === 'workspace') {
-            $projectionName = WorkspaceProjection::class;
-        } elseif ($projectionName === 'assetUsage') {
-            $projectionName = AssetUsageProjection::class;
-        } elseif ($projectionName === 'contentStream') {
-            $projectionName = ContentStreamProjection::class;
-        } elseif ($projectionName === 'hypergraph') {
-            $projectionName = HypergraphProjection::class; // TODO
-        } else {
-            throw new \RuntimeException('Wrong $projectionName given. Supported are: graph, nodeHiddenState, documentUriPath, change, workspace, assetUsage, contentStream');
-        }
+    /**
+     * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup
+     *
+     * @param string $projection Full Qualified Class Name or alias of the projection to replay (e.g. "contentStream")
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param bool $quiet If set only fatal errors are rendered to the output
+     */
+    public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
 
         if (!$quiet) {
-            $this->outputLine('Replaying events for projection "%s"%s ...', [$projectionName, ($maximumSequenceNumber ? ' until sequence number ' . $maximumSequenceNumber : '')]);
-            $this->output->progressStart();
+            $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
+            // TODO start progress bar
         }
-
-        // TODO: right now we re-use the contentRepositoryName as eventStoreIdentifier - needs to be refactored after ContentRepository instance creation
-        //$eventListenerInvoker = $this->createEventListenerInvokerForProjection($projector, $contentRepositoryName);
-        // TODO: ONPROGRESS HOOK??$eventListenerInvoker->onProgress(function () use (&$eventsCount, $quiet) {
-        //    $eventsCount++;
-        //    if (!$quiet) {
-        //        $this->output->progressAdvance();
-        //    }
-        //});
-        // TODO: MAX SEQ NUMBER
-        //if ($maximumSequenceNumber !== null) {
-            //    $eventListenerInvoker = $eventListenerInvoker->withMaximumSequenceNumber($maximumSequenceNumber);
-        //}
-
-        $contentRepository->resetProjectionState($projectionName);
-        $contentRepository->catchUpProjection($projectionName);
-
+        $projectionService->replayProjection($projection);
         if (!$quiet) {
-            $this->output->progressFinish();
-            $this->outputLine('Replayed events.');
+            // TODO finish progress bar
+            $this->outputLine('<success>Done.</success>');
         }
+    }
+
+    /**
+     * Replays all projections of the specified Content Repository by resetting their states and performing a full catchup
+     *
+     * @param string $contentRepository Identifier of the Content Repository instance to operate on
+     * @param bool $quiet If set only fatal errors are rendered to the output
+     */
+    public function replayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
+        if (!$quiet) {
+            $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
+            // TODO start progress bar
+        }
+        $projectionService->replayAllProjections();
+        if (!$quiet) {
+            // TODO finish progress bar
+            $this->outputLine('<success>Done.</success>');
+        }
+    }
+
+    public function pruneCommand(string $contentRepository = 'default'): void
+    {
+        if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {
+            return;
+        }
+
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+
+        $contentStreamPruner = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryId,
+            new ContentStreamPrunerFactory()
+        );
+        $contentStreamPruner->pruneAll();
+
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
+            $contentRepositoryId,
+            new WorkspaceMaintenanceServiceFactory()
+        );
+        $workspaceMaintenanceService->pruneAll();
+
+        $this->replayAllCommand();
     }
 }

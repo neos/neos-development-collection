@@ -24,8 +24,8 @@ final class SiteNodeTypeIsInvalid extends \DomainException
     public static function becauseItIsNotOfTypeSite(NodeTypeName $attemptedNodeTypeName): self
     {
         return new self(
-            'Node type name "' . $attemptedNodeTypeName
-                . '" is not of required type "' . NodeTypeNameFactory::forSite() . '"',
+            'Node type name "' . $attemptedNodeTypeName->value
+                . '" is not of required type "' . NodeTypeNameFactory::forSite()->value . '"',
             1412372375
         );
     }

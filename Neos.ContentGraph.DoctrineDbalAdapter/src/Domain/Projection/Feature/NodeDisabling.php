@@ -5,7 +5,13 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * The NodeDisabling projection feature trait
@@ -22,6 +28,8 @@ trait NodeDisabling
     private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
+
+
             // TODO: still unsure why we need an "INSERT IGNORE" here;
             // normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeStatement(
@@ -68,15 +76,15 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     )
 
     select
-        "' . $event->contentStreamId . '" as contentstreamid,
+        "' . $event->contentStreamId->value . '" as contentstreamid,
         dimensionspacepointhash,
-        "' . $event->nodeAggregateId . '" as originnodeaggregateid,
+        "' . $event->nodeAggregateId->value . '" as originnodeaggregateid,
         nodeaggregateid as affectednodeaggregateid
     from tree
             ',
                 [
-                    'entryNodeAggregateId' => (string)$event->nodeAggregateId,
-                    'contentStreamId' => (string)$event->contentStreamId,
+                    'entryNodeAggregateId' => $event->nodeAggregateId->value,
+                    'contentStreamId' => $event->contentStreamId->value,
                     'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
                 ],
                 [

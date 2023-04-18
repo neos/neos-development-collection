@@ -19,7 +19,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  *
  * @api
  */
-final class NodeTypeName implements \JsonSerializable, \Stringable
+final class NodeTypeName implements \JsonSerializable
 {
     public const ROOT_NODE_TYPE_NAME = 'Neos.ContentRepository:Root';
 
@@ -29,7 +29,7 @@ final class NodeTypeName implements \JsonSerializable, \Stringable
     private static array $instances = [];
 
     private function __construct(
-        private string $value
+        public readonly string $value
     ) {
         if ($value === '') {
             throw new \InvalidArgumentException('Node type name must not be empty.', 1505835958);
@@ -46,22 +46,12 @@ final class NodeTypeName implements \JsonSerializable, \Stringable
         return self::instance($value);
     }
 
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
     public function equals(self $other): bool
     {
         return $this === $other;
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

@@ -38,7 +38,7 @@ trait FlowQueryTrait
     /**
      * @var ContentStreamId
      */
-    private ?ContentStreamId $contentStreamIdentifier = null;
+    private ?ContentStreamId $contentStreamId = null;
 
     /**
      * @var DimensionSpacePoint
@@ -49,18 +49,18 @@ trait FlowQueryTrait
 
     /**
      * @When /^I have a FlowQuery with node "([^"]*)"$/
-     * @param string $serializedNodeAggregateIdentifier
+     * @param string $serializedNodeAggregateId
      * @throws \Neos\Eel\Exception
      */
-    public function iHaveAFlowQueryWithNode(string $serializedNodeAggregateIdentifier)
+    public function iHaveAFlowQueryWithNode(string $serializedNodeAggregateId)
     {
         $subgraph = $this->contentGraph->getSubgraph(
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $nodeAggregateIdentifier = NodeAggregateId::fromString($serializedNodeAggregateIdentifier);
-        $node = $subgraph->findNodeById($nodeAggregateIdentifier);
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $node = $subgraph->findNodeById($nodeAggregateId);
         $this->currentFlowQuery = new FlowQuery([$node]);
     }
 
@@ -86,15 +86,15 @@ trait FlowQueryTrait
 
     /**
      * @When /^I expect a node identified by aggregate identifier "([^"]*)" to exist in the FlowQuery context$/
-     * @param string $serializedExpectedNodeAggregateIdentifier
+     * @param string $serializedExpectedNodeAggregateId
      */
-    public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheFlowQueryContext(string $serializedExpectedNodeAggregateIdentifier)
+    public function iExpectANodeIdentifiedByAggregateIdentifierToExistInTheFlowQueryContext(string $serializedExpectedNodeAggregateId)
     {
-        $expectedNodeAggregateIdentifier = NodeAggregateId::fromString($serializedExpectedNodeAggregateIdentifier);
+        $expectedNodeAggregateId = NodeAggregateId::fromString($serializedExpectedNodeAggregateId);
         $expectationMet = false;
         foreach ($this->currentFlowQuery->getContext() as $node) {
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node */
-            if ($node->nodeAggregateId->equals($expectedNodeAggregateIdentifier)) {
+            if ($node->nodeAggregateId->equals($expectedNodeAggregateId)) {
                 $expectationMet = true;
                 break;
             }

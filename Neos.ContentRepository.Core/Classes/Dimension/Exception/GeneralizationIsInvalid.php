@@ -29,8 +29,8 @@ class GeneralizationIsInvalid extends \DomainException
         ContentDimensionId $dimensionId
     ): self {
         return new self(
-            '"' . $comparedValue . '" is no specialization of "' . $value
-                . '" in dimension "' . $dimensionId . '".'
+            '"' . $comparedValue->value . '" is no specialization of "' . $value->value
+                . '" in dimension "' . $dimensionId->value . '".'
         );
     }
 }

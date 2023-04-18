@@ -27,7 +27,7 @@ use Neos\Flow\Annotations as Flow;
  * Show me
  *  node $nodeAggregateId
  *  in dimensions $dimensionSpacePoint
- *  in contentStreamIdentifier $contentStreamIdentifier
+ *  in contentStreamId $contentStreamId
  *
  * It is used in Neos Routing to build a URI to a node.
  *
@@ -61,9 +61,9 @@ final class NodeAddress
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
-        return $this->workspaceName->name
+        return $this->workspaceName->value
             . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
-            . '__' . $this->nodeAggregateId->jsonSerialize();
+            . '__' . $this->nodeAggregateId->value;
     }
 
     public function isInLiveWorkspace(): bool
@@ -74,11 +74,11 @@ final class NodeAddress
     public function __toString(): string
     {
         return sprintf(
-            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateIdentifier=%s, workspaceName=%s]',
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $this->nodeAggregateId,
-            $this->workspaceName
+            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
+            $this->contentStreamId->value,
+            $this->dimensionSpacePoint->toJson(),
+            $this->nodeAggregateId->value,
+            $this->workspaceName->value
         );
     }
 }

@@ -32,12 +32,12 @@ class Change
     /**
      * @var ContentStreamId
      */
-    public $contentStreamIdentifier;
+    public $contentStreamId;
 
     /**
      * @var NodeAggregateId
      */
-    public $nodeAggregateIdentifier;
+    public $nodeAggregateId;
 
     /**
      * @var OriginDimensionSpacePoint
@@ -65,16 +65,16 @@ class Change
     public ?NodeAggregateId $removalAttachmentPoint;
 
     public function __construct(
-        ContentStreamId $contentStreamIdentifier,
-        NodeAggregateId $nodeAggregateIdentifier,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         bool $changed,
         bool $moved,
         bool $deleted,
         ?NodeAggregateId $removalAttachmentPoint = null
     ) {
-        $this->contentStreamIdentifier = $contentStreamIdentifier;
-        $this->nodeAggregateIdentifier = $nodeAggregateIdentifier;
+        $this->contentStreamId = $contentStreamId;
+        $this->nodeAggregateId = $nodeAggregateId;
         $this->originDimensionSpacePoint = $originDimensionSpacePoint;
         $this->changed = $changed;
         $this->moved = $moved;
@@ -89,14 +89,14 @@ class Change
     public function addToDatabase(Connection $databaseConnection, string $tableName): void
     {
         $databaseConnection->insert($tableName, [
-            'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-            'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
-            'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+            'contentStreamId' => $this->contentStreamId->value,
+            'nodeAggregateId' => $this->nodeAggregateId->value,
+            'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
             'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             'changed' => (int)$this->changed,
             'moved' => (int)$this->moved,
             'deleted' => (int)$this->deleted,
-            'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+            'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
         ]);
     }
 
@@ -108,12 +108,12 @@ class Change
                 'changed' => (int)$this->changed,
                 'moved' => (int)$this->moved,
                 'deleted' => (int)$this->deleted,
-                'removalAttachmentPoint' => $this->removalAttachmentPoint?->__toString()
+                'removalAttachmentPoint' => $this->removalAttachmentPoint?->value
             ],
             [
-                'contentStreamIdentifier' => (string)$this->contentStreamIdentifier,
-                'nodeAggregateIdentifier' => (string)$this->nodeAggregateIdentifier,
-                'originDimensionSpacePoint' => json_encode($this->originDimensionSpacePoint),
+                'contentStreamId' => $this->contentStreamId->value,
+                'nodeAggregateId' => $this->nodeAggregateId->value,
+                'originDimensionSpacePoint' => $this->originDimensionSpacePoint->toJson(),
                 'originDimensionSpacePointHash' => $this->originDimensionSpacePoint->hash,
             ]
         );
@@ -125,8 +125,8 @@ class Change
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamId::fromString($databaseRow['contentStreamIdentifier']),
-            NodeAggregateId::fromString($databaseRow['nodeAggregateIdentifier']),
+            ContentStreamId::fromString($databaseRow['contentStreamId']),
+            NodeAggregateId::fromString($databaseRow['nodeAggregateId']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['originDimensionSpacePoint']),
             (bool)$databaseRow['changed'],
             (bool)$databaseRow['moved'],

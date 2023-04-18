@@ -139,7 +139,7 @@ class InterDimensionalVariationGraph
         if (is_null($this->weightNormalizationBase)) {
             $base = 0;
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
-                $base = max($base, $contentDimension->getMaximumDepth()->depth + 1);
+                $base = max($base, $contentDimension->getMaximumDepth()->value + 1);
             }
 
             $this->weightNormalizationBase = $base;
@@ -169,7 +169,7 @@ class InterDimensionalVariationGraph
                 $dimension = $this->contentDimensionSource->getDimension($dimensionId);
                 foreach ($dimension->getSpecializations($contentDimensionValue) as $specializedValue) {
                     $specializedDimensionSpacePoint = $generalization->dimensionSpacePoint
-                        ->vary($dimensionId, (string)$specializedValue);
+                        ->vary($dimensionId, $specializedValue->value);
                     if (
                         !$this->contentDimensionZookeeper->getAllowedDimensionSubspace()
                             ->contains($specializedDimensionSpacePoint)

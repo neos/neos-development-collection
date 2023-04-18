@@ -125,14 +125,14 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     protected function scheduleCacheFlushJobForNodeAggregate(
         ContentRepository $contentRepository,
-        ContentStreamId $contentStreamIdentifier,
-        NodeAggregateId $nodeAggregateIdentifier
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId
     ): void {
         // we store this in an associative array deduplicate.
-        $this->cacheFlushes[$contentStreamIdentifier->getValue() . '__' . $nodeAggregateIdentifier->getValue()] = [
+        $this->cacheFlushes[$contentStreamId->value . '__' . $nodeAggregateId->value] = [
             'cr' => $contentRepository,
-            'csi' => $contentStreamIdentifier,
-            'nai' => $nodeAggregateIdentifier
+            'csi' => $contentStreamId,
+            'nai' => $nodeAggregateId
         ];
     }
 

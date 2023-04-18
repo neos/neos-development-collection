@@ -68,7 +68,7 @@ class ParentsUntilOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIds = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             $parentNodes = $this->getParents($contextNode);
             if (isset($arguments[0]) && !empty($arguments[0] && !$parentNodes->isEmpty())) {
@@ -83,8 +83,8 @@ class ParentsUntilOperation extends AbstractOperation
 
             foreach ($parentNodes as $parentNode) {
                 if ($parentNode !== null
-                    && !isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId])) {
-                    $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId] = true;
+                    && !isset($outputNodeAggregateIds[$parentNode->nodeAggregateId->value])) {
+                    $outputNodeAggregateIds[$parentNode->nodeAggregateId->value] = true;
                     $output[] = $parentNode;
                 }
             }
@@ -103,7 +103,7 @@ class ParentsUntilOperation extends AbstractOperation
         $node = $contextNode;
         do {
             $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node);
+                ->findParentNode($node->nodeAggregateId);
             if ($node === null) {
                 // no parent found
                 break;

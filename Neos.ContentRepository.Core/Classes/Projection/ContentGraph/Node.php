@@ -67,7 +67,8 @@ final class Node
          * @return PropertyCollectionInterface Property values, indexed by their name
          */
         public readonly PropertyCollectionInterface $properties,
-        public readonly ?NodeName $nodeName
+        public readonly ?NodeName $nodeName,
+        public readonly Timestamps $timestamps,
     ) {
     }
 

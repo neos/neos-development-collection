@@ -70,8 +70,8 @@ class NextAllOperation extends AbstractOperation
         $outputNodePaths = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             foreach ($this->getNextForNode($contextNode) as $nextNode) {
-                if ($nextNode !== null && !isset($outputNodePaths[(string)$nextNode->nodeAggregateId])) {
-                    $outputNodePaths[(string)$nextNode->nodeAggregateId] = true;
+                if ($nextNode !== null && !isset($outputNodePaths[$nextNode->nodeAggregateId->value])) {
+                    $outputNodePaths[$nextNode->nodeAggregateId->value] = true;
                     $output[] = $nextNode;
                 }
             }
@@ -96,7 +96,7 @@ class NextAllOperation extends AbstractOperation
             return Nodes::createEmpty();
         }
 
-        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all())
+        return $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create())
             ->nextAll($contextNode);
     }
 }

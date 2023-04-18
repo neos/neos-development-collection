@@ -45,7 +45,8 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\NodeTypeChange;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
 use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeCreation;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -58,7 +59,7 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RestoreNodeAggregate
 final class NodeAggregateCommandHandler implements CommandHandlerInterface
 {
     use ConstraintChecks;
-    use RootNodeCreation;
+    use RootNodeHandling;
     use NodeCreation;
     use NodeDisabling;
     use NodeModification;
@@ -132,9 +133,11 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             CreateNodeVariant::class => $this->handleCreateNodeVariant($command, $contentRepository),
             CreateRootNodeAggregateWithNode::class
                 => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
+            UpdateRootNodeAggregateDimensions::class
+                => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command),
+            ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
         };
     }
 
@@ -202,22 +205,22 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             ) as $parentAggregate
         ) {
             /* @var $parentAggregate NodeAggregate */
-            $parentsNodeType = $this->nodeTypeManager->getNodeType((string)$parentAggregate->nodeTypeName);
+            $parentsNodeType = $this->nodeTypeManager->getNodeType($parentAggregate->nodeTypeName->value);
             if (!$parentsNodeType->allowsChildNodeType($newNodeType)) {
                 throw new NodeConstraintException(
-                    'Node type ' . $command->newNodeTypeName
-                        . ' is not allowed below nodes of type ' . $parentAggregate->nodeTypeName
+                    'Node type ' . $command->newNodeTypeName->value
+                        . ' is not allowed below nodes of type ' . $parentAggregate->nodeTypeName->value
                 );
             }
             if (
                 $nodeAggregate->nodeName
                 && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->nodeName)
                 && $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeAggregate->nodeName)?->name
-                    !== (string)$command->newNodeTypeName
+                    !== $command->newNodeTypeName->value
             ) {
                 throw new NodeConstraintException(
-                    'Cannot change type of auto created child node' . $nodeAggregate->nodeName
-                        . ' to ' . $command->newNodeTypeName
+                    'Cannot change type of auto created child node' . $nodeAggregate->nodeName->value
+                        . ' to ' . $command->newNodeTypeName->value
                 );
             }
             foreach (
@@ -228,20 +231,20 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             ) {
                 /* @var $grandParentAggregate NodeAggregate */
                 $grandParentsNodeType = $this->nodeTypeManager->getNodeType(
-                    (string)$grandParentAggregate->nodeTypeName
+                    $grandParentAggregate->nodeTypeName->value
                 );
                 if (
                     $parentAggregate->nodeName
                     && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->nodeName)
                     && !$grandParentsNodeType->allowsGrandchildNodeType(
-                        (string) $parentAggregate->nodeName,
+                        $parentAggregate->nodeName->value,
                         $newNodeType
                     )
                 ) {
                     throw new NodeConstraintException(
-                        'Node type "' . $command->newNodeTypeName
-                            . '" is not allowed below auto created child nodes "' . $parentAggregate->nodeName
-                            . '" of nodes of type "' . $grandParentAggregate->nodeTypeName . '"',
+                        'Node type "' . $command->newNodeTypeName->value
+                            . '" is not allowed below auto created child nodes "' . $parentAggregate->nodeName->value
+                            . '" of nodes of type "' . $grandParentAggregate->nodeTypeName->value . '"',
                         1520011791
                     );
                 }

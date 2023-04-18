@@ -98,10 +98,14 @@ class AuthorizationService
                     continue;
                 }
 
-                $affectedNodeTypes = ($createNodePrivilege->getCreationNodeTypes() !== [] ? $createNodePrivilege->getCreationNodeTypes() : $allNodeTypes);
+                if ($createNodePrivilege->getCreationNodeTypes() !== []) {
+                    $affectedNodeTypes = $createNodePrivilege->getCreationNodeTypes();
+                } else {
+                    $affectedNodeTypes = array_map(static fn (NodeType $nodeType) => $nodeType->name->value, $allNodeTypes);
+                }
 
                 if ($createNodePrivilege->isGranted()) {
-                    $grantedCreationNodeTypes = array_merge($grantedCreationNodeTypes, $affectedNodeTypes);
+                    $grantedCreationNodeTypes[] = array_merge($grantedCreationNodeTypes, $affectedNodeTypes);
                 } elseif ($createNodePrivilege->isDenied()) {
                     $deniedCreationNodeTypes = array_merge($deniedCreationNodeTypes, $affectedNodeTypes);
                 } else {

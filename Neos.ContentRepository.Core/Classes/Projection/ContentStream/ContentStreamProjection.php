@@ -46,6 +46,8 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
+ * See {@see ContentStreamFinder} for explanation.
+ *
  * @internal
  * @implements ProjectionInterface<ContentStreamFinder>
  */
@@ -82,6 +84,13 @@ class ContentStreamProjection implements ProjectionInterface
         $schemaManager = $connection->getSchemaManager();
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
+        }
+
+        // MIGRATIONS
+        $currentSchema = $schemaManager->createSchema();
+        if ($currentSchema->hasTable($this->tableName)) {
+            // added 2023-04-01
+            $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
         }
 
         $schema = new Schema();
@@ -187,7 +196,7 @@ class ContentStreamProjection implements ProjectionInterface
     private function whenContentStreamWasCreated(ContentStreamWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'contentStreamId' => $event->contentStreamId,
+            'contentStreamId' => $event->contentStreamId->value,
             'version' => self::extractVersion($eventEnvelope),
             'state' => ContentStreamFinder::STATE_CREATED,
         ]);
@@ -199,7 +208,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamId' => $event->newContentStreamId
+            'contentStreamId' => $event->newContentStreamId->value
         ]);
     }
 
@@ -209,17 +218,17 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => ContentStreamFinder::STATE_IN_USE_BY_WORKSPACE,
         ], [
-            'contentStreamId' => $event->newContentStreamId
+            'contentStreamId' => $event->newContentStreamId->value
         ]);
     }
 
     private function whenContentStreamWasForked(ContentStreamWasForked $event, EventEnvelope $eventEnvelope): void
     {
         $this->getDatabaseConnection()->insert($this->tableName, [
-            'contentStreamId' => $event->newContentStreamId,
+            'contentStreamId' => $event->newContentStreamId->value,
             'version' => self::extractVersion($eventEnvelope),
-            'sourceContentStreamId' => $event->sourceContentStreamId,
-            'state' => ContentStreamFinder::STATE_REBASING, // TODO: FORKED?
+            'sourceContentStreamId' => $event->sourceContentStreamId->value,
+            'state' => ContentStreamFinder::STATE_FORKED,
         ]);
     }
 
@@ -312,7 +321,7 @@ class ContentStreamProjection implements ProjectionInterface
             'removed' => true,
             'version' => self::extractVersion($eventEnvelope),
         ], [
-            'contentStreamId' => $event->contentStreamId
+            'contentStreamId' => $event->contentStreamId->value
         ]);
     }
 
@@ -321,7 +330,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'state' => $state,
         ], [
-            'contentStreamId' => $contentStreamId
+            'contentStreamId' => $contentStreamId->value
         ]);
     }
 
@@ -337,7 +346,7 @@ class ContentStreamProjection implements ProjectionInterface
         $this->getDatabaseConnection()->update($this->tableName, [
             'version' => self::extractVersion($eventEnvelope),
         ], [
-            'contentStreamId' => $eventInstance->getContentStreamId()
+            'contentStreamId' => $eventInstance->getContentStreamId()->value
         ]);
     }
 

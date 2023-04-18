@@ -50,6 +50,16 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('classification', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
+        $table->addColumn('created', Types::DATETIME_IMMUTABLE)
+            ->setNotnull(true);
+        $table->addColumn('originalcreated', Types::DATETIME_IMMUTABLE)
+            ->setNotnull(true);
+        $table->addColumn('lastmodified', Types::DATETIME_IMMUTABLE)
+            ->setNotnull(false)
+            ->setDefault(null);
+        $table->addColumn('originallastmodified', Types::DATETIME_IMMUTABLE)
+            ->setNotnull(false)
+            ->setDefault(null);
         $table
             ->setPrimaryKey(['relationanchorpoint'])
             ->addIndex(['nodeaggregateid'], $this->tableNamePrefix . '_NODE_AGGREGATE_ID')

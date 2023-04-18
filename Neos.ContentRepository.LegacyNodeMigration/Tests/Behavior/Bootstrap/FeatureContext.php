@@ -5,6 +5,7 @@ require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowC
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
@@ -95,7 +96,7 @@ class FeatureContext implements Context
             return [
                 'path' => $row['Path'],
                 'parentpath' => implode('/', array_slice(explode('/', $row['Path']), 0, -1)) ?: '/',
-                'identifier' => $row['Identifier'] ?? (string)NodeAggregateId::create(),
+                'identifier' => $row['Identifier'] ?? NodeAggregateId::create()->value,
                 'nodetype' => $row['Node Type'] ?? 'unstructured',
                 'properties' => !empty($row['Properties']) ? $row['Properties'] : '{}',
                 'dimensionvalues' => !empty($row['Dimension Values']) ? $row['Dimension Values'] : '{}',
@@ -119,7 +120,7 @@ class FeatureContext implements Context
         $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
         $migration = new NodeDataToEventsProcessor($nodeTypeManager, $propertyMapper, $propertyConverter, $interDimensionalVariationGraph, $eventNormalizer, $this->mockFilesystem, $this->nodeDataRows);
         if ($contentStream !== null) {
-            $migration->setContentStreamIdentifier(ContentStreamId::fromString($contentStream));
+            $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
         $this->lastMigrationResult = $migration->run();
     }

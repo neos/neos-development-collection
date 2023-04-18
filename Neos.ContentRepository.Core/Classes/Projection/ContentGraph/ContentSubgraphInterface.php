@@ -15,19 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * This is the most important read model of a content repository.
@@ -57,107 +47,118 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param FindChildNodesFilter $filter
-     * @return Nodes
-     */
-    public function findChildNodes(
-        NodeAggregateId $parentNodeAggregateId,
-        Filter\FindChildNodesFilter $filter
-    ): Nodes;
-
-    public function findReferencedNodes(
-        NodeAggregateId $nodeAggregateId,
-        Filter\FindReferencedNodesFilter $filter
-    ): References;
-
-    public function findReferencingNodes(
-        NodeAggregateId $nodeAggregateId,
-        Filter\FindReferencingNodesFilter $filter
-    ): References;
-
-    /**
-     * @param NodeAggregateId $nodeAggregateId
-     * @return Node|null
+     * Find a single node by its aggregate id
+     *
+     * @return Node|null the node or NULL if no node with the specified id is accessible in this subgraph
      */
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node;
 
     /**
-     * @param NodeAggregateId $childNodeAggregateId
-     * @return Node|null
+     * Find direct child nodes of the specified parent node that match the given $filter
+     */
+    public function findChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\FindChildNodesFilter $filter): Nodes;
+
+    /**
+     * Count direct child nodes of the specified parent node that match the given $filter
+     * @see findChildNodes
+     */
+    public function countChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\CountChildNodesFilter $filter): int;
+
+    /**
+     * Find the direct parent of a node specified by its aggregate id
+     *
+     * @return Node|null the node or NULL if the specified node is the root node or is inaccessible
      */
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node;
 
     /**
-     * @param NodePath $path
-     * @param NodeAggregateId $startingNodeAggregateId
-     * @return Node|null
+     * Find all nodes that are positioned _behind_ the specified sibling and match the specified $filter
      */
-    public function findNodeByPath(
-        NodePath $path,
-        NodeAggregateId $startingNodeAggregateId
-    ): ?Node;
+    public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, Filter\FindSucceedingSiblingNodesFilter $filter): Nodes;
 
     /**
-     * @param NodeAggregateId $parentNodeAggregateId
-     * @param NodeName $edgeName
-     * @return Node|null
+     * Find all nodes that are positioned _before_ the specified sibling and match the specified $filter
      */
-    public function findChildNodeConnectedThroughEdgeName(
-        NodeAggregateId $parentNodeAggregateId,
-        NodeName $edgeName
-    ): ?Node;
+    public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, Filter\FindPrecedingSiblingNodesFilter $filter): Nodes;
 
     /**
-     * @param NodeAggregateId $sibling
-     * @param FindSucceedingSiblingsFilter $filter
-     * @return Nodes
-     */
-    public function findSucceedingSiblings(
-        NodeAggregateId $sibling,
-        Filter\FindSucceedingSiblingsFilter $filter
-    ): Nodes;
-
-    /**
-     * @param NodeAggregateId $sibling
-     * @param FindPrecedingSiblingsFilter $filter
-     * @return Nodes
-     */
-    public function findPrecedingSiblings(
-        NodeAggregateId $sibling,
-        Filter\FindPrecedingSiblingsFilter $filter,
-    ): Nodes;
-
-    /**
-     * @param NodeAggregateId $nodeAggregateId
-     * @return NodePath
-     */
-    public function findNodePath(NodeAggregateId $nodeAggregateId): NodePath;
-
-    public function findSubtrees(
-        NodeAggregateIds $entryNodeAggregateIds,
-        Filter\FindSubtreesFilter $filter
-    ): Subtrees;
-
-    /**
-     * Recursively find all nodes underneath the $entryNodeAggregateIds,
-     * which match the node type constraints specified by NodeTypeConstraints.
+     * Find a single child node by its name
      *
-     * If a Search Term is specified, the properties are searched for this search term.
-     *
-     * This is basically a set-based view of descendant nodes; so do not rely on
-     * a default ordering.
-     *
-     * @param NodeAggregateIds $entryNodeAggregateIds
-     * @param FindDescendantsFilter $filter
-     * @return Nodes
+     * @return Node|null the node that is connected to its parent with the specified $edgeName, or NULL if no matching node exists or the parent node is not accessible
      */
-    public function findDescendants(
-        NodeAggregateIds $entryNodeAggregateIds,
-        Filter\FindDescendantsFilter $filter
-    ): Nodes;
+    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
 
     /**
+     * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
+     *
+     * Note: This is basically a set-based view of descendant nodes; so the ordering should not be relied upon
+     */
+    public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindDescendantNodesFilter $filter): Nodes;
+
+    /**
+     * Count all nodes underneath the $entryNodeAggregateId that match the specified $filter
+     * @see findDescendantNodes
+     */
+    public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int;
+
+    /**
+     * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a tree
+     *
+     * Note: This returns a fragment of the existing tree structure. The structure is kept intact but nodes might be missing depending on the specified filter
+     *
+     * @return Subtree|null the recursive tree of all matching nodes, or NULL if the entry node is not accessible
+     */
+    public function findSubtree(NodeAggregateId $entryNodeAggregateId, Filter\FindSubtreeFilter $filter): ?Subtree;
+
+    /**
+     * Find all "outgoing" references of a given node that match the specified $filter
+     *
+     * A reference is a node property of type "reference" or "references"
+     * Because each reference has a name and can contain properties itself, this method does not return the target nodes
+     * directly, but actual {@see \Neos\ContentRepository\Core\Projection\ContentGraph\Reference} instances.
+     * The corresponding nodes can be retrieved via {@see References::getNodes()}
+     */
+    public function findReferences(NodeAggregateId $nodeAggregateId, Filter\FindReferencesFilter $filter): References;
+
+    /**
+     * Count all "outgoing" references of a given node that match the specified $filter
+     * @see findReferences
+     */
+    public function countReferences(NodeAggregateId $nodeAggregateId, Filter\CountReferencesFilter $filter): int;
+
+    /**
+     * Find all "incoming" references of a given node that match the specified $filter
+     * If nodes "A" and "B" both have a reference to "C", the node "C" has two incoming references.
+     *
+     * @see findReferences
+     */
+    public function findBackReferences(NodeAggregateId $nodeAggregateId, Filter\FindBackReferencesFilter $filter): References;
+
+    /**
+     * Count all "incoming" references of a given node that match the specified $filter
+     * @see findBackReferences
+     */
+    public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int;
+
+    /**
+     * Find a single node underneath $startingNodeAggregateId that matches the specified $path
+     *
+     * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
+     * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
+     */
+    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
+
+    /**
+     * Determine the absolute path of a node
+     *
+     * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
+     * @throws \InvalidArgumentException if the node path could not be retrieved because it is inaccessible or contains no valid path. The latter can happen if any node in the hierarchy has no name
+     */
+    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): NodePath;
+
+    /**
+     * Count all nodes in this subgraph, including inaccessible ones!
+     *
      * @return int
      * @internal this method might change without further notice.
      */

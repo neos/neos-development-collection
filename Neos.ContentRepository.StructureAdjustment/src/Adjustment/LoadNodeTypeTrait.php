@@ -22,8 +22,8 @@ trait LoadNodeTypeTrait
     protected function loadNodeType(NodeTypeName $nodeTypeName): ?NodeType
     {
         try {
-            $nodeType = $this->getNodeTypeManager()->getNodeType((string)$nodeTypeName);
-            if ($nodeType->getName() !== $nodeTypeName->jsonSerialize()) {
+            $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
+            if (!$nodeTypeName->equals($nodeType->name)) {
                 // the $nodeTypeName was different than the fetched node type; so that means
                 // that the FallbackNodeType has been returned.
                 return null;

@@ -31,12 +31,7 @@ final class PropertyCollection implements PropertyCollectionInterface
     /**
      * @var array<string,mixed>
      */
-    private array $deserializedPropertyValues;
-
-    /**
-     * @var \ArrayIterator<string,mixed>
-     */
-    private \ArrayIterator $iterator;
+    private array $deserializedPropertyValuesRuntimeCache = [];
 
     private PropertyConverter $propertyConverter;
 
@@ -48,7 +43,6 @@ final class PropertyCollection implements PropertyCollectionInterface
         PropertyConverter $propertyConverter
     ) {
         $this->serializedPropertyValues = $serializedPropertyValues;
-        $this->iterator = new \ArrayIterator($serializedPropertyValues->getPlainValues());
         $this->propertyConverter = $propertyConverter;
     }
 
@@ -59,19 +53,14 @@ final class PropertyCollection implements PropertyCollectionInterface
 
     public function offsetGet($offset): mixed
     {
-        if (!$this->offsetExists($offset)) {
-            return null;
-        }
-        if (!isset($this->deserializedPropertyValues[$offset])) {
+        if (!isset($this->deserializedPropertyValuesRuntimeCache[$offset])) {
             $serializedProperty = $this->serializedPropertyValues->getProperty($offset);
-            if (!is_null($serializedProperty)) {
-                $this->deserializedPropertyValues[$offset] = $this->propertyConverter->deserializePropertyValue(
-                    $serializedProperty
-                );
-            }
+            $this->deserializedPropertyValuesRuntimeCache[$offset] = $serializedProperty === null
+                ? null
+                : $this->propertyConverter->deserializePropertyValue($serializedProperty);
         }
 
-        return $this->deserializedPropertyValues[$offset];
+        return $this->deserializedPropertyValuesRuntimeCache[$offset];
     }
 
     public function offsetSet($offset, $value): never
@@ -85,11 +74,13 @@ final class PropertyCollection implements PropertyCollectionInterface
     }
 
     /**
-     * @return \ArrayIterator<string,mixed>
+     * @return \Generator<string,mixed>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Generator
     {
-        return $this->iterator;
+        foreach ($this->serializedPropertyValues as $propertyName => $_) {
+            yield $propertyName => $this->offsetGet($propertyName);
+        }
     }
 
     public function serialized(): SerializedPropertyValues

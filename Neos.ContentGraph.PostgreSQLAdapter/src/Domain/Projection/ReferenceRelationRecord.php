@@ -32,7 +32,7 @@ final class ReferenceRelationRecord
         public readonly ReferenceName $name,
         public readonly int $position,
         public readonly ?SerializedPropertyValues $properties,
-        public readonly NodeAggregateId $targetNodeAggregateIdentifier
+        public readonly NodeAggregateId $targetNodeAggregateId
     ) {
     }
 
@@ -48,7 +48,7 @@ final class ReferenceRelationRecord
             $databaseRow['properties']
                 ? SerializedPropertyValues::fromJsonString($databaseRow['properties'])
                 : null,
-            NodeAggregateId::fromString($databaseRow['targetnodeaggregateidentifier'])
+            NodeAggregateId::fromString($databaseRow['targetnodeaggregateid'])
         );
     }
 
@@ -58,13 +58,13 @@ final class ReferenceRelationRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_referencerelation', [
-            'sourcenodeanchor' => (string)$this->sourceNodeAnchor,
-            'name' => (string)$this->name,
+            'sourcenodeanchor' => $this->sourceNodeAnchor->value,
+            'name' => $this->name->value,
             'position' => $this->position,
             'properties' => $this->properties
                 ? \json_encode($this->properties)
                 : null,
-            'targetnodeaggregateidentifier' => (string)$this->targetNodeAggregateIdentifier
+            'targetnodeaggregateid' => $this->targetNodeAggregateId->value
         ]);
     }
 
@@ -75,7 +75,7 @@ final class ReferenceRelationRecord
             $this->name,
             $this->position,
             $this->properties,
-            $this->targetNodeAggregateIdentifier
+            $this->targetNodeAggregateId
         );
     }
 
@@ -85,7 +85,7 @@ final class ReferenceRelationRecord
         string $tableNamePrefix
     ): void {
         $databaseConnection->delete($tableNamePrefix . '_referencerelation', [
-            'sourcenodeanchor' => $sourceNodeAnchor
+            'sourcenodeanchor' => $sourceNodeAnchor->value
         ]);
     }
 }

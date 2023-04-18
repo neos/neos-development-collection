@@ -2,6 +2,8 @@
 # This represents a View that is always bound to a master Plugin
 # Usually you won't need to extend this
 #
+# @deprecated will be removed with Neos 9
+#
 prototype(Neos.Neos:PluginView) >
 prototype(Neos.Neos:PluginView) < prototype(Neos.Neos:Content) {
   @class = 'Neos\\Neos\\Fusion\\PluginViewImplementation'

@@ -162,7 +162,7 @@ Neos.Fusion:Loop
 
 Render each item in ``items`` using ``itemRenderer``.
 
-:items: (array/Iterable, **required**) The array or iterable to iterate over
+:items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
@@ -196,7 +196,7 @@ Neos.Fusion:Map
 
 Render each item in ``items`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
 
-:items: (array/Iterable, **required**) The array or iterable to iterate over
+:items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
@@ -210,7 +210,7 @@ Neos.Fusion:Reduce
 
 Reduce the given items to a single value by using ``itemRenderer``.
 
-:items: (array/Iterable, **required**) The array or iterable to iterate over
+:items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
 :itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
 :carryName: (string, defaults to ``carry``) Context variable that contains the result of the last iteration
@@ -349,35 +349,48 @@ Color usage::
 Neos.Fusion:Component
 ---------------------
 
-Create a component that adds all properties to the props context and afterward evaluates the renderer.
+Create a component
 
+:[key]: (mixed) The public API of your component: Lazy evaluated props that will be available inside the current component's scope under the context ``props`` (is iterable)
+:@private.[key]: (mixed) Can only be set inside the root component declaration: Lazy evaluated private props that will be available inside the current component's scope under the context ``private`` (is not iterable / is only a proxy)
 :renderer: (mixed, **required**) The value which gets rendered
+
+.. note:: The context ``props`` and ``private`` is only available in the components scope
+   The component's scope will be available inside the `renderer` and `@private` and will extend inwards until inside another component's renderer
+   That means inside `@private` it's even allowed to reference another private prop (be carefully of circular references, though!)
+   But normal props are not inside the component's scope and thus cannot reference each other or ``private``
 
 Example::
 
-	prototype(Vendor.Site:Component) < prototype(Neos.Fusion:Component) {
-		title = 'Hello World'
-		titleTagName = 'h1'
-		description = 'Description of the Neos World'
-		bold = false
+  prototype(Vendor.Site:Component) < prototype(Neos.Fusion:Component) {
+      title = 'Hello World'
+      titleTagName = 'h1'
+      bold = false
 
-		renderer = Neos.Fusion:Tag {
-			attributes.class = Neos.Fusion:DataStructure {
-				component = 'component'
-				bold = ${props.bold ? 'component--bold' : false}
-			}
-			content = Neos.Fusion:Join {
-				headline = Neos.Fusion:Tag {
-					tagName = ${props.titleTagName}
-					content = ${props.title}
-				}
+      @private {
+          computedTitle = ${String.toLowercase(props.title)}
+          funnyTitle = Neos.Fusion:Value {
+              value = ${props.titleTagName + " " + private.computedTitle}
+          }
+      }
 
-				description = Neos.Fusion:Tag {
-						content = ${props.description}
-				}
-			}
-		}
-	}
+      renderer = Neos.Fusion:Tag {
+          attributes.class {
+              component = 'component'
+              bold = ${props.bold && 'component--bold'}
+          }
+          content = Neos.Fusion:Join {
+              headline = Neos.Fusion:Tag {
+                  tagName = ${props.titleTagName}
+                  content = ${private.funnyTitle}
+              }
+              // nestedComponentScope = Neos.Fusion:Component {
+              //   prop1 = ${props.title} // works
+              //   renderer = ${props.title} // doest work!
+              // }
+  			}
+      }
+  }
 
 .. _Neos_Fusion__Fragment:
 
@@ -1029,8 +1042,7 @@ Neos.Neos:ContentComponent
 --------------------------
 
 Base type to render component based content-nodes, extends :ref:`Neos_Fusion__Component`.
-
-:renderer: (mixed, **required**) The value which gets rendered
+Features the same API as :ref:`Neos_Fusion__Component`, but it adds content element wrapping, so the node is correctly detected by the Neos.Ui
 
 
 .. _Neos_Neos__Editable:

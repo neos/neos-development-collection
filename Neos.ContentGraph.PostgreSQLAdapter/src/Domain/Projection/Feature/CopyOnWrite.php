@@ -31,7 +31,7 @@ trait CopyOnWrite
      * @throws \Throwable
      */
     public function copyOnWrite(
-        ContentStreamId $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamId,
         NodeRecord $originNode,
         callable $preprocessor
     ): NodeRelationAnchorPoint {
@@ -46,13 +46,13 @@ trait CopyOnWrite
             $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             $this->reassignIngoingHierarchyRelations(
-                $originContentStreamIdentifier,
+                $originContentStreamId,
                 $originNode->relationAnchorPoint,
                 $copiedNodeRelationAnchorPoint
             );
 
             $this->reassignOutgoingHierarchyRelations(
-                $originContentStreamIdentifier,
+                $originContentStreamId,
                 $originNode->relationAnchorPoint,
                 $copiedNodeRelationAnchorPoint
             );
@@ -76,13 +76,13 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function reassignIngoingHierarchyRelations(
-        ContentStreamId $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamId,
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingHierarchyHyperrelationRecords(
-                $originContentStreamIdentifier,
+                $originContentStreamId,
                 $originRelationAnchorPoint
             ) as $ingoingHierarchyRelation
         ) {
@@ -99,13 +99,13 @@ trait CopyOnWrite
      * @throws \Doctrine\DBAL\Exception
      */
     private function reassignOutgoingHierarchyRelations(
-        ContentStreamId $originContentStreamIdentifier,
+        ContentStreamId $originContentStreamId,
         NodeRelationAnchorPoint $originRelationAnchorPoint,
         NodeRelationAnchorPoint $targetRelationAnchorPoint
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findOutgoingHierarchyHyperrelationRecords(
-                $originContentStreamIdentifier,
+                $originContentStreamId,
                 $originRelationAnchorPoint
             ) as $outgoingHierarchyRelation
         ) {

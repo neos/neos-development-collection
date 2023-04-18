@@ -65,7 +65,7 @@ class ParentOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIds = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             /* @var $contextNode Node */
             $parentNode = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
@@ -74,9 +74,9 @@ class ParentOperation extends AbstractOperation
                 continue;
             }
 
-            if (!isset($outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId])) {
+            if (!isset($outputNodeAggregateIds[$parentNode->nodeAggregateId->value])) {
                 $output[] = $parentNode;
-                $outputNodeAggregateIdentifiers[(string)$parentNode->nodeAggregateId] = true;
+                $outputNodeAggregateIds[$parentNode->nodeAggregateId->value] = true;
             }
         }
 

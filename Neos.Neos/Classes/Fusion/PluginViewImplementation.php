@@ -26,6 +26,7 @@ use Neos\Neos\Service\PluginService;
 
 /**
  * A Fusion PluginView.
+ * @deprecated will be removed with Neos 9
  */
 class PluginViewImplementation extends PluginImplementation
 {

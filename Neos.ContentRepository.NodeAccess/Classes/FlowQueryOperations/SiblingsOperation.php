@@ -65,10 +65,10 @@ class SiblingsOperation extends AbstractOperation
     public function evaluate(FlowQuery $flowQuery, array $arguments): void
     {
         $output = [];
-        $outputNodeAggregateIdentifiers = [];
+        $outputNodeAggregateIds = [];
         foreach ($flowQuery->getContext() as $contextNode) {
             /** @var Node $contextNode */
-            $outputNodeAggregateIdentifiers[(string)$contextNode->nodeAggregateId] = true;
+            $outputNodeAggregateIds[$contextNode->nodeAggregateId->value] = true;
         }
 
         foreach ($flowQuery->getContext() as $contextNode) {
@@ -81,11 +81,11 @@ class SiblingsOperation extends AbstractOperation
             }
 
             foreach (
-                $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::all()) as $childNode
+                $subgraph->findChildNodes($parentNode->nodeAggregateId, FindChildNodesFilter::create()) as $childNode
             ) {
-                if (!isset($outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId])) {
+                if (!isset($outputNodeAggregateIds[$childNode->nodeAggregateId->value])) {
                     $output[] = $childNode;
-                    $outputNodeAggregateIdentifiers[(string)$childNode->nodeAggregateId] = true;
+                    $outputNodeAggregateIds[$childNode->nodeAggregateId->value] = true;
                 }
             }
         }

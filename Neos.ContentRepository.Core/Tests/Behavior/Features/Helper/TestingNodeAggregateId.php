@@ -30,11 +30,6 @@ final class TestingNodeAggregateId
         return new self($string);
     }
 
-    public function getValue(): string
-    {
-        return $this->value;
-    }
-
     public static function nonExistent(): self
     {
         return new self(self::NON_EXISTENT);

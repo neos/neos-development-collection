@@ -76,7 +76,7 @@ trait CurrentSubgraphTrait
         $workspaceName = WorkspaceName::fromString($workspaceName);
         $workspace = $this->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace === null) {
-            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
+            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName->value), 1548149355);
         }
         $this->contentStreamId = $workspace->currentContentStreamId;
         $this->dimensionSpacePoint = DimensionSpacePoint::fromJsonString($dimensionSpacePoint);

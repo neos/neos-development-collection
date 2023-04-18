@@ -1,0 +1,332 @@
+`8.0.8 (2023-02-23) <https://github.com/neos/neos-development-collection/releases/tag/8.0.8>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Adjust allowed workspaces list <https://github.com/neos/neos-development-collection/pull/4002>`_
+---------------------------------------------------------------------------------------------------------
+
+resolved: `#4001 <https://github.com/neos/neos-development-collection/issues/4001>`_
+
+**Review instructions**
+I adjusted the function for the base workspace options list so that if an excluded workspace is set, all of its child workspaces cannot be shown as well. 
+The query should check for each workspace if the excluded workspace is one of its base workspaces.
+If the excluded workspace is one of its base workspaces, the workspace will not be shown in the options. 
+
+For testing: This change could influence the Edit-view and the New-view of the workspace module. 
+
+I am unsure if I should rename the variable $excludedWorkspace or if I should add a new variable $excludeChildWorkspaces to the method.
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Use `position` from inspector config for `showInCreationDialog` properties <https://github.com/neos/neos-development-collection/pull/3992>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+Hi there,
+
+this is a small fix regarding the behavior of the ``CreationDialogPostprocessor`` (The related issue has been opened over at ``Neos.Neos.Ui``: https://github.com/neos/neos-ui/issues/3280).
+
+Currently, the sorting position within the node creation dialog of a property with ``showInCreationDialog: true`` is read from a supposed ``position`` configuration key at the top level of the property configuration. Such a key, however, does not exist. The sorting position for inspector properties is set at the ``ui.inspector.position`` path within the property configuration.
+
+This PR makes sure that the sorting position is read from ``ui.inspector.position``, so properties in the creation dialog are sorted similarly to their inspector counterparts.
+
+**How to verify**
+
+For a reproduction, please follow the instructions given here: https://github.com/neos/neos-ui/issues/3280
+
+With this PR checked out, you should see that the properties in the creation dialog are sorted in a similar fashion as their inspector counterparts. 
+
+
+* Packages: ``Neos``
+
+`BUGFIX: site list in "content" of left drawer is policy checked <https://github.com/neos/neos-development-collection/pull/4025>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+This is a backward bugfix from 8.2 branch. Details see PR https://github.com/neos/neos-development-collection/pull/3979
+
+* Packages: ``Neos``
+
+`BUGFIX: Hide publish button if the user is not allowed to publish to the live workspace <https://github.com/neos/neos-development-collection/pull/4021>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves: `#3615 <https://github.com/neos/neos-development-collection/issues/3615>`_
+
+## Description
+
+As a backend user who cannot publish changes if the base workspace is ``live``, the button should not be displayed. However, if the user publishes changes to a workspace where the base workspace is **not** ``Live``, the button will still be displayed, and changes can be published as usuall.
+
+currently
+!`image <https://user-images.githubusercontent.com/85400359/215278066-b1e22059-f131-4532-b97d-6942fc80991d.png>`_
+
+
+fixed
+!`image <https://user-images.githubusercontent.com/85400359/215278073-b98e8303-74de-43bb-b76b-1fbcbbe058cb.png>`_
+
+
+thx also to @crydotsnake  and @lorenzulrich for his solution at: https://github.com/neos/neos-development-collection/issues/3615#issuecomment-1048589311
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Don’t use legcy editor name in example <https://github.com/neos/neos-development-collection/pull/4023>`_
+-------------------------------------------------------------------------------------------------------------------
+
+When someone uses the old name the editor is still mapped correctly but the ``i18n`` labels are not properly localised.
+
+* Packages: ``Neos``
+
+`BUGFIX: make sure NotoSans font is loaded correctly <https://github.com/neos/neos-development-collection/pull/4006>`_
+----------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+**Review instructions**
+
+* Resolves: `#4005 <https://github.com/neos/neos-development-collection/issues/4005>`_ 
+
+Make sure the NotoSans font is loaded from the correct path.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add user module icon and description <https://github.com/neos/neos-development-collection/pull/4012>`_
+---------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+To see the icon and to view the description the easiest way is to set ``Neos.Neos.modules.user.hideInMenu`` to ``false``.
+Then the module shows up in the modules list with its icon and when hovering the title the description is shown.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Correctly handle empty property elements in node import <https://github.com/neos/neos-development-collection/pull/3553>`_
+----------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Made sure that properties with an empty value are actually set during the import.
+
+**How I did it**
+
+``$reader->isEmptyElement`` seems to only work for self-closing tags (for example, see ``relatedDocuments`` in the tests), but not for tags with empty content (for example, see ``subpageLayout`` in the tests). To work around this, also test for ``isset($properties[$currentProperty])`` when matching a suitable ``END_ELEMENT``.
+
+**How to verify it**
+
+Import a ``Sites.xml`` with empty properties and run ``node:repair``. There should be no missing default values.
+
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Skip constraints of abstract nodetypes in schema generation <https://github.com/neos/neos-development-collection/pull/3563>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+**What I did**
+
+Don't generate constraints for mixin nodetypes as those are never queried by the ui.
+Previously each abstract nodetype without defined constraints had every other nodetype set as constraint with a value of true.
+Therefore it would have even allowed any other nodetype as child.
+
+This change can reduce the size of the nodetype schema quite a lot. In a large project with ~900 types the size of the schema was reduced from 18mb to 12mb. The generation of the schema got twice as fast from 15s to 8s.
+
+This change shouldn't cause any problem as the ui uses the non abstract nodetypes and their constraints are already the combination of their own constraints and inherited constraints from their supertypes.
+
+* Resolves: `#1098 <https://github.com/neos/neos-development-collection/issues/1098>`_ 
+
+**How I did it**
+
+The ``NodeTypeSchemaBuilder`` already skips generating the configuration for abstract types. This patch also skips the generation of the constraint list for abstract nodetypes.
+
+**How to verify it**
+
+1. Open a page in the Neos backend and inspect the result of the ``neos/schema/node-type?version=xyz`` request.
+2. Check that the constraints in the resulting JSON object don't contain any abstract nodetypes.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Display flash messages in Fusion based backend modules <https://github.com/neos/neos-development-collection/pull/3999>`_
+---------------------------------------------------------------------------------------------------------------------------------
+
+Previously flash messages were not displayed in fusion based backend modules because the rendering was implemented in the BackendSubModule. This layout which was used by all BackendSubModules which had to use the same or a cloned layout.
+
+This change moves the rendering to the template of the backend module controller which renders around all modules. This makes sense because first this is not a layout task at all and second it makes sense to always render flash messages in the backend.
+
+Resolves. `#3998 <https://github.com/neos/neos-development-collection/issues/3998>`_
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix User CLI commands <https://github.com/neos/neos-development-collection/pull/3953>`_
+------------------------------------------------------------------------------------------------
+
+This fixes a regression that was introduced with `#3707 <https://github.com/neos/neos-development-collection/issues/3707>``_and led to exceptions when interacting with the ``UserService` via CLI.
+
+## Background:
+
+The ``UserService::destroyActiveSessionsForUser()`` method invoked methods ``getId()`` and ``destroy()`` on Sessions even if they weren't started which leads to an ``SessionNotStartedException``.
+This change checks whether sessions are started first.
+
+* Fixes: `#3952 <https://github.com/neos/neos-development-collection/issues/3952>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Capture exceptions when creating new user or updating password <https://github.com/neos/neos-development-collection/pull/3918>`_
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+This PR replaces #3901.
+
+**Upgrade instructions**
+
+Creating a user or changing the password will no longer throw an exception with a 500 error page but instead show the error in a flash message. This is done by wrapping ``UserService::addUser()`` and ``UserService::setUserPassword()`` with a try-catch block. 
+
+
+**Review instructions**
+
+This PR changes the exception handling when creating new users or updating passwords by wrapping the used methods (``UserService::addUser()`` and ``UserService::setUserPassword()``) inside a try catch block and showing an error message (FlashMessage) if there was an exception. 
+That way it will be easier to extend Neos and add some password checks without showing a 500 error page in the Neos backend, which is currently the case with `JvMTECH.NeosHardening <https://github.com/jvm-tech/JvMTECH.NeosHardening>``_ (see jvm-``#2 <https://github.com/tech/JvMTECH.NeosHardening/issues/2>`_) and maybe others.
+
+With the adjusted code you can add checks to the password through an Aspect and simply throw an exception, if the requirements do not pass. 
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: typo in CSS property border-bottom-left-radius <https://github.com/neos/neos-development-collection/pull/3961>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+* Solves: `#3960 <https://github.com/neos/neos-development-collection/issues/3960>`_ 
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Cleanup media browser `addFlashMessageTrait` <https://github.com/neos/neos-development-collection/pull/3942>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+resolves: https://github.com/neos/neos-development-collection/issues/3898
+
+another fix for the problem, by refactoring the ``AddFlashMessageTrait`` 
+
+thanks @crydotsnake for the initial effort with https://github.com/neos/neos-development-collection/pull/3940 but it if accepted it would make your approach obsolete. (I dindt wanted to force push on your branch - thus a new pr ^^)
+
+see https://github.com/neos/neos-development-collection/pull/3940#issuecomment-1296346190 for the explanation of this fix
+
+**Upgrade instructions**
+
+**Review instructions**
+
+Create a tag with ``%`` sign and wait for the flashmessage: 
+
+!`image <https://user-images.githubusercontent.com/85400359/199476967-6a3670b7-1cd6-4b4b-9697-cd19d700a8c2.png>`_
+
+
+
+* Packages: ``Neos`` ``Media.Browser``
+
+`BUGFIX: Escape flash message titles in Backend <https://github.com/neos/neos-development-collection/pull/3949>`_
+-----------------------------------------------------------------------------------------------------------------
+
+This is a follow-up to `5d9de8de745fdd2486e1d2bf234d396692559036 <https://github.com/neos/neos-development-collection/commit/5d9de8de745fdd2486e1d2bf234d396692559036>`_ that wasn't properly upmerged to all affected branches.
+
+## Background:
+
+With Neos 7.1+ the flash message body is already escaped using ``DOMPurify.sanitize()``. With this fix this is also applied to the message title
+
+* Packages: ``Neos``
+
+`BUGFIX: Manually add dissociated asset collections to persistence manager <https://github.com/neos/neos-development-collection/pull/3947>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Formerly, when removing asset collections from an asset, the respective asset collection needed to be retained, because Doctrine would otherwise not consider it during persistence.
+
+This has been fixed by adding the dissociated asset collection manually to the persistence manager.
+
+fixes: `#2107 <https://github.com/neos/neos-development-collection/issues/2107>`_
+
+**Upgrade instructions**
+
+-None-
+
+**Review instructions**
+
+1. You'll need a Neos 7.3 setup with ``Flowpack.Media.Ui`` installed
+2. Follow the reproduction steps described in https://github.com/Flowpack/media-ui/issues/56
+3. With this fix applied, the issue should no longer appear
+
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Adding labels to PRs <https://github.com/neos/neos-development-collection/pull/4045>`_
+---------------------------------------------------------------------------------------------
+
+With this task, we add automatically labels to the PRs. That makes the maintaining easier, as we did that manually all the time.
+
+*What I did*
+We always add the target branch as label, so we see directly which version the PR targets. And if the Commit message is following our rules, we also add the bugfix, task or feature label.
+
+*How I did it*
+I use the runner from https://github.com/actions-ecosystem They use node 12 which leads to a warning as actions are running node 16 but an issue is created and it runs anyways.
+
+*How to verify it*
+Checkout how it works in the neos-ui.
+https://github.com/neos/neos-ui/pull/3387
+
+
+* Packages: ``.github``
+
+`TASK: Remove JS debug message from UserManagement <https://github.com/neos/neos-development-collection/pull/4010>`_
+--------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos``
+
+`TASK: Replace TYPO3 with Neos in setting example <https://github.com/neos/neos-development-collection/pull/4009>`_
+-------------------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Media``
+
+`TASK: Add PHP 8.1 & 8.2 to CI build <https://github.com/neos/neos-development-collection/pull/3982>`_
+------------------------------------------------------------------------------------------------------
+
+
+
+* Packages: ``Neos`` ``.github``
+
+`DOCS: Add reference documentation for inspector views <https://github.com/neos/neos-development-collection/pull/3990>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Hi there,
+
+this PR adds a full reference documentation for every built-in inspector view. Documentation for the ``ui.inspector.views`` key has also been added to the "NodeType Definition Reference".
+
+I targeted 7.3, because I was unsure about how to treat documentation in regards to our LTS promises, and thought it makes sense to have the documentation available for all current Neos versions, because it works for all of them. It likely works for earlier versions as well.
+
+## TODOS
+
+- [x] Add reference documentation for ``Neos.Neos/Inspector/Views/Data/ColumnView``
+- [x] Add reference documentation for ``Neos.Neos/Inspector/Views/Data/TableView``
+- [x] Add reference documentation for ``Neos.Neos/Inspector/Views/Data/TimeSeriesView``
+- [x] Add reference documentation for ``Neos.Neos/Inspector/Views/NodeInfoView``
+- [x] Document inspector views in "NodeType Definition Reference"
+
+* Packages: ``Neos``
+
+`DOCS: Add missing colons in code examples throughout property editor reference <https://github.com/neos/neos-development-collection/pull/3988>`_
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
+I noticed upon copy-pasting some of the examples in the property editor reference, that colons were missing, so that the pasted code broke my configuration.
+
+This PR fixes all occasions of such missing colons in the property editor reference.
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.7...8.0.8>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

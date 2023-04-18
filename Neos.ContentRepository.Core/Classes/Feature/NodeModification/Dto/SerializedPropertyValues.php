@@ -14,9 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyScope;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
@@ -33,11 +30,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<string,?SerializedPropertyValue>
-     */
-    private array $values;
-
-    /**
      * @var \ArrayIterator<string,?SerializedPropertyValue>
      */
     protected \ArrayIterator $iterator;
@@ -45,9 +37,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     /**
      * @param array<string,?SerializedPropertyValue> $values
      */
-    private function __construct(array $values)
-    {
-        $this->values = $values;
+    private function __construct(
+        public readonly array $values
+    ) {
         $this->iterator = new \ArrayIterator($this->values);
     }
 
@@ -58,6 +50,9 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         $values = [];
         foreach ($propertyValues as $propertyName => $propertyValue) {
+            if (!is_string($propertyName)) {
+                throw new \InvalidArgumentException(sprintf('Invalid property name. Expected string, got: %s', get_debug_type($propertyName)), 1681326239);
+            }
             if ($propertyValue === null) {
                 // this case means we want to un-set a property.
                 $values[$propertyName] = null;
@@ -66,11 +61,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
             } elseif ($propertyValue instanceof SerializedPropertyValue) {
                 $values[$propertyName] = $propertyValue;
             } else {
-                throw new \InvalidArgumentException(sprintf(
-                    'Invalid property value. Expected instance of %s, got: %s',
-                    SerializedPropertyValue::class,
-                    is_object($propertyValue) ? get_class($propertyValue) : gettype($propertyValue)
-                ), 1546524480);
+                throw new \InvalidArgumentException(sprintf('Invalid property value. Expected instance of %s, got: %s', SerializedPropertyValue::class, get_debug_type($propertyValue)), 1546524480);
             }
         }
 
@@ -146,19 +137,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
 
     public function getProperty(string $propertyName): ?SerializedPropertyValue
     {
-        if (!isset($this->values[$propertyName])) {
-            return null;
-        }
-
-        return $this->values[$propertyName];
-    }
-
-    /**
-     * @return array<string,?SerializedPropertyValue>
-     */
-    public function getValues(): array
-    {
-        return $this->values;
+        return $this->values[$propertyName] ?? null;
     }
 
     /**
@@ -181,7 +160,7 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     {
         $values = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $values[$propertyName] = $propertyValue?->getValue();
+            $values[$propertyName] = $propertyValue?->value;
         }
 
         return $values;

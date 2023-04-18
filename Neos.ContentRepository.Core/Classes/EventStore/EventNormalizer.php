@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
@@ -32,9 +33,13 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
 use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventType;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 
 /**
  * Central authority to convert Content Repository domain events to Event Store EventData and EventType, vice versa.
@@ -83,13 +88,18 @@ final class EventNormalizer
             NodeSpecializationVariantWasCreated::class,
             RootNodeAggregateWithNodeWasCreated::class,
             RootWorkspaceWasCreated::class,
+            RootNodeAggregateDimensionsWereUpdated::class,
             WorkspaceRebaseFailed::class,
             WorkspaceWasCreated::class,
+            WorkspaceWasRenamed::class,
             WorkspaceWasDiscarded::class,
             WorkspaceWasPartiallyDiscarded::class,
             WorkspaceWasPartiallyPublished::class,
             WorkspaceWasPublished::class,
-            WorkspaceWasRebased::class
+            WorkspaceWasRebased::class,
+            WorkspaceWasRemoved::class,
+            WorkspaceOwnerWasChanged::class,
+            WorkspaceBaseWorkspaceWasChanged::class,
         ];
 
         foreach ($supportedEventClassNames as $fullEventClassName) {

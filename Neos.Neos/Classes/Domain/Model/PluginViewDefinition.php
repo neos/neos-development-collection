@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
  * A plugin view definition
  *
  * @api
+ * @deprecated will be removed with Neos 9
  */
 class PluginViewDefinition
 {

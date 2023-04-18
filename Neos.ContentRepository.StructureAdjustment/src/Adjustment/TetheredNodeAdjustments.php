@@ -79,7 +79,7 @@ class TetheredNodeAdjustments
                         yield StructureAdjustment::createForNode(
                             $node,
                             StructureAdjustment::TETHERED_NODE_MISSING,
-                            'The tethered child node "' . $tetheredNodeName . '" is missing.',
+                            'The tethered child node "' . $tetheredNodeName->value . '" is missing.',
                             function () use ($nodeAggregate, $node, $tetheredNodeName, $expectedTetheredNodeType) {
                                 $events = $this->createEventsForMissingTetheredNode(
                                     $nodeAggregate,
@@ -96,7 +96,7 @@ class TetheredNodeAdjustments
                                 return new EventsToPublish(
                                     $streamName->getEventStreamName(),
                                     $events,
-                                    ExpectedVersion::ANY()
+                                        ExpectedVersion::ANY()
                                 );
                             }
                         );
@@ -114,13 +114,13 @@ class TetheredNodeAdjustments
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
                 /* @var $tetheredNodeAggregate NodeAggregate */
-                if (!isset($expectedTetheredNodes[(string)$tetheredNodeAggregate->nodeName])) {
+                if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
                         $tetheredNodeAggregate,
                         StructureAdjustment::DISALLOWED_TETHERED_NODE,
                         'The tethered child node "'
-                            . $tetheredNodeAggregate->nodeName . '" should be removed.',
+                            . $tetheredNodeAggregate->nodeName->value . '" should be removed.',
                         function () use ($tetheredNodeAggregate) {
                             return $this->removeNodeAggregate($tetheredNodeAggregate);
                         }
@@ -137,13 +137,13 @@ class TetheredNodeAdjustments
                         $node->originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::all());
+                    $childNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::create());
 
                     /** is indexed by node name, and the value is the tethered node itself */
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
-                            $actualTetheredChildNodes[(string)$childNode->nodeName] = $childNode;
+                            $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
                         }
                     }
 
@@ -190,11 +190,11 @@ class TetheredNodeAdjustments
      */
     private function ensureNodeIsOfType(Node $node, NodeType $expectedNodeType): \Generator
     {
-        if ($node->nodeTypeName->getValue() !== $expectedNodeType->getName()) {
+        if ($node->nodeTypeName->value !== $expectedNodeType->name->value) {
             yield StructureAdjustment::createForNode(
                 $node,
                 StructureAdjustment::TETHERED_NODE_TYPE_WRONG,
-                'should be of type "' . $expectedNodeType . '", but was "' . $node->nodeTypeName->getValue() . '".'
+                'should be of type "' . $expectedNodeType->name->value . '", but was "' . $node->nodeTypeName->value . '".'
             );
         }
     }
@@ -216,7 +216,7 @@ class TetheredNodeAdjustments
      * @param array<int,string> $expectedNodeOrdering
      */
     private function reorderNodes(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         Node $parentNode,
         array $actualTetheredChildNodes,
         array $expectedNodeOrdering
@@ -233,7 +233,7 @@ class TetheredNodeAdjustments
             $succeedingNode = $actualTetheredChildNodes[$succeedingSiblingNodeName];
 
             $events[] = new NodeAggregateWasMoved(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $nodeToMove->nodeAggregateId,
                 OriginNodeMoveMappings::fromArray([
                     new OriginNodeMoveMapping(
@@ -260,7 +260,7 @@ class TetheredNodeAdjustments
             $succeedingSiblingNodeName = $nodeNameToMove;
         }
 
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamIdentifier);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
         return new EventsToPublish(
             $streamName->getEventStreamName(),
             Events::fromArray($events),

@@ -14,36 +14,33 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Frontend;
 
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentSubgraph;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreesFilter;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\InMemoryCache;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeShortcutResolver;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
-use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
-use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\View\FusionView;
 
@@ -148,7 +145,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph, $contentRepository);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
@@ -224,7 +221,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
 
-        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph, $contentRepository);
+        $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
@@ -254,26 +251,25 @@ class NodeController extends ActionController
     protected function overrideViewVariablesFromInternalArguments()
     {
         if (($nodeContextPath = $this->request->getInternalArgument('__nodeContextPath')) !== null) {
-            // @phpstan-ignore-next-line
-            $node = $this->propertyMapper->convert((string)$nodeContextPath, Node::class);
+            assert(is_string($nodeContextPath));
+            $node = $this->propertyMapper->convert($nodeContextPath, Node::class);
             if (!$node instanceof Node) {
                 throw new NodeNotFoundException(sprintf(
                     'The node with context path "%s" could not be resolved',
-                    // @phpstan-ignore-next-line
-                    (string)$nodeContextPath
+                    $nodeContextPath
                 ), 1437051934);
             }
             $this->view->assign('value', $node);
         }
 
         if (($affectedNodeContextPath = $this->request->getInternalArgument('__affectedNodeContextPath')) !== null) {
-            // @phpstan-ignore-next-line
-            $this->response->setHttpHeader('X-Neos-AffectedNodePath', (string)$affectedNodeContextPath);
+            assert(is_string($affectedNodeContextPath));
+            $this->response->setHttpHeader('X-Neos-AffectedNodePath', $affectedNodeContextPath);
         }
 
         if (($fusionPath = $this->request->getInternalArgument('__fusionPath')) !== null) {
-            // @phpstan-ignore-next-line
-            $this->view->setFusionPath((string)$fusionPath);
+            assert(is_string($fusionPath));
+            $this->view->setFusionPath($fusionPath);
         }
     }
 
@@ -316,31 +312,28 @@ class NodeController extends ActionController
     }
 
     private function fillCacheWithContentNodes(
-        NodeAggregateId $nodeAggregateIdentifier,
+        NodeAggregateId $nodeAggregateId,
         ContentSubgraphInterface $subgraph,
-        ContentRepository $contentRepository
     ): void {
-        if (!$subgraph instanceof ContentSubgraph) {
+        if (!$subgraph instanceof ContentSubgraphWithRuntimeCaches) {
             // wrong subgraph implementation
             return;
         }
         $inMemoryCache = $subgraph->inMemoryCache;
 
-        $subtree = $subgraph->findSubtrees(
-            NodeAggregateIds::fromArray([$nodeAggregateIdentifier]),
-            FindSubtreesFilter::nodeTypeConstraints('!Neos.Neos:Document')
+        $subtree = $subgraph->findSubtree(
+            $nodeAggregateId,
+            FindSubtreeFilter::nodeTypeConstraints('!Neos.Neos:Document')
                 ->withMaximumLevels(20)
-        )->first();
-        if (is_null($subtree)) {
+        );
+        if ($subtree === null) {
             return;
         }
-
         $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $currentDocumentNode = $subtree->node;
 
-        $nodePathOfDocumentNode = $subgraph->findNodePath($currentDocumentNode->nodeAggregateId);
-
+        $nodePathOfDocumentNode = $subgraph->retrieveNodePath($currentDocumentNode->nodeAggregateId);
         $nodePathCache->add($currentDocumentNode->nodeAggregateId, $nodePathOfDocumentNode);
 
         foreach ($subtree->children as $childSubtree) {
@@ -391,12 +384,11 @@ class NodeController extends ActionController
             $childNode = $childSubtree->node;
             $allChildNodes[] = $childNode;
         }
-
         // TODO Explain why this is safe (Content can not contain other documents)
         $allChildNodesByNodeIdentifierCache->add(
             $node->nodeAggregateId,
-            NodeTypeConstraintsWithSubNodeTypes::allowAll(),
-            $allChildNodes
+            null,
+            Nodes::fromArray($allChildNodes)
         );
     }
 }

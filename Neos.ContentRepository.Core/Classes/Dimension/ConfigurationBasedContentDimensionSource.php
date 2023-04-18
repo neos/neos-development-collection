@@ -180,7 +180,7 @@ final class ConfigurationBasedContentDimensionSource implements ContentDimension
             $this->initializeDimensions();
         }
 
-        return $this->contentDimensions[(string)$dimensionId] ?? null;
+        return $this->contentDimensions[$dimensionId->value] ?? null;
     }
 
     /**

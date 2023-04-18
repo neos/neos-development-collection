@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\SharedModel\Node;
 /**
  * @api
  */
-final class PropertyName implements \JsonSerializable, \Stringable
+final class PropertyName implements \JsonSerializable
 {
     private function __construct(
         public readonly string $value
@@ -33,11 +33,6 @@ final class PropertyName implements \JsonSerializable, \Stringable
     }
 
     public function jsonSerialize(): string
-    {
-        return $this->value;
-    }
-
-    public function __toString(): string
     {
         return $this->value;
     }

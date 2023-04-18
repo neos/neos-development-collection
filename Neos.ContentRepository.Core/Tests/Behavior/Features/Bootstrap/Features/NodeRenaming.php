@@ -31,8 +31,6 @@ trait NodeRenaming
 
     abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
-    abstract protected function getCurrentUserId(): ?UserId;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
@@ -47,7 +45,7 @@ trait NodeRenaming
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
             assert($subgraph instanceof ContentSubgraphInterface);
             $node = $subgraph->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
-            Assert::assertEquals($nodeName, (string)$node->nodeName, 'Node Names do not match in adapter ' . $adapterName);
+            Assert::assertEquals($nodeName, $node->nodeName->value, 'Node Names do not match in adapter ' . $adapterName);
         }
     }
 }

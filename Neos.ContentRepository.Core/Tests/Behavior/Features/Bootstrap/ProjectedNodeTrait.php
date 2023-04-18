@@ -15,10 +15,10 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingsFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencedNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencingNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingsFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -101,9 +101,9 @@ trait ProjectedNodeTrait
             );
             Assert::assertNotNull(
                 $currentNode,
-                'Node with aggregate id "' . $nodeDiscriminator->getNodeAggregateId()
-                . '" and originating in dimension space point "' . $nodeDiscriminator->getOriginDimensionSpacePoint()
-                . '" was not found in content stream "' . $nodeDiscriminator->getContentStreamId() . '"'
+                'Node with aggregate id "' . $nodeDiscriminator->getNodeAggregateId()->value
+                . '" and originating in dimension space point "' . $nodeDiscriminator->getOriginDimensionSpacePoint()->toJson()
+                . '" was not found in content stream "' . $nodeDiscriminator->getContentStreamId()->value . '"'
                 . '" in adapter "' . $adapterName . '"'
             );
 
@@ -124,7 +124,7 @@ trait ProjectedNodeTrait
         $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodesFromContentSubgraphs(function (ContentSubgraphInterface $subgraph, string $adapterName) use ($nodeAggregateId, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->dimensionSpacePoint->toJson() . '@' . $this->contentStreamId->value . '" and adapter "' . $adapterName . '"');
             $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator) . ' in adapter "' . $adapterName . '"');
             return $currentNode;
@@ -143,8 +143,8 @@ trait ProjectedNodeTrait
             $nodeByAggregateId = $subgraph->findNodeById($nodeAggregateId);
             if (!is_null($nodeByAggregateId)) {
                 Assert::fail(
-                    'A node was found by node aggregate id "' . $nodeAggregateId
-                    . '" in content subgraph {' . $this->dimensionSpacePoint . ',' . $this->contentStreamId
+                    'A node was found by node aggregate id "' . $nodeAggregateId->value
+                    . '" in content subgraph {' . $this->dimensionSpacePoint->toJson() . ',' . $this->contentStreamId->value
                     . '} and adapter "' . $adapterName . '"'
                 );
             }
@@ -167,7 +167,7 @@ trait ProjectedNodeTrait
         $expectedDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodesFromContentSubgraphs(function (ContentSubgraphInterface $subgraph, string $adapterName) use ($nodePath, $expectedDiscriminator) {
             $currentNode = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
+            Assert::assertNotNull($currentNode, 'No node could be found by node path "' . $nodePath->value . '" in content subgraph "' . $this->dimensionSpacePoint->toJson() . '@' . $this->contentStreamId->value . '" and adapter "' . $adapterName . '"');
             $actualDiscriminator = NodeDiscriminator::fromNode($currentNode);
             Assert::assertTrue($expectedDiscriminator->equals($actualDiscriminator), 'Node discriminators do not match. Expected was ' . json_encode($expectedDiscriminator) . ' , given was ' . json_encode($actualDiscriminator) . ' in adapter "' . $adapterName . '"');
             return $currentNode;
@@ -187,7 +187,7 @@ trait ProjectedNodeTrait
         $nodePath = NodePath::fromString($serializedNodePath);
         foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
             $nodeByPath = $subgraph->findNodeByPath($nodePath, $this->getRootNodeAggregateId());
-            Assert::assertNull($nodeByPath, 'A node was found by node path "' . $nodePath . '" in content subgraph "' . $this->dimensionSpacePoint . '@' . $this->contentStreamId . '" and adapter "' . $adapterName . '"');
+            Assert::assertNull($nodeByPath, 'A node was found by node path "' . $nodePath->value . '" in content subgraph "' . $this->dimensionSpacePoint->toJson() . '@' . $this->contentStreamId->value . '" and adapter "' . $adapterName . '"');
         }
     }
 
@@ -259,7 +259,7 @@ trait ProjectedNodeTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedNodeTypeName) {
             $actualNodeTypeName = $currentNode->nodeTypeName;
-            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName .'" does not match expected "' . $expectedNodeTypeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName->value .'" does not match expected "' . $expectedNodeTypeName->value . '" in adapter "' . $adapterName . '"');
         });
     }
 
@@ -272,7 +272,7 @@ trait ProjectedNodeTrait
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedNodeName) {
             $actualNodeName = $currentNode->nodeName;
-            Assert::assertSame((string)$expectedNodeName, (string)$actualNodeName, 'Actual node name "' . $actualNodeName .'" does not match expected "' . $expectedNodeName . '" in adapter "' . $adapterName . '"');
+            Assert::assertSame($expectedNodeName->value, $actualNodeName->value, 'Actual node name "' . $actualNodeName->value .'" does not match expected "' . $expectedNodeName->value . '" in adapter "' . $adapterName . '"');
         });
     }
 
@@ -356,7 +356,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedReferences) {
             $actualReferences = $this->getCurrentSubgraphs()[$adapterName]
-                ->findReferencedNodes($currentNode->nodeAggregateId, FindReferencedNodesFilter::all());
+                ->findReferences($currentNode->nodeAggregateId, FindReferencesFilter::create());
 
             $this->assertReferencesMatch($expectedReferences, $actualReferences, $adapterName);
         });
@@ -370,7 +370,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $references = $this->getCurrentSubgraphs()[$adapterName]
-                ->findReferencedNodes($currentNode->nodeAggregateId, FindReferencedNodesFilter::all());
+                ->findReferences($currentNode->nodeAggregateId, FindReferencesFilter::create());
 
             Assert::assertCount(0, $references, 'No references were expected in adapter "' . $adapterName . '".');
         });
@@ -385,7 +385,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedReferences) {
             $actualReferences = $this->getCurrentSubgraphs()[$adapterName]
-                ->findReferencingNodes($currentNode->nodeAggregateId, FindReferencingNodesFilter::all());
+                ->findBackReferences($currentNode->nodeAggregateId, FindBackReferencesFilter::create());
 
             $this->assertReferencesMatch($expectedReferences, $actualReferences, $adapterName);
         });
@@ -464,7 +464,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $originNodes = $this->getCurrentSubgraphs()[$adapterName]
-                ->findReferencingNodes($currentNode->nodeAggregateId, FindReferencingNodesFilter::all());
+                ->findBackReferences($currentNode->nodeAggregateId, FindBackReferencesFilter::create());
             Assert::assertCount(0, $originNodes, 'No referencing nodes were expected in adapter "' . $adapterName . '".');
         });
     }
@@ -512,7 +512,7 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedChildNodesTable) {
             $subgraph = $this->getCurrentSubgraphs()[$adapterName];
             $actualChildNodes = [];
-            foreach ($subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::all()) as $actualChildNode) {
+            foreach ($subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::create()) as $actualChildNode) {
                 $actualChildNodes[] = $actualChildNode;
             }
 
@@ -521,7 +521,7 @@ trait ProjectedNodeTrait
             foreach ($expectedChildNodesTable->getHash() as $index => $row) {
                 $expectedNodeName = NodeName::fromString($row['Name']);
                 $actualNodeName = $actualChildNodes[$index]->nodeName;
-                Assert::assertEquals($expectedNodeName, $actualNodeName, 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: "' . $expectedNodeName . '" Actual: "' . $actualNodeName . '"');
+                Assert::assertTrue($expectedNodeName->equals($actualNodeName), 'ContentSubgraph::findChildNodes: Node name in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: "' . $expectedNodeName->value . '" Actual: "' . $actualNodeName->value . '"');
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                     $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualChildNodes[$index]);
@@ -538,7 +538,7 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $subgraph = $this->getCurrentSubgraphs()[$adapterName];
-            $actualChildNodes = $subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::all());
+            $actualChildNodes = $subgraph->findChildNodes($currentNode->nodeAggregateId, FindChildNodesFilter::create());
 
             Assert::assertEquals(0, count($actualChildNodes), 'ContentSubgraph::findChildNodes returned present child nodes in adapter "' . $adapterName . '"');
         });
@@ -553,16 +553,16 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($expectedPrecedingSiblingsTable) {
             $actualSiblings = [];
             foreach ($this->getCurrentSubgraphs()[$adapterName]
-                         ->findPrecedingSiblings($currentNode->nodeAggregateId, FindPrecedingSiblingsFilter::all())
+                         ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::create())
                      as $actualSibling
             ) {
                 $actualSiblings[] = $actualSibling;
             }
-            Assert::assertCount(count($expectedPrecedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findPrecedingSiblings: Sibling count does not match in adapter "' . $adapterName . '"');
+            Assert::assertCount(count($expectedPrecedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findPrecedingSiblingNodes: Sibling count does not match in adapter "' . $adapterName . '"');
             foreach ($expectedPrecedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                 $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualSiblings[$index]);
-                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findPrecedingSiblings: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findPrecedingSiblingNodes: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
             }
         });
     }
@@ -574,8 +574,8 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]
-                ->findPrecedingSiblings($currentNode->nodeAggregateId, FindPrecedingSiblingsFilter::all());
-            Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findPrecedingSiblings: No siblings were expected in adapter "' . $adapterName . '"');
+                ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::create());
+            Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findPrecedingSiblingNodes: No siblings were expected in adapter "' . $adapterName . '"');
         });
     }
 
@@ -589,16 +589,16 @@ trait ProjectedNodeTrait
             $actualSiblings = [];
             foreach (
                 $this->getCurrentSubgraphs()[$adapterName]
-                    ->findSucceedingSiblings($currentNode->nodeAggregateId, FindSucceedingSiblingsFilter::all())
+                    ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::create())
                 as $actualSibling
             ) {
                 $actualSiblings[] = $actualSibling;
             }
-            Assert::assertCount(count($expectedSucceedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findSucceedingSiblings: Sibling count does not match in adapter "' . $adapterName . '"');
+            Assert::assertCount(count($expectedSucceedingSiblingsTable->getHash()), $actualSiblings, 'ContentSubgraph::findSucceedingSiblingNodes: Sibling count does not match in adapter "' . $adapterName . '"');
             foreach ($expectedSucceedingSiblingsTable->getHash() as $index => $row) {
                 $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                 $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualSiblings[$index]);
-                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findSucceedingSiblings: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
+                Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findSucceedingSiblingNodes: Node discriminator in index ' . $index . ' does not match in adapter "' . $adapterName . '". Expected: ' . json_encode($expectedNodeDiscriminator) . ' Actual: ' . json_encode($actualNodeDiscriminator));
             }
         });
     }
@@ -610,8 +610,8 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) {
             $actualSiblings = $this->getCurrentSubgraphs()[$adapterName]
-                ->findSucceedingSiblings($currentNode->nodeAggregateId, FindSucceedingSiblingsFilter::all());
-            Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findSucceedingSiblings: No siblings were expected');
+                ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::create());
+            Assert::assertCount(0, $actualSiblings, 'ContentSubgraph::findSucceedingSiblingNodes: No siblings were expected');
         });
     }
 

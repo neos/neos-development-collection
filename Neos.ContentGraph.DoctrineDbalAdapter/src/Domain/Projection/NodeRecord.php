@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -40,7 +42,8 @@ final class NodeRecord
         public NodeTypeName $nodeTypeName,
         public NodeAggregateClassification $classification,
         /** Transient node name to store a node name after fetching a node with hierarchy (not always available) */
-        public ?NodeName $nodeName = null
+        public ?NodeName $nodeName,
+        public Timestamps $timestamps,
     ) {
     }
 
@@ -51,13 +54,22 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
-            'relationanchorpoint' => (string)$this->relationAnchorPoint,
-            'nodeaggregateid' => (string)$this->nodeAggregateId,
+            'relationanchorpoint' => $this->relationAnchorPoint->value,
+            'nodeaggregateid' => $this->nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
             'properties' => json_encode($this->properties),
-            'nodetypename' => (string)$this->nodeTypeName,
-            'classification' => $this->classification->value
+            'nodetypename' => $this->nodeTypeName->value,
+            'classification' => $this->classification->value,
+            'created' => $this->timestamps->created,
+            'originalcreated' => $this->timestamps->originalCreated,
+            'lastmodified' => $this->timestamps->lastModified,
+            'originallastmodified' => $this->timestamps->originalLastModified,
+        ], [
+            'created' => Types::DATETIME_IMMUTABLE,
+            'originalcreated' => Types::DATETIME_IMMUTABLE,
+            'lastmodified' => Types::DATETIME_IMMUTABLE,
+            'originallastmodified' => Types::DATETIME_IMMUTABLE,
         ]);
     }
 
@@ -70,15 +82,21 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             [
-                'nodeaggregateid' => (string)$this->nodeAggregateId,
+                'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
-                'nodetypename' => (string)$this->nodeTypeName,
-                'classification' => $this->classification->value
+                'nodetypename' => $this->nodeTypeName->value,
+                'classification' => $this->classification->value,
+                'lastmodified' => $this->timestamps->lastModified,
+                'originallastmodified' => $this->timestamps->originalLastModified,
             ],
             [
-                'relationanchorpoint' => $this->relationAnchorPoint
+                'relationanchorpoint' => $this->relationAnchorPoint->value
+            ],
+            [
+                'lastmodified' => Types::DATETIME_IMMUTABLE,
+                'originallastmodified' => Types::DATETIME_IMMUTABLE,
             ]
         );
     }
@@ -91,7 +109,7 @@ final class NodeRecord
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->delete($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }
 
@@ -109,7 +127,22 @@ final class NodeRecord
             SerializedPropertyValues::fromArray(json_decode($databaseRow['properties'], true)),
             NodeTypeName::fromString($databaseRow['nodetypename']),
             NodeAggregateClassification::from($databaseRow['classification']),
-            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null
+            isset($databaseRow['name']) ? NodeName::fromString($databaseRow['name']) : null,
+            Timestamps::create(
+                self::parseDateTimeString($databaseRow['created']),
+                self::parseDateTimeString($databaseRow['originalcreated']),
+                isset($databaseRow['lastmodified']) ? self::parseDateTimeString($databaseRow['lastmodified']) : null,
+                isset($databaseRow['originallastmodified']) ? self::parseDateTimeString($databaseRow['originallastmodified']) : null,
+            ),
         );
+    }
+
+    private static function parseDateTimeString(string $string): \DateTimeImmutable
+    {
+        $result = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $string);
+        if ($result === false) {
+            throw new \RuntimeException(sprintf('Failed to parse "%s" into a valid DateTime', $string), 1678902055);
+        }
+        return $result;
     }
 }

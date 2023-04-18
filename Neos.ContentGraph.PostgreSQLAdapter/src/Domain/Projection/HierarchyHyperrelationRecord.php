@@ -27,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 final class HierarchyHyperrelationRecord
 {
     public function __construct(
-        public ContentStreamId $contentStreamIdentifier,
+        public ContentStreamId $contentStreamId,
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public DimensionSpacePoint $dimensionSpacePoint,
         /** The child node relation anchor points, indexed by sorting position */
@@ -41,7 +41,7 @@ final class HierarchyHyperrelationRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            ContentStreamId::fromString($databaseRow['contentstreamidentifier']),
+            ContentStreamId::fromString($databaseRow['contentstreamid']),
             NodeRelationAnchorPoint::fromString($databaseRow['parentnodeanchor']),
             DimensionSpacePoint::fromJsonString($databaseRow['dimensionspacepoint']),
             NodeRelationAnchorPoints::fromDatabaseString(
@@ -59,7 +59,7 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->update(
             $tableNamePrefix . '_hierarchyhyperrelation',
             [
-                'parentnodeanchor' => (string)$newParentNodeAnchor
+                'parentnodeanchor' => $newParentNodeAnchor->value
             ],
             $this->getDatabaseIdentifier()
         );
@@ -159,9 +159,9 @@ final class HierarchyHyperrelationRecord
         $databaseConnection->insert(
             $tableNamePrefix . '_hierarchyhyperrelation',
             [
-                'contentstreamidentifier' => $this->contentStreamIdentifier,
-                'parentnodeanchor' => $this->parentNodeAnchor,
-                'dimensionspacepoint' => \json_encode($this->dimensionSpacePoint),
+                'contentstreamid' => $this->contentStreamId->value,
+                'parentnodeanchor' => $this->parentNodeAnchor->value,
+                'dimensionspacepoint' => $this->dimensionSpacePoint->toJson(),
                 'dimensionspacepointhash' => $this->dimensionSpacePoint->hash,
                 'childnodeanchors' => $this->childNodeAnchors->toDatabaseString()
             ]
@@ -182,8 +182,8 @@ final class HierarchyHyperrelationRecord
     public function getDatabaseIdentifier(): array
     {
         return [
-            'contentstreamidentifier' => (string)$this->contentStreamIdentifier,
-            'parentnodeanchor' => (string)$this->parentNodeAnchor,
+            'contentstreamid' => $this->contentStreamId->value,
+            'parentnodeanchor' => $this->parentNodeAnchor->value,
             'dimensionspacepointhash' => $this->dimensionSpacePoint->hash
         ];
     }

@@ -32,7 +32,7 @@ final class NodeRecord
 {
     public function __construct(
         public NodeRelationAnchorPoint $relationAnchorPoint,
-        public NodeAggregateId $nodeAggregateIdentifier,
+        public NodeAggregateId $nodeAggregateId,
         public OriginDimensionSpacePoint $originDimensionSpacePoint,
         public string $originDimensionSpacePointHash,
         public SerializedPropertyValues $properties,
@@ -50,7 +50,7 @@ final class NodeRecord
     {
         return new self(
             NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
-            NodeAggregateId::fromString($databaseRow['nodeaggregateidentifier']),
+            NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             OriginDimensionSpacePoint::fromJsonString($databaseRow['origindimensionspacepoint']),
             $databaseRow['origindimensionspacepointhash'],
             SerializedPropertyValues::fromJsonString($databaseRow['properties']),
@@ -66,14 +66,14 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => (string) $this->relationAnchorPoint,
-            'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+            'relationanchorpoint' => $this->relationAnchorPoint->value,
+            'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
             'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-            'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-            'nodetypename' => (string) $this->nodeTypeName,
+            'nodeaggregateid' => $this->nodeAggregateId->value,
+            'nodetypename' => $this->nodeTypeName->value,
             'classification' => $this->classification->value,
             'properties' => json_encode($this->properties),
-            'nodename' => (string) $this->nodeName
+            'nodename' => $this->nodeName?->value ?? '',
         ]);
     }
 
@@ -85,13 +85,13 @@ final class NodeRecord
         $databaseConnection->update(
             $tableNamePrefix . '_node',
             [
-                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
+                'origindimensionspacepoint' => $this->originDimensionSpacePoint->toJson(),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePoint->hash,
-                'nodeaggregateidentifier' => (string) $this->nodeAggregateIdentifier,
-                'nodetypename' => (string) $this->nodeTypeName,
+                'nodeaggregateid' => $this->nodeAggregateId->value,
+                'nodetypename' => $this->nodeTypeName->value,
                 'classification' => $this->classification->value,
                 'properties' => json_encode($this->properties),
-                'nodename' => (string) $this->nodeName,
+                'nodename' => $this->nodeName?->value ?? '',
             ],
             [
                 'relationanchorpoint' => $this->relationAnchorPoint
@@ -105,7 +105,7 @@ final class NodeRecord
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->delete($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint
+            'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }
 }

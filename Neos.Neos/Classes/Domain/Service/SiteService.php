@@ -76,15 +76,8 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-            ?? throw new \RuntimeException(
-                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                . ' Neos.Neos.sites.*.contentRepository'
-            )
-        );
         $siteServiceInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
         $siteServiceInternals->removeSiteNode($site->getNodeName());
@@ -134,7 +127,10 @@ class SiteService
             return;
         }
 
-        $site = $this->siteRepository->findOneByNodeName((string)$siteNode->nodeName);
+        if ($siteNode->nodeName === null) {
+            return;
+        }
+        $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
         if ($site === null) {
             return;
         }
@@ -166,26 +162,19 @@ class SiteService
     ): Site {
         $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
 
-        if ($this->siteRepository->findOneByNodeName($siteNodeName->jsonSerialize())) {
+        if ($this->siteRepository->findOneByNodeName($siteNodeName->value)) {
             throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
         }
 
         // @todo use node aggregate identifier instead of node name
-        $site = new Site((string)$siteNodeName);
+        $site = new Site($siteNodeName->value);
         $site->setSiteResourcesPackageKey($packageKey);
         $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $contentRepositoryIdentifier = ContentRepositoryId::fromString(
-            $site->getConfiguration()['contentRepository']
-            ?? throw new \RuntimeException(
-                'There is no content repository identifier configured in Sites configuration in Settings.yaml:'
-                . ' Neos.Neos.sites.*.contentRepository'
-            )
-        );
         $siteServiceInternals = $this->contentRepositoryRegistry->getService(
-            $contentRepositoryIdentifier,
+            $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
         $siteServiceInternals->createSiteNode($site, $nodeTypeName);

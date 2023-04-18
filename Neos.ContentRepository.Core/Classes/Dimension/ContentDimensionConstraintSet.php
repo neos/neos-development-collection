@@ -65,15 +65,15 @@ final class ContentDimensionConstraintSet implements \IteratorAggregate
 
     public function getConstraints(ContentDimensionId $dimensionId): ?ContentDimensionConstraints
     {
-        return $this->constraints[(string)$dimensionId] ?? null;
+        return $this->constraints[$dimensionId->value] ?? null;
     }
 
     public function allowsCombinationWith(
         ContentDimensionId $contentDimensionId,
         ContentDimensionValue $contentDimensionValue
     ): bool {
-        return isset($this->constraints[(string)$contentDimensionId])
-            ? $this->constraints[(string)$contentDimensionId]->allowsCombinationWith($contentDimensionValue)
+        return isset($this->constraints[$contentDimensionId->value])
+            ? $this->constraints[$contentDimensionId->value]->allowsCombinationWith($contentDimensionValue)
             : true;
     }
 }

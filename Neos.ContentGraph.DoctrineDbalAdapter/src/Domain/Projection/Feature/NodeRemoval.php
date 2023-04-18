@@ -94,7 +94,7 @@ trait NodeRemoval
                     AND h.contentstreamid IS NULL
                 ',
             [
-                'anchorPointForNode' => (string)$ingoingRelation->childNodeAnchor,
+                'anchorPointForNode' => $ingoingRelation->childNodeAnchor->value,
             ]
         );
     }

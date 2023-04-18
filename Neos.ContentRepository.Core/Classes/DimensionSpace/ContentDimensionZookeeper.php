@@ -42,10 +42,9 @@ final class ContentDimensionZookeeper
             $dimensionCombinations = [];
             foreach ($this->contentDimensionSource->getContentDimensionsOrderedByPriority() as $contentDimension) {
                 assert($contentDimension instanceof Dimension\ContentDimension);
-                if (empty($dimensionCombinations)) {
+                if ($dimensionCombinations === []) {
                     foreach ($contentDimension->values as $serializedValue => $dimensionValue) {
-                        // @phpstan-ignore-next-line
-                        $dimensionCombinations[] = [(string)$contentDimension->id => $dimensionValue];
+                        $dimensionCombinations[] = [$contentDimension->id->value => $dimensionValue];
                     }
                 } else {
                     $this->extendCombinationsWithDimension($dimensionCombinations, $contentDimension);
@@ -83,7 +82,7 @@ final class ContentDimensionZookeeper
                     }
                 }
                 $newDimensionCombination = $dimensionCombination;
-                $newDimensionCombination[(string)$contentDimension->id] = $currentDimensionValue;
+                $newDimensionCombination[$contentDimension->id->value] = $currentDimensionValue;
                 $currentDimensionCombinations[] = $newDimensionCombination;
             }
         }
@@ -112,7 +111,7 @@ final class ContentDimensionZookeeper
         foreach ($this->getAllowedCombinations() as $dimensionCombination) {
             $coordinates = [];
             foreach ($dimensionCombination as $contentDimensionId => $contentDimensionValue) {
-                $coordinates[$contentDimensionId] = (string)$contentDimensionValue;
+                $coordinates[$contentDimensionId] = $contentDimensionValue->value;
             }
 
             $point = DimensionSpacePoint::fromArray($coordinates);

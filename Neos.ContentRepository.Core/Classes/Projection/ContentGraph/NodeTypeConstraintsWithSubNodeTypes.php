@@ -107,11 +107,11 @@ final class NodeTypeConstraintsWithSubNodeTypes
     ): NodeTypeNames {
         $processedNodeTypeNames = [];
         foreach ($nodeTypeNames as $nodeTypeName) {
-            $processedNodeTypeNames[$nodeTypeName->getValue()] = $nodeTypeName;
-            $subNodeTypes = $nodeTypeManager->getSubNodeTypes($nodeTypeName->getValue(), true);
+            $processedNodeTypeNames[$nodeTypeName->value] = $nodeTypeName;
+            $subNodeTypes = $nodeTypeManager->getSubNodeTypes($nodeTypeName, true);
             foreach ($subNodeTypes as $subNodeType) {
                 assert($subNodeType instanceof NodeType);
-                $processedNodeTypeNames[$subNodeType->name->getValue()] = $subNodeType->name;
+                $processedNodeTypeNames[$subNodeType->name->value] = $subNodeType->name;
             }
         }
 
@@ -138,21 +138,21 @@ final class NodeTypeConstraintsWithSubNodeTypes
         return $this->isWildCardAllowed;
     }
 
-    public function __toString(): string
+    public function toFilterString(): string
     {
-        $legacyParts = [];
+        $parts = [];
         if ($this->isWildCardAllowed) {
-            $legacyParts[] = '*';
+            $parts[] = '*';
         }
 
         foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
-            $legacyParts[] = '!' . $nodeTypeName;
+            $parts[] = '!' . $nodeTypeName->value;
         }
 
         foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {
-            $legacyParts[] = (string)$nodeTypeName;
+            $parts[] = $nodeTypeName->value;
         }
 
-        return implode(',', $legacyParts);
+        return implode(',', $parts);
     }
 }

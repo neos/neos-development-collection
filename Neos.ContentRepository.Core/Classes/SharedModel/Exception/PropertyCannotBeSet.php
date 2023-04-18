@@ -30,7 +30,7 @@ final class PropertyCannotBeSet extends \DomainException
         string $configuredType
     ): self {
         return new self(
-            'Property "' . $propertyName . '" cannot be set to a value of type "' . $attemptedType
+            'Property "' . $propertyName->value . '" cannot be set to a value of type "' . $attemptedType
                 . '", must be of type "' . $configuredType . '".',
             1615466573
         );
@@ -41,8 +41,8 @@ final class PropertyCannotBeSet extends \DomainException
         NodeTypeName $nodeTypeName
     ): self {
         return new self(
-            'Property "' . $propertyName . '" cannot be set because node type "'
-                . $nodeTypeName . '" does not declare it.',
+            'Property "' . $propertyName->value . '" cannot be set because node type "'
+                . $nodeTypeName->value . '" does not declare it.',
             1615664798
         );
     }

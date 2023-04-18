@@ -62,8 +62,8 @@ class CachingHelper implements ProtectedContextAwareInterface
         foreach ($nodes as $node) {
             if ($node instanceof Node) {
                 $prefixedNodeIdentifiers[] = $prefix . '_'
-                    . $this->renderContentStreamIdentifierTag($node->subgraphIdentity->contentStreamId)
-                    . '_' . $node->nodeAggregateId;
+                    . $this->renderContentStreamIdTag($node->subgraphIdentity->contentStreamId)
+                    . '_' . $node->nodeAggregateId->value;
             } else {
                 throw new Exception(sprintf(
                     'One of the elements in array passed to this helper was not a Node, but of type: "%s".',
@@ -105,7 +105,7 @@ class CachingHelper implements ProtectedContextAwareInterface
     {
         $contentStreamTag = '';
         if ($contextNode instanceof Node) {
-            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+            $contentStreamTag = $this->renderContentStreamIdTag(
                 $contextNode->subgraphIdentity->contentStreamId
             ) . '_';
         }
@@ -148,7 +148,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $contentStreamTag = '';
 
         if ($contextNode instanceof Node) {
-            $contentStreamTag = $this->renderContentStreamIdentifierTag(
+            $contentStreamTag = $this->renderContentStreamIdTag(
                 $contextNode->subgraphIdentity->contentStreamId
             ) . '_';
         }
@@ -157,7 +157,7 @@ class CachingHelper implements ProtectedContextAwareInterface
             $nodeTypeName .= $nodeType;
         }
         if ($nodeType instanceof NodeType) {
-            $nodeTypeName .= $nodeType->name;
+            $nodeTypeName .= $nodeType->name->value;
         }
 
         if ($nodeTypeName === '') {
@@ -183,12 +183,12 @@ class CachingHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param ContentStreamId $contentStreamIdentifier
+     * @param ContentStreamId $contentStreamId
      * @return string
      */
-    private function renderContentStreamIdentifierTag(ContentStreamId $contentStreamIdentifier)
+    private function renderContentStreamIdTag(ContentStreamId $contentStreamId)
     {
-        return '%' . $contentStreamIdentifier . '%';
+        return '%' . $contentStreamId->value . '%';
     }
 
     /**
@@ -213,7 +213,7 @@ class CachingHelper implements ProtectedContextAwareInterface
         $workspaceChain = [];
         // TODO: Maybe write CTE here
         while ($currentWorkspace instanceof Workspace) {
-            $workspaceChain[(string)$currentWorkspace->workspaceName] = $currentWorkspace;
+            $workspaceChain[$currentWorkspace->workspaceName->value] = $currentWorkspace;
             $currentWorkspace = $currentWorkspace->baseWorkspaceName
                 ? $contentRepository->getWorkspaceFinder()->findOneByName($currentWorkspace->baseWorkspaceName)
                 : null;

@@ -10,8 +10,8 @@ use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ESCR\AssetUsage\AssetUsageFinder;
-use Neos\ESCR\AssetUsage\Dto\AssetUsageFilter;
+use Neos\Neos\AssetUsage\Projection\AssetUsageFinder;
+use Neos\Neos\AssetUsage\Dto\AssetUsageFilter;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetVariantInterface;
@@ -21,7 +21,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 /**
  * Processor that exports all assets and resources used in the Neos live workspace to the file system
  *
- * Note: This processor requires the packages "neos/media" and "neos/escr-asset-usage" to be installed!
+ * Note: This processor requires the packages "neos/media" and "neos/neos" to be installed!
  */
 final class AssetExportProcessor implements ProcessorInterface
 {
@@ -54,10 +54,10 @@ final class AssetExportProcessor implements ProcessorInterface
 
         foreach ($this->assetUsageFinder->findByFilter($assetFilter) as $assetUsage) {
             /** @var Asset|null $asset */
-            $asset = $this->assetRepository->findByIdentifier($assetUsage->assetIdentifier);
+            $asset = $this->assetRepository->findByIdentifier($assetUsage->assetId);
             if ($asset === null) {
                 $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, 'Skipping asset "%s" because it does not exist in the database', $assetUsage->assetIdentifier);
+                $this->dispatch(Severity::ERROR, 'Skipping asset "%s" because it does not exist in the database', $assetUsage->assetId);
                 continue;
             }
 

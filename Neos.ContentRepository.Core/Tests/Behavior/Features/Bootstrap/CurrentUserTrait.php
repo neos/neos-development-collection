@@ -13,25 +13,19 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  */
 
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
 
 /**
  * The feature trait to test projected nodes
  */
 trait CurrentUserTrait
 {
-    protected ?UserId $currentUserId = null;
-
     /**
      * @Given /^I am user identified by "([^"]*)"$/
      * @param string $userId
      */
     public function iAmUserIdentifiedBy(string $userId): void
     {
-        $this->currentUserId = UserId::fromString($userId);
-    }
-
-    public function getCurrentUserId(): ?UserId
-    {
-        return $this->currentUserId;
+        FakeUserIdProvider::setUserId(UserId::fromString($userId));
     }
 }

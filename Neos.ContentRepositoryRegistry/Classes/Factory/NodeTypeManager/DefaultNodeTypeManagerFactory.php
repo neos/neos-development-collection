@@ -18,7 +18,7 @@ class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
     {
     }
 
-    public function build(ContentRepositoryId $contentRepositoryIdentifier, array $contentRepositorySettings, array $nodeTypeManagerPreset): NodeTypeManager
+    public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
         return new NodeTypeManager(
             function() {
@@ -26,7 +26,7 @@ class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
                 return $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
             },
             $this->objectManager,
-            $nodeTypeManagerPreset['options']['fallbackNodeTypeName']
+            $options['fallbackNodeTypeName'] ?? null,
         );
     }
 }

@@ -1,4 +1,8 @@
-prototype(Neos.Fusion:Component).@class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+prototype(Neos.Fusion:Component) {
+  @class = 'Neos\\Fusion\\FusionObjects\\ComponentImplementation'
+  @sortProperties = false
+}
+
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
@@ -68,4 +72,137 @@ component.wrapperRenderer = Neos.Fusion:Component {
 
     renderer = ${props.content}
   }
+}
+
+
+prototype(Neos.Fusion:Component.Private) < prototype(Neos.Fusion:Component) {
+  a = 'Moin'
+
+  @private {
+    b = ${props.a + '!'}
+    c = Neos.Fusion:Tag {
+      content = ${props.a}
+    }
+  }
+
+  renderer = ${props.a + private.b + private.c}
+}
+
+prototype(Neos.Fusion:Component.PrivateLazy) < prototype(Neos.Fusion:Component) {
+  a = 'Moin'
+  x = Neos.Fusion:NotImplemented
+
+  @private {
+    b = ${props.a + '!'}
+    y = Neos.Fusion:NotImplemented
+  }
+
+  renderer = ${props.a + private.b}
+}
+
+prototype(Neos.Fusion:Component.PrivateSelfReferencing) < prototype(Neos.Fusion:Component) {
+  a = 'Moin'
+
+  @private {
+    b = ${props.a + '!'}
+    c = ${private.b}
+    d = Neos.Fusion:Value {
+      value = ${private.c}
+    }
+  }
+
+  renderer = ${private.c + private.d}
+}
+
+prototype(Neos.Fusion:Component.PrivateNotDefined) < prototype(Neos.Fusion:Component) {
+  @private {
+    b = true
+  }
+  renderer = ${private.nonExistant}
+}
+
+prototype(Neos.Fusion:Component.PrivateSelfReferencingInfiniteLoop) < prototype(Neos.Fusion:Component) {
+  @private {
+    b = ${private.c}
+    c = ${private.b}
+  }
+  renderer = ${private.b}
+}
+
+prototype(Neos.Fusion:Component.PrivateSelfReferencingInfiniteLoopComplex) < prototype(Neos.Fusion:Component) {
+  @private {
+    b = ${private.c}
+    c = Neos.Fusion:Value {
+      d = ${private.b}
+      value = ${this.d}
+    }
+  }
+  renderer = ${private.c}
+}
+
+prototype(Neos.Fusion:Component.PrivateCannotBeApplied) < prototype(Neos.Fusion:Component) {
+  @private {
+    b = "Hello"
+  }
+  renderer = Neos.Fusion:Join {
+    @apply.it = ${private}
+  }
+}
+
+prototype(Neos.Fusion:Component.PrivateCannotBeLooped) < prototype(Neos.Fusion:Component) {
+  @private {
+    b = "Hello"
+  }
+  renderer = ${Array.join(private)}
+}
+
+prototype(Neos.Fusion:Component.PrivateScopeIsIsolatedFromOtherPrivate) < prototype(Neos.Fusion:Component) {
+  @private {
+    outer = "Will not be reachable in inner"
+  }
+  renderer = Neos.Fusion:Component.PrivateScopeIsIsolatedFromOtherPrivate.Inner
+}
+
+# inner component used
+prototype(Neos.Fusion:Component.PrivateScopeIsIsolatedFromOtherPrivate.Inner) < prototype(Neos.Fusion:Component) {
+  @private {
+    inner = ${private.outer}
+  }
+  renderer = ${private.inner}
+}
+
+prototype(Neos.Fusion:Component.PrivateScopeIsIsolatedInRenderer) < prototype(Neos.Fusion:Component) {
+  @private {
+    outer = "Will not be reachable"
+  }
+  renderer = Neos.Fusion:Component {
+    renderer = Neos.Fusion:Component {
+      prop1 = ${private.outer}
+      renderer = ${props.prop1}
+    }
+  }
+}
+
+prototype(Neos.Fusion:Component.PrivateScopeIsReachableInProps) < prototype(Neos.Fusion:Component) {
+  @private {
+    outer = "Moin"
+  }
+  renderer = Neos.Fusion:Component {
+    prop1 = ${private.outer}
+    renderer = ${props.prop1}
+  }
+}
+
+prototype(Neos.Fusion:Component.PrivateLegacyPatternWorks) < prototype(Neos.Fusion:Component) {
+  renderer.@context.private = Neos.Fusion:DataStructure {
+    a = 'Moin'
+  }
+  renderer = Neos.Fusion:Value {
+    value = ${private.a}
+  }
+}
+
+prototype(Neos.Fusion:Component.PrivateOuterContextIsOverridden) < prototype(Neos.Fusion:Component) {
+  @context.private = 'Will not be rendered'
+  renderer = ${String.toString(private)}
 }

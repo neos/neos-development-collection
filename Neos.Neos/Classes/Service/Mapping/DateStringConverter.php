@@ -64,10 +64,10 @@ class DateStringConverter extends AbstractTypeConverter
         array $convertedChildProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ): ?string {
-        if (!$source instanceof \DateTime) {
+        if (!$source instanceof \DateTimeInterface) {
             return null;
         }
         $value = clone $source;
-        return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::W3C);
+        return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTimeInterface::W3C);
     }
 }

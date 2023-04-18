@@ -145,7 +145,7 @@ trait NodeCreation
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     protected function connectToHierarchy(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         NodeRelationAnchorPoint $parentNodeAnchor,
         NodeRelationAnchorPoint $childNodeAnchor,
         DimensionSpacePointSet $dimensionSpacePointSet,
@@ -153,7 +153,7 @@ trait NodeCreation
     ): void {
         foreach ($dimensionSpacePointSet as $dimensionSpacePoint) {
             $hierarchyRelation = $this->getProjectionHypergraph()->findHierarchyHyperrelationRecordByParentNodeAnchor(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint,
                 $parentNodeAnchor
             );
@@ -166,7 +166,7 @@ trait NodeCreation
                 );
             } else {
                 $hierarchyRelation = new HierarchyHyperrelationRecord(
-                    $contentStreamIdentifier,
+                    $contentStreamId,
                     $parentNodeAnchor,
                     $dimensionSpacePoint,
                     NodeRelationAnchorPoints::fromArray([$childNodeAnchor])
@@ -181,20 +181,20 @@ trait NodeCreation
      * @throws \Doctrine\DBAL\Driver\Exception
      */
     protected function connectToRestrictionRelations(
-        ContentStreamId $contentStreamIdentifier,
+        ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
-        NodeAggregateId $parentNodeAggregateIdentifier,
-        NodeAggregateId $affectedNodeAggregateIdentifier
+        NodeAggregateId $parentNodeAggregateId,
+        NodeAggregateId $affectedNodeAggregateId
     ): void {
         foreach (
             $this->getProjectionHypergraph()->findIngoingRestrictionRelations(
-                $contentStreamIdentifier,
+                $contentStreamId,
                 $dimensionSpacePoint,
-                $parentNodeAggregateIdentifier
+                $parentNodeAggregateId
             ) as $ingoingRestrictionRelation
         ) {
-            $ingoingRestrictionRelation->addAffectedNodeAggregateIdentifier(
-                $affectedNodeAggregateIdentifier,
+            $ingoingRestrictionRelation->addAffectedNodeAggregateId(
+                $affectedNodeAggregateId,
                 $this->getDatabaseConnection(),
                 $this->tableNamePrefix
             );

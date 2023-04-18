@@ -30,8 +30,8 @@ final class NodeAggregateDoesCurrentlyNotOccupyDimensionSpacePoint extends \Doma
         OriginDimensionSpacePoint $occupiedDimensionSpacePoint
     ): self {
         return new self(
-            'Node aggregate "' . $nodeAggregateId
-                . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint,
+            'Node aggregate "' . $nodeAggregateId->value
+                . '" does currently not occupy dimension space point ' . $occupiedDimensionSpacePoint->toJson(),
             1554902613
         );
     }

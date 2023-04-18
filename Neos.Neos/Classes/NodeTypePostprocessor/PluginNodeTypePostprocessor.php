@@ -23,6 +23,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypePostprocessorInterface;
 /**
  * This Processor updates the PluginViews NodeType with the existing
  * Plugins and it's corresponding available Views
+ *
+ * @deprecated will be removed with Neos 9
  */
 class PluginNodeTypePostprocessor implements NodeTypePostprocessorInterface
 {

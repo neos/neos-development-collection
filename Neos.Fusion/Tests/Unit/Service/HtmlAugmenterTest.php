@@ -13,7 +13,6 @@ namespace Neos\Fusion\Tests\Unit\Service;
 
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
-use Neos\Neos\Exception;
 
 /**
  * Testcase for the HTML Augmenter
@@ -59,6 +58,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['object' => $mockObject],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<div object="casted value"></div>'
             ],
 
@@ -68,6 +68,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<div class="new-class"></div>',
             ],
             [
@@ -75,6 +76,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<div class="new-class">   	' . chr(10) . '  </div>',
             ],
 
@@ -84,6 +86,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<div class="some-class">Plain Text without html</div>',
             ],
 
@@ -93,6 +96,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<p class="new-class">Simple HTML with unique root element</p>',
             ],
             [
@@ -100,6 +104,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<div class="new-class"><p>Simple HTML without</p><p> unique root element</p></div>',
             ],
             [
@@ -107,6 +112,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<div class="new-class">Plain text and simple HTML without<p> unique root element</p></div>',
             ],
             [
@@ -114,6 +120,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => 'fallback-tag',
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '   <p class="some-class">Simple HTML with unique root element in whitespace</p>   ',
             ],
             [
@@ -121,6 +128,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => 'fallback-tag',
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<fallback-tag class="some-class"><p class="some-class">Simple HTML without</p><p> unique root element</p></fallback-tag>',
             ],
             [
@@ -128,6 +136,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['type' => 'new-type'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<script type="new-type">console.log("Script tag with unique root element");</script>',
             ],
 
@@ -137,6 +146,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'new-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<root class="new-class some-class">merging attributes</root>',
             ],
             [
@@ -144,35 +154,40 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['class' => 'some-class'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<root class="some-class">similar attribute value</root>',
             ],
             [
                 'html' => '<root data-foo="">empty attribute value</root>',
-                'attributes' => ['data-bar' => null],
+                'attributes' => ['data-bar' => true],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
-                'expectedResult' => '<root data-bar data-foo="">empty attribute value</root>',
+                'allowEmpty' => true,
+                'expectedResult' => '<root data-bar data-foo>empty attribute value</root>',
             ],
             [
                 'html' => '<root data-foo="">empty attribute value, overridden</root>',
-                'attributes' => ['data-foo' => null],
+                'attributes' => ['data-foo' => true],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => false,
                 'expectedResult' => '<root data-foo="">empty attribute value, overridden</root>',
             ],
             [
                 'html' => '<root data-foo>omitted attribute value</root>',
-                'attributes' => ['data-bar' => null],
+                'attributes' => ['data-bar' => true],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<root data-bar data-foo>omitted attribute value</root>',
             ],
             [
                 'html' => '<root data-foo>omitted attribute value, overridden</root>',
-                'attributes' => ['data-foo' => ''],
+                'attributes' => ['data-foo' => true],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
-                'expectedResult' => '<root data-foo="">omitted attribute value, overridden</root>',
+                'allowEmpty' => true,
+                'expectedResult' => '<root data-foo>omitted attribute value, overridden</root>',
             ],
 
             // attribute encoding
@@ -181,13 +196,15 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-bar' => '<&"'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<p data-bar="&lt;&amp;&quot;" data-foo="&amp;">invalid characters are encoded</p>',
             ],
             [
                 'html' => '<p data-foo="&quot;&gt;&amp;">encoded entities are preserved</p>',
-                'attributes' => ['data-bar' => null],
+                'attributes' => ['data-bar' => true],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<p data-bar data-foo="&quot;&gt;&amp;">encoded entities are preserved</p>',
             ],
             [
@@ -196,6 +213,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-bar' => 'öäüß'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<p data-bar="öäüß" data-foo="öäüß">valid characters are decoded</p>',
             ],
             [
@@ -203,6 +221,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-bar' => 'öäüß🦆'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<p data-bar="öäüß🦆" data-foo="öäüß🦆">valid characters are untouched</p>',
             ],
 
@@ -212,6 +231,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-foo' => 'bar'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => ['data-foo'],
+                'allowEmpty' => true,
                 'expectedResult' => '<div data-foo="bar"><p data-foo="foo">exclusive attributes force new root element</p></div>',
             ],
             [
@@ -219,6 +239,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['dAtA-fOO' => 'bar'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => ['data-foo'],
+                'allowEmpty' => true,
                 'expectedResult' => '<div dAtA-fOO="bar"><p DaTa-Foo="foo">exclusive attributes are checked case insensitive</p></div>',
             ],
             [
@@ -226,6 +247,7 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['some-attribute' => 'value'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => ['some-attribute'],
+                'allowEmpty' => true,
                 'expectedResult' => '<div some-attribute="value"><div some-attribute>no attribute value is required to make an attribute exclusive</div></div>',
             ],
             // Escaping possible preg_replace placeholders in attributes
@@ -234,7 +256,93 @@ class HtmlAugmenterTest extends UnitTestCase
                 'attributes' => ['data-label' => 'Cost $0.00'],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
+                'allowEmpty' => true,
                 'expectedResult' => '<p data-label="Cost $0.00">Simple HTML with unique root element</p>',
+            ],
+            // Adding of empty string attributes
+            [
+                'html' => '<p>Empty attribute</p>',
+                'attributes' => ['data-att' => ''],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-att>Empty attribute</p>',
+            ],
+            // Adding of empty string attributes
+            [
+                'html' => '<p>Empty attribute</p>',
+                'attributes' => ['data-att' => ''],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p data-att="">Empty attribute</p>',
+            ],
+            // Adding of boolean attributes
+            [
+                'html' => '<p>Boolean attribute</p>',
+                'attributes' => ['data-bool' => true],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bool>Boolean attribute</p>',
+            ],
+            [
+                'html' => '<p>Boolean attribute</p>',
+                'attributes' => ['data-bool' => true],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p data-bool="">Boolean attribute</p>',
+            ],
+            [
+                'html' => '<p>Boolean attribute</p>',
+                'attributes' => ['data-bool' => false],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p>Boolean attribute</p>',
+            ],
+            [
+                'html' => '<p>Boolean attribute</p>',
+                'attributes' => ['data-bool' => false],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p>Boolean attribute</p>',
+            ],
+            // Adding of null attributes
+            [
+                'html' => '<p>Null attribute</p>',
+                'attributes' => ['data-null' => null],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p>Null attribute</p>',
+            ],
+            [
+                'html' => '<p>Null attribute</p>',
+                'attributes' => ['data-null' => null],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p>Null attribute</p>',
+            ],
+            // Adding of array attributes
+            [
+                'html' => '<p>Array attribute</p>',
+                'attributes' => ['class' => ["Hello", "world"]],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p class="Hello world">Array attribute</p>',
+            ],
+            [
+                'html' => '<p>Array attribute</p>',
+                'attributes' => ['class' => []],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p class="">Array attribute</p>',
             ]
         ];
     }
@@ -243,13 +351,6 @@ class HtmlAugmenterTest extends UnitTestCase
     {
         return [
             // invalid attributes
-            [
-                'html' => '',
-                'attributes' => ['data-foo' => []],
-                'fallbackTagName' => null,
-                'exclusiveAttributes' => null,
-                'expectedResult' => '<root>array value ignored</root>',
-            ],
             [
                 'html' => '',
                 'attributes' => ['data-foo' => (object)[]],
@@ -265,16 +366,17 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $attributes
      * @param string $fallbackTagName
      * @param string $expectedResult
+     * @param bool $allowEmpty
      * @param array $exclusiveAttributes
      * @test
      * @dataProvider addAttributesDataProvider
      */
-    public function addAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes, $expectedResult)
+    public function addAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes, $allowEmpty, $expectedResult)
     {
         if ($fallbackTagName === null) {
             $fallbackTagName = 'div';
         }
-        $actualResult = $this->htmlAugmenter->addAttributes($html, $attributes, $fallbackTagName, $exclusiveAttributes);
+        $actualResult = $this->htmlAugmenter->addAttributes($html, $attributes, $fallbackTagName, $exclusiveAttributes, $allowEmpty);
         self::assertSame($expectedResult, $actualResult);
     }
 
@@ -283,12 +385,13 @@ class HtmlAugmenterTest extends UnitTestCase
      * @param array $attributes
      * @param string $fallbackTagName
      * @param array $exclusiveAttributes
+     * @param bool $allowEmpty
      * @test
      * @dataProvider invalidAttributesDataProvider
      */
-    public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes)
+    public function invalidAttributesTests($html, array $attributes, $fallbackTagName, $exclusiveAttributes, $allowEmpty)
     {
-        $this->expectException(Exception::class);
-        $this->addAttributesTests($html, $attributes, $fallbackTagName, $exclusiveAttributes, null);
+        $this->expectException(\Error::class);
+        $this->addAttributesTests($html, $attributes, $fallbackTagName, $exclusiveAttributes, $allowEmpty, null);
     }
 }
