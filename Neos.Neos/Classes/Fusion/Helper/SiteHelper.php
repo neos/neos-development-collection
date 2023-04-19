@@ -42,6 +42,9 @@ class SiteHelper implements ProtectedContextAwareInterface
      */
     public function findBySiteNode(Node $siteNode): ?Site
     {
+        if ($siteNode->nodeName === null) {
+            return null;
+        }
         $siteNodeName = SiteNodeName::fromNodeName($siteNode->nodeName);
         return $this->siteRepository->findOneByNodeName($siteNodeName);
     }
