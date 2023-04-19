@@ -209,7 +209,7 @@ class NodeConverter extends AbstractTypeConverter
             switch ($nodePropertyType) {
                 case 'reference':
                     $nodePropertyValue = $context->getNodeByIdentifier($nodePropertyValue);
-                break;
+                    break;
                 case 'references':
                     $nodeIdentifiers = json_decode($nodePropertyValue);
                     $nodePropertyValue = [];
@@ -223,25 +223,25 @@ class NodeConverter extends AbstractTypeConverter
                     } elseif ($nodeIdentifiers !== null) {
                         throw new TypeConverterException(sprintf('node type "%s" expects an array of identifiers for its property "%s"', $nodeType->getName(), $nodePropertyName), 1383587419);
                     }
-                break;
+                    break;
                 case 'DateTime':
                     if ($nodePropertyValue !== '' && ($nodePropertyValue = \DateTime::createFromFormat(\DateTime::W3C, $nodePropertyValue)) !== false) {
                         $nodePropertyValue->setTimezone(new \DateTimeZone(date_default_timezone_get()));
                     } else {
                         $nodePropertyValue = null;
                     }
-                break;
+                    break;
                 case 'integer':
                     $nodePropertyValue = intval($nodePropertyValue);
-                break;
+                    break;
                 case 'boolean':
                     if (is_string($nodePropertyValue)) {
                         $nodePropertyValue = $nodePropertyValue === 'true' ? true : false;
                     }
-                break;
+                    break;
                 case 'array':
                     $nodePropertyValue = json_decode($nodePropertyValue, true);
-                break;
+                    break;
             }
             if (substr($nodePropertyName, 0, 1) === '_') {
                 $nodePropertyName = substr($nodePropertyName, 1);

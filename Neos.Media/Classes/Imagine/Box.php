@@ -17,7 +17,6 @@ use Imagine\Image\PointInterface;
 
 class Box implements BoxInterface
 {
-
     /**
      * @var integer
      */
