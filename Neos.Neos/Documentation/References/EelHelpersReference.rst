@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2023-04-13
+This reference was automatically generated from code on 2023-04-19
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -1363,6 +1363,37 @@ Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 
 
 
+.. _`Eel Helpers Reference: Neos.Media.Assets`:
+
+Neos.Media.Assets
+-----------------
+
+This is a helper for accessing assets from the media library
+
+Implemented in: ``Neos\Media\Eel\AssetsHelper``
+
+Neos.Media.Assets.findByCollection(collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Return** (QueryResultInterface<AssetInterface>) | null
+
+Neos.Media.Assets.findByTag(tag)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Return** (QueryResultInterface) | null
+
+Neos.Media.Assets.search(searchTerm, tags, collection)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* ``tags`` (Tag[]|string[], *optional*)
+
+**Return** (QueryResultInterface<AssetInterface>) | null
+
+
+
+
+
+
 .. _`Eel Helpers Reference: Neos.Node`:
 
 Neos.Node
@@ -1443,46 +1474,6 @@ Render a human-readable description for the passed $dimensions
 * ``dimensions`` (array)
 
 **Return** (string)
-
-
-
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Media.Assets`:
-
-Neos.Media.Assets
------------------
-
-Implemented in: ``Neos\Media\Eel\AssetsHelper``
-
-Neos.Media.Assets.findByTag(tag)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``tag`` (Neos\Media\Domain\Model\Tag|string) The label of a tag or an ``Tag`` instance
-
-**Return** (null|QueryResultInterface<AssetInterface>)
-
-Neos.Media.Assets.findByCollection(collection)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``collection`` (Neos\Media\Domain\Model\AssetCollection|string) The title of a collection or an ``AssetCollection`` instance
-
-**Return** (null|QueryResultInterface<AssetInterface>)
-
-Neos.Media.Assets.search(searchTerm, tags, collection)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``searchTerm`` (string) The search term to look for in the title, filename and caption of assets
-* ``tags`` (Neos\Media\Domain\Model\Tag[], optional) A list of ``Tag`` instances
-* ``collection`` (Neos\Media\Domain\Model\AssetCollection, optional) An ``AssetCollection`` instance
-
-**Return** (null|QueryResultInterface<AssetInterface>)
-
-
 
 
 
