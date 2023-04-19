@@ -1363,37 +1363,6 @@ Neos.Link.resolveNodeUri(uri, contextNode, controllerContext)
 
 
 
-.. _`Eel Helpers Reference: Neos.Media.Assets`:
-
-Neos.Media.Assets
------------------
-
-This is a helper for accessing assets from the media library
-
-Implemented in: ``Neos\Media\Eel\AssetsHelper``
-
-Neos.Media.Assets.findByCollection(collection)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Return** (QueryResultInterface<AssetInterface>) | null
-
-Neos.Media.Assets.findByTag(tag)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Return** (QueryResultInterface) | null
-
-Neos.Media.Assets.search(searchTerm, tags, collection)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-* ``tags`` (Tag[]|string[], *optional*)
-
-**Return** (QueryResultInterface<AssetInterface>) | null
-
-
-
-
-
-
 .. _`Eel Helpers Reference: Neos.Node`:
 
 Neos.Node
@@ -2355,15 +2324,6 @@ Get the class name of the given variable or NULL if it wasn't an object
 * ``variable`` (object)
 
 **Return** (string|NULL)
-
-Type.debugType(variable)
-^^^^^^^^^^^^^^^^^^^^^^^^
-
-Get the classname for objects or type for other values
-
-* ``variable`` (mixed)
-
-**Return** (string)
 
 Type.getType(variable)
 ^^^^^^^^^^^^^^^^^^^^^^

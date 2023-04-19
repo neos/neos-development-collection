@@ -230,58 +230,6 @@ Arguments
 
 
 
-.. _`Flow Validator Reference: FileExtensionValidator`:
-
-FileExtensionValidator
-----------------------
-
-The given $value is has one of the allowed file extensions
-Note: a value of NULL or empty string ('') are considered valid
-
-The given $value is valid media type matches one of the allowedTypes and
-none of the disallowedTypes
-
-Note: a value of NULL or empty string ('') is considered valid and was handled already
-
-.. note:: A value of NULL or an empty string ('') is considered valid
-
-
-
-Arguments
-*********
-
-* ``allowedExtensions`` (array): Array of allowed file extensions
-
-
-
-
-.. _`Flow Validator Reference: FileSizeValidator`:
-
-FileSizeValidator
------------------
-
-Validator for file sizes
-Note: a value of NULL or empty string ('') are considered valid
-
-The given $value is valid media type matches one of the allowedTypes and
-none of the disallowedTypes
-
-Note: a value of NULL or empty string ('') is considered valid and was handled already
-
-.. note:: A value of NULL or an empty string ('') is considered valid
-
-
-
-Arguments
-*********
-
-* ``minimum`` (integer): Minimum allowed filesize in bytes
-
-* ``maximum`` (integer): Maximum allowed filesize in bytes
-
-
-
-
 .. _`Flow Validator Reference: FloatValidator`:
 
 FloatValidator
@@ -362,33 +310,6 @@ Flow I18n implementation.
 Is valid if the given value is a valid "locale identifier".
 
 .. note:: A value of NULL or an empty string ('') is considered valid
-
-
-
-
-.. _`Flow Validator Reference: MediaTypeValidator`:
-
-MediaTypeValidator
-------------------
-
-The given $value is matches the defined medis types
-Note: a value of NULL or empty string ('') are considered valid
-
-The given $value is valid media type matches one of the allowedTypes and
-none of the disallowedTypes
-
-Note: a value of NULL or empty string ('') is considered valid and was handled already
-
-.. note:: A value of NULL or an empty string ('') is considered valid
-
-
-
-Arguments
-*********
-
-* ``allowedTypes`` (array): Array of allowed media ranges
-
-* ``disallowedTypes`` (array): Array of disallowed media ranges
 
 
 

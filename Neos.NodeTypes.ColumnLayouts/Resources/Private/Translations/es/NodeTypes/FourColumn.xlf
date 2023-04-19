@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>Four column content</source>
-        <target state="translated">Contenido a cuatro columnas</target>
+        <target state="translated">Contenido para cuatro columnas</target>
       </trans-unit>
     </body>
   </file>
