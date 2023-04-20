@@ -18,14 +18,12 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
@@ -58,6 +56,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
         private readonly PropertyMapper $propertyMapper,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly SiteRepository $siteRepository,
+        private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
     ) {
         parent::__construct();
     }
@@ -69,7 +68,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
      * @param string|null $config JSON encoded configuration, for example '{"dbal": {"dbname": "some-other-db"}, "resourcesPath": "/some/absolute/path"}'
      * @throws \Exception
      */
-    public function runCommand(bool $verbose = false, string $config = null): void
+    public function migrateLegacyDataCommand(bool $verbose = false, string $config = null): void
     {
         if ($config !== null) {
             try {
@@ -154,17 +153,9 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
         $this->outputLine();
 
-        // TODO: 'assetUsage'
-        $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'contentStream'];
         $this->outputLine('Replaying projections');
-        $verbose && $this->output->progressStart(count($projections));
-        foreach ($projections as $projection) {
-            Scripts::executeCommand('neos.contentrepositoryregistry:cr:replay', $this->flowSettings, false, ['projectionName' => $projection]);
-            /** @noinspection DisconnectedForeachInstructionInspection */
-            $verbose && $this->output->progressAdvance();
-        }
-        $verbose && $this->output->progressFinish();
-
+        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService->replayAllProjections();
         $this->outputLine('<success>Done</success>');
     }
 
