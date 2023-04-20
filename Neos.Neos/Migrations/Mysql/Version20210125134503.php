@@ -5,7 +5,6 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Neos\ContentRepository\Utility;
 
 final class Version20210125134503 extends AbstractMigration
 {
@@ -45,13 +44,6 @@ final class Version20210125134503 extends AbstractMigration
      */
     public function postUp(Schema $schema): void
     {
-        $eventLogResult = $this->connection->executeQuery('SELECT dimension FROM neos_neos_eventlog_domain_model_event where dimensionshash IS NULL AND dimension IS NOT NULL LIMIT 1');
-
-        while ($eventLogInfo = $eventLogResult->fetchAssociative()) {
-            $dimensionsArray = unserialize($eventLogInfo['dimension'], ['allowed_classes' => false]);
-            $dimensionsHash = Utility::sortDimensionValueArrayAndReturnDimensionsHash($dimensionsArray);
-            $this->connection->executeStatement('UPDATE neos_neos_eventlog_domain_model_event SET dimensionshash = ? WHERE dimension = ?', [$dimensionsHash, $eventLogInfo['dimension']]);
-            $eventLogResult = $this->connection->executeQuery('SELECT dimension FROM neos_neos_eventlog_domain_model_event where dimensionshash IS NULL AND dimension IS NOT NULL LIMIT 1');
-        }
+        // Disabled for Neos 9 - the Event Log needs to be rewritten anyways based on ES CR
     }
 }

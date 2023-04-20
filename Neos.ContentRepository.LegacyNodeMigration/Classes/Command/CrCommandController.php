@@ -18,14 +18,12 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
 use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
-use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Core\Booting\Scripts;
@@ -39,7 +37,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
-class ContentRepositoryMigrateCommandController extends CommandController
+class CrCommandController extends CommandController
 {
 
     /**
@@ -58,6 +56,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
         private readonly PropertyMapper $propertyMapper,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly SiteRepository $siteRepository,
+        private readonly ProjectionReplayServiceFactory $projectionReplayServiceFactory,
     ) {
         parent::__construct();
     }
@@ -69,7 +68,7 @@ class ContentRepositoryMigrateCommandController extends CommandController
      * @param string|null $config JSON encoded configuration, for example '{"dbal": {"dbname": "some-other-db"}, "resourcesPath": "/some/absolute/path"}'
      * @throws \Exception
      */
-    public function runCommand(bool $verbose = false, string $config = null): void
+    public function migrateLegacyDataCommand(bool $verbose = false, string $config = null): void
     {
         if ($config !== null) {
             try {
@@ -100,26 +99,26 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         if ($site !== null) {
-            if (!$this->output->askConfirmation(sprintf('Site "%s" already exists, prune it? [n] ', $siteNodeName), false)) {
+            if (!$this->output->askConfirmation(sprintf('Site "%s" already exists, update it? [n] ', $siteNodeName), false)) {
                 $this->outputLine('Cancelled...');
                 $this->quit();
             }
-            $this->siteRepository->remove($site);
+
+            $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
+            $site->setState(Site::STATE_ONLINE);
+            $site->setName($siteRow['name']);
+            $this->siteRepository->update($site);
+            $this->persistenceManager->persistAll();
+        } else {
+            $site = new Site($siteNodeName);
+            $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
+            $site->setState(Site::STATE_ONLINE);
+            $site->setName($siteRow['name']);
+            $this->siteRepository->add($site);
             $this->persistenceManager->persistAll();
         }
 
-        $site = new Site($siteNodeName);
-        $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
-        $site->setState(Site::STATE_ONLINE);
-        $site->setName($siteRow['name']);
-        $this->siteRepository->add($site);
-        $this->persistenceManager->persistAll();
-
         $contentRepositoryId = $site->getConfiguration()->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
 
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryId);
         $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE [n]? ', $eventTableName), false);
@@ -129,6 +128,11 @@ class ContentRepositoryMigrateCommandController extends CommandController
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
         $this->outputLine('Truncated events');
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
+        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
+        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
 
         $legacyMigrationService = $this->contentRepositoryRegistry->getService(
             $contentRepositoryId,
@@ -150,17 +154,9 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
         $this->outputLine();
 
-        // TODO: 'assetUsage'
-        $projections = ['graph', 'nodeHiddenState', 'documentUriPath', 'change', 'workspace', 'contentStream'];
         $this->outputLine('Replaying projections');
-        $verbose && $this->output->progressStart(count($projections));
-        foreach ($projections as $projection) {
-            Scripts::executeCommand('neos.contentrepositoryregistry:cr:replay', $this->flowSettings, false, ['projectionName' => $projection]);
-            /** @noinspection DisconnectedForeachInstructionInspection */
-            $verbose && $this->output->progressAdvance();
-        }
-        $verbose && $this->output->progressFinish();
-
+        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService->replayAllProjections();
         $this->outputLine('<success>Done</success>');
     }
 
