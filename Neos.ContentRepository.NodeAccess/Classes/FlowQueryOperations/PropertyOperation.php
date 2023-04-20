@@ -94,6 +94,10 @@ class PropertyOperation extends AbstractOperation
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return $subgraph->retrieveNodePath($element->nodeAggregateId)->value;
         }
+        if ($propertyName === '_identifier') {
+            // TODO: deprecated (Neos <9 case)
+            return $element->nodeAggregateId->value;
+        }
 
         if ($propertyName[0] === '_') {
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
