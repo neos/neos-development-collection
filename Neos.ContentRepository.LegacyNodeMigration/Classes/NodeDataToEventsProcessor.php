@@ -185,7 +185,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     private function processNodeData(array $nodeDataRow): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeDataRow['identifier']);
-        $nodePath = NodePath::fromString(strtolower($nodeDataRow['path']));
+
         try {
             $dimensionArray = json_decode($nodeDataRow['dimensionvalues'], true, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
@@ -193,6 +193,45 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         /** @noinspection PhpDeprecationInspection */
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray($dimensionArray);
+
+        if ($originDimensionSpacePoint->coordinates === []) {
+            // the old CR had a special case implemented: in case a node was not found in the expected dimension,
+            // it was checked whether it is found in the empty dimension - and if so, this one was used.
+            //
+            // We need to replicate this logic here.
+            //
+            // Assumption: a node with empty coordinates comes AFTER the same node with coordinates.
+            // This is implemented in {@see NodeDataLoader.}
+            //
+            // If the dimensions of the node we want to import are empty,
+            // - we iterate through ALL possible dimensions (because the node in empty dimension might shine through
+            //   in all dimensions).
+            // - we check if we have seen a node already in the target dimension (if yes, we can ignore the empty-dimension node)
+            // - if we haven't seen a node in the target dimension, we can assume it does not exist (see "assumption" above),
+            //   and then create the node in the currently-iterated dimension.
+            foreach ($this->interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
+                $originDimensionSpacePoint = OriginDimensionSpacePoint::fromDimensionSpacePoint($dimensionSpacePoint);
+                if (!$this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->contains($originDimensionSpacePoint)) {
+                    $this->processNodeDataWithoutFallbackToEmptyDimension($nodeAggregateId, $originDimensionSpacePoint, $nodeDataRow);
+                }
+            }
+        } else {
+            $this->processNodeDataWithoutFallbackToEmptyDimension($nodeAggregateId, $originDimensionSpacePoint, $nodeDataRow);
+        }
+    }
+
+
+    /**
+     * @param NodePath $nodePath
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint
+     * @param NodeAggregateId $nodeAggregateId
+     * @param array $nodeDataRow
+     * @return NodeName[]|void
+     * @throws \JsonException
+     */
+    public function processNodeDataWithoutFallbackToEmptyDimension(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, array $nodeDataRow)
+    {
+        $nodePath = NodePath::fromString(strtolower($nodeDataRow['path']));
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
         if ($parentNodeAggregate === null) {
             $this->dispatch(Severity::ERROR, 'Failed to find parent node for node with id "%s" and dimensions: %s. The old CR can sometimes have orphaned nodes.', $nodeAggregateId->value, $originDimensionSpacePoint->toJson());
@@ -214,11 +253,11 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->createNodeVariant($nodeAggregateId, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
         } else {
             // create node aggregate
-            $this->exportEvent( new NodeAggregateWithNodeWasCreated($this->contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateId, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, null));
+            $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateId, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, null));
         }
         // nodes are hidden via NodeAggregateWasDisabled event
         if ($nodeDataRow['hidden']) {
-            $this->exportEvent( new NodeAggregateWasDisabled($this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet())));
+            $this->exportEvent(new NodeAggregateWasDisabled($this->contentStreamId, $nodeAggregateId, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId)->toDimensionSpacePointSet())));
         }
         foreach ($serializedPropertyValuesAndReferences->references as $referencePropertyName => $destinationNodeAggregateIds) {
             $this->nodeReferencesWereSetEvents[] = new NodeReferencesWereSet($this->contentStreamId, $nodeAggregateId, new OriginDimensionSpacePointSet([$originDimensionSpacePoint]), ReferenceName::fromString($referencePropertyName), SerializedNodeReferences::fromNodeAggregateIds($destinationNodeAggregateIds));

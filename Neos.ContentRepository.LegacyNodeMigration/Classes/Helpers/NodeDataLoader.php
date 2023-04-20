@@ -25,7 +25,11 @@ final class NodeDataLoader implements \IteratorAggregate
                 AND (movedto IS NULL OR removed=0)
                 AND path != "/"
             ORDER BY
-                parentpath, sortingindex, path
+                -- dimensionshash d7... is {} (the empty dimension).
+                -- Because there is a fallback from a dimension value to no dimension value in the old CR (if nothing is found),
+                -- we need to ensure that the empty dimensionshash comes LAST.
+                -- see NodeDataToEventsProcessor::processNodeData() which handles this special case
+                parentpath, sortingindex, path, IF(dimensionshash=\'d751713988987e9331980363e24189ce\', 1, 0)
         ');
         return $query->iterateAssociative();
     }
