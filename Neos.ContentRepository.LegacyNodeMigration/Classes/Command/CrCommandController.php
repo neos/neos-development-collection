@@ -37,7 +37,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
-class ContentRepositoryMigrateCommandController extends CommandController
+class CrCommandController extends CommandController
 {
 
     /**
