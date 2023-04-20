@@ -100,20 +100,24 @@ class ContentRepositoryMigrateCommandController extends CommandController
 
         $site = $this->siteRepository->findOneByNodeName($siteNodeName);
         if ($site !== null) {
-            if (!$this->output->askConfirmation(sprintf('Site "%s" already exists, prune it? [n] ', $siteNodeName), false)) {
+            if (!$this->output->askConfirmation(sprintf('Site "%s" already exists, update it? [n] ', $siteNodeName), false)) {
                 $this->outputLine('Cancelled...');
                 $this->quit();
             }
-            $this->siteRepository->remove($site);
+
+            $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
+            $site->setState(Site::STATE_ONLINE);
+            $site->setName($siteRow['name']);
+            $this->siteRepository->update($site);
+            $this->persistenceManager->persistAll();
+        } else {
+            $site = new Site($siteNodeName);
+            $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
+            $site->setState(Site::STATE_ONLINE);
+            $site->setName($siteRow['name']);
+            $this->siteRepository->add($site);
             $this->persistenceManager->persistAll();
         }
-
-        $site = new Site($siteNodeName);
-        $site->setSiteResourcesPackageKey($siteRow['siteresourcespackagekey']);
-        $site->setState(Site::STATE_ONLINE);
-        $site->setName($siteRow['name']);
-        $this->siteRepository->add($site);
-        $this->persistenceManager->persistAll();
 
         $contentRepositoryId = $site->getConfiguration()->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
