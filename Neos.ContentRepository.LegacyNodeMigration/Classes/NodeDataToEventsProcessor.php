@@ -251,7 +251,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             // In the old `Node`, we call the property mapper to convert the returned properties from NodeData;
             // so we need to do the same here.
             try {
-                $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);
+                // Special case for empty values (as this can break the property mapper)
+                if ($propertyValue === '' || $propertyValue === null) {
+                    $properties[$propertyName] = null;
+                } else {
+                    $properties[$propertyName] = $this->propertyMapper->convert($propertyValue, $type);
+                }
+
             } catch (\Exception $e) {
                 throw new MigrationException(sprintf('Failed to convert property "%s" of type "%s" (Node: %s): %s', $propertyName, $type, $nodeDataRow['identifier'], $e->getMessage()), 1655912878, $e);
             }
