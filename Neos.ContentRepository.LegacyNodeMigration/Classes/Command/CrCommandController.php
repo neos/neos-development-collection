@@ -119,10 +119,6 @@ class CrCommandController extends CommandController
         }
 
         $contentRepositoryId = $site->getConfiguration()->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
 
         $eventTableName = DoctrineEventStoreFactory::databaseTableName($contentRepositoryId);
         $confirmed = $this->output->askConfirmation(sprintf('We will clear the events from "%s". ARE YOU SURE [n]? ', $eventTableName), false);
@@ -132,6 +128,11 @@ class CrCommandController extends CommandController
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
         $this->outputLine('Truncated events');
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
+        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
+        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
 
         $legacyMigrationService = $this->contentRepositoryRegistry->getService(
             $contentRepositoryId,
