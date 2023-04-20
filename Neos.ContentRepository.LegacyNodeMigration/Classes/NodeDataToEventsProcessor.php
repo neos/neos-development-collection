@@ -33,6 +33,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
+use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\Exception\MigrationException;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\SerializedPropertyValuesAndReferences;
 use Neos\ContentRepository\LegacyNodeMigration\Helpers\VisitedNodeAggregate;
@@ -58,6 +59,7 @@ use Webmozart\Assert\Assert;
 final class NodeDataToEventsProcessor implements ProcessorInterface
 {
 
+    private array $callbacks = [];
     private NodeTypeName $sitesNodeTypeName;
     private ContentStreamId $contentStreamId;
     private VisitedNodeAggregates $visitedNodes;
@@ -193,7 +195,8 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $originDimensionSpacePoint = OriginDimensionSpacePoint::fromLegacyDimensionArray($dimensionArray);
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
         if ($parentNodeAggregate === null) {
-            throw new MigrationException(sprintf('Failed to find parent node for node with id "%s" and dimensions: %s. Did you properly configure your dimensions setup to be in sync with the old setup?', $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1655980069);
+            $this->dispatch(Severity::ERROR, 'Failed to find parent node for node with id "%s" and dimensions: %s. The old CR can sometimes have orphaned nodes.', $nodeAggregateId->value, $originDimensionSpacePoint->toJson());
+            return;
         }
         $pathParts = $nodePath->getParts();
         $nodeName = end($pathParts);
@@ -339,5 +342,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
         return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
+    }
+
+    private function dispatch(Severity $severity, string $message, mixed ...$args): void
+    {
+        $renderedMessage = sprintf($message, ...$args);
+        foreach ($this->callbacks as $callback) {
+            $callback($severity, $renderedMessage);
+        }
     }
 }
