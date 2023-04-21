@@ -13,6 +13,7 @@ namespace Neos\Media\Domain\Repository;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
+use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Media\Domain\Model\AssetCollection;
 
@@ -20,6 +21,7 @@ use Neos\Media\Domain\Model\AssetCollection;
  * A repository for AssetCollections
  *
  * @method AssetCollection findOneByTitle(string $title)
+ * @method QueryResultInterface<AssetCollection> findByParent(AssetCollection $parent)
  *
  * @Flow\Scope("singleton")
  */

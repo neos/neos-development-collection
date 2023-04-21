@@ -68,7 +68,6 @@ class AssetCollection
         $this->title = $title;
         $this->assets = new ArrayCollection();
         $this->tags = new ArrayCollection();
-        $this->children = new ArrayCollection();
     }
 
     /**
@@ -219,43 +218,6 @@ class AssetCollection
     public function setParent(?self $parent): void
     {
         $this->parent = $parent;
-        $this->validateCircularHierarchy();
-    }
-
-    public function addChild(self $child): void
-    {
-        if (!$this->children->contains($child)) {
-            $this->children->add($child);
-            $child->setParent($this);
-        }
-    }
-
-    public function removeChild(self $child): void
-    {
-        if ($this->children->contains($child)) {
-            $this->children->removeElement($child);
-        }
-    }
-
-    /**
-     * @return Collection<self>
-     */
-    public function getChildren(): Collection
-    {
-        return $this->children ?? new ArrayCollection();
-    }
-
-    /**
-     * @param Collection<self> $children
-     */
-    public function setChildren(Collection $children): void
-    {
-        foreach ($this->children as $child) {
-            $child->setParent(null);
-        }
-        foreach ($children as $child) {
-            $child->setParent($this);
-        }
         $this->validateCircularHierarchy();
     }
 }

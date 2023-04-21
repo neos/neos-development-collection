@@ -51,10 +51,11 @@ class AssetCollectionTest extends AbstractTest
         $parent = new AssetCollection('parent');
 
         $child1->setParent($parent);
-        $parent->addChild($child2);
+        $child2->setParent($parent);
 
         $this->assetCollectionRepository->add($parent);
         $this->assetCollectionRepository->add($child1);
+        $this->assetCollectionRepository->add($child2);
 
         $this->persistenceManager->persistAll();
         $this->persistenceManager->clearState();
@@ -65,7 +66,7 @@ class AssetCollectionTest extends AbstractTest
         self::assertEquals('parent', $persistedParent->getTitle());
         self::assertNull($persistedParent->getParent());
 
-        $children = $persistedParent->getChildren();
+        $children = $this->assetCollectionRepository->findByParent($parent);
         self::assertEquals(2, $children->count());
         self::assertEquals('child1', $children->offsetGet(0)->getTitle());
         self::assertEquals('child2', $children->offsetGet(1)->getTitle());
@@ -85,69 +86,6 @@ class AssetCollectionTest extends AbstractTest
 
         $this->expectException(\InvalidArgumentException::class);
         $parent->setParent($childOfChild);
-    }
-
-    /**
-     * @test
-     */
-    public function circularParentChildrenRelationThrowsErrorWhenAddingChild(): void
-    {
-        $child = new AssetCollection('child');
-        $childOfChild = new AssetCollection('childOfChild');
-        $parent = new AssetCollection('parent');
-
-        $parent->addChild($child);
-        $child->addChild($childOfChild);
-
-        $this->expectException(\InvalidArgumentException::class);
-        $childOfChild->addChild($parent);
-    }
-
-    /**
-     * @test
-     */
-    public function circularParentChildrenRelationThrowsErrorWhenSettingChildren(): void
-    {
-        $child = new AssetCollection('child');
-        $childOfChild = new AssetCollection('childOfChild');
-        $parent = new AssetCollection('parent');
-
-        $parent->setChildren(new ArrayCollection([$child]));
-        $child->setChildren(new ArrayCollection([$childOfChild]));
-
-        $this->expectException(\InvalidArgumentException::class);
-        $childOfChild->setChildren(new ArrayCollection([$parent]));
-    }
-
-    /**
-     * @test
-     */
-    public function removingTheChildDeletesIt(): void
-    {
-        $child = new AssetCollection('child');
-        $parent = new AssetCollection('parent');
-
-        $child->setParent($parent);
-
-        $this->assetCollectionRepository->add($parent);
-        $this->assetCollectionRepository->add($child);
-
-        $this->persistenceManager->persistAll();
-        $this->persistenceManager->clearState();
-
-        $persistedChild = $this->assetCollectionRepository->findOneByTitle('child');
-        $persistedParent = $this->assetCollectionRepository->findOneByTitle('parent');
-
-        $persistedParent->removeChild($persistedChild);
-
-        $this->persistenceManager->persistAll();
-        $this->persistenceManager->clearState();
-
-        $persistedChild = $this->assetCollectionRepository->findOneByTitle('child');
-        $persistedParent = $this->assetCollectionRepository->findOneByTitle('parent');
-
-        self::assertNull($persistedChild);
-        self::assertEquals(0, $persistedParent->getChildren()->count());
     }
 
     /**
@@ -176,8 +114,10 @@ class AssetCollectionTest extends AbstractTest
         $persistedChild = $this->assetCollectionRepository->findOneByTitle('child');
         $persistedParent = $this->assetCollectionRepository->findOneByTitle('parent');
 
+        $children = $this->assetCollectionRepository->findByParent($persistedParent);
+
         self::assertNull($persistedChild->getParent());
-        self::assertEquals(0, $persistedParent->getChildren()->count());
+        self::assertEquals(0, count($children));
     }
 
     /**
@@ -207,30 +147,5 @@ class AssetCollectionTest extends AbstractTest
 
         self::assertNull($persistedChild);
         self::assertNull($persistedParent);
-    }
-
-    /**
-     * @test
-     */
-    public function settingChildrenSetsTheirParent(): void
-    {
-        $child1 = new AssetCollection('child1');
-        $child2 = new AssetCollection('child2');
-        $parent = new AssetCollection('parent');
-
-        $parent->setChildren(new ArrayCollection([$child1, $child2]));
-
-        $this->assetCollectionRepository->add($parent);
-        $this->assetCollectionRepository->add($child1);
-        $this->assetCollectionRepository->add($child2);
-
-        $this->persistenceManager->persistAll();
-        $this->persistenceManager->clearState();
-
-        $persistedChild1 = $this->assetCollectionRepository->findOneByTitle('child1');
-        $persistedChild2 = $this->assetCollectionRepository->findOneByTitle('child2');
-
-        self::assertEquals('parent', $persistedChild1->getParent()->getTitle());
-        self::assertEquals('parent', $persistedChild2->getParent()->getTitle());
     }
 }
