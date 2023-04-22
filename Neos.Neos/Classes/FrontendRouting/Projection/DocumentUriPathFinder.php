@@ -19,6 +19,8 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 final class DocumentUriPathFinder implements ProjectionStateInterface
 {
     private ?ContentStreamId $liveContentStreamIdRuntimeCache = null;
+    private bool $cacheEnabled = true;
+    private array $getByIdAndDimensionSpacePointHashCache = [];
 
     public function __construct(
         private readonly Connection $dbal,
@@ -71,7 +73,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         NodeAggregateId $nodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        return $this->fetchSingle(
+        $cacheKey = $nodeAggregateId->value . '#' . $dimensionSpacePointHash;
+        if ($this->cacheEnabled && isset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey])){
+            return $this->getByIdAndDimensionSpacePointHashCache[$cacheKey];
+        }
+        $result = $this->fetchSingle(
             'nodeAggregateId = :nodeAggregateId
                 AND dimensionSpacePointHash = :dimensionSpacePointHash',
             [
@@ -79,6 +85,10 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
                 'dimensionSpacePointHash' => $dimensionSpacePointHash,
             ]
         );
+        if ($this->cacheEnabled) {
+            $this->getByIdAndDimensionSpacePointHashCache[$cacheKey] = $result;
+        }
+        return $result;
     }
 
     /**
@@ -241,5 +251,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             ), 1599667143);
         }
         return DocumentNodeInfo::fromDatabaseRow($row);
+    }
+
+    public function disableCache()
+    {
+        $this->cacheEnabled = false;
+        $this->getByIdAndDimensionSpacePointHashCache = [];
     }
 }
