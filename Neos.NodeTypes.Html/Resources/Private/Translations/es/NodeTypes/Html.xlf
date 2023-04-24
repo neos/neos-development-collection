@@ -4,7 +4,7 @@
     <body>
       <trans-unit id="ui.label" xml:space="preserve">
 				<source>HTML</source>
-        <target state="translated">Lenguaje HTML</target>
+        <target state="translated">HTML</target>
       </trans-unit>
       <trans-unit id="groups.html" xml:space="preserve">
 				<source>HTML</source>
