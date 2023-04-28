@@ -323,15 +323,13 @@ class LinkingService
         }
 
         $baseUri = $this->baseUriProvider->getConfiguredBaseUriOrFallbackToCurrentRequest($request->getHttpRequest());
-        if ($site->hasActiveDomains()) {
+        if ($site->hasActiveDomains() && $absolute === false) {
             $requestUriHost = $baseUri->getHost();
             $activeHostPatterns = $site->getActiveDomains()->map(static function (Domain $domain) {
                 return $domain->getHostname();
             })->toArray();
             if (!in_array($requestUriHost, $activeHostPatterns, true)) {
                 $uri = $this->createSiteUri($controllerContext, $site) . '/' . ltrim($uri, '/');
-            } elseif ($absolute === true) {
-                $uri = $baseUri . ltrim($uri, '/');
             }
         } elseif ($absolute === true) {
             if (strncmp($uri, 'http://', 7) !== 0 && strncmp($uri, 'https://', 8) !== 0) {
