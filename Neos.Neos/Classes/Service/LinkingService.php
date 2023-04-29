@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Service;
 
 /*
@@ -11,6 +12,7 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+use http\Exception\RuntimeException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\BaseUriProvider;
@@ -29,6 +31,7 @@ use Neos\Neos\Exception as NeosException;
 use Neos\Neos\TYPO3CR\NeosNodeServiceInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
+use function Psalm\get_path_to_config;
 
 /**
  * A service for creating URIs pointing to nodes and assets.
@@ -242,7 +245,7 @@ class LinkingService
      * @throws HttpException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      */
-    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true): string
+    public function createNodeUri(ControllerContext $controllerContext, $node = null, NodeInterface $baseNode = null, $format = null, $absolute = false, array $arguments = [], $section = '', $addQueryString = false, array $argumentsToBeExcludedFromQueryString = [], $resolveShortcuts = true, ?string $overrideDefaultAction = null): string
     {
         $this->lastLinkedNode = null;
         if ($resolveShortcuts === false) {
@@ -284,7 +287,7 @@ class LinkingService
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $node->getContext()->getWorkspace()->isPublicWorkspace() && !$node->isHidden() ? 'show' : 'edit';
+        $action = $this->determineAction($request, $overrideDefaultAction);
         return $uriBuilder
             ->reset()
             ->setSection($section)
@@ -332,5 +335,24 @@ class LinkingService
     public function getLastLinkedNode(): ?NodeInterface
     {
         return $this->lastLinkedNode;
+    }
+
+    /**
+     * @param NodeInterface $node
+     * @param \Neos\Flow\Mvc\ActionRequest $request
+     * @return string
+     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     */
+    private function determineAction(\Neos\Flow\Mvc\ActionRequest $request, ?string $overrideActionName): string
+    {
+        $validActions = ['show', 'preview', 'edit'];
+        if ($overrideActionName === null) {
+            return in_array($request->getControllerActionName(), $validActions) ? $request->getControllerActionName() : 'show';
+        }
+        if (in_array($overrideActionName, $validActions)) {
+            return $overrideActionName;
+        }
+        throw new \RuntimeException('Override action not allowed', 1682778247);
+
     }
 }

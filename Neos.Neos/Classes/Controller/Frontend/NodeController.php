@@ -128,7 +128,7 @@ class NodeController extends ActionController
     }
 
     /**
-     * Previews a node that is not live (i.e. for the Backend Preview & Edit Mode)
+     * Previews a node that is not live (i.e. for the Backend Preview Mode)
      *
      * @param NodeInterface $node
      * @return string View output for the specified node
@@ -161,6 +161,15 @@ class NodeController extends ActionController
         }
     }
 
+    /**
+     * Renders a node in backend
+     *
+     * @param NodeInterface|null $node
+     * @throws NeosException
+     * @throws NodeNotFoundException
+     * @throws SessionNotStartedException
+     * @throws UnresolvableShortcutException
+     */
     public function editAction(NodeInterface $node = null)
     {
         if ($node === null) {
@@ -181,6 +190,7 @@ class NodeController extends ActionController
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
             }
+
             if ($this->session->isStarted()) {
                 $this->session->putData('lastVisitedNode', $node->getContextPath());
             }
