@@ -1,645 +1,645 @@
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
-prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
+prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
 prototype(Neos.Fusion:Testing.Throwing).@class = 'Neos\\Fusion\\Tests\\Functional\\FusionObjects\\Fixtures\\FusionObjects\\ThrowingImplementation'
 
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
-prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray)
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
+prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStructure)
 
-contentCache.cachedSegment = Neos.Fusion:Array {
-	5 = 'Cached segment|'
+contentCache.cachedSegment = Neos.Fusion:Join {
+  5 = 'Cached segment|'
 
-	10 = ${object.value}
+  10 = ${object.value}
 
-	@cache {
-		mode = 'cached'
-	}
+  @cache {
+    mode = 'cached'
+  }
 }
 
-contentCache.nestedCacheSegments = Neos.Fusion:Array {
-	5 = 'Outer segment|'
+contentCache.nestedCacheSegments = Neos.Fusion:Join {
+  5 = 'Outer segment|'
 
-	10 = ${'site=' + site}
+  10 = ${'site=' + site}
 
-	15 = '|'
+  15 = '|'
 
-	20 = Neos.Fusion:Array {
+  20 = Neos.Fusion:Join {
 
-		5 = 'Inner segment|'
+    5 = 'Inner segment|'
 
-		10 = ${'object=' + object.value}
+    10 = ${'object=' + object.value}
 
-		15 = '|End inner'
+    15 = '|End inner'
 
-		@cache {
-			mode = 'cached'
+    @cache {
+      mode = 'cached'
 
-			entryIdentifier {
-				object = ${object}
-			}
-		}
-	}
+      entryIdentifier {
+        object = ${object}
+      }
+    }
+  }
 
-	25 = '|End outer'
+  25 = '|End outer'
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			site = ${site}
-		}
-	}
+    entryIdentifier {
+      site = ${site}
+    }
+  }
 }
 
-contentCache.uncachedSegmentOnTopLevel = Neos.Fusion:Array {
-	5 = 'Uncached segment|'
+contentCache.uncachedSegmentOnTopLevel = Neos.Fusion:Join {
+  5 = 'Uncached segment|'
 
-	10 = ${'counter=' + object.counter}
+  10 = ${'counter=' + object.counter}
 
-	15 = '|End uncached'
+  15 = '|End uncached'
 
-	@cache {
-		mode = 'uncached'
+  @cache {
+    mode = 'uncached'
 
-		context {
-			1 = 'object'
-		}
-	}
+    context {
+      1 = 'object'
+    }
+  }
 }
 
-contentCache.uncachedSegmentWithWronglyConfiguredContext = Neos.Fusion:Array {
-	5 = 'Uncached segment|'
+contentCache.uncachedSegmentWithWronglyConfiguredContext = Neos.Fusion:Join {
+  5 = 'Uncached segment|'
 
-	10 = ${'counter=' + object.counter}
+  10 = ${'counter=' + object.counter}
 
-	15 = '|End uncached'
+  15 = '|End uncached'
 
-	@cache {
-		mode = 'uncached'
+  @cache {
+    mode = 'uncached'
 
-		context {
-			1 = 'otherContextVariable'
-		}
-	}
+    context {
+      1 = 'otherContextVariable'
+    }
+  }
 }
 
-contentCache.uncachedSegmentInCachedSegment = Neos.Fusion:Array {
-	5 = 'Outer segment|'
+contentCache.uncachedSegmentInCachedSegment = Neos.Fusion:Join {
+  5 = 'Outer segment|'
 
-	10 = ${'object=' + object.value}
+  10 = ${'object=' + object.value}
 
-	15 = '|'
+  15 = '|'
 
-	20 =  Neos.Fusion:Array {
-		5 = 'Uncached segment|'
+  20 = Neos.Fusion:Join {
+    5 = 'Uncached segment|'
 
-		10 = ${'counter=' + object.counter}
+    10 = ${'counter=' + object.counter}
 
-		15 = '|End uncached'
+    15 = '|End uncached'
 
-		@cache {
-			mode = 'uncached'
+    @cache {
+      mode = 'uncached'
 
-			context {
-				1 = 'object'
-			}
-		}
-	}
+      context {
+        1 = 'object'
+      }
+    }
+  }
 
-	25 = '|End outer'
+  25 = '|End outer'
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			object = ${object}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
 }
 
-contentCache.cacheSegmentsWithTags = Neos.Fusion:Array {
-	5 = 'Outer segment|'
+contentCache.cacheSegmentsWithTags = Neos.Fusion:Join {
+  5 = 'Outer segment|'
 
-	10 = ${'counter=' + object.counter}
+  10 = ${'counter=' + object.counter}
 
-	15 = '|'
+  15 = '|'
 
-	20 = Neos.Fusion:Array {
+  20 = Neos.Fusion:Join {
 
-		5 = 'Inner segment 1|'
+    5 = 'Inner segment 1|'
 
-		10 = ${'object=' + object.value}
+    10 = ${'object=' + object.value}
 
-		15 = '|End inner'
+    15 = '|End inner'
 
-		@cache {
-			mode = 'cached'
+    @cache {
+      mode = 'cached'
 
-			entryIdentifier {
-				object = ${object}
-			}
+      entryIdentifier {
+        object = ${object}
+      }
 
-			entryTags {
-				1 = ${'Object_' + object.id}
-				2 = 'NodeType_Acme.Demo:SampleNodeType'
-			}
-		}
-	}
+      entryTags {
+        1 = ${'Object_' + object.id}
+        2 = 'NodeType_Acme.Demo:SampleNodeType'
+      }
+    }
+  }
 
-	25 = Neos.Fusion:Array {
+  25 = Neos.Fusion:Join {
 
-		5 = 'Inner segment 2|'
+    5 = 'Inner segment 2|'
 
-		10 = ${'object=' + object.value}
+    10 = ${'object=' + object.value}
 
-		15 = '|End inner'
+    15 = '|End inner'
 
-		@cache {
-			mode = 'cached'
+    @cache {
+      mode = 'cached'
 
-			entryIdentifier {
-				object = ${object}
-			}
+      entryIdentifier {
+        object = ${object}
+      }
 
-			entryTags {
-				2 = ${['Node_cba42fd2-495f-409d-af2a-b71768a33a6f', 'Node_47a6ee72-936a-4489-abc1-3666a63cdc4a']}
-			}
-		}
-	}
+      entryTags {
+        2 = ${['Node_cba42fd2-495f-409d-af2a-b71768a33a6f', 'Node_47a6ee72-936a-4489-abc1-3666a63cdc4a']}
+      }
+    }
+  }
 
-	30 = '|End outer'
+  30 = '|End outer'
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			object = ${object}
-		}
+    entryIdentifier {
+      object = ${object}
+    }
 
-		entryTags {
-			1 = 'Outer'
-			# Empty tags should be ignored
-			2 = ${null}
-		}
-	}
+    entryTags {
+      1 = 'Outer'
+      # Empty tags should be ignored
+      2 = ${null}
+    }
+  }
 }
 
-contentCache.cachedSegmentWithProcessor = Neos.Fusion:Array {
+contentCache.cachedSegmentWithProcessor = Neos.Fusion:Join {
 
-	5 = 'Cached segment|'
+  5 = 'Cached segment|'
 
-	10 = ${'object=' + object.value}
+  10 = ${'object=' + object.value}
 
-	15 = '|End cached'
+  15 = '|End cached'
 
-	@process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
+  @process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			object = ${object}
-		}
-	}
-
-}
-
-contentCache.uncachedSegmentWithProcessor = Neos.Fusion:Array {
-
-	5 = 'Cached segment|'
-
-	10 = Neos.Fusion:Array {
-		5 = 'Uncached segment|'
-
-		10 = ${'object=' + object.value}
-
-		15 = '|End cached'
-
-		@process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
-
-		@cache {
-			mode = 'uncached'
-
-			context {
-				1 = 'object'
-			}
-		}
-	}
-
-	15 = '|End segment'
-
-	@cache {
-		mode = 'cached'
-
-		entryIdentifier {
-			object = ${object}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
 
 }
 
-contentCache.cachedSegmentWithCondition = Neos.Fusion:Array {
+contentCache.uncachedSegmentWithProcessor = Neos.Fusion:Join {
 
-	@if.isFirst = ${condition && object.counter == 1}
+  5 = 'Cached segment|'
 
-	5 = 'Cached segment|'
+  10 = Neos.Fusion:Join {
+    5 = 'Uncached segment|'
 
-	10 = ${'object=' + object.value}
+    10 = ${'object=' + object.value}
 
-	15 = '|End cached'
+    15 = '|End cached'
 
-	@cache {
-		mode = 'cached'
+    @process.wrap = ${'Processor start|counter=' + object.counter + '|' + value + '|Processor end'}
 
-		entryIdentifier {
-			object = ${object}
-			condition = ${condition}
-		}
-	}
+    @cache {
+      mode = 'uncached'
 
-}
+      context {
+        1 = 'object'
+      }
+    }
+  }
 
-contentCache.uncachedSegmentWithCondition = Neos.Fusion:Array {
+  15 = '|End segment'
 
-	5 = 'Cached segment|'
+  @cache {
+    mode = 'cached'
 
-	10 = Neos.Fusion:Array {
-		@if.isFirst = ${request.arguments.currentPage < 3}
-
-		5 = 'Uncached segment|'
-
-		10 = ${'request.currentPage=' + request.arguments.currentPage}
-
-		15 = '|End cached'
-
-		@cache {
-			mode = 'uncached'
-
-			context {
-				1 = 'object'
-			}
-		}
-	}
-
-	15 = '|End segment'
-
-	@cache {
-		mode = 'cached'
-
-		entryIdentifier {
-			object = ${object}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
 
 }
 
-contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Array {
+contentCache.cachedSegmentWithCondition = Neos.Fusion:Join {
 
-	5 = 'Cached segment|'
+  @if.isFirst = ${condition && object.counter == 1}
 
-	10 = ${'counter=' + object.counter + '|'}
+  5 = 'Cached segment|'
 
-	15 = Neos.Fusion:Collection {
-		collection = ${['Foo', 'Bar']}
-		itemName = 'item'
-		itemRenderer = Neos.Fusion:Template {
-			templatePath = 'no.such.file.here.so.crash.please'
+  10 = ${'object=' + object.value}
 
-			@cache {
-				mode = 'cached'
+  15 = '|End cached'
 
-				entryIdentifier {
-					item = ${item}
-				}
-			}
+  @cache {
+    mode = 'cached'
 
-			@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
-		}
-	}
-
-	20 = '|End segment'
-
-	@cache {
-		mode = 'cached'
-
-		entryIdentifier {
-			object = ${object}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+      condition = ${condition}
+    }
+  }
 
 }
 
-contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Array {
+contentCache.uncachedSegmentWithCondition = Neos.Fusion:Join {
 
-	5 = 'Cached segment|'
+  5 = 'Cached segment|'
 
-	// This is just a cached path
-	15 = Neos.Fusion:Array {
-		5 = ${'counter=' + object.counter + '|'}
+  10 = Neos.Fusion:Join {
+    @if.isFirst = ${request.arguments.currentPage < 3}
 
-		@cache {
-			mode = 'cached'
+    5 = 'Uncached segment|'
 
-			entryIdentifier {
-				object = ${object}
-			}
-		}
-	}
+    10 = ${'request.currentPage=' + request.arguments.currentPage}
 
-	// Use an exception to have the exception handler working
-	20 = Neos.Fusion:Collection {
-		collection = ${['Foo']}
+    15 = '|End cached'
 
-		itemName = 'item'
-		itemRenderer = Neos.Fusion:Testing.Throwing {
-			shouldThrow = ${throwException}
+    @cache {
+      mode = 'uncached'
 
-			@cache {
-				mode = 'cached'
+      context {
+        1 = 'object'
+      }
+    }
+  }
 
-				entryTags {
-					inner = 'Inner'
-				}
-			}
+  15 = '|End segment'
 
-			@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
-		}
-	}
+  @cache {
+    mode = 'cached'
 
-	25 = '|End segment'
-
-	@cache {
-		mode = 'cached'
-
-		entryIdentifier {
-			object = ${object}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
 
 }
 
-contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Array {
+contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Join {
 
-	5 = Neos.Fusion:Value {
-		value = 'Foo'
+  5 = 'Cached segment|'
 
-		@cache {
-			mode = 'cached'
+  10 = ${'counter=' + object.counter + '|'}
 
-			entryIdentifier {
-				static = 42
-			}
+  15 = Neos.Fusion:Loop {
+    items = ${['Foo', 'Bar']}
+    itemName = 'item'
+    itemRenderer = Neos.Fusion:Template {
+      templatePath = 'no.such.file.here.so.crash.please'
 
-			maximumLifetime = 60
-		}
-	}
+      @cache {
+        mode = 'cached'
 
-	10 = '|'
+        entryIdentifier {
+          item = ${item}
+        }
+      }
 
-	15 = Neos.Fusion:Array {
-		1 = Neos.Fusion:Value {
-			value = 'Bar'
+      @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
+    }
+  }
 
-			@cache {
-				# This should influence the upper lifetime, since this segment is embedded and the lifetime is lower than 'Foo'
-				maximumLifetime = 5
-			}
-		}
+  20 = '|End segment'
 
-		2 = Neos.Fusion:Value {
-			value = ''
+  @cache {
+    mode = 'cached'
 
-			@cache {
-				# Assigning NULL should not override other maximumLifetime values
-				maximumLifetime = ${null}
-			}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
 
-	20 = '|'
+}
 
-	25 = Neos.Fusion:Value {
-		value = 'Baz'
+contentCache.nestedCacheSegmentsWithConditionalException = Neos.Fusion:Join {
 
-		@cache {
-			mode = 'cached'
+  5 = 'Cached segment|'
 
-			entryIdentifier {
-				static = 42
-			}
+  // This is just a cached path
+  15 = Neos.Fusion:Join {
+    5 = ${'counter=' + object.counter + '|'}
 
-			# No maximumLifetime set, so the default lifetime (NULL) should be used, but it won't affect the outer maximumLifetime
-		}
-	}
+    @cache {
+      mode = 'cached'
 
-	30 = '|'
+      entryIdentifier {
+        object = ${object}
+      }
+    }
+  }
 
-	35 = Neos.Fusion:Value {
-		value = 'Qux'
+  // Use an exception to have the exception handler working
+  20 = Neos.Fusion:Loop {
+    items = ${['Foo']}
 
-		@cache {
-			mode = 'cached'
+    itemName = 'item'
+    itemRenderer = Neos.Fusion:Testing.Throwing {
+      shouldThrow = ${throwException}
 
-			entryIdentifier {
-				static = 35
-			}
+      @cache {
+        mode = 'cached'
 
-			maximumLifetime = 0
+        entryTags {
+          inner = 'Inner'
+        }
+      }
 
-			# A maximum lifetime of 0 means infinity caching for this segment. Infinity must not be propagated upwards
-		}
-	}
+      @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\PlainTextHandler'
+    }
+  }
 
-	@cache {
-		mode = 'cached'
+  25 = '|End segment'
 
-		entryIdentifier {
-			static = 42
-		}
+  @cache {
+    mode = 'cached'
 
-		maximumLifetime = 30
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
+
+}
+
+contentCache.maximumLifetimeInNestedEmbedAndCachedSegments = Neos.Fusion:Join {
+
+  5 = Neos.Fusion:Value {
+    value = 'Foo'
+
+    @cache {
+      mode = 'cached'
+
+      entryIdentifier {
+        static = 42
+      }
+
+      maximumLifetime = 60
+    }
+  }
+
+  10 = '|'
+
+  15 = Neos.Fusion:Join {
+    1 = Neos.Fusion:Value {
+      value = 'Bar'
+
+      @cache {
+        # This should influence the upper lifetime, since this segment is embedded and the lifetime is lower than 'Foo'
+        maximumLifetime = 5
+      }
+    }
+
+    2 = Neos.Fusion:Value {
+      value = ''
+
+      @cache {
+        # Assigning NULL should not override other maximumLifetime values
+        maximumLifetime = ${null}
+      }
+    }
+  }
+
+  20 = '|'
+
+  25 = Neos.Fusion:Value {
+    value = 'Baz'
+
+    @cache {
+      mode = 'cached'
+
+      entryIdentifier {
+        static = 42
+      }
+
+      # No maximumLifetime set, so the default lifetime (NULL) should be used, but it won't affect the outer maximumLifetime
+    }
+  }
+
+  30 = '|'
+
+  35 = Neos.Fusion:Value {
+    value = 'Qux'
+
+    @cache {
+      mode = 'cached'
+
+      entryIdentifier {
+        static = 35
+      }
+
+      maximumLifetime = 0
+
+      # A maximum lifetime of 0 means infinity caching for this segment. Infinity must not be propagated upwards
+    }
+  }
+
+  @cache {
+    mode = 'cached'
+
+    entryIdentifier {
+      static = 42
+    }
+
+    maximumLifetime = 30
+  }
 
 }
 
 
 
 contentCache.entryIdentifiersAreMergedWithGlobalIdentifiers < contentCache.cachedSegment {
-	prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-		site = ${site}
-	}
+  prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+    site = ${site}
+  }
 
-	@cache {
-		entryIdentifier {
-			object = ${object}
-		}
+  @cache {
+    entryIdentifier {
+      object = ${object}
+    }
 
-		entryTags {
-			1 = ${site}
-		}
-	}
+    entryTags {
+      1 = ${site}
+    }
+  }
 }
 
 contentCache.globalIdentifiersAreUsedWithBlankEntryIdentifiers < contentCache.cachedSegment {
-	prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-		site = ${site}
-	}
+  prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+    site = ${site}
+  }
 
-	@cache {
-		entryTags {
-			1 = ${site}
-		}
-	}
+  @cache {
+    entryTags {
+      1 = ${site}
+    }
+  }
 }
 
 contentCache.entryIdentifierPrototypeCanBeOverwritten < contentCache.cachedSegment {
-	prototype(Neos.Fusion:GlobalCacheIdentifiers) {
-		site = ${site}
-	}
+  prototype(Neos.Fusion:GlobalCacheIdentifiers) {
+    site = ${site}
+  }
 
-	@cache {
-		entryIdentifier = Neos.Fusion:RawArray {
-			object = ${object}
-		}
+  @cache {
+    entryIdentifier = Neos.Fusion:DataStructure {
+      object = ${object}
+    }
 
-		entryTags {
-			1 = ${site}
-		}
-	}
+    entryTags {
+      1 = ${site}
+    }
+  }
 }
 
-contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = Neos.Fusion:Array {
-	5 = 'Outer segment|'
+contentCache.uncachedSegmentInCachedSegmentCanOverrideContextVariables = Neos.Fusion:Join {
+  5 = 'Outer segment|'
 
-	10 = ${'object=' + object.value}
+  10 = ${'object=' + object.value}
 
-	15 = '|'
+  15 = '|'
 
-	20 =  Neos.Fusion:Array {
-		@context.currentCounter = ${object.counter}
+  20 = Neos.Fusion:Join {
+    @context.currentCounter = ${object.counter}
 
-		5 = 'Uncached segment|'
+    5 = 'Uncached segment|'
 
-		10 = ${'counter=' + currentCounter}
+    10 = ${'counter=' + currentCounter}
 
-		15 = '|End uncached'
+    15 = '|End uncached'
 
-		@cache {
-			mode = 'uncached'
+    @cache {
+      mode = 'uncached'
 
-			context {
-				1 = 'object'
-			}
-		}
-	}
+      context {
+        1 = 'object'
+      }
+    }
+  }
 
-	25 = '|End outer'
+  25 = '|End outer'
 
-	@cache {
-		mode = 'cached'
+  @cache {
+    mode = 'cached'
 
-		entryIdentifier {
-			object = ${object}
-		}
-	}
+    entryIdentifier {
+      object = ${object}
+    }
+  }
 }
 
-contentCache.dynamicSegment = Neos.Fusion:Array {
-	5 = 'Dynamic segment|'
-	10 = ${'counter=' + renderObject.counter}
+contentCache.dynamicSegment = Neos.Fusion:Join {
+  5 = 'Dynamic segment|'
+  10 = ${'counter=' + renderObject.counter}
 
-	@cache {
-		mode = 'dynamic'
-		context {
-			1 = 'renderObject'
-			2 = 'discriminatorObject'
-		}
-		entryIdentifier {
-			renderObject = 'static'
-		}
-		entryDiscriminator = ${discriminatorObject.value}
-	}
+  @cache {
+    mode = 'dynamic'
+    context {
+      1 = 'renderObject'
+      2 = 'discriminatorObject'
+    }
+    entryIdentifier {
+      renderObject = 'static'
+    }
+    entryDiscriminator = ${discriminatorObject.value}
+  }
 }
 
-contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Array {
-	5 = 'Dynamic segment|'
-	10 = ${'counter=' + renderObject.counter}
+contentCache.dynamicSegmentWithDisabledDiscriminator = Neos.Fusion:Join {
+  5 = 'Dynamic segment|'
+  10 = ${'counter=' + renderObject.counter}
 
-	@cache {
-		mode = 'dynamic'
-		context {
-			1 = 'renderObject'
-			2 = 'discriminatorObject'
-		}
-		entryIdentifier {
-			renderObject = 'static'
-		}
-		entryDiscriminator = ${discriminatorObject.value == 'disable' ? false : discriminatorObject.value}
-	}
+  @cache {
+    mode = 'dynamic'
+    context {
+      1 = 'renderObject'
+      2 = 'discriminatorObject'
+    }
+    entryIdentifier {
+      renderObject = 'static'
+    }
+    entryDiscriminator = ${discriminatorObject.value == 'disable' ? false : discriminatorObject.value}
+  }
 }
 
-contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Array {
-	5 = 'Cached segment|'
-	10 = ${'counter=' + renderObject.counter + '|'}
-	15 = Neos.Fusion:Array {
-		5 = 'Nested dynamic segment|'
-		10 = ${'counter=' + renderObject.counter + '|'}
-		15 = Neos.Fusion:Array {
-			5 = 'Nested cached segment|'
-			10 = ${'counter=' + renderObject.counter}
-			@cache {
-				mode = 'cached'
-			}
-		}
-		@cache {
-			mode = 'dynamic'
-			entryDiscriminator = 'static'
-			context {
-				1 = 'renderObject'
-			}
-		}
-	}
-	@cache {
-		mode = 'cached'
-	}
+contentCache.dynamicSegmentWithNestedCachedSegment = Neos.Fusion:Join {
+  5 = 'Cached segment|'
+  10 = ${'counter=' + renderObject.counter + '|'}
+  15 = Neos.Fusion:Join {
+    5 = 'Nested dynamic segment|'
+    10 = ${'counter=' + renderObject.counter + '|'}
+    15 = Neos.Fusion:Join {
+      5 = 'Nested cached segment|'
+      10 = ${'counter=' + renderObject.counter}
+      @cache {
+        mode = 'cached'
+      }
+    }
+    @cache {
+      mode = 'dynamic'
+      entryDiscriminator = 'static'
+      context {
+        1 = 'renderObject'
+      }
+    }
+  }
+  @cache {
+    mode = 'cached'
+  }
 }
 
 contentCache.cachedSegmentWithNestedDynamicSegment = Neos.Fusion:Value {
-	value = Neos.Fusion:Value {
-		value = ${someContextVariable}
-		@cache {
-			mode = 'dynamic'
-			entryDiscriminator = 'static'
-			context {
-				1 = 'someContextVariable'
-			}
-		}
-	}
-	@cache {
-		mode = 'cached'
-		entryTags {
-			1 = 'testing'
-		}
-	}
+  value = Neos.Fusion:Value {
+    value = ${someContextVariable}
+    @cache {
+      mode = 'dynamic'
+      entryDiscriminator = 'static'
+      context {
+        1 = 'someContextVariable'
+      }
+    }
+  }
+  @cache {
+    mode = 'cached'
+    entryTags {
+      1 = 'testing'
+    }
+  }
 }
 
 contentCache.dynamicWithChangingDiscriminator = Neos.Fusion:Value {
-	value = Neos.Fusion:Value {
-		value = ${request.arguments.testArgument}
-		@cache {
-			mode = 'dynamic'
-			entryDiscriminator = ${request.arguments.testArgument}
-			context {
-				1 = 'someContextVariable'
-			}
-			entryTags {
-				1 = 'dynamicTag'
-			}
-		}
-	}
-	@cache {
-		mode = 'cached'
-		entryTags {
-			1 = 'testing'
-		}
-	}
+  value = Neos.Fusion:Value {
+    value = ${request.arguments.testArgument}
+    @cache {
+      mode = 'dynamic'
+      entryDiscriminator = ${request.arguments.testArgument}
+      context {
+        1 = 'someContextVariable'
+      }
+      entryTags {
+        1 = 'dynamicTag'
+      }
+    }
+  }
+  @cache {
+    mode = 'cached'
+    entryTags {
+      1 = 'testing'
+    }
+  }
 }

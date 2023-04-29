@@ -37,7 +37,10 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
         return (
             $thumbnail->getOriginalAsset() instanceof Document &&
             $this->isExtensionSupported($thumbnail) &&
-            extension_loaded('imagick')
+            (
+                $this->imagineService instanceof \Imagine\Imagick\Imagine ||
+                (extension_loaded('imagick') && $this->getOption('overrideImagineDriverCheck'))
+            )
         );
     }
 
@@ -60,7 +63,25 @@ class DocumentThumbnailGenerator extends AbstractThumbnailGenerator
 
             $im = new \Imagick();
             $im->setResolution($this->getOption('resolution'), $this->getOption('resolution'));
-            $im->readImage($documentFile);
+            try {
+                $readResult = $im->readImage($documentFile);
+            } catch (\ImagickException $e) {
+                $readResult = $e;
+            }
+            if ($readResult !== true) {
+                $filename = $thumbnail->getOriginalAsset()->getResource()->getFilename();
+                $sha1 = $thumbnail->getOriginalAsset()->getResource()->getSha1();
+                $message = $readResult instanceof \ImagickException ? $readResult->getMessage() : 'unknown';
+                throw new \RuntimeException(
+                    sprintf(
+                        'Could not read image (filename: %s, SHA1: %s) for thumbnail generation. Maybe the ImageMagick security policy denies reading the format? Error: %s',
+                        $filename,
+                        $sha1,
+                        $message
+                    ),
+                    1656518085
+                );
+            }
             $im->setImageFormat('png');
             $im->setImageBackgroundColor('white');
             $im->setImageCompose(\Imagick::COMPOSITE_OVER);

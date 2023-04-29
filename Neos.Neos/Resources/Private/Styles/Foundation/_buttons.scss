@@ -2,129 +2,128 @@
 // Buttons
 // --------------------------------------------------
 
-
 // Base styles
 // --------------------------------------------------
 
 // Core
 .neos-button {
-	display: inline-block;
-	padding: 0 $defaultMargin;
-	margin: 0;
-	@include font;
-	color: #fff;
-	font-size: $generalFontSize;
-	text-align: center;
-	vertical-align: middle;
-	cursor: pointer;
-	width: auto;
-	height: $unit;
-	line-height: $unit;
-	background-color: $grayLight;
-	background-image: none;
-	border: none;
-	border-radius: 0;
-	text-shadow: none;
-	box-shadow: none;
-	box-sizing: border-box;
-	transition: all 0 ease 0;
+  display: inline-block;
+  padding: 0 $defaultMargin;
+  margin: 0;
+  @include font;
+  color: #fff;
+  font-size: $generalFontSize;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  width: auto;
+  height: $unit;
+  line-height: $unit;
+  background-color: $grayLight;
+  background-image: none;
+  border: none;
+  border-radius: 0;
+  text-shadow: none;
+  box-shadow: none;
+  box-sizing: border-box;
+  transition: all 0 ease 0;
 
-	&.neos-button-small {
-		height: $defaultMargin + $relatedMargin;
-		line-height: $defaultMargin + $relatedMargin;
-		font-size: 12px;
-		padding: 0 $relatedMargin;
-	}
+  &.neos-button-small {
+    height: $defaultMargin + $relatedMargin;
+    line-height: $defaultMargin + $relatedMargin;
+    font-size: 12px;
+    padding: 0 $relatedMargin;
+  }
 
-	&:not([disabled]),
-	&:not(.neos-disabled) {
-		// Hover/focus state
-		&:hover,
-		&:active,
-		&.neos-active,
-		&.neos-pressed {
-			color: #fff;
-			background-color: $blue;
-			text-decoration: none;
-		}
-	}
+  &:not([disabled]),
+  &:not(.neos-disabled) {
+    // Hover/focus state
+    &:hover,
+    &:active,
+    &.neos-active,
+    &.neos-pressed {
+      color: #fff;
+      background-color: $blue;
+      text-decoration: none;
+    }
+  }
 
-	// Focus state for keyboard and accessibility
-	&:focus {
-		@include tab-focus();
-		outline: 1px dotted #fff;
-		outline-offset: 0;
-	}
+  // Focus state for keyboard and accessibility
+  &:focus {
+    @include tab-focus();
+    outline: 1px dotted #fff;
+    outline-offset: 0;
+  }
 
-	// Disabled state
-	&.neos-disabled,
-	&[disabled] {
-		cursor: not-allowed;
-		opacity: .65;
-	}
+  // Disabled state
+  &.neos-disabled,
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.65;
+  }
 
-	&[class^="fa-"],
-	&[class*=" fa-"] {
-		@extend .fas;
-	}
+  &[class^="fa-"],
+  &[class*=" fa-"] {
+    @extend .fas;
+  }
 
-	&.neos-button-primary {
-		background-color: $blue;
+  &.neos-button-primary {
+    background-color: $blue;
 
-		&:focus {
-			outline: 1px dotted #fff;
-		}
-	}
+    &:focus {
+      outline: 1px dotted #fff;
+    }
+  }
 
-	&.neos-button-success {
-		background-color: $green;
+  &.neos-button-success {
+    background-color: $green;
 
-		&:hover,
-		&:active {
-			background-color: $green;
-		}
+    &:hover,
+    &:active {
+      background-color: $green;
+    }
 
-		&:focus {
-			outline: 1px dotted #fff;
-		}
-	}
+    &:focus {
+      outline: 1px dotted #fff;
+    }
+  }
 
-	&.neos-button-warning {
-		background-color: $orange;
+  &.neos-button-warning {
+    background-color: $orange;
 
-		&:hover,
-		&:active {
-			background-color: $orange;
-		}
+    &:hover,
+    &:active {
+      background-color: $orange;
+    }
 
-		&:focus {
-			outline: 1px dotted #fff;
-		}
-	}
+    &:focus {
+      outline: 1px dotted #fff;
+    }
+  }
 
-	&.neos-button-danger {
-		background-color: $warning;
+  &.neos-button-danger {
+    background-color: $warning;
 
-		&:hover,
-		&:active {
-			background-color: $warning;
-		}
+    &:hover,
+    &:active {
+      background-color: $warning;
+    }
 
-		&:focus {
-			outline: 1px dotted #fff;
-		}
-	}
+    &:focus {
+      outline: 1px dotted #fff;
+    }
+  }
 }
 
 a.neos-button {
-	color: #fff;
+  color: #fff;
 
-	&:hover,
-	&:focus {
-		color: #fff;
-	}
+  &:hover,
+  &:focus {
+    color: #fff;
+  }
 
-	i {
-		display: inline-block !important;
-	}
+  i {
+    display: inline-block !important;
+  }
 }

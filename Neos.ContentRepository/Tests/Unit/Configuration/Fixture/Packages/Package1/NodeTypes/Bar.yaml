@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Packages/Package1/NodeTypes/Bar.yaml
+    pathPackages.Package1.NodeTypes.Bar_yaml: true
+'NodeType:PathPackages.Package1.NodeTypes.Bar_yaml':
+  options:
+    path: Packages/Package1/NodeTypes/Bar.yaml

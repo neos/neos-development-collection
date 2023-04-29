@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for the Fusion RawArray
+ * Testcase for the Fusion DataStructure
  *
  */
 class QuotedKeysTest extends AbstractFusionObjectTest

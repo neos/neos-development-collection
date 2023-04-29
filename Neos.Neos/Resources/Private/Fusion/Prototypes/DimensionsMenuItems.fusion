@@ -1,15 +1,15 @@
 prototype(Neos.Neos:DimensionsMenuItems) < prototype(Neos.Neos:MenuItems)  {
  @class = 'Neos\\Neos\\Fusion\\DimensionsMenuItemsImplementation'
 
-	# if documents which are hidden in index should be rendered or not
-	renderHiddenInIndex = true
+  # if documents which are hidden in index should be rendered or not
+  renderHiddenInIndex = true
 
-	# name of the dimension to use (optional)
-	dimension = null
+  # name of the dimension to use (optional)
+  dimension = null
 
-	# list of presets, if the default order should be overridden, only used with "dimension" set
-	presets = null
+  # list of presets, if the default order should be overridden, only used with "dimension" set
+  presets = null
 
-	# if true, items for all presets will be included, ignoring dimension constraints
-	includeAllPresets = false
+  # if true, items for all presets will be included, ignoring dimension constraints
+  includeAllPresets = false
 }

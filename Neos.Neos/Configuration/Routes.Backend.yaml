@@ -72,13 +72,6 @@
   appendExceedingArguments: true
 
 -
-  name: 'Menu'
-  uriPattern: 'menu'
-  defaults:
-    '@controller': 'Backend\Menu'
-  appendExceedingArguments: true
-
--
   name: 'Settings'
   uriPattern: 'settings/{@action}'
   defaults:

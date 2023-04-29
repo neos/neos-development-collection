@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Media\ViewHelpers;
 
 /*
@@ -98,6 +99,7 @@ class ImageViewHelper extends AbstractTagBasedViewHelper
         $this->registerTagAttribute('alt', 'string', 'Specifies an alternate text for an image', true);
         $this->registerTagAttribute('ismap', 'string', 'Specifies an image as a server-side image-map. Rarely used. Look at usemap instead');
         $this->registerTagAttribute('usemap', 'string', 'Specifies an image as a client-side image-map');
+        $this->registerTagAttribute('loading', 'string', 'Specifies the loading attribute for an image', false, 'lazy');
 
         $this->registerArgument('image', ImageInterface::class, 'The image to be rendered as an image');
         $this->registerArgument('width', 'integer', 'Desired width of the image');

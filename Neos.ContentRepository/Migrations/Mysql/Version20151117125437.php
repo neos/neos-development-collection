@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 use Doctrine\DBAL\Schema\Schema;
 
 /**
@@ -14,7 +14,7 @@ class Version20151117125437 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema)
+    public function up(Schema $schema): void 
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace ADD owner VARCHAR(40) DEFAULT NULL");
@@ -24,7 +24,7 @@ class Version20151117125437 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema)
+    public function down(Schema $schema): void 
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
         $this->addSql("ALTER TABLE typo3_typo3cr_domain_model_workspace DROP owner");

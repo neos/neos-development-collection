@@ -285,7 +285,7 @@ class NodeDataTest extends UnitTestCase
     {
         $this->inject($this->nodeData, 'persistenceManager', $this->createMock(PersistenceManagerInterface::class));
 
-        $className = uniqid('Test');
+        $className = uniqid('Test', false);
         eval('class ' .$className . ' {
 				public $title = "My Title";
 			}');
@@ -305,7 +305,7 @@ class NodeDataTest extends UnitTestCase
     {
         $this->inject($this->nodeData, 'persistenceManager', $this->createMock(PersistenceManagerInterface::class));
 
-        $className = uniqid('Test');
+        $className = uniqid('Test', false);
         eval('
 			class ' .$className . ' {
 				public $title = "My Title";
@@ -341,7 +341,7 @@ class NodeDataTest extends UnitTestCase
     public function getPropertyThrowsAnExceptionIfTheSpecifiedPropertyDoesNotExistInTheContentObject()
     {
         $this->expectException(NodeException::class);
-        $className = uniqid('Test');
+        $className = uniqid('Test', false);
         eval('
 			class ' .$className . ' {
 				public $title = "My Title";
@@ -473,8 +473,7 @@ class NodeDataTest extends UnitTestCase
         ];
 
         $nodeDataRepository = $this->getMockBuilder(NodeDataRepository::class)->disableOriginalConstructor()->getMock();
-        $nodeDataRepository->expects($this->at(0))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will(self::returnValue($childNodeDataResults));
-        $nodeDataRepository->expects($this->at(1))->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->will(self::returnValue([]));
+        $nodeDataRepository->method('findByParentWithoutReduce')->with('/foo', $this->mockWorkspace)->willReturnOnConsecutiveCalls($childNodeDataResults, []);
 
         $nodeData = $this->getAccessibleMock(NodeData::class, ['dummy'], ['/foo', $this->mockWorkspace]);
         $this->inject($nodeData, 'nodeDataRepository', $nodeDataRepository);
@@ -607,9 +606,8 @@ class NodeDataTest extends UnitTestCase
     {
         /** @var SecurityContext|\PHPUnit\Framework\MockObject\MockObject $mockSecurityContext */
         $mockSecurityContext = $this->createMock(SecurityContext::class);
-        $mockSecurityContext->expects($this->at(0))->method('canBeInitialized')->will(self::returnValue(true));
-        $mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will(self::returnValue(false));
-        $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('SomeOtherRole')->will(self::returnValue(true));
+        $mockSecurityContext->method('canBeInitialized')->willReturn(true);
+        $mockSecurityContext->expects(self::atLeast(2))->method('hasRole')->withConsecutive(['SomeRole'], ['SomeOtherRole'])->willReturnOnConsecutiveCalls(false, true);
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
         $this->nodeData->setAccessRoles(['SomeRole', 'SomeOtherRole']);
@@ -623,9 +621,8 @@ class NodeDataTest extends UnitTestCase
     {
         /** @var SecurityContext|\PHPUnit\Framework\MockObject\MockObject $mockSecurityContext */
         $mockSecurityContext = $this->createMock(SecurityContext::class);
-        $mockSecurityContext->expects($this->at(0))->method('canBeInitialized')->will(self::returnValue(true));
-        $mockSecurityContext->expects($this->at(1))->method('hasRole')->with('SomeRole')->will(self::returnValue(false));
-        $mockSecurityContext->expects($this->at(2))->method('hasRole')->with('Everyone')->will(self::returnValue(true));
+        $mockSecurityContext->method('canBeInitialized')->willReturn(true);
+        $mockSecurityContext->expects(self::atLeast(2))->method('hasRole')->withConsecutive(['SomeRole'], ['Everyone'])->willReturnOnConsecutiveCalls(false, true);
         $this->inject($this->nodeData, 'securityContext', $mockSecurityContext);
 
         $this->nodeData->setAccessRoles(['SomeRole', 'Everyone', 'SomeOtherRole']);

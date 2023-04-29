@@ -15,7 +15,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Exception;
-use Neos\Fusion\FusionObjects\ArrayImplementation;
+use Neos\Fusion\FusionObjects\JoinImplementation;
 
 /**
  * Testcase for the Fusion Parser
@@ -447,7 +447,7 @@ class ParserTest extends UnitTestCase
         $expectedParseTree = [
 
             'newObject1' => [
-                '__objectType' =>'Neos.Fusion:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 'value' => [
                     '__value' => 'Hello',
                     '__objectType' => null,
@@ -481,7 +481,7 @@ class ParserTest extends UnitTestCase
                 '__eelExpression' => null,
             ],
             'newObject2' => [
-                '__objectType' =>'Neos.Fusion:Text',
+                '__objectType' => 'Neos.Fusion:Text',
                 'value' => 'Hello',
                 '__meta' => [
                     'process' => [
@@ -528,37 +528,37 @@ class ParserTest extends UnitTestCase
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
-                'value' => chr(10) . '	Some text.' . chr(10)
+                'value' => chr(10) . '  Some text.' . chr(10)
             ],
             'object2' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
-                'value' => chr(10) . '	Some text.' . chr(10)
+                'value' => chr(10) . '  Some text.' . chr(10)
             ],
             'object3' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
-                'value' => 'The text might start' . chr(10) . '	at some line\' and' . chr(10) . '	end at some other line'
+                'value' => 'The text might start' . chr(10) . '  at some line\' and' . chr(10) . '  end at some other line'
             ],
             'object4' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
-                'value' => 'The text might start' . chr(10) . '	at some line "and' . chr(10) . '	end at some other line'
+                'value' => 'The text might start' . chr(10) . '  at some line "and' . chr(10) . '  end at some other line'
             ],
             'object5' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
-                'value' => 'The text might start' . chr(10) . '	at "some" line and' . chr(10) . '	end at some other line'
+                'value' => 'The text might start' . chr(10) . '  at "some" line and' . chr(10) . '  end at some other line'
             ],
             'object6' => [
                 '__objectType' => 'Neos.Fusion:Text',
                 '__value' => null,
                 '__eelExpression' => null,
-                'value' => 'The text might start' . chr(10) . '	at \'some\' line and' . chr(10) . '	end at some other line'
+                'value' => 'The text might start' . chr(10) . '  at \'some\' line and' . chr(10) . '  end at some other line'
             ],
         ];
 
@@ -675,27 +675,27 @@ class ParserTest extends UnitTestCase
                                 '__objectType' => null
                             ],
                             'blah3' => [
-                                '__eelExpression' => 'my.expression("as' . "		some stuff }		" . '" + "df")',
+                                '__eelExpression' => 'my.expression("as' . "    some stuff }    " . '" + "df")',
                                 '__value' => null,
                                 '__objectType' => null
                             ],
                             'multiline2' => [
-                                '__eelExpression' => "my.expression(		Foo.bar(\"foo\")	)",
+                                '__eelExpression' => "my.expression(    Foo.bar(\"foo\")  )",
                                 '__value' => null,
                                 '__objectType' => null
                             ],
                             'multiline3' => [
-                                '__eelExpression' => "		my.expression(			Bar.foo(\"bar\")		)	",
+                                '__eelExpression' => "    my.expression(      Bar.foo(\"bar\")    )  ",
                                 '__value' => null,
                                 '__objectType' => null
                             ],
                             'multiline4' => [
-                                '__eelExpression' => "my.expression(		\"bla\",		\"blubb\",		Test()	)",
+                                '__eelExpression' => "my.expression(    \"bla\",    \"blubb\",    Test()  )",
                                 '__value' => null,
                                 '__objectType' => null
                             ],
                             'multiline5' => [
-                                '__eelExpression' => "'col-sm-'+		String.split(q(node).parent().property('layout'), '-')[multiColumnIteration.index]",
+                                '__eelExpression' => "'col-sm-'+    String.split(q(node).parent().property('layout'), '-')[multiColumnIteration.index]",
                                 '__value' => null,
                                 '__objectType' => null
                             ]
@@ -802,22 +802,22 @@ class ParserTest extends UnitTestCase
             '__prototypes' => [
                 'Neos.Neos:Foo' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ],
                 'Neos.Neos:Bar' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ],
                 'Neos.Schirmchen:Baz' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ],
                 'Neos.Future:Quux' => [
                     '__meta' => [
-                        'class' => ArrayImplementation::class
+                        'class' => JoinImplementation::class
                     ]
                 ]
             ]
@@ -921,6 +921,26 @@ class ParserTest extends UnitTestCase
     }
 
     /**
+     * Checks if identifiers starting with digits are parsed correctly
+     *
+     * @test
+     */
+    public function parserCorrectlyParsesFixture25()
+    {
+        $sourceCode = $this->readFusionFixture('ParserTestFusionFixture25');
+
+        $expectedParseTree = [
+            'attributes' => [
+                '@notAMeta' => 'value',
+                '@notAMeta.notNested.reallyNotNested.string' => 'value'
+            ]
+        ];
+
+        $actualParseTree = $this->parser->parse($sourceCode);
+        self::assertSame($expectedParseTree, $actualParseTree, 'The parse tree was not as expected after parsing fixture 23.');
+    }
+
+    /**
      * Checks if really long strings are parsed correctly
      *
      * @test
@@ -960,8 +980,8 @@ class ParserTest extends UnitTestCase
             ->expects($this->exactly(2))
             ->method('invokeAndParseDsl')
             ->withConsecutive(
-                ['dsl1', 'example value' ],
-                ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value' ]
+                ['dsl1', 'example value'],
+                ['dsl2', 'another' . chr(10) . 'multiline' . chr(10) . 'value']
             );
 
         $parser->parse($sourceCode);

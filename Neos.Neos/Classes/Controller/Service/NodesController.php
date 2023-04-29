@@ -12,7 +12,6 @@ namespace Neos\Neos\Controller\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
@@ -204,7 +203,7 @@ class NodesController extends ActionController
     {
         $nodeVariants = $context->getNodeVariantsByIdentifier($identifier);
         if (count($nodeVariants) > 0) {
-            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Neos-Node-Exists-In-Other-Dimensions', true);
+            $this->response->setHttpHeader('X-Neos-Node-Exists-In-Other-Dimensions', true);
 
             // If the node exists in another dimension, we want to know how many nodes in the rootline are also missing for the target
             // dimension. This is needed in the UI to tell the user if nodes will be materialized recursively upwards in the rootline.
@@ -222,7 +221,7 @@ class NodesController extends ActionController
                 $nodes = $context->getNodesOnPath($siteNodePath, $node->getPath());
                 $missingNodesOnRootline = $pathSegments - count($nodes);
                 if ($missingNodesOnRootline > 0) {
-                    $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Neos-Nodes-Missing-On-Rootline', $missingNodesOnRootline);
+                    $this->response->setHttpHeader('X-Neos-Nodes-Missing-On-Rootline', $missingNodesOnRootline);
                 }
             }
         }

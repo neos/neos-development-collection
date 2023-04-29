@@ -2081,7 +2081,7 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
      */
     public function countChildNodes(NodeTypeConstraints $nodeTypeConstraints = null): int
     {
-        return count($this->getChildNodes($nodeTypeConstraints));
+        return count($this->findChildNodes($nodeTypeConstraints));
     }
 
     /**

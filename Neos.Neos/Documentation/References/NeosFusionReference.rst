@@ -308,6 +308,41 @@ Example::
 
   # the initial value is not changed, so you can define the Debug prototype anywhere in your Fusion code
 
+.. _Neos_Fusion__DebugConsole:
+
+Neos.Fusion:DebugConsole
+-----------------
+
+Wraps the given value with a script tag to print it to the browser console.
+When used as process the script tag is appended to the processed value.
+
+:title: (optional) Title for the debug output
+:value: (mixed) The value to print to the console
+:method: (string, optional) The method to call on the browser console object
+:[key]: (mixed) Other arguments to pass to the console method
+
+Example::
+
+  renderer.@process.debug = Neos.Fusion:Debug.Console {
+    title = 'My props'
+    value = ${props}
+    method = 'table'
+  }
+
+Multiple values::
+
+  renderer.@process.debug = Neos.Fusion:Debug.Console {
+    value = ${props.foo}
+    otherValue = ${props.other}
+    thirdValue = ${props.third}
+  }
+
+Color usage::
+
+  renderer.@process.debug = Neos.Fusion:Debug.Console {
+    value = ${'%c' + node.identifier}
+    color = 'color: red'
+  }
 
 .. _Neos_Fusion__Component:
 
@@ -449,6 +484,44 @@ Example::
 
 .. note:: Most of the time this can be simplified by directly assigning the value instead of using the ``Value`` object.
 
+.. _Neos_Fusion__Match:
+
+Neos.Fusion:Match
+-----------------
+
+Matches the given subject to a value
+
+:@subject: (string, **required**) The subject to match
+:@default: (mixed) The default to return when no match was found
+:[key]: (mixed) Definition list, the keys will be matched to the subject and their value returned.
+
+Example::
+
+	myValue = Neos.Fusion:Match {
+		@subject = 'hello'
+		@default = 'World?'
+		hello = 'Hello World'
+		bye = 'Goodbye world'
+	}
+
+.. note:: This can be used to simplify many usages of :ref:`Neos_Fusion__Case` when the subject is a string.
+
+.. _Neos_Fusion__Memo:
+
+Neos.Fusion:Memo
+-----------------
+
+Returns the result of previous calls with the same "discriminator"
+
+:discriminator: (string, **required**) Cache identifier
+:value: (mixed) The value to evaluate and store for future calls during rendering
+
+Example::
+
+  prototype(My.Vendor:Expensive.Calculation) < prototype(Neos.Fusion:Memo) {
+    discriminator = 'expensive-calculation'
+    value = ${1+2}
+  }
 
 .. _Neos_Fusion__RawArray:
 
@@ -1277,6 +1350,9 @@ Render an image tag for an asset.
 
 :\*: All :ref:`Neos_Neos__ImageUri` properties
 :attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
+
+Per default, the attribute loading is set to ``'lazy'``. To fetch a resource immediately, you can set ``attributes.loading``
+to ``null``, ``false`` or ``'eager'``.
 
 Example::
 

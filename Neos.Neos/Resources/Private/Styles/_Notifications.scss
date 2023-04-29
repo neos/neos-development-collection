@@ -1,157 +1,233 @@
 // Notifications
+
+@-moz-keyframes fadeIn {
+  from {
+    height: 0;
+  }
+  to {
+    height: $unit;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    height: 0;
+  }
+  to {
+    height: $unit;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    height: 0;
+  }
+  to {
+    height: $unit;
+  }
+}
+@-moz-keyframes fadeOut {
+  from {
+    height: $unit;
+  }
+  to {
+    height: 0;
+  }
+}
+
+@-webkit-keyframes fadeOut {
+  from {
+    height: $unit;
+  }
+  to {
+    height: 0;
+  }
+}
+@keyframes fadeOut {
+  from {
+    height: $unit;
+  }
+  to {
+    height: 0;
+  }
+}
+
 #neos-notification-container.neos-notification-top {
-	position: fixed;
-	z-index: 999999;
-	top: 0;
-	left: 50%;
-	width: 512px;
-	padding-top: 8px;
-	@include font;
-	transform: translate(-50%, 0);
+  position: fixed;
+  z-index: 999999;
+  top: 0;
+  left: 50%;
+  width: 512px;
+  padding-top: 8px;
+  @include font;
+  transform: translate(-50%, 0);
 
-	> .neos-notification {
-		color: white;
-		font-size: 14px;
-		position: relative;
-		width: 512px;
-		margin: 0 auto $tightMargin;
-		word-wrap: break-word;
-		overflow: hidden;
-		box-sizing: border-box;
-		box-shadow: 0 0 14px rgba(0, 0, 0, .15);
+  > .neos-notification {
+    display: block;
+    color: white;
+    font-size: 14px;
+    position: relative;
+    width: 512px;
+    margin: 0 auto $tightMargin;
+    word-wrap: break-word;
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: 0 0 14px rgba(0, 0, 0, 0.15);
+    -webkit-animation: fadeIn 250ms;
+    -moz-animation: fadeIn 250ms;
+    animation: fadeIn 250ms;
 
-		&::before {
-			content: '';
-			display: block;
-			position: absolute;
-			left: 40px;
-			top: 0;
-			bottom: 0;
-			width: 1px;
-			background: rgba(255, 255, 255, .25);
-		}
+    &.fade-out {
+      -webkit-animation: fadeOut 250ms;
+      -moz-animation: fadeOut 250ms;
+      animation: fadeOut 250ms;
+    }
 
-		&.neos-notification-error {
-			background-color: $warning;
+    &::before {
+      content: "";
+      display: block;
+      position: absolute;
+      left: 40px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.25);
+    }
 
-			.fa-error {
-				@extend .#{$fa-css-prefix}-ban;
-			}
-		}
+    &.neos-notification-error {
+      background-color: $warning;
 
-		&.neos-notification-success {
-			background-color: $green;
+      .fa-error {
+        @extend .#{$fa-css-prefix}-ban;
+      }
+    }
 
-			.fa-success {
-				@extend .#{$fa-css-prefix}-check;
-			}
-		}
+    &.neos-notification-success {
+      background-color: $green;
 
-		&.neos-notification-warning {
-			background-color: $orange;
+      .fa-success {
+        @extend .#{$fa-css-prefix}-check;
+      }
+    }
 
-			.fa-warning {
-				@extend .#{$fa-css-prefix}-exclamation-triangle;
-			}
-		}
+    &.neos-notification-warning {
+      background-color: $orange;
 
-		&.neos-notification-info {
-			background-color: $blue;
+      .fa-warning {
+        @extend .#{$fa-css-prefix}-exclamation-triangle;
+      }
+    }
 
-			.fa-info-circle {
-				@extend .#{$fa-css-prefix}-info-circle;
-			}
-		}
+    &.neos-notification-info {
+      background-color: $blue;
 
-		.neos-title {
-			display: none;
-		}
+      .fa-info-circle {
+        @extend .#{$fa-css-prefix}-info-circle;
+      }
+    }
 
-		i {
-			height: $unit;
-			line-height: $unit !important;
-			width: $unit;
-			text-align: center;
-			font-size: 16px;
-			padding: 0;
-			margin: 0;
-			font-family: Font Awesome 5 Free;
-			font-weight: 900;
-			font-style: normal;
-			text-decoration: inherit;
-			-webkit-font-smoothing: antialiased;
-			position: absolute;
-			top: 0;
-			left: 0;
+    .neos-title {
+      display: none;
+    }
 
-			&.neos-close-button {
-				color: white;
-				height: 40px;
-				line-height: 40px;
-				width: 40px;
-				text-align: center;
-				left: auto;
-				right: 0;
-				cursor: pointer;
-				font-size: 18px;
-				@extend .fas;
-				@extend .#{$fa-css-prefix}-times-circle;
+    i {
+      height: $unit;
+      line-height: $unit !important;
+      width: $unit;
+      text-align: center;
+      font-size: 16px;
+      padding: 0;
+      margin: 0;
+      font-family: Font Awesome 5 Free;
+      font-weight: 900;
+      font-style: normal;
+      text-decoration: inherit;
+      -webkit-font-smoothing: antialiased;
+      position: absolute;
+      top: 0;
+      left: 0;
 
-				&:hover {
-					background-color: rgba(255, 255, 255, .25);
-				}
-			}
-		}
+      &.neos-close-button {
+        color: white;
+        height: 40px;
+        line-height: 40px;
+        width: 40px;
+        text-align: center;
+        left: auto;
+        right: 0;
+        cursor: pointer;
+        font-size: 18px;
+        @extend .fas;
+        @extend .#{$fa-css-prefix}-times-circle;
 
-		.neos-notification-content {
-			.neos-expand-content {
-				display: none;
-				padding: $defaultMargin ($unit + 1 + $relatedMargin);
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.25);
+        }
+      }
+    }
 
-				pre {
-					padding: $defaultMargin 0;
-					font-family: "Lucida Console", Monaco, monospace;
-					background-color: transparent;
-					border: none;
-					color: #fff;
-					border-radius: 0;
-					white-space: pre-wrap;
-				}
-			}
+    .neos-notification-content {
+      &.expandable {
+        .neos-expand-content {
+          visibility: hidden;
+          padding: 0 ($unit + 1 + $relatedMargin);
+          transition: all 500ms cubic-bezier(0, 1, 0.5, 1);
 
-			&.expandable {
-				.neos-notification-heading {
-					cursor: pointer;
-					color: #fff;
+          pre {
+            padding: $defaultMargin 0;
+            font-family: "Lucida Console", Monaco, monospace;
+            background-color: transparent;
+            border: none;
+            color: #fff;
+            border-radius: 0;
+            white-space: pre-wrap;
+          }
+        }
 
-					&::after {
-						content: "›";
-						font-size: 26px;
-						font-weight: normal;
-						display: inline-block;
-						position: relative;
-						rotate: 90deg;
-						top: 5px;
-						left: 16px;
-						line-height: 0;
-					}
-				}
+        &:not(.expanded) .neos-expand-content {
+          max-height: 0;
+        }
 
-				&.expanded {
-					.neos-notification-heading::after {
-						rotate: -90deg;
-						left: 10px;
-					}
-				}
-			}
+        .neos-notification-heading {
+          cursor: pointer;
+          color: #fff;
 
-			.neos-notification-heading {
-				padding: 12px ($unit + 1 + $relatedMargin) 12px;
-				margin-bottom: 0;
-				color: white;
-				font-weight: 400;
-				font-size: 14px;
-			}
-		}
-	}
+          &::after {
+            &:focus {
+              outline: none;
+            }
+            content: "›";
+            font-size: 26px;
+            font-weight: normal;
+            display: inline-block;
+            position: relative;
+            rotate: 90deg;
+            top: 5px;
+            left: 16px;
+            line-height: 0;
+          }
+        }
+      }
+
+      &.expanded {
+        .neos-expand-content {
+          visibility: visible;
+          max-height: auto;
+          padding: $defaultMargin ($unit + 1 + $relatedMargin);
+        }
+        .neos-notification-heading::after {
+          rotate: -90deg;
+          left: 10px;
+        }
+      }
+
+      .neos-notification-heading {
+        padding: 12px ($unit + 1 + $relatedMargin) 12px;
+        margin-bottom: 0;
+        color: white;
+        font-weight: 400;
+        font-size: 14px;
+      }
+    }
+  }
 }

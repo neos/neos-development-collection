@@ -11,8 +11,6 @@
 
 // .||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||..||.
 
-
-
 // $BaseType
 // -------------------------------------//
 
@@ -24,12 +22,10 @@ $font-family: Arial, serif; // Non-font-face font-stack
 
 $custom-font-family: false; // Custom font-face stack, if set will be added to the $font-family
 
-
 // $Small Print
 // -------------------------------------//
 
 $small-print-size: 65%;
-
 
 // $Color
 // -------------------------------------//
@@ -37,25 +33,23 @@ $small-print-size: 65%;
 $body-copy-color: #444;
 $heading-color: #222;
 
-
 // $Ampersand
 // -------------------------------------//
 
 $amp-fontface-name: Ampersand;
-$amp-fontface-source: local('Georgia'), local('Garamond'), local('Palatino'), local('Book Antiqua');
-$amp-fontface-fallback: local('Georgia');
+$amp-fontface-source: local("Georgia"), local("Garamond"), local("Palatino"),
+  local("Book Antiqua");
+$amp-fontface-fallback: local("Georgia");
 
 // Allows for our ampersand element to have differing
 // font-family from the ampersand unicode font-family.
 $amp-font-family: Verdana, sans-serif;
-
 
 // $Icon-Font-Helper
 // -------------------------------------//
 // ex.1) $icon-fonts: (icon-name);
 // ex.2) $icon-fonts: (icon-name1, icon-name2, icon-name3);
 $icon-fonts: null;
-
 
 // $TypeScale
 // -------------------------------------//
@@ -70,18 +64,15 @@ $delta: 24; // 24 = 18 × 1.3333
 $epsilon: 21; // 21 = 18 × 1.1667
 $zeta: 18; // 18 = 18 × 1
 
-
 // $TypeScale-Unit
 // -------------------------------------//
 
 $type-scale-unit-value: rem;
 
-
 // $Text-Indentation
 // -------------------------------------//
 
 $indent-val: 1.5em;
-
 
 // $Pull-Quotes
 // -------------------------------------//
@@ -90,7 +81,6 @@ $pull-quote-fontsize: 4em;
 $pull-quote-opacity: 0.5;
 $pull-quote-color: #dc976e;
 
-
 // $Citation
 // -------------------------------------//
 
@@ -98,13 +88,11 @@ $cite-display: block;
 $cite-text-align: right;
 $cite-font-size: inherit;
 
-
 // $SmallCaps
 // -------------------------------------//
 
 $small-caps-color: gray;
 $small-caps-weight: 600;
-
 
 // $DropCap
 // -------------------------------------//

@@ -1,84 +1,84 @@
 .neos-login-dialog {
-	.neos-modal {
-		width: $unit * 10;
-		top: $unit * 6;
-		margin: 0px 0px 0px ($unit * -4);
-	}
+  .neos-modal {
+    width: $unit * 10;
+    top: $unit * 6;
+    margin: 0px 0px 0px ($unit * -4);
+  }
 
-	input[type="text"],
-	input[type="password"] {
-		width: 100%;
-		min-width: $inspectorWidth - $defaultMargin * 2;
-		height: $unit;
-		border: 2px solid $grayMedium;
-		background-color: $grayMedium;
-		color: $textOnGray;
-		font-size: 14px;
-		padding: 0 ($defaultMargin - 2px);
-		margin: 0 0 15px 0;
-		border-radius: 0;
-		box-sizing: border-box;
-		box-shadow: none;
-		transition: none;
-		@include font;
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    min-width: $inspectorWidth - $defaultMargin * 2;
+    height: $unit;
+    border: 2px solid $grayMedium;
+    background-color: $grayMedium;
+    color: $textOnGray;
+    font-size: 14px;
+    padding: 0 ($defaultMargin - 2px);
+    margin: 0 0 15px 0;
+    border-radius: 0;
+    box-sizing: border-box;
+    box-shadow: none;
+    transition: none;
+    @include font;
 
-		&:focus {
-			background-color: #fff;
-			border: 2px solid #fff;
-			color: $textOnWhite;
-			box-shadow: none;
-		}
+    &:focus {
+      background-color: #fff;
+      border: 2px solid #fff;
+      color: $textOnWhite;
+      box-shadow: none;
+    }
 
-		&:-webkit-autofill {
-			-webkit-box-shadow: 0 0 0 50px $grayMedium inset;
-			-webkit-text-fill-color: $textOnGray;
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 50px $grayMedium inset;
+      -webkit-text-fill-color: $textOnGray;
 
-			&:focus {
-				-webkit-box-shadow: 0 0 0 50px #fff inset;
-				-webkit-text-fill-color: $textOnWhite;
-			}
-		}
-	}
+      &:focus {
+        -webkit-box-shadow: 0 0 0 50px #fff inset;
+        -webkit-text-fill-color: $textOnWhite;
+      }
+    }
+  }
 
-	.neos-modal-body {
-		padding: $defaultMargin;
-	}
+  .neos-modal-body {
+    padding: $defaultMargin;
+  }
 
-	.neos-button {
-		width: 100%;
-	}
+  .neos-button {
+    width: 100%;
+  }
 
-	.neos-tooltip {
-		left: -4px;
-		top: 0;
-		width: 100%;
-		position: relative;
-		clear: both;
-		float: none;
+  .neos-tooltip {
+    left: -4px;
+    top: 0;
+    width: 100%;
+    position: relative;
+    clear: both;
+    float: none;
 
-		&.neos-bottom {
-			padding: $relatedMargin 0 0 0;
-			margin-left: $tightMargin;
-			margin-top: -1px;
-		}
+    &.neos-bottom {
+      padding: $relatedMargin 0 0 0;
+      margin-left: $tightMargin;
+      margin-top: -1px;
+    }
 
-		&.neos-in {
-			opacity: 1;
-		}
+    &.neos-in {
+      opacity: 1;
+    }
 
-		.neos-tooltip-arrow {
-			margin-left: -$relatedMargin;
-			border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
-			border-bottom-color: $warning;
-		}
+    .neos-tooltip-arrow {
+      margin-left: -$relatedMargin;
+      border-width: 0 $relatedMargin $relatedMargin $relatedMargin;
+      border-bottom-color: $warning;
+    }
 
-		.neos-tooltip-inner {
-			max-width: 100%;
-			background-color: $warning;
-			font-size: 13px;
-			color: #fff;
-			border-radius: 0;
-			box-sizing: border-box;
-		}
-	}
+    .neos-tooltip-inner {
+      max-width: 100%;
+      background-color: $warning;
+      font-size: 13px;
+      color: #fff;
+      border-radius: 0;
+      box-sizing: border-box;
+    }
+  }
 }

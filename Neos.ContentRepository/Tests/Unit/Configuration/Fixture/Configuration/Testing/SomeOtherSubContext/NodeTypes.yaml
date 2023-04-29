@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Configuration/Testing/SomeOtherSubContext/NodeTypes.yaml
+    pathConfiguration.Testing.SomeOtherSubContext.NodeTypes_yaml: true
+'NodeType:PathConfiguration.Testing.SomeOtherSubContext.NodeTypes_yaml':
+  options:
+    path: Configuration/Testing/SomeOtherSubContext/NodeTypes.yaml

@@ -1,14 +1,14 @@
-prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
+prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
-quotedKeys.multipleKeys = Neos.Fusion:RawArray {
-	a = 1
-	1 = 1
-	'x-y' = 1
-	_x = 1
-	'_y' = 1
-	'@a' = 1
-	@b = 0
+quotedKeys.multipleKeys = Neos.Fusion:DataStructure {
+  a = 1
+  1 = 1
+  'x-y' = 1
+  _x = 1
+  '_y' = 1
+  '@a' = 1
+  @b = 0
 }
 
 quotedKeys.'single' = 1
@@ -18,7 +18,7 @@ quotedKeys."double" = 1
 quotedKeys."nested".'keys' = 1
 
 quotedKeys."@special" {
-	'_!' = 1
+  '_!' = 1
 }
 
 prototype(Foo.Bar) < prototype(Neos.Fusion:TestRenderer)

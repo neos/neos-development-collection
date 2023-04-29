@@ -14,6 +14,7 @@
       'Neos.Neos:Document': true
   postprocessors:
     'CreationDialogPostprocessor':
+      position: 'after NodeTypePresetPostprocessor'
       postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
   options:
     nodeCreationHandlers:

@@ -4,11 +4,11 @@
 #
 prototype(Neos.Neos:PluginView) >
 prototype(Neos.Neos:PluginView) < prototype(Neos.Neos:Content) {
-	@class = 'Neos\\Neos\\Fusion\\PluginViewImplementation'
-	@cache {
-		mode = 'uncached'
-		context {
-			1 = 'node'
-		}
-	}
+  @class = 'Neos\\Neos\\Fusion\\PluginViewImplementation'
+  @cache {
+    mode = 'uncached'
+    context {
+      1 = 'node'
+    }
+  }
 }

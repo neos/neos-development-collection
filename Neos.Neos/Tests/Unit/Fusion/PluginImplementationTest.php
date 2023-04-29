@@ -12,7 +12,6 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  */
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ControllerContext;
@@ -135,7 +134,7 @@ class PluginImplementationTest extends UnitTestCase
         $this->pluginImplementation->evaluate();
 
         foreach ($expected as $expectedKey => $expectedValue) {
-            self::assertEquals($expectedValue, (string)$parentResponse->getComponentParameters()[SetHeaderComponent::class][$expectedKey], $message);
+            self::assertEquals($expectedValue, (string)$parentResponse->getHttpHeader($expectedKey), $message);
         }
     }
 
@@ -149,7 +148,7 @@ class PluginImplementationTest extends UnitTestCase
     private function _setHeadersIntoResponse(ActionResponse $response, array $headers): ActionResponse
     {
         foreach ($headers as $key => $value) {
-            $response->setComponentParameter(SetHeaderComponent::class, $key, $value);
+            $response->setHttpHeader($key, $value);
         }
 
         return $response;

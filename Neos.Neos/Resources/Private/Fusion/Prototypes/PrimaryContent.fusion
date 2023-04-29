@@ -2,16 +2,16 @@
 # provides an extension point for other packages
 #
 prototype(Neos.Neos:PrimaryContent) < prototype(Neos.Fusion:Case) {
-	nodePath = 'to-be-defined-by-user'
+  nodePath = 'to-be-defined-by-user'
 
-	@context.nodePath = ${this.nodePath}
-	@ignoreProperties = ${['nodePath']}
+  @context.nodePath = ${this.nodePath}
+  @ignoreProperties = ${['nodePath']}
 
-	default {
-		condition = true
-		renderer = Neos.Neos:ContentCollection {
-			nodePath = ${nodePath}
-		}
-		@position = 'end'
-	}
+  default {
+    condition = true
+    renderer = Neos.Neos:ContentCollection {
+      nodePath = ${nodePath}
+    }
+    @position = 'end'
+  }
 }

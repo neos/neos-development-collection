@@ -12,15 +12,15 @@ object1.foo = 42
 object2 < object1
 
 lib {
-	object3 = Text
-	object3.value = "Another message"
+  object3 = Text
+  object3.value = "Another message"
 
-	object4 < .object3
+  object4 < .object3
 
-	object5 < lib.object3
+  object5 < lib.object3
 
-	object6 < object1
-	object6.foo = 21
+  object6 < object1
+  object6.foo = 21
 }
 
 object7 = Text

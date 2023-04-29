@@ -41,6 +41,7 @@ comes with a number of filters:
 - ``NodeName``
 - ``NodeType``
 - ``PropertyNotEmpty``
+- ``PropertyValue``
 - ``Workspace``
 
 They all implement the ``Neos\ContentRepository\Migration\Filters\FilterInterface``. Custom filters can be developed against
@@ -326,6 +327,18 @@ Options Reference:
 
 ``propertyName`` (string)
   The property name to be checked for non-empty value.
+
+PropertyValue
+~~~~~~~~~~~~~~~~
+
+Filter nodes having the given property with the corresponding value.
+
+Options Reference:
+
+``propertyName`` (string)
+  The property name to filter for with the given property value.
+``propertyValue`` (string)
+  The property value to filter for.
 
 Workspace
 ~~~~~~~~~

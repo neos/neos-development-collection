@@ -107,6 +107,6 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
     public function constraintsForNamedChildNodeTypesAreEvaluatedForANodeType()
     {
         self::assertFalse(array_key_exists('Neos.Neos.BackendSchemaControllerTest:SubPage', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']));
-        self::assertContains('Neos.Neos.BackendSchemaControllerTest:SimpleNodeType', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']);
+        self::assertArrayHasKey('Neos.Neos.BackendSchemaControllerTest:SimpleNodeType', $this->schema['constraints']['Neos.Neos.BackendSchemaControllerTest:TwoColumn']['childNodes']['column1']['nodeTypes']);
     }
 }

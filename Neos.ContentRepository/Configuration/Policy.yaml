@@ -1,13 +1,15 @@
 #                                                                        #
-# Security policy for the ContentRepository package                                #
+# Security policy for the ContentRepository package                      #
 #                                                                        #
 
 privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'Neos.Neos:PublicWorkspaceAccess':
+      label: Allowed to access the public workspace
       matcher: 'method(Neos\ContentRepository\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === true)'
 
     'Neos.Neos:OtherWorkspacesAccess':
+      label: Allowed to access to other users workspaces
       matcher: 'method(Neos\ContentRepository\Domain\Service\Context->validateWorkspace()) && evaluate(this.workspace.publicWorkspace === false) && evaluate(this.workspace.personalWorkspace === false)'
 
 roles:

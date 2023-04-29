@@ -3,10 +3,10 @@ prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\V
 
 map.basicLoop = Neos.Fusion:Map {
   items = ${items}
-	itemName = 'element'
-	itemRenderer = Neos.Fusion:TestRenderer {
-		test = ${element}
-	}
+  itemName = 'element'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element}
+  }
 }
 
 map.basicLoopWithContentRenderer = Neos.Fusion:Map {
@@ -19,19 +19,19 @@ map.basicLoopWithContentRenderer = Neos.Fusion:Map {
 
 map.basicLoopOtherContextVariables = Neos.Fusion:Map {
   items = ${items}
-	itemName = 'element'
-	itemRenderer = Neos.Fusion:TestRenderer {
-		test = ${element + other}
-	}
+  itemName = 'element'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element + other}
+  }
 }
 
 map.iteration = Neos.Fusion:Map {
-	items = ${items}
-	itemName = 'element'
-	iterationName = 'iteration'
-	itemRenderer = Neos.Fusion:TestRenderer {
-		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
-	}
+  items = ${items}
+  itemName = 'element'
+  iterationName = 'iteration'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+  }
 }
 
 map.keyRenderer = Neos.Fusion:Map {

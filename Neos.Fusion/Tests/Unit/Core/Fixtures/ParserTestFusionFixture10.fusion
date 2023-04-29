@@ -9,8 +9,8 @@ newObject1.value.@process.1 = ${value + ' world'}
 newObject1.value = 'Hello'
 newObject1.value.@process.other = ${value + ' world'}
 newObject1.value.@process.default {
-	expression = ${value + ' world'}
-	@position = 'start'
+  expression = ${value + ' world'}
+  @position = 'start'
 }
 
 newObject2 = Text

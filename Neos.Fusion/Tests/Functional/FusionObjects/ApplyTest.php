@@ -220,20 +220,20 @@ class ApplyTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function collectionWithoutSpreadRendering()
+    public function loopWithoutSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderCollectionWithoutSpread');
+        $view->setFusionPath('apply/renderLoopWithoutSpread');
         self::assertEquals('X1X2X2X3', $view->render());
     }
 
     /**
      * @test
      */
-    public function collectionWithSpreadRendering()
+    public function loopWithSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderCollectionWithSpread');
+        $view->setFusionPath('apply/renderLoopWithSpread');
         self::assertEquals('X1X2X2X3', $view->render());
     }
 
@@ -250,10 +250,10 @@ class ApplyTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function arrayWithSpreadRendering()
+    public function dataStructureWithSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderRawArrayWithSpread');
+        $view->setFusionPath('apply/renderDataStructureWithSpread');
         self::assertEquals(
             [
                 'key' => 'original value',
@@ -267,10 +267,10 @@ class ApplyTest extends AbstractFusionObjectTest
     /**
      * @test
      */
-    public function arrayWithPositionAndSpreadRendering()
+    public function joinWithPositionAndSpreadRendering()
     {
         $view = $this->buildView();
-        $view->setFusionPath('apply/renderArrayWithPositionAndSpread');
+        $view->setFusionPath('apply/renderJoinWithPositionAndSpread');
         self::assertEquals(
             'startmiddleModifiedendModified',
             $view->render()
@@ -285,5 +285,15 @@ class ApplyTest extends AbstractFusionObjectTest
         $view = $this->buildView();
         $view->setFusionPath('apply/renderWithNestedProps');
         self::assertEquals('::example::', $view->render());
+    }
+
+    /**
+     * @test
+     */
+    public function evaluateLazyPropsWithLastOneSkipped()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('apply/evaluateLazyPropsWithLastOneSkipped');
+        self::assertSame(['lazyPropValue' => 'foo'], $view->render());
     }
 }

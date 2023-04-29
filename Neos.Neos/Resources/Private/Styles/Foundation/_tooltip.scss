@@ -2,7 +2,6 @@
 // Tooltips
 // --------------------------------------------------
 
-
 // Base class
 .neos-tooltip {
   position: absolute;
@@ -12,11 +11,25 @@
   font-size: 11px;
   line-height: 1.4;
   opacity: 0;
-  &.neos-in     { opacity: .9; }
-  &.neos-top    { margin-top:  -3px; padding: 5px 0; }
-  &.neos-right  { margin-left:  3px; padding: 0 5px; }
-  &.neos-bottom { margin-top:   3px; padding: 5px 0; }
-  &.neos-left   { margin-left: -3px; padding: 0 5px; }
+  &.neos-in {
+    opacity: 0.9;
+  }
+  &.neos-top {
+    margin-top: -3px;
+    padding: 5px 0;
+  }
+  &.neos-right {
+    margin-left: 3px;
+    padding: 0 5px;
+  }
+  &.neos-bottom {
+    margin-top: 3px;
+    padding: 5px 0;
+  }
+  &.neos-left {
+    margin-left: -3px;
+    padding: 0 5px;
+  }
 }
 
 // Wrapper for the tooltip content

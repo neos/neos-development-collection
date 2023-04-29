@@ -1,4 +1,4 @@
 prototype(Neos.Neos:FallbackNode) < prototype(Neos.Neos:Content) {
-	templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/FallbackNode.html'
-	@if.onlyRenderInBackend = ${node.context.inBackend}
+  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/FallbackNode.html'
+  @if.onlyRenderInBackend = ${node.context.inBackend}
 }

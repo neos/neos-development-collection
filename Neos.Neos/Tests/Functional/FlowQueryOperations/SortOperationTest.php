@@ -183,4 +183,61 @@ class SortOperationTest extends FunctionalTestCase
 
         self::assertEquals($correctOrder, $flowQuery->getContext());
     }
+
+    /**
+     * @test
+     */
+    public function invalidSortOptionCausesException()
+    {
+        $this->expectException(FlowQueryException::class);
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery([]);
+        $operation = new SortOperation();
+        $operation->evaluate($flowQuery, ['title', 'ASC', 'SORT_BAR']);
+    }
+
+    /**
+     * @test
+     */
+    public function sortByStringNaturalCaseAscending()
+    {
+        $nodesToSort = [
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addb', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addc', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), [])
+        ];
+        $correctOrder = [
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addc', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addf', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addb', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addd', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115adde', $this->context->getWorkspace(true), [])
+        ];
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $operation = new SortOperation();
+        $operation->evaluate($flowQuery, ['title', 'ASC', ['SORT_NATURAL', 'SORT_FLAG_CASE']]);
+
+        self::assertEquals($correctOrder, $flowQuery->getContext());
+    }
+
+    /**
+     * @test
+     */
+    public function sortByNumericDescending()
+    {
+        $nodesToSort = [
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addc', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addb', $this->context->getWorkspace(true), []),
+        ];
+        $correctOrder = [
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addb', $this->context->getWorkspace(true), []),
+            $this->nodeDataRepository->findOneByIdentifier('c381f64d-4269-429a-9c21-6d846115addc', $this->context->getWorkspace(true), []),
+        ];
+        $flowQuery = new \Neos\Eel\FlowQuery\FlowQuery($nodesToSort);
+        $operation = new SortOperation();
+        $operation->evaluate($flowQuery, ['text', 'DESC', 'SORT_NUMERIC']);
+
+        self::assertEquals($correctOrder, $flowQuery->getContext());
+    }
 }

@@ -6,49 +6,7 @@
   ></button>
   <div class="neos-menu-panel">
     <div class="neos-menu-wrapper">
-      <div class="neos-menu-section" data-key="content">
-        <div class="neos-menu-section-header" aria-expanded="false">
-          <h2>
-            <f:link.action
-              package="Neos.Neos"
-              controller="Backend\Backend"
-              action="index"
-              title="{neos:backend.translate(id: 'contentView', value: 'Content View')}"
-              class="neos-menu-headline"
-            >
-              <i class="fas fa-file"></i> {neos:backend.translate(id: 'content',
-              value: 'Content')}
-            </f:link.action>
-          </h2>
-          <button type="button" class="neos-button neos-menu-panel-toggle" role="button">
-            <i class="fas fa-chevron-circle-down"></i>
-          </button>
-        </div>
-        <f:if condition="{sites}">
-          <div class="neos-menu-section-content">
-            <div class="neos-menu-list">
-              <f:for each="{sites}" as="site">
-                <f:if condition="{site.uri}">
-                  <f:then>
-                    <a href="{site.uri}" title="{site.nodeName}">
-                      <i class="fas fa-globe"></i> {site.name}
-                    </a>
-                  </f:then>
-                  <f:else>
-                    <span
-                      title="{site.nodeName}"
-                      class="neos-menu-item neos-disabled"
-                    >
-                      <i class="fas fa-globe"></i> {site.name}
-                    </span>
-                  </f:else>
-                </f:if>
-              </f:for>
-            </div>
-          </div>
-        </f:if>
-      </div>
-      <f:for each="{modules}" as="module">
+      <f:for each="{modules}" as="module" key="moduleKey">
         <f:if condition="{module.hideInMenu}">
           <f:else>
             <f:render section="moduleMenu" arguments="{_all}" />
@@ -63,21 +21,18 @@
   <div class="neos-menu-section" data-key="{module.modulePath}">
     <div class="neos-menu-section-header" aria-expanded="false">
       <h2>
-        <neos:link.module
-          path="{module.modulePath}"
-          class="neos-menu-headline"
-        >
-          <i
-            class="{f:if(condition: module.icon, then: module.icon, else: 'fas fa-puzzle-piece')}"
-          ></i>
-          {neos:backend.translate(id: module.label, source: 'Modules', value:
-          module.label)}
+        <neos:link.module path="{module.modulePath}" class="neos-menu-headline">
+          <i class="{f:if(condition: module.icon, then: module.icon, else: 'fas fa-puzzle-piece')}"></i>
+          {neos:backend.translate(id: module.label, source: 'Modules', value: module.label)}
         </neos:link.module>
       </h2>
       <button type="button" class="neos-button neos-menu-panel-toggle" role="button">
         <i class="fas fa-chevron-circle-down"></i>
       </button>
     </div>
+    <f:if condition="{moduleKey}=='content'">
+        <f:render section="siteSelector" arguments="{_all}" />
+    </f:if>
     <f:if condition="{module.submodules}">
       <div class="neos-menu-section-content">
         <div class="neos-menu-list">
@@ -105,4 +60,28 @@
     {neos:backend.translate(id: submodule.label, source: 'Modules', value:
     submodule.label)}
   </neos:link.module>
+</f:section>
+
+
+<f:section name="siteSelector">
+    <f:if condition="{sites}">
+        <div class="neos-menu-section-content">
+            <div class="neos-menu-list">
+                <f:for each="{sites}" as="site">
+                    <f:if condition="{site.uri}">
+                        <f:then>
+                            <a href="{site.uri}" title="{site.nodeName}">
+                                <i class="fas fa-globe"></i> {site.name}
+                            </a>
+                        </f:then>
+                        <f:else>
+                        <span title="{site.nodeName}" class="neos-menu-item neos-disabled">
+                          <i class="fas fa-globe"></i> {site.name}
+                        </span>
+                        </f:else>
+                    </f:if>
+                </f:for>
+            </div>
+        </div>
+    </f:if>
 </f:section>

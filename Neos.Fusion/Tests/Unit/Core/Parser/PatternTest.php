@@ -135,6 +135,25 @@ class PatternTest extends UnitTestCase
         self::assertSame($expected, preg_split($pattern, 'foo.bar'));
 
         $expected = [
+            0 => 'attributes',
+            1 => '"dots.inside.double.quotes"'
+        ];
+        self::assertSame($expected, preg_split($pattern, 'attributes."dots.inside.double.quotes"'));
+
+        $expected = [
+            0 => 'attributes',
+            1 => '\'dots.inside.single.quotes\''
+        ];
+        self::assertSame($expected, preg_split($pattern, 'attributes.\'dots.inside.single.quotes\''));
+
+        $expected = [
+            0 => '"quo\"tes.mix\'ed"',
+            1 => 'bla',
+            2 => '\'he\\\'.llo\''
+        ];
+        self::assertSame($expected, preg_split($pattern, '"quo\"tes.mix\'ed".bla.\'he\\\'.llo\''));
+
+        $expected = [
             0 => 'prototype(Neos.Foo)',
             1 => 'bar'
         ];
@@ -148,7 +167,7 @@ class PatternTest extends UnitTestCase
         self::assertSame($expected, preg_split($pattern, 'asdf.prototype(Neos.Foo).bar'));
 
         $expected = [
-            0 =>  'blah',
+            0 => 'blah',
             1 => 'asdf',
             2 => 'prototype(Neos.Foo)',
             3 => 'bar'
@@ -156,7 +175,7 @@ class PatternTest extends UnitTestCase
         self::assertSame($expected, preg_split($pattern, 'blah.asdf.prototype(Neos.Foo).bar'));
 
         $expected = [
-            0 =>  'b-lah',
+            0 => 'b-lah',
             1 => 'asdf',
             2 => 'prototype(Neos.Foo)',
             3 => 'b-ar'
@@ -164,12 +183,19 @@ class PatternTest extends UnitTestCase
         self::assertSame($expected, preg_split($pattern, 'b-lah.asdf.prototype(Neos.Foo).b-ar'));
 
         $expected = [
-            0 =>  'b:lah',
+            0 => 'b:lah',
             1 => 'asdf',
             2 => 'prototype(Neos.Foo)',
             3 => 'b:ar'
         ];
         self::assertSame($expected, preg_split($pattern, 'b:lah.asdf.prototype(Neos.Foo).b:ar'));
+
+        $expected = [
+            0 => 'asdf',
+            1 => 'prototype(Neos.Foo)',
+            2 => '"@click.blah.blub"'
+        ];
+        self::assertSame($expected, preg_split($pattern, 'asdf.prototype(Neos.Foo)."@click.blah.blub"'));
     }
 
     /**

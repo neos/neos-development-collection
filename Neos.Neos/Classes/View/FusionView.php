@@ -11,7 +11,7 @@ namespace Neos\Neos\View;
  * source code.
  */
 
-use function GuzzleHttp\Psr7\parse_response;
+use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
@@ -102,7 +102,7 @@ class FusionView extends AbstractView
     protected function parsePotentialRawHttpResponse($output)
     {
         if ($this->isRawHttpResponse($output)) {
-            return parse_response($output);
+            return Message::parseResponse($output);
         }
 
         return $output;

@@ -2,8 +2,8 @@
 prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.Neos:Content) {
   templatePath = 'resource://Neos.NodeTypes.ContentReferences/Private/Templates/NodeTypes/ContentReferences.html'
   @context.referenceNodesArray = ${q(node).property('references')}
-  referenceNodes = Neos.Fusion:Collection {
-    collection = ${referenceNodesArray}
+  referenceNodes = Neos.Fusion:Loop {
+    items = ${referenceNodesArray}
     itemRenderer = Neos.Neos:ContentCase
     itemName = 'node'
   }

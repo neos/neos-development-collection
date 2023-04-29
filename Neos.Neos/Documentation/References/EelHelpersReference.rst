@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2021-05-30
+This reference was automatically generated from code on 2023-04-23
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -214,7 +214,7 @@ Allows to push multiple elements at once::
 
     Array.push(array, e1, e2)
 
-* ``array`` (iterable)
+* ``array`` (iterable|scalar|null)
 * ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
@@ -383,6 +383,15 @@ Allows to insert multiple elements at once::
 * ``element`` (mixed)
 
 **Return** (array) The array with the inserted elements
+
+Array.values(array)
+^^^^^^^^^^^^^^^^^^^
+
+Get the array values
+
+* ``array`` (iterable) The array
+
+**Return** (array)
 
 
 
@@ -1098,7 +1107,7 @@ Rounds the subject to the given precision
 The precision defines the number of digits after the decimal point.
 Negative values are also supported (-1 rounds to full 10ths).
 
-* ``subject`` (float) The value to round
+* ``subject`` (mixed) The value to round
 * ``precision`` (integer, *optional*) The precision (digits after decimal point) to use, defaults to 0
 
 **Return** (float) The rounded value
@@ -1350,6 +1359,15 @@ has the given name.
 
 **Return** (bool)
 
+Neos.Node.labelForNode(node)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Generate a label for a node with a chaining mechanism. To be used in nodetype definitions.
+
+* ``node`` (NodeInterface|null, *optional*)
+
+**Return** (NodeLabelToken)
+
 Neos.Node.nearestContentCollection(node, nodePath)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1438,47 +1456,6 @@ Neos.Seo.Image.createThumbnail(asset, preset, width, maximumWidth, height, maxim
 
 
 
-.. _`Eel Helpers Reference: Neos.Ui.Modules`:
-
-Neos.Ui.Modules
----------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\ModulesHelper``
-
-Neos.Ui.Modules.isAllowed(modulePath)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Checks whether the current user has access to a module
-
-* ``modulePath`` (string)
-
-**Return** (boolean)
-
-Neos.Ui.Modules.isAvailable(moduleName)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Checks, whether a module is available to the current user
-
-* ``moduleName`` (string)
-
-**Return** (boolean)
-
-Neos.Ui.Modules.isEnabled(modulePath)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Checks whether a module is enabled
-
-* ``modulePath`` (string)
-
-**Return** (boolean)
-
-
-
-
-
-
 .. _`Eel Helpers Reference: Neos.Ui.PositionalArraySorter`:
 
 Neos.Ui.PositionalArraySorter
@@ -1495,23 +1472,6 @@ Neos.Ui.PositionalArraySorter.sort(array, positionPath)
 * ``positionPath`` (string, *optional*)
 
 **Return** (array)
-
-
-
-
-
-
-.. _`Eel Helpers Reference: Neos.Ui.Sites`:
-
-Neos.Ui.Sites
--------------
-
-
-
-Implemented in: ``Neos\Neos\Ui\Fusion\Helper\SitesHelper``
-
-Neos.Ui.Sites.isActive(siteNode)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -1695,6 +1655,42 @@ Security.isAuthenticated()
 Returns true, if any account is currently authenticated
 
 **Return** (boolean) true if any account is authenticated
+
+
+
+
+
+
+.. _`Eel Helpers Reference: StaticResource`:
+
+StaticResource
+--------------
+
+
+
+Implemented in: ``Neos\Flow\ResourceManagement\EelHelper\StaticResourceHelper``
+
+StaticResource.content(packageKey, pathAndFilename, localize)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the content of a package resource
+
+* ``packageKey`` (string) Package key where the resource is from.
+* ``pathAndFilename`` (string) The path and filename of the resource. Starting with "Public/..." or "Private/...
+* ``localize`` (bool, *optional*) If enabled localizing of the resource is attempted by adding locales from the current locale-chain between filename and extension.
+
+**Return** (string)
+
+StaticResource.uri(packageKey, pathAndFilename, localize)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Get the public uri of a package resource
+
+* ``packageKey`` (string) Package key where the resource is from.
+* ``pathAndFilename`` (string) The path and filename of the resource. Has to start with "Public/..." as private resources do not have a uri.
+* ``localize`` (bool, *optional*) If enabled localizing of the resource is attempted by adding locales from the current locale-chain between filename and extension.
+
+**Return** (string)
 
 
 

@@ -37,11 +37,11 @@ class ExceptionHandlerTest extends AbstractFusionObjectTest
         $view->setFusionPath('exceptionHandler/eelExpressionInOverride');
         $output = $view->render();
         self::assertStringStartsWith('StartException while rendering exceptionHandler', $output);
-        self::assertStringContainsString('myCollection', $output, 'The override path should be visible in the message Fusion path');
+        self::assertStringContainsString('myItems', $output, 'The override path should be visible in the message Fusion path');
     }
 
     /**
-     * We trigger rendering of a Fusion object with a nested TS object being "evaluated". If an exception happens there,
+     * We trigger rendering of a Fusion object with a nested Fusion object being "evaluated". If an exception happens there,
      * the configured exceptionHandler needs to be triggered as well, even though the object has been rendered with "evaluate()"
      * and not with "render()"
      *

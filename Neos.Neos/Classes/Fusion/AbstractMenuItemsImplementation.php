@@ -84,7 +84,7 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     {
         if ($this->items === null) {
             $fusionContext = $this->runtime->getCurrentContext();
-            $this->currentNode = isset($fusionContext['activeNode']) ? $fusionContext['activeNode'] : $fusionContext['documentNode'];
+            $this->currentNode = $fusionContext['activeNode'] ?? $fusionContext['documentNode'];
             $this->currentLevel = 1;
             $this->items = $this->buildItems();
         }

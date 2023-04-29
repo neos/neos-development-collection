@@ -2,25 +2,25 @@
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 
 expressions.calculus = Value {
-	value = ${21 * 2}
+  value = ${21 * 2}
 }
 
 expressions.stringHelper = Value {
-	value = ${String.toUpperCase(foo)}
+  value = ${String.toUpperCase(foo)}
 }
 
 expressions.dateHelper = Value {
-	value = ${Date.format(Date.parse('2013-07-14 12:14:00', 'Y-m-d H:i:s'), 'd.m.Y H:i')}
+  value = ${Date.format(Date.parse('2013-07-14 12:14:00', 'Y-m-d H:i:s'), 'd.m.Y H:i')}
 }
 
 expressions.arrayHelper = Value {
-	value = ${Array.reverse([1, 2, 3])[0]}
+  value = ${Array.reverse([1, 2, 3])[0]}
 }
 
 expressions.customHelper = Value {
-	value = ${Testing.String.substr('Neos Flow', 5)}
+  value = ${Testing.String.substr('Neos Flow', 5)}
 }
 
 expressions.flowQuery = Value {
-	value = ${q(q(['a', 'b', 'c'])).count()}
+  value = ${q(q(['a', 'b', 'c'])).count()}
 }

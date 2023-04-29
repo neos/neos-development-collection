@@ -1,9 +1,9 @@
 .. _`Media ViewHelper Reference`:
 
 Media ViewHelper Reference
-==========================
+##########################
 
-This reference was automatically generated from code on 2021-05-30
+This reference was automatically generated from code on 2023-04-23
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
@@ -234,6 +234,8 @@ Arguments
 * ``ismap`` (string, *optional*): Specifies an image as a server-side image-map. Rarely used. Look at usemap instead
 
 * ``usemap`` (string, *optional*): Specifies an image as a client-side image-map
+
+* ``loading`` (string, *optional*): Specifies the loading attribute for an image
 
 * ``image`` (Neos\Media\Domain\Model\ImageInterface, *optional*): The image to be rendered as an image
 
@@ -570,6 +572,7 @@ Expected result::
 
 	(depending on the asset; has scaled keeping the aspect ratio)
 	_Resources/Persistent/b29[...]95d.jpeg
+
 
 
 

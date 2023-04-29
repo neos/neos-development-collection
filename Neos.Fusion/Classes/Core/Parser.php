@@ -40,7 +40,7 @@ class Parser implements ParserInterface
 			|\'(?:\\\\\'|[^\'])+\'          # Single quoted key, supporting more characters like underscore and at sign
 			|prototype\([a-zA-Z0-9.:]+\)    # Prototype definition
 		)
-		(?:                                 # followed by multiple .<tsPathPart> sections:
+		(?:                                 # followed by multiple .<fusionPathPart> sections:
 			\.
 			(?:
 				@?[a-zA-Z0-9:_\-]+              # Unquoted key
@@ -96,15 +96,17 @@ class Parser implements ParserInterface
 	/x';
 
     /**
-     * Split an object path like "foo.bar.baz.quux" or "foo.prototype(Neos.Fusion:Something).bar.baz"
-     * at the dots (but not the dots inside the prototype definition prototype(...))
+     * Split an object path like "foo.bar.baz.quux", "foo.'bar.baz.quux'" or "foo.prototype(Neos.Fusion:Something).bar.baz"
+     * at the dots (but not the dots inside the prototype definition prototype(...) or dots inside quotes)
      */
     const SPLIT_PATTERN_OBJECTPATH = '/
-		\.                         # we split at dot characters...
-		(?!                        # which are not inside prototype(...). Thus, the dot does NOT match IF it is followed by:
-			[^(]*                  # - any character except (
-			\)                     # - the character )
-		)
+        (                       # Matches area if:
+            prototype\(.*?\)        # inside prototype(...),
+            |"(?:\\\"|[^"])+"       # inside double quotes - respect escape,
+            |\'(?:\\\\\'|[^\'])+\'  # inside single quotes - respect escape
+        )
+        (*SKIP)(*FAIL)          # skip, when the preceding matches and fail (dont include them in the match)
+        |\.                     # for what was not matched, we split at dot characters...
 	/x';
 
     /**
@@ -258,6 +260,7 @@ class Parser implements ParserInterface
      * with that namespace and name must be defined elsewhere.
      *
      * These namespaces are _not_ used for resolution of processor class names.
+     * @deprecated with version 7.3 will be removed with 8.0
      * @var array
      */
     protected $objectTypeNamespaces = [
@@ -315,6 +318,7 @@ class Parser implements ParserInterface
      * @return void
      * @throws Fusion\Exception
      * @api
+     * @deprecated with version 7.3 will be removed with 8.0
      */
     public function setObjectTypeNamespace($alias, $namespace)
     {

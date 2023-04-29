@@ -2,175 +2,169 @@
 // Dropdown menus
 // --------------------------------------------------
 
-
 // Use the .neos-menu class on any <li> element within the topbar or ul.neos-tabs and you'll get some superfancy dropdowns
 .neos-dropup,
 .neos-dropdown {
-	position: relative;
-}
-.neos-dropdown-toggle {
-	// The caret makes the toggle a bit too tall in IE7
-	*margin-bottom: -3px;
+  position: relative;
 }
 .neos-dropdown-toggle:active,
 .neos-open .neos-dropdown-toggle {
-	outline: 0;
+  outline: 0;
 }
 
 // Dropdown arrow/caret
 // --------------------
 .neos-caret {
-	display: inline-block;
-	width: 0;
-	height: 0;
-	vertical-align: top;
-	border-top:   4px solid $white;
-	border-right: 4px solid transparent;
-	border-left:  4px solid transparent;
-	content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  vertical-align: top;
+  border-top: 4px solid $white;
+  border-right: 4px solid transparent;
+  border-left: 4px solid transparent;
+  content: "";
 }
 
 // Place the caret
 .neos-dropdown .neos-caret {
-	margin-top: 8px;
-	margin-left: 2px;
+  margin-top: 8px;
+  margin-left: 2px;
 }
 
 // The dropdown menu (ul)
 // ----------------------
 .neos-dropdown-menu {
-	position: absolute;
-	top: 100%;
-	z-index: $zindexDropdown;
-	display: none; // none by default, but block on "open" of the menu
-	float: left;
-	min-width: 100%;
-	padding: 0;
-	margin: 1px 0 0;
-	list-style: none;
-	background-color: $grayMedium;
-	box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  position: absolute;
+  top: 100%;
+  z-index: $zindexDropdown;
+  display: none; // none by default, but block on "open" of the menu
+  float: left;
+  min-width: 100%;
+  padding: 0;
+  margin: 1px 0 0;
+  list-style: none;
+  background-color: $grayMedium;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 
-	// Aligns the dropdown menu to right
-	&.neos-pull-right {
-		right: 0;
-		left: auto;
-	}
+  // Aligns the dropdown menu to right
+  &.neos-pull-right {
+    right: 0;
+    left: auto;
+  }
 
-	// Links within the dropdown menu
-	> li {
-		display: block;
-		height: $unit;
-		clear: both;
-		font-weight: normal;
-		line-height: $baseLineHeight;
-		color: $dropdownLinkColor;
-		white-space: nowrap;
-		padding: 0;
+  // Links within the dropdown menu
+  > li {
+    display: block;
+    height: $unit;
+    clear: both;
+    font-weight: normal;
+    line-height: $baseLineHeight;
+    color: $dropdownLinkColor;
+    white-space: nowrap;
+    padding: 0;
 
-		+ li {
-			border-top: 1px solid $grayDark;
-		}
+    + li {
+      border-top: 1px solid $grayDark;
+    }
 
-		> a {
-			display: block;
-			width: 100%;
-			text-align: left;
-			line-height: $unit;
-			padding: 0 $defaultMargin;
-			box-sizing: border-box;
+    > a {
+      display: block;
+      width: 100%;
+      text-align: left;
+      line-height: $unit;
+      padding: 0 $defaultMargin;
+      box-sizing: border-box;
 
-			&:hover,
-			&.neos-active {
-				background-color: $blue;
-				color: #fff;
-			}
+      &:hover,
+      &.neos-active {
+        background-color: $blue;
+        color: #fff;
+      }
 
-			[class^="fa-"],
-			[class*=" fa-"] {
-				margin: 0 $relatedMargin;
-				line-height: $unit;
-				vertical-align: top;
-			}
-		}
-	}
+      [class^="fa-"],
+      [class*=" fa-"] {
+        margin: 0 $relatedMargin;
+        line-height: $unit;
+        vertical-align: top;
+      }
+    }
+  }
 }
 
 // The dropdown menu with multiple ul's
 // ----------------------
 .neos-dropdown-menu-list {
-	position: absolute;
-	top: 100%;
-	left: 0;
-	z-index: $zindexDropdown;
-	display: none; // none by default, but block on "open" of the menu
-	background-color: $grayMedium;
-	box-shadow: 0 5px 10px rgba(0,0,0,.2);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: $zindexDropdown;
+  display: none; // none by default, but block on "open" of the menu
+  background-color: $grayMedium;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 
-	// Aligns the dropdown menu to right
-	&.neos-pull-right {
-		right: 0;
-		left: auto;
-	}
+  // Aligns the dropdown menu to right
+  &.neos-pull-right {
+    right: 0;
+    left: auto;
+  }
 
-	.neos-dropdown-menu-list-title {
-		display: block;
-		height: $unit;
-		clear: both;
-		font-weight: normal;
-		color: $dropdownLinkColor;
-		white-space: nowrap;
-		padding: 0 $defaultMargin;
-		line-height: $unit;
-		font-size: 14px;
-		border-bottom: 1px solid $grayDark;
-		font-weight: bold;
-	}
+  .neos-dropdown-menu-list-title {
+    display: block;
+    height: $unit;
+    clear: both;
+    font-weight: normal;
+    color: $dropdownLinkColor;
+    white-space: nowrap;
+    padding: 0 $defaultMargin;
+    line-height: $unit;
+    font-size: 14px;
+    border-bottom: 1px solid $grayDark;
+    font-weight: bold;
+  }
 
-	ul {
-		list-style: none;
-		padding: 0;
-		float: left;
-		min-width: 160px;
-		margin: 1px 0 0 0;
+  ul {
+    list-style: none;
+    padding: 0;
+    float: left;
+    min-width: 160px;
+    margin: 1px 0 0 0;
 
-		// Links within the dropdown menu
-		> li {
-			display: block;
-			height: $unit;
-			clear: both;
-			font-weight: normal;
-			line-height: $baseLineHeight;
-			color: $dropdownLinkColor;
-			white-space: nowrap;
-			padding: 0;
-			border-bottom: 1px solid $grayDark;
+    // Links within the dropdown menu
+    > li {
+      display: block;
+      height: $unit;
+      clear: both;
+      font-weight: normal;
+      line-height: $baseLineHeight;
+      color: $dropdownLinkColor;
+      white-space: nowrap;
+      padding: 0;
+      border-bottom: 1px solid $grayDark;
 
-			> a {
-				display: block;
-				width: 100%;
-				text-align: left;
-				line-height: $unit;
-				padding: 0 $defaultMargin;
-				box-sizing: border-box;
+      > a {
+        display: block;
+        width: 100%;
+        text-align: left;
+        line-height: $unit;
+        padding: 0 $defaultMargin;
+        box-sizing: border-box;
 
-				&:hover,
-				&.neos-active {
-					background-color: $blue;
-					color: #fff;
-				}
+        &:hover,
+        &.neos-active {
+          background-color: $blue;
+          color: #fff;
+        }
 
-				[class^="fa-"],
-				[class*=" fa-"] {
-					margin: 0 $relatedMargin;
-					line-height: $unit;
-					vertical-align: top;
-				}
-			}
-		}
-	}
+        [class^="fa-"],
+        [class*=" fa-"] {
+          margin: 0 $relatedMargin;
+          line-height: $unit;
+          vertical-align: top;
+        }
+      }
+    }
+  }
 }
-
 
 // Hover/Focus state
 // -----------
@@ -178,9 +172,9 @@
 .neos-dropdown-menu > li > a:focus,
 .neos-dropdown-submenu:hover > a,
 .neos-dropdown-submenu:focus > a {
-	text-decoration: none;
-	color: $dropdownLinkColorHover;
-	background-color: $blue;
+  text-decoration: none;
+  color: $dropdownLinkColorHover;
+  background-color: $blue;
 }
 
 // Active state
@@ -188,10 +182,10 @@
 .neos-dropdown-menu > .neos-active > a,
 .neos-dropdown-menu > .neos-active > a:hover,
 .neos-dropdown-menu > .neos-active > a:focus {
-	color: $dropdownLinkColorActive;
-	text-decoration: none;
-	outline: 0;
-	background-color: $blue;
+  color: $dropdownLinkColorActive;
+  text-decoration: none;
+  outline: 0;
+  background-color: $blue;
 }
 
 // Disabled state
@@ -200,38 +194,33 @@
 .neos-dropdown-menu > .neos-disabled > a,
 .neos-dropdown-menu > .neos-disabled > a:hover,
 .neos-dropdown-menu > .neos-disabled > a:focus {
-	color: $grayLight;
+  color: $grayLight;
 }
 // Nuke hover/focus effects
 .neos-dropdown-menu > .neos-disabled > a:hover,
 .neos-dropdown-menu > .neos-disabled > a:focus {
-	text-decoration: none;
-	background-color: transparent;
-	@include reset-filter();
-	cursor: default;
+  text-decoration: none;
+  background-color: transparent;
+  cursor: default;
 }
 
 // Open state for the dropdown
 // ---------------------------
 .neos-open {
-	// IE7's z-index only goes to the nearest positioned ancestor, which would
-	// make the menu appear below buttons that appeared later on the page
-	*z-index: $zindexDropdown;
+  & > .neos-dropdown-menu {
+    display: block;
+  }
 
-	& > .neos-dropdown-menu {
-		display: block;
-	}
-
-	& > .neos-dropdown-menu-list {
-		display: block;
-	}
+  & > .neos-dropdown-menu-list {
+    display: block;
+  }
 }
 
 // Right aligned dropdowns
 // ---------------------------
 .neos-pull-right > .neos-dropdown-menu {
-	right: 0;
-	left: auto;
+  right: 0;
+  left: auto;
 }
 
 // Allow for dropdowns to go bottom up (aka, dropup-menu)
@@ -240,84 +229,84 @@
 // TODO: abstract this so that the navbar fixed styles are not placed here?
 .neos-dropup,
 .neos-navbar-fixed-bottom .neos-dropdown {
-	// Reverse the caret
-	.neos-caret {
-		border-top: 0;
-		border-bottom: 4px solid $black;
-		content: "";
-	}
-	// Different positioning for bottom up menu
-	.neos-dropdown-menu {
-		top: auto;
-		bottom: 100%;
-		margin-bottom: 1px;
-	}
+  // Reverse the caret
+  .neos-caret {
+    border-top: 0;
+    border-bottom: 4px solid $black;
+    content: "";
+  }
+  // Different positioning for bottom up menu
+  .neos-dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 1px;
+  }
 }
 
 // Sub menus
 // ---------------------------
 .neos-dropdown-submenu {
-	position: relative;
+  position: relative;
 }
 // Default dropdowns
 .neos-dropdown-submenu > .neos-dropdown-menu {
-	top: 0;
-	left: 100%;
-	margin-top: -6px;
-	margin-left: -1px;
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
 }
 .neos-dropdown-submenu:hover > .neos-dropdown-menu {
-	display: block;
+  display: block;
 }
 
 // Dropups
 .neos-dropup .neos-dropdown-submenu > .neos-dropdown-menu {
-	top: auto;
-	bottom: 0;
-	margin-top: 0;
-	margin-bottom: -2px;
+  top: auto;
+  bottom: 0;
+  margin-top: 0;
+  margin-bottom: -2px;
 }
 
 // Caret to indicate there is a submenu
 .neos-dropdown-submenu > a:after {
-	position: absolute;
-	top: 4px;
-	right: $relatedMargin;
-	@include font;
-	font-size: 26px;
-	line-height: 26px;
-	font-weight: normal;
-	content: "›";
+  position: absolute;
+  top: 4px;
+  right: $relatedMargin;
+  @include font;
+  font-size: 26px;
+  line-height: 26px;
+  font-weight: normal;
+  content: "›";
 }
 .neos-dropdown-submenu:hover > a:after {
-	border-left-color: $dropdownLinkColorHover;
+  border-left-color: $dropdownLinkColorHover;
 }
 
 // Left aligned submenus
 .neos-dropdown-submenu.neos-pull-left {
-	// Undo the float
-	// Yes, this is awkward since .neos-pull-left adds a float, but it sticks to our conventions elsewhere.
-	float: none;
+  // Undo the float
+  // Yes, this is awkward since .neos-pull-left adds a float, but it sticks to our conventions elsewhere.
+  float: none;
 
-	// Positioning the submenu
-	> .neos-dropdown-menu {
-		left: -100%;
-		margin-left: 10px;
-	}
+  // Positioning the submenu
+  > .neos-dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+  }
 }
 
 // Tweak nav headers
 // -----------------
 // Increase padding from 15px to 20px on sides
 .neos-dropdown .neos-dropdown-menu .neos-nav-header {
-	padding-left: 20px;
-	padding-right: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 // Typeahead
 // ---------
 .neos-typeahead {
-	z-index: 1051;
-	margin-top: 2px; // give it some space to breathe
-	border-radius: $baseBorderRadius;
+  z-index: 1051;
+  margin-top: 2px; // give it some space to breathe
+  border-radius: $baseBorderRadius;
 }

@@ -128,12 +128,20 @@ class ChangePropertyValue extends AbstractTransformation
      *
      * @param NodeData $node
      * @return void
+     * @throws \Neos\ContentRepository\Exception\NodeException
      */
     public function execute(NodeData $node)
     {
         $currentPropertyValue = $node->getProperty($this->propertyName);
+
+        if (!is_string($currentPropertyValue) || !is_string($this->newValue)) {
+            $node->setProperty($this->propertyName, $this->newValue);
+            return;
+        }
+
         $newValueWithReplacedCurrentValue = str_replace($this->currentValuePlaceholder, $currentPropertyValue, $this->newValue);
         $newValueWithReplacedSearch = str_replace($this->search, $this->replace, $newValueWithReplacedCurrentValue);
+
         $node->setProperty($this->propertyName, $newValueWithReplacedSearch);
     }
 }

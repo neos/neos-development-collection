@@ -1,0 +1,18 @@
+prototype({packageKey}:Component.Template.Default) < prototype(Neos.Fusion:Component) {
+  # Property API
+  menu = ''
+  content = ''
+
+  # Template
+  renderer = afx`
+    <!-- change to your needs -->
+    <header>
+      Header
+      <nav>{props.menu}</nav>
+    </header>
+    <main id="main">
+      {props.content}
+    </main>
+    <footer>Footer</footer>
+  `
+}

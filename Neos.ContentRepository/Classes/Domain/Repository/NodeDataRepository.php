@@ -132,7 +132,7 @@ class NodeDataRepository extends Repository
      * @return void
      * @api
      */
-    public function add($object)
+    public function add($object): void
     {
         if ($this->removedNodes->contains($object)) {
             $this->removedNodes->detach($object);
@@ -153,7 +153,7 @@ class NodeDataRepository extends Repository
      * @return void
      * @api
      */
-    public function remove($object)
+    public function remove($object): void
     {
         if ($object instanceof NodeInterface) {
             $object = $object->getNodeData();

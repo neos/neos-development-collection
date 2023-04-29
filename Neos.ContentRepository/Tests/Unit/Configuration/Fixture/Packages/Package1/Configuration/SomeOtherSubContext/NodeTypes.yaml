@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Packages/Package1/Configuration/SomeOtherSubContext/NodeTypes.yaml
+    pathPackages.Package1.Configuration.SomeOtherSubContext.NodeTypes_yaml: true
+'NodeType:PathPackages.Package1.Configuration.SomeOtherSubContext.NodeTypes_yaml':
+  options:
+    path: Packages/Package1/Configuration/SomeOtherSubContext/NodeTypes.yaml

@@ -17,6 +17,7 @@ use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeService;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\Flow\Utility\Algorithms;
 
 /**
  * Testcase for the NodeService
@@ -196,7 +197,7 @@ class NodeServiceTest extends UnitTestCase
     {
         $nodeService = $this->createNodeService();
 
-        $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->getMock();
+        $mockNode = $this->getMockBuilder(Node::class)->disableOriginalConstructor()->onlyMethods(['getNodeType', 'createNode', 'getIdentifier'])->getMock();
 
         $mockNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:Content');
         $firstChildNodeType = $this->mockNodeType('Neos.ContentRepository.Testing:Content');
@@ -209,17 +210,15 @@ class NodeServiceTest extends UnitTestCase
                 'second-child-node-name' => $secondChildNodeType
             ]));
 
+        $mockNode->method('getIdentifier')->willReturn(Algorithms::generateUUID());
+
         $mockNode->expects(self::once())
             ->method('getNodeType')
             ->will(self::returnValue($mockNodeType));
 
-        $mockNode->expects($this->at(1))
+        $mockNode->expects(self::atLeast(2))
             ->method('createNode')
-            ->with('first-child-node-name', $firstChildNodeType);
-
-        $mockNode->expects($this->at(2))
-            ->method('createNode')
-            ->with('second-child-node-name', $secondChildNodeType);
+            ->withConsecutive(['first-child-node-name', $firstChildNodeType], ['second-child-node-name', $secondChildNodeType]);
 
         $nodeService->createChildNodes($mockNode);
     }

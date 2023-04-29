@@ -1,0 +1,35 @@
+`7.3.7 (2022-08-30) <https://github.com/neos/neos-development-collection/releases/tag/7.3.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Apply autorotate before image adjustments <https://github.com/neos/neos-development-collection/pull/3851>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Applies the Imagine autorotate filter before doing image adjustments,
+so images are consistently rotated from metadata also for crop
+operations.
+
+* Fixes: `#3300 <https://github.com/neos/neos-development-collection/issues/3300>`_
+
+
+* Packages: ``NodeTypes.BaseMixins`` ``Media``
+
+`BUGFIX: Add raw content fallback renderer to prevent rendering exceptions <https://github.com/neos/neos-development-collection/pull/3798>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+Before Neos 5 it was only necessary to have a Fluid template and no Fusion prototype to work with nodes in Neos incl. the raw content mode.
+
+As the default Fusion prototype generator was disabled in Neos 5 and later removed in Neos 7, even a Fluid template was not enough anymore and this broke the old behaviour.
+
+Therefore a fallback renderer was added that will render a simple Fusion prototype which shows the elements label and editable properties and images. This way exceptions in the raw content mode due to missing prototypes should not happen anymore.
+
+The whole raw content mode will then be later refactored as new feature in `#376 <https://github.com/neos/neos-development-collection/issues/376>`_
+
+<img width="852" alt="raw-content-fix-example" src="https://user-images.githubusercontent.com/596967/168566285-56f42c40-4cf5-4108-b907-05bd472550b9.png">
+
+* Packages: ``Neos``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.6...7.3.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

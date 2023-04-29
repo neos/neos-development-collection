@@ -5,74 +5,75 @@
 // *******************/
 
 form {
-	text-align: left;
-	margin: 0px;
-	padding: 0px;
+  text-align: left;
+  margin: 0px;
+  padding: 0px;
 }
 
 button {
-	outline: 0;
+  outline: 0;
 }
 
 ul {
-	li {
-		background: transparent;
-	}
+  li {
+    background: transparent;
+  }
 }
 
 a {
-	color: $orange;
-	text-decoration: none;
+  color: $orange;
+  text-decoration: none;
 
-	&:hover,
-	&:focus,
-	&:active {
-		color: $orange;
-		text-decoration: underline;
-	}
+  &:hover,
+  &:focus,
+  &:active {
+    color: $orange;
+    text-decoration: underline;
+  }
 }
 
-[class^="fa-"], [class*=" fa-"] {
-	@include icon-font($baseIconFontFamily, 14px);
-	text-align: center;
+[class^="fa-"],
+[class*=" fa-"] {
+  @include icon-font($baseIconFontFamily, 14px);
+  text-align: center;
 
-	&.fab {
-		@include icon-font($brandIconFontFamily, 14px);
-	}
+  &.fab {
+    @include icon-font($brandIconFontFamily, 14px);
+  }
 }
 
 .neos-clear {
-	clear: both;
+  clear: both;
 }
 
 .neos-pageloader-wrapper {
-	position: fixed;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	background-color: #fff;
-	opacity: 0;
-	z-index: 10001;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  opacity: 0;
+  z-index: 10001;
 
-	.neos-pageloader {
-		position: relative;
-		top: 50% !important;
-		left: 50% !important;
-		margin-top: ($unit * 2 + 2) / 2;
-		margin-left: -30 - $inspectorWidth / 2;
-		transition-property: margin;
-		transition-duration: 0.2s;
-	}
+  .neos-pageloader {
+    position: relative;
+    top: 50% !important;
+    left: 50% !important;
+    margin-top: ($unit * 2 + 2) / 2;
+    margin-left: -30 - $inspectorWidth / 2;
+    transition-property: margin;
+    transition-duration: 0.2s;
+  }
 }
 
 &.neos-navigate-panel-open .neos-pageloader-wrapper .neos-pageloader {
-	margin-left: -30 - $navigatePanelWidth / 2 - $inspectorWidth / 2;
+  margin-left: -30 - $navigatePanelWidth / 2 - $inspectorWidth / 2;
 }
 
 &.neos-full-screen .neos-pageloader-wrapper .neos-pageloader {
-	margin-top: $unit / 2;
+  margin-top: $unit / 2;
 }
 
 iframe {
-	border: 0;
+  border: 0;
 }

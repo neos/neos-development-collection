@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace Neos\Neos\Service;
 
 /*
@@ -14,10 +16,15 @@ namespace Neos\Neos\Service;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
+use Neos\Neos\Controller\Backend\MenuHelper;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\ContentContext;
@@ -26,6 +33,7 @@ use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Utility\Arrays;
 
 /**
  * @Flow\Scope("singleton")
@@ -87,40 +95,67 @@ class BackendRedirectionService
     protected $propertyMapper;
 
     /**
-     * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.routeAfterLogin.values")
-     * @var bool
+     * @Flow\Inject
+     * @var MenuHelper
      */
-    protected $routingValuesAfterLogin;
+    protected $menuHelper;
+
+    /**
+     * @var PrivilegeManagerInterface
+     * @Flow\Inject
+     */
+    protected $privilegeManager;
+
+    /**
+     * @Flow\InjectConfiguration(package="Neos.Neos", path="moduleConfiguration.preferredStartModules")
+     * @var string[]
+     */
+    protected $preferedStartModules;
 
     /**
      * Returns a specific URI string to redirect to after the login; or NULL if there is none.
      *
-     * @param ActionRequest $actionRequest
+     * @param ControllerContext $controllerContext
      * @return string
+     * @throws IllegalObjectTypeException
+     * @throws MissingActionNameException
+     * @throws \Neos\Flow\Http\Exception
      */
-    public function getAfterLoginRedirectionUri(ActionRequest $actionRequest)
+    public function getAfterLoginRedirectionUri(ControllerContext $controllerContext): ?string
     {
         $user = $this->userService->getBackendUser();
         if ($user === null) {
             return null;
         }
 
+        $availableModules = $this->menuHelper->buildModuleList($controllerContext);
+        $startModule = $this->determineStartModule($availableModules);
+
         $workspaceName = $this->userService->getPersonalWorkspaceName();
         $this->createWorkspaceAndRootNodeIfNecessary($workspaceName);
 
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($actionRequest);
-        $uriBuilder->setFormat('html');
-        $uriBuilder->setCreateAbsoluteUri(true);
+        return $startModule['uri'];
+    }
 
-        $nodeToEdit = $this->getLastVisitedNode($workspaceName);
-        if ($nodeToEdit === null) {
-            $contentContext = $this->createContext($workspaceName);
-            $nodeToEdit = $contentContext->getCurrentSiteNode();
+    /**
+     * @param array $availableModules
+     * @return array|null
+     */
+    protected function determineStartModule(array $availableModules): ?array
+    {
+        foreach ($this->preferedStartModules as $startModule) {
+            $subModulePath = str_replace('/', '.submodules.', $startModule);
+            if (Arrays::getValueByPath($availableModules, $subModulePath) !== null) {
+                return Arrays::getValueByPath($availableModules, $subModulePath);
+            }
         }
 
-        $arguments = array_merge(['node' => $nodeToEdit], $this->routingValuesAfterLogin);
-        return $uriBuilder->uriFor($this->routingValuesAfterLogin['@action'], $arguments, $this->routingValuesAfterLogin['@controller'], $this->routingValuesAfterLogin['@package']);
+        $firstModule = current($availableModules);
+        if (array_key_exists('submodules', $firstModule) && is_array($firstModule['submodules'])) {
+            return current($firstModule['submodules']);
+        }
+
+        return $firstModule;
     }
 
     /**
@@ -130,8 +165,10 @@ class BackendRedirectionService
      *
      * @param ActionRequest $actionRequest
      * @return string A possible redirection URI, if any
+     * @throws \Neos\Flow\Http\Exception
+     * @throws MissingActionNameException
      */
-    public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest)
+    public function getAfterLogoutRedirectionUri(ActionRequest $actionRequest): ?string
     {
         $lastVisitedNode = $this->getLastVisitedNode('live');
         if ($lastVisitedNode === null) {
@@ -145,11 +182,10 @@ class BackendRedirectionService
     }
 
     /**
-     *
      * @param string $workspaceName
      * @return NodeInterface
      */
-    protected function getLastVisitedNode($workspaceName)
+    protected function getLastVisitedNode(string $workspaceName): ?NodeInterface
     {
         if (!$this->session->isStarted() || !$this->session->hasKey('lastVisitedNode')) {
             return null;
@@ -157,8 +193,7 @@ class BackendRedirectionService
         try {
             $lastVisitedNode = $this->propertyMapper->convert($this->session->getData('lastVisitedNode'), NodeInterface::class);
             $q = new FlowQuery([$lastVisitedNode]);
-            $lastVisitedNodeUserWorkspace = $q->context(['workspaceName' => $workspaceName])->get(0);
-            return $lastVisitedNodeUserWorkspace;
+            return $q->context(['workspaceName' => $workspaceName])->get(0);
         } catch (\Exception $exception) {
             return null;
         }
@@ -170,7 +205,7 @@ class BackendRedirectionService
      * @param string $workspaceName
      * @return ContentContext
      */
-    protected function createContext($workspaceName)
+    protected function createContext(string $workspaceName): ContentContext
     {
         $contextProperties = [
             'workspaceName' => $workspaceName,
@@ -190,8 +225,9 @@ class BackendRedirectionService
      *
      * @param string $workspaceName Name of the workspace
      * @return void
+     * @throws IllegalObjectTypeException
      */
-    protected function createWorkspaceAndRootNodeIfNecessary($workspaceName)
+    protected function createWorkspaceAndRootNodeIfNecessary(string $workspaceName): void
     {
         $workspace = $this->workspaceRepository->findOneByName($workspaceName);
         if ($workspace === null) {

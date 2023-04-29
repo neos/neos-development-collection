@@ -1,12 +1,13 @@
 .neos-help-message-button {
-	&:active, &:focus {
-		outline: none; // we really don't need that outline for the tiny [?] icon, do we?
-	}
+  &:active,
+  &:focus {
+    outline: none; // we really don't need that outline for the tiny [?] icon, do we?
+  }
 }
 .neos-help-message-icon {
-	color: $textOnGray;
-	vertical-align: baseline;
-	position: relative;
-	cursor: pointer;
-	text-decoration: none;
+  color: $textOnGray;
+  vertical-align: baseline;
+  position: relative;
+  cursor: pointer;
+  text-decoration: none;
 }

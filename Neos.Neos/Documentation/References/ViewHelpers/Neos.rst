@@ -1,9 +1,9 @@
 .. _`Neos ViewHelper Reference`:
 
 Neos ViewHelper Reference
-=========================
+#########################
 
-This reference was automatically generated from code on 2021-05-30
+This reference was automatically generated from code on 2023-04-23
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -101,27 +101,6 @@ Arguments
 *********
 
 * ``configuration`` (array): Configuration to show
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.container`:
-
-neos:backend.container
-----------------------
-
-ViewHelper for the backend 'container'. Renders the required HTML to integrate
-the Neos backend into a website.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ContainerViewHelper
-
-
-
-
-Arguments
-*********
-
-* ``node`` (Neos\ContentRepository\Domain\Model\NodeInterface): Node
 
 
 
@@ -231,19 +210,6 @@ ViewHelper for the backend JavaScript configuration. Renders the required JS sni
 the Neos backend.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Backend\\JavascriptConfigurationViewHelper
-
-
-
-
-
-.. _`Neos ViewHelper Reference: neos:backend.shouldLoadMinifiedJavascript`:
-
-neos:backend.shouldLoadMinifiedJavascript
------------------------------------------
-
-Returns true if the minified Neos JavaScript sources should be loaded, false otherwise.
-
-:Implementation: Neos\\Neos\\ViewHelpers\\Backend\\ShouldLoadMinifiedJavascriptViewHelper
 
 
 
@@ -676,7 +642,7 @@ Arguments
 
 * ``nodeVariableName`` (string, *optional*): The variable the node will be assigned to for the rendered child content
 
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself
+* ``resolveShortcuts`` (boolean, *optional*): DEPRECATED Parameter - ignored
 
 
 
@@ -1135,7 +1101,7 @@ Arguments
 
 * ``baseNodeName`` (string, *optional*): The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths
 
-* ``resolveShortcuts`` (boolean, *optional*): INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.
+* ``resolveShortcuts`` (boolean, *optional*): DEPRECATED Parameter - ignored
 
 
 
@@ -1196,6 +1162,7 @@ Expected result::
 
 	about/us.html
 	(depending on current workspace, current node, format etc.)
+
 
 
 

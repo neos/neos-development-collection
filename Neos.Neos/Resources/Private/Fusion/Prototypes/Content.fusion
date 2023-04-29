@@ -6,37 +6,37 @@
 # you should still extend this prototype and override the @class property (see Neos.Neos:Plugin).
 #
 prototype(Neos.Neos:Content) < prototype(Neos.Fusion:Template) {
-	node = ${node}
+  node = ${node}
 
-	attributes = Neos.Fusion:Attributes
-	attributes.class = ''
+  attributes = Neos.Fusion:Attributes
+  attributes.class = ''
 
-	# The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
-	# for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
-	# You can disable the following line with:
-	# prototype(Neos.Neos:Content) {
-	#   attributes.class.@process.nodeType >
-	# }
-	# in your site's Fusion if you don't need that behavior.
-	attributes.class.@process.nodeType = Neos.Fusion:Case {
-		@context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
+  # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
+  # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
+  # You can disable the following line with:
+  # prototype(Neos.Neos:Content) {
+  #   attributes.class.@process.nodeType >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes.class.@process.nodeType = Neos.Fusion:Case {
+    @context.nodeTypeClassName = ${String.toLowerCase(String.pregReplace(q(node).property('_nodeType.name'), '/[[:^alnum:]]/', '-'))}
 
-		classIsString {
-			condition = ${Type.isString(value)}
-			renderer = ${String.trim(String.trim(value) + ' ' + nodeTypeClassName)}
-		}
+    classIsString {
+      condition = ${Type.isString(value)}
+      renderer = ${String.trim(String.trim(value) + ' ' + nodeTypeClassName)}
+    }
 
-		classIsArray {
-			condition = ${Type.isArray(value)}
-			renderer = ${Array.push(value, nodeTypeClassName)}
-		}
-	}
+    classIsArray {
+      condition = ${Type.isArray(value)}
+      renderer = ${Array.push(value, nodeTypeClassName)}
+    }
+  }
 
-	# The following line must not be removed as it adds required meta data to all content elements in backend
-	@process.contentElementWrapping {
-		expression = Neos.Neos:ContentElementWrapping
-		@position = 'end 999999999'
-	}
+  # The following line must not be removed as it adds required meta data to all content elements in backend
+  @process.contentElementWrapping {
+    expression = Neos.Neos:ContentElementWrapping
+    @position = 'end 999999999'
+  }
 
-	@exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
+  @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
 }

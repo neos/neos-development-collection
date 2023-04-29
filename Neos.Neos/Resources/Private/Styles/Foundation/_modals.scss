@@ -4,177 +4,181 @@
 
 // Background
 .neos-modal-backdrop {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: $zindexModalBackdrop;
-	background-color: $black;
-	// Fade for backdrop
-	&.neos-fade { opacity: 0; }
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: $zindexModalBackdrop;
+  background-color: $black;
+  // Fade for backdrop
+  &.neos-fade {
+    opacity: 0;
+  }
 }
 
 .neos-modal-backdrop,
 .neos-modal-backdrop.neos-fade.neos-in {
-	opacity: .35;
+  opacity: 0.35;
 }
 
 // Base modal
 .neos-modal {
-	position: fixed;
-	top: 120px;
-	left: 50%;
-	z-index: $zindexModal;
-	margin: 0px 0px 0px -17.5%;
-	color: $textOnGray;
-	background: $grayDark;
-	border: 1px solid $grayLight;
-	padding: 0px;
-	width: 35%;
-	border-radius: 0;
-	@include font();
-	// Remove focus outline from opened modal
-	outline: none;
+  position: fixed;
+  top: 120px;
+  left: 50%;
+  z-index: $zindexModal;
+  margin: 0px 0px 0px -17.5%;
+  color: $textOnGray;
+  background: $grayDark;
+  border: 1px solid $grayLight;
+  padding: 0px;
+  width: 35%;
+  border-radius: 0;
+  @include font();
+  // Remove focus outline from opened modal
+  outline: none;
 
-	&.neos-modal-wide {
-		width: 50%;
-		left: 42.5%;
-	}
+  &.neos-modal-wide {
+    width: 50%;
+    left: 42.5%;
+  }
 
-	&.neos-fade {
-		transition: opacity .3s linear, top .3s ease-out;
-		top: -25%;
-	}
+  &.neos-fade {
+    transition: opacity 0.3s linear, top 0.3s ease-out;
+    top: -25%;
+  }
 
-	&.neos-fade.neos-in {
-		top: 10%;
-	}
+  &.neos-fade.neos-in {
+    top: 10%;
+  }
 
-	.neos-modal-header {
-		padding: 0px;
-		border: 0px;
+  .neos-modal-header {
+    padding: 0px;
+    border: 0px;
 
-		// Heading
-		h3 {
-			margin: 0;
-			line-height: 30px;
-		}
+    // Heading
+    h3 {
+      margin: 0;
+      line-height: 30px;
+    }
 
-		.neos-close {
-			@extend .fas;
-			margin: 0;
-			color: #fff;
-			font-size: 18px;
-			line-height: 100%;
-			width: $unit;
-			height: $unit;
-			margin-left: $defaultMargin;
-			margin-top: -$defaultMargin;
-			border-left: none;
-			text-shadow: none;
-			opacity: 1;
-			box-sizing: border-box;
+    .neos-close {
+      @extend .fas;
+      margin: 0;
+      color: #fff;
+      font-size: 18px;
+      line-height: 100%;
+      width: $unit;
+      height: $unit;
+      margin-left: $defaultMargin;
+      margin-top: -$defaultMargin;
+      border-left: none;
+      text-shadow: none;
+      opacity: 1;
+      box-sizing: border-box;
 
-			&:before {
-				content: fa-content($fa-var-times);
-			}
+      &:before {
+        content: fa-content($fa-var-times);
+      }
 
-			&:hover {
-				background: $blue;
-			}
-		}
+      &:hover {
+        background: $blue;
+      }
+    }
 
-		// Top area
-		.neos-header {
-			font-size: 16px;
-			line-height: 100%;
-			margin: $defaultMargin;
-			line-height: $unit / 2;
-			box-sizing: border-box;
-		}
-	}
+    // Top area
+    .neos-header {
+      font-size: 16px;
+      line-height: 100%;
+      margin: $defaultMargin;
+      line-height: $unit / 2;
+      box-sizing: border-box;
+    }
+  }
 
-	// Header
-	.neos-subheader {
-		font-size: 14px;
-		margin: $defaultMargin;
-		line-height: 18px;
-		font-weight: normal;
-		color: $textSubtleLight;
-	}
+  // Header
+  .neos-subheader {
+    font-size: 14px;
+    margin: $defaultMargin;
+    line-height: 18px;
+    font-weight: normal;
+    color: $textSubtleLight;
+  }
 
-	// Footer area
-	.neos-modal-footer {
-		background: transparent;
-		box-shadow: 0px 0px 0px transparent;
-		border-radius: 0px;
-		border: 0px;
-		padding: $defaultMargin;
-		text-align: right;
-		@include clearfix(); // clear it in case folks use .neos-pull-* classes on buttons
+  // Footer area
+  .neos-modal-footer {
+    background: transparent;
+    box-shadow: 0px 0px 0px transparent;
+    border-radius: 0px;
+    border: 0px;
+    padding: $defaultMargin;
+    text-align: right;
+    @include clearfix(
 
-		// Properly space out buttons
-		.neos-button {
-			margin-left: $relatedMargin;
-			margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
-		}
-	}
+    ); // clear it in case folks use .neos-pull-* classes on buttons
+
+    // Properly space out buttons
+    .neos-button {
+      margin-left: $relatedMargin;
+      margin-bottom: 0; // account for input[type="submit"] which gets the bottom margin like all other inputs
+    }
+  }
 }
 
 // Base modal flexbox container
 .neos-modal-centered {
-	@include flex();
-	@include flex-align(center);
-	@include flex-justify(center);
-	position: fixed;
-	z-index: $zindexModal;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
+  @include flex();
+  @include flex-align(center);
+  @include flex-justify(center);
+  position: fixed;
+  z-index: $zindexModal;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
 
-	&.neos-modal-wide {
-		width: 100%;
-		left: 0;
+  &.neos-modal-wide {
+    width: 100%;
+    left: 0;
 
-		.neos-modal-content {
-			max-width: $unit * 24;
-		}
-	}
+    .neos-modal-content {
+      max-width: $unit * 24;
+    }
+  }
 
-	&.neos-modal-fixed {
-		@include flex-align(flex-start);
-		top: 120px;
-	}
+  &.neos-modal-fixed {
+    @include flex-align(flex-start);
+    top: 120px;
+  }
 
-	&.neos-fade {
-		transition: opacity .3s linear, top .3s ease-out;
-		top: -25%;
-	}
+  &.neos-fade {
+    transition: opacity 0.3s linear, top 0.3s ease-out;
+    top: -25%;
+  }
 
-	&.neos-fade.neos-in {
-		top: 0;
+  &.neos-fade.neos-in {
+    top: 0;
 
-		&.neos-modal-fixed {
-			top: 120px;
-		}
-	}
+    &.neos-modal-fixed {
+      top: 120px;
+    }
+  }
 }
 
 // Base modal flexbox content
 .neos-modal-content {
-	@extend .neos-modal;
-	position: static;
-	top: 0;
-	left: 0;
-	width: calc(100vw - #{$unit * 2});
-	max-width: $unit * 16;
-	margin: 0;
-	z-index: auto;
+  @extend .neos-modal;
+  position: static;
+  top: 0;
+  left: 0;
+  width: calc(100vw - #{$unit * 2});
+  max-width: $unit * 16;
+  margin: 0;
+  z-index: auto;
 }
 
 // Remove bottom margin if need be
 .neos-modal-form {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }

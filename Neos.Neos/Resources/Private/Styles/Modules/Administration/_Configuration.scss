@@ -1,57 +1,56 @@
 &.neos-module-administration-configuration {
-	#configuration {
-		> ul {
+  #configuration {
+    > ul {
+      &.neos-tree-container {
+        display: block;
 
-			&.neos-tree-container {
-				display: block;
+        > li > span {
+          display: none;
+        }
 
-				> li > span {
-					display: none;
-				}
+        .neos-tree-node {
+          cursor: pointer;
+          height: auto;
 
-				.neos-tree-node {
-					cursor: pointer;
-					height: auto;
+          &.neos-tree-folder .neos-tree-title {
+            user-select: none;
+          }
 
-					&.neos-tree-folder .neos-tree-title {
-						user-select: none;
-					}
+          .neos-tree-icon {
+            display: none;
+          }
 
-					.neos-tree-icon {
-						display: none;
-					}
+          .neos-tree-title {
+            width: calc(100% - 24px);
+            height: auto;
+            white-space: normal;
+            text-align: left;
+            word-break: break-word;
+            word-wrap: break-word;
+          }
+        }
+      }
+    }
 
-					.neos-tree-title {
-						width: calc(100% - 24px);
-						height: auto;
-						white-space: normal;
-						text-align: left;
-						word-break: break-word;
-						word-wrap: break-word;
-					}
-				}
-			}
-		}
+    .key,
+    .value {
+      display: inline;
+    }
 
-		.key,
-		.value {
-			display: inline;
-		}
+    .value {
+      &[title="boolean"],
+      &[title="NULL"] {
+        color: $orange;
+      }
 
-		.value {
-			&[title="boolean"],
-			&[title="NULL"] {
-				color: $orange;
-			}
+      &[title="integer"],
+      &[title="double"] {
+        color: $warning;
+      }
 
-			&[title="integer"],
-			&[title="double"] {
-				color: $warning;
-			}
-
-			&[title="string"] {
-				color: $blue;
-			}
-		}
-	}
+      &[title="string"] {
+        color: $blue;
+      }
+    }
+  }
 }

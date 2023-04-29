@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Controller\Module\User;
 
 /*
@@ -14,6 +15,7 @@ namespace Neos\Neos\Controller\Module\User;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\Security\Account;
@@ -46,6 +48,13 @@ class UserSettingsController extends AbstractModuleController
      * @var User
      */
     protected $currentUser;
+
+    /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
+
 
     /**
      * @return void
@@ -101,7 +110,11 @@ class UserSettingsController extends AbstractModuleController
     public function updateAction(User $user)
     {
         $this->userService->updateUser($user);
-        $this->addFlashMessage('Your user has been updated.', 'User updated', Message::SEVERITY_OK);
+        $this->addFlashMessage(
+            $this->translator->translateById('userSettings.UserUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('userSettings.UserUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK
+        );
         $this->redirect('edit');
     }
 
@@ -131,8 +144,24 @@ class UserSettingsController extends AbstractModuleController
         $user = $this->currentUser;
         $password = array_shift($password);
         if (strlen(trim(strval($password))) > 0) {
-            $this->userService->setUserPassword($user, $password);
-            $this->addFlashMessage('The password has been updated.', 'Password updated', Message::SEVERITY_OK);
+            try {
+                $this->userService->setUserPassword($user, $password);
+                $this->addFlashMessage(
+                    $this->translator->translateById('userSettings.passwordUpdated.body', [], null, null, 'Modules', 'Neos.Neos'),
+                    $this->translator->translateById('userSettings.passwordUpdated.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_OK
+                );
+            } catch (\Exception $e) {
+                $this->addFlashMessage(
+                    // The shown message must be translated when throwing the actual exception.
+                    $e->getMessage(),
+                    $this->translator->translateById('userSettings.passwordUpdateFailed.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_ERROR,
+                    [],
+                    1647335912
+                );
+                $this->forward('edit', null, null, ['user' => $user]);
+            }
         }
         $this->redirect('index');
     }
@@ -163,7 +192,13 @@ class UserSettingsController extends AbstractModuleController
         $user->addElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('An electronic address "%s" (%s) has been added.', 'Electronic address added', Message::SEVERITY_OK, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())], 1412374814);
+        $this->addFlashMessage(
+            $this->translator->translateById('userSettings.electronicAddressAdded.body', [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType())], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('userSettings.electronicAddressAdded.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_OK,
+            [],
+            1412374814
+        );
         $this->redirect('edit', null, null, ['user' => $user]);
     }
 
@@ -179,7 +214,13 @@ class UserSettingsController extends AbstractModuleController
         $user->removeElectronicAddress($electronicAddress);
         $this->userService->updateUser($user);
 
-        $this->addFlashMessage('The electronic address "%s" (%s) has been deleted for "%s".', 'Electronic address removed', Message::SEVERITY_NOTICE, [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], 1412374678);
+        $this->addFlashMessage(
+            $this->translator->translateById('userSettings.electronicAddressRemoved.body', [htmlspecialchars($electronicAddress->getIdentifier()), htmlspecialchars($electronicAddress->getType()), htmlspecialchars($user->getName())], null, null, 'Modules', 'Neos.Neos'),
+            $this->translator->translateById('userSettings.electronicAddressRemoved.title', [], null, null, 'Modules', 'Neos.Neos'),
+            Message::SEVERITY_NOTICE,
+            [],
+            1412374678
+        );
         $this->redirect('edit', null, null, ['user' => $user]);
     }
 

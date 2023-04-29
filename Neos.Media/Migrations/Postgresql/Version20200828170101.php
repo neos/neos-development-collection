@@ -6,7 +6,7 @@ namespace Neos\Flow\Persistence\Doctrine\Migrations;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Migrations\AbortMigrationException;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Migrations\AbstractMigration;
+use Doctrine\Migrations\AbstractMigration;
 
 /**
  * Fix paths to static icons still pointing to TYPO3.Media

@@ -46,6 +46,19 @@ class SortOperation extends AbstractOperation
      *
      * First argument is the node property to sort by. Works with internal arguments (_xyz) as well.
      * Second argument is the sort direction (ASC or DESC).
+     * Third optional argument are the sort options (see https://www.php.net/manual/en/function.sort):
+     *  - 'SORT_REGULAR'
+     *  - 'SORT_NUMERIC'
+     *  - 'SORT_STRING'
+     *  - 'SORT_LOCALE_STRING'
+     *  - 'SORT_NATURAL'
+     *  - 'SORT_FLAG_CASE' (use as last option with SORT_STRING, SORT_LOCALE_STRING or SORT_NATURAL)
+     * A single sort option can be supplied as string. Multiple sort options are supplied as array.
+     * Other than the above listed sort options throw an error. Omitting the third parameter leaves FlowQuery sort() in SORT_REGULAR sort mode.
+     * Example usages:
+     *      sort("title", "ASC", ["SORT_NATURAL", "SORT_FLAG_CASE"])
+     *      sort("risk", "DESC", "SORT_NUMERIC")
+     *
      *
      * @param FlowQuery $flowQuery the FlowQuery object
      * @param array $arguments the arguments for this operation.
@@ -71,6 +84,19 @@ class SortOperation extends AbstractOperation
             throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort direction (ASC or DESC)', 1467881105);
         }
 
+        // Check sort options
+        $sortOptions = [];
+        if (isset($arguments[2]) && !empty($arguments[2])) {
+            $args = is_array($arguments[2]) ? $arguments[2] : [$arguments[2]];
+            foreach ($args as $arg) {
+                if (!in_array(strtoupper($arg), ['SORT_REGULAR', 'SORT_NUMERIC', 'SORT_STRING', 'SORT_LOCALE_STRING', 'SORT_NATURAL', 'SORT_FLAG_CASE'], true)) {
+                    throw new \Neos\Eel\FlowQuery\FlowQueryException('Please provide a valid sort option (see https://www.php.net/manual/en/function.sort)', 1591107722);
+                } else {
+                    $sortOptions[] = $arg;
+                }
+            }
+        }
+
         $sortedNodes = [];
         $sortSequence = [];
         $nodesByIdentifier = [];
@@ -92,10 +118,12 @@ class SortOperation extends AbstractOperation
         }
 
         // Create the sort sequence
+        $sortFlags = array_sum(array_map('constant', $sortOptions));
+        $sortFlags = $sortFlags === 0 ? SORT_REGULAR : $sortFlags;
         if ($sortOrder === 'DESC') {
-            arsort($sortSequence);
+            arsort($sortSequence, $sortFlags);
         } elseif ($sortOrder === 'ASC') {
-            asort($sortSequence);
+            asort($sortSequence, $sortFlags);
         }
 
         // Build the sorted context that is returned

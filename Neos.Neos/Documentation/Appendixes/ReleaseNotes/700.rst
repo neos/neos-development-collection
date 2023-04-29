@@ -1,0 +1,275 @@
+========
+Neos 7.0
+========
+
+This major release of Neos comes with some great new features, bugfixes and a lot of modernisation of the existing code base.
+As usual, we worked hard to keep this release as backwards compatible as possible but, since it's a major release, some of the changes might require manual
+adjustments. So please make sure to carefully read the upgrade instructions below.
+Neos 7 also increases the minimal required PHP version to **7.3**.
+
+**Note:** Version 6 has been skipped so that future releases are in sync with the Flow versioning scheme.
+          The last minor release before **7.0** was **5.3**.
+
+************
+New Features
+************
+
+Faster and more extensible routing
+----------------------------------
+
+With version 7 Neos leverages the full power of the latest Routing features and moves most of the logic of the ``LinkingService::createNodeUri()`` into
+the infamous ``FrontendNodeRoutePartHandler``.
+This results in a **greatly improved performance** for the frontend routing because information about the current context can
+be shared between routes and cached independently from the content.
+
+Furthermore the handler has been extended by a ``nodeType`` option that allows custom routes to be applied for the specified
+node type exclusively.
+
+Example ``Routes.yaml``:
+
+.. code-block:: yaml
+  -
+    name:  'Custom'
+    uriPattern: '{node}/custom.html'
+    defaults:
+      '@package':    'Neos.Neos'
+      '@controller': 'Frontend\Node'
+      '@action':     'show'
+      '@format':     'html'
+      custom:         true
+    routeParts:
+      'node':
+        handler: 'Neos\Neos\Routing\FrontendNodeRoutePartHandlerInterface'
+        options:
+          nodeType: 'Some.Package:SomeDocument'
+
+With that, the ``custom.html`` suffix will only work if the resolved nodes implements the ``Some.Package:SomeDocument`` node type.
+In this example, the custom route will set a ``custom`` argument that can be accessed from Fusion in order to implement
+a dynamic representation of the node for example (see `docs.neos.io <https://docs.neos.io/cms/features/routing#custom-frontend-routes>`_).
+
+Related issue: `#3020 <https://github.com/neos/neos-development-collection/issues/3020>`_
+
+NodeType presets
+----------------
+
+Many developers are familiar with the `Sitegeist.Silhouettes <https://github.com/sitegeist/Sitegeist.Silhouettes>`_ package that allows integrators
+to specify presets that can be used across multiple node type definitions.
+This feature is now part of the core functionality and it can be used to centralize recurring configurations:
+
+Example ``Settings.yaml``
+
+.. code-block:: yaml
+
+  Neos:
+    Neos:
+      nodeTypes:
+        presets:
+          properties:
+
+            'rte':
+
+              'plaintext':
+                type: string
+                ui:
+                  inlineEditable: true
+
+              'rich':
+                type: 'string'
+                ui:
+                  inlineEditable: true
+                  inline:
+                    editorOptions:
+                      autoparagraph: true
+                      formatting:
+                        em: true
+                        strong: true
+
+Example ``NodeTypes.yaml``
+
+.. code-block:: yaml
+
+  'Some.Package:SomeNodeType':
+    # ...
+    properties:
+      'title':
+        options:
+          preset: 'rte.plaintext'
+        defaultValue: 'Title'
+      'description':
+        options:
+          preset: 'rte.basicText'
+
+Related issue: `#3090 <https://github.com/neos/neos-development-collection/issues/3090>`_
+
+Atomic Fusion
+-------------
+
+Two years ago Martin introduced their JSX inspired packages around "Atomic Fusion" in a blog post `Blog post <https://www.neos.io/blog/atomic-fusion.html>`_.
+It was very popular from the start and is considered *best practice* in the meantime and the `Neos.Demo <https://github.com/neos/Neos.Demo>`_ package has
+already been reworked to demonstrate some of the possibilities of AFX.
+While Fluid still plays an important role, especially in the Neos *backend*, version 7 marks an important step towards a unified, Fusion based
+templating system:
+
+Include AFX in the development collection
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The ``neos/fusion-afx`` package is now part of the `Neos development collection <https://github.com/neos/neos-development-collection>`_ making
+it much easier to implement changes that need synchronous alterations in AFX and Fusion and reducing the number of version constraints we'll have
+to deal with.
+
+As a consequence, the package makes a huge version jump from **1.4** to **7.0**,
+
+Related issue: `#2878 <https://github.com/neos/neos-development-collection/issues/2878>`_
+
+SiteKickstarter creates AFX based packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+We made the Site Kickstarter more versatile. Now you can easily add a custom generator package and
+kickstart different sorts of sites with one package:
+
+* Add possibility to use more than one template for the site kickstarter
+* Replace AFX template with the fluid template
+* Add the generator selection to the backend module for site packages
+* Removed the old generic generator service
+
+Related issue: `#3074 <https://github.com/neos/neos-development-collection/issues/3074>`_
+
+Improved AFX parser exception message
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Previously, only AFX exceptions were converted to fusion exceptions, which hid valuable information
+about the user's error source. This change will also catch for AFX parser exceptions and
+convert those to Fusion Exceptions.
+
+Before::
+
+  <p> Opening-bracket for closing of tag "p" expected.
+
+Now:
+
+  Error during AFX-parsing: <p> Opening-bracket for closing of tag "p" expected.
+
+Related issue: `#3235 <https://github.com/neos/neos-development-collection/pull/3235>`_
+
+Configurable default backend module
+-----------------------------------
+
+Up to now, after logging into the Neos backend a user would always end up in the "Content module".
+While this makes sense most of the time, it made it impossible to deny a user access to this module.
+
+With Neos 7 a new privilege target ``Neos.Neos.Ui:Backend.Module.Content`` has been added that is
+granted to the default ``Neos.Neos:AbstractEditor``. Users without that privilege won't have access
+to the default content module.
+
+Furthermore it's now possible to define the default module that is shown after login via the
+``Neos.Neos.moduleConfiguration.preferredStartModules`` setting:
+
+.. code-block:: yaml
+
+  Neos:
+    Neos:
+      moduleConfiguration:
+        preferredStartModules: ['content', 'management/custom']
+
+After login the user will be redirected to the first accessible module.
+
+Related issue: `#2351 <https://github.co/neos/neos-development-collection/issues/2351>`_
+
+StaticResource Eel Helper
+-------------------------
+
+A new Eel helper has been added that allows for easy rendering of static resource URIs:
+
+.. code-block:: html
+
+    <!-- create static resource uri -->
+    <link rel="stylesheet" href={StaticResource.uri('Neos.Demo', 'Public/Styles/Main.css')} media="all" />
+
+And, since it sometimes make sense to inline the *contents* of a static resource, this is possible as well:
+
+.. code-block:: html
+
+    <!-- get static resource content -->
+    <style>{StaticResource.content('Neos.Demo', 'Public/Styles/Main.css')}</style>
+
+Related issue: `#2175 <https://github.com/neos/flow-development-collection/issues/2175>`_
+
+Respect language plurals also in XliffService
+---------------------------------------------
+
+Neos now supports plurals in the localized UI labels.
+Previously the value had to be generic such as "{0} change(s) applied". Now two individual labels, such as
+"one change applied" and "{0} changes applied" can be specified.
+
+Related issue: `#2786 <https://github.com/neos/neos-development-collection/issues/2786>`_
+
+Lazy loading images
+-------------------
+
+Image tags rendered with the ``Neos.Neos:ImageTag`` fusion prototype (or the ``ImageViewHelper`` from the Neos.Media package)
+will now be rendered with the ``loading`` attribute set to "lazy" by default leveraging the power of modern browsers to
+defer loading of images until they are visible. See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#attr-loading
+
+Related issue: `#3084 <https://github.com/neos/neos-development-collection/issues/3084>`_
+
+Description and icon for Asset sources
+--------------------------------------
+
+The ``Neos\Media\Domain\Model\AssetSource\AssetSourceInterface`` has been extended by the two methods ``getIconUri()`` and
+``getDescription()``.
+Custom asset sources implementing this interface have to be adjusted accordingly.
+
+Related issue: `#3211 <https://github.com/neos/neos-development-collection/pull/3211>`_
+
+Remove default prototype generator
+----------------------------------
+
+The default plugin and content prototype generators have been disabled and deprecated with version 5.
+Now the implementations were removed from the source.
+
+The feature to define a custom prototype generator in the node type definition via ``options.fusion.prototypeGenerator``
+still exists of course!
+
+Related issues: `#2487 <https://github.com/neos/neos-development-collection/pull/2487>`_, `#3210 <https://github.com/neos/neos-development-collection/pull/3210>`_
+
+Add third parameter "sortFlags" for FlowQuery sort()
+----------------------------------------------------
+
+Now you are able the pass a third parameter to the ``sort()`` method. According to the sort
+flags of `arsort() <https://www.php.net/manual/en/function.sort>`_ the sort options are:
+
+.. code-block:: PHP
+
+  'SORT_REGULAR'
+  'SORT_NUMERIC'
+  'SORT_STRING'
+  'SORT_LOCALE_STRING'
+  'SORT_NATURAL'
+  'SORT_FLAG_CASE' (use as last option with SORT_STRING, SORT_LOCALE_STRING, or SORT_NATURAL)
+
+
+A single sort option can be supplied as a string. Multiple sort options are supplied as an array.
+Omitting the third parameter leaves FlowQuery ``sort()`` in ``SORT_REGULAR`` sort mode.
+
+Related issue: `#2989 <https://github.com/neos/neos-development-collection/pull/2989>`_
+
+~~~~~~~~~~~~~~~~~~~~
+Upgrade instructions
+~~~~~~~~~~~~~~~~~~~~
+
+See https://www.neos.io/download-and-extend/upgrade-instructions-5-3-7-0.html
+
+~~~~~~~~~~~~~~~~~~~~
+!!! Breaking changes
+~~~~~~~~~~~~~~~~~~~~
+
+As this is a major release, a few breaking changes have been made. All of them can be found
+in the ChangeLog, but everything important should be listed above and in the upgrade instructions.
+
+In case you have any problems with this guide, please get in touch with us
+via `discuss.neos.io <https://discuss.neos.io/>`_ or on `Slack <https://neos-project.slack.com/>`_.
+
+.. note::
+
+   Additionally, all changes in Flow 7.0 apply; see the release notes to further information.
+   See http://flowframework.readthedocs.org/en/7.0/TheDefinitiveGuide/PartV/ReleaseNotes/700.html

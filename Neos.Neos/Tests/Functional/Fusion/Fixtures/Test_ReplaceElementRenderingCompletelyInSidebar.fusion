@@ -3,9 +3,9 @@
 #
 
 page1.body.content.sidebar.prototype(Neos.Neos:ContentCase).smallHeadline {
-	condition = ${q(node).is('[instanceof Acme.Demo:Headline]')}
-	type = 'Acme.Demo:SmallHeadline'
-	@position = 'start'
+  condition = ${q(node).is('[instanceof Acme.Demo:Headline]')}
+  type = 'Acme.Demo:SmallHeadline'
+  @position = 'start'
 }
 prototype(Acme.Demo:SmallHeadline) < prototype(Acme.Demo:Headline)
 prototype(Acme.Demo:SmallHeadline).templatePath = ${fixturesDirectory + '/SmallHeadlineTemplate.html'}

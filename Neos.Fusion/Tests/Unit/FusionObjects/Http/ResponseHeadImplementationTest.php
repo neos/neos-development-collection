@@ -16,7 +16,7 @@ use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Http\ResponseHeadImplementation;
 use Psr\Http\Message\ResponseFactoryInterface;
-use function GuzzleHttp\Psr7\str;
+use GuzzleHttp\Psr7\Message;
 
 /**
  * Testcase for the Fusion ResponseHead object
@@ -74,6 +74,6 @@ class ResponseHeadImplementationTest extends UnitTestCase
 
         $result = $renderer->evaluate();
 
-        self::assertEquals($expectedOutput, str($result));
+        self::assertEquals($expectedOutput, Message::toString($result));
     }
 }

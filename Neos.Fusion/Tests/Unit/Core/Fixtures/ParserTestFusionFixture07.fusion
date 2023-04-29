@@ -13,7 +13,7 @@ object1 >
 
 object3 = Text
 object3 {
-	value = "Hello world"
+  value = "Hello world"
 }
 
 object3.value >

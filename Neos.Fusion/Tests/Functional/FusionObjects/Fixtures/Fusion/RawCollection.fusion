@@ -2,26 +2,26 @@ prototype(Neos.Fusion:RawCollection).@class = 'Neos\\Fusion\\FusionObjects\\RawC
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 
 rawCollection.basicLoop = Neos.Fusion:RawCollection {
-	collection = ${collection}
-	itemName = 'element'
-	itemRenderer = Neos.Fusion:TestRenderer {
-		test = ${element}
-	}
+  collection = ${collection}
+  itemName = 'element'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element}
+  }
 }
 
 rawCollection.basicLoopOtherContextVariables = Neos.Fusion:RawCollection {
-	collection = ${collection}
-	itemName = 'element'
-	itemRenderer = Neos.Fusion:TestRenderer {
-		test = ${element + other}
-	}
+  collection = ${collection}
+  itemName = 'element'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element + other}
+  }
 }
 
 rawCollection.iteration = Neos.Fusion:RawCollection {
-	collection = ${collection}
-	itemName = 'element'
-	iterationName = 'iteration'
-	itemRenderer = Neos.Fusion:TestRenderer {
-		test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
-	}
+  collection = ${collection}
+  itemName = 'element'
+  iterationName = 'iteration'
+  itemRenderer = Neos.Fusion:TestRenderer {
+    test = ${element + '-' + iteration.index + '-' + iteration.cycle + '-' + iteration.isFirst + '-' + iteration.isLast + '-' + iteration.isOdd + '-' + iteration.isEven}
+  }
 }

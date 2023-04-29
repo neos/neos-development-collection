@@ -1,0 +1,200 @@
+========
+Neos 7.3
+========
+
+This release of Neos comes with some great new features, bug fixes, and a lot of modernization.
+
+As usual, we worked hard to keep this release as backward compatible as possible, but some of the changes might require manual
+adjustments. So please make sure to read the upgrade instructions below carefully.
+
+
+************
+New Features
+************
+
+
+AFX shorthand for ``@if`` and ``@process``
+------------------------------------------
+
+Automatically generates keys for ``@if`` and ``@process`` when no one is specified.
+
+.. code-block:: html
+
+  <Vendor.Site:Prototype @if={eel1} image.@if={eel2} />
+
+Related issue: `#29 <https://github.com/neos/fusion-afx/issues/29>`_
+
+
+Fusion/AFX escaped attribute names (paths) with dots inside
+-----------------------------------------------------------
+
+Now it is possible to use dots in attributes and thus AlpineJS (for example) in AFX and Fusion.
+If you escape the attribute/path, the Fusion parser will not disturb you and won't make a nested object path out of it, as before.
+
+AFX
+***
+
+.. code-block:: html
+
+ <div '@foo.bar'='baz'></div>
+
+Generated Fusion
+****************
+
+::
+
+ Neos.Fusion:Tag {
+    attributes.'@foo.bar' = 'baz'
+ }
+
+HTML Output
+***********
+
+.. code-block:: html
+
+ <div @foo.bar="baz"></div>
+
+
+Related issues: `#3112 <https://github.com/neos/neos-development-collection/issues/3112>`_ and `#34 <https://github.com/neos/fusion-afx/issues/34>`_
+
+
+
+Introduce ThumbnailRefreshed signal to the Neos.Media package
+-------------------------------------------------------------
+
+Packages like ``MOC.ImageOptimizer`` that are necessary for achieving optimal performance currently have to use unstable APIs (aspects) to access freshly created image-crops. The existing signals ``ThumbnailPersisted`` and ``ThumbnailCreated`` do not cover this use case.
+
+This change introduces the ``ThumbnailRefreshed`` signal to the ``Neos.Media`` package that package authors can use to optimize the rendered thumbnails further before they are presented to the user.
+
+Related pull request: `#3478 <https://github.com/neos/neos-development-collection/pull/3478>`_
+
+
+Filter by collections in ``media:removeunused``
+-----------------------------------------------
+
+The assets, the ``media:removeunused`` command takes into account can now be filtered by collections by specifying a comma-separated list of collection titles with the ``—only-collections``
+
+Related pull request: `#3466 <https://github.com/neos/neos-development-collection/pull/3466>`_
+
+
+Add Neos.CliSetup package
+-------------------------
+
+* ``./flow welcome`` Shows a welcome message with information on how to set up Neos via CLI.
+* ``./flow setup:database`` Configure the database connection interactively
+* ``./flow setup:imagehandler`` Configure the image handling interactively
+
+Related issue: `#3506 <https://github.com/neos/neos-development-collection/issues/3506>`_
+
+Add support for AVIF format
+---------------------------
+
+You can now set ``avif`` as a format for generated images. Currently avif is only supported by ``imagick > 7.0.10-25`` and ``libheif > 1.7.0``.
+
+Related issue: `#3132 <https://github.com/neos/neos-development-collection/issues/3132>`_
+
+
+Allow setting the position of backend modules
+---------------------------------------------
+
+For example, if you want to move the media module after the workspace module, you are now able to do this like this:
+
+.. code-block:: yaml
+
+ Neos:
+   Neos:
+     modules:
+       management:
+         submodules:
+           media:
+             position: 'after workspaces'
+
+Related issue: `#3433 <https://github.com/neos/neos-development-collection/issues/3433>`_
+
+
+Add case-insensitive filter operators for FlowQuery
+----------------------------------------------------
+
+It is now possible to use case-insensitive filter operators for FlowQuery.
+
+* ExactMatchInsensitive: ``=~``
+* NotEqualMatchInsensitive: ``!=~``
+* SuffixMatchInsensitive: ``$=~``
+* PrefixMatchInsensitive: ``^=~``
+* SubstringMatchInsensitive: ``*=~``
+
+Related issue: `#2614 <https://github.com/neos/neos-development-collection/issues/2614>`_
+
+
+Show asset collections and tag for read-only asset sources
+----------------------------------------------------------
+
+Asset sources have a method ``isReadOnly()`` to tell whether they are read-only or not. A read-only asset source does not allow its content to be changed.
+
+With this change, that read-only state is no longer coupled to the display of asset collections and tags in the media browser. Asset sources thus are free to implement a "connection" to asset collections and tags in any reasonable way.
+
+Related issue: `#3480 <https://github.com/neos/neos-development-collection/issues/3480>`_
+
+
+********************
+!!! Breaking changes
+********************
+
+
+Deprecate Fusion Namespaces
+---------------------------
+
+Add deprecation notice for the namespace to the parser and corresponding interface.
+
+Starting with Neos version 8, this code will not work anymore:
+**************************************************************
+
+Alias a namespace
+
+::
+
+ namespace: Foo = Acme.Demo
+ video = Foo:YouTube
+
+
+You will need to declare the namespace fully (add ``Neos.Fusion:`` in front)
+
+::
+
+  content = DataStructure
+  # or
+  root = Page
+
+
+Related issue: `#3498 <https://github.com/neos/neos-development-collection/issues/3498>`_
+
+
+Always show current node in breadcrumb
+--------------------------------------
+
+* ``Neos.Neos:BreadcrumbMenu`` was using ``node``, this is fixed and use ``documentNode`` now
+* ``Neos.Neos:BreadcrumbMenuItems`` returned the nodes in the wrong order
+* On both prototypes, the current node is now always rendered, even when it is hidden in index
+
+Related issue: `#3407 <https://github.com/neos/neos-development-collection/issues/3407>`_
+
+
+Set the default for new shortcut nodes to ``parent``
+----------------------------------------------------
+
+The default value for the ``target`` is now ``parent`` instead of ``firstChildNode``
+
+Related issue: `#3256 <https://github.com/neos/neos-development-collection/issues/3256>`_
+
+
+********************
+Upgrade Instructions
+********************
+
+See https://docs.neos.io/cms/references/upgrade-instructions/upgrade-instructions-7-2-7-3
+
+.. note::
+
+   Additionally, all changes in Flow 7.3 apply. See the release notes to further information.
+   See https://flowframework.readthedocs.org/en/7.3/TheDefinitiveGuide/PartV/ReleaseNotes/730.html
+

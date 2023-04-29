@@ -1,6 +1,5 @@
 <?php
-namespace Neos\SiteKickstarter\Command;
-
+declare(strict_types=1);
 /*
  * This file is part of the Neos.SiteKickstarter package.
  *
@@ -11,10 +10,13 @@ namespace Neos\SiteKickstarter\Command;
  * source code.
  */
 
+namespace Neos\SiteKickstarter\Command;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
-use Neos\SiteKickstarter\Service\GeneratorService;
+use Neos\SiteKickstarter\Service\SiteGeneratorCollectingService;
+use Neos\SiteKickstarter\Service\SitePackageGeneratorNameService;
 
 /**
  * Command controller for the Kickstart generator
@@ -28,10 +30,16 @@ class KickstartCommandController extends CommandController
     protected $packageManager;
 
     /**
-     * @var GeneratorService
+     * @var SiteGeneratorCollectingService
      * @Flow\Inject
      */
-    protected $generatorService;
+    protected $siteGeneratorCollectingService;
+
+    /**
+     * @var SitePackageGeneratorNameService
+     * @Flow\Inject
+     */
+    protected $sitePackageGeneratorNameService;
 
     /**
      * Kickstart a new site package
@@ -54,7 +62,27 @@ class KickstartCommandController extends CommandController
             $this->quit(1);
         }
 
-        $generatedFiles = $this->generatorService->generateSitePackage($packageKey, $siteName);
+        $generatorClasses = $this->siteGeneratorCollectingService->getAllGenerators();
+
+        $selection = [];
+        $nameToClassMap = [];
+        foreach ($generatorClasses as $generatorClass) {
+            $name = $this->sitePackageGeneratorNameService->getNameOfSitePackageGenerator($generatorClass);
+
+            $selection[] = $name;
+            $nameToClassMap[$name] = $generatorClass;
+        }
+
+        $generatorName = $this->output->select(
+            'What generator do you want to use?',
+            $selection
+        );
+
+        $generatorClass = $nameToClassMap[$generatorName];
+
+        $generatorService = $this->objectManager->get($generatorClass);
+
+        $generatedFiles = $generatorService->generateSitePackage($packageKey, $siteName);
         $this->outputLine(implode(PHP_EOL, $generatedFiles));
     }
 }

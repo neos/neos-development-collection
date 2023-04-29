@@ -1082,6 +1082,22 @@
 				<source>Please enter ###CHARACTERS### more character</source>
         <target state="translated">Lūdzu, ievadiet papildu rakstzīmes # # #CHARACTERS###</target>
       </trans-unit>
+      <trans-unit id="login.wrongCredentials.title" xml:space="preserve">
+				<source>Wrong Credentials</source>
+        <target state="translated">Nepareizi akreditācijas dati</target>
+      </trans-unit>
+      <trans-unit id="login.wrongCredentials.body" xml:space="preserve">
+				<source>The entered username or password was wrong</source>
+        <target state="translated">Ievadītais lietotājvārds vai parole ir nepareiza</target>
+      </trans-unit>
+      <trans-unit id="login.loggedOut.title" xml:space="preserve">
+				<source>Logged Out</source>
+        <target state="translated">Izlogojies</target>
+      </trans-unit>
+      <trans-unit id="login.loggedOut.body" xml:space="preserve">
+				<source>Successfully logged out</source>
+        <target state="translated">Veiksmīgi atteicies no sistēmas</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -7,5 +7,5 @@
 # prototype and override the @class property.
 #
 prototype(Neos.Neos:Document) < prototype(Neos.Fusion:Template) {
-	node = ${node}
+  node = ${node}
 }

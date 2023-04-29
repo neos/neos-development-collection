@@ -42,6 +42,15 @@ class ProcessorTest extends AbstractFusionObjectTest
     }
 
     /**
+     * https://github.com/neos/neos-development-collection/pull/3847
+     * @test
+     */
+    public function plainValueOverriddenByPlainValueWorks()
+    {
+        $this->assertFusionPath('foo', 'processors/newSyntax/basicProcessor/plainValueOverriddenByPlainValue');
+    }
+
+    /**
      * Data Provider for processorsCanBeUnset
      *
      * @return array
@@ -73,5 +82,15 @@ class ProcessorTest extends AbstractFusionObjectTest
     public function usingThisInProcessorWorks()
     {
         $this->assertFusionPath('my value append', 'processors/newSyntax/usingThisInProcessor');
+    }
+
+    /**
+     * @test
+     */
+    public function skippedLazyPropsInProcessor()
+    {
+        $view = $this->buildView();
+        $view->setFusionPath('processors/newSyntax/skippedLazyPropsInProcessor');
+        self::assertSame(['buz' => 'bar', 'lazyPropValue' => 'foo'], $view->render());
     }
 }

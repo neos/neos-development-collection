@@ -14,8 +14,6 @@ namespace Neos\Neos\Service;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\VariableFrontend;
-use Neos\Error\Messages\Result;
-use Neos\Flow\I18n\Exception;
 use Neos\Flow\I18n\Xliff\Service\XliffFileProvider;
 use Neos\Flow\I18n\Xliff\Service\XliffReader;
 use Neos\Flow\Package\PackageInterface;
@@ -86,10 +84,11 @@ class XliffService
      * The json will be cached.
      *
      * @param Locale $locale The locale
-     * @return Result
-     * @throws Exception
+     * @return string
+     * @throws \Neos\Cache\Exception
+     * @throws \Neos\Flow\Package\Exception\UnknownPackageException
      */
-    public function getCachedJson(Locale $locale)
+    public function getCachedJson(Locale $locale): string
     {
         $cacheIdentifier = md5($locale);
 
@@ -112,10 +111,8 @@ class XliffService
                     $file = $this->xliffFileProvider->getFile($fileId, $locale);
 
                     foreach ($file->getTranslationUnits() as $key => $value) {
-                        $valueToStore = !empty($value[0]['target']) ? $value[0]['target'] : $value[0]['source'];
-                        if ($this->scrambleTranslatedLabels) {
-                            $valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
-                        }
+                        $valueToStore = $this->getTranslationUnitValue($value);
+                        $valueToStore = count($valueToStore) > 1 ? $valueToStore : array_shift($valueToStore);
                         $this->setArrayDataValue($labels, str_replace('.', '_', $packageKey) . '.' . str_replace('/', '_', $sourceName) . '.' . str_replace('.', '_', $key), $valueToStore);
                     }
                 }
@@ -129,7 +126,27 @@ class XliffService
     }
 
     /**
+     * @param array $labelValue
+     * @return array
+     */
+    protected function getTranslationUnitValue(array $labelValue)
+    {
+        $xliffValue = [];
+
+        foreach ($labelValue as $key => $value) {
+            $valueToStore = !empty($value['target']) ? $value['target'] : $value['source'];
+            if ($this->scrambleTranslatedLabels) {
+                $valueToStore = str_repeat('#', UnicodeFunctions::strlen($valueToStore));
+            }
+            $xliffValue[$key] = $valueToStore;
+        }
+
+        return $xliffValue;
+    }
+
+    /**
      * @return string The current cache version identifier
+     * @throws \Neos\Cache\Exception
      */
     public function getCacheVersion(): string
     {
@@ -204,7 +221,7 @@ class XliffService
      *
      * @param array $arrayPointer
      * @param string $key
-     * @param string $value
+     * @param string|array $value
      * @return void
      */
     protected function setArrayDataValue(array &$arrayPointer, $key, $value)

@@ -2,8 +2,8 @@
 #
 prototype(Neos.Neos:NodeUri) {
   @class = 'Neos\\Neos\\Fusion\\NodeUriImplementation'
-  additionalParams = Neos.Fusion:RawArray
-  arguments = Neos.Fusion:RawArray
-  argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
   @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }

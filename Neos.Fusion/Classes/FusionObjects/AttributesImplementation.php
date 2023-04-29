@@ -17,7 +17,7 @@ namespace Neos\Fusion\FusionObjects;
  * So a configuration like:
  *
  * attributes = Neos.Fusion:Attributes
- * attributes.class = Neos.Fusion:RawArray {
+ * attributes.class = Neos.Fusion:DataStructure {
  *  class1: 'class1'
  *  class2: 'class2'
  * }

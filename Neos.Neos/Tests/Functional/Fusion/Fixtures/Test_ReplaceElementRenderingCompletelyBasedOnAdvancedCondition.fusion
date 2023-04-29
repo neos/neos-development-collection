@@ -3,9 +3,9 @@
 #
 
 prototype(Neos.Neos:ContentCase).override {
-	condition = ${q(node).is('[title *= Docume]')}
-	type = 'Neos.Fusion:DocumentationText'
-	@position = 'start'
+  condition = ${q(node).is('[title *= Docume]')}
+  type = 'Neos.Fusion:DocumentationText'
+  @position = 'start'
 }
 
 prototype(Neos.Fusion:DocumentationText) < prototype(Acme.Demo:Headline)

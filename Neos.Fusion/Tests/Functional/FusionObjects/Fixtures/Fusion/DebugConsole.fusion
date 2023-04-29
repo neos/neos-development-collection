@@ -1,0 +1,28 @@
+prototype(Neos.Fusion:DebugConsole) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DebugConsoleImplementation'
+  title = ''
+  method = 'log'
+  value = ''
+  content = ${value}
+}
+
+debugConsole.empty = Neos.Fusion:DebugConsole
+
+debugConsole.null = Neos.Fusion:DebugConsole {
+  value = null
+}
+
+debugConsole.nullWithTitle = Neos.Fusion:DebugConsole {
+  title = 'Title'
+  value = null
+}
+
+debugConsole.object = Neos.Fusion:DebugConsole {
+  value = ${{ foo: 'bar' }}
+}
+
+debugConsole.multipleValues = Neos.Fusion:DebugConsole {
+  value = 'a'
+  b = 'b'
+  c = 'c'
+}

@@ -223,6 +223,27 @@ The following options are allowed for defining a NodeType:
 
       ``collapsed``
         If the group should be collapsed by default (true or false). If left empty, the group will be expanded.
+
+    ``views``
+      Defines views that can be used to display read-only data alongside property editors inside the inspector
+
+      ``label``
+        The human-readable label for this view
+
+      ``group``
+        Identifier of the *inspector group* this view is categorized into in the content editing user interface. If none is given, the view is not visibile in the property inspector of the user interface.
+
+        The value here must reference a group configured in the ``ui.inspector.groups`` element of the node type this view belongs to.
+
+      ``position``
+        Position inside the inspector group, small numbers are sorted on top.
+
+      ``view``
+        Name of the JavaScript View Class which is instantiated to edit this element in the inspector.
+
+      ``viewOptions``
+        A set of options for the given view, see the :ref:`inspector-views-reference`.
+
   ``creationDialog``
     Creation dialog elements configuration. See `Node Creation Dialog Configuration`_ for more details.
 ``properties``
@@ -267,10 +288,6 @@ The following options are allowed for defining a NodeType:
     ``inlineEditable``
       If `true`, this property is inline editable, i.e. edited directly on the page.
 
-    ``aloha``
-      Legacy configuration of rich text editor, works for the sake of backwards compatibility, but it
-      is advised to use `inline.editorOptions` instead.
-
     ``inline``
 
       ``editor``
@@ -283,9 +300,6 @@ The following options are allowed for defining a NodeType:
 
       ``editorOptions``
         This section controls the text formatting options the user has available for this property.
-
-        **Note**: When using `inline.editorOptions` anything defined under the legacy `aloha` key for a
-        property is ignored. Keep this in mind when using supertypes and mixins.
 
         ``placeholder``
           A text that is shown when the field is empty. Supports i18n.
@@ -314,10 +328,8 @@ The following options are allowed for defining a NodeType:
             formatting:
               strong: true
               em: true
-              u: true
               sub: true
               sup: true
-              del: true
               p: true
               h1: true
               h2: true

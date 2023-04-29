@@ -12,7 +12,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  */
 
 /**
- * Testcase for the Collection TS object
+ * Testcase for the Collection Fusion object
  *
  */
 class CollectionTest extends AbstractFusionObjectTest

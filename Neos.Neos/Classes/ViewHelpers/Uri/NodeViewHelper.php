@@ -122,7 +122,7 @@ class NodeViewHelper extends AbstractViewHelper
         $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
         $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
         $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
-        $this->registerArgument('resolveShortcuts', 'boolean', 'INTERNAL Parameter - if false, shortcuts are not redirected to their target. Only needed on rare backend occasions when we want to link to the shortcut itself.', false, true);
+        $this->registerArgument('resolveShortcuts', 'boolean', 'DEPRECATED Parameter - ignored', false, true);
     }
 
     /**
@@ -154,8 +154,7 @@ class NodeViewHelper extends AbstractViewHelper
                 $this->arguments['arguments'],
                 $this->arguments['section'],
                 $this->arguments['addQueryString'],
-                $this->arguments['argumentsToBeExcludedFromQueryString'],
-                $this->arguments['resolveShortcuts']
+                $this->arguments['argumentsToBeExcludedFromQueryString']
             );
         } catch (NeosException $exception) {
             $this->throwableStorage->logThrowable($exception);

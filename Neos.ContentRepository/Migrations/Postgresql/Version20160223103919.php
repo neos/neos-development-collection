@@ -1,7 +1,7 @@
 <?php
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
-use Doctrine\DBAL\Migrations\AbstractMigration,
+use Doctrine\Migrations\AbstractMigration,
 	Doctrine\DBAL\Schema\Schema;
 
 /**
@@ -13,7 +13,7 @@ class Version20160223103919 extends AbstractMigration {
 	 * @param Schema $schema
 	 * @return void
 	 */
-	public function up(Schema $schema) {
+	public function up(Schema $schema): void  {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("ALTER TABLE typo3_typo3cr_domain_model_nodedata ALTER pathhash DROP DEFAULT");
@@ -24,7 +24,7 @@ class Version20160223103919 extends AbstractMigration {
 	 * @param Schema $schema
 	 * @return void
 	 */
-	public function down(Schema $schema) {
+	public function down(Schema $schema): void  {
 		$this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
 		$this->addSql("ALTER INDEX IF EXISTS idx_71de9cfbbb46155 RENAME TO idx_71de9cfba762b951");

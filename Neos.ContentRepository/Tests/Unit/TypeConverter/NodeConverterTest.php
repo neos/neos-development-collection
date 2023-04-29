@@ -25,6 +25,7 @@ use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\Context;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
 use Neos\ContentRepository\TypeConverter\NodeConverter;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Testcase for the Node TypeConverter
@@ -97,8 +98,10 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath);
 
-        $this->mockConverterConfiguration->expects(self::at(0))->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN)->will($this->returnValue(true));
-        $this->mockConverterConfiguration->expects(self::at(1))->method('getConfigurationValue')->with(NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN)->will(self::returnValue(true));
+        $this->mockConverterConfiguration->expects(self::atLeast(2))
+            ->method('getConfigurationValue')
+            ->withConsecutive([NodeConverter::class, NodeConverter::INVISIBLE_CONTENT_SHOWN], [NodeConverter::class, NodeConverter::REMOVED_CONTENT_SHOWN])
+            ->willReturn(true);
 
         $result = $this->nodeConverter->convertFrom($contextPath, null, [], $this->mockConverterConfiguration);
         self::assertSame($mockNode, $result);
@@ -159,9 +162,12 @@ class NodeConverterTest extends UnitTestCase
 
         $mockNode = $this->setUpNodeWithNodeType($nodePath, $nodeTypeProperties);
 
+        /** @var Context|MockObject $mockContext */
         $mockContext = $mockNode->getContext();
-        $mockContext->expects($this->at(2))->method('getNodeByIdentifier')->with(current($decodedPropertyValue))->will(self::returnValue(current($convertedPropertyValue)));
-        $mockContext->expects($this->at(3))->method('getNodeByIdentifier')->with(end($decodedPropertyValue))->will(self::returnValue(end($convertedPropertyValue)));
+        $mockContext->expects(self::atLeast(2))
+            ->method('getNodeByIdentifier')
+            ->withConsecutive([current($decodedPropertyValue)], [end($decodedPropertyValue)])
+            ->willReturnOnConsecutiveCalls(current($convertedPropertyValue), end($convertedPropertyValue));
 
         $mockNode->expects(self::once())->method('setProperty')->with('references', $convertedPropertyValue);
 

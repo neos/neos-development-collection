@@ -71,6 +71,23 @@ class SiteRepository extends Repository
         return $this->findOnline()->getFirst();
     }
 
+
+    /**
+     * @param string $nodeName
+     * @return Site|null
+     */
+    public function findOneByNodeName(string $nodeName): ?Site
+    {
+        $query = $this->createQuery();
+        /** @var Site|null $site */
+        $site = $query->matching(
+            $query->equals('nodeName', $nodeName)
+        )
+            ->execute()
+            ->getFirst();
+        return $site;
+    }
+
     /**
      * Find the site that was specified in the configuration ``defaultSiteNodeName``
      *

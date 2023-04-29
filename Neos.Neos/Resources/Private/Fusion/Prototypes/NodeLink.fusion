@@ -3,9 +3,9 @@
 #
 prototype(Neos.Neos:NodeLink) < prototype(Neos.Fusion:Tag) {
   node = null
-  additionalParams = Neos.Fusion:RawArray
-  arguments = Neos.Fusion:RawArray
-  argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
   addQueryString = false
   absolute = false
   baseNodeName = 'documentNode'

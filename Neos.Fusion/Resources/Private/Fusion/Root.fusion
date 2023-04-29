@@ -1,3 +1,7 @@
+include: DebugConsole.fusion
+include: Match.fusion
+include: Memo.fusion
+
 prototype(Neos.Fusion:Array).@class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
 prototype(Neos.Fusion:RawArray).@class = 'Neos\\Fusion\\FusionObjects\\RawArrayImplementation'
 prototype(Neos.Fusion:Join).@class = 'Neos\\Fusion\\FusionObjects\\JoinImplementation'
@@ -19,10 +23,10 @@ prototype(Neos.Fusion:Debug) {
   value = ${value}
 }
 prototype(Neos.Fusion:Collection) {
-	@class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
-	itemName = 'item'
-	itemKey = 'itemKey'
-	iterationName = 'iterator'
+  @class = 'Neos\\Fusion\\FusionObjects\\CollectionImplementation'
+  itemName = 'item'
+  itemKey = 'itemKey'
+  iterationName = 'iterator'
 }
 prototype(Neos.Fusion:RawCollection) {
   @class = 'Neos\\Fusion\\FusionObjects\\RawCollectionImplementation'
@@ -54,8 +58,8 @@ prototype(Neos.Fusion:Reduce) {
 # Render an HTTP response header
 #
 prototype(Neos.Fusion:Http.ResponseHead) {
-	@class = 'Neos\\Fusion\\FusionObjects\\Http\\ResponseHeadImplementation'
-	headers = Neos.Fusion:RawArray
+  @class = 'Neos\\Fusion\\FusionObjects\\Http\\ResponseHeadImplementation'
+  headers = Neos.Fusion:DataStructure
 }
 
 # Render an HTTP message (response)
@@ -71,10 +75,10 @@ prototype(Neos.Fusion:Http.ResponseHead) {
 # }
 #
 #
-prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Array) {
-    @class = 'Neos\\Fusion\\FusionObjects\\HttpResponseImplementation'
-	httpResponseHead = Neos.Fusion:Http.ResponseHead
-	httpResponseHead.@position = 'start 1000'
+prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Join) {
+  @class = 'Neos\\Fusion\\FusionObjects\\HttpResponseImplementation'
+  httpResponseHead = Neos.Fusion:Http.ResponseHead
+  httpResponseHead.@position = 'start 1000'
 }
 
 # Renders attributes of a HTML tag
@@ -82,14 +86,14 @@ prototype(Neos.Fusion:Http.Message) < prototype(Neos.Fusion:Array) {
 # Usage:
 # attributes = Neos.Fusion:Attributes {
 #   foo = 'bar'
-#   class = Neos.Fusion:RawArray {
+#   class = Neos.Fusion:DataStructure {
 #     class1 = 'class1'
 #     class2 = 'class2'
 #   }
 # }
 #
 prototype(Neos.Fusion:Attributes) {
-	@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
+  @class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 }
 
 # Renders an HTML tag
@@ -103,10 +107,10 @@ prototype(Neos.Fusion:Attributes) {
 # }
 #
 prototype(Neos.Fusion:Tag) {
-	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
-	attributes = Neos.Fusion:DataStructure
-	omitClosingTag = false
-	selfClosingTag = false
+  @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
+  attributes = Neos.Fusion:DataStructure
+  omitClosingTag = false
+  selfClosingTag = false
 }
 
 # Renders an URI pointing to a controller/action
@@ -119,12 +123,12 @@ prototype(Neos.Fusion:Tag) {
 # }
 #
 prototype(Neos.Fusion:UriBuilder) {
-	@class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
-	additionalParams = Neos.Fusion:RawArray
-	arguments = Neos.Fusion:RawArray
-	argumentsToBeExcludedFromQueryString = Neos.Fusion:RawArray
+  @class = 'Neos\\Fusion\\FusionObjects\\UriBuilderImplementation'
+  additionalParams = Neos.Fusion:DataStructure
+  arguments = Neos.Fusion:DataStructure
+  argumentsToBeExcludedFromQueryString = Neos.Fusion:DataStructure
 
-	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
 }
 
 # Modify given html content and add attributes
@@ -161,10 +165,58 @@ prototype(Neos.Fusion:Augmenter) < prototype(Neos.Fusion:Component) {
 # }
 #
 prototype(Neos.Fusion:ResourceUri) {
-	@class = 'Neos\\Fusion\\FusionObjects\\ResourceUriImplementation'
-	localize = true
+  @class = 'Neos\\Fusion\\FusionObjects\\ResourceUriImplementation'
+  localize = true
 
-	@exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\AbsorbingHandler'
+}
+
+# Renders a link pointing to a controller/action
+#
+# Usage:
+# link = afx`
+#    <Neos.Fusion:Link.Action class="action-link" href.package="Some.Package" href.controller="Standard" href.action="index">
+#        Some Link
+#    </Neos.Fusion:Link.Action>
+# `
+#
+prototype(Neos.Fusion:Link.Action) < prototype(Neos.Fusion:Component) {
+    href = Neos.Fusion:UriBuilder
+    content = ''
+
+    renderer = Neos.Fusion:Tag {
+        tagName = 'a'
+        attributes {
+            @ignoreProperties = ${['content']}
+            @apply.props = ${props}
+        }
+        content = ${props.content}
+    }
+}
+
+# Renders a link pointing to a resource
+#
+# Usage:
+# link = afx`
+#    <Neos.Fusion:Link.Resource class="action-link" href.path="resource://Some.Package/Public/Images/SomeImage.png">
+#        Some Link
+#    </Neos.Fusion:Link.Resource>
+# `
+#
+prototype(Neos.Fusion:Link.Resource) < prototype(Neos.Fusion:Component) {
+    href = Neos.Fusion:ResourceUri {
+        localize = true
+    }
+    content = ''
+
+    renderer = Neos.Fusion:Tag {
+        tagName = 'a'
+        attributes {
+            @ignoreProperties = ${['content']}
+            @apply.props = ${props}
+        }
+        content = ${props.content}
+    }
 }
 
 # Render a content fragment without any additional markup
@@ -182,14 +234,14 @@ prototype(Neos.Fusion:Fragment) < prototype(Neos.Fusion:Component) {
 }
 
 # These are globally applied cache identifiers.
-# If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:RawArray)
+# If you don't make @cache.entryIdentifiers another prototype (like a Neos.Fusion:DataStructure)
 # they will be rendered as this prototype, which means everything in here is added to ALL cached
 # Fusion parts.
 # The baseUri contains the protocol (http/https), domain and port.
 #
 # WARNING: Do not delete this prototype, it is used inside of \Neos\Fusion\Core\Cache\RuntimeContentCache::buildCacheIdentifierValues() as a fallback.
 #
-prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:RawArray) {
-	format = ${request.format}
-	baseUri = ${String.toString(BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(request.httpRequest))}
+prototype(Neos.Fusion:GlobalCacheIdentifiers) < prototype(Neos.Fusion:DataStructure) {
+  format = ${request.format}
+  baseUri = ${String.toString(BaseUri.getConfiguredBaseUriOrFallbackToCurrentRequest(request.httpRequest))}
 }

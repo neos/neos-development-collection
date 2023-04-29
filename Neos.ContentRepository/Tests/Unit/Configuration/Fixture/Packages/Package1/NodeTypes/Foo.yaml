@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Packages/Package1/NodeTypes/Foo.yaml
+    pathPackages.Package1.NodeTypes.Foo_yaml: true
+'NodeType:PathPackages.Package1.NodeTypes.Foo_yaml':
+  options:
+    path: Packages/Package1/NodeTypes/Foo.yaml

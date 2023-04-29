@@ -1,105 +1,105 @@
 .neos-position-selector {
-	position: relative;
-	text-indent: 0;
-	user-select: none;
+  position: relative;
+  text-indent: 0;
+  user-select: none;
 
-	&.neos-disabled {
-		cursor: not-allowed;
-		color: $textSubtle !important;
-		opacity: 1;
+  &.neos-disabled {
+    cursor: not-allowed;
+    color: $textSubtle !important;
+    opacity: 1;
 
-		&:hover,
-		&::after {
-			color: $textSubtle !important;
-		}
+    &:hover,
+    &::after {
+      color: $textSubtle !important;
+    }
 
-		.neos-arrow {
-			border-bottom-color: $textSubtle;
-		}
-	}
+    .neos-arrow {
+      border-bottom-color: $textSubtle;
+    }
+  }
 
-	&::before {
-		font-size: 14px;
-	}
+  &::before {
+    font-size: 14px;
+  }
 
-	&::after {
-		@extend .fas;
-		position: absolute;
-		font-size: 14px;
-		color: $blue;
-	}
+  &::after {
+    @extend .fas;
+    position: absolute;
+    font-size: 14px;
+    color: $blue;
+  }
 
-	&.neos-position-selector-node-into::after {
-		content: fa-content($fa-var-long-arrow-alt-right);
-		font-weight: 900;
-		left: 18px;
-		bottom: 4px;
-	}
+  &.neos-position-selector-node-into::after {
+    content: fa-content($fa-var-long-arrow-alt-right);
+    font-weight: 900;
+    left: 18px;
+    bottom: 4px;
+  }
 
-	&.neos-position-selector-node-before::after {
-		content: fa-content($fa-var-level-up-alt);
-		font-weight: 900;
-		left: 24px;
-		bottom: 7px;
-	}
+  &.neos-position-selector-node-before::after {
+    content: fa-content($fa-var-level-up-alt);
+    font-weight: 900;
+    left: 24px;
+    bottom: 7px;
+  }
 
-	&.neos-position-selector-node-after::after {
-		content: fa-content($fa-var-level-down-alt);
-		font-weight: 900;
-		left: 24px;
-		bottom: 6px;
-	}
+  &.neos-position-selector-node-after::after {
+    content: fa-content($fa-var-level-down-alt);
+    font-weight: 900;
+    left: 24px;
+    bottom: 6px;
+  }
 
-	&.neos-expanded {
-		.neos-position-selector-position {
-			display: block;
-		}
+  &.neos-expanded {
+    .neos-position-selector-position {
+      display: block;
+    }
 
-		.neos-arrow {
-			display: none;
-		}
-	}
+    .neos-arrow {
+      display: none;
+    }
+  }
 
-	.neos-arrow {
-		position: absolute;
-		bottom: $tightMargin;
-		right: $tightMargin;
-		border-left: $tightMargin solid transparent;
-		border-bottom: $tightMargin solid $blue;
-		transform: rotate(45deg);
-	}
+  .neos-arrow {
+    position: absolute;
+    bottom: $tightMargin;
+    right: $tightMargin;
+    border-left: $tightMargin solid transparent;
+    border-bottom: $tightMargin solid $blue;
+    transform: rotate(45deg);
+  }
 }
 
 .neos-position-selector-position {
-	display: none;
-	position: absolute;
-	top: $unit;
-	left: -1px;
-	z-index: 1;
-	background-color: $grayDark;
-	border: 1px solid $grayLight;
-	border-top: none;
-	box-shadow: 1px 2px 5px $grayDark;
+  display: none;
+  position: absolute;
+  top: $unit;
+  left: -1px;
+  z-index: 1;
+  background-color: $grayDark;
+  border: 1px solid $grayLight;
+  border-top: none;
+  box-shadow: 1px 2px 5px $grayDark;
 
-	.neos-button {
-		width: $unit - 2px;
-		height: $unit;
-		color: $textOnGray;
-		border: none;
+  .neos-button {
+    width: $unit - 2px;
+    height: $unit;
+    color: $textOnGray;
+    border: none;
 
-		&.neos-active {
-			color: $blue;
-			background-color: inherit;
-		}
+    &.neos-active {
+      color: $blue;
+      background-color: inherit;
+    }
 
-		&.neos-disabled {
-			color: $textSubtle !important;
-			opacity: 1;
-		}
+    &.neos-disabled {
+      color: $textSubtle !important;
+      opacity: 1;
+    }
 
-		&:hover:not(.neos-disabled) {
-			color: $blue;
-			background-color: inherit;
-		}
-	}
+    &:hover:not(.neos-disabled) {
+      color: $blue;
+      background-color: inherit;
+    }
+  }
 }

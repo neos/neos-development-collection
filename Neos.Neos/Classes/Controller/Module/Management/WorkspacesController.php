@@ -198,7 +198,11 @@ class WorkspacesController extends AbstractModuleController
     {
         $workspace = $this->workspaceRepository->findOneByTitle($title);
         if ($workspace instanceof Workspace) {
-            $this->addFlashMessage($this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'Neos.Neos'), '', Message::SEVERITY_WARNING);
+            $this->addFlashMessage(
+                $this->translator->translateById('workspaces.workspaceWithThisTitleAlreadyExists', [], null, null, 'Modules', 'Neos.Neos'),
+                '',
+                Message::SEVERITY_WARNING
+            );
             $this->redirect('new');
         }
 
@@ -262,7 +266,9 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $this->workspaceRepository->update($workspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.workspaceHasBeenUpdated', [$workspace->getTitle()], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage(
+            $this->translator->translateById('workspaces.workspaceHasBeenUpdated', [$workspace->getTitle()], null, null, 'Modules', 'Neos.Neos')
+        );
         $this->redirect('index');
     }
 
@@ -359,7 +365,9 @@ class WorkspacesController extends AbstractModuleController
     public function publishNodeAction(NodeInterface $node, Workspace $selectedWorkspace)
     {
         $this->publishingService->publishNode($node);
-        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage(
+            $this->translator->translateById('workspaces.selectedChangeHasBeenPublished', [], null, null, 'Modules', 'Neos.Neos')
+        );
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
@@ -374,7 +382,9 @@ class WorkspacesController extends AbstractModuleController
     {
         // Hint: we cannot use $node->remove() here, as this removes the node recursively (but we just want to *discard changes*)
         $this->publishingService->discardNode($node);
-        $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage(
+            $this->translator->translateById('workspaces.selectedChangeHasBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos')
+        );
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace]);
     }
 
@@ -400,11 +410,15 @@ class WorkspacesController extends AbstractModuleController
                 foreach ($nodes as $node) {
                     $this->publishingService->publishNode($node);
                 }
-                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'Neos.Neos'));
+                $this->addFlashMessage(
+                    $this->translator->translateById('workspaces.selectedChangesHaveBeenPublished', [], null, null, 'Modules', 'Neos.Neos')
+                );
             break;
             case 'discard':
                 $this->publishingService->discardNodes($nodes);
-                $this->addFlashMessage($this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos'));
+                $this->addFlashMessage(
+                    $this->translator->translateById('workspaces.selectedChangesHaveBeenDiscarded', [], null, null, 'Modules', 'Neos.Neos')
+                );
             break;
             default:
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
@@ -425,7 +439,9 @@ class WorkspacesController extends AbstractModuleController
             $targetWorkspace = $this->workspaceRepository->findOneByName('live');
         }
         $this->publishingService->publishNodes($this->publishingService->getUnpublishedNodes($workspace), $targetWorkspace);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage(
+            $this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenPublished', [htmlspecialchars($workspace->getTitle()), htmlspecialchars($targetWorkspace->getTitle())], null, null, 'Modules', 'Neos.Neos')
+        );
         $this->redirect('index');
     }
 
@@ -439,7 +455,9 @@ class WorkspacesController extends AbstractModuleController
     {
         $unpublishedNodes = $this->publishingService->getUnpublishedNodes($workspace);
         $this->publishingService->discardNodes($unpublishedNodes);
-        $this->addFlashMessage($this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'Neos.Neos'));
+        $this->addFlashMessage(
+            $this->translator->translateById('workspaces.allChangesInWorkspaceHaveBeenDiscarded', [htmlspecialchars($workspace->getTitle())], null, null, 'Modules', 'Neos.Neos')
+        );
         $this->redirect('index');
     }
 
@@ -703,15 +721,20 @@ class WorkspacesController extends AbstractModuleController
      * Creates an array of workspace names and their respective titles which are possible base workspaces for other
      * workspaces.
      *
-     * @param Workspace $excludedWorkspace If set, this workspace will be excluded from the list of returned workspaces
+     * @param Workspace $excludedWorkspace If set, this workspace and all its child workspaces will be excluded from the list of returned workspaces
      * @return array
      */
     protected function prepareBaseWorkspaceOptions(Workspace $excludedWorkspace = null)
     {
         $baseWorkspaceOptions = [];
+
         foreach ($this->workspaceRepository->findAll() as $workspace) {
             /** @var Workspace $workspace */
-            if (!$workspace->isPersonalWorkspace() && $workspace !== $excludedWorkspace && ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace))) {
+            if (!$workspace->isPersonalWorkspace() &&
+                $workspace !== $excludedWorkspace &&
+                ($workspace->isPublicWorkspace() || $workspace->isInternalWorkspace() || $this->userService->currentUserCanManageWorkspace($workspace)) &&
+                (!$excludedWorkspace || !isset($workspace->getBaseWorkspaces()[$excludedWorkspace->getName()]))
+            ) {
                 $baseWorkspaceOptions[$workspace->getName()] = $workspace->getTitle();
             }
         }

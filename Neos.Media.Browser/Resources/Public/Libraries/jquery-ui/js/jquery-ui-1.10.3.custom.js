@@ -3,6 +3,7 @@
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.draggable.js, jquery.ui.droppable.js, jquery.ui.tooltip.js, jquery.ui.effect.js, jquery.ui.effect-highlight.js
 * Copyright 2013 jQuery Foundation and other contributors Licensed MIT */
 
+window.addEventListener('DOMContentLoaded', (event) => {
 (function( $, undefined ) {
 
 var uuid = 0,
@@ -312,7 +313,7 @@ $.extend( $.ui, {
 	}
 });
 
-})( jQuery );
+})( window.jQuery );
 (function( $, undefined ) {
 
 var uuid = 0,
@@ -823,7 +824,7 @@ $.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
 	};
 });
 
-})( jQuery );
+})( window.jQuery );
 (function( $, undefined ) {
 
 var mouseHandled = false;
@@ -979,7 +980,7 @@ $.widget("ui.mouse", {
 	_mouseCapture: function(/* event */) { return true; }
 });
 
-})(jQuery);
+})( window.jQuery );
 (function( $, undefined ) {
 
 $.ui = $.ui || {};
@@ -1466,7 +1467,7 @@ $.ui.position = {
 	testElementParent.removeChild( testElement );
 })();
 
-}( jQuery ) );
+}( window.jQuery ) );
 (function( $, undefined ) {
 
 $.widget("ui.draggable", $.ui.mouse, {
@@ -2409,7 +2410,7 @@ $.ui.plugin.add("draggable", "zIndex", {
 	}
 });
 
-})(jQuery);
+})( window.jQuery );
 (function( $, undefined ) {
 
 function isOverAxis( x, reference, size ) {
@@ -2765,7 +2766,7 @@ $.ui.ddmanager = {
 	}
 };
 
-})(jQuery);
+})( window.jQuery );
 (function( $ ) {
 
 var increments = 0;
@@ -3152,7 +3153,7 @@ $.widget( "ui.tooltip", {
 	}
 });
 
-}( jQuery ) );
+}( window.jQuery ) );
 (function($, undefined) {
 
 var dataSpace = "ui-effects-";
@@ -3823,7 +3824,7 @@ colors = jQuery.Color.names = {
 	_default: "#ffffff"
 };
 
-})( jQuery );
+})( window.jQuery );
 
 
 /******************************************************************************/
@@ -4431,7 +4432,7 @@ $.each( baseEasings, function( name, easeIn ) {
 
 })();
 
-})(jQuery);
+})( window.jQuery );
 (function( $, undefined ) {
 
 $.effects.effect.highlight = function( o, done ) {
@@ -4468,4 +4469,5 @@ $.effects.effect.highlight = function( o, done ) {
 		});
 };
 
-})(jQuery);
+})( window.jQuery );
+});

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Neos\Neos\Controller;
 
@@ -15,13 +16,18 @@ namespace Neos\Neos\Controller;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\Frontend\StringFrontend;
 use Neos\Error\Messages\Message;
-use Neos\Flow\Http\Component\SetHeaderComponent;
 use Neos\Flow\Http\Cookie;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\Exception\InvalidFlashMessageConfigurationException;
+use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\Mvc\FlashMessage\FlashMessageService;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authentication\Controller\AbstractAuthenticationController;
 use Neos\Flow\Security\Exception\AuthenticationRequiredException;
+use Neos\Flow\Security\Exception\InvalidRequestPatternException;
+use Neos\Flow\Security\Exception\NoRequestPatternFoundException;
+use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Fusion\View\FusionView;
@@ -89,6 +95,12 @@ class LoginController extends AbstractAuthenticationController
     protected $flashMessageService;
 
     /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * @var array
      */
     protected $viewFormatToObjectNameMap = [
@@ -107,7 +119,7 @@ class LoginController extends AbstractAuthenticationController
     /**
      * @return void
      */
-    public function initializeIndexAction()
+    public function initializeIndexAction(): void
     {
         if (is_array($this->request->getInternalArgument('__authentication'))) {
             $authentication = $this->request->getInternalArgument('__authentication');
@@ -120,14 +132,19 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Default action, displays the login screen
      *
-     * @param string $username Optional: A username to pre-fill into the username field
-     * @param boolean $unauthorized
+     * @param string|null $username Optional: A username to pre-fill into the username field
+     * @param bool $unauthorized
      * @return void
+     * @throws InvalidFlashMessageConfigurationException
+     * @throws InvalidRequestPatternException
+     * @throws NoRequestPatternFoundException
+     * @throws StopActionException
+     * @throws \Neos\Neos\Domain\Exception
      */
-    public function indexAction($username = null, $unauthorized = false)
+    public function indexAction(?string $username = null, bool $unauthorized = false): void
     {
         if ($unauthorized || $this->securityContext->getInterceptedRequest()) {
-            $this->response->setComponentParameter(SetHeaderComponent::class, 'X-Authentication-Required', '1');
+            $this->response->setHttpHeader('X-Authentication-Required', '1');
         }
         if ($this->authenticationManager->isAuthenticated()) {
             $this->redirect('index', 'Backend\Backend');
@@ -148,8 +165,10 @@ class LoginController extends AbstractAuthenticationController
      *
      * @param string $token
      * @return void
+     * @throws StopActionException
+     * @throws SessionNotStartedException
      */
-    public function tokenLoginAction($token)
+    public function tokenLoginAction(string $token): void
     {
         $newSessionId = $this->loginTokenCache->get($token);
         $this->loginTokenCache->remove($token);
@@ -186,22 +205,31 @@ class LoginController extends AbstractAuthenticationController
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => false]);
         } else {
-            $this->addFlashMessage('The entered username or password was wrong', 'Wrong credentials', Message::SEVERITY_ERROR, [], ($exception === null ? 1347016771 : $exception->getCode()));
+            $this->addFlashMessage(
+                $this->translator->translateById('login.wrongCredentials.body', [], null, null, 'Main', 'Neos.Neos'),
+                $this->translator->translateById('login.wrongCredentials.title', [], null, null, 'Main', 'Neos.Neos'),
+                Message::SEVERITY_ERROR,
+                [],
+                $exception === null ? 1347016771 : $exception->getCode()
+            );
         }
     }
 
     /**
      * Is called if authentication was successful.
      *
-     * @param ActionRequest $originalRequest The request that was intercepted by the security framework, NULL if there was none
+     * @param ActionRequest|null $originalRequest The request that was intercepted by the security framework, NULL if there was none
      * @return void
+     * @throws SessionNotStartedException
+     * @throws StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
     protected function onAuthenticationSuccess(ActionRequest $originalRequest = null)
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => $this->authenticationManager->isAuthenticated(), 'csrfToken' => $this->securityContext->getCsrfProtectionToken()]);
         } else {
-            if ($this->request->hasArgument('lastVisitedNode') && strlen($this->request->getArgument('lastVisitedNode')) > 0) {
+            if ($this->request->hasArgument('lastVisitedNode') && $this->request->getArgument('lastVisitedNode') !== '') {
                 $this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
             }
             if ($originalRequest !== null) {
@@ -234,7 +262,13 @@ class LoginController extends AbstractAuthenticationController
                 if ($possibleRedirectionUri !== null) {
                     $this->redirectToUri($possibleRedirectionUri);
                 }
-                $this->addFlashMessage('Successfully logged out', 'Logged out', Message::SEVERITY_NOTICE, [], 1318421560);
+                $this->addFlashMessage(
+                    $this->translator->translateById('login.loggedOut.body', [], null, null, 'Main', 'Neos.Neos'),
+                    $this->translator->translateById('login.loggedOut.title', [], null, null, 'Main', 'Neos.Neos'),
+                    Message::SEVERITY_NOTICE,
+                    [],
+                    1318421560
+                );
                 $this->redirect('index');
         }
     }
@@ -242,7 +276,7 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Disable the default error flash message
      *
-     * @return boolean
+     * @return bool
      */
     protected function getErrorFlashMessage()
     {
@@ -255,7 +289,7 @@ class LoginController extends AbstractAuthenticationController
      * @param string $sessionIdentifier
      * @return void
      */
-    protected function replaceSessionCookie($sessionIdentifier)
+    protected function replaceSessionCookie(string $sessionIdentifier): void
     {
         $sessionCookie = new Cookie($this->sessionName, $sessionIdentifier);
         $this->response->setCookie($sessionCookie);

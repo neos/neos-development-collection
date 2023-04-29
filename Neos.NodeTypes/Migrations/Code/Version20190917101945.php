@@ -35,7 +35,6 @@ class Version20190917101945 extends AbstractMigration
             'Neos.NodeTypes:Menu' => 'Neos.NodeTypes.Navigation:Navigation',
             'Neos.NodeTypes:Column' => 'Neos.NodeTypes.ColumnLayouts:Column',
             'Neos.NodeTypes:TwoColumn' => 'Neos.NodeTypes.ColumnLayouts:TwoColumn',
-            'Neos.NodeTypes:TwoColumn' => 'Neos.NodeTypes.ColumnLayouts:TwoColumn',
             'Neos.NodeTypes:ThreeColumn' => 'Neos.NodeTypes.ColumnLayouts:ThreeColumn',
             'Neos.NodeTypes:FourColumn' => 'Neos.NodeTypes.ColumnLayouts:FourColumn',
             'Neos.NodeTypes:Records' => 'Neos.NodeTypes.ContentReferences:ContentReferences'

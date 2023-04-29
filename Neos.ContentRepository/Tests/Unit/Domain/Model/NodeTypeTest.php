@@ -138,7 +138,7 @@ class NodeTypeTest extends UnitTestCase
     public function setDeclaredSuperTypesExpectsAnArrayOfNodeTypesAsKeys()
     {
         $this->expectException(\InvalidArgumentException::class);
-        new NodeType('TYPO3CR:Folder', ['foo' => true], []);
+        new NodeType('ContentRepository:Folder', ['foo' => true], []);
     }
 
     /**
@@ -147,7 +147,7 @@ class NodeTypeTest extends UnitTestCase
     public function setDeclaredSuperTypesAcceptsAnArrayOfNodeTypes()
     {
         $this->expectException(\InvalidArgumentException::class);
-        new NodeType('TYPO3CR:Folder', ['foo'], []);
+        new NodeType('ContentRepository:Folder', ['foo'], []);
     }
 
     /**

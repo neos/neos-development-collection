@@ -2,7 +2,6 @@
 // Navs
 // --------------------------------------------------
 
-
 // BASE CLASS
 // ----------
 
@@ -22,12 +21,6 @@
   background-color: $grayLighter;
 }
 
-// Prevent IE8 from misplacing imgs
-// See https://github.com/h5bp/html5-boilerplate/issues/984#issuecomment-3985989
-.neos-nav > li > a > img {
-  max-width: none;
-}
-
 // Redeclare pull classes because of specifity
 .neos-nav > .neos-pull-right {
   float: right;
@@ -41,15 +34,13 @@
   font-weight: bold;
   line-height: $baseLineHeight;
   color: $grayLight;
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
 }
 // Space them out when they follow another list item (link)
 .neos-nav li + .neos-nav-header {
   margin-top: 9px;
 }
-
-
 
 // NAV LIST
 // --------
@@ -61,9 +52,9 @@
 }
 .neos-nav-list > li > a,
 .neos-nav-list .neos-nav-header {
-  margin-left:  -15px;
+  margin-left: -15px;
   margin-right: -15px;
-  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .neos-nav-list > li > a {
   padding: 3px 15px;
@@ -72,7 +63,7 @@
 .neos-nav-list > .neos-active > a:hover,
 .neos-nav-list > .neos-active > a:focus {
   color: $white;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.2);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
   background-color: $linkColor;
 }
 .neos-nav-list [class^="fa-"],
@@ -83,8 +74,6 @@
 .neos-nav-list .neos-divider {
   @include nav-divider();
 }
-
-
 
 // TABS AND PILLS
 // -------------
@@ -140,7 +129,6 @@
   cursor: default;
 }
 
-
 // PILLS
 // -----
 
@@ -160,8 +148,6 @@
   color: $white;
   background-color: $linkColor;
 }
-
-
 
 // STACKED NAV
 // -----------
@@ -201,8 +187,6 @@
 .neos-nav-pills.neos-nav-stacked > li:last-child > a {
   margin-bottom: 1px; // decrease margin to match sizing of stacked tabs
 }
-
-
 
 // DROPDOWNS
 // ---------
@@ -275,11 +259,8 @@
   border-color: $grayLight;
 }
 
-
-
 // TABBABLE
 // --------
-
 
 // COMMON STYLES
 // -------------
@@ -308,7 +289,6 @@
 .neos-pill-content > .neos-active {
   display: block;
 }
-
 
 // BOTTOM
 // ------
@@ -390,8 +370,6 @@
   border-color: #ddd #ddd #ddd transparent;
   *border-left-color: $white;
 }
-
-
 
 // DISABLED STATES
 // ---------------

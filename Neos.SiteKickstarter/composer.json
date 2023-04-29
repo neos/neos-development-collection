@@ -4,10 +4,11 @@
     "description": "A simple generator for Neos assets, like sites and plugins.",
     "license": ["GPL-3.0-or-later"],
     "require": {
+        "php": "^7.3 || ^8.0",
         "neos/flow": "*",
         "neos/utility-files": "*",
         "neos/fluid-adaptor": "*",
-        "neos/kickstarter": "~6.3.0",
+        "neos/kickstarter": "~7.3.0",
 
         "neos/content-repository": "self.version"
     },
@@ -17,6 +18,11 @@
     "autoload": {
         "psr-4": {
             "Neos\\SiteKickstarter\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\SiteKickstarter\\Tests\\": "Tests"
         }
     },
     "extra": {

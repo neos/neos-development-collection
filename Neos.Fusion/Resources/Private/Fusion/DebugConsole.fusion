@@ -1,0 +1,14 @@
+##
+# This object will output the given value to the browser console.
+#
+# @process.debug = Neos.Fusion:Debug.Console {
+#     value = ${node.identifier}
+# }
+#
+prototype(Neos.Fusion:Debug.Console) {
+  @class = 'Neos\\Fusion\\FusionObjects\\DebugConsoleImplementation'
+  title = ${node ? node.label : (documentNode ? documentNode.label : '')}
+  method = 'log'
+  value = ''
+  content = ${value}
+}

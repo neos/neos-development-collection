@@ -8,6 +8,8 @@ finder:
     - "Neos.Diff/Tests"
     - "Neos.Fusion/Classes"
     - "Neos.Fusion/Tests"
+    - "Neos.Fusion.Afx/Classes"
+    - "Neos.Fusion.Afx/Tests"
     - "Neos.Media.Browser/Classes"
     - "Neos.Media.Browser/Tests"
     - "Neos.Media/Classes"
@@ -18,7 +20,7 @@ finder:
     - "Neos.NodeTypes/Tests"
     - "Neos.SiteKickstarter/Classes"
     - "Neos.SiteKickstarter/Tests"
-    
+
 enabled:
   - no_unused_imports
   - short_array_syntax

@@ -1,4 +1,5 @@
-(function ($) {
-    $('[data-neos-toggle="popover"]').popover();
-    $('[data-neos-toggle="tooltip"]').tooltip();
-})(jQuery);
+window.addEventListener("DOMContentLoaded", (event) => {
+	$(function () {
+		$('[data-neos-toggle="popover"]').popover();
+	});
+});

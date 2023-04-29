@@ -1098,9 +1098,9 @@ class NodesTest extends FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = [];
-        array_walk($childNodes, function ($value, $key, &$names) {
+        array_walk($childNodes, function ($value, $key) use (&$names) {
             $names->names[] = $value->getName();
-        }, $names);
+        });
         self::assertSame(['fluss', 'baz', 'flux'], $names->names);
     }
 
@@ -1119,9 +1119,9 @@ class NodesTest extends FunctionalTestCase
         $childNodes = $rootNode->getChildNodes();
         $names = new \stdClass();
         $names->names = [];
-        array_walk($childNodes, function ($value, $key, &$names) {
+        array_walk($childNodes, function ($value, $key) use (&$names) {
             $names->names[] = $value->getName();
-        }, $names);
+        });
         self::assertSame(['baz', 'fluss', 'flux'], $names->names);
     }
 
@@ -1174,9 +1174,9 @@ class NodesTest extends FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = [];
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+        array_walk($copiedChildNodes, function ($value, $key) use (&$names) {
             $names->names[] = $value->getName();
-        }, $names);
+        });
         self::assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 
@@ -1197,9 +1197,9 @@ class NodesTest extends FunctionalTestCase
 
         $names = new \stdClass();
         $names->names = [];
-        array_walk($copiedChildNodes, function ($value, $key, &$names) {
+        array_walk($copiedChildNodes, function ($value, $key) use (&$names) {
             $names->names[] = $value->getName();
-        }, $names);
+        });
         self::assertSame(['capacitor', 'second', 'third'], $names->names);
     }
 

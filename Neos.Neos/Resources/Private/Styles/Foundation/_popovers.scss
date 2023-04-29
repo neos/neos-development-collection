@@ -11,188 +11,213 @@ $popoverArrowColor: $grayMedium;
 $popoverArrowOuterColor: $grayLight;
 
 .neos-popover {
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: $zindexPopover;
-	display: none;
-	width: $popoverSizeDefault;
-	background-color: $popoverBackground;
-	-webkit-background-clip: padding-box;
-	-moz-background-clip: padding;
-	background-clip: padding-box;
-	border: 1px solid $popoverBorderColor;
-	box-shadow: #{0 5px 10px rgba(0, 0, 0, .2)};
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: $zindexPopover;
+  display: none;
+  width: $popoverSizeDefault;
+  background-color: $popoverBackground;
+  -webkit-background-clip: padding-box;
+  -moz-background-clip: padding;
+  background-clip: padding-box;
+  border: 1px solid $popoverBorderColor;
+  box-shadow: #{0 5px 10px rgba(0, 0, 0, 0.2)};
 
-	// Offset the popover to account for the popover arrow
-	&.neos-top     { margin-bottom: 10px; }
-	&.neos-right   { margin-left: 10px; }
-	&.neos-bottom  { margin-top: 10px; }
-	&.neos-left    { margin-right: 10px; }
+  // Offset the popover to account for the popover arrow
+  &.neos-top {
+    margin-bottom: 10px;
+  }
+  &.neos-right {
+    margin-left: 10px;
+  }
+  &.neos-bottom {
+    margin-top: 10px;
+  }
+  &.neos-left {
+    margin-right: 10px;
+  }
 }
 
 .neos-popover-title {
-	margin: 0; // reset heading margin
-	padding: ($defaultMargin - 3) ($defaultMargin - $tightMargin);
-	font-size: $generalFontSize;
-	line-height: $generalFontSize;
-	font-weight: bold;
-	color: $textOnGray;
-	background-color: $popoverTitleBackground;
-	border-bottom: 1px solid $popoverBorderColor;
+  margin: 0; // reset heading margin
+  padding: ($defaultMargin - 3) ($defaultMargin - $tightMargin);
+  font-size: $generalFontSize;
+  line-height: $generalFontSize;
+  font-weight: bold;
+  color: $textOnGray;
+  background-color: $popoverTitleBackground;
+  border-bottom: 1px solid $popoverBorderColor;
 
-	&:empty {
-		display: none;
-	}
+  &:empty {
+    display: none;
+  }
 }
 
 .neos-popover-content {
-	padding: $relatedMargin ($relatedMargin + $tightMargin);
-	max-height: $popoverSizeDefault;
-	overflow-y: auto;
-	white-space: normal;
-	line-height: 1.2;
+  padding: $relatedMargin ($relatedMargin + $tightMargin);
+  max-height: $popoverSizeDefault;
+  overflow-y: auto;
+  white-space: normal;
+  line-height: 1.2;
 
-	p, ul, ol {
-		margin-bottom: 0.4rem; // same padding as for content padding inside popover
-		font-size: inherit; // so setting font-size only for parent .neos-popover-content works
-		&:last-child {
-			margin-bottom: 0;
-		}
-	}
-	// Re-style UL and OL because inside .neos container they have zero-ed margins and no list-style-type.
-	ul, ol {
-		margin-left: 1.1rem;
-		li {
-			list-style-type: inherit; // It's enough to set list-style-type for UL/OL, but it's re-set for whole .neos container, so it needs to be re-defined again
-		}
-	}
-	ul {
-		list-style-type: disc;
-	}
-	ol {
-		list-style-type: decimal;
-	}
-	h1, h2, h3, h4, h5, h6 {
-		color: inherit;
-		font-weight: bold;
-	}
-	h1 {
-		font-size: 1.6em;
-	}
-	h2 {
-		font-size: 1.4em;
-	}
-	h3 {
-		font-size: 1.3em;
-	}
-	h4 {
-		font-size: 1.2em;
-	}
-	h5 {
-		font-size: 1em;
-	}
-	h6 {
-		font-size: 0.9em;
-	}
-	a {
-		color: $blueLight;
-		&:hover, &:focus, &:active { color: $blue }
-	}
-	strong {
-		font-weight: bold;
-	}
-	em {
-		font-style: italic;
-	}
-	code { // inline code using single `` backticks.
-		color: inherit;
-		background-color: $grayMedium;
-		border: 0 none;
-	}
-	pre { // block of code using triple ``` backticks.
-		margin: 0.4rem 0;
-		padding: 0.4rem;
-		line-height: 1.5;
-		background-color: $grayMedium;
-		code { // code inside block of code (yes, Markdown renders it like that)
-			padding: 0;
-		}
-	}
-	hr {
-		border-color: $grayLight;
-	}
-	img {
-		margin: auto auto 0.4rem auto;
-	}
+  p,
+  ul,
+  ol {
+    margin-bottom: 0.4rem; // same padding as for content padding inside popover
+    font-size: inherit; // so setting font-size only for parent .neos-popover-content works
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  // Re-style UL and OL because inside .neos container they have zero-ed margins and no list-style-type.
+  ul,
+  ol {
+    margin-left: 1.1rem;
+    li {
+      list-style-type: inherit; // It's enough to set list-style-type for UL/OL, but it's re-set for whole .neos container, so it needs to be re-defined again
+    }
+  }
+  ul {
+    list-style-type: disc;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: inherit;
+    font-weight: bold;
+  }
+  h1 {
+    font-size: 1.6em;
+  }
+  h2 {
+    font-size: 1.4em;
+  }
+  h3 {
+    font-size: 1.3em;
+  }
+  h4 {
+    font-size: 1.2em;
+  }
+  h5 {
+    font-size: 1em;
+  }
+  h6 {
+    font-size: 0.9em;
+  }
+  a {
+    color: $blueLight;
+    &:hover,
+    &:focus,
+    &:active {
+      color: $blue;
+    }
+  }
+  strong {
+    font-weight: bold;
+  }
+  em {
+    font-style: italic;
+  }
+  code {
+    // inline code using single `` backticks.
+    color: inherit;
+    background-color: $grayMedium;
+    border: 0 none;
+  }
+  pre {
+    // block of code using triple ``` backticks.
+    margin: 0.4rem 0;
+    padding: 0.4rem;
+    line-height: 1.5;
+    background-color: $grayMedium;
+    code {
+      // code inside block of code (yes, Markdown renders it like that)
+      padding: 0;
+    }
+  }
+  hr {
+    border-color: $grayLight;
+  }
+  img {
+    margin: auto auto 0.4rem auto;
+  }
 }
 
 // Arrows
 .neos-popover .neos-arrow,
 .neos-popover .neos-arrow:after {
-	position: absolute;
-	display: inline-block;
-	width: 0;
-	height: 0;
-	border-color: transparent;
-	border-style: solid;
+  position: absolute;
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
 }
 .neos-popover .neos-arrow:after {
-	content: "";
-	z-index: -1;
+  content: "";
+  z-index: -1;
 }
 
 .neos-popover {
-	&.neos-top .neos-arrow {
-		bottom: -$popoverArrowWidth;
-		left: 50%;
-		margin-left: -$popoverArrowWidth;
-		border-width: $popoverArrowWidth $popoverArrowWidth 0;
-		border-top-color: $popoverArrowColor;
-		&:after {
-			border-width: $popoverArrowOuterWidth $popoverArrowOuterWidth 0;
-			border-top-color: $popoverArrowOuterColor;
-			bottom: -1px;
-			left: -$popoverArrowOuterWidth;
-		}
-	}
-	&.neos-right .neos-arrow {
-		top: 50%;
-		left: -$popoverArrowWidth;
-		margin-top: -$popoverArrowWidth;
-		border-width: $popoverArrowWidth $popoverArrowWidth $popoverArrowWidth 0;
-		border-right-color: $popoverArrowColor;
-		&:after {
-			border-width: $popoverArrowOuterWidth $popoverArrowOuterWidth $popoverArrowOuterWidth 0;
-			border-right-color: $popoverArrowOuterColor;
-			bottom: -$popoverArrowOuterWidth;
-			left: -1px;
-		}
-	}
-	&.neos-bottom .neos-arrow {
-		top: -$popoverArrowWidth;
-		left: 50%;
-		margin-left: -$popoverArrowWidth;
-		border-width: 0 $popoverArrowWidth $popoverArrowWidth;
-		border-bottom-color: $popoverTitleBackground;
-		&:after {
-			border-width: 0 $popoverArrowOuterWidth $popoverArrowOuterWidth;
-			border-bottom-color: $popoverArrowOuterColor;
-			top: -1px;
-			left: -$popoverArrowOuterWidth;
-		}
-	}
-	&.neos-left .neos-arrow {
-		top: 50%;
-		right: -$popoverArrowWidth;
-		margin-top: -$popoverArrowWidth;
-		border-width: $popoverArrowWidth 0 $popoverArrowWidth $popoverArrowWidth;
-		border-left-color: $popoverArrowColor;
-		&:after {
-			border-width: $popoverArrowOuterWidth 0 $popoverArrowOuterWidth $popoverArrowOuterWidth;
-			border-left-color: $popoverArrowOuterColor;
-			bottom: -$popoverArrowOuterWidth;
-			right: -1px;
-		}
-	}
+  &.neos-top .neos-arrow {
+    bottom: -$popoverArrowWidth;
+    left: 50%;
+    margin-left: -$popoverArrowWidth;
+    border-width: $popoverArrowWidth $popoverArrowWidth 0;
+    border-top-color: $popoverArrowColor;
+    &:after {
+      border-width: $popoverArrowOuterWidth $popoverArrowOuterWidth 0;
+      border-top-color: $popoverArrowOuterColor;
+      bottom: -1px;
+      left: -$popoverArrowOuterWidth;
+    }
+  }
+  &.neos-right .neos-arrow {
+    top: 50%;
+    left: -$popoverArrowWidth;
+    margin-top: -$popoverArrowWidth;
+    border-width: $popoverArrowWidth $popoverArrowWidth $popoverArrowWidth 0;
+    border-right-color: $popoverArrowColor;
+    &:after {
+      border-width: $popoverArrowOuterWidth $popoverArrowOuterWidth
+        $popoverArrowOuterWidth 0;
+      border-right-color: $popoverArrowOuterColor;
+      bottom: -$popoverArrowOuterWidth;
+      left: -1px;
+    }
+  }
+  &.neos-bottom .neos-arrow {
+    top: -$popoverArrowWidth;
+    left: 50%;
+    margin-left: -$popoverArrowWidth;
+    border-width: 0 $popoverArrowWidth $popoverArrowWidth;
+    border-bottom-color: $popoverTitleBackground;
+    &:after {
+      border-width: 0 $popoverArrowOuterWidth $popoverArrowOuterWidth;
+      border-bottom-color: $popoverArrowOuterColor;
+      top: -1px;
+      left: -$popoverArrowOuterWidth;
+    }
+  }
+  &.neos-left .neos-arrow {
+    top: 50%;
+    right: -$popoverArrowWidth;
+    margin-top: -$popoverArrowWidth;
+    border-width: $popoverArrowWidth 0 $popoverArrowWidth $popoverArrowWidth;
+    border-left-color: $popoverArrowColor;
+    &:after {
+      border-width: $popoverArrowOuterWidth 0 $popoverArrowOuterWidth
+        $popoverArrowOuterWidth;
+      border-left-color: $popoverArrowOuterColor;
+      bottom: -$popoverArrowOuterWidth;
+      right: -1px;
+    }
+  }
 }

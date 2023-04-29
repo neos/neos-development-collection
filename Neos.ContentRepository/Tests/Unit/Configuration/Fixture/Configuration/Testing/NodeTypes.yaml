@@ -1,0 +1,7 @@
+'Some.Node:Type':
+  options:
+    finalPath: Configuration/Testing/NodeTypes.yaml
+    pathConfiguration.Testing.NodeTypes_yaml: true
+'NodeType:PathConfiguration.Testing.NodeTypes_yaml':
+  options:
+    path: Configuration/Testing/NodeTypes.yaml

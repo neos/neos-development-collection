@@ -3,9 +3,9 @@ prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn) < prototype(Neos.Neos:Conten
     templatePath = 'resource://Neos.NodeTypes.ColumnLayouts/Private/Templates/NodeTypes/MultiColumn.html'
     layout = ${q(node).property('layout')}
     attributes.class = ${'container columns-' + q(node).property('layout')}
-    columns = Neos.Fusion:Collection {
+    columns = Neos.Fusion:Loop {
         @context.columnLayout = ${q(node).property('layout')}
-        collection = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
+        items = ${q(node).children('[instanceof Neos.Neos:ContentCollection]')}
         itemRenderer = Neos.NodeTypes.ColumnLayouts:MultiColumnItem
         itemName = 'node'
         iterationName = 'columnIteration'

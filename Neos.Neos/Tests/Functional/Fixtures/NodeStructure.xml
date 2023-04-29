@@ -561,7 +561,7 @@
       </node>
      </node>
      <node identifier="eab73e26-0dbf-8a2f-fcd7-a3cab1821e49" nodeName="teaser">
-      <variant sortingIndex="100" workspace="live" nodeType="Neos.Neos:ContentCollection" version="2" removed="" hidden="" hiddenInIndex="">
+      <variant sortingIndex="100" workspace="live" nodeType="Acme.Demo:TeaserGroup" version="2" removed="" hidden="" hiddenInIndex="">
        <dimensions>
         <language>en_US</language>
        </dimensions>

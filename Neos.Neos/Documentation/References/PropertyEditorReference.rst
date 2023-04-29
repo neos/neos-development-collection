@@ -14,7 +14,7 @@ Property Type: boolean ``BooleanEditor`` -- Checkbox editor
 
 A ``boolean`` value is rendered using a checkbox in the inspector::
 
-    'isActive'
+    'isActive':
       type: boolean
       ui:
         label: 'is active'
@@ -276,7 +276,7 @@ the key/value pairs can be accessed in the ``$arguments`` array passed to ``getD
     questions:
       ui:
         inspector:
-          editor: 'Content/Inspector/Editors/SelectBoxEditor'
+          editor: 'Neos.Neos/Inspector/Editors/SelectBoxEditor'
           editorOptions:
             dataSourceIdentifier: 'questions'
             # alternatively using a custom uri:
@@ -426,6 +426,52 @@ Example::
 Options Reference:
 
 **all TextFieldEditor options apply**
+
+Property Type: string / integer ``RangeEditor`` -- Range Editor for selecting numeric values
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The minimum, maximum and step size can be defined. Additionally, a unit label as well as a special label for the minimum and maximum value can be defined.
+
+If a certain value should be entered, the current value can also be clicked to enter the desired value directly.
+
+::
+
+    opacity:
+      type: integer
+      ui:
+        inspector:
+          editor: 'Neos.Neos/Inspector/Editors/RangeEditor'
+          editorOptions:
+            minLabel: Invisible
+            maxLabel: Opaque
+            min: 0
+            max: 100
+            step: 5
+            unit: px
+
+
+Options Reference:
+
+``min`` (integer)
+	The lowest value in the range of permitted values. This value must be less than or equal to the value of the max attribute.
+  
+``max`` (integer)
+	The greatest value in the range of permitted values. This value must be greater than or equal to the value of the min attribute.
+  
+``step`` (integer)
+	The step attribute is a number that specifies the granularity that the value must adhere to.
+  
+``unit`` (string)
+  The value gets displayed beside the current value, as well after the minimal value (only if ``minLabel`` is not set) and after the maximal value (only if ``maxLabel`` is not set). (The unit is just a visual indicator and will not be added to the resulting property value.)
+
+``minLabel`` (string)
+	If set, this value is displayed instead of the minimum value.
+  
+``maxLabel`` (string)
+	If set, this value is displayed instead of the maximum value.
+ 
+``disabled`` (boolean)
+	If set to ``true``, the range editor gets disabled.
 
 Property Type: reference / references ``ReferenceEditor`` / ``ReferencesEditor`` -- Reference Selection Editors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -578,7 +624,7 @@ For properties of type ``Neos\Media\Domain\Model\ImageInterface``, an image edit
 and resizing functionality, you need to set ``features.crop`` and ``features.resize`` to ``true``, as in the following
 example::
 
-    'teaserImage'
+    'teaserImage':
       type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
@@ -593,7 +639,7 @@ If cropping is enabled, you might want to enforce a certain aspect ratio, which 
 ``crop.aspectRatio.locked.width`` and ``crop.aspectRatio.locked.height``. To show the crop dialog automatically on image upload, configure the ``crop.aspectRatio.forceCrop`` option. In the following example, the
 image format must be ``16:9``::
 
-    'teaserImage'
+    'teaserImage':
       type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
@@ -616,7 +662,7 @@ added or removed from this list underneath ``crop.aspectRatio.options``. If the 
 shall be added to the list, ``crop.aspectRatio.enableOriginal`` must be set to ``true``. If the user should be allowed
 to choose a custom aspect ratio, set ``crop.aspectRatio.allowCustom`` to ``true``::
 
-    'teaserImage'
+    'teaserImage':
       type: 'Neos\Media\Domain\Model\ImageInterface'
       ui:
         label: 'Teaser Image'
@@ -728,7 +774,7 @@ Property Type: asset (Neos\\Media\\Domain\\Model\\Asset / array<Neos\\Media\\Dom
 If an asset, i.e. ``Neos\Media\Domain\Model\Asset``, shall be uploaded or selected, the following configuration
 is an example::
 
-    'caseStudyPdf'
+    'caseStudyPdf':
       type: 'Neos\Media\Domain\Model\Asset'
       ui:
         label: 'Case Study PDF'
@@ -737,7 +783,7 @@ is an example::
 
 Conversely, if multiple assets shall be uploaded, use ``array<Neos\Media\Domain\Model\Asset>`` as type::
 
-    'caseStudies'
+    'caseStudies':
       type: 'array<Neos\Media\Domain\Model\Asset>'
       ui:
         label: 'Case Study PDF'

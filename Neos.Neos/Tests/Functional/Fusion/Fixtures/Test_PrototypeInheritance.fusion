@@ -3,9 +3,9 @@
 #
 
 page1.body.sections.sidebar.prototype(Neos.Fusion:Case).smallHeadline {
-	condition = ${q(node).is('[instanceof Acme.Demo:Headline]')}
-	type = 'Acme.Demo:SmallHeadline'
-	@position = 'start'
+  condition = ${q(node).is('[instanceof Acme.Demo:Headline]')}
+  type = 'Acme.Demo:SmallHeadline'
+  @position = 'start'
 }
 
 # this line should make sure that SmallHeadline's Prototype points to "Headline".

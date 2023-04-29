@@ -15,6 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
+use Neos\Flow\I18n\Translator;
 use Neos\Utility\SchemaGenerator;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Error\Messages\Message;
@@ -43,6 +44,12 @@ class ConfigurationController extends AbstractModuleController
     protected $schemaGenerator;
 
     /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * @param string $type
      * @return void
      */
@@ -60,10 +67,22 @@ class ConfigurationController extends AbstractModuleController
             try {
                 $this->view->assign('validationResult', $this->configurationSchemaValidator->validate($type));
             } catch (SchemaValidationException $exception) {
-                $this->addFlashMessage(htmlspecialchars($exception->getMessage()), 'An error occurred during validation of the configuration.', Message::SEVERITY_ERROR, [], 1412373972);
+                $this->addFlashMessage(
+                    htmlspecialchars($exception->getMessage()),
+                    $this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    Message::SEVERITY_ERROR,
+                    [],
+                    1412373972
+                );
             }
         } else {
-            $this->addFlashMessage('Configuration type not found.', '', Message::SEVERITY_ERROR, [], 1412373998);
+            $this->addFlashMessage(
+                $this->translator->translateById('configuration.configurationTypeNotFound.body', [], null, null, 'Modules', 'Neos.Neos'),
+                '',
+                Message::SEVERITY_ERROR,
+                [],
+                1412373998
+            );
         }
     }
 }

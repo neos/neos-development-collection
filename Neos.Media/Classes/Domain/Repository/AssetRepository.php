@@ -366,7 +366,7 @@ class AssetRepository extends Repository
      * @throws IllegalObjectTypeException
      * @throws AssetServiceException
      */
-    public function remove($object)
+    public function remove($object): void
     {
         $this->assetService->validateRemoval($object);
         parent::remove($object);
@@ -392,7 +392,7 @@ class AssetRepository extends Repository
      * @param AssetInterface $object
      * @throws IllegalObjectTypeException
      */
-    public function add($object)
+    public function add($object): void
     {
         parent::add($object);
         $this->assetService->emitAssetCreated($object);
@@ -402,7 +402,7 @@ class AssetRepository extends Repository
      * @param AssetInterface $object
      * @throws IllegalObjectTypeException
      */
-    public function update($object)
+    public function update($object): void
     {
         parent::update($object);
         $this->assetService->emitAssetUpdated($object);

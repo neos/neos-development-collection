@@ -761,7 +761,7 @@ class Runtime
             $positionalArraySorter = new PositionalArraySorter($propertiesConfiguration, '__meta.position');
             foreach ($positionalArraySorter->getSortedKeys() as $key) {
                 // skip keys which start with __, as they are purely internal.
-                if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+                if (is_string($key) && $key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
                     continue;
                 }
 
@@ -773,13 +773,11 @@ class Runtime
                     $singleApplyPath .= '/expression';
                 }
                 $singleApplyValues = $this->evaluate($singleApplyPath, null, self::BEHAVIOR_EXCEPTION);
-                if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
-                    if ($singleApplyValues === null) {
-                        continue;
-                    } elseif (is_array($singleApplyValues)) {
+                if ($singleApplyValues !== null || $this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
+                    if (is_array($singleApplyValues)) {
                         foreach ($singleApplyValues as $key => $value) {
                             // skip keys which start with __, as they are purely internal.
-                            if ($key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
+                            if (is_string($key) && $key[0] === '_' && $key[1] === '_' && in_array($key, Parser::$reservedParseTreeKeys, true)) {
                                 continue;
                             }
 
@@ -827,7 +825,7 @@ class Runtime
             }
 
             # If there is only the internal "__stopInheritanceChain" path set, skip evaluation
-            if (count($processorConfiguration[$key]) === 1 && isset($processorConfiguration[$key]['__stopInheritanceChain'])) {
+            if (isset($processorConfiguration[$key]['__stopInheritanceChain']) && count($processorConfiguration[$key]) === 1) {
                 continue;
             }
 
@@ -837,7 +835,7 @@ class Runtime
 
             $this->pushContext('value', $valueToProcess);
             $result = $this->evaluate($processorPath, $contextObject, self::BEHAVIOR_EXCEPTION);
-            if ($this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
+            if ($result !== null || $this->getLastEvaluationStatus() !== static::EVALUATION_SKIPPED) {
                 $valueToProcess = $result;
             }
             $this->popContext();
