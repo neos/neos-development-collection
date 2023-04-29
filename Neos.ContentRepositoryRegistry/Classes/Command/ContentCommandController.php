@@ -39,6 +39,13 @@ final class ContentCommandController extends CommandController
         parent::__construct();
     }
 
+    /**
+     * Refreshes the root node dimensions in the specified content repository for the specified workspace
+     *
+     * @param string $contentRepository test
+     * @param string $workspace test
+     * @return void
+     */
     public function refreshRootNodeDimensionsCommand(string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
