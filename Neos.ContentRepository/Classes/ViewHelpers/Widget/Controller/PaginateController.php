@@ -11,6 +11,7 @@ namespace Neos\ContentRepository\ViewHelpers\Widget\Controller;
  * source code.
  */
 
+use ArrayIterator;
 use Neos\Utility\Arrays;
 use Neos\FluidAdaptor\Core\Widget\AbstractWidgetController;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
@@ -87,7 +88,11 @@ class PaginateController extends AbstractWidgetController
     protected function initializeAction()
     {
         $this->parentNode = $this->widgetConfiguration['parentNode'];
-        $this->nodes = $this->widgetConfiguration['nodes'];
+        if ($this->widgetConfiguration['nodes'] instanceof ArrayIterator) {
+            $this->nodes = $this->widgetConfiguration['nodes']->getArrayCopy();
+        } else {
+            $this->nodes = $this->widgetConfiguration['nodes'];
+        }
         $this->nodeTypeFilter = $this->widgetConfiguration['nodeTypeFilter'] ?: null;
         $this->configuration = Arrays::arrayMergeRecursiveOverrule($this->configuration, $this->widgetConfiguration['configuration'], true);
         $this->maximumNumberOfNodes = $this->configuration['maximumNumberOfNodes'];
@@ -121,7 +126,7 @@ class PaginateController extends AbstractWidgetController
         }
         $offset = ($this->currentPage > 1) ? (integer)($itemsPerPage * ($this->currentPage - 1)) : null;
         if ($this->parentNode === null) {
-            $nodes = array_slice($this->nodes, $offset, $itemsPerPage);
+            $nodes = (array) array_slice($this->nodes, $offset, $itemsPerPage);
         } else {
             $nodes = $this->parentNode->getChildNodes($this->nodeTypeFilter, $itemsPerPage, $offset);
         }
