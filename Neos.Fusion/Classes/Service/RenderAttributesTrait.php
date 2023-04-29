@@ -19,32 +19,39 @@ namespace Neos\Fusion\Service;
 trait RenderAttributesTrait
 {
     /**
-     * Render the tag attributes for the given key->values as atring,
-     * if an value is an iterable it will be concatenated with spaces as seperator
+     * Render the tag attributes for the given key->values as string,
+     * if a value is an iterable it will be concatenated with spaces as separator
      *
-     * @param iterable $attributes a
+     * @param iterable<mixed,int|string|null|bool|array<mixed,string|bool|null>> $attributes
      * @param bool $allowEmpty
      */
-    protected function renderAttributes(iterable $attributes, $allowEmpty = true): string
+    protected function renderAttributes(iterable $attributes, bool $allowEmpty = true): string
     {
         $renderedAttributes = '';
         foreach ($attributes as $attributeName => $attributeValue) {
             if ($attributeValue === null || $attributeValue === false) {
                 continue;
             }
+            if (is_array($attributeValue)) {
+                // [] => empty attribute ? questionable
+                // [true] => empty attribute
+                // [false] => empty attribute
+                // ["foo", null, false, "bar"] => "foo bar"
+                // [""] => empty attribute
+                $joinedAttributeValue = '';
+                foreach ($attributeValue as $attributeValuePart) {
+                    $joinedAttributeValue .= match (gettype($attributeValuePart)) {
+                        'boolean', 'NULL' => '',
+                        'string' => ' ' . trim($attributeValuePart),
+                        default => throw new \InvalidArgumentException('$attributes may contain values of type array<string|bool|null> type: array<' . get_debug_type($attributeValuePart) . '> given')
+                    };
+                }
+                $attributeValue = trim($joinedAttributeValue);
+            }
             $encodedAttributeName = htmlspecialchars((string)$attributeName, ENT_COMPAT, 'UTF-8', false);
             if ($attributeValue === true || $attributeValue === '') {
                 $renderedAttributes .= ' ' . $encodedAttributeName . ($allowEmpty ? '' : '=""');
             } else {
-                if (is_array($attributeValue)) {
-                    $joinedAttributeValue = '';
-                    foreach ($attributeValue as $attributeValuePart) {
-                        if ((string)$attributeValuePart !== '') {
-                            $joinedAttributeValue .= ' ' . trim($attributeValuePart);
-                        }
-                    }
-                    $attributeValue = trim($joinedAttributeValue);
-                }
                 $encodedAttributeValue = htmlspecialchars((string)$attributeValue, ENT_COMPAT, 'UTF-8', false);
                 $renderedAttributes .= ' ' . $encodedAttributeName . '="' . $encodedAttributeValue . '"';
             }
