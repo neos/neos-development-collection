@@ -81,7 +81,11 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
 
         foreach ($processors as $label => $processor) {
             $outputLineFn($label . '...');
-            $verbose && $processor->onMessage(fn(Severity $severity, string $message) => $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]));
+            $processor->onMessage(function (Severity $severity, string $message) use ($verbose, $outputLineFn) {
+                if ($severity !== Severity::NOTICE || $verbose) {
+                    $outputLineFn('<%1$s>%2$s</%1$s>', [$severity === Severity::ERROR ? 'error' : 'comment', $message]);
+                }
+            });
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
                 throw new \RuntimeException($label . ': ' . $result->message ?? '');

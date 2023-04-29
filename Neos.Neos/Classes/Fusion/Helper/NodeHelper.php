@@ -91,6 +91,34 @@ class NodeHelper implements ProtectedContextAwareInterface
         return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
+    /**
+     * @param Node $node
+     * @return int
+     * @deprecated do not rely on this, as it is rather expensive to calculate
+     */
+    public function depth(Node $node): int
+    {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $depth = 0;
+        while ($node !== null) {
+            $node = $subgraph->findParentNode($node->nodeAggregateId);
+            $depth++;
+        }
+        return $depth;
+    }
+
+
+    /**
+     * @param Node $node
+     * @return string
+     * @deprecated do not rely on this, as it is rather expensive to calculate
+     */
+    public function path(Node $node): string
+    {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        return $subgraph->retrieveNodePath($node->nodeAggregateId)->value;
+    }
+
     public function isLive(Node $node): bool
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);

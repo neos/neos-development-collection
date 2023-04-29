@@ -59,7 +59,7 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
     /**
      * Recursive function rendering configuration and adding it to $this->output
      *
-     * @param array<string,mixed> $configuration
+     * @param array<string|int,mixed> $configuration
      * @param string $relativePath the path up-to-now
      * @return void
      */
@@ -67,9 +67,9 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
     {
         $this->output .= '<ul>';
         foreach ($configuration as $key => $value) {
-            $path = ($relativePath ? $relativePath . '.' . $key : $key);
+            $path = ($relativePath ? $relativePath . '.' . $key : (string)$key);
             $pathEscaped = htmlspecialchars($path);
-            $keyEscaped = htmlspecialchars($key);
+            $keyEscaped = htmlspecialchars((string)$key);
 
             $typeEscaped = htmlspecialchars(gettype($value));
             if ($typeEscaped === 'array') {
@@ -83,7 +83,7 @@ class ConfigurationTreeViewHelper extends AbstractViewHelper
                 $this->output .= match ($typeEscaped) {
                     'boolean' => ($value ? 'true' : 'false'),
                     'NULL' => 'NULL',
-                    default => htmlspecialchars($value),
+                    default => htmlspecialchars((string)$value),
                 };
                 $this->output .= '</div>';
             }

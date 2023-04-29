@@ -95,7 +95,7 @@ class TranslateViewHelper extends FluidTranslateViewHelper
         $value = $this->arguments['value'];
         $locale = $this->arguments['locale'];
 
-        if (preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
+        if (is_string($id) && preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
             // In the longer run, this "extended ID" format should directly be resolved in the localization service
             list($package, $source, $id) = explode(':', $id, 3);
             $this->arguments['id'] = $id;

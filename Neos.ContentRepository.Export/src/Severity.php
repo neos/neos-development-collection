@@ -5,5 +5,6 @@ namespace Neos\ContentRepository\Export;
 enum Severity
 {
     case NOTICE;
+    case WARNING;
     case ERROR;
 }
