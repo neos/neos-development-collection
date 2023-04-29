@@ -15,6 +15,7 @@ namespace Neos\Neos\Fusion\Cache;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -70,7 +71,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
             return;
         }
 
-        if ($eventInstance instanceof NodeAggregateWasRemoved) {
+        if ($eventInstance instanceof NodeAggregateWasRemoved
+            // NOTE: when moving a node, we need to clear the cache not just after the move was completed,
+            // but also on the original location. Otherwise, we have the problem that the cache is not
+            // cleared, leading to presumably duplicate nodes in the UI.
+            || $eventInstance instanceof NodeAggregateWasMoved) {
             $nodeAggregate = $this->contentRepository->getContentGraph()->findNodeAggregateById(
                 $eventInstance->getContentStreamId(),
                 $eventInstance->getNodeAggregateId()
