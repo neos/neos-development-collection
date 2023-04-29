@@ -4,9 +4,16 @@
 
 -
   name:          'Preview'
-  uriPattern:    'neos/preview'
+  uriPattern:    'neos/previewo'
   defaults:
     '@action':   'preview'
+  appendExceedingArguments: true
+
+-
+  name:          'Edit'
+  uriPattern:    'neos/edit'
+  defaults:
+    '@action':   'edit'
   appendExceedingArguments: true
 
 -
