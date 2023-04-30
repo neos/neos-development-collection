@@ -124,7 +124,6 @@ class FindOperation extends AbstractOperation
         $result = [];
         $selectorAndFilter = $arguments[0];
 
-        $parsedFilter = null;
         $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
 
         /** @todo fetch them $elsewhere (fusion runtime?) */
@@ -274,7 +273,7 @@ class FindOperation extends AbstractOperation
 
             /** @var Node $node */
             foreach ($entryPoint['nodes'] as $node) {
-                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::nodeTypeConstraints($nodeTypeFilter)) as $descendant) {
+                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypeConstraints: $nodeTypeFilter)) as $descendant) {
                     $result[] = $descendant;
                 }
             }

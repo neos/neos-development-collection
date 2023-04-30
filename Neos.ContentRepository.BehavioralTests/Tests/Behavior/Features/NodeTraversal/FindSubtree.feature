@@ -77,12 +77,13 @@ Feature: Find nodes using the findSubtree query
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findSubtree queries without results
+  Scenario:
+    # findSubtree queries without results
     When I execute the findSubtree query for entry node aggregate id "non-existing" I expect no results
     # node "a2a2a" is disabled so it should not yield results
     When I execute the findSubtree query for entry node aggregate id "a2a2a" I expect no results
 
-  Scenario: findSubtree queries with results
+    # findSubtree queries with results
     When I execute the findSubtree query for entry node aggregate id "a2a2" I expect no results
     """
     a2a2

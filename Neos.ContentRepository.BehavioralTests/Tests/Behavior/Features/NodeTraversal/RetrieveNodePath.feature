@@ -84,14 +84,15 @@ Feature: Find nodes using the retrieveNodePath query
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: retrieveNodePath queries without result
+  Scenario:
+    # retrieveNodePath queries without result
     When I execute the retrieveNodePath query for node aggregate id "non-existing" I expect an exception 'Failed to retrieve node path for node "non-existing"'
     # node "b1" is disabled so it must not be returned
     When I execute the retrieveNodePath query for node aggregate id "b1" I expect an exception 'Failed to retrieve node path for node "b1"'
     When I execute the retrieveNodePath query for node aggregate id "b1a" I expect an exception 'Failed to retrieve node path for node "b1a"'
     When I execute the retrieveNodePath query for node aggregate id "unnamed" I expect an exception 'The path "//home/a/a2/a2a/" is no valid NodePath because it contains a segment "" that is no valid NodeName'
 
-  Scenario: retrieveNodePath queries with result
+    # retrieveNodePath queries with result
     When I execute the retrieveNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/" to be returned
     When I execute the retrieveNodePath query for node aggregate id "home" I expect the path "//home" to be returned
     When I execute the retrieveNodePath query for node aggregate id "a2a2" I expect the path "//home/a/a2/a2a/a2a2" to be returned

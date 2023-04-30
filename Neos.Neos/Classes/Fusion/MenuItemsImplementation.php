@@ -158,8 +158,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             foreach ($this->getItemCollection() as $node) {
                 $childSubtree = $subgraph->findSubtree(
                     $node->nodeAggregateId,
-                    FindSubtreeFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
-                        ->withMaximumLevels($this->getMaximumLevels())
+                    FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
                 );
                 if ($childSubtree === null) {
                     continue;
@@ -176,8 +175,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $childSubtree = $subgraph->findSubtree(
             $entryParentNode->nodeAggregateId,
-            FindSubtreeFilter::nodeTypeConstraints($this->getNodeTypeConstraints())
-                ->withMaximumLevels($this->getMaximumLevels())
+            FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
         );
         if ($childSubtree === null) {
             return [];

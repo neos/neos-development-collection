@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -314,7 +315,7 @@ trait NodeMove
                 if ($precedingSibling) {
                     $alternateSucceedingSiblings = $currentContentSubgraph->findSucceedingSiblingNodes(
                         $precedingSiblingId,
-                        FindSucceedingSiblingNodesFilter::create()->withPagination(1, 0)
+                        FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
                     );
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();
@@ -373,7 +374,7 @@ trait NodeMove
                 if ($precedingSiblingId && $precedingSibling) {
                     $alternateSucceedingSiblings = $contentSubgraph->findSucceedingSiblingNodes(
                         $precedingSiblingId,
-                        FindSucceedingSiblingNodesFilter::create()->withPagination(1, 0)
+                        FindSucceedingSiblingNodesFilter::create(pagination: Pagination::fromLimitAndOffset(1, 0)),
                     );
                     if (count($alternateSucceedingSiblings) > 0) {
                         $succeedingSibling = $alternateSucceedingSiblings->first();
