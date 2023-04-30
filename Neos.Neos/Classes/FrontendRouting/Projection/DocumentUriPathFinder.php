@@ -74,7 +74,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
         $cacheKey = $nodeAggregateId->value . '#' . $dimensionSpacePointHash;
-        if ($this->cacheEnabled && isset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey])){
+        if ($this->cacheEnabled && isset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey])) {
             return $this->getByIdAndDimensionSpacePointHashCache[$cacheKey];
         }
         $result = $this->fetchSingle(
