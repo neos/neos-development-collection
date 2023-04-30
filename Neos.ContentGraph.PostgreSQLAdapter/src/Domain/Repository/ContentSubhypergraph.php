@@ -183,6 +183,13 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             ->withSourceRestriction($this->visibilityConstraints)
             ->withTargetRestriction($this->visibilityConstraints);
 
+        if ($filter->nodeTypeConstraints) {
+            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
+                $filter->nodeTypeConstraints,
+                $this->nodeTypeManager
+            );
+            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'srcn');
+        }
         $orderings = [];
         if ($filter->referenceName) {
             $query = $query->withReferenceName($filter->referenceName);
@@ -192,6 +199,11 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         $orderings[] = 'r.position';
         $orderings[] = 'srcn.nodeaggregateid';
         $query = $query->orderedBy($orderings);
+        if (!is_null($filter->pagination)) {
+            $query = $query
+                ->withLimit($filter->pagination->limit)
+                ->withOffset($filter->pagination->offset);
+        }
 
         $referenceRows = $query->execute($this->getDatabaseConnection())->fetchAllAssociative();
 

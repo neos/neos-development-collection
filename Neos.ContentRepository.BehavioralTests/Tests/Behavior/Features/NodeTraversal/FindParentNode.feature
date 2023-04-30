@@ -85,7 +85,8 @@ Feature: Find nodes using the findParentNodes query
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findParentNode queries without result
+  Scenario:
+    # findParentNode queries without result
     When I execute the findParentNode query for node aggregate id "non-existing" I expect no node to be returned
     When I execute the findParentNode query for node aggregate id "lady-eleonode-rootford" I expect no node to be returned
     # node "a2a" is disabled, so it should be ignored
@@ -93,6 +94,6 @@ Feature: Find nodes using the findParentNodes query
     # the parent node of "a2a1", "a2a", is disabled, so it must not be returned
     When I execute the findParentNode query for node aggregate id "a2a1" I expect no node to be returned
 
-  Scenario: findParentNode queries with result
+    # findParentNode queries with result
     When I execute the findParentNode query for node aggregate id "home" I expect the node "lady-eleonode-rootford" to be returned
     When I execute the findParentNode query for node aggregate id "a2" I expect the node "a" to be returned

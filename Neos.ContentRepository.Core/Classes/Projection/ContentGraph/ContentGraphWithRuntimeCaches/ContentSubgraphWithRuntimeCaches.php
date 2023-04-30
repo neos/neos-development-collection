@@ -52,7 +52,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
-        if ($filter->pagination !== null || $filter->propertyValue !== null || $filter->ordering !== null) {
+        if (!self::isFilterEmpty($filter)) {
             return $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         }
         $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
@@ -74,7 +74,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
     {
-        if ($filter->propertyValue !== null) {
+        if (!self::isFilterEmpty($filter)) {
             return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
         }
         $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
@@ -217,6 +217,11 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     {
         // TODO: implement runtime caches
         return $this->wrappedContentSubgraph->countNodes();
+    }
+
+    private static function isFilterEmpty(object $filter): bool
+    {
+        return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
     }
 
     public function jsonSerialize(): mixed

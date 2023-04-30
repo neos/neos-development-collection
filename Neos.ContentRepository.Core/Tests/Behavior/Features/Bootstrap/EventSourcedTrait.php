@@ -531,8 +531,7 @@ trait EventSourcedTrait
 
             $subtree = $contentGraph
                 ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
-                ->findSubtree($nodeAggregateId,
-                    FindSubtreeFilter::nodeTypeConstraints($nodeTypeConstraints)->withMaximumLevels($maximumLevels));
+                ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
 
             /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];

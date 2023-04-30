@@ -149,12 +149,13 @@ class NodesController extends ActionController
             $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
                 $entryNode->nodeAggregateId,
-                FindDescendantNodesFilter::nodeTypeConstraints(
-                    NodeTypeConstraints::create(
+                FindDescendantNodesFilter::create(
+                    nodeTypeConstraints: NodeTypeConstraints::create(
                         NodeTypeNames::fromStringArray($nodeTypes),
                         NodeTypeNames::createEmpty()
-                    )
-                )->withSearchTerm($searchTerm)
+                    ),
+                    searchTerm: $searchTerm,
+                )
             ) : [];
         } else {
             if (!empty($searchTerm)) {
@@ -441,7 +442,7 @@ class NodesController extends ActionController
         foreach (
             $sourceSubgraph->findChildNodes(
                 $parentNodeId,
-                FindChildNodesFilter::nodeTypeConstraints($constraints)
+                FindChildNodesFilter::create(nodeTypeConstraints: $constraints)
             ) as $childNode
         ) {
             if ($childNode->classification->isRegular()) {

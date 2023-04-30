@@ -57,6 +57,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -110,9 +111,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilder = $this->buildChildNodesQuery($parentNodeAggregateId, $filter);
         if ($filter->pagination !== null) {
-            $queryBuilder
-                ->setMaxResults($filter->pagination->limit)
-                ->setFirstResult($filter->pagination->offset);
+            $this->applyPagination($queryBuilder, $filter->pagination);
         }
         if ($filter->ordering !== null) {
             $this->applyOrdering($queryBuilder, $filter->ordering);
@@ -130,10 +129,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findReferences(NodeAggregateId $nodeAggregateId, FindReferencesFilter $filter): References
     {
         $queryBuilder = $this->buildReferencesQuery(false, $nodeAggregateId, $filter);
-        if ($filter->referenceName === null) {
-            $queryBuilder->addOrderBy('r.name');
-        }
-        $queryBuilder->addOrderBy('r.position');
         return $this->fetchReferences($queryBuilder);
     }
 
@@ -145,11 +140,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findBackReferences(NodeAggregateId $nodeAggregateId, FindBackReferencesFilter $filter): References
     {
         $queryBuilder = $this->buildReferencesQuery(true, $nodeAggregateId, $filter);
-        if ($filter->referenceName === null) {
-            $queryBuilder->addOrderBy('r.name');
-        }
-        $queryBuilder->addOrderBy('r.position');
-        $queryBuilder->addOrderBy('sn.nodeaggregateid');
         return $this->fetchReferences($queryBuilder);
     }
 
@@ -221,13 +211,13 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findSucceedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindSucceedingSiblingNodesFilter $filter): Nodes
     {
-        $queryBuilder = $this->buildSiblingsQuery(false, $siblingNodeAggregateId, $filter->nodeTypeConstraints, $filter->pagination);
+        $queryBuilder = $this->buildSiblingsQuery(false, $siblingNodeAggregateId, $filter);
         return $this->fetchNodes($queryBuilder);
     }
 
     public function findPrecedingSiblingNodes(NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter $filter): Nodes
     {
-        $queryBuilder = $this->buildSiblingsQuery(true, $siblingNodeAggregateId, $filter->nodeTypeConstraints, $filter->pagination);
+        $queryBuilder = $this->buildSiblingsQuery(true, $siblingNodeAggregateId, $filter);
         return $this->fetchNodes($queryBuilder);
     }
 
@@ -320,6 +310,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
         ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
         if ($filter->ordering !== null) {
             $this->applyOrdering($queryBuilderCte, $filter->ordering);
+        }
+        if ($filter->pagination !== null) {
+            $this->applyPagination($queryBuilderCte, $filter->pagination);
         }
         $queryBuilderCte->addOrderBy('level')->addOrderBy('position');
         $nodeRows = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
@@ -419,30 +412,35 @@ final class ContentSubgraph implements ContentSubgraphInterface
         }
     }
 
-    private function addPropertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue): void
+    private function addSearchTermConstraints(QueryBuilder $queryBuilder, SearchTerm $searchTerm, string $nodeTableAlias = 'n'): void
     {
-        $queryBuilder->andWhere($this->propertyValueConstraints($queryBuilder, $propertyValue));
+        $queryBuilder->andWhere('JSON_SEARCH(' . $nodeTableAlias . '.properties, "one", :searchTermPattern, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPattern', '%' . $searchTerm->term . '%');
     }
 
-    private function propertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue): string
+    private function addPropertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias = 'n'): void
+    {
+        $queryBuilder->andWhere($this->propertyValueConstraints($queryBuilder, $propertyValue, $nodeTableAlias));
+    }
+
+    private function propertyValueConstraints(QueryBuilder $queryBuilder, PropertyValueCriteriaInterface $propertyValue, string $nodeTableAlias): string
     {
         return match ($propertyValue::class) {
-            AndCriteria::class => (string)$queryBuilder->expr()->and($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2)),
-            NegateCriteria::class => 'NOT (' . $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria) . ')',
-            OrCriteria::class => (string)$queryBuilder->expr()->or($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2)),
-            PropertyValueContains::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value . '%'),
-            PropertyValueEndsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value),
-            PropertyValueEquals::class => is_string($propertyValue->value) ? $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value) : $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '='),
-            PropertyValueGreaterThan::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '>'),
-            PropertyValueGreaterThanOrEqual::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '>='),
-            PropertyValueLessThan::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '<'),
-            PropertyValueLessThanOrEqual::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '<='),
-            PropertyValueStartsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value . '%'),
+            AndCriteria::class => (string)$queryBuilder->expr()->and($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTableAlias), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTableAlias)),
+            NegateCriteria::class => 'NOT (' . $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria, $nodeTableAlias) . ')',
+            OrCriteria::class => (string)$queryBuilder->expr()->or($this->propertyValueConstraints($queryBuilder, $propertyValue->criteria1, $nodeTableAlias), $this->propertyValueConstraints($queryBuilder, $propertyValue->criteria2, $nodeTableAlias)),
+            PropertyValueContains::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value . '%', $nodeTableAlias),
+            PropertyValueEndsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, '%' . $propertyValue->value, $nodeTableAlias),
+            PropertyValueEquals::class => is_string($propertyValue->value) ? $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, $nodeTableAlias) : $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '=', $nodeTableAlias),
+            PropertyValueGreaterThan::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '>', $nodeTableAlias),
+            PropertyValueGreaterThanOrEqual::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '>=', $nodeTableAlias),
+            PropertyValueLessThan::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '<', $nodeTableAlias),
+            PropertyValueLessThanOrEqual::class => $this->comparePropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value, '<=', $nodeTableAlias),
+            PropertyValueStartsWith::class => $this->searchPropertyValueStatement($queryBuilder, $propertyValue->propertyName, $propertyValue->value . '%', $nodeTableAlias),
             default => throw new \InvalidArgumentException(sprintf('Invalid/unsupported property value criteria "%s"', get_debug_type($propertyValue)), 1679561062),
         };
     }
 
-    private function comparePropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|int|float|bool $value, string $operator): string
+    private function comparePropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|int|float|bool $value, string $operator, string $nodeTableAlias): string
     {
         $paramName = $this->createUniqueParameterName();
         $paramType = match (gettype($value)) {
@@ -451,20 +449,20 @@ final class ContentSubgraph implements ContentSubgraphInterface
             default => ParameterType::STRING,
         };
         $queryBuilder->setParameter($paramName, $value, $paramType);
-        return  $this->extractPropertyValue($propertyName) . ' ' . $operator . ' :' . $paramName;
+        return  $this->extractPropertyValue($propertyName, $nodeTableAlias) . ' ' . $operator . ' :' . $paramName;
     }
 
-    private function extractPropertyValue(PropertyName $propertyName): string
+    private function extractPropertyValue(PropertyName $propertyName, string $nodeTableAlias): string
     {
         try {
             $escapedPropertyName = addslashes(json_encode($propertyName->value, JSON_THROW_ON_ERROR));
         } catch (\JsonException $e) {
             throw new \RuntimeException(sprintf('Failed to escape property name: %s', $e->getMessage()), 1679394579, $e);
         }
-        return 'JSON_EXTRACT(n.properties, \'$.' . $escapedPropertyName . '.value\')';
+        return 'JSON_EXTRACT(' . $nodeTableAlias . '.properties, \'$.' . $escapedPropertyName . '.value\')';
     }
 
-    private function searchPropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|bool|int|float $value): string
+    private function searchPropertyValueStatement(QueryBuilder $queryBuilder, PropertyName $propertyName, string|bool|int|float $value, string $nodeTableAlias): string
     {
         try {
             $escapedPropertyName = addslashes(json_encode($propertyName->value, JSON_THROW_ON_ERROR));
@@ -472,11 +470,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             throw new \RuntimeException(sprintf('Failed to escape property name: %s', $e->getMessage()), 1679394579, $e);
         }
         if (is_bool($value)) {
-            return 'JSON_SEARCH(n.properties, \'one\', \'' . ($value ? 'true' : 'false') . '\', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+            return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', \'' . ($value ? 'true' : 'false') . '\', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
         }
         $paramName = $this->createUniqueParameterName();
         $queryBuilder->setParameter($paramName, $value);
-        return 'JSON_SEARCH(n.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
+        return 'JSON_SEARCH(' . $nodeTableAlias . '.properties, \'one\', :' . $paramName . ', NULL, \'$.' . $escapedPropertyName . '.value\') IS NOT NULL';
     }
 
     private function buildChildNodesQuery(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter|CountChildNodesFilter $filter): QueryBuilder
@@ -491,6 +489,9 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
         if ($filter->nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints);
+        }
+        if ($filter->searchTerm !== null) {
+            $this->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
         }
         if ($filter->propertyValue !== null) {
             $this->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
@@ -517,13 +518,43 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('sh.contentstreamid = :contentStreamId');
         $this->addRestrictionRelationConstraints($queryBuilder, 'dn', 'dh');
         $this->addRestrictionRelationConstraints($queryBuilder, 'sn', 'sh');
+        if ($filter->nodeTypeConstraints !== null) {
+            $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints, "{$destinationTablePrefix}n");
+        }
+        if ($filter->nodeSearchTerm !== null) {
+            $this->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "{$destinationTablePrefix}n");
+        }
+        if ($filter->nodePropertyValue !== null) {
+            $this->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "{$destinationTablePrefix}n");
+        }
+        if ($filter->referenceSearchTerm !== null) {
+            $this->addSearchTermConstraints($queryBuilder, $filter->referenceSearchTerm, 'r');
+        }
+        if ($filter->referencePropertyValue !== null) {
+            $this->addPropertyValueConstraints($queryBuilder, $filter->referencePropertyValue, 'r');
+        }
+        if ($filter->nodePropertyValue !== null) {
+            $this->addPropertyValueConstraints($queryBuilder, $filter->nodePropertyValue, "{$destinationTablePrefix}n");
+        }
         if ($filter->referenceName !== null) {
             $queryBuilder->andWhere('r.name = :referenceName')->setParameter('referenceName', $filter->referenceName->value);
+        }
+        if ($filter instanceof FindReferencesFilter || $filter instanceof FindBackReferencesFilter) {
+            if ($filter->ordering !== null) {
+                $this->applyOrdering($queryBuilder, $filter->ordering, "{$destinationTablePrefix}n");
+            } elseif ($filter->referenceName === null) {
+                $queryBuilder->addOrderBy('r.name');
+            }
+            $queryBuilder->addOrderBy('r.position');
+            $queryBuilder->addOrderBy('sn.nodeaggregateid');
+            if ($filter->pagination !== null) {
+                $this->applyPagination($queryBuilder, $filter->pagination);
+            }
         }
         return $queryBuilder;
     }
 
-    private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, ?NodeTypeConstraints $nodeTypeConstraints, ?Pagination $pagination): QueryBuilder
+    private function buildSiblingsQuery(bool $preceding, NodeAggregateId $siblingNodeAggregateId, FindPrecedingSiblingNodesFilter|FindSucceedingSiblingNodesFilter $filter): QueryBuilder
     {
         $parentNodeAnchorSubQuery = $this->createQueryBuilder()
             ->select('sh.parentnodeanchor')
@@ -553,13 +584,17 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
 
         $this->addRestrictionRelationConstraints($queryBuilder);
-        if ($nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilder, $nodeTypeConstraints);
+        if ($filter->nodeTypeConstraints !== null) {
+            $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints);
         }
-        if ($pagination !== null) {
-            $queryBuilder
-                ->setMaxResults($pagination->limit)
-                ->setFirstResult($pagination->offset);
+        if ($filter->searchTerm !== null) {
+            $this->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
+        }
+        if ($filter->propertyValue !== null) {
+            $this->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
+        }
+        if ($filter->pagination !== null) {
+            $this->applyPagination($queryBuilder, $filter->pagination);
         }
         return $queryBuilder;
     }
@@ -603,7 +638,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints);
         }
         if ($filter->searchTerm !== null) {
-            $queryBuilderCte->andWhere('JSON_SEARCH(properties, "one", :searchTermPrefix, NULL, "$.*.value") IS NOT NULL')->setParameter('searchTermPrefix', $filter->searchTerm->term . '%');
+            $this->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm);
         }
         if ($filter->propertyValue !== null) {
             $this->addPropertyValueConstraints($queryBuilderCte, $filter->propertyValue);
@@ -611,7 +646,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
 
-    private function applyOrdering(QueryBuilder $queryBuilder, Ordering $ordering): void
+    private function applyOrdering(QueryBuilder $queryBuilder, Ordering $ordering, string $nodeTableAlias = 'n'): void
     {
         foreach ($ordering as $orderingField) {
             $order = match ($orderingField->direction) {
@@ -619,7 +654,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 OrderingDirection::DESCENDING => 'DESC',
             };
             if ($orderingField->field instanceof PropertyName) {
-                $queryBuilder->addOrderBy($this->extractPropertyValue($orderingField->field), $order);
+                $queryBuilder->addOrderBy($this->extractPropertyValue($orderingField->field, $nodeTableAlias), $order);
             } else {
                 $timestampColumnName = match ($orderingField->field) {
                     TimestampField::CREATED => 'created',
@@ -627,9 +662,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
                     TimestampField::LAST_MODIFIED => 'lastmodified',
                     TimestampField::ORIGINAL_LAST_MODIFIED => 'originallastmodified',
                 };
-                $queryBuilder->addOrderBy('n.' . $timestampColumnName, $order);
+                $queryBuilder->addOrderBy($nodeTableAlias . '.' . $timestampColumnName, $order);
             }
         }
+    }
+
+    private function applyPagination(QueryBuilder $queryBuilder, Pagination $pagination): void
+    {
+        $queryBuilder
+            ->setMaxResults($pagination->limit)
+            ->setFirstResult($pagination->offset);
     }
 
     /**

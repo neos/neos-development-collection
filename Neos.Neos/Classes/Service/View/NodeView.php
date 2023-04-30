@@ -267,7 +267,7 @@ class NodeView extends JsonView
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
 
         $filter = $nodeTypeFilter
-            ? FindChildNodesFilter::nodeTypeConstraints($nodeTypeFilter)
+            ? FindChildNodesFilter::create(nodeTypeConstraints: $nodeTypeFilter)
             : FindChildNodesFilter::create();
         foreach ($subgraph->findChildNodes($node->nodeAggregateId, $filter) as $childNode) {
             if (

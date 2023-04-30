@@ -12,7 +12,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
  *
  * Example:
  *
- * FindRootNodeAggregatesFilter::create()->with(nodeTypeName: $nodeTypeName);
+ * FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName);
  *
  * @api for the factory methods; NOT for the inner state.
  */
@@ -26,14 +26,19 @@ final class FindRootNodeAggregatesFilter
     ) {
     }
 
-    public static function create(): self
-    {
-        return new self(null);
-    }
-
-    public static function nodeTypeName(NodeTypeName $nodeTypeName): self
-    {
-        return self::create()->with(nodeTypeName: $nodeTypeName);
+    /**
+     * Creates an instance with the specified filter options
+     *
+     * Note: The signature of this method might be extended in the future, so it should always be used with named arguments
+     * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+     */
+    public static function create(
+        NodeTypeName|string $nodeTypeName = null,
+    ): self {
+        if (is_string($nodeTypeName)) {
+            $nodeTypeName = NodeTypeName::fromString($nodeTypeName);
+        }
+        return new self($nodeTypeName);
     }
 
     /**
@@ -45,7 +50,7 @@ final class FindRootNodeAggregatesFilter
     public function with(
         NodeTypeName $nodeTypeName = null,
     ): self {
-        return new self(
+        return self::create(
             $nodeTypeName ?? $this->nodeTypeName,
         );
     }

@@ -1,6 +1,6 @@
 @contentrepository @adapters=DoctrineDBAL
   # TODO implement for Postgres
-Feature: Find nodes using the findChildNodes query
+Feature: Find and count nodes using the findChildNodes and countChildNodes queries
 
   Background:
     Given the current date and time is "2023-03-16T12:00:00+01:00"
@@ -110,6 +110,10 @@ Feature: Find nodes using the findChildNodes query
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:AbstractPage,!Neos.ContentRepository.Testing:SomeMixin"}' I expect the nodes "terms,a,b" to be returned
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExistingNodeType"}' I expect no nodes to be returned
 
+     # Child nodes filtered by search term
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "brown"}' I expect the nodes "a2a1,a2a4,a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"searchTerm": "bear", "pagination": {"limit": 3, "offset": 1}}' I expect the nodes "a2a5" to be returned and the total count to be 2
+
      # Child nodes paginated
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"limit": 3}}' I expect the nodes "terms,contact,a" to be returned and the total count to be 4
     When I execute the findChildNodes query for parent node aggregate id "home" and filter '{"pagination": {"limit": 2, "offset": 2}}' I expect the nodes "a,b" to be returned and the total count to be 4
@@ -137,3 +141,4 @@ Feature: Find nodes using the findChildNodes query
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "propertyName", "field": "dateProperty", "direction": "ASCENDING"}]}' I expect the nodes "a2a4,a2a5,a2a2,a2a1" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "CREATED", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "a2a5,a2a1,a2a2,a2a4" to be returned
+
