@@ -51,8 +51,10 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('created', Types::DATETIME_IMMUTABLE)
+            ->setDefault('CURRENT_TIMESTAMP')
             ->setNotnull(true);
         $table->addColumn('originalcreated', Types::DATETIME_IMMUTABLE)
+            ->setDefault('CURRENT_TIMESTAMP')
             ->setNotnull(true);
         $table->addColumn('lastmodified', Types::DATETIME_IMMUTABLE)
             ->setNotnull(false)
