@@ -121,7 +121,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
         try {
             $contentStreamCreationCommitResult = $this->eventStore->commit($contentStreamStreamName, $events, ExpectedVersion::NO_STREAM());
         } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $this->contentStreamId->value));
+            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists (1)', $this->contentStreamId->value));
         }
 
         $workspaceName = WorkspaceName::forLive();
@@ -139,14 +139,13 @@ final class EventStoreImportProcessor implements ProcessorInterface
         try {
             $this->eventStore->commit($workspaceStreamName, $events, ExpectedVersion::NO_STREAM());
         } catch (ConcurrencyException $e) {
-            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists', $workspaceStreamName->value));
+            return ProcessorResult::error(sprintf('Failed to publish workspace events because the event stream "%s" already exists (2)', $workspaceStreamName->value));
         }
 
         try {
             $this->eventStore->commit($contentStreamStreamName, Events::fromArray($domainEvents), ExpectedVersion::fromVersion($contentStreamCreationCommitResult->highestCommittedVersion));
         } catch (ConcurrencyException $e) {
-            throw $e;
-            return ProcessorResult::error(sprintf('Failed to publish %d events because the event stream "%s" already exists', count($domainEvents), $contentStreamStreamName->value));
+            return ProcessorResult::error(sprintf('Failed to publish %d events because the event stream "%s" already exists (3)', count($domainEvents), $contentStreamStreamName->value));
         }
         return ProcessorResult::success(sprintf('Imported %d event%s into stream "%s"', count($domainEvents), count($domainEvents) === 1 ? '' : 's', $contentStreamStreamName->value));
     }
