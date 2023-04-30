@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
  * CountBackReferencesFilter::fromFindBackReferencesFilter($filter);
  *
  * NOTE:
- * "nodeSearchTerm", "nodePropertyValue" and "ordering" are applied for the properties of the target node
+ * "nodeSearchTerm" and "nodePropertyValue" are applied for the properties of the target node
  * "referenceSearchTerm" and "referencePropertyValue" are applied to the properties of the reference itself
  *
  * @api for the factory methods; NOT for the inner state.
