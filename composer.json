@@ -63,7 +63,6 @@
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/escr-asset-usage": "self.version",
-        "neos/eventsourcedcontentrepository-legacyapi": "self.version",
         "neos/event-sourced-neos-adjustments": "self.version",
         "neos/fusion-afx": "self.version",
         "neos/fusion": "self.version",
@@ -90,7 +89,7 @@
         "neos/redirecthandler-neosadapter": "Adds automatic redirects for moved/renamed pages"
     },
     "scripts": {
-        "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedContentRepository.LegacyApi/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
+        "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.Core/Classes ./Neos.EventSourcedNeosAdjustments/Classes ./Neos.Neos/Classes",
         "lint:phpcs": [
             "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength"
         ],
@@ -166,9 +165,6 @@
             ],
             "Neos\\Diff\\": [
                 "Neos.Diff/Classes"
-            ],
-            "Neos\\EventSourcedContentRepository\\LegacyApi\\": [
-                "Neos.EventSourcedContentRepository.LegacyApi/Classes"
             ],
             "Neos\\EventSourcedNeosAdjustments\\": [
                 "Neos.EventSourcedNeosAdjustments/Classes"
@@ -254,9 +250,6 @@
             ],
             "Neos\\ContentRepositoryRegistry\\Tests\\": [
                 "Neos.ContentRepositoryRegistry/Tests"
-            ],
-            "Neos\\EventSourcedContentRepository\\LegacyApi\\Tests\\": [
-                "Neos.EventSourcedContentRepository.LegacyApi/Tests"
             ],
             "Neos\\Fusion\\Afx\\Tests\\": [
                 "Neos.Fusion.Afx/Tests"
