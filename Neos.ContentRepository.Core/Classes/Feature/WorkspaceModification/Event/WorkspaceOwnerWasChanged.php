@@ -25,7 +25,7 @@ final class WorkspaceOwnerWasChanged implements EventInterface
     {
         return new self(
             WorkspaceName::fromString($values['workspaceName']),
-            $values['newWorkspaceOwner'],
+            $values['newWorkspaceOwner'] ?? null,
         );
     }
 
