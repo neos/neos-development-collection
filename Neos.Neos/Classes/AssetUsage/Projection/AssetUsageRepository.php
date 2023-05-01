@@ -72,7 +72,8 @@ final class AssetUsageRepository
         $table->addColumn('origindimensionspacepoint', Types::TEXT)
             ->setNotnull(false);
         $table->addColumn('origindimensionspacepointhash', Types::STRING)
-            ->setLength(255)
+            // this is an MD5(...), so 32 chars long
+            ->setLength(32)
             ->setNotnull(true)
             ->setDefault('');
         $table->addColumn('propertyname', Types::STRING)
