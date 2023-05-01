@@ -19,6 +19,7 @@ use Neos\Flow\Aop\JoinPointInterface;
 use Neos\Flow\Utility\Environment;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteNodeName;
 
 /**
  * Aspect to memoize values from SiteRepository without the overhead of a query cache
@@ -45,6 +46,11 @@ class SiteRepositoryCachingAspect
     protected $domainForActiveRequest = false;
 
     /**
+     * @var array<string,mixed>
+     */
+    private array $byNodeNameCache = [];
+
+    /**
      * @Flow\Around("method(Neos\Neos\Domain\Repository\SiteRepository->findFirstOnline())")
      * @param JoinPointInterface $joinPoint The current join point
      * @return mixed
@@ -56,6 +62,26 @@ class SiteRepositoryCachingAspect
             $this->firstOnlineSite = $site;
         }
         return $this->firstOnlineSite;
+    }
+
+    /**
+     * @Flow\Around("method(Neos\Neos\Domain\Repository\SiteRepository->findOneByNodeName())")
+     * @param JoinPointInterface $joinPoint The current join point
+     * @return mixed
+     */
+    public function cacheFindOneByNodeName(JoinPointInterface $joinPoint)
+    {
+        $nodeName = $joinPoint->getMethodArgument('nodeName');
+        if ($nodeName instanceof SiteNodeName) {
+            $nodeName = $nodeName->value;
+        }
+        if (!array_key_exists($nodeName, $this->byNodeNameCache) || $this->environment->getContext()->isTesting()) {
+            $site = $joinPoint->getAdviceChain()->proceed($joinPoint);
+            // make phpstan happy
+            assert(is_string($nodeName));
+            $this->byNodeNameCache[$nodeName] = $site;
+        }
+        return $this->byNodeNameCache[$nodeName];
     }
 
     /**

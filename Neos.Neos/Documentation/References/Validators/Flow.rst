@@ -3,7 +3,7 @@
 Flow Validator Reference
 ========================
 
-This reference was automatically generated from code on 2023-04-20
+This reference was automatically generated from code on 2023-05-01
 
 
 .. _`Flow Validator Reference: AggregateBoundaryValidator`:
@@ -371,7 +371,7 @@ Is valid if the given value is a valid "locale identifier".
 MediaTypeValidator
 ------------------
 
-The given $value is matches the defined medis types
+The given $value is matches the defined media types
 Note: a value of NULL or empty string ('') are considered valid
 
 The given $value is valid media type matches one of the allowedTypes and

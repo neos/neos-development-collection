@@ -86,7 +86,8 @@ Feature: Find nodes using the findNodeByPath query
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findNodeByPath queries without result
+  Scenario:
+    # findNodeByPath queries without result
     When I execute the findNodeByPath query for path "non-existing" and starting node aggregate id "non-existing" I expect no node to be returned
     When I execute the findNodeByPath query for path "/home" and starting node aggregate id "non-existing" I expect no node to be returned
     When I execute the findNodeByPath query for path "a/a1/a2a" and starting node aggregate id "home" I expect no node to be returned
@@ -94,7 +95,7 @@ Feature: Find nodes using the findNodeByPath query
     When I execute the findNodeByPath query for path "a/a2/a2a/a2a2" and starting node aggregate id "home" I expect no node to be returned
     When I execute the findNodeByPath query for path "a/a2/a2a/a2a2/a2a2a" and starting node aggregate id "home" I expect no node to be returned
 
-  Scenario: findNodeByPath queries with result
+    # findNodeByPath queries with result
     When I execute the findNodeByPath query for path "/home" and starting node aggregate id "lady-eleonode-rootford" I expect the node "home" to be returned
     When I execute the findNodeByPath query for path "a" and starting node aggregate id "home" I expect the node "a" to be returned
     When I execute the findNodeByPath query for path "/a/a1" and starting node aggregate id "home" I expect the node "a1" to be returned

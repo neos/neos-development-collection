@@ -104,7 +104,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             ->setLength(255)
             ->setNotnull(false);
         $workspaceTable->addColumn('currentcontentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(false);
         $workspaceTable->addColumn('status', Types::STRING)
             ->setLength(50)

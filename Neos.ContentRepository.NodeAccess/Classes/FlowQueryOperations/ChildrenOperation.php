@@ -163,12 +163,11 @@ class ChildrenOperation extends AbstractOperation
                     }, $instanceOfFilters);
                     /** @var Node $contextNode */
                     foreach ($flowQuery->getContext() as $contextNode) {
-                        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->subgraphIdentity->contentRepositoryId);
                         $childNodes = $this->contentRepositoryRegistry->subgraphForNode($contextNode)
                             ->findChildNodes(
                             $contextNode->nodeAggregateId,
-                            FindChildNodesFilter::nodeTypeConstraints(
-                                NodeTypeConstraints::create(
+                            FindChildNodesFilter::create(
+                                nodeTypeConstraints: NodeTypeConstraints::create(
                                     NodeTypeNames::fromStringArray($allowedNodeTypes),
                                     NodeTypeNames::createEmpty()
                                 )

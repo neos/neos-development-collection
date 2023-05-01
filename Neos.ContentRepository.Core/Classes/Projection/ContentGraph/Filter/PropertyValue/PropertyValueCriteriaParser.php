@@ -88,7 +88,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
  * Example:
  *
  * $propertyValueCriteria = PropertyValueCriteriaParser::parse(prop1 ^= "foo" AND prop $= "bar");
- * $contentSubgraph->findChildNodes($parentNodeId, FindChildNodesFilter::create()->with(propertyValue: $propertyValueCriteria));
+ * $contentSubgraph->findChildNodes($parentNodeId, FindChildNodesFilter::create(propertyValue: $propertyValueCriteria));
  *
  * @see ContentSubgraphInterface
  * @api

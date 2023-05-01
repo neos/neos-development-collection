@@ -1,7 +1,0 @@
--
-  requestFilter: 'isPackage("Neos.Neos.Ui") && isController("Backend")'
-  viewObjectName: 'Neos\Fusion\View\FusionView'
-  options:
-    fusionPathPatterns:
-      - 'resource://Neos.Neos.Ui/Private/Fusion/Backend'
-      - 'resource://Neos.EventSourcedNeosAdjustments/Private/Fusion/Backend'

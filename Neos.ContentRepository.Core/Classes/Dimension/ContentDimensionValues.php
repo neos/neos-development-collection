@@ -20,7 +20,7 @@ use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInv
  * A collection of content dimension values, indexed by dimension identifier
  *
  * @implements \IteratorAggregate<string,ContentDimensionValue>
- * @internal
+ * @api because used as return value of Dimension Eel helper
  */
 final class ContentDimensionValues implements \IteratorAggregate
 {

@@ -70,10 +70,11 @@ Feature: Find nodes using the countNodes query
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
 
-  Scenario: count all nodes
+  Scenario:
+    # count all nodes
     When I execute the countNodes query I expect the result to be 12
 
-  Scenario: count all nodes with disabled nodes
+    # count all nodes with disabled nodes
     When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a1"       |

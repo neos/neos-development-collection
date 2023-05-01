@@ -10,13 +10,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     'Neos.Neos:Sites': {}
     'Neos.Neos:Document': {}
     'Neos.Neos:Content': {}
-    'Neos.EventSourcedNeosAdjustments:Test.Routing.Page':
+    'Neos.Neos:Test.Routing.Page':
       superTypes:
         'Neos.Neos:Document': true
       properties:
         uriPathSegment:
           type: string
-    'Neos.EventSourcedNeosAdjustments:Test.Routing.Content':
+    'Neos.Neos:Test.Routing.Content':
       superTypes:
         'Neos.Neos:Content': true
       properties:
@@ -47,12 +47,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
-      | shernode-homes         | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
-      | sir-david-nodenborough | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
-      | duke-of-contentshire   | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
-      | earl-o-documentbourgh  | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
-      | leaf-mc-node           | earl-o-documentbourgh  | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "leaf"}               | node5    |
-      | nody-mc-nodeface       | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node6    |
+      | shernode-homes         | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
+      | sir-david-nodenborough | shernode-homes         | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
+      | duke-of-contentshire   | sir-david-nodenborough | Neos.Neos:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
+      | earl-o-documentbourgh  | sir-david-nodenborough | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "earl-document"}      | node4    |
+      | leaf-mc-node           | earl-o-documentbourgh  | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "leaf"}               | node5    |
+      | nody-mc-nodeface       | shernode-homes         | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node6    |
     And A site exists for node name "node1"
     And the sites configuration is:
     """

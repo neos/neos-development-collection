@@ -123,7 +123,7 @@ final class ContentGraph implements ContentGraphInterface
     ): NodeAggregate {
         $rootNodeAggregates = $this->findRootNodeAggregates(
             $contentStreamId,
-            FindRootNodeAggregatesFilter::nodeTypeName($nodeTypeName)
+            FindRootNodeAggregatesFilter::create(nodeTypeName: $nodeTypeName)
         );
 
         if ($rootNodeAggregates->count() > 1) {

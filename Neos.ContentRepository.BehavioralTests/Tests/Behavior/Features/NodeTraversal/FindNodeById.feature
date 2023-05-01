@@ -85,10 +85,11 @@ Feature: Find nodes using the findNodeById query
       | nodeVariantSelectionStrategy | "allVariants"      |
     And the graph projection is fully up to date
 
-  Scenario: findNodeById queries without result
+  Scenario:
+    # findNodeById queries without result
     When I execute the findNodeById query for node aggregate id "non-existing" I expect no node to be returned
     When I execute the findNodeById query for node aggregate id "a2a1" I expect no node to be returned
 
-  Scenario: findNodeById queries with result
+    # findNodeById queries with result
     When I execute the findNodeById query for node aggregate id "home" I expect the node "home" to be returned
     When I execute the findNodeById query for node aggregate id "a2a2" I expect the node "a2a2" to be returned

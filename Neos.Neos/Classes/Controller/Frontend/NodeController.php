@@ -323,8 +323,7 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
-            FindSubtreeFilter::nodeTypeConstraints('!Neos.Neos:Document')
-                ->withMaximumLevels(20)
+            FindSubtreeFilter::create(nodeTypeConstraints: '!Neos.Neos:Document', maximumLevels: 20)
         );
         if ($subtree === null) {
             return;

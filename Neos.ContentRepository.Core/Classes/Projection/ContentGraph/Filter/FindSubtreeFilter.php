@@ -11,7 +11,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
  *
  * Example:
  *
- * FindSubtreeFilter::create()->with(nodeTypeConstraint: 'Some.Included:NodeType,!Some.Excluded:NodeType');
+ * FindSubtreeFilter::create(nodeTypeConstraints: 'Some.Included:NodeType,!Some.Excluded:NodeType');
  *
  * @api for the factory methods; NOT for the inner state.
  */
@@ -26,14 +26,20 @@ final class FindSubtreeFilter
     ) {
     }
 
-    public static function create(): self
-    {
-        return new self(null, null);
-    }
-
-    public static function nodeTypeConstraints(NodeTypeConstraints|string $nodeTypeConstraints): self
-    {
-        return self::create()->with(nodeTypeConstraints: $nodeTypeConstraints);
+    /**
+     * Creates an instance with the specified filter options
+     *
+     * Note: The signature of this method might be extended in the future, so it should always be used with named arguments
+     * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
+     */
+    public static function create(
+        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        int $maximumLevels = null,
+    ): self {
+        if (is_string($nodeTypeConstraints)) {
+            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
+        }
+        return new self($nodeTypeConstraints, $maximumLevels);
     }
 
     /**
@@ -46,17 +52,9 @@ final class FindSubtreeFilter
         NodeTypeConstraints|string $nodeTypeConstraints = null,
         int $maximumLevels = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
-        }
-        return new self(
+        return self::create(
             $nodeTypeConstraints ?? $this->nodeTypeConstraints,
             $maximumLevels ?? $this->maximumLevels,
         );
-    }
-
-    public function withMaximumLevels(int $maximumLevels): self
-    {
-        return $this->with(maximumLevels: $maximumLevels);
     }
 }

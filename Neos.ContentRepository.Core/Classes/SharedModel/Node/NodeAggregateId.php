@@ -26,7 +26,7 @@ final class NodeAggregateId implements \JsonSerializable
     /**
      * A preg pattern to match against node aggregate identifiers
      */
-    public const PATTERN = '/^([a-z0-9\-]{1,255})$/';
+    public const PATTERN = '/^([a-z0-9\-]{1,64})$/';
 
     private function __construct(
         public readonly string $value

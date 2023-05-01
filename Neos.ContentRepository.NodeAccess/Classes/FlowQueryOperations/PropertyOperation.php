@@ -108,7 +108,7 @@ class PropertyOperation extends AbstractOperation
             return (
                 $subgraph->findReferences(
                     $element->nodeAggregateId,
-                    FindReferencesFilter::referenceName($propertyName)
+                    FindReferencesFilter::create(referenceName: $propertyName)
                 )[0] ?? null
             )?->node;
         }
@@ -117,7 +117,7 @@ class PropertyOperation extends AbstractOperation
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return $subgraph->findReferences(
                 $element->nodeAggregateId,
-                FindReferencesFilter::referenceName($propertyName)
+                FindReferencesFilter::create(referenceName: $propertyName)
             )->getNodes();
         }
 

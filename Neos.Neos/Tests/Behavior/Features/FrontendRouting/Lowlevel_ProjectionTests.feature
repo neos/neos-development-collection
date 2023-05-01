@@ -21,10 +21,10 @@ Feature: Low level tests covering the inner behavior of the routing projection
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues           | nodeName |
-      | shernode-homes  | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | site     |
-      | a               | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "a"}         | a        |
-      | b               | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b"}         | b        |
-      | c               | shernode-homes         | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "c"}         | c        |
+      | shernode-homes  | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | site     |
+      | a               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "a"}         | a        |
+      | b               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b"}         | b        |
+      | c               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "c"}         | c        |
     And A site exists for node name "site"
     And The documenturipath projection is up to date
 
@@ -169,7 +169,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | Key                              | Value                                                |
       | contentStreamId                  | "cs-identifier"                                      |
       | nodeAggregateId                  | "b1"                                                 |
-      | nodeTypeName                     | "Neos.EventSourcedNeosAdjustments:Test.Routing.Page" |
+      | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                                                   |
       | parentNodeAggregateId            | "b"                                                  |
       | initialPropertyValues            | {"uriPathSegment": "b1"}                             |
@@ -197,7 +197,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | Key                              | Value                                                |
       | contentStreamId                  | "cs-identifier"                                      |
       | nodeAggregateId                  | "b1"                                                 |
-      | nodeTypeName                     | "Neos.EventSourcedNeosAdjustments:Test.Routing.Page" |
+      | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
       | originDimensionSpacePoint        | {}                                                   |
       | parentNodeAggregateId            | "b"                                                  |
       | initialPropertyValues            | {"uriPathSegment": "b1"}                             |
@@ -224,9 +224,9 @@ Feature: Low level tests covering the inner behavior of the routing projection
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                       | initialPropertyValues     | nodeName |
-      | b1              | b                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
-      | b2              | b                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
-      | b2a             | b2                    | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
+      | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
+      | b2              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
+      | b2a             | b2                    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
       | contentStreamId                     | "cs-identifier" |
@@ -250,9 +250,9 @@ Feature: Low level tests covering the inner behavior of the routing projection
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                       | initialPropertyValues     | nodeName |
-      | b1              | b                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
-      | b2              | b                     | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
-      | b2a             | b2                    | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
+      | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
+      | b2              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
+      | b2a             | b2                    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
       | contentStreamId                     | "cs-identifier" |

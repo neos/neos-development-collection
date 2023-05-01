@@ -1,5 +1,5 @@
-@contentrepository @adapters=DoctrineDBAL,Postgres
-Feature: Find nodes using the findSucceedingSiblingNodes query
+@contentrepository @adapters=DoctrineDBAL
+Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedingSiblingNodes queries
 
   Background:
     Given I have the following content dimensions:
@@ -86,20 +86,38 @@ Feature: Find nodes using the findSucceedingSiblingNodes query
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
-      | nodeAggregateId              | "a2a3"        |
+      | nodeAggregateId              | "a2a2"        |
       | nodeVariantSelectionStrategy | "allVariants" |
     And the graph projection is fully up to date
 
-  Scenario: findSucceedingSiblingNodes queries without results
+  Scenario:
+    # findPrecedingSiblingNodes queries without result
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "non-existing" I expect no nodes to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect no nodes to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"searchTerm": "non-existing"}' I expect no nodes to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"propertyValue": "text=\"non-existing\""}' I expect no nodes to be returned
+
+    # findPrecedingSiblingNodes queries with result
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a2a3" I expect the nodes "a2a1" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" I expect the nodes "a5,a4,a3,a2,a1" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a5,a3,a2,a1" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Page"}' I expect the nodes "a4" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"pagination": {"limit": 3, "offset": 1}}' I expect the nodes "a4,a3,a2" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:NonExisting", "pagination": {"limit": 4, "offset": 2}}' I expect the nodes "a2,a1" to be returned
+    When I execute the findPrecedingSiblingNodes query for sibling node aggregate id "a6" and filter '{"propertyValue": "text > \"a3\""}' I expect the nodes "a5,a4" to be returned
+
+    # findSucceedingSiblingNodes queries without results
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "non-existing" I expect no nodes to be returned
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect no nodes to be returned
-    # node "a2a3" is disabled and should not be returned
-    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a2a2" I expect no nodes to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"searchTerm": "non-existing"}' I expect no nodes to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"propertyValue": "text=\"non-existing\""}' I expect no nodes to be returned
 
-  Scenario: findSucceedingSiblingNodes queries with results
+    # findSucceedingSiblingNodes queries with results
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a2a1" I expect the nodes "a2a3" to be returned
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" I expect the nodes "a2,a3,a4,a5,a6" to be returned
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2,a3,a5,a6" to be returned
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Page"}' I expect the nodes "a4" to be returned
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"pagination": {"limit": 3, "offset": 1}}' I expect the nodes "a3,a4,a5" to be returned
     When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:NonExisting", "pagination": {"limit": 4, "offset": 2}}' I expect the nodes "a5,a6" to be returned
-    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a2a1" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:NonExisting"}' I expect the nodes "a2a2" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a2a1" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:NonExisting"}' I expect the nodes "a2a3" to be returned
+    When I execute the findSucceedingSiblingNodes query for sibling node aggregate id "a1" and filter '{"propertyValue": "text < \"a4\""}' I expect the nodes "a2,a3" to be returned

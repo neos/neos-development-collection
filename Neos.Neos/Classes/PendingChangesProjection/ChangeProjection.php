@@ -106,7 +106,7 @@ class ChangeProjection implements ProjectionInterface
         $schema = new Schema();
         $changeTable = $schema->createTable($this->tableName);
         $changeTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $changeTable->addColumn('changed', Types::BOOLEAN)
             ->setNotnull(true);
@@ -114,7 +114,7 @@ class ChangeProjection implements ProjectionInterface
             ->setNotnull(true);
 
         $changeTable->addColumn('nodeAggregateId', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
         $changeTable->addColumn('originDimensionSpacePoint', Types::TEXT)
             ->setNotnull(false);

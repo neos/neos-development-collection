@@ -1,6 +1,6 @@
 @contentrepository @adapters=DoctrineDBAL
   # TODO implement for Postgres
-Feature: Find nodes using the findDescendantNodes query
+Feature: Find and count nodes using the findDescendantNodes and countDescendantNodes queries
 
   Background:
     Given the current date and time is "2023-03-16T12:00:00+01:00"
@@ -118,6 +118,7 @@ Feature: Find nodes using the findDescendantNodes query
     When I execute the findDescendantNodes query for entry node aggregate id "home" I expect the nodes "terms,contact,a,b,a1,b1,a2,a3,a2a,a2a1,a2a2,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a,b,a1,b1,a2,a3,a2a1,a2a2,a2a2b" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a2"}' I expect the nodes "a2,a2a,a2a1,a2a2,a2a2b" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"searchTerm": "a1"}' I expect the nodes "a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\""}' I expect the nodes "a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "text ^= \"a1\" OR text $= \"a1\""}' I expect the nodes "a1,a2a1" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "stringProperty *= \"späci\" OR text $= \"a1\""}' I expect the nodes "b,a1,a2a1" to be returned
@@ -134,3 +135,4 @@ Feature: Find nodes using the findDescendantNodes query
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"propertyValue": "dateProperty > \"1980-12-13\""}' I expect the nodes "a2a1,a2a2" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}]}' I expect the nodes "a2a2b,a2,a1,terms,contact,a,b,b1,a3,a2a,a2a1,a2a2" to be returned
     When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "booleanProperty", "direction": "ASCENDING"}, {"type": "timestampField", "field": "LAST_MODIFIED", "direction": "DESCENDING"}]}' I expect the nodes "terms,contact,b,a1,b1,a2,a2a,a2a1,a2a2,a3,a2a2b,a" to be returned
+    When I execute the findDescendantNodes query for entry node aggregate id "home" and filter '{"ordering": [{"type": "propertyName", "field": "integerProperty", "direction": "DESCENDING"}], "pagination": {"limit": 3, "offset": 4}}' I expect the nodes "contact,a,b" to be returned and the total count to be 12

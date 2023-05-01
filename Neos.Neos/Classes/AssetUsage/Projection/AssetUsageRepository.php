@@ -62,17 +62,18 @@ final class AssetUsageRepository
             ->setNotnull(false)
             ->setDefault(null);
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true)
             ->setDefault('');
         $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true)
             ->setDefault('');
         $table->addColumn('origindimensionspacepoint', Types::TEXT)
             ->setNotnull(false);
         $table->addColumn('origindimensionspacepointhash', Types::STRING)
-            ->setLength(255)
+            // this is an MD5(...), so 32 chars long
+            ->setLength(32)
             ->setNotnull(true)
             ->setDefault('');
         $table->addColumn('propertyname', Types::STRING)

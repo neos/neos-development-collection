@@ -18,9 +18,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
-use Neos\ContentRepository\Core\Service\ContentRepositoryBootstrapper;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory;
@@ -127,12 +127,13 @@ class CrCommandController extends CommandController
             $this->quit();
         }
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
+        // we also need to reset the projections; in order to ensure the system runs deterministically. We
+        // do this by replaying the just-truncated event stream.
+        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService->replayAllProjections();
         $this->outputLine('Truncated events');
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepositoryBootstrapper = ContentRepositoryBootstrapper::create($contentRepository);
-        $liveContentStreamId = $contentRepositoryBootstrapper->getOrCreateLiveContentStream();
-        $contentRepositoryBootstrapper->getOrCreateRootNodeAggregate($liveContentStreamId, NodeTypeNameFactory::forSites());
+        $liveContentStreamId = ContentStreamId::create();
 
         $legacyMigrationService = $this->contentRepositoryRegistry->getService(
             $contentRepositoryId,
@@ -155,7 +156,6 @@ class CrCommandController extends CommandController
         $this->outputLine();
 
         $this->outputLine('Replaying projections');
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionReplayServiceFactory);
         $projectionService->replayAllProjections();
         $this->outputLine('<success>Done</success>');
     }

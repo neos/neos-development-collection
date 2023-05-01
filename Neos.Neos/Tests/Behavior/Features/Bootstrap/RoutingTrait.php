@@ -88,7 +88,7 @@ trait RoutingTrait
         $persistenceManager = $this->getObjectManager()->get(PersistenceManagerInterface::class);
 
         $site = new Site($nodeName);
-        $site->setSiteResourcesPackageKey('Neos.EventSourcedNeosAdjustments');
+        $site->setSiteResourcesPackageKey('Neos.Neos');
         $site->setState(Site::STATE_ONLINE);
         $siteRepository->add($site);
 

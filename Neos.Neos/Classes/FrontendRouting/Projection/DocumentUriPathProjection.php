@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -51,7 +52,7 @@ use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
  */
-final class DocumentUriPathProjection implements ProjectionInterface
+final class DocumentUriPathProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     public const COLUMN_TYPES_DOCUMENT_URIS = [
         'shortcutTarget' => Types::JSON,
@@ -993,5 +994,10 @@ final class DocumentUriPathProjection implements ProjectionInterface
         NodePropertiesWereSet $event,
         EventEnvelope $eventEnvelope
     ): void {
+    }
+
+    public function markStale(): void
+    {
+        $this->getState()->disableCache();
     }
 }
