@@ -17,6 +17,7 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -87,6 +88,30 @@ final class DimensionHelper implements ProtectedContextAwareInterface
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         return $contentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority();
+    }
+
+
+    /**
+     * Find all content dimension values in content repository defined by `contentRepositoryId` or `node`.
+     *
+     * Example::
+     *
+     *     Neos.Dimension.allDimensionValues(contentRepositoryId, 'language')
+     *     Neos.Dimension.allDimensionValues(node, 'language')
+     *
+     * @param ContentRepositoryId|Node $subject Node will be used to determine `ContentRepositoryId`
+     * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
+     * @return ContentDimensionValues|null
+     */
+    public function allDimensionValues(ContentRepositoryId|Node $subject, ContentDimensionId|string $dimensionName): ?ContentDimensionValues
+    {
+        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentDimension = $contentRepository->getContentDimensionSource()->getDimension($contentDimensionId);
+
+        return $contentDimension?->values;
     }
 
     /**
