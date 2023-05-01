@@ -46,7 +46,7 @@ class SiteRepositoryCachingAspect
     protected $domainForActiveRequest = false;
 
     /**
-     * @var array<string,Site>
+     * @var array<string,mixed>
      */
     private array $byNodeNameCache = [];
 
@@ -79,7 +79,6 @@ class SiteRepositoryCachingAspect
             $site = $joinPoint->getAdviceChain()->proceed($joinPoint);
             // make phpstan happy
             assert(is_string($nodeName));
-            assert($site instanceof Site);
             $this->byNodeNameCache[$nodeName] = $site;
         }
         return $this->byNodeNameCache[$nodeName];
