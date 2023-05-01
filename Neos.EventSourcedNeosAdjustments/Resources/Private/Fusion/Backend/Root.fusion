@@ -1,3 +1,0 @@
-prototype(Neos.Neos:NodeUri) {
-    @class = 'Neos\\EventSourcedNeosAdjustments\\Fusion\\NodeUriImplementation'
-}

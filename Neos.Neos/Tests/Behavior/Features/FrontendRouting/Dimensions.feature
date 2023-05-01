@@ -24,9 +24,9 @@ Feature: Routing functionality with multiple content dimensions
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues           | nodeName |
-      | sir-david-nodenborough | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
-      | nody-mc-nodeface       | sir-david-nodenborough | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
-      | carl-destinode         | nody-mc-nodeface       | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
+      | sir-david-nodenborough | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
+      | nody-mc-nodeface       | sir-david-nodenborough | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
+      | carl-destinode         | nody-mc-nodeface       | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
     And the command CreateNodeVariant is executed with payload:
       | Key             | Value                            |
       | contentStreamId | "cs-identifier"                  |
