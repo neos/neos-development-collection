@@ -49,7 +49,7 @@ class HypergraphSchemaBuilder
         $table->addColumn('relationanchorpoint', 'hypergraphuuid')
             ->setNotnull(true);
         $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
         $table->addColumn('origindimensionspacepoint', Types::JSON)
             ->setNotnull(true);
@@ -79,7 +79,7 @@ class HypergraphSchemaBuilder
     {
         $table = $schema->createTable($this->tableNamePrefix . '_hierarchyhyperrelation');
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $table->addColumn('parentnodeanchor', 'hypergraphuuid')
             ->setNotnull(true);
@@ -112,7 +112,7 @@ class HypergraphSchemaBuilder
         $table->addColumn('properties', 'hypergraphjsonb')
             ->setNotnull(false);
         $table->addColumn('targetnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
 
         $table
@@ -125,13 +125,13 @@ class HypergraphSchemaBuilder
     {
         $table = $schema->createTable($this->tableNamePrefix . '_restrictionhyperrelation');
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('originnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
         $table->addColumn('affectednodeaggregateids', 'hypergraphvarchars')
             ->setNotnull(true);

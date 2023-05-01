@@ -96,12 +96,12 @@ class ContentStreamProjection implements ProjectionInterface
         $schema = new Schema();
         $contentStreamTable = $schema->createTable($this->tableName);
         $contentStreamTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $contentStreamTable->addColumn('version', Types::INTEGER)
             ->setNotnull(true);
         $contentStreamTable->addColumn('sourceContentStreamId', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(false);
         $contentStreamTable->addColumn('state', Types::STRING)
             ->setLength(20)

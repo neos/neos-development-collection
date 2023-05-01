@@ -35,7 +35,7 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(false);
         $table->addColumn('origindimensionspacepoint', Types::TEXT)
             ->setNotnull(false);
@@ -77,7 +77,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('position', Types::INTEGER)
             ->setNotnull(true);
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepoint', Types::TEXT)
             ->setNotnull(true);
@@ -111,7 +111,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('properties', Types::TEXT)
             ->setNotnull(false);
         $table->addColumn('destinationnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
 
         $table
@@ -122,16 +122,16 @@ class DoctrineDbalContentGraphSchemaBuilder
     {
         $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $table->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
         $table->addColumn('originnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
         $table->addColumn('affectednodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
 
         $table
