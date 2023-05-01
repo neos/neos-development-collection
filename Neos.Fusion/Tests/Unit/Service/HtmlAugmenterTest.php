@@ -342,7 +342,54 @@ class HtmlAugmenterTest extends UnitTestCase
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p class="">Array attribute</p>',
+                'expectedResult' => '<p class>Array attribute</p>',
+            ],
+
+            // https://github.com/neos/neos-development-collection/issues/3582
+            'empty string rendered as empty attribute' => [
+                'html' => '<p>text</p>',
+                'attributes' => ['data-bla' => ''],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla>text</p>',
+            ],
+
+            // https://github.com/neos/neos-development-collection/issues/4213
+            'null should not remove existing attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => null],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla>text</p>',
+            ],
+
+            'apply empty string on existing empty attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => ''],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla>text</p>',
+            ],
+
+            'apply string on existing empty attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => 'foobar'],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla="foobar">text</p>',
+            ],
+
+            'false removes attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => false],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p>text</p>',
             ]
         ];
     }
