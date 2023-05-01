@@ -69,7 +69,6 @@
         "neos/fusion": "self.version",
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
-        "neos/neos-legacyfusioncompatibility": "self.version",
         "neos/neos": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-basemixins": "self.version",
@@ -186,9 +185,6 @@
             "Neos\\Media\\": [
                 "Neos.Media/Classes"
             ],
-            "Neos\\Neos\\LegacyFusionCompatibility\\": [
-                "Neos.Neos.LegacyFusionCompatibility/Classes"
-            ],
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
             ],
@@ -270,9 +266,6 @@
             ],
             "Neos\\Media\\Tests\\": [
                 "Neos.Media/Tests"
-            ],
-            "Neos\\Neos\\LegacyFusionCompatibility\\Tests\\": [
-                "Neos.Neos.LegacyFusionCompatibility/Tests"
             ],
             "Neos\\Neos\\Tests\\": [
                 "Neos.Neos/Tests"
