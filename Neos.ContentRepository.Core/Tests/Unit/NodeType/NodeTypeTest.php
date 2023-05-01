@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Model;
+namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,25 +12,24 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Model;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
+use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the "NodeType" domain model
- *
  */
-class NodeTypeTest extends UnitTestCase
+class NodeTypeTest extends TestCase
+
 {
     /**
      * example node types
      *
-     * @var array
+     * @var array<string,mixed>
      */
-    protected $nodeTypesFixture = [
+    protected array $nodeTypesFixture = [
         'Neos.ContentRepository.Testing:ContentObject' => [
             'ui' => [
                 'label' => 'Abstract content object'
@@ -133,8 +132,8 @@ class NodeTypeTest extends UnitTestCase
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository.Testing:Text'), [], [],
             $this->getMockBuilder(NodeTypeManager::class)
-                ->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
-        self::assertSame('Neos.ContentRepository.Testing:Text', $nodeType->getName());
+                ->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
+        self::assertSame('Neos.ContentRepository.Testing:Text', $nodeType->name->value);
     }
 
     /**
@@ -145,7 +144,7 @@ class NodeTypeTest extends UnitTestCase
         $this->expectException(\InvalidArgumentException::class);
         new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo' => true], [],
             $this->getMockBuilder(NodeTypeManager::class)
-                ->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+                ->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory()
         );
     }
 
@@ -156,7 +155,7 @@ class NodeTypeTest extends UnitTestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         new NodeType(NodeTypeName::fromString('ContentRepository:Folder'), ['foo'], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
     }
 
     /**
@@ -165,12 +164,12 @@ class NodeTypeTest extends UnitTestCase
     public function nodeTypesCanHaveAnyNumberOfSuperTypes()
     {
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
 
         $timeableNodeType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:TimeableContent'),
             [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory()
         );
         $documentType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:Document'),
@@ -178,13 +177,13 @@ class NodeTypeTest extends UnitTestCase
                 'Neos.ContentRepository:Base' => $baseType,
                 'Neos.ContentRepository.Testing:TimeableContent' => $timeableNodeType,
             ],
-            [], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+            [], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory()
         );
 
         $hideableNodeType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:HideableContent'),
             [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory()
         );
         $pageType = new NodeType(
             NodeTypeName::fromString('Neos.ContentRepository.Testing:Page'),
@@ -193,7 +192,9 @@ class NodeTypeTest extends UnitTestCase
                 'Neos.ContentRepository.Testing:HideableContent' => $hideableNodeType,
                 'Neos.ContentRepository.Testing:TimeableContent' => null,
             ],
-            [], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock()
+            [],
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(),
+            new DefaultNodeLabelGeneratorFactory()
         );
 
         self::assertEquals(
@@ -219,7 +220,7 @@ class NodeTypeTest extends UnitTestCase
     public function labelIsEmptyStringByDefault()
     {
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
         self::assertSame('', $baseType->getLabel());
     }
 
@@ -229,7 +230,7 @@ class NodeTypeTest extends UnitTestCase
     public function propertiesAreEmptyArrayByDefault()
     {
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
         self::assertSame([], $baseType->getProperties());
     }
 
@@ -242,7 +243,7 @@ class NodeTypeTest extends UnitTestCase
             'someKey' => [
                 'someSubKey' => 'someValue'
             ]
-        ], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+        ], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
         self::assertTrue($nodeType->hasConfiguration('someKey.someSubKey'));
     }
 
@@ -252,7 +253,7 @@ class NodeTypeTest extends UnitTestCase
     public function hasConfigurationReturnsFalseIfSpecifiedConfigurationPathDoesNotExist()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
         self::assertFalse($nodeType->hasConfiguration('some.nonExisting.path'));
     }
 
@@ -265,7 +266,7 @@ class NodeTypeTest extends UnitTestCase
             'someKey' => [
                 'someSubKey' => 'someValue'
             ]
-        ], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+        ], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
         self::assertSame('someValue', $nodeType->getConfiguration('someKey.someSubKey'));
     }
 
@@ -275,25 +276,8 @@ class NodeTypeTest extends UnitTestCase
     public function getConfigurationReturnsNullIfTheSpecifiedPathDoesNotExist()
     {
         $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [],
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), new DefaultNodeLabelGeneratorFactory());
         self::assertNull($nodeType->getConfiguration('some.nonExisting.path'));
-    }
-
-    /**
-     * @test
-     */
-    public function defaultValuesForPropertiesHandlesDateTypes()
-    {
-        $nodeType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [
-            'properties' => [
-                'date' => [
-                    'type' => 'DateTime',
-                    'defaultValue' => '2014-09-23'
-                ]
-            ]
-        ], $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
-
-        self::assertEquals($nodeType->getDefaultValuesForProperties(), ['date' => new \DateTime('2014-09-23')]);
     }
 
     /**
@@ -398,11 +382,8 @@ class NodeTypeTest extends UnitTestCase
 
     /**
      * Return a nodetype built from the nodeTypesFixture
-     *
-     * @param string $nodeTypeName
-     * @return null|NodeType
      */
-    protected function getNodeType($nodeTypeName)
+    protected function getNodeType(string $nodeTypeName): ?NodeType
     {
         if (!isset($this->nodeTypesFixture[$nodeTypeName])) {
             return null;
@@ -416,8 +397,13 @@ class NodeTypeTest extends UnitTestCase
             }
         }
 
-        return new NodeType(NodeTypeName::fromString($nodeTypeName), $declaredSuperTypes, $configuration,
-            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(), $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+        return new NodeType(
+            NodeTypeName::fromString($nodeTypeName),
+            $declaredSuperTypes,
+            $configuration,
+            $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock(),
+            new DefaultNodeLabelGeneratorFactory()
+        );
     }
 
     /**
@@ -429,7 +415,7 @@ class NodeTypeTest extends UnitTestCase
         $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
         $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [
             'childNodes' => ['nodeName' => $childNodeConfiguration]
-        ], $mockNodeTypeManager, $this->getMockBuilder(ObjectManagerInterface::class)->getMock());
+        ], $mockNodeTypeManager, new DefaultNodeLabelGeneratorFactory());
         $mockNodeTypeManager->expects(self::any())->method('getNodeType')->will(self::returnValue($baseType));
 
         $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('Neos.ContentRepository:Base')->getAutoCreatedChildNodes();

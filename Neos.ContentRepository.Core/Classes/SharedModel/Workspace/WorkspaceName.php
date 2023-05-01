@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
+use Behat\Transliterator\Transliterator;
+
 /**
  * Name of a workspace.
  *
@@ -49,6 +51,40 @@ final class WorkspaceName implements \JsonSerializable
     public static function forLive(): self
     {
         return self::instance(self::WORKSPACE_NAME_LIVE);
+    }
+
+    /**
+     * Transforms a text (for example a workspace title) into a valid workspace name by removing invalid characters
+     * and transliterating special characters if possible.
+     *
+     * @param string $name The possibly invalid name
+     */
+    public static function transliterateFromString(string $name): self
+    {
+        try {
+            // Check if name already match name pattern to prevent unnecessary transliteration
+            return self::fromString($name);
+        } catch (\InvalidArgumentException $e) {
+            // Okay, let's transliterate
+        }
+
+        $originalName = $name;
+
+        // Transliterate (transform 北京 to 'Bei Jing')
+        $name = Transliterator::transliterate($name);
+
+        // Urlization (replace spaces with dash, special special characters)
+        $name = Transliterator::urlize($name);
+
+        // Ensure only allowed characters are left
+        $name = preg_replace('/[^a-z0-9\-]/', '', $name);
+
+        // Make sure we don't have an empty string left.
+        if ($name === '') {
+            $name = 'workspace-' . strtolower(md5($originalName));
+        }
+
+        return new self($name);
     }
 
     public function isLive(): bool

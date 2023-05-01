@@ -1,5 +1,8 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Unit;
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,12 +14,13 @@ namespace Neos\ContentRepository\Core\Tests\Unit;
  * source code.
  */
 
-use Neos\ContentRepositoryRegistry\Utility;
-use Neos\Flow\Tests\UnitTestCase;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use PHPUnit\Framework\Assert;
+use PHPUnit\Framework\TestCase;
 
 /**
  */
-class UtilityTest extends UnitTestCase
+class NodeNameTest extends TestCase
 {
     /**
      * A data provider returning titles and the expected valid node names based on those.
@@ -49,8 +53,8 @@ class UtilityTest extends UnitTestCase
      * @test
      * @dataProvider sourcesAndNodeNames
      */
-    public function renderValidNodeNameWorks($source, $expectedNodeName)
+    public function transliterateFromStringWorksForNodeNames($source, $expectedNodeName)
     {
-        self::assertEquals($expectedNodeName, Utility::renderValidNodeName($source));
+        Assert::assertEquals($expectedNodeName, NodeName::transliterateFromString($source)->value);
     }
 }

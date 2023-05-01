@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Service;
+namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,28 +11,22 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Domain\Service;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Tests\UnitTestCase;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Testcase for the "NodeTypeManager"
  */
-class NodeTypeManagerTest extends UnitTestCase
+class NodeTypeManagerTest extends TestCase
 {
     /**
      * @var NodeTypeManager
      */
     protected $nodeTypeManager;
-
-    /**
-     * @var ConfigurationManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $mockConfigurationManager;
 
     public function setUp(): void
     {
@@ -46,7 +40,11 @@ class NodeTypeManagerTest extends UnitTestCase
      */
     protected function prepareNodeTypeManager(array $nodeTypesFixtureData, string $fallbackNodeTypeName = '')
     {
-        $this->nodeTypeManager = new NodeTypeManager(fn() => $nodeTypesFixtureData, $this->getMockBuilder(ObjectManagerInterface::class)->disableOriginalConstructor()->getMock(), $fallbackNodeTypeName);
+        $this->nodeTypeManager = new NodeTypeManager(
+            fn() => $nodeTypesFixtureData,
+            new DefaultNodeLabelGeneratorFactory(),
+            $fallbackNodeTypeName
+        );
     }
 
     /**

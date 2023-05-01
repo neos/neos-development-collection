@@ -1,6 +1,6 @@
 {
     "name": "neos/contentrepository-core",
-    "description": "Content repository based on Flow, specifically made for Neos, but also usable standalone.",
+    "description": "Content repository, specifically made for Neos, but also usable standalone.",
     "type": "library",
     "license": [
         "GPL-3.0-or-later"
@@ -14,7 +14,8 @@
         "neos/utility-arrays": "*",
         "doctrine/dbal": "^2.6",
         "symfony/serializer": "*",
-        "psr/clock": "^1"
+        "psr/clock": "^1",
+        "behat/transliterator": "~1.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
