@@ -5,7 +5,6 @@ parameters:
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
         - Neos.ContentRepository.Core/Classes
-        - Neos.EventSourcedContentRepository.LegacyApi/Classes
         - Neos.ContentRepository.Security/Classes
         - Neos.Neos/Classes
     excludePaths:
