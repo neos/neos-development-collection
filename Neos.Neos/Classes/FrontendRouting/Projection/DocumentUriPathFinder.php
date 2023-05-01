@@ -20,6 +20,10 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
 {
     private ?ContentStreamId $liveContentStreamIdRuntimeCache = null;
     private bool $cacheEnabled = true;
+
+    /**
+     * @var array<string,DocumentNodeInfo>
+     */
     private array $getByIdAndDimensionSpacePointHashCache = [];
 
     public function __construct(
@@ -253,7 +257,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         return DocumentNodeInfo::fromDatabaseRow($row);
     }
 
-    public function disableCache()
+    public function disableCache(): void
     {
         $this->cacheEnabled = false;
         $this->getByIdAndDimensionSpacePointHashCache = [];
