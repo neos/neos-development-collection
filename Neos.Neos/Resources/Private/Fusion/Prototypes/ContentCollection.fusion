@@ -1,7 +1,7 @@
 # This is a helper Fusion object which is used to render all of the child elements
 # of a current node.
 prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
-  @context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
+  @context.nodeAvailable = ${node}
   # Set context removedContentShown to get removed nodes too.
   # Needed for publish function to be able to publish removed nodes.
   items = ${nodeAvailable ? q(node).children() : []}
@@ -58,8 +58,6 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 			# whenever one of the given nodes (for any variant) is updated.
       2 = ${Neos.Caching.nodeTag(node)}
     }
-
-    maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}
   }
 
   @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'

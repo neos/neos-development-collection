@@ -1,6 +1,0 @@
-'Neos.Neos:Timable':
-  properties:
-# TODO: enable again!
-    _hiddenBeforeDateTime: ~
-    _hiddenAfterDateTime: ~
-
