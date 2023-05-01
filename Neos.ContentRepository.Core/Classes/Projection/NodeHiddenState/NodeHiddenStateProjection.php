@@ -73,10 +73,10 @@ class NodeHiddenStateProjection implements ProjectionInterface
         $schema = new Schema();
         $contentStreamTable = $schema->createTable($this->tableName);
         $contentStreamTable->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $contentStreamTable->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
         $contentStreamTable->addColumn('dimensionspacepointhash', Types::STRING)
             ->setLength(255)

@@ -25,6 +25,11 @@ use Neos\Flow\Utility\Algorithms;
 final class ContentStreamId implements \JsonSerializable
 {
     /**
+     * A preg pattern to match against content stream identifiers
+     */
+    public const PATTERN = '/^([a-z0-9\-]{1,40})$/';
+
+    /**
      * @var array<string,self>
      */
     private static array $instances = [];
@@ -32,6 +37,13 @@ final class ContentStreamId implements \JsonSerializable
     private function __construct(
         public string $value
     ) {
+        if (!preg_match(self::PATTERN, $value)) {
+            throw new \InvalidArgumentException(
+                'Invalid content stream identifier "' . $value
+                . '" (a content stream identifier must only contain lowercase characters, numbers and the "-" sign).',
+                1505840197862
+            );
+        }
     }
 
     private static function instance(string $value): self

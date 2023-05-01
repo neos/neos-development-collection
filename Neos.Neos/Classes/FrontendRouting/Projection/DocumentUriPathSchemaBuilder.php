@@ -27,7 +27,7 @@ class DocumentUriPathSchemaBuilder
 
         $table = $schema->createTable($this->tableNamePrefix . '_uri');
         $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setDefault('')
             ->setNotnull(true);
         $table->addColumn('uripath', Types::STRING)
@@ -56,13 +56,13 @@ class DocumentUriPathSchemaBuilder
             ->setDefault('')
             ->setNotnull(true);
         $table->addColumn('parentnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(false);
         $table->addColumn('precedingnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(false);
         $table->addColumn('succeedingnodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(false);
         $table->addColumn('shortcuttarget', Types::STRING)
             ->setLength(1000)
@@ -82,7 +82,7 @@ class DocumentUriPathSchemaBuilder
     {
         $table = $schema->createTable($this->tableNamePrefix . '_livecontentstreams');
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setDefault('')
             ->setNotnull(true);
         $table->addColumn('workspacename', Types::STRING)
