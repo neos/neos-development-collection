@@ -12,7 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\NodeAccess\Tests\Unit\AbstractNodeTest;
+use Neos\ContentRepository\NodeAccess\Tests\Functional\AbstractNodeTest;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 

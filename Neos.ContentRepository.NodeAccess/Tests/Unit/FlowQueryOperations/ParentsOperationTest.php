@@ -11,7 +11,7 @@ namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
  * source code.
  */
 
-use Neos\ContentRepository\NodeAccess\Tests\Unit\AbstractNodeTest;
+use Neos\ContentRepository\NodeAccess\Tests\Functional\AbstractNodeTest;
 use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
