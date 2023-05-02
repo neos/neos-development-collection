@@ -467,11 +467,7 @@ class NodeType
         $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (is_string($propertyName) && isset($propertyConfiguration['defaultValue'])) {
-                $type = $propertyConfiguration['type'] ?? '';
-                $defaultValues[$propertyName] = match ($type) {
-                    'DateTime' => new \DateTime($propertyConfiguration['defaultValue']),
-                    default => $propertyConfiguration['defaultValue'],
-                };
+                $defaultValues[$propertyName] =  $propertyConfiguration['defaultValue'];
             }
         }
 

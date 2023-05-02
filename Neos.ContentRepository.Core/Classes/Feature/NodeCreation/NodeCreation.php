@@ -101,15 +101,9 @@ trait NodeCreation
                 $nodeTypeName
             );
 
-            if ($defaultValue instanceof \DateTimeInterface) {
-                // In NodeType::getDefaultValuesForProperties, DateTime objects are handled specially :(
-                // That's why we also need to take care of them here.
-                $defaultValues[$propertyName] =  $defaultValue;
-            } else {
-                $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                    new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
-                );
-            }
+            $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
+                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
+            );
         }
 
         return PropertyValuesToWrite::fromArray($defaultValues);
