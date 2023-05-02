@@ -110,7 +110,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             $sitesNodeIdentifier,
             $site->getNodeName()->toNodeName(),
         );
-        if (iterator_count($siteNodeAggregate) > 0) {
+        foreach ($siteNodeAggregate as $_) {
             // Site node already exists
             return;
         }
