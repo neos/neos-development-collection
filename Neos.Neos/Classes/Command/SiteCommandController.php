@@ -99,7 +99,7 @@ class SiteCommandController extends CommandController
             );
             $this->quit(1);
         } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
-            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName]);
+            $this->outputLine('<error>A site with siteNodeName "%s" already exists</error>', [$nodeName ?: $name]);
             $this->quit(1);
         }
 
