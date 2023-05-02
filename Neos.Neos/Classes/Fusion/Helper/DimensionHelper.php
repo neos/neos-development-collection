@@ -46,12 +46,18 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return string|null
+     * @return ContentDimensionValue|null
      */
-    public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?string
+    public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        return $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
+        $currentDimensionValueAsString = $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
+
+        if (is_string($currentDimensionValueAsString)) {
+            return $this->allDimensionValues($node, $contentDimensionId)?->getValue($currentDimensionValueAsString);
+        }
+
+        return null;
     }
 
     /**
@@ -63,12 +69,18 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return string|null
+     * @return ContentDimensionValue|null
      */
-    public function originValue(Node $node, ContentDimensionId|string $dimensionName): ?string
+    public function originValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        return $node->originDimensionSpacePoint->getCoordinate($contentDimensionId);
+        $originalDimensionValueAsString = $node->originDimensionSpacePoint->getCoordinate($contentDimensionId);
+
+        if (is_string($originalDimensionValueAsString)) {
+            return $this->allDimensionValues($node, $contentDimensionId)?->getValue($originalDimensionValueAsString);
+        }
+
+        return null;
     }
 
     /**
