@@ -146,9 +146,8 @@ trait NodeCreation
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        ContentRepository                                  $contentRepository
-    ): EventsToPublish
-    {
+        ContentRepository $contentRepository
+    ): EventsToPublish {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeType = $this->requireNodeType($command->nodeTypeName);
@@ -256,10 +255,9 @@ trait NodeCreation
      */
     private function createRegularWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        DimensionSpacePointSet                             $coveredDimensionSpacePoints,
-        SerializedPropertyValues                           $initialPropertyValues
-    ): NodeAggregateWithNodeWasCreated
-    {
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        SerializedPropertyValues $initialPropertyValues
+    ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
             $command->contentStreamId,
             $command->nodeAggregateId,
@@ -282,14 +280,13 @@ trait NodeCreation
      */
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        NodeType                                           $nodeType,
-        DimensionSpacePointSet                             $coveredDimensionSpacePoints,
-        NodeAggregateId                                    $parentNodeAggregateId,
-        NodeAggregateIdsByNodePaths                        $nodeAggregateIds,
-        ?NodePath                                          $nodePath,
-        ContentRepository                                  $contentRepository,
-    ): Events
-    {
+        NodeType $nodeType,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        NodeAggregateId $parentNodeAggregateId,
+        NodeAggregateIdsByNodePaths $nodeAggregateIds,
+        ?NodePath $nodePath,
+        ContentRepository $contentRepository,
+    ): Events {
         $events = [];
         foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
             assert($childNodeType instanceof NodeType);
@@ -332,15 +329,14 @@ trait NodeCreation
      */
     private function createTetheredWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
-        NodeAggregateId                                    $nodeAggregateId,
-        NodeTypeName                                       $nodeTypeName,
-        DimensionSpacePointSet                             $coveredDimensionSpacePoints,
-        NodeAggregateId                                    $parentNodeAggregateId,
-        NodeName                                           $nodeName,
-        SerializedPropertyValues                           $initialPropertyValues,
-        NodeAggregateId                                    $precedingNodeAggregateId = null
-    ): NodeAggregateWithNodeWasCreated
-    {
+        NodeAggregateId $nodeAggregateId,
+        NodeTypeName $nodeTypeName,
+        DimensionSpacePointSet $coveredDimensionSpacePoints,
+        NodeAggregateId $parentNodeAggregateId,
+        NodeName $nodeName,
+        SerializedPropertyValues $initialPropertyValues,
+        NodeAggregateId $precedingNodeAggregateId = null
+    ): NodeAggregateWithNodeWasCreated {
         return new NodeAggregateWithNodeWasCreated(
             $command->contentStreamId,
             $nodeAggregateId,
@@ -356,11 +352,10 @@ trait NodeCreation
     }
 
     protected static function populateNodeAggregateIds(
-        NodeType                     $nodeType,
+        NodeType $nodeType,
         ?NodeAggregateIdsByNodePaths $nodeAggregateIds,
-        NodePath                     $childPath = null
-    ): NodeAggregateIdsByNodePaths
-    {
+        NodePath $childPath = null
+    ): NodeAggregateIdsByNodePaths {
         if ($nodeAggregateIds === null) {
             $nodeAggregateIds = NodeAggregateIdsByNodePaths::createEmpty();
         }
