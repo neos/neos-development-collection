@@ -177,7 +177,7 @@ class SiteService
             $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
-        $siteServiceInternals->createSiteNode($site, $nodeTypeName);
+        $siteServiceInternals->createSiteNodeIfNotExists($site, $nodeTypeName);
 
         return $site;
     }
