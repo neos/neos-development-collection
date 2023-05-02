@@ -16,12 +16,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueIsInvalid;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for content dimension values
  */
-class ContentDimensionValueTest extends UnitTestCase
+class ContentDimensionValueTest extends TestCase
 {
     public function testInitializationThrowsExceptionForEmptyValue()
     {

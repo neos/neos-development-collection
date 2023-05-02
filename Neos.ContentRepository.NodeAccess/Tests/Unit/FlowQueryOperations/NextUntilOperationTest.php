@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,50 +11,50 @@ namespace Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\NodeAccess\Tests\Unit\AbstractNodeTest;
+use Neos\Eel\FlowQuery\FlowQuery;
 
 /**
- * Functional test case which tests FlowQuery PrevUntilOperation
+ * Functional test case which tests FlowQuery NextUntilOperation
  */
-class PrevUntilOperationTest extends AbstractNodeTest
+class NextUntilOperationTest extends AbstractNodeTest
 {
     /**
      * @return array
      */
-    public function prevUntilOperationDataProvider()
+    public function nextUntilOperationDataProvider()
     {
         return [
             [
-                'currentNodePaths' => ['/a/a5'],
+                'currentNodePaths' => ['/a/a1'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => ['/a/a4'],
-                'unexpectedNodePaths' => ['/a/a5','/a/a3','/a/a2']
+                'expectedNodePaths' => ['/a/a2'],
+                'unexpectedNodePaths' => ['/a/a1','/a/a3','/a/a4']
             ],
             [
                 'currentNodePaths' => ['/a/a3'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => ['/a/a2'],
-                'unexpectedNodePaths' => ['a/a1']
+                'expectedNodePaths' => ['/a/a4'],
+                'unexpectedNodePaths' => ['/b']
             ],
             [
                 'currentNodePaths' => ['/a/a4'],
                 'subject' => '[instanceof Neos.ContentRepository.Testing:NodeType]',
                 'expectedNodePaths' => [],
-                'unexpectedNodePaths' => ['/a/a2','/a/a3','/a/a5']
+                'unexpectedNodePaths' => ['/a/a5']
             ],
             [
-                'currentNodePaths' => ['/b/b4'],
-                'subject' => 'b2[instanceof Neos.ContentRepository.Testing:NodeType]',
-                'expectedNodePaths' => ['/b/b3'],
-                'unexpectedNodePaths' => ['/b/b4','/a','/a/a1']
+                'currentNodePaths' => ['/b/b1'],
+                'subject' => 'b3[instanceof Neos.ContentRepository.Testing:NodeType]',
+                'expectedNodePaths' => ['/b/b2'],
+                'unexpectedNodePaths' => ['/b/b4']
             ],
             [
-                'currentNodePaths' => ['/a/a5'],
+                'currentNodePaths' => ['/a/a1'],
                 'subject' => '',
-                'expectedNodePaths' => ['/a/a1','/a/a2','/a/a3','/a/a4'],
-                'unexpectedNodePaths' => ['/a/a5','/b','/b1']
+                'expectedNodePaths' => ['/a/a2','/a/a3','/a/a4','/a/a5'],
+                'unexpectedNodePaths' => ['/a/a1','/b']
             ]
         ];
     }
@@ -63,36 +63,37 @@ class PrevUntilOperationTest extends AbstractNodeTest
      * Tests on a tree:
      *
      * a
-     *   a1 (testNodeType)
+     *   a1
      *   a2
      *   a3 (testNodeType)
      *   a4
-     *   a5
+     *   a5 (testNodeType)
      * b
      *   b1
-     *   b2 (testNodeType3)
-     *   b3
+     *   b2
+     *   b3 (testNodeType3)
      *   b4
      *
      * @test
-     * @dataProvider prevUntilOperationDataProvider()
+     * @dataProvider nextUntilOperationDataProvider()
      */
-    public function prevUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
+    public function nextUntilOperationTests(array $currentNodePaths, $subject, array $expectedNodePaths, array $unexpectedNodePaths)
     {
         $nodeTypeManager = $this->objectManager->get(NodeTypeManager::class);
         $testNodeType = $nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:NodeType');
 
+
         $rootNode = $this->node->getNode('/');
         $nodeA = $rootNode->createNode('a');
-        $nodeA->createNode('a1', $testNodeType);
+        $nodeA->createNode('a1');
         $nodeA->createNode('a2');
         $nodeA->createNode('a3', $testNodeType);
         $nodeA->createNode('a4');
-        $nodeA->createNode('a5');
+        $nodeA->createNode('a5', $testNodeType);
         $nodeB = $rootNode->createNode('b');
         $nodeB->createNode('b1');
-        $nodeB->createNode('b2', $testNodeType);
-        $nodeB->createNode('b3');
+        $nodeB->createNode('b2');
+        $nodeB->createNode('b3', $testNodeType);
         $nodeB->createNode('b4');
 
 
@@ -110,7 +111,7 @@ class PrevUntilOperationTest extends AbstractNodeTest
         }
 
         $q = new FlowQuery($currentNodes);
-        $result = $q->prevUntil($subject)->get();
+        $result = $q->nextUntil($subject)->get();
 
         if ($expectedNodePaths === [] && $unexpectedNodePaths === []) {
             self::assertEmpty($result);

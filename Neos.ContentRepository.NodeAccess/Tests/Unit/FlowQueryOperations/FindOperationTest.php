@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit\FlowQueryOperations;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,10 +11,12 @@ namespace Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Core\Tests\Functional\AbstractNodeTest;
+use Neos\ContentRepository\NodeAccess\Tests\Unit\AbstractNodeTest;
+use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
+
+use function Neos\ContentRepository\Core\Tests\Functional\Eel\FlowQueryOperations\sort;
 
 /**
  * Functional test case which tests FlowQuery FindOperation

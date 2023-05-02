@@ -39,7 +39,7 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
@@ -47,8 +47,18 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait as BaseDetectionTrait;
-use Neos\ContentRepository\Core\Tests\Functional\Command\BehatTestHelper;
+use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Utility\Environment;
@@ -61,11 +71,12 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use FlowContextTrait;
     use IsolatedBehatStepsTrait;
     use ProjectionIntegrityViolationDetectionTrait;
-    use BaseDetectionTrait;
     use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
-    use \Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+    use NodeOperationsTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
+
+    protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
 
     public function __construct()
     {
@@ -91,5 +102,64 @@ class FeatureContext implements \Behat\Behat\Context\Context
     protected function getEnvironment()
     {
         return $this->objectManager->get(Environment::class);
+    }
+
+    protected function initCleanContentRepository(array $adapterKeys): void
+    {
+        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
+
+        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+        $registrySettings = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.ContentRepositoryRegistry'
+        );
+
+        unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
+        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
+        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
+
+        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
+            $registrySettings,
+            $this->getObjectManager()
+        );
+
+
+        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
+        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
+        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
+            $this->contentRepository->setUp();
+            self::$wasContentRepositorySetupCalled = true;
+        }
+        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService(
+            $this->contentRepositoryId,
+            new ContentRepositoryInternalsFactory()
+        );
+
+        $availableContentGraphs = [];
+        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
+
+        if (count($availableContentGraphs) === 0) {
+            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
+        }
+        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
+    }
+
+    protected function getContentRepositoryService(
+        ContentRepositoryId $contentRepositoryId,
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface {
+        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
+        $contentRepositoryRegistry = $this->contentRepositoryRegistry
+            ?: $this->objectManager->get(ContentRepositoryRegistry::class);
+
+        return $contentRepositoryRegistry->getService(
+            $contentRepositoryId,
+            $factory
+        );
+    }
+
+    protected function getDbalClient(): DbalClientInterface
+    {
+        return $this->dbalClient;
     }
 }

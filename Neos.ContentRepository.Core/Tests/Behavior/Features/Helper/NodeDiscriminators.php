@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The node discriminator value object collection

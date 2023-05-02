@@ -1,5 +1,4 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,11 +10,10 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use PHPUnit\Framework\Assert;
 
@@ -66,15 +64,32 @@ trait NodeAuthorizationTrait
     /**
      * @Given /^I should get (true|false) when asking the node authorization service if editing the "([^"]*)" property is granted$/
      */
-    public function iShouldGetTrueWhenAskingTheNodeAuthorizationServiceIfEditingThePropertyIsGranted($expectedResult, $propertyName)
-    {
+    public function iShouldGetTrueWhenAskingTheNodeAuthorizationServiceIfEditingThePropertyIsGranted(
+        $expectedResult,
+        $propertyName
+    ) {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s %s %s',
+                    'string',
+                    escapeshellarg(trim($expectedResult)),
+                    'string',
+                    escapeshellarg($propertyName)
+                )
+            );
         } elseif ($expectedResult === 'true') {
-            if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== true) {
+            if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
+                    $this->currentNodes[0],
+                    $propertyName
+                ) !== true) {
                 Assert::fail('The node authorization service did not return true!');
             }
-        } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== false) {
+        } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
+                $this->currentNodes[0],
+                $propertyName
+            ) !== false) {
             Assert::fail('The node authorization service did not return false!');
         }
     }
@@ -86,18 +101,34 @@ trait NodeAuthorizationTrait
     public function iShouldGetTheFollowingListOfDeniedNodePropertiesFromTheNodeAuthorizationService($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s',
+                    escapeshellarg(TableNode::class),
+                    escapeshellarg(json_encode($table->getHash()))
+                )
+            );
         } else {
             $rows = $table->getHash();
-            $deniedPropertyNames = $this->nodeAuthorizationService->getDeniedNodePropertiesForEditing($this->currentNodes[0]);
+            $deniedPropertyNames = $this->nodeAuthorizationService->getDeniedNodePropertiesForEditing(
+                $this->currentNodes[0]
+            );
 
             if (count($rows) !== count($deniedPropertyNames)) {
-                Assert::fail('The node authorization service did not return the expected amount of node property names! Got: ' . implode(', ', $deniedPropertyNames));
+                Assert::fail(
+                    'The node authorization service did not return the expected amount of node property names! Got: ' . implode(
+                        ', ',
+                        $deniedPropertyNames
+                    )
+                );
             }
 
             foreach ($rows as $row) {
                 if (in_array($row['propertyName'], $deniedPropertyNames) === false) {
-                    Assert::fail('The following property name has not been returned by the node authorization service: ' . $row['propertyName']);
+                    Assert::fail(
+                        'The following property name has not been returned by the node authorization service: ' . $row['propertyName']
+                    );
                 }
             }
         }
@@ -236,7 +267,18 @@ trait NodeAuthorizationTrait
     public function iShouldNotBeGrantedToCreateANewChildNodeOfType($not, $nodeName, $nodeType)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeType)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s %s %s %s %s',
+                    'string',
+                    escapeshellarg(trim($not)),
+                    'string',
+                    escapeshellarg($nodeName),
+                    'string',
+                    escapeshellarg($nodeType)
+                )
+            );
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
             $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
@@ -261,21 +303,41 @@ trait NodeAuthorizationTrait
      * @throws NodeTypeNotFoundException
      * @Given /^I should get (true|false) when asking the node authorization service if creating a new "([^"]*)" child node of type "([^"]*)" is granted$/
      */
-    public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfCreatingAChildNodeOfTypeIsGranted($expectedResult, $nodeName, $nodeTypeName)
-    {
+    public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfCreatingAChildNodeOfTypeIsGranted(
+        $expectedResult,
+        $nodeName,
+        $nodeTypeName
+    ) {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($nodeName), 'string', escapeshellarg($nodeTypeName)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s %s %s %s %s',
+                    'string',
+                    escapeshellarg(trim($expectedResult)),
+                    'string',
+                    escapeshellarg($nodeName),
+                    'string',
+                    escapeshellarg($nodeTypeName)
+                )
+            );
         } else {
             /** @var NodeTypeManager $nodeTypeManager */
             $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
             $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
 
             if ($expectedResult === 'true') {
-                if ($this->nodeAuthorizationService->isGrantedToCreateNode($this->currentNodes[0], $nodeType) !== true) {
+                if ($this->nodeAuthorizationService->isGrantedToCreateNode(
+                        $this->currentNodes[0],
+                        $nodeType
+                    ) !== true) {
                     Assert::fail('The node authorization service did not return true!');
                 }
             } else {
-                if ($this->nodeAuthorizationService->isGrantedToCreateNode($this->currentNodes[0], $nodeType) !== false) {
+                if ($this->nodeAuthorizationService->isGrantedToCreateNode(
+                        $this->currentNodes[0],
+                        $nodeType
+                    ) !== false) {
                     Assert::fail('The node authorization service did not return false!');
                 }
             }
@@ -288,18 +350,34 @@ trait NodeAuthorizationTrait
     public function iShouldGetTheFollowingListOfDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s',
+                    escapeshellarg(TableNode::class),
+                    escapeshellarg(json_encode($table->getHash()))
+                )
+            );
         } else {
             $rows = $table->getHash();
-            $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
+            $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation(
+                $this->currentNodes[0]
+            );
 
             if (count($rows) !== count($deniedNodeTypeNames)) {
-                Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
+                Assert::fail(
+                    'The node authorization service did not return the expected amount of node type names! Got: ' . implode(
+                        ', ',
+                        $deniedNodeTypeNames
+                    )
+                );
             }
 
             foreach ($rows as $row) {
                 if (in_array($row['nodeTypeName'], $deniedNodeTypeNames) === false) {
-                    Assert::fail('The following node type name has not been returned by the node authorization service: ' . $row['nodeTypeName']);
+                    Assert::fail(
+                        'The following node type name has not been returned by the node authorization service: ' . $row['nodeTypeName']
+                    );
                 }
             }
         }
@@ -308,21 +386,31 @@ trait NodeAuthorizationTrait
     /**
      * @Then /^I should get the list of all available node types as denied node types for this node from the node authorization service$/
      */
-    public function iShouldGetTheListOfAllAvailableNodeTypesAsDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService()
+    public function iShouldGetTheListOfAllAvailableNodeTypesAsDeniedNodeTypesForThisNodeFromTheNodeAuthorizationService(
+    )
     {
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
             $availableNodeTypes = $this->nodeTypeManager->getNodeTypes();
-            $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation($this->currentNodes[0]);
+            $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation(
+                $this->currentNodes[0]
+            );
 
             if (count($availableNodeTypes) !== count($deniedNodeTypeNames)) {
-                Assert::fail('The node authorization service did not return the expected amount of node type names! Got: ' . implode(', ', $deniedNodeTypeNames));
+                Assert::fail(
+                    'The node authorization service did not return the expected amount of node type names! Got: ' . implode(
+                        ', ',
+                        $deniedNodeTypeNames
+                    )
+                );
             }
 
             foreach ($availableNodeTypes as $nodeType) {
                 if (in_array($nodeType, $deniedNodeTypeNames) === false) {
-                    Assert::fail('The following node type name has not been returned by the node authorization service: ' . $nodeType);
+                    Assert::fail(
+                        'The following node type name has not been returned by the node authorization service: ' . $nodeType
+                    );
                 }
             }
         }
@@ -378,7 +466,10 @@ trait NodeAuthorizationTrait
     public function iShouldNotBeGrantedToGetTheProperty($not, $propertyName)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName))
+            );
         } else {
             /** @var Node $currentNode */
             $currentNode = $this->currentNodes[0];
@@ -407,7 +498,9 @@ trait NodeAuthorizationTrait
                         break;
                 }
                 if ($not === 'not') {
-                    Assert::fail('Property should not be gettable on the current node! But we could read the value: "' . $propertyValue . '"');
+                    Assert::fail(
+                        'Property should not be gettable on the current node! But we could read the value: "' . $propertyValue . '"'
+                    );
                 }
             } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
@@ -420,15 +513,32 @@ trait NodeAuthorizationTrait
     /**
      * @Given /^I should get (true|false) when asking the node authorization service if getting the "([^"]*)" property is granted$/
      */
-    public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfGettingThePropertyIsGranted($expectedResult, $propertyName)
-    {
+    public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfGettingThePropertyIsGranted(
+        $expectedResult,
+        $propertyName
+    ) {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s %s %s',
+                    'string',
+                    escapeshellarg(trim($expectedResult)),
+                    'string',
+                    escapeshellarg($propertyName)
+                )
+            );
         } elseif ($expectedResult === 'true') {
-            if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== true) {
+            if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty(
+                    $this->currentNodes[0],
+                    $propertyName
+                ) !== true) {
                 Assert::fail('The node authorization service did not return true!');
             }
-        } elseif ($this->nodeAuthorizationService->isGrantedToReadNodeProperty($this->currentNodes[0], $propertyName) !== false) {
+        } elseif ($this->nodeAuthorizationService->isGrantedToReadNodeProperty(
+                $this->currentNodes[0],
+                $propertyName
+            ) !== false) {
             Assert::fail('The node authorization service did not return false!');
         }
     }
@@ -439,7 +549,18 @@ trait NodeAuthorizationTrait
     public function iShouldNotBeGrantedToSetThePropertyTo($not, $propertyName, $value)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s %s %s', 'string', escapeshellarg(trim($not)), 'string', escapeshellarg($propertyName), 'string', escapeshellarg($value)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s %s %s %s %s',
+                    'string',
+                    escapeshellarg(trim($not)),
+                    'string',
+                    escapeshellarg($propertyName),
+                    'string',
+                    escapeshellarg($value)
+                )
+            );
         } else {
             /** @var Node $currentNode */
             $currentNode = $this->currentNodes[0];
@@ -468,7 +589,9 @@ trait NodeAuthorizationTrait
                         break;
                 }
                 if ($not === 'not') {
-                    Assert::fail('Property should not be settable on the current node! But we could set the value of "' . $propertyName . '" to "' . $value . '"');
+                    Assert::fail(
+                        'Property should not be settable on the current node! But we could set the value of "' . $propertyName . '" to "' . $value . '"'
+                    );
                 }
             } catch (AccessDeniedException $exception) {
                 if ($not !== 'not') {
@@ -481,15 +604,32 @@ trait NodeAuthorizationTrait
     /**
      * @Given /^I should get (true|false) when asking the node authorization service if setting the "([^"]*)" property is granted$/
      */
-    public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfSettingThePropertyIsGranted($expectedResult, $propertyName)
-    {
+    public function iShouldGetFalseWhenAskingTheNodeAuthorizationServiceIfSettingThePropertyIsGranted(
+        $expectedResult,
+        $propertyName
+    ) {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s %s %s', 'string', escapeshellarg(trim($expectedResult)), 'string', escapeshellarg($propertyName)));
+            $this->callStepInSubProcess(
+                __METHOD__,
+                sprintf(
+                    ' %s %s %s %s',
+                    'string',
+                    escapeshellarg(trim($expectedResult)),
+                    'string',
+                    escapeshellarg($propertyName)
+                )
+            );
         } elseif ($expectedResult === 'true') {
-            if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== true) {
+            if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
+                    $this->currentNodes[0],
+                    $propertyName
+                ) !== true) {
                 Assert::fail('The node authorization service did not return true!');
             }
-        } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty($this->currentNodes[0], $propertyName) !== false) {
+        } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
+                $this->currentNodes[0],
+                $propertyName
+            ) !== false) {
             Assert::fail('The node authorization service did not return false!');
         }
     }

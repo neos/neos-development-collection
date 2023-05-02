@@ -95,8 +95,6 @@ trait NodeReferencing
 
     /**
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleSetSerializedNodeReferences(
         SetSerializedNodeReferences $command,

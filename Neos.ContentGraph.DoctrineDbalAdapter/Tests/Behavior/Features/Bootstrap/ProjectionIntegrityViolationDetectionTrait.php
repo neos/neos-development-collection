@@ -17,14 +17,18 @@ use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
-use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphSchemaBuilder;
+use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\TestingNodeAggregateId;
 use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
+use Neos\Error\Messages\Error;
+use Neos\Error\Messages\Result;
 use Neos\Flow\Utility\Algorithms;
+use PHPUnit\Framework\Assert;
 
 /**
  * Custom context trait for projection integrity violation detection specific to the Doctrine DBAL content graph adapter
@@ -33,11 +37,15 @@ trait ProjectionIntegrityViolationDetectionTrait
 {
     private DbalClient $dbalClient;
 
+    protected Result $lastIntegrityViolationDetectionResult;
+
     abstract protected function getContentRepositoryId(): ContentRepositoryId;
 
     protected function getTableNamePrefix(): string
     {
-        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix($this->getContentRepositoryId());
+        return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
+            $this->getContentRepositoryId()
+        );
     }
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
@@ -289,4 +297,43 @@ trait ProjectionIntegrityViolationDetectionTrait
 
         return $result;
     }
+
+    /**
+     * @When /^I run integrity violation detection$/
+     */
+    public function iRunIntegrityViolationDetection(): void
+    {
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService($this->getContentRepositoryId(), new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
+        $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
+    }
+
+    /**
+     * @Then /^I expect the integrity violation detection result to contain exactly (\d+) errors?$/
+     * @param int $expectedNumberOfErrors
+     */
+    public function iExpectTheIntegrityViolationDetectionResultToContainExactlyNErrors(int $expectedNumberOfErrors): void
+    {
+        Assert::assertSame(
+            $expectedNumberOfErrors,
+            count($this->lastIntegrityViolationDetectionResult->getErrors()),
+            'Errors were: ' . implode(', ', array_map(fn (Error $e) => $e->render(), $this->lastIntegrityViolationDetectionResult->getErrors()))
+        );
+    }
+
+    /**
+     * @Then /^I expect integrity violation detection result error number (\d+) to have code (\d+)$/
+     * @param int $errorNumber
+     * @param int $expectedErrorCode
+     */
+    public function iExpectIntegrityViolationDetectionResultErrorNumberNToHaveCodeX(int $errorNumber, int $expectedErrorCode): void
+    {
+        /** @var Error $error */
+        $error = $this->lastIntegrityViolationDetectionResult->getErrors()[$errorNumber-1];
+        Assert::assertSame(
+            $expectedErrorCode,
+            $error->getCode()
+        );
+    }
+
+    abstract protected function getDbalClient(): DbalClientInterface;
 }

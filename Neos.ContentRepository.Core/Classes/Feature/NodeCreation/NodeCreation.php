@@ -73,7 +73,7 @@ trait NodeCreation
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
 
         $lowLevelCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
-            $command->contentStreamIdd,
+            $command->contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $command->originDimensionSpacePoint,
@@ -101,15 +101,9 @@ trait NodeCreation
                 $nodeTypeName
             );
 
-            if ($defaultValue instanceof \DateTimeInterface) {
-                // In NodeType::getDefaultValuesForProperties, DateTime objects are handled specially :(
-                // That's why we also need to take care of them here.
-                $defaultValues[$propertyName] =  $defaultValue;
-            } else {
-                $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
-                    new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
-                );
-            }
+            $defaultValues[$propertyName] = $this->getPropertyConverter()->deserializePropertyValue(
+                new SerializedPropertyValue($defaultValue, $propertyType->getSerializationType())
+            );
         }
 
         return PropertyValuesToWrite::fromArray($defaultValues);
@@ -147,8 +141,6 @@ trait NodeCreation
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -255,10 +247,6 @@ trait NodeCreation
         );
     }
 
-    /**
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
     private function createRegularWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -281,8 +269,6 @@ trait NodeCreation
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -329,10 +315,6 @@ trait NodeCreation
         return Events::fromArray($events);
     }
 
-    /**
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
     private function createTetheredWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         NodeAggregateId $nodeAggregateId,

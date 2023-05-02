@@ -13,8 +13,11 @@ declare(strict_types=1);
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
+use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -27,7 +30,6 @@ trait BrowserTrait
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
      */
     abstract protected function getObjectManager();
-    abstract protected function getCurrentNodeAddress(string $alias = null): \Neos\Neos\FrontendRouting\NodeAddress;
 
     /**
      * @var \Neos\Flow\Http\Client\Browser
@@ -68,6 +70,78 @@ trait BrowserTrait
      * @var \Psr\Http\Message\ServerRequestInterface
      */
     protected $currentRequest;
+
+    /**
+     * @var NodeAddress[]
+     */
+    private $currentNodeAddresses;
+
+    /**
+     * @param string|null $alias
+     * @return \Neos\Neos\FrontendRouting\NodeAddress
+     */
+    protected function getCurrentNodeAddress(string $alias = null): NodeAddress
+    {
+        if ($alias === null) {
+            $alias = 'DEFAULT';
+        }
+        return $this->currentNodeAddresses[$alias];
+    }
+
+    /**
+     * @return \Neos\Neos\FrontendRouting\NodeAddress[]
+     */
+    public function getCurrentNodeAddresses(): array
+    {
+        return $this->currentNodeAddresses;
+    }
+
+    /**
+     * @Given /^I get the node address for node aggregate "([^"]*)"(?:, remembering it as "([^"]*)")?$/
+     * @param string $rawNodeAggregateId
+     * @param string $alias
+     */
+    public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
+    {
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
+        $node = $subgraph->findNodeById($nodeAggregateId);
+        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
+
+        $this->currentNodeAddresses[$alias] = new NodeAddress(
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $nodeAggregateId,
+            $this->contentRepository->getWorkspaceFinder()
+                ->findOneByCurrentContentStreamId($this->contentStreamId)
+                ->workspaceName
+        );
+    }
+
+    /**
+     * @Then /^I get the node address for the node at path "([^"]*)"(?:, remembering it as "([^"]*)")?$/
+     * @param string $serializedNodePath
+     * @param string $alias
+     * @throws Exception
+     */
+    public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
+    {
+        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        if (!$this->getRootNodeAggregateId()) {
+            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
+        }
+        $node = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateId());
+        Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
+
+        $this->currentNodeAddresses[$alias] = new NodeAddress(
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $node->nodeAggregateId,
+            $this->contentRepository->getWorkspaceFinder()
+                ->findOneByCurrentContentStreamId($this->contentStreamId)
+                ->workspaceName
+        );
+    }
 
     /**
      * @When /^I visit "([^"]*)"$/

@@ -28,8 +28,6 @@ class WorkspaceMaintenanceService implements ContentRepositoryServiceInterface
      * @throws \Doctrine\DBAL\Exception
      * @throws \Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist
      * @throws \Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     public function rebaseOutdatedWorkspaces(): array
     {

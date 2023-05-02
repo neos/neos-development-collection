@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * An immutable, type-safe collection of Node objects, indexed by content graph adapter

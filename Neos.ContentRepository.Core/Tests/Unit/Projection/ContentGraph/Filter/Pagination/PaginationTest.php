@@ -12,9 +12,9 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Projection\ContentGraph\Filter\
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
-class PaginationTest extends UnitTestCase
+class PaginationTest extends TestCase
 {
     public function invalidLimitAndOffsets(): \Generator
     {

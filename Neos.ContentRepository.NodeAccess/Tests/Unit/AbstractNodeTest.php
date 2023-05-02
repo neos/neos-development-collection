@@ -1,5 +1,5 @@
 <?php
-namespace Neos\ContentRepository\Core\Tests\Functional;
+namespace Neos\ContentRepository\NodeAccess\Tests\Unit;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -11,12 +11,13 @@ namespace Neos\ContentRepository\Core\Tests\Functional;
  * source code.
  */
 
-use Neos\Flow\Property\PropertyMapper;
-use Neos\Flow\Tests\FunctionalTestCase;
+use Neos\ContentRepository\Core\Tests\Functional\SiteImportService;
 use Neos\ContentRepository\Domain\Model\Node;
 use Neos\ContentRepository\Domain\Model\Workspace;
 use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
 use Neos\ContentRepository\Domain\Service\ContextFactoryInterface;
+use Neos\Flow\Property\PropertyMapper;
+use Neos\Flow\Tests\FunctionalTestCase;
 
 /**
  * Base test case for nodes

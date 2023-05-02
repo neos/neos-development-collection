@@ -22,7 +22,6 @@ use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -32,7 +31,6 @@ trait MigrationsTrait
 {
     protected NodeMigrationService $nodeMigrationService;
 
-    abstract protected function getObjectManager(): ObjectManagerInterface;
     abstract protected function getContentRepositoryId(): ContentRepositoryId;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
