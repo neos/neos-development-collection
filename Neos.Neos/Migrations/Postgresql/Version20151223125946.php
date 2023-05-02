@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
@@ -10,7 +11,6 @@ use Neos\Neos\Utility\User as UserUtility;
  */
 class Version20151223125946 extends AbstractMigration
 {
-
     /**
      * @param Schema $schema
      * @return void
