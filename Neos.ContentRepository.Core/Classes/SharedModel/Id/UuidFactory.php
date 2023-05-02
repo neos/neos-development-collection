@@ -27,6 +27,7 @@ final class UuidFactory
     {
         return is_callable('uuid_create')
             ? strtolower(uuid_create(UUID_TYPE_RANDOM))
+            /** @phpstan-ignore-next-line not always true */
             : Uuid::uuid4()->toString();
     }
 }

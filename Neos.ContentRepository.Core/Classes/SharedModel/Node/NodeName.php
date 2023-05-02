@@ -72,7 +72,7 @@ final class NodeName implements \JsonSerializable
         $name = preg_replace('/[^a-z0-9\-]/', '', $name);
 
         // Make sure we don't have an empty string left.
-        if ($name === '') {
+        if (empty($name)) {
             $name = 'node-' . strtolower(md5($originalName));
         }
 

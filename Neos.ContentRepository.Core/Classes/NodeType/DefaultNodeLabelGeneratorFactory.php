@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
+/**
+ * @internal
+ */
 final class DefaultNodeLabelGeneratorFactory implements NodeLabelGeneratorFactoryInterface
 {
     public function create(NodeType $nodeType): NodeLabelGeneratorInterface

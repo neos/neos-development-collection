@@ -226,7 +226,7 @@ class WorkspacesController extends AbstractModuleController
         );
         while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = WorkspaceName::fromString(
-                WorkspaceName::transliterateFromString($title->value)->value. '-'
+                WorkspaceName::transliterateFromString($title->value)->value . '-'
                 . substr(base_convert(microtime(false), 10, 36), -5, 5)
             );
         }
