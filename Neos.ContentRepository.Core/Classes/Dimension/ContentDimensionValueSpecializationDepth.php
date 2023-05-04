@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Dimension;
 
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The value object describing the specialization depth between two content dimension values

@@ -5,8 +5,8 @@ Neos Content Repository
 .. note:: This repository is a **read-only subsplit** of a package that is part of the
           Neos project (learn more on `www.neos.io <https://www.neos.io/>`_).
 
-A content repository based on Flow, specifically made for Neos, but also usable
-in standalone Flow applications.
+A content repository, specifically made for Neos, but also usable
+in standalone applications.
 
 If you want to use Neos, please have a look at the `Neos documentation
 <http://neos.readthedocs.org/en/stable/>`_

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Dimension;
 
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueIsInvalid;
-use Neos\Flow\Annotations as Flow;
 use Neos\Utility\Arrays;
 
 /**

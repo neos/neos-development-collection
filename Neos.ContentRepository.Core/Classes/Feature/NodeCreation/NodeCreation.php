@@ -73,7 +73,7 @@ trait NodeCreation
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
 
         $lowLevelCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
-            $command->contentStreamIdd,
+            $command->contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
             $command->originDimensionSpacePoint,
@@ -141,8 +141,6 @@ trait NodeCreation
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleCreateNodeAggregateWithNodeAndSerializedProperties(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -249,10 +247,6 @@ trait NodeCreation
         );
     }
 
-    /**
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
     private function createRegularWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         DimensionSpacePointSet $coveredDimensionSpacePoints,
@@ -275,8 +269,6 @@ trait NodeCreation
     /**
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeTypeNotFoundException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleTetheredChildNodes(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
@@ -323,10 +315,6 @@ trait NodeCreation
         return Events::fromArray($events);
     }
 
-    /**
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
     private function createTetheredWithNode(
         CreateNodeAggregateWithNodeAndSerializedProperties $command,
         NodeAggregateId $nodeAggregateId,

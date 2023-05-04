@@ -14,8 +14,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\DimensionSpace;
-use Neos\Flow\Tests\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
 // NOTE: not sure why this is needed
 require_once(__DIR__ . '/Fixtures/VariationExampleDimensionSource.php');
@@ -24,14 +24,15 @@ require_once(__DIR__ . '/Fixtures/NullExampleDimensionSource.php');
 /**
  * Unit test cases for the inter dimensional variation graph
  */
-class InterDimensionalVariationGraphTest extends UnitTestCase
+class InterDimensionalVariationGraphTest extends TestCase
 {
-    protected DimensionSpace\InterDimensionalVariationGraph|MockObject $subject;
+    protected DimensionSpace\InterDimensionalVariationGraph $subject;
 
     public function testInitializeWeightedDimensionSpacePointsCorrectlyInitializesAllAvailableWeightedDimensionSpacePointsWithDimensionsWithVariationsGiven()
     {
         $this->setUpVariationExample();
-        $this->subject->_call('initializeWeightedDimensionSpacePoints');
+        $reflection = new \ReflectionClass($this->subject);
+        $reflection->getMethod('initializeWeightedDimensionSpacePoints')->invoke($this->subject);
 
         $expectedWeightedDimensionSpacePointsCoordinates = [
             ['value1', 'value1', 0, 0],
@@ -83,7 +84,8 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     public function testInitializeWeightedDimensionSpacePointsCorrectlyInitializesSingularWeightedDimensionSpacePointsWithNoDimensionsGiven()
     {
         $this->setUpNullExample();
-        $this->subject->_call('initializeWeightedDimensionSpacePoints');
+        $reflection = new \ReflectionClass($this->subject);
+        $reflection->getMethod('initializeWeightedDimensionSpacePoints')->invoke($this->subject);
 
         $singularWeightedDimensionSpacePoints = new DimensionSpace\WeightedDimensionSpacePoint([]);
         $this->assertEquals(
@@ -107,7 +109,8 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     public function testInitializeVariationsCorrectlyInitializesSpecializations()
     {
         $this->setUpVariationExample();
-        $this->subject->_call('initializeVariations');
+        $reflection = new \ReflectionClass($this->subject);
+        $reflection->getMethod('initializeVariations')->invoke($this->subject);
 
         foreach ([
                      [
@@ -269,7 +272,8 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     public function testInitializeVariationsCorrectlyInitializesGeneralizations()
     {
         $this->setUpVariationExample();
-        $this->subject->_call('initializeVariations');
+        $reflection = new \ReflectionClass($this->subject);
+        $reflection->getMethod('initializeVariations')->invoke($this->subject);
 
         foreach ([
                      [
@@ -434,7 +438,8 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     public function testInitializeVariationsCorrectlyInitializesPrimaryGeneralizations()
     {
         $this->setUpVariationExample();
-        $this->subject->_call('initializeVariations');
+        $reflection = new \ReflectionClass($this->subject);
+        $reflection->getMethod('initializeVariations')->invoke($this->subject);
 
         foreach ([
                      [
@@ -597,20 +602,20 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
     {
         $dimensionSource = new Fixtures\VariationExampleDimensionSource();
         $dimensionZookeeper = new DimensionSpace\ContentDimensionZookeeper($dimensionSource);
-        $this->subject = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
+        $this->subject = new DimensionSpace\InterDimensionalVariationGraph(
             $dimensionSource,
             $dimensionZookeeper
-        ]);
+        );
     }
 
-    protected function setUpNullExample()
+    protected function setUpNullExample(): void
     {
         $dimensionSource = new Fixtures\NullExampleDimensionSource();
         $dimensionZookeeper = new DimensionSpace\ContentDimensionZookeeper($dimensionSource);
-        $this->subject = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
+        $this->subject = new DimensionSpace\InterDimensionalVariationGraph(
             $dimensionSource,
             $dimensionZookeeper
-        ]);
+        );
     }
 
     public function testDetermineWeightNormalizationBaseEvaluatesToMaximumDimensionDepthPlusOne()
@@ -633,12 +638,16 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
 
         $dimensionSource = $this->createDimensionSourceMock(['first' => $firstDimension, 'second' => $secondDimension]);
         $dimensionZookeeper = new DimensionSpace\ContentDimensionZookeeper($dimensionSource);
-        $graph = $this->getAccessibleMock(DimensionSpace\InterDimensionalVariationGraph::class, ['dummy'], [
+        $graph =  new DimensionSpace\InterDimensionalVariationGraph(
             $dimensionSource,
             $dimensionZookeeper
-        ]);
+        );
 
-        $this->assertSame(max($firstDepth->value, $secondDepth->value) + 1, $graph->_call('determineWeightNormalizationBase'));
+        $reflection = new \ReflectionClass($graph);
+        $this->assertSame(
+            max($firstDepth->value, $secondDepth->value) + 1,
+            $reflection->getMethod('determineWeightNormalizationBase')->invoke($graph)
+        );
     }
 
     public function testGetVariantTypeCorrectlyDeterminesTheVariantType()
@@ -649,11 +658,11 @@ class InterDimensionalVariationGraphTest extends UnitTestCase
         $generalization = DimensionSpace\DimensionSpacePoint::fromArray(['dimensionA' => 'value1', 'dimensionB' => 'value1']);
         $peer = DimensionSpace\DimensionSpacePoint::fromArray(['dimensionA' => 'value1.2', 'dimensionB' => 'value1']);
 
-        $this->assertTrue($this->subject->getVariantType($specialization, $generalization) === DimensionSpace\VariantType::TYPE_SPECIALIZATION);
-        $this->assertTrue($this->subject->getVariantType($generalization, $specialization) === DimensionSpace\VariantType::TYPE_GENERALIZATION);
-        $this->assertTrue($this->subject->getVariantType($specialization, $peer) === DimensionSpace\VariantType::TYPE_PEER);
-        $this->assertTrue($this->subject->getVariantType($peer, $specialization) === DimensionSpace\VariantType::TYPE_PEER);
-        $this->assertTrue($this->subject->getVariantType($peer, $peer) === DimensionSpace\VariantType::TYPE_SAME);
+        self::assertSame(DimensionSpace\VariantType::TYPE_SPECIALIZATION, $this->subject->getVariantType($specialization, $generalization));
+        self::assertSame(DimensionSpace\VariantType::TYPE_GENERALIZATION, $this->subject->getVariantType($generalization, $specialization));
+        self::assertSame(DimensionSpace\VariantType::TYPE_PEER, $this->subject->getVariantType($specialization, $peer));
+        self::assertSame(DimensionSpace\VariantType::TYPE_PEER, $this->subject->getVariantType($peer, $specialization));
+        self::assertSame(DimensionSpace\VariantType::TYPE_SAME, $this->subject->getVariantType($peer, $peer));
     }
 
     /**

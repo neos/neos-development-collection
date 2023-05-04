@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\Core\Dimension;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for content dimension values
  */
-class ContentDimensionConstraintsTest extends UnitTestCase
+class ContentDimensionConstraintsTest extends TestCase
 {
     public function testCombinationWithValueIsAllowedWithWildcardAllowedAndNoSpecificRestrictionsInPlace()
     {

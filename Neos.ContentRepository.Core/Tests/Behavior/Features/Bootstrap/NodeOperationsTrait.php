@@ -12,31 +12,24 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ConfigurationBasedContentDimensionSource;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionConstraintSet;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDepth;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdge;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdges;
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * A trait with shared step definitions for common use by other contexts
- *
- * Note that this trait requires that the Flow Object Manager must be available via $this->getObjectManager().
  *
  * Note: This trait expects the IsolatedBehatStepsTrait to be available!
  */
@@ -48,7 +41,6 @@ trait NodeOperationsTrait
      */
     private $nodeTypesConfiguration = [];
 
-    abstract protected function getObjectManager(): ObjectManagerInterface;
     abstract protected function getContentRepository(): ContentRepository;
     abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
@@ -90,7 +82,7 @@ trait NodeOperationsTrait
     public function iHaveTheFollowingContentDimensions($table)
     {
         if ($this->isolated === true) {
-            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(\Neos\Flow\Tests\Functional\Command\TableNode::class), escapeshellarg(json_encode($table->getHash()))));
+            $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', escapeshellarg(TableNode::class), escapeshellarg(json_encode($table->getHash()))));
         } else {
             $dimensions = [];
             foreach ($table->getHash() as $row) {

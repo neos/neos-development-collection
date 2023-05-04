@@ -63,7 +63,7 @@ final class CreateNodeAggregateWithNode implements CommandInterface
 
     // TODO: CREATE METHODS FÜR ALLE COMMANDS
     public function __construct(
-        public readonly ContentStreamId $contentStreamIdd,
+        public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
         /**
@@ -88,7 +88,7 @@ final class CreateNodeAggregateWithNode implements CommandInterface
     public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self
     {
         return new self(
-            $this->contentStreamIdd,
+            $this->contentStreamId,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,

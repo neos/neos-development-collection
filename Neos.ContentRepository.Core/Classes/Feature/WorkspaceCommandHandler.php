@@ -354,8 +354,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleRebaseWorkspace(
         RebaseWorkspace $command,

@@ -17,9 +17,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\CriteriaParser\ParserException;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
-class PropertyValueCriteriaParserTest extends UnitTestCase
+class PropertyValueCriteriaParserTest extends TestCase
 {
     public function validQueries(): \Generator
     {

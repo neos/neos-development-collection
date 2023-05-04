@@ -15,12 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\Core\Dimension;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for content dimension identifiers
  */
-class ContentDimensionIdentifierTest extends UnitTestCase
+class ContentDimensionIdentifierTest extends TestCase
 {
     public function testInitializationThrowsExceptionForEmptyValue()
     {

@@ -17,9 +17,6 @@ namespace Neos\ContentRepository\Core\NodeType;
 
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator;
-use Neos\ContentRepositoryRegistry\Utility;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
@@ -76,10 +73,7 @@ class NodeType
      */
     protected array $declaredSuperTypes;
 
-    /**
-     * @var NodeLabelGeneratorInterface
-     */
-    protected $nodeLabelGenerator;
+    protected ?NodeLabelGeneratorInterface $nodeLabelGenerator = null;
 
     /**
      * Whether or not this node type has been initialized (e.g. if it has been postprocessed)
@@ -99,7 +93,7 @@ class NodeType
         array $declaredSuperTypes,
         array $configuration,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly ObjectManagerInterface $objectManager
+        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
         $this->name = $name;
 
@@ -210,10 +204,13 @@ class NodeType
         foreach ($sortedPostProcessors as $postprocessorConfiguration) {
             $postprocessor = new $postprocessorConfiguration['postprocessor']();
             if (!$postprocessor instanceof NodeTypePostprocessorInterface) {
-                throw new InvalidNodeTypePostprocessorException(sprintf(
-                    'Expected NodeTypePostprocessorInterface but got "%s"',
-                    get_class($postprocessor)
-                ), 1364759955);
+                throw new InvalidNodeTypePostprocessorException(
+                    sprintf(
+                        'Expected NodeTypePostprocessorInterface but got "%s"',
+                        get_class($postprocessor)
+                    ),
+                    1364759955
+                );
             }
             $postprocessorOptions = [];
             if (isset($postprocessorConfiguration['postprocessorOptions'])) {
@@ -390,26 +387,7 @@ class NodeType
         $this->initialize();
 
         if ($this->nodeLabelGenerator === null) {
-            if ($this->hasConfiguration('label.generatorClass')) {
-                $nodeLabelGenerator = $this->objectManager->get($this->getConfiguration('label.generatorClass'));
-                if (!$nodeLabelGenerator instanceof NodeLabelGeneratorInterface) {
-                    throw new \InvalidArgumentException(
-                        $this->getConfiguration('label.generatorClass')
-                            . 'does not implement the required ' . NodeLabelGeneratorInterface::class,
-                        1651761078
-                    );
-                }
-            } elseif ($this->hasConfiguration('label') && is_string($this->getConfiguration('label'))) {
-                $nodeLabelGenerator = $this->objectManager->get(ExpressionBasedNodeLabelGenerator::class);
-                /** @var ExpressionBasedNodeLabelGenerator $nodeLabelGenerator */
-                $nodeLabelGenerator->setExpression($this->getConfiguration('label'));
-            } else {
-                // TODO
-                /** @var NodeLabelGeneratorInterface $nodeLabelGenerator */
-                $nodeLabelGenerator = $this->objectManager->get(\Neos\ContentRepositoryRegistry\NodeLabel\ExpressionBasedNodeLabelGenerator::class);
-                //$nodeLabelGenerator = $this->objectManager->get(NodeLabelGeneratorInterface::class);
-            }
-            $this->nodeLabelGenerator = $nodeLabelGenerator;
+            $this->nodeLabelGenerator = $this->nodeLabelGeneratorFactory->create($this);
         }
 
         return $this->nodeLabelGenerator;
@@ -467,7 +445,7 @@ class NodeType
         $defaultValues = [];
         foreach ($this->fullConfiguration['properties'] as $propertyName => $propertyConfiguration) {
             if (is_string($propertyName) && isset($propertyConfiguration['defaultValue'])) {
-                $defaultValues[$propertyName] =  $propertyConfiguration['defaultValue'];
+                $defaultValues[$propertyName] = $propertyConfiguration['defaultValue'];
             }
         }
 
@@ -490,7 +468,7 @@ class NodeType
         $autoCreatedChildNodes = [];
         foreach ($this->fullConfiguration['childNodes'] as $childNodeName => $childNodeConfiguration) {
             if (isset($childNodeConfiguration['type'])) {
-                $autoCreatedChildNodes[Utility::renderValidNodeName($childNodeName)]
+                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value]
                     = $this->nodeTypeManager->getNodeType($childNodeConfiguration['type']);
             }
         }
@@ -559,7 +537,7 @@ class NodeType
 
         $childNodeConfiguration = [];
         foreach ($this->getConfiguration('childNodes') as $name => $configuration) {
-            $childNodeConfiguration[Utility::renderValidNodeName($name)] = $configuration;
+            $childNodeConfiguration[NodeName::transliterateFromString($name)->value] = $configuration;
         }
         $childNodeConstraintConfiguration = ObjectAccess::getPropertyPath(
             $childNodeConfiguration,

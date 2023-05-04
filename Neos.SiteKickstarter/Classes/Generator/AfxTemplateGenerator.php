@@ -13,13 +13,12 @@ namespace Neos\SiteKickstarter\Generator;
  * source code.
  */
 
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\PackageManager;
 use Neos\Kickstarter\Service\GeneratorService;
 use Neos\SiteKickstarter\Service\SimpleTemplateRenderer;
 use Neos\Utility\Files;
-use Neos\ContentRepositoryRegistry\Utility;
 use Neos\SiteKickstarter\Service\FusionRecursiveDirectoryRenderer;
 
 /**
@@ -39,13 +38,6 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
      * @var SimpleTemplateRenderer
      */
     protected $simpleTemplateRenderer;
-
-    /**
-     * TODO: FIX ME ES CR
-     * __Flow\Inject
-     * __var ContentDimensionZookeeper
-     */
-    protected $contentDimensionZookeeper;
 
     /**
      * Generate a site package and fill it with boilerplate data.
@@ -158,13 +150,10 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
 
     /**
      * Generate site node name based on the given package key
-     *
-     * @param string $packageKey
-     * @return string
      */
     protected function generateSiteNodeName(string $packageKey) : string
     {
-        return Utility::renderValidNodeName($packageKey);
+        return NodeName::transliterateFromString($packageKey)->value;
     }
 
     /**

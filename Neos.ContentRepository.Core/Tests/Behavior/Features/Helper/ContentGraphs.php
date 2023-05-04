@@ -15,7 +15,6 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
  */
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
-use Neos\Flow\Annotations as Flow;
 
 /**
  * The content graph repository collection, indexed by adapter package

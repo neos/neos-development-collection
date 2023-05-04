@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Core\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 
 /**
  * Manager for node types
@@ -39,15 +38,9 @@ class NodeTypeManager
      */
     protected array $cachedSubNodeTypes = [];
 
-
-    /**
-     * @var array<string,mixed>
-     */
-    protected array $fullNodeTypeConfigurations;
-
     public function __construct(
         private readonly \Closure $nodeTypeConfigLoader,
-        private readonly ObjectManagerInterface $objectManager,
+        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory,
         private readonly ?string $fallbackNodeTypeName
     ) {
     }
@@ -92,7 +85,6 @@ class NodeTypeManager
 
         if (!isset($this->cachedSubNodeTypes[$superTypeName])) {
             $filteredNodeTypes = [];
-            /** @var NodeType $nodeType */
             foreach ($this->cachedNodeTypes as $nodeTypeName => $nodeType) {
                 if ($nodeType->isOfType($superTypeName) && $nodeTypeName !== $superTypeName) {
                     $filteredNodeTypes[$nodeTypeName] = $nodeType;
@@ -129,18 +121,24 @@ class NodeTypeManager
         }
 
         if ($this->fallbackNodeTypeName === null) {
-            throw new NodeTypeNotFoundException(sprintf(
-                'The node type "%s" is not available and no fallback NodeType is configured.',
-                $nodeTypeName
-            ), 1316598370);
+            throw new NodeTypeNotFoundException(
+                sprintf(
+                    'The node type "%s" is not available and no fallback NodeType is configured.',
+                    $nodeTypeName
+                ),
+                1316598370
+            );
         }
 
         if (!$this->hasNodeType($this->fallbackNodeTypeName)) {
-            throw new NodeTypeNotFoundException(sprintf(
-                'The node type "%s" is not available and the configured fallback NodeType "%s" is not available.',
-                $nodeTypeName,
-                $this->fallbackNodeTypeName
-            ), 1438166322);
+            throw new NodeTypeNotFoundException(
+                sprintf(
+                    'The node type "%s" is not available and the configured fallback NodeType "%s" is not available.',
+                    $nodeTypeName,
+                    $this->fallbackNodeTypeName
+                ),
+                1438166322
+            );
         }
 
         return $this->getNodeType($this->fallbackNodeTypeName);
@@ -149,7 +147,7 @@ class NodeTypeManager
     /**
      * Checks if the specified node type exists
      *
-     * @param string $nodeTypeName Name of the node type
+     * @param string|NodeTypeName $nodeTypeName Name of the node type
      * @return boolean true if it exists, otherwise false
      * @api
      */
@@ -257,7 +255,7 @@ class NodeTypeManager
             $superTypes,
             $nodeTypeConfiguration,
             $this,
-            $this->objectManager
+            $this->nodeLabelGeneratorFactory
         );
 
         $this->cachedNodeTypes[$nodeTypeName] = $nodeType;

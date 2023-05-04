@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\User;
 
-use Neos\Flow\Utility\Algorithms;
+use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 
 /**
  * @api
@@ -40,7 +40,7 @@ final class UserId implements \JsonSerializable
 
     public static function create(): self
     {
-        return self::instance(Algorithms::generateUUID());
+        return new self(UuidFactory::create());
     }
 
     /**
