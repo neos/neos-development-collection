@@ -7,6 +7,7 @@
     ],
     "require": {
         "neos/flow": "*",
+        "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-core": "*",
         "symfony/property-access": "*",
         "psr/clock": "^1"
