@@ -6,6 +6,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
+use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
@@ -42,8 +43,9 @@ final class CrCommandController extends CommandController
      * @param string $projection Full Qualified Class Name or alias of the projection to replay (e.g. "contentStream")
      * @param string $contentRepository Identifier of the Content Repository instance to operate on
      * @param bool $quiet If set only fatal errors are rendered to the output
+     * @param int $until Until which sequence number should projections be replayed? useful for debugging
      */
-    public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false): void
+    public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
@@ -52,7 +54,7 @@ final class CrCommandController extends CommandController
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
             // TODO start progress bar
         }
-        $projectionService->replayProjection($projection);
+        $projectionService->replayProjection($projection, $until !== 0 ? SequenceNumber::fromInteger($until) : null);
         if (!$quiet) {
             // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');

@@ -6,6 +6,9 @@ namespace Neos\ContentRepositoryRegistry\Service;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\EventStore\EventStoreInterface;
+use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventStream\VirtualStreamName;
 
 /**
  * Content Repository service to perform Projection replays
@@ -18,14 +21,24 @@ final class ProjectionReplayService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly Projections $projections,
         private readonly ContentRepository $contentRepository,
+        private readonly EventStoreInterface $eventStore,
     ) {
     }
 
-    public function replayProjection(string $projectionAliasOrClassName): void
+    public function replayProjection(string $projectionAliasOrClassName, ?SequenceNumber $maximumSequenceNumber = null): void
     {
         $projectionClassName = $this->resolveProjectionClassName($projectionAliasOrClassName);
         $this->contentRepository->resetProjectionState($projectionClassName);
-        $this->contentRepository->catchUpProjection($projectionClassName);
+
+        // the logic below is from ContentRepository::catchUpProjection,
+        // but adjusted with the maximumSequenceNumber restriction
+        $projection = $this->projections->get($projectionClassName);
+        $streamName = VirtualStreamName::all();
+        $eventStream = $this->eventStore->load($streamName);
+        if ($maximumSequenceNumber !== null) {
+            $eventStream = $eventStream->withMaximumSequenceNumber($maximumSequenceNumber);
+        }
+        $projection->catchUp($eventStream, $this->contentRepository);
     }
 
     public function replayAllProjections(): void
