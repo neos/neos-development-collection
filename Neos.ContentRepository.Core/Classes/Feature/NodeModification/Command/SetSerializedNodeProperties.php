@@ -84,4 +84,33 @@ final class SetSerializedNodeProperties implements
                 && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );
     }
+
+    /**
+     * @internal
+     */
+    public function appliesToSameNode(SetSerializedNodeProperties $command): bool
+    {
+        return (
+            $this->contentStreamId === $command->contentStreamId
+            && $this->originDimensionSpacePoint->equals($command->originDimensionSpacePoint)
+            && $this->nodeAggregateId->equals($command->nodeAggregateId)
+        );
+    }
+
+    /**
+     * @internal
+     */
+    public function mergeWith(SetSerializedNodeProperties $command): self
+    {
+        if (!$this->appliesToSameNode($command)) {
+            throw new \InvalidArgumentException('command applies to different node, this is not supported');
+        }
+
+        return new self(
+            $this->contentStreamId,
+            $this->nodeAggregateId,
+            $this->originDimensionSpacePoint,
+            $this->propertyValues->merge($command->propertyValues)
+        );
+    }
 }

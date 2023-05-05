@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
@@ -378,6 +379,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
+        $originalCommands = $this->compactCommands($originalCommands);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
         foreach ($originalCommands as $i => $originalCommand) {
             if (!($originalCommand instanceof RebasableToOtherContentStreamsInterface)) {
@@ -506,6 +508,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
+        $originalCommands = $this->compactCommands($originalCommands);
         /** @var RebasableToOtherContentStreamsInterface[] $matchingCommands */
         $matchingCommands = [];
         /** @var RebasableToOtherContentStreamsInterface[] $remainingCommands */
@@ -627,6 +630,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
+        $originalCommands = $this->compactCommands($originalCommands);
         $commandsToKeep = [];
 
         foreach ($originalCommands as $originalCommand) {
@@ -914,5 +918,46 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         return false;
+    }
+
+    private function compactCommands(array $commands): array
+    {
+        $compressedCommands = [];
+        /* @var $lastSetSerializedNodePropertiesCommand \Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties */
+        $lastSetSerializedNodePropertiesCommand = null;
+        foreach ($commands as $command) {
+            if ($command instanceof SetSerializedNodeProperties
+                && $lastSetSerializedNodePropertiesCommand !== null
+                && $lastSetSerializedNodePropertiesCommand->appliesToSameNode($command)) {
+                // COMPATIBLE: we can merge with a previous command, and reduce the command count.
+                $lastSetSerializedNodePropertiesCommand = $lastSetSerializedNodePropertiesCommand->mergeWith($command);
+            } elseif ($command instanceof SetSerializedNodeProperties) {
+                // Incompatible SetSerializedNodeProperties command => store the
+                // last compressed command if any
+                if ($lastSetSerializedNodePropertiesCommand !== null) {
+                    $compressedCommands[] = $lastSetSerializedNodePropertiesCommand;
+                    $lastSetSerializedNodePropertiesCommand = null;
+                }
+
+                $lastSetSerializedNodePropertiesCommand = $command;
+            } else {
+                // different command type
+                // so store the compacted command
+                if ($lastSetSerializedNodePropertiesCommand !== null) {
+                    $compressedCommands[] = $lastSetSerializedNodePropertiesCommand;
+                    $lastSetSerializedNodePropertiesCommand = null;
+                }
+
+                $compressedCommands[] = $command;
+            }
+        }
+
+        // we are not allowed to lose commands
+        if ($lastSetSerializedNodePropertiesCommand !== null) {
+            $compressedCommands[] = $lastSetSerializedNodePropertiesCommand;
+            $lastSetSerializedNodePropertiesCommand = null;
+        }
+
+        return $compressedCommands;
     }
 }
