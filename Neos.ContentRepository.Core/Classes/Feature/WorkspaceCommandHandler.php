@@ -588,6 +588,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             ),
         );
 
+        // to avoid dangling content streams, we need to remove our temporary content stream (whose events
+        // have already been published)
+        $contentRepository->handle(new RemoveContentStream(
+            $matchingContentStream
+        ));
+
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"
         return new EventsToPublish(
