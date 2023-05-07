@@ -49,7 +49,7 @@ class HasOperation extends AbstractOperation
      */
     public function canEvaluate($context)
     {
-        return $this->checkContextForNodeInterface($context);
+        return $this->checkContextForTraversableNodeInterface($context);
     }
 
     /**

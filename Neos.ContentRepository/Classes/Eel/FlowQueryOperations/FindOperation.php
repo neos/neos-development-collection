@@ -55,7 +55,6 @@ use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
  */
 class FindOperation extends AbstractOperation
 {
-
     /**
      * {@inheritdoc}
      *
