@@ -9,9 +9,8 @@ use Neos\ContentRepository\Domain\Projection\Content\TraversableNodeInterface;
 trait CanEvaluateNodeContextTrait
 {
     /**
-     * {@inheritdoc}
-     *
-     * @param array|\Traversable (or array-like object) $context onto which this operation should be applied
+     * @param $context
+     * @return bool
      */
     public function checkContextForNodeInterface($context): bool
     {
@@ -27,9 +26,8 @@ trait CanEvaluateNodeContextTrait
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array|\Traversable $context onto which this operation should be applied
+     * @param $context
+     * @return bool
      */
     public function checkContextForTraversableNodeInterface($context): bool
     {
