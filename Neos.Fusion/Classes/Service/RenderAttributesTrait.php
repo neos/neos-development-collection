@@ -40,6 +40,9 @@ trait RenderAttributesTrait
                 // [""] => empty attribute
                 $joinedAttributeValue = '';
                 foreach ($attributeValue as $attributeValuePart) {
+                    if ($attributeValuePart instanceof \Stringable) {
+                        $attributeValuePart = $attributeValuePart->__toString();
+                    }
                     $joinedAttributeValue .= match (gettype($attributeValuePart)) {
                         'boolean', 'NULL' => '',
                         'string' => ' ' . trim($attributeValuePart),
