@@ -22,7 +22,7 @@ trait RenderAttributesTrait
      * Render the tag attributes for the given key->values as string,
      * if a value is an iterable it will be concatenated with spaces as separator
      *
-     * @param iterable<mixed,int|string|null|bool|array<mixed,string|bool|null>> $attributes
+     * @param iterable<mixed,int|string|null|bool|array<string|bool|null|\Stringable>> $attributes
      * @param bool $allowEmpty
      */
     protected function renderAttributes(iterable $attributes, bool $allowEmpty = true): string
@@ -46,7 +46,7 @@ trait RenderAttributesTrait
                     $joinedAttributeValue .= match (gettype($attributeValuePart)) {
                         'boolean', 'NULL' => '',
                         'string' => ' ' . trim($attributeValuePart),
-                        default => throw new \InvalidArgumentException('$attributes may contain values of type array<string|bool|null> type: array<' . get_debug_type($attributeValuePart) . '> given')
+                        default => throw new \InvalidArgumentException('$attributes may contain values of type array<string|bool|null|\Stringable> type: array<' . get_debug_type($attributeValuePart) . '> given')
                     };
                 }
                 $attributeValue = trim($joinedAttributeValue);
