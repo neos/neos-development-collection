@@ -34,6 +34,10 @@ use Neos\Neos\Service\EditorContentStreamZookeeper;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Neos\AssetUsage\GlobalAssetUsageService;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
  * The Neos Package
@@ -143,27 +147,20 @@ class Package extends BasePackage
 
         $dispatcher->connect(
             DocumentUriPathProjection::class,
-            'documentUriPathChanged',
-            function (string $oldUriPath, string $newUriPath, $_, EventEnvelope $eventEnvelope) use ($bootstrap) {
+            'afterDocumentUriPathChanged',
+            function (
+                ContentRepositoryId $contentRepositoryId,
+                ContentStreamId $contentStreamId,
+                NodeAggregateId $aggregateId,
+                OriginDimensionSpacePoint $originDimensionSpacePoint,
+                string $oldUriPath,
+                string $newUriPath,
+                $_,
+                EventEnvelope $eventEnvelope
+            ) use ($bootstrap) {
                 /** @var RouterCachingService $routerCachingService */
                 $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
                 $routerCachingService->flushCachesForUriPath($oldUriPath);
-
-                if (class_exists(RedirectStorageInterface::class)) {
-                    if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
-                        return;
-                    }
-                    /** @var RedirectStorageInterface $redirectStorage */
-                    $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
-                    $redirectStorage->addRedirect(
-                        $oldUriPath,
-                        $newUriPath,
-                        301,
-                        [],
-                        (string)$eventEnvelope->event->metadata->get('initiatingUserId'),
-                        'via DocumentUriPathProjector'
-                    );
-                }
             }
         );
 

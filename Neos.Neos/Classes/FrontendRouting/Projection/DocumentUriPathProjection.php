@@ -48,6 +48,7 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
@@ -64,6 +65,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     public function __construct(
         private readonly EventNormalizer $eventNormalizer,
         private readonly NodeTypeManager $nodeTypeManager,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
     ) {
@@ -569,6 +571,16 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if ($oldUriPath === '') {
             return;
         }
+        $this->emitBeforeDocumentUriPathChanged(
+            $this->contentRepositoryId,
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->originDimensionSpacePoint,
+            $oldUriPath,
+            $event,
+            $eventEnvelope
+        );
+
         /** @var string[] $uriPathSegments */
         $uriPathSegments = explode('/', $oldUriPath);
         $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
@@ -589,7 +601,17 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]
         );
-        $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $eventEnvelope);
+
+        $this->emitAfterDocumentUriPathChanged(
+            $this->contentRepositoryId,
+            $event->contentStreamId,
+            $event->nodeAggregateId,
+            $event->originDimensionSpacePoint,
+            $oldUriPath,
+            $newUriPath,
+            $event,
+            $eventEnvelope
+        );
     }
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
@@ -988,11 +1010,29 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     /**
      * @Flow\Signal
      */
-    public function emitDocumentUriPathChanged(
+    public function emitBeforeDocumentUriPathChanged(
+        ContentRepositoryId $contentRepositoryId,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $dimensionSpacePoint,
+        string $oldUriPath,
+        NodePropertiesWereSet $event,
+        EventEnvelope $eventEnvelope,
+    ): void {
+    }
+
+    /**
+     * @Flow\Signal
+     */
+    public function emitAfterDocumentUriPathChanged(
+        ContentRepositoryId $contentRepositoryId,
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $dimensionSpacePoint,
         string $oldUriPath,
         string $newUriPath,
         NodePropertiesWereSet $event,
-        EventEnvelope $eventEnvelope
+        EventEnvelope $eventEnvelope,
     ): void {
     }
 
