@@ -327,14 +327,45 @@ class HtmlAugmenterTest extends UnitTestCase
                 'allowEmpty' => false,
                 'expectedResult' => '<p>Null attribute</p>',
             ],
-            // Adding of array attributes
+            // Adding of Stringable attributes
             [
-                'html' => '<p>Array attribute</p>',
-                'attributes' => ['class' => ["Hello", "world"]],
+                'html' => '<p>Stringable attribute</p>',
+                'attributes' => ['data-stringable' => new class {
+                    public function __toString(): string
+                    {
+                        return 'toString';
+                    }
+                }],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p class="Hello world">Array attribute</p>',
+                'expectedResult' => '<p data-stringable="toString">Stringable attribute</p>',
+            ],
+            [
+                'html' => '<p>Stringable attribute</p>',
+                'attributes' => ['data-stringable' => new class {
+                    public function __toString(): string
+                    {
+                        return 'toString';
+                    }
+                }],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p data-stringable="toString">Stringable attribute</p>',
+            ],
+            // Adding of array attributes
+            [
+                'html' => '<p>Array attribute</p>',
+                'attributes' => ['class' => ["Hello", "world", new class {
+                    public function __toString(){
+                        return "toString";
+                    }
+                }]],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p class="Hello world toString">Array attribute</p>',
             ],
             [
                 'html' => '<p>Array attribute</p>',
