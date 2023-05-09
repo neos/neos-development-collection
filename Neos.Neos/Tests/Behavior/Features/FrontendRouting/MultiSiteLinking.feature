@@ -27,10 +27,10 @@ Feature: Linking between multiple websites
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId         | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues                    | nodeName |
-      | homepage1               | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
-      | sir-david-nodenborough  | homepage1              | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
-      | homepage2               | lady-eleonode-rootford | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-2   |
-      | sir-david-nodenborough2 | homepage2              | Neos.EventSourcedNeosAdjustments:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node3    |
+      | homepage1               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-1   |
+      | sir-david-nodenborough  | homepage1              | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node2    |
+      | homepage2               | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"}          | site-2   |
+      | sir-david-nodenborough2 | homepage2              | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "david-nodenborough"} | node3    |
     And A site exists for node name "site-1" and domain "http://domain1.tld"
     And A site exists for node name "site-2" and domain "http://domain2.tld"
     And the sites configuration is:

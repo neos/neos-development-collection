@@ -17,6 +17,7 @@ namespace Neos\Neos\Fusion\Helper;
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValue;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionValues;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -45,12 +46,18 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return string|null
+     * @return ContentDimensionValue|null
      */
-    public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?string
+    public function currentValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        return $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
+        $currentDimensionValueAsString = $node->subgraphIdentity->dimensionSpacePoint->getCoordinate($contentDimensionId);
+
+        if (is_string($currentDimensionValueAsString)) {
+            return $this->allDimensionValues($node, $contentDimensionId)?->getValue($currentDimensionValueAsString);
+        }
+
+        return null;
     }
 
     /**
@@ -62,12 +69,18 @@ final class DimensionHelper implements ProtectedContextAwareInterface
      *
      * @param Node $node
      * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
-     * @return string|null
+     * @return ContentDimensionValue|null
      */
-    public function originValue(Node $node, ContentDimensionId|string $dimensionName): ?string
+    public function originValue(Node $node, ContentDimensionId|string $dimensionName): ?ContentDimensionValue
     {
         $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
-        return $node->originDimensionSpacePoint->getCoordinate($contentDimensionId);
+        $originalDimensionValueAsString = $node->originDimensionSpacePoint->getCoordinate($contentDimensionId);
+
+        if (is_string($originalDimensionValueAsString)) {
+            return $this->allDimensionValues($node, $contentDimensionId)?->getValue($originalDimensionValueAsString);
+        }
+
+        return null;
     }
 
     /**
@@ -87,6 +100,30 @@ final class DimensionHelper implements ProtectedContextAwareInterface
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         return $contentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority();
+    }
+
+
+    /**
+     * Find all content dimension values in content repository defined by `contentRepositoryId` or `node`.
+     *
+     * Example::
+     *
+     *     Neos.Dimension.allDimensionValues(contentRepositoryId, 'language')
+     *     Neos.Dimension.allDimensionValues(node, 'language')
+     *
+     * @param ContentRepositoryId|Node $subject Node will be used to determine `ContentRepositoryId`
+     * @param ContentDimensionId|string $dimensionName String will be converted to `ContentDimensionId`
+     * @return ContentDimensionValues|null
+     */
+    public function allDimensionValues(ContentRepositoryId|Node $subject, ContentDimensionId|string $dimensionName): ?ContentDimensionValues
+    {
+        $contentRepositoryId = $subject instanceof Node ? $subject->subgraphIdentity->contentRepositoryId : $subject;
+        $contentDimensionId = is_string($dimensionName) ? new ContentDimensionId($dimensionName) : $dimensionName;
+
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentDimension = $contentRepository->getContentDimensionSource()->getDimension($contentDimensionId);
+
+        return $contentDimension?->values;
     }
 
     /**

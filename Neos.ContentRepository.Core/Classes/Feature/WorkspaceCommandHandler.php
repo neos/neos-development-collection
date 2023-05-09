@@ -354,8 +354,6 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
      * @throws BaseWorkspaceDoesNotExist
      * @throws WorkspaceDoesNotExist
      * @throws \Exception
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     private function handleRebaseWorkspace(
         RebaseWorkspace $command,
@@ -589,6 +587,12 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                 $command->nodesToPublish,
             ),
         );
+
+        // to avoid dangling content streams, we need to remove our temporary content stream (whose events
+        // have already been published)
+        $contentRepository->handle(new RemoveContentStream(
+            $matchingContentStream
+        ));
 
         // It is safe to only return the last command result,
         // as the commands which were rebased are already executed "synchronously"

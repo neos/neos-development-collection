@@ -16,12 +16,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValueSpecializationDepthIsInvalid;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for content dimension value specialization depths
  */
-class ContentDimensionValueSpecializationDepthTest extends UnitTestCase
+class ContentDimensionValueSpecializationDepthTest extends TestCase
 {
     public function testInitializationThrowsExceptionForNegativeDepth()
     {

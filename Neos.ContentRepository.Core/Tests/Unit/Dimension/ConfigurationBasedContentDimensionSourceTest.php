@@ -1,6 +1,6 @@
 <?php
 
-/*
+/*s
  * This file is part of the Neos.ContentRepository.DimensionSpace package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
@@ -16,12 +16,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionConstraintSet;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Unit test cases for the ConfigurationBasedContentDimensionSource
  */
-class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
+class ConfigurationBasedContentDimensionSourceTest extends TestCase
 {
     protected ?Dimension\ConfigurationBasedContentDimensionSource $subject;
 
@@ -85,9 +85,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         $this->assertSame([], $subject->getContentDimensionsOrderedByPriority());
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testDimensionsAreInitializedInCorrectOrder()
     {
         $dimensions = $this->subject->getContentDimensionsOrderedByPriority();
@@ -97,9 +94,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         $this->assertSame('dimensionB', $dimensionKeys[1]);
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testDimensionValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
@@ -174,9 +168,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testSpecializationsAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
@@ -238,9 +229,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testMaximumDepthIsCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
@@ -256,9 +244,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testRestrictionsAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
@@ -315,9 +300,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         );
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testDimensionConfigurationValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));
@@ -325,9 +307,6 @@ class ConfigurationBasedContentDimensionSourceTest extends UnitTestCase
         $this->assertSame('anotherValue', $dimensionA->getConfigurationValue('dimensionConfiguration.anotherKey'));
     }
 
-    /**
-     * @throws Dimension\Exception\ContentDimensionDefaultValueIsMissing
-     */
     public function testDimensionValueConfigurationValuesAreCorrectlyInitialized()
     {
         $dimensionA = $this->subject->getDimension(new Dimension\ContentDimensionId('dimensionA'));

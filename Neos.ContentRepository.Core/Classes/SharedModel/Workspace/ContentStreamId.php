@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Workspace;
 
-use Neos\Flow\Utility\Algorithms;
+use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 
 /**
  * The ContentStreamId is the identifier for a Content Stream, which is
@@ -25,13 +25,25 @@ use Neos\Flow\Utility\Algorithms;
 final class ContentStreamId implements \JsonSerializable
 {
     /**
+     * A preg pattern to match against content stream identifiers
+     */
+    public const PATTERN = '/^([a-z0-9\-]{1,40})$/';
+
+    /**
      * @var array<string,self>
      */
     private static array $instances = [];
 
     private function __construct(
-        public string $value
+        public readonly string $value
     ) {
+        if (!preg_match(self::PATTERN, $value)) {
+            throw new \InvalidArgumentException(
+                'Invalid content stream identifier "' . $value
+                . '" (a content stream identifier must only contain lowercase characters, numbers and the "-" sign).',
+                1505840197862
+            );
+        }
     }
 
     private static function instance(string $value): self
@@ -46,7 +58,7 @@ final class ContentStreamId implements \JsonSerializable
 
     public static function create(): self
     {
-        return self::instance(Algorithms::generateUUID());
+        return self::instance(UuidFactory::create());
     }
 
     public function jsonSerialize(): string

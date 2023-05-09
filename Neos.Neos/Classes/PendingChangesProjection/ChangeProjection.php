@@ -95,18 +95,18 @@ class ChangeProjection implements ProjectionInterface
             // added 2023-03-18
             if ($tableSchema->hasColumn('nodeAggregateIdentifier')) {
                 // table in old format -> we migrate to new.
-                $connection->executeStatement(sprintf('ALTER TABLE %s RENAME COLUMN nodeAggregateIdentifier TO nodeAggregateId; ', $this->tableName));
+                $connection->executeStatement(sprintf('ALTER TABLE %s CHANGE nodeAggregateIdentifier nodeAggregateId VARCHAR(255); ', $this->tableName));
             }
             // added 2023-03-18
             if ($tableSchema->hasColumn('contentStreamIdentifier')) {
-                $connection->executeStatement(sprintf('ALTER TABLE %s RENAME COLUMN contentStreamIdentifier TO contentStreamId; ', $this->tableName));
+                $connection->executeStatement(sprintf('ALTER TABLE %s CHANGE contentStreamIdentifier contentStreamId VARCHAR(255); ', $this->tableName));
             }
         }
 
         $schema = new Schema();
         $changeTable = $schema->createTable($this->tableName);
         $changeTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true);
         $changeTable->addColumn('changed', Types::BOOLEAN)
             ->setNotnull(true);
@@ -114,7 +114,7 @@ class ChangeProjection implements ProjectionInterface
             ->setNotnull(true);
 
         $changeTable->addColumn('nodeAggregateId', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true);
         $changeTable->addColumn('originDimensionSpacePoint', Types::TEXT)
             ->setNotnull(false);

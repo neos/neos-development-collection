@@ -41,7 +41,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Utility;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
@@ -222,12 +221,12 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $workspaceName = WorkspaceName::fromString(
-            Utility::renderValidNodeName($title->value) . '-'
+            WorkspaceName::transliterateFromString($title->value)->value . '-'
             . substr(base_convert(microtime(false), 10, 36), -5, 5)
         );
         while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
             $workspaceName = WorkspaceName::fromString(
-                Utility::renderValidNodeName($title->value) . '-'
+                WorkspaceName::transliterateFromString($title->value)->value . '-'
                 . substr(base_convert(microtime(false), 10, 36), -5, 5)
             );
         }

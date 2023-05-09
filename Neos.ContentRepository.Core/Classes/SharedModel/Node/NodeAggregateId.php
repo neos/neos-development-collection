@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
-use Neos\Flow\Utility\Algorithms;
+use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 
 /**
  * The NodeAggregateId supersedes the Node Identifier from Neos <= 9.x.
@@ -26,7 +26,7 @@ final class NodeAggregateId implements \JsonSerializable
     /**
      * A preg pattern to match against node aggregate identifiers
      */
-    public const PATTERN = '/^([a-z0-9\-]{1,255})$/';
+    public const PATTERN = '/^([a-z0-9\-]{1,64})$/';
 
     private function __construct(
         public readonly string $value
@@ -42,7 +42,7 @@ final class NodeAggregateId implements \JsonSerializable
 
     public static function create(): self
     {
-        return new self(Algorithms::generateUUID());
+        return new self(UuidFactory::create());
     }
 
     public static function fromString(string $value): self

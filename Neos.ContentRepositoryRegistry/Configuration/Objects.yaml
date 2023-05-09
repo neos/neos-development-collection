@@ -6,6 +6,9 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
 Neos\ContentRepository\Core\Infrastructure\DbalClientInterface:
   className: Neos\ContentRepositoryRegistry\Infrastructure\DbalClient
 
+Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface:
+  className: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\ObjectManagerBasedNodeLabelGeneratorFactory
+
 # !!! UGLY WORKAROUNDS, because we cannot wire non-Flow class constructor arguments here.
 Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory:
   scope: singleton

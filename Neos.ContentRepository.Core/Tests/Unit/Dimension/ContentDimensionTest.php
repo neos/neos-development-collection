@@ -17,12 +17,12 @@ namespace Neos\ContentRepository\Core\Tests\Unit\Dimension;
 use Neos\ContentRepository\Core\Dimension;
 use Neos\ContentRepository\Core\Dimension\Exception\ContentDimensionValuesAreInvalid;
 use Neos\ContentRepository\Core\Dimension\Exception\GeneralizationIsInvalid;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test cases for content dimensions
  */
-class ContentDimensionTest extends UnitTestCase
+class ContentDimensionTest extends TestCase
 {
     protected ?Dimension\ContentDimension $subject;
 

@@ -11,23 +11,21 @@ namespace Neos\Neos\Tests\Functional\Command;
  * source code.
  */
 
-require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(FLOW_PATH_PACKAGES . '/Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-if (file_exists(FLOW_PATH_PACKAGES . '/Neos')) {
-    require_once(FLOW_PATH_PACKAGES . '/Neos/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-    require_once(FLOW_PATH_PACKAGES . '/Neos/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
+require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
+if (file_exists(__DIR__ . '/../../../../../Neos')) {
+    require_once(__DIR__ . '/../../../../../Neos/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+    require_once(__DIR__ . '/../../../../../Neos/Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 } else {
-    require_once(FLOW_PATH_PACKAGES . '/Application/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-    require_once(FLOW_PATH_PACKAGES . '/Application/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
+    require_once(__DIR__ . '/../../../../../Application/Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
+    require_once(__DIR__ . '/../../../../../Application/Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 }
 
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeAuthorizationTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\LegacyNodeOperationsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * A test helper, to include behat step traits, beeing executed by

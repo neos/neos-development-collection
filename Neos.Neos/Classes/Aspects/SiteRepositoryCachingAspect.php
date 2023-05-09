@@ -44,6 +44,10 @@ class SiteRepositoryCachingAspect
      * @var Domain|boolean
      */
     protected $domainForActiveRequest = false;
+
+    /**
+     * @var array<string,mixed>
+     */
     private array $byNodeNameCache = [];
 
     /**
@@ -71,9 +75,10 @@ class SiteRepositoryCachingAspect
         if ($nodeName instanceof SiteNodeName) {
             $nodeName = $nodeName->value;
         }
-
         if (!array_key_exists($nodeName, $this->byNodeNameCache) || $this->environment->getContext()->isTesting()) {
             $site = $joinPoint->getAdviceChain()->proceed($joinPoint);
+            // make phpstan happy
+            assert(is_string($nodeName));
             $this->byNodeNameCache[$nodeName] = $site;
         }
         return $this->byNodeNameCache[$nodeName];

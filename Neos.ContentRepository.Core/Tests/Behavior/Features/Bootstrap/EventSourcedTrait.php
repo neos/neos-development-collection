@@ -31,18 +31,19 @@ require_once(__DIR__ . '/Features/WorkspacePublishing.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -68,21 +69,12 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\Works
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\MutableClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -122,21 +114,12 @@ trait EventSourcedTrait
     protected ?NodeAggregateId $rootNodeAggregateId;
 
     private ContentRepositoryId $contentRepositoryId;
-    private ContentRepositoryRegistry $contentRepositoryRegistry;
     private ContentRepository $contentRepository;
     private ContentRepositoryInternals $contentRepositoryInternals;
-
-    abstract protected function getObjectManager(): ObjectManagerInterface;
-
 
     protected function getContentRepositoryId(): ContentRepositoryId
     {
         return $this->contentRepositoryId;
-    }
-
-    protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
-    {
-        return $this->contentRepositoryRegistry;
     }
 
     protected function getContentRepository(): ContentRepository
@@ -178,30 +161,7 @@ trait EventSourcedTrait
     protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false)
     {
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
-        $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->contentRepositoryId = ContentRepositoryId::fromString('default');
-
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
-        }
-
-        // prepare race tracking for debugging into the race log
-        if (class_exists(RedisInterleavingLogger::class)) { // the class must exist (the package loaded)
-            $raceConditionTrackerConfig = $this->getObjectManager()->get(ConfigurationManager::class)
-                ->getConfiguration(
-                    ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-                    'Neos.ContentRepository.BehavioralTests.raceConditionTracker');
-
-            // if it's enabled, correctly configure the Redis connection.
-            // Then, people can use {@see logToRaceConditionTracker()} for debugging.
-            $this->raceConditionTrackerEnabled = boolval($raceConditionTrackerConfig['enabled']);
-            if ($this->raceConditionTrackerEnabled) {
-                RedisInterleavingLogger::connect(
-                    $raceConditionTrackerConfig['redis']['host'],
-                    $raceConditionTrackerConfig['redis']['port']
-                );
-            }
-        }
     }
 
     /**
@@ -225,55 +185,7 @@ trait EventSourcedTrait
      * @param array<string> $adapterKeys "DoctrineDBAL" if
      * @return void
      */
-    private function initCleanContentRepository(array $adapterKeys): void
-    {
-        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
-
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $registrySettings = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepositoryRegistry'
-        );
-
-        if (!in_array('Postgres', $adapterKeys)) {
-            // in case we do not have tests annotated with @adapters=Postgres, we
-            // REMOVE the Postgres projection from the Registry settings. This way, we won't trigger
-            // Postgres projection catchup for tests which are not yet postgres-aware.
-            //
-            // This is to make the testcases more stable and deterministic. We can remove this workaround
-            // once the Postgres adapter is fully ready.
-            unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-        }
-        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $registrySettings,
-            $this->getObjectManager()
-        );
-
-
-        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
-        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
-        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
-            $this->contentRepository->setUp();
-            self::$wasContentRepositorySetupCalled = true;
-        }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryId, new ContentRepositoryInternalsFactory());
-
-        $availableContentGraphs = [];
-        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-        // NOTE: to disable a content graph (do not run the tests for it), you can use "null" as value.
-        if (in_array('Postgres', $adapterKeys)) {
-            $availableContentGraphs['Postgres'] = $this->contentRepository->projectionState(ContentHypergraph::class);
-        }
-
-        if (count($availableContentGraphs) === 0) {
-            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
-        }
-        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-
-    }
+    abstract protected function initCleanContentRepository(array $adapterKeys): void;
 
     /**
      * @BeforeScenario @contentrepository
@@ -499,7 +411,7 @@ trait EventSourcedTrait
     {
         $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
-        Assert::assertNotEquals($rawContentStreamId, (string)$workspace->currentContentStreamId);
+        Assert::assertNotEquals($rawContentStreamId, $workspace->currentContentStreamId->value);
     }
 
     /**
@@ -533,7 +445,7 @@ trait EventSourcedTrait
                 ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
                 ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
 
-            /** @var \Neos\ContentRepository\Core\Projection\ContentGraph\Subtree[] $flattenedSubtree */
+            /** @var Subtree[] $flattenedSubtree */
             $flattenedSubtree = [];
             if ($subtree !== null) {
                 self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
@@ -562,78 +474,6 @@ trait EventSourcedTrait
     }
 
     /**
-     * @var NodeAddress[]
-     */
-    private $currentNodeAddresses;
-
-    /**
-     * @param string|null $alias
-     * @return \Neos\Neos\FrontendRouting\NodeAddress
-     */
-    protected function getCurrentNodeAddress(string $alias = null): NodeAddress
-    {
-        if ($alias === null) {
-            $alias = 'DEFAULT';
-        }
-        return $this->currentNodeAddresses[$alias];
-    }
-
-    /**
-     * @return \Neos\Neos\FrontendRouting\NodeAddress[]
-     */
-    public function getCurrentNodeAddresses(): array
-    {
-        return $this->currentNodeAddresses;
-    }
-
-    /**
-     * @Given /^I get the node address for node aggregate "([^"]*)"(?:, remembering it as "([^"]*)")?$/
-     * @param string $rawNodeAggregateId
-     * @param string $alias
-     */
-    public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
-    {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
-        $node = $subgraph->findNodeById($nodeAggregateId);
-        Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
-
-        $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $nodeAggregateId,
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
-                ->workspaceName
-        );
-    }
-
-    /**
-     * @Then /^I get the node address for the node at path "([^"]*)"(?:, remembering it as "([^"]*)")?$/
-     * @param string $serializedNodePath
-     * @param string $alias
-     * @throws Exception
-     */
-    public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
-    {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
-        if (!$this->getRootNodeAggregateId()) {
-            throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
-        }
-        $node = $subgraph->findNodeByPath(NodePath::fromString($serializedNodePath), $this->getRootNodeAggregateId());
-        Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
-
-        $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
-            $node->nodeAggregateId,
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
-                ->workspaceName
-        );
-    }
-
-    /**
      * @return EventStoreInterface
      * @deprecated
      */
@@ -650,7 +490,7 @@ trait EventSourcedTrait
 
         $contentGraphs = $this->getActiveContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
-        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamId, \Neos\ContentRepository\Core\NodeType\NodeTypeName::fromString('Neos.Neos:Sites'));
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamId, NodeTypeName::fromString('Neos.Neos:Sites'));
         if ($sitesNodeAggregate) {
             assert($sitesNodeAggregate instanceof NodeAggregate);
             return $sitesNodeAggregate->nodeAggregateId;
@@ -685,7 +525,7 @@ trait EventSourcedTrait
     public function iPruneUnusedContentStreams()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentRepositoryService($this->contentRepositoryId, new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
         $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
@@ -696,7 +536,12 @@ trait EventSourcedTrait
     public function iPruneRemovedContentStreamsFromTheEventStream()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentRepositoryService($this->getContentRepositoryId(), new ContentStreamPrunerFactory());
         $contentStreamPruner->pruneRemovedFromEventStream();
     }
+
+    abstract protected function getContentRepositoryService(
+        ContentRepositoryId $contentRepositoryId,
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface;
 }

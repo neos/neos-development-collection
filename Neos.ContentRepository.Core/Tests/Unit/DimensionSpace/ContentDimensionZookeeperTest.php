@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\DimensionSpace;
  */
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\Dimension;
-use Neos\Flow\Tests\UnitTestCase;
+use PHPUnit\Framework\TestCase;
 
 // NOTE: not sure why this is needed
 require_once(__DIR__ . '/Fixtures/ExampleDimensionSource.php');
@@ -21,7 +21,7 @@ require_once(__DIR__ . '/Fixtures/ExampleDimensionSource.php');
 /**
  * Unit test cases for the ContentDimensionZookeeper
  */
-class ContentDimensionZookeeperTest extends UnitTestCase
+class ContentDimensionZookeeperTest extends TestCase
 {
     protected ?DimensionSpace\ContentDimensionZookeeper $subject;
 

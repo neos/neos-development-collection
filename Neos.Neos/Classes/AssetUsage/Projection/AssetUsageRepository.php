@@ -62,11 +62,11 @@ final class AssetUsageRepository
             ->setNotnull(false)
             ->setDefault(null);
         $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(255)
+            ->setLength(40)
             ->setNotnull(true)
             ->setDefault('');
         $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(255)
+            ->setLength(64)
             ->setNotnull(true)
             ->setDefault('');
         $table->addColumn('origindimensionspacepoint', Types::TEXT)

@@ -89,7 +89,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         }
     }
 
-    public function createSiteNode(Site $site, string $nodeTypeName): void
+    public function createSiteNodeIfNotExists(Site $site, string $nodeTypeName): void
     {
         $bootstrapper = ContentRepositoryBootstrapper::create($this->contentRepository);
         $liveContentStreamId = $bootstrapper->getOrCreateLiveContentStream();
@@ -104,6 +104,15 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                 'Cannot create a site using a non-existing node type.',
                 1412372375
             );
+        }
+        $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
+            $liveContentStreamId,
+            $sitesNodeIdentifier,
+            $site->getNodeName()->toNodeName(),
+        );
+        foreach ($siteNodeAggregate as $_) {
+            // Site node already exists
+            return;
         }
 
         $rootDimensionSpacePoints = $this->interDimensionalVariationGraph->getRootGeneralizations();

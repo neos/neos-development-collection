@@ -230,8 +230,6 @@ trait NodeCreation
      * @When /^the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
      */
     public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
