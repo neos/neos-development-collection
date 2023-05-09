@@ -540,6 +540,15 @@ trait EventSourcedTrait
         $contentStreamPruner->pruneRemovedFromEventStream();
     }
 
+    /**
+     * @When I replay the :projectionName projection
+     */
+    public function iReplayTheProjection(string $projectionName)
+    {
+        $this->contentRepository->resetProjectionState($projectionName);
+        $this->contentRepository->catchUpProjection($projectionName);
+    }
+
     abstract protected function getContentRepositoryService(
         ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory

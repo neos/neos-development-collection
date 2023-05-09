@@ -103,6 +103,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         $this->truncateDatabaseTables();
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        $this->stateAccessor = null;
     }
 
     private function truncateDatabaseTables(): void
@@ -194,6 +195,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         if (!$this->stateAccessor) {
             $this->stateAccessor = new DocumentUriPathFinder($this->dbal, $this->tableNamePrefix);
+
+            // !!! Bugfix #4253: during projection replay/update, it is crucial to have caches disabled.
+            $this->stateAccessor->disableCache();
         }
         return $this->stateAccessor;
     }
