@@ -330,42 +330,28 @@ class HtmlAugmenterTest extends UnitTestCase
             // Adding of Stringable attributes
             [
                 'html' => '<p>Stringable attribute</p>',
-                'attributes' => ['data-stringable' => new class {
-                    public function __toString(): string
-                    {
-                        return 'toString';
-                    }
-                }],
+                'attributes' => ['data-stringable' => $mockObject],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p data-stringable="toString">Stringable attribute</p>',
+                'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
             ],
             [
                 'html' => '<p>Stringable attribute</p>',
-                'attributes' => ['data-stringable' => new class {
-                    public function __toString(): string
-                    {
-                        return 'toString';
-                    }
-                }],
+                'attributes' => ['data-stringable' => $mockObject],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => false,
-                'expectedResult' => '<p data-stringable="toString">Stringable attribute</p>',
+                'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
             ],
             // Adding of array attributes
             [
                 'html' => '<p>Array attribute</p>',
-                'attributes' => ['class' => ["Hello", "world", new class {
-                    public function __toString(){
-                        return "toString";
-                    }
-                }]],
+                'attributes' => ['class' => ["Hello", "world", $mockObject]],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p class="Hello world toString">Array attribute</p>',
+                'expectedResult' => '<p class="Hello world casted value">Array attribute</p>',
             ],
             [
                 'html' => '<p>Array attribute</p>',
