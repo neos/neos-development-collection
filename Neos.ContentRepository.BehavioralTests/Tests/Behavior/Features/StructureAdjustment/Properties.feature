@@ -18,28 +18,28 @@ Feature: Properties
           defaultValue: "Foo"
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                |
-      | workspaceName              | "live"               |
-      | workspaceTitle             | "Live"               |
-      | workspaceDescription       | "The live workspace" |
-      | newContentStreamId | "cs-identifier"      |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the event RootNodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                         |
-      | contentStreamId     | "cs-identifier"               |
-      | nodeAggregateId     | "lady-eleonode-rootford"      |
+      | contentStreamId             | "cs-identifier"               |
+      | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
       | coveredDimensionSpacePoints | [{}]                          |
       | nodeAggregateClassification | "root"                        |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
-      | Key                           | Value                                     |
-      | contentStreamId       | "cs-identifier"                           |
-      | nodeAggregateId       | "sir-david-nodenborough"                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document" |
-      | originDimensionSpacePoint     | {}                                        |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                  |
+      | Key                       | Value                                     |
+      | contentStreamId           | "cs-identifier"                           |
+      | nodeAggregateId           | "sir-david-nodenborough"                  |
+      | nodeTypeName              | "Neos.ContentRepository.Testing:Document" |
+      | originDimensionSpacePoint | {}                                        |
+      | parentNodeAggregateId     | "lady-eleonode-rootford"                  |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -57,8 +57,8 @@ Feature: Properties
         myProp: ~
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type              | nodeAggregateId |
-      | OBSOLETE_PROPERTY | sir-david-nodenborough  |
+      | Type              | nodeAggregateId        |
+      | OBSOLETE_PROPERTY | sir-david-nodenborough |
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
@@ -76,8 +76,8 @@ Feature: Properties
           defaultValue: "foo"
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                  | nodeAggregateId |
-      | MISSING_DEFAULT_VALUE | sir-david-nodenborough  |
+      | Type                  | nodeAggregateId        |
+      | MISSING_DEFAULT_VALUE | sir-david-nodenborough |
 
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
@@ -98,11 +98,11 @@ Feature: Properties
           defaultValue: "foo"
     """
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                        |
-      | contentStreamId   | "cs-identifier"              |
-      | nodeAggregateId   | "sir-david-nodenborough"     |
-      | originDimensionSpacePoint | {}                           |
-      | propertyValues            | {"otherProp": ""}            |
+      | Key                       | Value                    |
+      | contentStreamId           | "cs-identifier"          |
+      | nodeAggregateId           | "sir-david-nodenborough" |
+      | originDimensionSpacePoint | {}                       |
+      | propertyValues            | {"otherProp": ""}        |
     And the graph projection is fully up to date
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
@@ -118,15 +118,16 @@ Feature: Properties
     """
 
     And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
-      | Key                       | Value                                                                       |
-      | contentStreamId   | "cs-identifier"                                                             |
-      | nodeAggregateId   | "sir-david-nodenborough"                                                    |
-      | originDimensionSpacePoint | {}                                                                          |
-      | propertyValues            | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
+      | Key                          | Value                                                                       |
+      | contentStreamId              | "cs-identifier"                                                             |
+      | nodeAggregateId              | "sir-david-nodenborough"                                                    |
+      | originDimensionSpacePoint    | {}                                                                          |
+      | affectedDimensionSpacePoints | [{}]                                                                        |
+      | propertyValues               | {"myProp": {"value": "original value", "type": "My\\Non\\Existing\\Class"}} |
     And the graph projection is fully up to date
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
-      | Type                        | nodeAggregateId |
-      | NON_DESERIALIZABLE_PROPERTY | sir-david-nodenborough  |
+      | Type                        | nodeAggregateId        |
+      | NON_DESERIALIZABLE_PROPERTY | sir-david-nodenborough |
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
