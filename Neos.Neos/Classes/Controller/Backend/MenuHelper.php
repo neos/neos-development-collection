@@ -11,6 +11,7 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Service\ContentDimensionCombinator;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception;
@@ -70,6 +71,12 @@ class MenuHelper
     protected $contextFactory;
 
     /**
+     * @Flow\Inject
+     * @var ContentDimensionCombinator
+     */
+    protected $contentDimensionCombinator;
+
+    /**
      * @param array $settings
      */
     public function injectSettings(array $settings): void
@@ -93,38 +100,65 @@ class MenuHelper
             return [];
         }
 
-        $context = $this->contextFactory->create();
+        // generate ContentContext for all possible dimension combinations
+        $combinations = $this->contentDimensionCombinator->getAllAllowedCombinations();
+        $contentContexts = [];
+        foreach ($combinations as $dimensionCombination) {
+            $contentContexts[] = $this->contextFactory->create([
+                'dimensions' => $dimensionCombination,
+                'invisibleContentShown' => true,
+                'inaccessibleContentShown' => true,
+            ]);
+        }
+
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
-            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
-                $uri = null;
-                $active = false;
-                /** @var $site Site */
-                if ($site->hasActiveDomains()) {
-                    $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
-                        return $domain->getHostname();
-                    })->toArray();
-
-                    $active = in_array($requestUriHost, $activeHostPatterns, true);
-
-                    if ($active) {
-                        $uri = $contentModule['uri'];
-                    } else {
-                        $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
-                    }
-
-                    $domainsFound = true;
+            $granted = false;
+            foreach ($contentContexts as $context) {
+                // check if the site node exists in the context dimension
+                $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+                if (!$node) {
+                    continue;
                 }
 
-                $sites[] = [
-                    'name' => $site->getName(),
-                    'nodeName' => $site->getNodeName(),
-                    'uri' => $uri,
-                    'active' => $active
-                ];
+                // if the node exists, check if the user is granted access to this node
+                if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+                    $granted = true;
+                    break;
+                }
             }
+
+            // if no siteNode is accessible ignore this site
+            if (!$granted) {
+                continue;
+            }
+
+            $uri = null;
+            $active = false;
+            /** @var $site Site */
+            if ($site->hasActiveDomains()) {
+                $activeHostPatterns = $site->getActiveDomains()->map(static function ($domain) {
+                    return $domain->getHostname();
+                })->toArray();
+
+                $active = in_array($requestUriHost, $activeHostPatterns, true);
+
+                if ($active) {
+                    $uri = $contentModule['uri'];
+                } else {
+                    $uri = $controllerContext->getUriBuilder()->reset()->uriFor('switchSite', ['site' => $site], 'Backend\Backend', 'Neos.Neos');
+                }
+
+                $domainsFound = true;
+            }
+
+            $sites[] = [
+                'name' => $site->getName(),
+                'nodeName' => $site->getNodeName(),
+                'uri' => $uri,
+                'active' => $active
+            ];
         }
 
         if ($domainsFound === false) {
