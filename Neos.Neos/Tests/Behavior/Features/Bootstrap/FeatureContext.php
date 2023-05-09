@@ -121,7 +121,6 @@ class FeatureContext extends MinkContext
         $this->environment = $this->objectManager->get(Environment::class);
 
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
-        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
         $this->setupEventSourcedTrait(true);
     }
