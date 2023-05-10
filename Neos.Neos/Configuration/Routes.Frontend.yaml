@@ -10,6 +10,13 @@
   appendExceedingArguments: true
 
 -
+  name:          'Edit'
+  uriPattern:    'neos/edit'
+  defaults:
+    '@action':   'edit'
+  appendExceedingArguments: true
+
+-
   name: 'Default Frontend'
   uriPattern: '{node}'
   routeParts:

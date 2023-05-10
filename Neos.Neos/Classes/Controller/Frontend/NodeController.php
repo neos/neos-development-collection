@@ -34,6 +34,9 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
+use Neos\Neos\Controller\Exception\InvalidEditPreviewModeException;
+use Neos\Neos\Domain\Model\EditPreviewMode;
+use Neos\Neos\Domain\Repository\EditPreviewModeRepository;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
@@ -108,7 +111,14 @@ class NodeController extends ActionController
     protected $nodeSiteResolvingService;
 
     /**
+     * @Flow\Inject
+     * @var EditPreviewModeRepository
+     */
+    protected $editPreviewModeRepository;
+
+    /**
      * @param string $node Legacy name for backwards compatibility of route components
+     * @param string|null $editPreviewMode Rendering mode like "rawContent" defaults to defaultEditPreviewMode from settings
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
@@ -119,7 +129,38 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function previewAction(string $node): void
+    public function previewAction(string $node, string $editPreviewMode = null): void
+    {
+        $editPreviewModeObject = $editPreviewMode ? $this->editPreviewModeRepository->findByName($editPreviewMode) : $this->editPreviewModeRepository->findDefault();
+        if ($editPreviewModeObject->isPreviewMode === false) {
+            throw new InvalidEditPreviewModeException(sprintf('"%s" is not a preview mode', $editPreviewMode), 1683127314);
+        }
+        $this->renderEditPreviewMode($node, $editPreviewModeObject);
+    }
+
+    /**
+     * @param string $node Legacy name for backwards compatibility of route components
+     * @param string|null $editPreviewMode Rendering mode like "rawContent" defaults to defaultEditPreviewMode from settings
+     * @throws NodeNotFoundException
+     * @throws \Neos\Flow\Mvc\Exception\StopActionException
+     * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
+     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @throws \Neos\Flow\Session\Exception\SessionNotStartedException
+     * @throws \Neos\Neos\Exception
+     * @Flow\SkipCsrfProtection We need to skip CSRF protection here because this action could be called
+     * with unsafe requests from widgets or plugins that are rendered on the node
+     * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
+     */
+    public function editAction(string $node, ?string $editPreviewMode = null): void
+    {
+        $editPreviewModeObject = $editPreviewMode ? $this->editPreviewModeRepository->findByName($editPreviewMode) : $this->editPreviewModeRepository->findDefault();
+        if ($editPreviewModeObject->isEditMode === false) {
+            throw new InvalidEditPreviewModeException(sprintf('"%s" is not an edit mode', $editPreviewModeObject->name), 1683127295);
+        }
+        $this->renderEditPreviewMode($node, $editPreviewModeObject);
+    }
+
+    protected function renderEditPreviewMode(string $node, EditPreviewMode $editPreviewMode): void
     {
         $visibilityConstraints = VisibilityConstraints::frontend();
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
@@ -163,6 +204,7 @@ class NodeController extends ActionController
         $this->view->assignMultiple([
             'value' => $nodeInstance,
             'site' => $site,
+            'editPreviewMode' => $editPreviewMode
         ]);
 
         if (!$nodeAddress->isInLiveWorkspace()) {
@@ -192,7 +234,7 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(string $node, bool $showInvisible = false): void
+    public function showAction(string $node): void
     {
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
@@ -203,9 +245,6 @@ class NodeController extends ActionController
         }
 
         $visibilityConstraints = VisibilityConstraints::frontend();
-        if ($showInvisible && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        }
 
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamId,

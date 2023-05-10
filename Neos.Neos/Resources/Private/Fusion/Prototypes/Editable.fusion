@@ -12,9 +12,7 @@ prototype(Neos.Neos:Editable) < prototype(Neos.Fusion:Component) {
 
   renderer = Neos.Fusion:Case {
     editable {
-      // TODO: add props.node.context.currentRenderingMode.edit
-      // condition = ${Neos.Node.inBackend(props.node) && props.node.context.currentRenderingMode.edit}
-      condition = ${Neos.Node.inBackend(props.node)}
+      condition = ${!Neos.Node.isLive(props.node) && Neos.Backend.isEditMode(request)}
 
       renderer = Neos.Fusion:Tag {
         tagName = ${props.block ? 'div' : 'span'}

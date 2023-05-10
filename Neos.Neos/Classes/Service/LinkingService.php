@@ -19,6 +19,8 @@ use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateFinder
 use Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -272,7 +274,7 @@ class LinkingService
      * @throws \Neos\Flow\Property\Exception
      * @throws \Neos\Flow\Security\Exception
      * @throws HttpException
-     * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
+     * @throws IllegalObjectTypeException
      */
     public function createNodeUri(
         ControllerContext $controllerContext,
@@ -367,7 +369,18 @@ class LinkingService
         $request = $controllerContext->getRequest()->getMainRequest();
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
-        $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
+
+        if ($request->getControllerPackageKey() === 'Neos.Neos'
+            && $request->getControllerName() === "Frontend\Node"
+            && in_array($request->getControllerActionName(), ['edit', 'preview'])
+        ) {
+            $action = $request->getControllerActionName();
+            if ( $request->hasArgument('editPreviewMode')) {
+                $arguments['editPreviewMode'] = $request->getArgument('editPreviewMode');
+            }
+        } else {
+            $action = $workspace && $workspace->isPublicWorkspace() && !$hiddenState->isHidden ? 'show' : 'preview';
+        }
 
         return $uriBuilder
             ->reset()
@@ -377,7 +390,7 @@ class LinkingService
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
             ->setCreateAbsoluteUri($absolute)
-            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
+            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos') . '&grrr';
     }
 
     /**

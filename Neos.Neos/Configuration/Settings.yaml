@@ -278,7 +278,7 @@ Neos:
           title: Live
         inPlace:
           isEditingMode: true
-          isPreviewMode: false
+          isPreviewMode: true
           fusionRenderingPath: ''
           title: 'Neos.Neos:Main:editPreviewModes.inPlace'
           position: 100

@@ -65,6 +65,17 @@ final class NodeUriBuilder
     public function uriFor(NodeAddress $nodeAddress): UriInterface
     {
         if (!$nodeAddress->isInLiveWorkspace()) {
+            $request = $this->uriBuilder->getRequest();
+            if ($request->getControllerPackageKey() === 'Neos.Neos'
+                && $request->getControllerName() === "Frontend\Node"
+            ) {
+                if ($request->getControllerActionName() == 'edit') {
+                    return $this->editUriFor($nodeAddress, $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null);
+                } elseif ($request->getControllerActionName() == 'preview') {
+                    return $this->previewUriFor($nodeAddress, $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null);
+                }
+            }
+
             return $this->previewUriFor($nodeAddress);
         }
         return new Uri($this->uriBuilder->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos'));
@@ -75,16 +86,50 @@ final class NodeUriBuilder
      * A preview URI is used to display a node that is not public yet (i.e. not in a live workspace).
      *
      * @param NodeAddress $nodeAddress
+     * @param string|null $editPreviewMode
      * @return UriInterface
      * @throws NoMatchingRouteException | MissingActionNameException | HttpException
      */
-    public function previewUriFor(NodeAddress $nodeAddress): UriInterface
+    public function previewUriFor(NodeAddress $nodeAddress, ?string $editPreviewMode = null): UriInterface
     {
-        return new Uri($this->uriBuilder->uriFor(
+        $uri = new Uri($this->uriBuilder->uriFor(
             'preview',
-            ['node' => $nodeAddress->serializeForUri()],
+            [],
             'Frontend\Node',
             'Neos.Neos'
         ));
+
+        $queryParameters = ['node' => $nodeAddress->serializeForUri()];
+        if ($editPreviewMode) {
+            $queryParameters['editPreviewMode'] = $editPreviewMode;
+        }
+
+        return $uri->withQuery(http_build_query($queryParameters));
+    }
+
+    /**
+     * Renders a stable "edit" URI for the given $nodeAddress
+     * A edit URI is used to render a node for inline editing that is not public yet (i.e. not in a live workspace).
+     *
+     * @param NodeAddress $nodeAddress
+     * @param string|null $editPreviewMode
+     * @return UriInterface
+     * @throws NoMatchingRouteException | MissingActionNameException | HttpException
+     */
+    public function editUriFor(NodeAddress $nodeAddress, ?string $editPreviewMode = null): UriInterface
+    {
+        $uri = new Uri($this->uriBuilder->uriFor(
+            'edit',
+            [],
+            'Frontend\Node',
+            'Neos.Neos'
+        ));
+
+        $queryParameters = ['node' => $nodeAddress->serializeForUri()];
+        if ($editPreviewMode) {
+            $queryParameters['editPreviewMode'] = $editPreviewMode;
+        }
+
+        return $uri->withQuery(http_build_query($queryParameters));
     }
 }

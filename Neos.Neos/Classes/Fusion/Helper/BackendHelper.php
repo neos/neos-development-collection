@@ -14,6 +14,7 @@ namespace Neos\Neos\Fusion\Helper;
 
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Neos\Service\UserService;
 
 /**
@@ -38,6 +39,34 @@ class BackendHelper implements ProtectedContextAwareInterface
         $currentUser = $this->userService->getBackendUser();
         assert($currentUser !== null, "No backend user");
         return $this->userService->getInterfaceLanguage();
+    }
+
+    public function isEditMode(ActionRequest $request): bool
+    {
+        return ($request->getControllerPackageKey() === 'Neos.Neos'
+            && $request->getControllerName() === "Frontend\Node"
+            && $request->getControllerActionName() === 'edit'
+        );
+    }
+
+    public function isPreviewMode(ActionRequest $request): bool
+    {
+        return ($request->getControllerPackageKey() === 'Neos.Neos'
+            && $request->getControllerName() === "Frontend\Node"
+            && $request->getControllerActionName() === 'preview'
+        );
+    }
+
+    public function editPreviewModeCacheIdentifier(ActionRequest $request): string
+    {
+        if ($request->getControllerPackageKey() === 'Neos.Neos'
+            && $request->getControllerName() === "Frontend\Node"
+            && ($request->getControllerActionName() === 'edit' || $request->getControllerActionName() === 'preview')
+        ) {
+            return $request->getControllerActionName() . ($request->hasArgument('editPreviewMode') ? ':' . $request->getArgument('editPreviewMode') : '');
+        } else {
+            return "";
+        }
     }
 
     public function allowsCallOfMethod($methodName)
