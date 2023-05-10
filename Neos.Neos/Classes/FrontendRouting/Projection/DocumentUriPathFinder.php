@@ -28,7 +28,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
 
     public function __construct(
         private readonly Connection $dbal,
-        private readonly string $tableNamePrefix
+        private readonly string $tableNamePrefix,
     ) {
     }
 
@@ -46,7 +46,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     public function getEnabledBySiteNodeNameUriPathAndDimensionSpacePointHash(
         SiteNodeName $siteNodeName,
         string $uriPath,
-        string $dimensionSpacePointHash
+        string $dimensionSpacePointHash,
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
@@ -75,7 +75,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      */
     public function getByIdAndDimensionSpacePointHash(
         NodeAggregateId $nodeAggregateId,
-        string $dimensionSpacePointHash
+        string $dimensionSpacePointHash,
     ): DocumentNodeInfo {
         $cacheKey = $nodeAggregateId->value . '#' . $dimensionSpacePointHash;
         if ($this->cacheEnabled && isset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey])) {
@@ -132,7 +132,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     public function getPrecedingNode(
         NodeAggregateId $succeedingNodeAggregateId,
         NodeAggregateId $parentNodeAggregateId,
-        string $dimensionSpacePointHash
+        string $dimensionSpacePointHash,
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
@@ -159,7 +159,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      */
     public function getFirstEnabledChildNode(
         NodeAggregateId $parentNodeAggregateId,
-        string $dimensionSpacePointHash
+        string $dimensionSpacePointHash,
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
@@ -182,7 +182,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
      */
     public function getLastChildNode(
         NodeAggregateId $parentNodeAggregateId,
-        string $dimensionSpacePointHash
+        string $dimensionSpacePointHash,
     ): DocumentNodeInfo {
         return $this->fetchSingle(
             'dimensionSpacePointHash = :dimensionSpacePointHash
@@ -204,7 +204,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             try {
                 $contentStreamId = $this->dbal->fetchColumn(
                     'SELECT contentStreamId FROM '
-                        . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
+                    . $this->tableNamePrefix . '_livecontentstreams LIMIT 1'
                 );
             } catch (DBALException $e) {
                 throw new \RuntimeException(sprintf(
@@ -215,7 +215,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             if (!is_string($contentStreamId)) {
                 throw new \RuntimeException(
                     'Failed to fetch contentStreamId for live workspace,'
-                        . ' probably you have to replay the "documenturipath" projection',
+                    . ' probably you have to replay the "documenturipath" projection',
                     1599667894
                 );
             }
@@ -257,9 +257,52 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         return DocumentNodeInfo::fromDatabaseRow($row);
     }
 
+    /**
+     * @param string $where
+     * @param array $parameters
+     * @return array<DocumentNodeInfo>
+     */
+    private function fetchMultiple(string $where, array $parameters): array
+    {
+        try {
+            $rows = $this->dbal->fetchAllAssociative(
+                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
+                     WHERE ' . $where,
+                $parameters,
+                DocumentUriPathProjection::COLUMN_TYPES_DOCUMENT_URIS
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf(
+                'Failed to load node for query "%s": %s',
+                $where,
+                $e->getMessage()
+            ), 1683808640, $e);
+        }
+
+        return array_map(fn ($row) => DocumentNodeInfo::fromDatabaseRow($row), $rows);
+    }
+
+    public function purgeCacheFor(DocumentNodeInfo $nodeInfo) {
+        if ($this->cacheEnabled) {
+            $cacheKey = $nodeInfo->getNodeAggregateId()->value . '#' . $nodeInfo->getDimensionSpacePointHash();
+            unset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey]);
+        }
+    }
+
     public function disableCache(): void
     {
         $this->cacheEnabled = false;
         $this->getByIdAndDimensionSpacePointHashCache = [];
+    }
+
+    public function getAllChildrenOfNode(DocumentNodeInfo $node)
+    {
+        return $this->fetchMultiple(
+            'dimensionSpacePointHash = :dimensionSpacePointHash
+                    AND nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix',
+            [
+                'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
+                'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
+            ]);
     }
 }

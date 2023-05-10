@@ -149,14 +149,9 @@ class Package extends BasePackage
             DocumentUriPathProjection::class,
             'afterDocumentUriPathChanged',
             function (
-                ContentRepositoryId $contentRepositoryId,
-                ContentStreamId $contentStreamId,
-                NodeAggregateId $aggregateId,
-                OriginDimensionSpacePoint $originDimensionSpacePoint,
                 string $oldUriPath,
                 string $newUriPath,
                 $_,
-                EventEnvelope $eventEnvelope
             ) use ($bootstrap) {
                 /** @var RouterCachingService $routerCachingService */
                 $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);

@@ -12,32 +12,33 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
@@ -48,7 +49,6 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
@@ -409,7 +409,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $sourceOrigin,
         OriginDimensionSpacePoint $targetOrigin,
-        DimensionSpacePointSet $coveredSpacePoints
+        DimensionSpacePointSet $coveredSpacePoints,
     ): void {
         $sourceNode = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $nodeAggregateId,
@@ -426,9 +426,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             $this->insertNode(
                 $sourceNode
-                ->withDimensionSpacePoint($coveredSpacePoint)
-                ->withOriginDimensionSpacePoint($targetOrigin)
-                ->toArray()
+                    ->withDimensionSpacePoint($coveredSpacePoint)
+                    ->withOriginDimensionSpacePoint($targetOrigin)
+                    ->toArray()
             );
         }
     }
@@ -501,16 +501,17 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return;
         }
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+            $nodeBeforeRemoval = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
                 $dimensionSpacePoint->hash
             ));
-            if ($node === null) {
+            if ($nodeBeforeRemoval === null) {
                 // Probably not a document node
                 continue;
             }
+            $childrenBeforeRemoval = $this->getState()->getAllChildrenOfNode($nodeBeforeRemoval);
 
-            $this->disconnectNodeFromSiblings($node);
+            $this->disconnectNodeFromSiblings($nodeBeforeRemoval);
 
             $this->deleteNodeQuery('WHERE dimensionSpacePointHash = :dimensionSpacePointHash
                     AND (
@@ -518,10 +519,28 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                         OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
                     )', [
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId()->value,
-                'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
+                'nodeAggregateId' => $nodeBeforeRemoval->getNodeAggregateId()->value,
+                'childNodeAggregateIdPathPrefix' => $nodeBeforeRemoval->getNodeAggregateIdPath() . '/%',
             ]);
+            $this->getState()->purgeCacheFor($nodeBeforeRemoval);
+
+            $this->emitAfterNodeAggregateWasRemoved($nodeBeforeRemoval->getUriPath(), $nodeBeforeRemoval->getSiteNodeName(), $event);
+            array_map(
+                fn($childBeforeRemoval) => $this->emitAfterNodeAggregateWasRemoved($childBeforeRemoval->getUriPath(), $childBeforeRemoval->getSiteNodeName(), $event),
+                $childrenBeforeRemoval
+            );
         }
+    }
+
+    /**
+     * @Flow\Signal
+     * @return void
+     */
+    public function emitAfterNodeAggregateWasRemoved(
+        string $oldUriPath,
+        SiteNodeName $siteNodeName,
+        NodeAggregateWasRemoved $event,
+    ) {
     }
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
@@ -541,17 +560,17 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         // TODO Can there be more affected dimension space points and how to determine them?
         // see https://github.com/neos/contentrepository-development-collection/issues/163
 
-        $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+        $nodeBeforeChange = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateId,
             $event->originDimensionSpacePoint->hash
         ));
 
-        if ($node === null) {
+        if ($nodeBeforeChange === null) {
             // probably not a document node
             return;
         }
-        if ((isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) && $node->isShortcut()) {
-            $shortcutTarget = $node->getShortcutTarget();
+        if ((isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) && $nodeBeforeChange->isShortcut()) {
+            $shortcutTarget = $nodeBeforeChange->getShortcutTarget();
             $shortcutTarget = [
                 'mode' => $newPropertyValues['targetMode'] ?? $shortcutTarget['mode'],
                 'target' => $newPropertyValues['target'] ?? $shortcutTarget['target'],
@@ -566,20 +585,13 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if (!isset($newPropertyValues['uriPathSegment'])) {
             return;
         }
-        $oldUriPath = $node->getUriPath();
+        $oldUriPath = $nodeBeforeChange->getUriPath();
         // homepage -> TODO hacky?
         if ($oldUriPath === '') {
             return;
         }
-        $this->emitBeforeDocumentUriPathChanged(
-            $this->contentRepositoryId,
-            $event->contentStreamId,
-            $event->nodeAggregateId,
-            $event->originDimensionSpacePoint,
-            $oldUriPath,
-            $event,
-            $eventEnvelope
-        );
+
+        $childrenBeforeChange = $this->getState()->getAllChildrenOfNode($nodeBeforeChange);
 
         /** @var string[] $uriPathSegments */
         $uriPathSegments = explode('/', $oldUriPath);
@@ -597,21 +609,44 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'newUriPath' => $newUriPath,
                 'oldUriPath' => $oldUriPath,
                 'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'nodeAggregateId' => $node->getNodeAggregateId()->value,
-                'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
+                'nodeAggregateId' => $nodeBeforeChange->getNodeAggregateId()->value,
+                'childNodeAggregateIdPathPrefix' => $nodeBeforeChange->getNodeAggregateIdPath() . '/%',
             ]
+        );
+        $this->getState()->purgeCacheFor($nodeBeforeChange);
+
+        $nodeAfterChange = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+            $event->nodeAggregateId,
+            $event->originDimensionSpacePoint->hash
+        ));
+
+        $childrenAfterChange = array_combine(
+            array_map(fn (DocumentNodeInfo $nodeInfo) => $nodeInfo->getNodeAggregateId()->value, $this->getState()->getAllChildrenOfNode($nodeBeforeChange)),
+            $this->getState()->getAllChildrenOfNode($nodeBeforeChange)
         );
 
         $this->emitAfterDocumentUriPathChanged(
-            $this->contentRepositoryId,
-            $event->contentStreamId,
-            $event->nodeAggregateId,
-            $event->originDimensionSpacePoint,
-            $oldUriPath,
-            $newUriPath,
+            $nodeBeforeChange->getUriPath(),
+            $nodeAfterChange->getUriPath(),
+            $nodeBeforeChange->getSiteNodeName(),
             $event,
             $eventEnvelope
         );
+
+        foreach ($childrenBeforeChange as $childBeforeChange) {
+            $childAfterChange = $childrenAfterChange[$childBeforeChange->getNodeAggregateId()->value] ?? null;
+            if ($childAfterChange === null) {
+                continue;
+            }
+
+            $this->emitAfterDocumentUriPathChanged(
+                $childBeforeChange->getUriPath(),
+                $childAfterChange->getUriPath(),
+                $childBeforeChange->getSiteNodeName(),
+                $event,
+                $eventEnvelope
+            );
+        }
     }
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
@@ -624,35 +659,81 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
             foreach ($moveMapping->newLocations as $newLocation) {
                 /* @var $newLocation CoverageNodeMoveMapping */
-                $node = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $nodeBeforeMove = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                     $event->nodeAggregateId,
                     $newLocation->coveredDimensionSpacePoint->hash
                 ));
-                if (!$node) {
+                if (!$nodeBeforeMove) {
                     // node probably no document node, skip
                     continue;
                 }
 
+                $childrenBeforeMove = $this->getState()->getAllChildrenOfNode($nodeBeforeMove);
+
                 match ($newLocation->destination::class) {
                     SucceedingSiblingNodeMoveDestination::class => $this->moveNode(
-                        $node,
+                        $nodeBeforeMove,
                         $newLocation->destination->parentNodeAggregateId,
                         $newLocation->destination->nodeAggregateId
                     ),
                     ParentNodeMoveDestination::class => $this->moveNode(
-                        $node,
+                        $nodeBeforeMove,
                         $newLocation->destination->nodeAggregateId,
                         null
                     ),
                 };
+                $this->getState()->purgeCacheFor($nodeBeforeMove);
+
+                $nodeAfterMove = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                    $event->nodeAggregateId,
+                    $newLocation->coveredDimensionSpacePoint->hash
+                ));
+
+                $childrenAfterMove = array_combine(
+                    array_map(fn (DocumentNodeInfo $nodeInfo) => $nodeInfo->getNodeAggregateId()->value, $this->getState()->getAllChildrenOfNode($nodeBeforeMove)),
+                    $this->getState()->getAllChildrenOfNode($nodeBeforeMove)
+                );
+
+                $this->emitAfterNodeAggregateWasMoved(
+                    $nodeBeforeMove->getUriPath(),
+                    $nodeAfterMove->getUriPath(),
+                    $nodeBeforeMove->getSiteNodeName(),
+                    $event
+                );
+
+                foreach ($childrenBeforeMove as $childBeforeMove) {
+                    $childAfterMove = $childrenAfterMove[$childBeforeMove->getNodeAggregateId()->value] ?? null;
+                    if ($childAfterMove === null) {
+                        continue;
+                    }
+
+                    $this->emitAfterNodeAggregateWasMoved(
+                        $childBeforeMove->getUriPath(),
+                        $childAfterMove->getUriPath(),
+                        $childBeforeMove->getSiteNodeName(),
+                        $event,
+                    );
+                }
             }
         }
+    }
+
+    /**
+     * @Flow\Signal
+     * @return void
+     */
+    public function emitAfterNodeAggregateWasMoved(
+        string $oldUriPath,
+        string $newUriPath,
+        SiteNodeName $siteNodeName,
+        NodeAggregateWasMoved $event,
+    ) {
     }
 
     private function moveNode(
         DocumentNodeInfo $node,
         NodeAggregateId $newParentNodeAggregateId,
-        ?NodeAggregateId $newSucceedingNodeAggregateId
+        ?NodeAggregateId $newSucceedingNodeAggregateId,
     ): void {
         $this->disconnectNodeFromSiblings($node);
 
@@ -677,7 +758,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
 
         $this->updateNodeQuery(
-            /** @codingStandardsIgnoreStart */
+        /** @codingStandardsIgnoreStart */
             'SET
                 nodeAggregateIdPath = TRIM(TRAILING "/" FROM CONCAT(:newParentNodeAggregateIdPath, "/", TRIM(LEADING "/" FROM SUBSTRING(nodeAggregateIdPath, :sourceNodeAggregateIdPathOffset)))),
                 uriPath = TRIM("/" FROM CONCAT(:newParentUriPath, "/", TRIM(LEADING "/" FROM SUBSTRING(uriPath, :sourceUriPathOffset)))),
@@ -692,7 +773,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'newParentNodeAggregateIdPath' => $newParentNode->getNodeAggregateIdPath(),
                 'sourceNodeAggregateIdPathOffset'
-                    => (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1,
+                => (int)strrpos($node->getNodeAggregateIdPath(), '/') + 1,
                 'newParentUriPath' => $newParentNode->getUriPath(),
                 // we have to distinguish two cases here:
                 // - standard case: we want to move the nodes with URI /foo/bar into /target
@@ -794,7 +875,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     private function updateNodeByIdAndDimensionSpacePointHash(
         NodeAggregateId $nodeAggregateId,
         string $dimensionSpacePointHash,
-        array $data
+        array $data,
     ): void {
         try {
             $this->dbal->update(
@@ -836,7 +917,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function deleteNodeByIdAndDimensionSpacePointHash(
         NodeAggregateId $nodeAggregateId,
-        string $dimensionSpacePointHash
+        string $dimensionSpacePointHash,
     ): void {
         try {
             $this->dbal->delete(
@@ -900,7 +981,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     private function connectNodeWithSiblings(
         DocumentNodeInfo $node,
         NodeAggregateId $parentNodeAggregateId,
-        ?NodeAggregateId $newSucceedingNodeAggregateId
+        ?NodeAggregateId $newSucceedingNodeAggregateId,
     ): void {
         if ($newSucceedingNodeAggregateId !== null) {
             $newPrecedingNode = $this->tryGetNode(fn () => $this->getState()->getPrecedingNode(
@@ -1010,27 +1091,10 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     /**
      * @Flow\Signal
      */
-    public function emitBeforeDocumentUriPathChanged(
-        ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $dimensionSpacePoint,
-        string $oldUriPath,
-        NodePropertiesWereSet $event,
-        EventEnvelope $eventEnvelope,
-    ): void {
-    }
-
-    /**
-     * @Flow\Signal
-     */
     public function emitAfterDocumentUriPathChanged(
-        ContentRepositoryId $contentRepositoryId,
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $dimensionSpacePoint,
         string $oldUriPath,
         string $newUriPath,
+        SiteNodeName $siteNodeName,
         NodePropertiesWereSet $event,
         EventEnvelope $eventEnvelope,
     ): void {
