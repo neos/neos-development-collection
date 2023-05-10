@@ -48,7 +48,7 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
+require_once(__DIR__ . '/../../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
