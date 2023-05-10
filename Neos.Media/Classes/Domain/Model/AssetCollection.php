@@ -53,14 +53,6 @@ class AssetCollection
     protected $parent;
 
     /**
-     * @var Collection<AssetCollection>
-     * @ORM\OneToMany(mappedBy="parent", orphanRemoval=true, cascade={"persist"})
-     * @ORM\OrderBy({"title"="ASC"})
-     * @Flow\Lazy
-     */
-    protected $children;
-
-    /**
      * @param string $title
      */
     public function __construct($title)

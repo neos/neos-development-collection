@@ -31,4 +31,19 @@ class AssetCollectionRepository extends Repository
      * @var array
      */
     protected $defaultOrderings = ['title' => QueryInterface::ORDER_ASCENDING];
+
+    /**
+     * Remove all child collections recursively to prevent orphaned collections
+     */
+    public function remove($object): void
+    {
+        /** @var AssetCollection $object */
+        $childCollections = $this->findByParent($object);
+        foreach ($childCollections as $childCollection) {
+            $this->remove($childCollection);
+        }
+        parent::remove($object);
+    }
+
+
 }
