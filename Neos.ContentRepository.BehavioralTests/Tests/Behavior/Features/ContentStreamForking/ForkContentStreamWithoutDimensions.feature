@@ -39,11 +39,12 @@ Feature: ForkContentStream Without Dimensions
       | nodeName                    | "child"                                  |
       | nodeAggregateClassification | "regular"                                |
     And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
-      | Key                       | Value                                                   |
-      | contentStreamId           | "cs-identifier"                                         |
-      | nodeAggregateId           | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint | {}                                                      |
-      | propertyValues            | {"text": {"value": "original value", "type": "string"}} |
+      | Key                          | Value                                                   |
+      | contentStreamId              | "cs-identifier"                                         |
+      | nodeAggregateId              | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint    | {}                                                      |
+      | affectedDimensionSpacePoints | [{}]                                                    |
+      | propertyValues               | {"text": {"value": "original value", "type": "string"}} |
 
   Scenario: Ensure that the node is available in the forked content stream
     When the command "ForkContentStream" is executed with payload:
@@ -61,11 +62,12 @@ Feature: ForkContentStream Without Dimensions
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
     And the Event "NodePropertiesWereSet" was published to stream "ContentStream:user-cs-identifier" with payload:
-      | Key                       | Value                                                   |
-      | contentStreamId           | "user-cs-identifier"                                    |
-      | nodeAggregateId           | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint | {}                                                      |
-      | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
+      | Key                          | Value                                                   |
+      | contentStreamId              | "user-cs-identifier"                                    |
+      | nodeAggregateId              | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint    | {}                                                      |
+      | affectedDimensionSpacePoints | [{}]                                                    |
+      | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
     And the graph projection is fully up to date
 
       # live
@@ -89,11 +91,12 @@ Feature: ForkContentStream Without Dimensions
       | contentStreamId       | "user-cs-identifier" |
       | sourceContentStreamId | "cs-identifier"      |
     And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:
-      | Key                       | Value                                                   |
-      | contentStreamId           | "cs-identifier"                                         |
-      | nodeAggregateId           | "nody-mc-nodeface"                                      |
-      | originDimensionSpacePoint | {}                                                      |
-      | propertyValues            | {"text": {"value": "modified value", "type": "string"}} |
+      | Key                          | Value                                                   |
+      | contentStreamId              | "cs-identifier"                                         |
+      | nodeAggregateId              | "nody-mc-nodeface"                                      |
+      | originDimensionSpacePoint    | {}                                                      |
+      | affectedDimensionSpacePoints | [{}]                                                    |
+      | propertyValues               | {"text": {"value": "modified value", "type": "string"}} |
     And the graph projection is fully up to date
 
     # live

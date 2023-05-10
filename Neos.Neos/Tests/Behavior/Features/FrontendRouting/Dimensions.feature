@@ -23,7 +23,7 @@ Feature: Routing functionality with multiple content dimensions
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues           | nodeName |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
       | sir-david-nodenborough | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | node1    |
       | nody-mc-nodeface       | sir-david-nodenborough | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "nody"}      | node2    |
       | carl-destinode         | nody-mc-nodeface       | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "carl"}      | node3    |
@@ -255,6 +255,19 @@ Feature: Routing functionality with multiple content dimensions
     When I am on URL "/"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should resolve to URL "/at/nody/karl-de"
+
+    # now, when changing the UriPathSegment, this should change in the dimension and its shine-through.
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                   |
+      | contentStreamId           | "cs-identifier"                         |
+      | nodeAggregateId           | "carl-destinode"                        |
+      | originDimensionSpacePoint | {"market":"DE", "language":"de"}        |
+      | propertyValues            | {"uriPathSegment": "karl-aktualisiert"} |
+    And The documenturipath projection is up to date
+    When I am on URL "/"
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-aktualisiert"
+    # testcase for #4256
+    And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should resolve to URL "/at/nody/karl-aktualisiert"
 
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
