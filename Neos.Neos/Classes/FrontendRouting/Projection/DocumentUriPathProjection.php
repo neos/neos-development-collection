@@ -530,7 +530,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             $this->emitAfterNodeAggregateWasRemoved($nodeBeforeRemoval->getUriPath(), $nodeBeforeRemoval->getSiteNodeName(), $event);
             array_map(
-                fn($childBeforeRemoval) => $this->emitAfterNodeAggregateWasRemoved($childBeforeRemoval->getUriPath(), $childBeforeRemoval->getSiteNodeName(), $event),
+                fn ($childBeforeRemoval) => $this->emitAfterNodeAggregateWasRemoved($childBeforeRemoval->getUriPath(), $childBeforeRemoval->getSiteNodeName(), $event),
                 $childrenBeforeRemoval
             );
         }
@@ -600,8 +600,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
             $newUriPath = implode('/', $uriPathSegments);
 
-                $this->updateNodeQuery(
-                    'SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1))
+            $this->updateNodeQuery(
+                'SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1))
                     WHERE dimensionSpacePointHash = :dimensionSpacePointHash
                         AND (
                             nodeAggregateId = :nodeAggregateId

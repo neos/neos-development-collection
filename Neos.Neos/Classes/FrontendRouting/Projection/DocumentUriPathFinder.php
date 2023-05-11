@@ -282,7 +282,8 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         return array_map(fn ($row) => DocumentNodeInfo::fromDatabaseRow($row), $rows);
     }
 
-    public function purgeCacheFor(DocumentNodeInfo $nodeInfo) {
+    public function purgeCacheFor(DocumentNodeInfo $nodeInfo)
+    {
         if ($this->cacheEnabled) {
             $cacheKey = $nodeInfo->getNodeAggregateId()->value . '#' . $nodeInfo->getDimensionSpacePointHash();
             unset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey]);
@@ -298,11 +299,12 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
     public function getAllChildrenOfNode(DocumentNodeInfo $node)
     {
         return $this->fetchMultiple(
-            'dimensionSpacePointHash = :dimensionSpacePointHash
-                    AND nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix',
+            'dimensionSpacePointHash = :dimensionSpacePointHash 
+            AND nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix',
             [
                 'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
-            ]);
+            ]
+        );
     }
 }
