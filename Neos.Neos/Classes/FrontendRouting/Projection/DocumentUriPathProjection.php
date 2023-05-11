@@ -105,6 +105,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         $this->truncateDatabaseTables();
         $this->checkpointStorage->acquireLock();
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
+        $this->stateAccessor = null;
     }
 
     private function truncateDatabaseTables(): void
@@ -196,6 +197,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         if (!$this->stateAccessor) {
             $this->stateAccessor = new DocumentUriPathFinder($this->dbal, $this->tableNamePrefix);
+
+            // !!! Bugfix #4253: during projection replay/update, it is crucial to have caches disabled.
+            $this->stateAccessor->disableCache();
         }
         return $this->stateAccessor;
     }
@@ -557,95 +561,94 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return;
         }
 
-        // TODO Can there be more affected dimension space points and how to determine them?
-        // see https://github.com/neos/contentrepository-development-collection/issues/163
-
-        $nodeBeforeChange = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
-            $event->nodeAggregateId,
-            $event->originDimensionSpacePoint->hash
-        ));
-
-        if ($nodeBeforeChange === null) {
-            // probably not a document node
-            return;
-        }
-        if ((isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) && $nodeBeforeChange->isShortcut()) {
-            $shortcutTarget = $nodeBeforeChange->getShortcutTarget();
-            $shortcutTarget = [
-                'mode' => $newPropertyValues['targetMode'] ?? $shortcutTarget['mode'],
-                'target' => $newPropertyValues['target'] ?? $shortcutTarget['target'],
-            ];
-            $this->updateNodeByIdAndDimensionSpacePointHash(
+        foreach ($event->affectedDimensionSpacePoints as $affectedDimensionSpacePoint) {
+            $nodeBeforeChange = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
                 $event->nodeAggregateId,
-                $event->originDimensionSpacePoint->hash,
-                ['shortcutTarget' => $shortcutTarget]
-            );
-        }
+                $affectedDimensionSpacePoint->hash
+            ));
 
-        if (!isset($newPropertyValues['uriPathSegment'])) {
-            return;
-        }
-        $oldUriPath = $nodeBeforeChange->getUriPath();
-        // homepage -> TODO hacky?
-        if ($oldUriPath === '') {
-            return;
-        }
+            if ($nodeBeforeChange === null) {
+                // probably not a document node
+                continue;
+            }
+            if ((isset($newPropertyValues['targetMode']) || isset($newPropertyValues['target'])) && $nodeBeforeChange->isShortcut()) {
+                $shortcutTarget = $nodeBeforeChange->getShortcutTarget();
+                $shortcutTarget = [
+                    'mode' => $newPropertyValues['targetMode'] ?? $shortcutTarget['mode'],
+                    'target' => $newPropertyValues['target'] ?? $shortcutTarget['target'],
+                ];
+                $this->updateNodeByIdAndDimensionSpacePointHash(
+                    $event->nodeAggregateId,
+                    $affectedDimensionSpacePoint->hash,
+                    ['shortcutTarget' => $shortcutTarget]
+                );
+            }
 
-        $childrenBeforeChange = $this->getState()->getAllChildrenOfNode($nodeBeforeChange);
-
-        /** @var string[] $uriPathSegments */
-        $uriPathSegments = explode('/', $oldUriPath);
-        $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
-        $newUriPath = implode('/', $uriPathSegments);
-
-        $this->updateNodeQuery(
-            'SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1))
-                WHERE dimensionSpacePointHash = :dimensionSpacePointHash
-                    AND (
-                        nodeAggregateId = :nodeAggregateId
-                        OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
-                    )',
-            [
-                'newUriPath' => $newUriPath,
-                'oldUriPath' => $oldUriPath,
-                'dimensionSpacePointHash' => $event->originDimensionSpacePoint->hash,
-                'nodeAggregateId' => $nodeBeforeChange->getNodeAggregateId()->value,
-                'childNodeAggregateIdPathPrefix' => $nodeBeforeChange->getNodeAggregateIdPath() . '/%',
-            ]
-        );
-        $this->getState()->purgeCacheFor($nodeBeforeChange);
-
-        $nodeAfterChange = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
-            $event->nodeAggregateId,
-            $event->originDimensionSpacePoint->hash
-        ));
-
-        $childrenAfterChange = array_combine(
-            array_map(fn (DocumentNodeInfo $nodeInfo) => $nodeInfo->getNodeAggregateId()->value, $this->getState()->getAllChildrenOfNode($nodeBeforeChange)),
-            $this->getState()->getAllChildrenOfNode($nodeBeforeChange)
-        );
-
-        $this->emitAfterDocumentUriPathChanged(
-            $nodeBeforeChange->getUriPath(),
-            $nodeAfterChange->getUriPath(),
-            $nodeBeforeChange->getSiteNodeName(),
-            $event,
-            $eventEnvelope
-        );
-
-        foreach ($childrenBeforeChange as $childBeforeChange) {
-            $childAfterChange = $childrenAfterChange[$childBeforeChange->getNodeAggregateId()->value] ?? null;
-            if ($childAfterChange === null) {
+            if (!isset($newPropertyValues['uriPathSegment'])) {
+                continue;
+            }
+            $oldUriPath = $nodeBeforeChange->getUriPath();
+            // homepage -> TODO hacky?
+            if ($oldUriPath === '') {
                 continue;
             }
 
+            $childrenBeforeChange = $this->getState()->getAllChildrenOfNode($nodeBeforeChange);
+
+            /** @var string[] $uriPathSegments */
+            $uriPathSegments = explode('/', $oldUriPath);
+            $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
+            $newUriPath = implode('/', $uriPathSegments);
+
+                $this->updateNodeQuery(
+                    'SET uriPath = CONCAT(:newUriPath, SUBSTRING(uriPath, LENGTH(:oldUriPath) + 1))
+                    WHERE dimensionSpacePointHash = :dimensionSpacePointHash
+                        AND (
+                            nodeAggregateId = :nodeAggregateId
+                            OR nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix
+                        )',
+                [
+                    'newUriPath' => $newUriPath,
+                    'oldUriPath' => $oldUriPath,
+                    'dimensionSpacePointHash' => $affectedDimensionSpacePoint->hash,
+                    'nodeAggregateId' => $nodeBeforeChange->getNodeAggregateId()->value,
+                    'childNodeAggregateIdPathPrefix' => $nodeBeforeChange->getNodeAggregateIdPath() . '/%',
+                ]
+            );
+            $this->getState()->purgeCacheFor($nodeBeforeChange);
+
+            $nodeAfterChange = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $event->nodeAggregateId,
+                $event->originDimensionSpacePoint->hash
+            ));
+
+            $childrenAfterChange = array_combine(
+                array_map(fn (DocumentNodeInfo $nodeInfo) => $nodeInfo->getNodeAggregateId()->value, $this->getState()->getAllChildrenOfNode($nodeBeforeChange)),
+                $this->getState()->getAllChildrenOfNode($nodeBeforeChange)
+            );
+
             $this->emitAfterDocumentUriPathChanged(
-                $childBeforeChange->getUriPath(),
-                $childAfterChange->getUriPath(),
-                $childBeforeChange->getSiteNodeName(),
+                $nodeBeforeChange->getUriPath(),
+                $nodeAfterChange->getUriPath(),
+                $nodeBeforeChange->getSiteNodeName(),
                 $event,
                 $eventEnvelope
             );
+
+            foreach ($childrenBeforeChange as $childBeforeChange) {
+                $childAfterChange = $childrenAfterChange[$childBeforeChange->getNodeAggregateId()->value] ?? null;
+                if ($childAfterChange === null) {
+                    continue;
+                }
+
+                $this->emitAfterDocumentUriPathChanged(
+                    $childBeforeChange->getUriPath(),
+                    $childAfterChange->getUriPath(),
+                    $childBeforeChange->getSiteNodeName(),
+                    $event,
+                    $eventEnvelope
+                );
+            }
         }
     }
 

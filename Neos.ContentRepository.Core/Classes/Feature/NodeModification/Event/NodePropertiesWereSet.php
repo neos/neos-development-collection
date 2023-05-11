@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Event;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
@@ -41,7 +42,9 @@ final class NodePropertiesWereSet implements
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint, // TODO
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
+        /** the covered dimension space points for this modification - i.e. where this change is visible */
+        public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
         public readonly SerializedPropertyValues $propertyValues
     ) {
     }
@@ -67,6 +70,7 @@ final class NodePropertiesWereSet implements
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
+            $this->affectedDimensionSpacePoints,
             $this->propertyValues
         );
     }
@@ -77,6 +81,7 @@ final class NodePropertiesWereSet implements
             $this->contentStreamId,
             $this->nodeAggregateId,
             $this->originDimensionSpacePoint,
+            $this->affectedDimensionSpacePoints,
             $this->propertyValues->merge($other->propertyValues)
         );
     }
@@ -87,6 +92,7 @@ final class NodePropertiesWereSet implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($values['originDimensionSpacePoint']),
+            DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
             SerializedPropertyValues::fromArray($values['propertyValues']),
         );
     }

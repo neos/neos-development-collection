@@ -317,8 +317,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriConstraints
         );
 
-        if (!empty($this->options['uriSuffix']) && $nodeInfo->hasUriPath()) {
-            $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriSuffix']);
+        if (!empty($this->options['uriPathSuffix']) && $nodeInfo->hasUriPath()) {
+            $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriPathSuffix']);
         }
         return new ResolveResult($nodeInfo->getUriPath(), $uriConstraints, $nodeInfo->getRouteTags());
     }
@@ -326,8 +326,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
     private function truncateRequestPathAndReturnRemainder(string &$requestPath): string
     {
-        if (!empty($this->options['uriSuffix'])) {
-            $suffixPosition = strpos($requestPath, $this->options['uriSuffix']);
+        if (!empty($this->options['uriPathSuffix'])) {
+            $suffixPosition = strpos($requestPath, $this->options['uriPathSuffix']);
             if ($suffixPosition === false) {
                 return '';
             }
