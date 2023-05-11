@@ -45,7 +45,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     #
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                   | initialPropertyValues                    | nodeName |
       | shernode-homes         | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
       | sir-david-nodenborough | shernode-homes         | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
       | duke-of-contentshire   | sir-david-nodenborough | Neos.Neos:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
@@ -96,6 +96,33 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     And I am on URL "/"
     Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated"
     And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated/earl-document"
+
+  Scenario: Change uri path segment works multiple times (bug #4253)
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                              |
+      | contentStreamId           | "cs-identifier"                                    |
+      | nodeAggregateId           | "sir-david-nodenborough"                           |
+      | originDimensionSpacePoint | {}                                                 |
+      | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-a"} |
+    And The documenturipath projection is up to date
+    When the command SetNodeProperties is executed with payload:
+      | Key                       | Value                                              |
+      | contentStreamId           | "cs-identifier"                                    |
+      | nodeAggregateId           | "sir-david-nodenborough"                           |
+      | originDimensionSpacePoint | {}                                                 |
+      | propertyValues            | {"uriPathSegment": "david-nodenborough-updated-b"} |
+    And The documenturipath projection is up to date
+
+    And I am on URL "/"
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
+
+    # !!! when caches were still enabled (without calling DocumentUriPathFinder->disableCache()), the replay below will
+    # show really "interesting" (non-correct) results. This was bug #4253.
+    When I replay the "Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection" projection
+    Then the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b"
+    And the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough-updated-b/earl-document"
+
 
   Scenario: Move node upwards in the tree
     When the command MoveNodeAggregate is executed with payload:

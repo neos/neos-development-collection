@@ -37,17 +37,17 @@ final class NodeUriBuilder
         $this->uriBuilder = $uriBuilder;
     }
 
-    public static function fromRequest(ActionRequest $request): self
+    public static function fromRequest(ActionRequest $request): static
     {
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
 
-        return new self($uriBuilder);
+        return new static($uriBuilder);
     }
 
-    public static function fromUriBuilder(UriBuilder $uriBuilder): self
+    public static function fromUriBuilder(UriBuilder $uriBuilder): static
     {
-        return new self($uriBuilder);
+        return new static($uriBuilder);
     }
 
     /**

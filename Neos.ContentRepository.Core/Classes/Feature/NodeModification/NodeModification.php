@@ -98,6 +98,7 @@ trait NodeModification
                     $command->contentStreamId,
                     $command->nodeAggregateId,
                     $affectedOrigin,
+                    $nodeAggregate->getCoverageByOccupant($affectedOrigin),
                     $propertyValues,
                 );
             }

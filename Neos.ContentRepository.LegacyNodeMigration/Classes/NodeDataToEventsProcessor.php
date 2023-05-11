@@ -344,7 +344,15 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         $this->exportEvent($variantCreatedEvent);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0) {
-            $this->exportEvent(new NodePropertiesWereSet($this->contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences->serializedPropertyValues));
+            $this->exportEvent(
+                new NodePropertiesWereSet(
+                    $this->contentStreamId,
+                    $nodeAggregateId,
+                    $originDimensionSpacePoint,
+                    $coveredDimensionSpacePoints,
+                    $serializedPropertyValuesAndReferences->serializedPropertyValues
+                )
+            );
         }
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
