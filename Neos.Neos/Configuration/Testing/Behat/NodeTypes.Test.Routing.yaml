@@ -7,8 +7,14 @@
     nodeTypes:
       '*': true
       'Neos.Neos:Test.Routing.Page': true
+      'Neos.Neos:Test.Routing.SomeOtherPage': true
       'Neos.Neos:Test.Routing.Content': true
 
 'Neos.Neos:Test.Routing.Content':
   superTypes:
     'Neos.Neos:Content': true
+
+
+'Neos.Neos:Test.Routing.SomeOtherPage':
+  superTypes:
+    'Neos.Neos:Test.Routing.Page': true
