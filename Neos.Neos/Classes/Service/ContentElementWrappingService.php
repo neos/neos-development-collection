@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -81,24 +80,6 @@ class ContentElementWrappingService
     protected $contentRepositoryRegistry;
 
     /**
-     * All editable nodes rendered in the document
-     *
-     * @var array<string,Node>
-     */
-    protected array $renderedNodes = [];
-
-    /**
-     * String containing `<script>` tags for non rendered nodes
-     *
-     * @var string
-     */
-    protected $nonRenderedContentNodeMetadata;
-
-    public function __construct()
-    {
-    }
-
-    /**
      * Wrap the $content identified by $node with the needed markup for the backend.
      *
      * @param array<string,string> $additionalAttributes
@@ -133,8 +114,6 @@ class ContentElementWrappingService
         $attributes['data-__neos-fusion-path'] = $fusionPath;
         $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
 
-        $this->renderedNodes[NodeCacheEntryIdentifier::fromNode($node)->getCacheEntryIdentifier()] = $node;
-
         $this->userLocaleService->switchToUILocale();
 
         $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
@@ -154,13 +133,14 @@ class ContentElementWrappingService
      * @param array<string,mixed> $additionalAttributes
      * additional attributes in the form ['<attribute-name>' => '<attibute-value>', ...]
      * to be rendered in the element wrapping
+     *
+     * @deprecated
      */
     public function wrapCurrentDocumentMetadata(
         Node $node,
         string $content,
         string $fusionPath,
         array $additionalAttributes = [],
-        ?Node $siteNode = null
     ): string {
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->subgraphIdentity->contentRepositoryId
@@ -170,154 +150,10 @@ class ContentElementWrappingService
         }
 
         $attributes = $additionalAttributes;
-        $attributes['data-node-__typoscript-path'] = $fusionPath; // @deprecated
-        $attributes['data-node-__fusion-path'] = $fusionPath;
-        $attributes = $this->addGenericEditingMetadata($attributes, $node);
-        $attributes = $this->addNodePropertyAttributes($attributes, $node);
-        $attributes = $this->addDocumentMetadata($contentRepository, $attributes, $node, $siteNode);
+        $attributes['data-__neos-fusion-path'] = $fusionPath;
         $attributes = $this->addCssClasses($attributes, $node, []);
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'div', ['typeof']);
-    }
-
-    /**
-     * Collects metadata attributes used to allow editing of the node in the Neos backend.
-     *
-     * @param array<string,mixed> $attributes
-     * @return array<string,mixed>
-     */
-    protected function addGenericEditingMetadata(array $attributes, Node $node): array
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
-        );
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
-        $attributes['typeof'] = 'typo3:' . $node->nodeType->getName();
-        $attributes['about'] = $nodeAddress->serializeForUri();
-        $attributes['data-node-_identifier'] = $node->nodeAggregateId->value;
-        $attributes['data-node-__workspace-name'] = $nodeAddress->workspaceName;
-        $attributes['data-node-__label'] = $node->getLabel();
-
-        if ($node->nodeType->isOfType('Neos.Neos:ContentCollection')) {
-            $attributes['rel'] = 'typo3:content-collection';
-        }
-
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $parentNode = $subgraph->findParentNode($node->nodeAggregateId);
-        // these properties are needed together with the current NodeType to evaluate Node Type Constraints
-        // TODO: this can probably be greatly cleaned up once we do not use CreateJS or VIE anymore.
-        if ($parentNode) {
-            $attributes['data-node-__parent-node-type'] = $parentNode->nodeType->getName();
-        }
-
-        if ($node->classification->isTethered()) {
-            $attributes['data-node-_name'] = $node->nodeName;
-            $attributes['data-node-_is-autocreated'] = 'true';
-        }
-
-        if ($parentNode && $parentNode->classification->isTethered()) {
-            $attributes['data-node-_parent-is-autocreated'] = 'true';
-            // we shall only add these properties if the parent is actually auto-created;
-            // as the Node-Type-Switcher in the UI relies on that.
-            $attributes['data-node-__parent-node-name'] = $parentNode->nodeName;
-            $attributes['data-node-__grandparent-node-type']
-                = $subgraph->findParentNode($parentNode->nodeAggregateId)?->nodeType->getName();
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Adds node properties to the given $attributes collection and returns the extended array
-     *
-     * @param array<string,mixed> $attributes
-     * @return array<string,mixed> the merged attributes
-     */
-    protected function addNodePropertyAttributes(array $attributes, Node $node): array
-    {
-        foreach (array_keys($node->nodeType->getProperties()) as $propertyName) {
-            if ($propertyName[0] === '_' && $propertyName[1] === '_') {
-                // skip fully-private properties
-                continue;
-            }
-            $attributes = array_merge($attributes, $this->renderNodePropertyAttribute($node, $propertyName));
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * Renders data attributes needed for the given node property.
-     *
-     * @return array<string,mixed>
-     */
-    protected function renderNodePropertyAttribute(Node $node, string $propertyName): array
-    {
-        $attributes = [];
-
-        // skip the node name of the site node - TODO: Why do we need this?
-        if ($propertyName === '_name' && $node->nodeType->isOfType('Neos.Neos:Site')) {
-            return $attributes;
-        }
-
-        $dataType = $node->nodeType->getPropertyType($propertyName);
-        $dasherizedPropertyName = $this->dasherize($propertyName);
-
-        $propertyValue = $node->getProperty($propertyName);
-        $propertyValue = $propertyValue === null ? '' : $propertyValue;
-        $propertyValue = !is_string($propertyValue) ? json_encode($propertyValue) : $propertyValue;
-
-        if ($dataType !== 'string') {
-            $attributes['data-nodedatatype-' . $dasherizedPropertyName] = 'xsd:' . $dataType;
-        }
-
-        $attributes['data-node-' . $dasherizedPropertyName] = $propertyValue;
-
-        return $attributes;
-    }
-
-    /**
-     * Collects metadata for the Neos backend specifically for document nodes.
-     *
-     * @param array<string,mixed> $attributes
-     * @return array<string,mixed>
-     */
-    protected function addDocumentMetadata(
-        ContentRepository $contentRepository,
-        array $attributes,
-        Node $node,
-        ?Node $siteNode
-    ): array {
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        $nodeAddress = $nodeAddressFactory->createFromNode($node);
-        if (!$siteNode instanceof Node) {
-            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-
-            $siteCandidate = $node;
-            while ($siteCandidate instanceof Node) {
-                if ($siteCandidate->nodeType->isOfType('Neos.Neos:Site')) {
-                    $siteNode = $siteCandidate;
-                    break;
-                }
-                $siteCandidate = $subgraph->findParentNode($siteCandidate->nodeAggregateId);
-            }
-        }
-        $siteNodeAddress = null;
-        if ($siteNode instanceof Node) {
-            $siteNodeAddress = $nodeAddressFactory->createFromNode($siteNode);
-        }
-        $attributes['data-neos-site-name'] = $siteNode?->nodeName;
-        $attributes['data-neos-site-node-context-path'] = $siteNodeAddress?->serializeForUri();
-        // Add the workspace of the content repository context to the attributes
-        $attributes['data-neos-context-workspace-name'] = $nodeAddress->workspaceName;
-        $attributes['data-neos-context-dimensions'] = json_encode($nodeAddress->dimensionSpacePoint);
-
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            $attributes['data-node-__read-only'] = 'true';
-            $attributes['data-nodedatatype-__read-only'] = 'boolean';
-        }
-
-        return $attributes;
     }
 
     /**
@@ -339,99 +175,6 @@ class ContentElementWrappingService
         }
 
         return $attributes;
-    }
-
-    /**
-     * Concatenate strings containing `<script>` tags for all child nodes not rendered
-     * within the current document node. This way we can show e.g. content collections
-     * within the structure tree which are not actually rendered.
-     *
-     * @throws \Neos\Eel\Exception
-     */
-    protected function appendNonRenderedContentNodeMetadata(Node $documentNode): void
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $documentNode->subgraphIdentity->contentRepositoryId
-        );
-        if (
-            $this->isContentStreamOfLiveWorkspace(
-                $documentNode->subgraphIdentity->contentStreamId,
-                $contentRepository
-            )
-        ) {
-            return;
-        }
-
-
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($documentNode);
-
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-
-        foreach ($subgraph->findChildNodes($documentNode->nodeAggregateId, FindChildNodesFilter::create()) as $node) {
-            if ($node->nodeType->isOfType('Neos.Neos:Document') === true) {
-                continue;
-            }
-
-            if (isset($this->renderedNodes[$node->nodeAggregateId->value]) === false) {
-                $serializedNode = json_encode($this->nodeInfoHelper->renderNode($node));
-                $nodeContextPath = $nodeAddressFactory->createFromNode($node)->serializeForUri();
-                /** @codingStandardsIgnoreStart */
-                $this->nonRenderedContentNodeMetadata .= "<script>(function(){(this['@Neos.Neos.Ui:Nodes'] = this['@Neos.Neos.Ui:Nodes'] || {})['{$nodeContextPath}'] = {$serializedNode}})()</script>";
-                /** @codingStandardsIgnoreEnd */
-            }
-
-            $nestedNodes = $subgraph->findChildNodes($node->nodeAggregateId, FindChildNodesFilter::create());
-            $hasChildNodes = false;
-            foreach ($nestedNodes as $nestedNode) {
-                $hasChildNodes = true;
-                break;
-            }
-
-            if ($hasChildNodes) {
-                $this->appendNonRenderedContentNodeMetadata($node);
-            }
-        }
-    }
-
-    /**
-     * Clear rendered nodes helper array to prevent possible side effects.
-     */
-    protected function clearRenderedNodesArray(): void
-    {
-        $this->renderedNodes = [];
-    }
-
-    /**
-     * Clear non rendered content node metadata to prevent possible side effects.
-     */
-    protected function clearNonRenderedContentNodeMetadata(): void
-    {
-        $this->nonRenderedContentNodeMetadata = '';
-    }
-
-    /**
-     * @throws \Neos\Eel\Exception
-     */
-    public function getNonRenderedContentNodeMetadata(Node $documentNode): string
-    {
-        $this->userLocaleService->switchToUILocale();
-
-        $this->appendNonRenderedContentNodeMetadata($documentNode);
-        $nonRenderedContentNodeMetadata = $this->nonRenderedContentNodeMetadata;
-        $this->clearNonRenderedContentNodeMetadata();
-        $this->clearRenderedNodesArray();
-
-        $this->userLocaleService->switchToUILocale(true);
-
-        return $nonRenderedContentNodeMetadata;
-    }
-
-    /**
-     * Converts camelCased strings to lower cased and non-camel-cased strings
-     */
-    protected function dasherize(string $value): string
-    {
-        return strtolower(trim(preg_replace('/[A-Z]/', '-$0', $value) ?: '', '-'));
     }
 
     protected function needsMetadata(
