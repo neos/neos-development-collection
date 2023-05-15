@@ -16,8 +16,6 @@ Neos:
     asyncThumbnails: true
     # Thumbnail presets
     thumbnailPresets: {  }
-    # Automatically create thumbnails for configured presets when assets are added
-    autoCreateThumbnailPresets: true
 
     iconSet:
       path: 'resource://Neos.Media/Public/IconSets/vivid'
