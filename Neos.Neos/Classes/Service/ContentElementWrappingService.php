@@ -130,7 +130,7 @@ class ContentElementWrappingService
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
         $attributes = $additionalAttributes;
-        $attributes['data-node-__fusion-path'] = $fusionPath;
+        $attributes['data-__neos-fusion-path'] = $fusionPath;
         $attributes['data-__neos-node-contextpath'] = $nodeAddress->serializeForUri();
 
         $this->renderedNodes[NodeCacheEntryIdentifier::fromNode($node)->getCacheEntryIdentifier()] = $node;
