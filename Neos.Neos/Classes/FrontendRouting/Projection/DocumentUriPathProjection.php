@@ -367,16 +367,14 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if ($this->isShortcutNodeType($event->newNodeTypeName)) {
             // The node has been turned into a shortcut node, but since the shortcut mode is not yet set
             // we'll set it to "firstChildNode" in order to prevent an invalid mode
-            $this->updateNodeQuery('SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\', nodeTypeName=:nodeTypeName
-                WHERE nodeAggregateId = :nodeAggregateId
-                    AND shortcuttarget IS NULL', [
+            $this->updateNodeQuery('SET shortcuttarget = COALESCE(shortcuttarget,\'{"mode":"firstChildNode","target":null}\'), nodeTypeName=:nodeTypeName
+                WHERE nodeAggregateId = :nodeAggregateId', [
                 'nodeAggregateId' => $event->nodeAggregateId->value,
                 'nodeTypeName' => $event->newNodeTypeName->value,
             ]);
         } elseif ($this->isDocumentNodeType($event->newNodeTypeName)) {
             $this->updateNodeQuery('SET shortcuttarget = NULL, nodeTypeName=:nodeTypeName
-                WHERE nodeAggregateId = :nodeAggregateId
-                    AND shortcuttarget IS NOT NULL', [
+                WHERE nodeAggregateId = :nodeAggregateId', [
                 'nodeAggregateId' => $event->nodeAggregateId->value,
                 'nodeTypeName' => $event->newNodeTypeName->value,
             ]);
