@@ -7,6 +7,7 @@ namespace Neos\ContentRepository\Core\CommandHandler;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\EventStore\Model\Event\Version;
 use Neos\EventStore\Model\EventStore\CommitResult;
 use Neos\EventStore\Model\Event\SequenceNumber;
 
@@ -23,6 +24,20 @@ final class CommandResult
         private readonly PendingProjections $pendingProjections,
         public readonly CommitResult $commitResult,
     ) {
+    }
+
+    /**
+     * an empty command result which should not result in projection updates
+     * @return self
+     */
+    public static function empty(): self {
+        return new self(
+            PendingProjections::empty(),
+            new CommitResult(
+                Version::first(),
+                SequenceNumber::none()
+            )
+        );
     }
 
     /**

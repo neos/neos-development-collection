@@ -609,39 +609,6 @@ trait ConstraintChecks
         }
     }
 
-    /**
-     * @throws NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint
-     */
-    protected function requireNodeAggregateToDisableDimensionSpacePoint(
-        NodeAggregate $nodeAggregate,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): void {
-        if (!$nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
-            throw new NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
-                    . '" currently does not disable dimension space point '
-                    . json_encode($dimensionSpacePoint) . '.',
-                1557735431
-            );
-        }
-    }
-
-    /**
-     * @throws NodeAggregateCurrentlyDisablesDimensionSpacePoint
-     */
-    protected function requireNodeAggregateToNotDisableDimensionSpacePoint(
-        NodeAggregate $nodeAggregate,
-        DimensionSpacePoint $dimensionSpacePoint
-    ): void {
-        if ($nodeAggregate->disablesDimensionSpacePoint($dimensionSpacePoint)) {
-            throw new NodeAggregateCurrentlyDisablesDimensionSpacePoint(
-                'Node aggregate "' . $nodeAggregate->nodeAggregateId->value
-                    . '" currently disables dimension space point ' . json_encode($dimensionSpacePoint) . '.',
-                1555179563
-            );
-        }
-    }
-
     protected function validateReferenceProperties(
         ReferenceName $referenceName,
         PropertyValuesToWrite $referenceProperties,
