@@ -47,7 +47,7 @@ final class ContentCommandController extends CommandController
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
 
         $this->outputFormatted('Refreshing root node dimensions in workspace %s (content repository %s)', [$workspace->workspaceName->value, $contentRepositoryId->value]);
-        $this->outputFormatted('Resolved content stream %s', [$workspace->currentContentStreamId]);
+        $this->outputFormatted('Resolved content stream %s', [$workspace->currentContentStreamId->value]);
 
         $rootNodeAggregates = $contentRepository->getContentGraph()->findRootNodeAggregates(
             $workspace->currentContentStreamId,

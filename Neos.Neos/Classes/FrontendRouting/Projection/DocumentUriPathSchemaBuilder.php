@@ -67,6 +67,9 @@ class DocumentUriPathSchemaBuilder
         $table->addColumn('shortcuttarget', Types::STRING)
             ->setLength(1000)
             ->setNotnull(false);
+        $table->addColumn('nodetypename', Types::STRING)
+            ->setLength(255)
+            ->setNotnull(true);
 
         $table
             ->addUniqueIndex(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
