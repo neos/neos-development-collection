@@ -64,6 +64,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -103,7 +104,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly string $tableNamePrefix
+        private readonly string $tableNamePrefix,
+        private readonly PrivilegeProviderInterface $privilegeProvider,
     ) {
     }
 

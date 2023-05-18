@@ -55,6 +55,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
@@ -95,6 +96,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly ProjectionContentGraph $projectionContentGraph,
         private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly string $tableNamePrefix,
+        private readonly PrivilegeProviderInterface $privilegeProvider,
     ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $this->dbalClient->getConnection(),
@@ -261,7 +263,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $this->dbalClient,
                 $this->nodeFactory,
                 $this->nodeTypeManager,
-                $this->tableNamePrefix
+                $this->tableNamePrefix,
+                $this->privilegeProvider,
             );
         }
         return $this->contentGraph;

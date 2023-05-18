@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
@@ -54,6 +55,7 @@ final class ContentRepositoryFactory
         ProjectionsFactory $projectionsFactory,
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
+        private readonly PrivilegeProviderInterface $privilegeProvider,
         private readonly ClockInterface $clock,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
@@ -70,7 +72,8 @@ final class ContentRepositoryFactory
             $contentDimensionSource,
             $contentDimensionZookeeper,
             $interDimensionalVariationGraph,
-            new PropertyConverter($propertySerializer)
+            new PropertyConverter($propertySerializer),
+            $this->privilegeProvider,
         );
 
         $this->projections = $projectionsFactory->build($this->projectionFactoryDependencies);
@@ -99,6 +102,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
+                $this->privilegeProvider,
                 $this->clock,
             );
         }

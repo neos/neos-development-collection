@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 
 /**
@@ -37,6 +38,7 @@ final class ProjectionFactoryDependencies
         public readonly ContentDimensionZookeeper $contentDimensionZookeeper,
         public readonly InterDimensionalVariationGraph $interDimensionalVariationGraph,
         public readonly PropertyConverter $propertyConverter,
+        public readonly PrivilegeProviderInterface $privilegeProvider,
     ) {
     }
 }

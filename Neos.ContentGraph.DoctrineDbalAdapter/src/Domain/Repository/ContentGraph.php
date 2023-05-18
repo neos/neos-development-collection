@@ -33,6 +33,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Privilege\PrivilegeProviderInterface;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -56,7 +58,8 @@ final class ContentGraph implements ContentGraphInterface
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
-        private readonly string $tableNamePrefix
+        private readonly string $tableNamePrefix,
+        private readonly PrivilegeProviderInterface $privilegeProvider,
     ) {
     }
 
@@ -67,6 +70,10 @@ final class ContentGraph implements ContentGraphInterface
     ): ContentSubgraphInterface {
         $index = $contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subgraphs[$index])) {
+            $privileges = $this->privilegeProvider->getPrivileges($visibilityConstraints);
+            if (!$privileges->isContentStreamAllowed($contentStreamId)) {
+                throw new \RuntimeException(sprintf('No access to content stream "%s"', $contentStreamId->value), 1681306937);
+            }
             $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
                 new ContentSubgraph(
                     $contentStreamId,
@@ -75,7 +82,8 @@ final class ContentGraph implements ContentGraphInterface
                     $this->client,
                     $this->nodeFactory,
                     $this->nodeTypeManager,
-                    $this->tableNamePrefix
+                    $this->tableNamePrefix,
+                    $this->privilegeProvider,
                 )
             );
         }
