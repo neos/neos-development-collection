@@ -15,12 +15,6 @@ root {
     type = 'Neos.Neos:Page'
   }
 
-  editPreviewMode {
-    @position = 'end 9996'
-    condition = ${Neos.Node.inBackend(documentNode) && editPreviewMode.fusionPath}
-    renderPath = ${'/' + editPreviewMode.fusionPath}
-  }
-
   format {
     @position = 'end 9997'
     condition = ${request.format != 'html'}

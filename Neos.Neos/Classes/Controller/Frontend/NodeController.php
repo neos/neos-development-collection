@@ -201,10 +201,13 @@ class NodeController extends ActionController
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
+        if ($editPreviewMode->fusionPath) {
+            $this->view->setFusionPath($editPreviewMode->fusionPath);
+        }
+
         $this->view->assignMultiple([
             'value' => $nodeInstance,
-            'site' => $site,
-            'editPreviewMode' => $editPreviewMode
+            'site' => $site
         ]);
 
         if (!$nodeAddress->isInLiveWorkspace()) {
