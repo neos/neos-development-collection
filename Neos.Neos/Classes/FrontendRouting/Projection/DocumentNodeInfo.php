@@ -16,6 +16,7 @@ namespace Neos\Neos\FrontendRouting\Projection;
 
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\Flow\Annotations as Flow;
@@ -164,6 +165,10 @@ final class DocumentNodeInfo
         return new Uri($this->getShortcutTarget()['target']);
     }
 
+    public function getNodeTypeName(): NodeTypeName
+    {
+        return NodeTypeName::fromString($this->source['nodetypename']);
+    }
 
     /**
      * As the route tags are based on the node aggregate ids of the node and its parents up to the site,

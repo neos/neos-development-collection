@@ -231,6 +231,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'nodeAggregateIdPath' => $event->nodeAggregateId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateId' => $event->nodeAggregateId->value,
+                'nodeTypeName' => $event->nodeTypeName->value,
             ]);
         }
     }
@@ -238,6 +239,16 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
     {
         if (!$this->isLiveContentStream($event->contentStreamId)) {
+            return;
+        }
+
+        // Just to figure out current NodeTypeName. This is the same for the aggregate in all dimensionSpacePoints.
+        $nodeInSomeDimension = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
+            $event->nodeAggregateId,
+            $event->coveredDimensionSpacePoints->getIterator()->current()->hash
+        ));
+
+        if ($nodeInSomeDimension === null) {
             return;
         }
 
@@ -254,6 +265,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'nodeAggregateIdPath' => $event->nodeAggregateId->value,
                 'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
                 'nodeAggregateId' => $event->nodeAggregateId->value,
+                'nodeTypeName' => $nodeInSomeDimension->getNodeTypeName()->value,
             ]);
         }
     }
@@ -344,6 +356,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'precedingNodeAggregateId' => $precedingNode?->getNodeAggregateId()->value,
                 'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
+                'nodeTypeName' => $event->nodeTypeName->value,
             ]);
         }
     }
@@ -356,16 +369,16 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if ($this->isShortcutNodeType($event->newNodeTypeName)) {
             // The node has been turned into a shortcut node, but since the shortcut mode is not yet set
             // we'll set it to "firstChildNode" in order to prevent an invalid mode
-            $this->updateNodeQuery('SET shortcuttarget = \'{"mode":"firstChildNode","target":null}\'
-                WHERE nodeAggregateId = :nodeAggregateId
-                    AND shortcuttarget IS NULL', [
+            $this->updateNodeQuery('SET shortcuttarget = COALESCE(shortcuttarget,\'{"mode":"firstChildNode","target":null}\'), nodeTypeName=:nodeTypeName
+                WHERE nodeAggregateId = :nodeAggregateId', [
                 'nodeAggregateId' => $event->nodeAggregateId->value,
+                'nodeTypeName' => $event->newNodeTypeName->value,
             ]);
         } elseif ($this->isDocumentNodeType($event->newNodeTypeName)) {
-            $this->updateNodeQuery('SET shortcuttarget = NULL
-                WHERE nodeAggregateId = :nodeAggregateId
-                    AND shortcuttarget IS NOT NULL', [
+            $this->updateNodeQuery('SET shortcuttarget = NULL, nodeTypeName=:nodeTypeName
+                WHERE nodeAggregateId = :nodeAggregateId', [
                 'nodeAggregateId' => $event->nodeAggregateId->value,
+                'nodeTypeName' => $event->newNodeTypeName->value,
             ]);
         }
     }
@@ -1060,7 +1073,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     parentnodeaggregateid,
                     precedingnodeaggregateid,
                     succeedingnodeaggregateid,
-                    shortcuttarget
+                    shortcuttarget,
+                    nodetypename
                 )
                 SELECT
                     nodeaggregateid,
@@ -1073,7 +1087,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     parentnodeaggregateid,
                     precedingnodeaggregateid,
                     succeedingnodeaggregateid,
-                    shortcuttarget
+                    shortcuttarget,
+                    nodetypename
                 FROM
                     ' . $this->tableNamePrefix . '_uri
                 WHERE
