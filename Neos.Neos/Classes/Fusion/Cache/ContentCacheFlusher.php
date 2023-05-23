@@ -157,6 +157,20 @@ class ContentCacheFlusher
 
     protected function registerAllTagsToFlushForNodeInWorkspace(NodeInterface $node, Workspace $workspace): void
     {
+        // Ensure that we're dealing with the variant of the given node that actually
+        // lives in the given workspace
+        if ($node->getWorkspace()->getName() !== $workspace->getName()) {
+            $workspaceContext = $this->contextFactory->create(
+                array_merge(
+                    $node->getContext()->getProperties(),
+                    ['workspaceName' => $workspace->getName()]
+                )
+            );
+            $node = $workspaceContext->getNodeByIdentifier($node->getIdentifier());
+            if ($node === null) {
+                return;
+            }
+        }
         $nodeIdentifier = $node->getIdentifier();
 
         if (!array_key_exists($workspace->getName(), $this->workspacesToFlush) || is_array($this->workspacesToFlush[$workspace->getName()]) === false) {
