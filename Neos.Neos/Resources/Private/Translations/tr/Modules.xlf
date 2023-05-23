@@ -230,12 +230,10 @@
       <group id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes" restype="x-gettext-plurals">
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[0]">
           <source>Did not delete workspace "{0}" because it currently contains {1} node.</source>
-          <target state="translated">Şu anda {1} düğüm içerdiği için "{0}" çalışma alanı silinmedi.</target>
-        </trans-unit>
+          <target state="translated">Şu anda {1} düğüm içerdiği için "{0}" çalışma alanı silinmedi.</target> </trans-unit>
         <trans-unit id="workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes[1]">
           <source>Did not delete workspace "{0}" because it currently contains {1} nodes.</source>
-          <target state="translated">Şu anda {1} düğüm içerdiği için "{0}" çalışma alanı silinmedi.</target>
-        </trans-unit>
+          <target state="translated">Şu anda {1} düğüm içerdiği için "{0}" çalışma alanı silinmedi.</target> </trans-unit>
       </group>
       <trans-unit id="workspaces.workspaceHasBeenRemoved">
         <source>The workspace "{0}" has been removed.</source>
@@ -572,11 +570,11 @@
       </trans-unit>
       <trans-unit id="users.tooltip.editDisallowed" xml:space="preserve">
 				<source>Not enough privileges to edit this user</source>
-        <target state="needs-translation">Not enough privileges to edit this user</target>
+        <target state="translated">Bu kullanıcıyı düzenlemek için yeterli yetki yok</target>
       </trans-unit>
       <trans-unit id="users.tooltip.deleteDisallowed" xml:space="preserve">
 				<source>Not enough privileges to delete this user</source>
-        <target state="needs-translation">Not enough privileges to delete this user</target>
+        <target state="translated">Bu kullanıcıyı silmek için yeterli yetki yok</target>
       </trans-unit>
       <trans-unit id="users.tooltip.delete" xml:space="preserve">
 				<source>Delete user</source>
@@ -788,7 +786,7 @@
       </trans-unit>
       <trans-unit id="sites.generatorClass" xml:space="preserve">
 	  		    <source>Select a site generator</source>
-        <target state="needs-translation">Select a site generator</target>
+        <target state="translated">Bir site oluşturucu seçin</target>
       </trans-unit>
       <trans-unit id="sites.name" xml:space="preserve">
 				<source>Site name</source>
