@@ -149,6 +149,7 @@ class Package extends BasePackage
             DocumentUriPathProjection::class,
             'afterDocumentUriPathChanged',
             function (
+                ContentRepositoryId $contentRepositoryId,
                 string $oldUriPath,
                 string $newUriPath,
                 $_,
