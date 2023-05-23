@@ -259,8 +259,8 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
 
     /**
      * @param string $where
-     * @param array $parameters
-     * @return array<DocumentNodeInfo>
+     * @param array<string> $parameters
+     * @return DocumentNodeInfo[]
      */
     private function fetchMultiple(string $where, array $parameters): array
     {
@@ -279,10 +279,10 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             ), 1683808640, $e);
         }
 
-        return array_map(fn ($row) => DocumentNodeInfo::fromDatabaseRow($row), $rows);
+        return array_map(fn($row) => DocumentNodeInfo::fromDatabaseRow($row), $rows);
     }
 
-    public function purgeCacheFor(DocumentNodeInfo $nodeInfo)
+    public function purgeCacheFor(DocumentNodeInfo $nodeInfo): void
     {
         if ($this->cacheEnabled) {
             $cacheKey = $nodeInfo->getNodeAggregateId()->value . '#' . $nodeInfo->getDimensionSpacePointHash();
@@ -296,7 +296,11 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         $this->getByIdAndDimensionSpacePointHashCache = [];
     }
 
-    public function getAllChildrenOfNode(DocumentNodeInfo $node)
+    /**
+     * @param DocumentNodeInfo $node
+     * @return DocumentNodeInfo[]
+     */
+    public function getAllChildrenOfNode(DocumentNodeInfo $node): array
     {
         return $this->fetchMultiple(
             'dimensionSpacePointHash = :dimensionSpacePointHash 
