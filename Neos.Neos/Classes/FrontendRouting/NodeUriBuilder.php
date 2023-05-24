@@ -66,13 +66,16 @@ final class NodeUriBuilder
     {
         if (!$nodeAddress->isInLiveWorkspace()) {
             $request = $this->uriBuilder->getRequest();
-            if ($request->getControllerPackageKey() === 'Neos.Neos'
+            if (
+                $request->getControllerPackageKey() === 'Neos.Neos'
                 && $request->getControllerName() === "Frontend\Node"
             ) {
                 if ($request->getControllerActionName() == 'edit') {
-                    return $this->editUriFor($nodeAddress, $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null);
+                    $editPreviewModeArgument = $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null;
+                    return $this->editUriFor($nodeAddress, is_string($editPreviewModeArgument) ? $editPreviewModeArgument : null);
                 } elseif ($request->getControllerActionName() == 'preview') {
-                    return $this->previewUriFor($nodeAddress, $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null);
+                    $editPreviewModeArgument = $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null;
+                    return $this->previewUriFor($nodeAddress, is_string($editPreviewModeArgument) ? $editPreviewModeArgument : null);
                 }
             }
 

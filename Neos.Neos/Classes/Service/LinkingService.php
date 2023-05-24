@@ -370,12 +370,13 @@ class LinkingService
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
 
-        if ($request->getControllerPackageKey() === 'Neos.Neos'
+        if (
+            $request->getControllerPackageKey() === 'Neos.Neos'
             && $request->getControllerName() === "Frontend\Node"
             && in_array($request->getControllerActionName(), ['edit', 'preview'])
         ) {
             $action = $request->getControllerActionName();
-            if ( $request->hasArgument('editPreviewMode')) {
+            if ($request->hasArgument('editPreviewMode')) {
                 $arguments['editPreviewMode'] = $request->getArgument('editPreviewMode');
             }
         } else {

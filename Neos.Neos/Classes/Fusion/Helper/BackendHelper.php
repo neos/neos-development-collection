@@ -57,15 +57,20 @@ class BackendHelper implements ProtectedContextAwareInterface
         );
     }
 
-    public function editPreviewModeCacheIdentifier(ActionRequest $request): string
+    public function renderingModeCacheIdentifier(ActionRequest $request): string
     {
-        if ($request->getControllerPackageKey() === 'Neos.Neos'
+        if (
+            $request->getControllerPackageKey() === 'Neos.Neos'
             && $request->getControllerName() === "Frontend\Node"
             && ($request->getControllerActionName() === 'edit' || $request->getControllerActionName() === 'preview')
         ) {
-            return $request->getControllerActionName() . ($request->hasArgument('editPreviewMode') ? ':' . $request->getArgument('editPreviewMode') : '');
+            $editPreviewModeArgument = $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null;
+            if (is_string($editPreviewModeArgument)) {
+                return $request->getControllerActionName() . ':' . $editPreviewModeArgument;
+            }
+            return $request->getControllerActionName();
         } else {
-            return "";
+            return "show";
         }
     }
 

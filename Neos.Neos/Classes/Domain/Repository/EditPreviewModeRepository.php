@@ -36,7 +36,7 @@ class EditPreviewModeRepository
 
     public function findByName(string $name): EditPreviewMode
     {
-        if (array_key_exists($name,$this->editPreviewModeConfigurations)) {
+        if (array_key_exists($name, $this->editPreviewModeConfigurations)) {
             return EditPreviewMode::fromNameAndConfiguration($name, $this->editPreviewModeConfigurations[$name]);
         }
         throw new InvalidEditPreviewModeException(sprintf('"%s" is not a valid editPreviewMode', $name), 1683790077);
