@@ -1,3 +1,20 @@
 include: RawContent/*.fusion
 
-rawContent = Neos.Neos:RawContent.Document
+rawContent = Neos.Fusion:Case
+rawContent {
+  shortcut {
+    prototype(Neos.Neos:Page) {
+      body = Neos.Neos:Shortcut
+    }
+
+    @position = 'start'
+    condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
+    type = 'Neos.Neos:Page'
+  }
+
+  default {
+    @position = 'end'
+    condition = true
+    renderer = Neos.Neos:RawContent.Document
+  }
+}
