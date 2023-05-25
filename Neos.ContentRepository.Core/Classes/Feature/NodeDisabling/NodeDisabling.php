@@ -60,10 +60,11 @@ trait NodeDisabling
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
-        $this->requireNodeAggregateToNotDisableDimensionSpacePoint(
-            $nodeAggregate,
-            $command->coveredDimensionSpacePoint
-        );
+
+        if ($nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
+            // already disabled, so we can return a no-operation.
+            return EventsToPublish::empty();
+        }
 
         $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
             ->resolveAffectedDimensionSpacePoints(
@@ -113,10 +114,11 @@ trait NodeDisabling
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
-        $this->requireNodeAggregateToDisableDimensionSpacePoint(
-            $nodeAggregate,
-            $command->coveredDimensionSpacePoint
-        );
+
+        if (!$nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
+            // already enabled, so we can return a no-operation.
+            return EventsToPublish::empty();
+        }
 
         $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
             ->resolveAffectedDimensionSpacePoints(
