@@ -13,7 +13,10 @@ class WorkspaceCommandControllerTest extends FunctionalTestCase
 {
     protected static $testablePersistenceEnabled = true;
 
-    private WorkspaceCommandController $commandController;
+    /**
+     * @var WorkspaceCommandController
+     */
+    private $commandController;
 
     protected function setUp(): void
     {
@@ -26,7 +29,7 @@ class WorkspaceCommandControllerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function test_createCommand_withInvalidWorkspaceName_throwsException(): void
+    public function test_createCommand_withInvalidWorkspaceName_throwsException()
     {
         $this->expectException(StopCommandException::class);
         $this->commandController->createCommand('invalid_workspace_name');
@@ -35,7 +38,7 @@ class WorkspaceCommandControllerTest extends FunctionalTestCase
     /**
      * @test
      */
-    public function test_createCommand_withValidWorkspaceName_succeeds(): void
+    public function test_createCommand_withValidWorkspaceName_succeeds()
     {
         $workspaceRepository = $this->objectManager->get(WorkspaceRepository::class);
         $liveWorkspace = new Workspace('live', null, null);
