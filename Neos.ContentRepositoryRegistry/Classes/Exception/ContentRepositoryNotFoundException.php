@@ -5,7 +5,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 #[Flow\Proxy(false)]
-final class ContentRepositoryNotFound extends \InvalidArgumentException
+final class ContentRepositoryNotFoundException extends \InvalidArgumentException
 {
 
     public static function notConfigured(ContentRepositoryId $contentRepositoryId): self

@@ -20,7 +20,7 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                                       | initialPropertyValues           | nodeName |
+      | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues           | nodeName |
       | shernode-homes  | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "ignore-me"} | site     |
       | a               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "a"}         | a        |
       | b               | shernode-homes         | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b"}         | b        |
@@ -30,12 +30,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
 
   Scenario: initial state
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "b"                       |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "a"                      | "c"                       |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | null                      |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "b"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "a"                      | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => acb (moving b)
     When the command MoveNodeAggregate is executed with payload:
@@ -47,12 +47,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "c"                       |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "c"                      | null                      |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | "b"                       |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "c"                      | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | "b"                       | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => acb (moving c)
     When the command MoveNodeAggregate is executed with payload:
@@ -64,12 +64,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | "b"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "c"                       |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "c"                      | null                      |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | "b"                       |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "c"                      | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | "b"                       | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => bac (moving b)
     When the command MoveNodeAggregate is executed with payload:
@@ -81,12 +81,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | "a"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "b"                      | "c"                       |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "a"                       |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | null                      |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "b"                      | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "a"                       | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => bac (moving a)
     When the command MoveNodeAggregate is executed with payload:
@@ -98,12 +98,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | "c"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "b"                      | "c"                       |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "a"                       |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | null                      |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "b"                      | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "a"                       | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "a"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => bca (moving a)
     When the command MoveNodeAggregate is executed with payload:
@@ -115,12 +115,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "c"                      | null                      |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "c"                       |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | "a"                       |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "c"                      | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | "a"                       | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => bca (moving b and c)
     When the command MoveNodeAggregate is executed with payload:
@@ -140,12 +140,12 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | "a"             |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "c"                      | null                      |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "c"                       |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | "a"                       |
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | "c"                      | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | "a"                       | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: abc => a(> b)c (moving b below a)
     When the command MoveNodeAggregate is executed with payload:
@@ -157,23 +157,23 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                         | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                    | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"     | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a"   | "a"                      | "shernode-homes"         | null                     | "c"                       |
-      | "a/b"   | "lady-eleonode-rootford/shernode-homes/a/b" | "b"                      | "a"                      | null                     | null                      |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c"   | "c"                      | "shernode-homes"         | "a"                      | null                      |
+      | uripath | nodeaggregateidpath                         | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                    | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"     | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a"   | "a"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "a/b"   | "lady-eleonode-rootford/shernode-homes/a/b" | "b"                      | "a"                      | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c"   | "c"                      | "shernode-homes"         | "a"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1)c => a(> b > b1)c (moving b & b1 below a)
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                              | Value                                                |
-      | contentStreamId                  | "cs-identifier"                                      |
-      | nodeAggregateId                  | "b1"                                                 |
+      | Key                              | Value                         |
+      | contentStreamId                  | "cs-identifier"               |
+      | nodeAggregateId                  | "b1"                          |
       | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
-      | originDimensionSpacePoint        | {}                                                   |
-      | parentNodeAggregateId            | "b"                                                  |
-      | initialPropertyValues            | {"uriPathSegment": "b1"}                             |
-      | succeedingSiblingNodeAggregateId | null                                                 |
+      | originDimensionSpacePoint        | {}                            |
+      | parentNodeAggregateId            | "b"                           |
+      | initialPropertyValues            | {"uriPathSegment": "b1"}      |
+      | succeedingSiblingNodeAggregateId | null                          |
     And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
@@ -184,24 +184,24 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath  | nodeaggregateidpath                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""       | "lady-eleonode-rootford"                       | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""       | "lady-eleonode-rootford/shernode-homes"        | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"      | "lady-eleonode-rootford/shernode-homes/a"      | "a"                      | "shernode-homes"         | null                     | "c"                       |
-      | "a/b"    | "lady-eleonode-rootford/shernode-homes/a/b"    | "b"                      | "a"                      | null                     | null                      |
-      | "a/b/b1" | "lady-eleonode-rootford/shernode-homes/a/b/b1" | "b1"                     | "b"                      | null                     | null                      |
-      | "c"      | "lady-eleonode-rootford/shernode-homes/c"      | "c"                      | "shernode-homes"         | "a"                      | null                      |
+      | uripath  | nodeaggregateidpath                            | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""       | "lady-eleonode-rootford"                       | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""       | "lady-eleonode-rootford/shernode-homes"        | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"      | "lady-eleonode-rootford/shernode-homes/a"      | "a"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "a/b"    | "lady-eleonode-rootford/shernode-homes/a/b"    | "b"                      | "a"                      | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a/b/b1" | "lady-eleonode-rootford/shernode-homes/a/b/b1" | "b1"                     | "b"                      | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "c"      | "lady-eleonode-rootford/shernode-homes/c"      | "c"                      | "shernode-homes"         | "a"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1)c => a(> b1)bc (moving b1 below a)
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                              | Value                                                |
-      | contentStreamId                  | "cs-identifier"                                      |
-      | nodeAggregateId                  | "b1"                                                 |
+      | Key                              | Value                         |
+      | contentStreamId                  | "cs-identifier"               |
+      | nodeAggregateId                  | "b1"                          |
       | nodeTypeName                     | "Neos.Neos:Test.Routing.Page" |
-      | originDimensionSpacePoint        | {}                                                   |
-      | parentNodeAggregateId            | "b"                                                  |
-      | initialPropertyValues            | {"uriPathSegment": "b1"}                             |
-      | succeedingSiblingNodeAggregateId | null                                                 |
+      | originDimensionSpacePoint        | {}                            |
+      | parentNodeAggregateId            | "b"                           |
+      | initialPropertyValues            | {"uriPathSegment": "b1"}      |
+      | succeedingSiblingNodeAggregateId | null                          |
     And the graph projection is fully up to date
     And the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value           |
@@ -212,18 +212,18 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath | nodeaggregateidpath                          | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""      | "lady-eleonode-rootford"                     | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""      | "lady-eleonode-rootford/shernode-homes"      | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"     | "lady-eleonode-rootford/shernode-homes/a"    | "a"                      | "shernode-homes"         | null                     | "b"                       |
-      | "a/b1"  | "lady-eleonode-rootford/shernode-homes/a/b1" | "b1"                     | "a"                      | null                     | null                      |
-      | "b"     | "lady-eleonode-rootford/shernode-homes/b"    | "b"                      | "shernode-homes"         | "a"                      | "c"                       |
-      | "c"     | "lady-eleonode-rootford/shernode-homes/c"    | "c"                      | "shernode-homes"         | "b"                      | null                      |
+      | uripath | nodeaggregateidpath                          | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""      | "lady-eleonode-rootford"                     | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""      | "lady-eleonode-rootford/shernode-homes"      | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a"    | "a"                      | "shernode-homes"         | null                     | "b"                       | "Neos.Neos:Test.Routing.Page" |
+      | "a/b1"  | "lady-eleonode-rootford/shernode-homes/a/b1" | "b1"                     | "a"                      | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b"    | "b"                      | "shernode-homes"         | "a"                      | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c"    | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1, b2 > b2a)c => a(> b2 > b2a)b(> b1)c (moving b1 below a)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                       | initialPropertyValues     | nodeName |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues     | nodeName |
       | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
       | b2a             | b2                    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
@@ -236,20 +236,20 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | null            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""         | "lady-eleonode-rootford/shernode-homes"          | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "a"        | "lady-eleonode-rootford/shernode-homes/a"        | "a"                      | "shernode-homes"         | null                     | "b"                       |
-      | "a/b2"     | "lady-eleonode-rootford/shernode-homes/a/b2"     | "b2"                     | "a"                      | null                     | null                      |
-      | "a/b2/b2a" | "lady-eleonode-rootford/shernode-homes/a/b2/b2a" | "b2a"                    | "b2"                     | null                     | null                      |
-      | "b"        | "lady-eleonode-rootford/shernode-homes/b"        | "b"                      | "shernode-homes"         | "a"                      | "c"                       |
-      | "b/b1"     | "lady-eleonode-rootford/shernode-homes/b/b1"     | "b1"                     | "b"                      | null                     | null                      |
-      | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      |
+      | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""         | "lady-eleonode-rootford/shernode-homes"          | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a"        | "lady-eleonode-rootford/shernode-homes/a"        | "a"                      | "shernode-homes"         | null                     | "b"                       | "Neos.Neos:Test.Routing.Page" |
+      | "a/b2"     | "lady-eleonode-rootford/shernode-homes/a/b2"     | "b2"                     | "a"                      | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "a/b2/b2a" | "lady-eleonode-rootford/shernode-homes/a/b2/b2a" | "b2a"                    | "b2"                     | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "b"        | "lady-eleonode-rootford/shernode-homes/b"        | "b"                      | "shernode-homes"         | "a"                      | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b/b1"     | "lady-eleonode-rootford/shernode-homes/b/b1"     | "b1"                     | "b"                      | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
 
   Scenario: ab(> b1, b2 > b2a)c => b(> b1, a, b2 > b2a)c (moving a below b)
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                                       | initialPropertyValues     | nodeName |
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                | initialPropertyValues     | nodeName |
       | b1              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b1"}  | b1       |
       | b2              | b                     | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2"}  | b2       |
       | b2a             | b2                    | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "b2a"} | b2a      |
@@ -262,12 +262,28 @@ Feature: Low level tests covering the inner behavior of the routing projection
       | newSucceedingSiblingNodeAggregateId | "b2"            |
     And The documenturipath projection is up to date
     Then I expect the documenturipath table to contain exactly:
-      | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid |
-      | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      |
-      | ""         | "lady-eleonode-rootford/shernode-homes"          | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      |
-      | "b"        | "lady-eleonode-rootford/shernode-homes/b"        | "b"                      | "shernode-homes"         | null                     | "c"                       |
-      | "b/a"      | "lady-eleonode-rootford/shernode-homes/b/a"      | "a"                      | "b"                      | "b1"                     | "b2"                      |
-      | "b/b1"     | "lady-eleonode-rootford/shernode-homes/b/b1"     | "b1"                     | "b"                      | null                     | "a"                       |
-      | "b/b2"     | "lady-eleonode-rootford/shernode-homes/b/b2"     | "b2"                     | "b"                      | "a"                      | null                      |
-      | "b/b2/b2a" | "lady-eleonode-rootford/shernode-homes/b/b2/b2a" | "b2a"                    | "b2"                     | null                     | null                      |
-      | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      |
+      | uripath    | nodeaggregateidpath                              | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                  |
+      | ""         | "lady-eleonode-rootford"                         | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"             |
+      | ""         | "lady-eleonode-rootford/shernode-homes"          | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "b"        | "lady-eleonode-rootford/shernode-homes/b"        | "b"                      | "shernode-homes"         | null                     | "c"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b/a"      | "lady-eleonode-rootford/shernode-homes/b/a"      | "a"                      | "b"                      | "b1"                     | "b2"                      | "Neos.Neos:Test.Routing.Page" |
+      | "b/b1"     | "lady-eleonode-rootford/shernode-homes/b/b1"     | "b1"                     | "b"                      | null                     | "a"                       | "Neos.Neos:Test.Routing.Page" |
+      | "b/b2"     | "lady-eleonode-rootford/shernode-homes/b/b2"     | "b2"                     | "b"                      | "a"                      | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "b/b2/b2a" | "lady-eleonode-rootford/shernode-homes/b/b2/b2a" | "b2a"                    | "b2"                     | null                     | null                      | "Neos.Neos:Test.Routing.Page" |
+      | "c"        | "lady-eleonode-rootford/shernode-homes/c"        | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.Page" |
+
+  Scenario: Changing the NodeTypeName of a NodeAggregate
+    When the command ChangeNodeAggregateType was published with payload:
+      | Key             | Value                                  |
+      | contentStreamId | "cs-identifier"                        |
+      | nodeAggregateId | "c"                                    |
+      | newNodeTypeName | "Neos.Neos:Test.Routing.SomeOtherPage" |
+      | strategy        | "happypath"                            |
+    And The documenturipath projection is up to date
+    Then I expect the documenturipath table to contain exactly:
+      | uripath | nodeaggregateidpath                       | nodeaggregateid          | parentnodeaggregateid    | precedingnodeaggregateid | succeedingnodeaggregateid | nodetypename                           |
+      | ""      | "lady-eleonode-rootford"                  | "lady-eleonode-rootford" | null                     | null                     | null                      | "Neos.Neos:Sites"                      |
+      | ""      | "lady-eleonode-rootford/shernode-homes"   | "shernode-homes"         | "lady-eleonode-rootford" | null                     | null                      | "Neos.Neos:Test.Routing.Page"          |
+      | "a"     | "lady-eleonode-rootford/shernode-homes/a" | "a"                      | "shernode-homes"         | null                     | "b"                       | "Neos.Neos:Test.Routing.Page"          |
+      | "b"     | "lady-eleonode-rootford/shernode-homes/b" | "b"                      | "shernode-homes"         | "a"                      | "c"                       | "Neos.Neos:Test.Routing.Page"          |
+      | "c"     | "lady-eleonode-rootford/shernode-homes/c" | "c"                      | "shernode-homes"         | "b"                      | null                      | "Neos.Neos:Test.Routing.SomeOtherPage" |

@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFound;
+use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensionSourceFactoryInterface;
@@ -34,6 +34,7 @@ use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
+use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryIdNotFoundException;
 
 /**
  * @api
@@ -61,13 +62,12 @@ final class ContentRepositoryRegistry
      */
     public function __construct(
         private readonly array $settings,
-        private readonly ObjectManagerInterface $objectManager
-    )
-    {
+        private readonly ObjectManagerInterface $objectManager,
+    ) {
     }
 
     /**
-     * @throws ContentRepositoryNotFound | InvalidConfigurationException
+     * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
     public function get(ContentRepositoryId $contentRepositoryId): ContentRepository
     {
@@ -75,6 +75,16 @@ final class ContentRepositoryRegistry
             $this->contentRepositoryInstances[$contentRepositoryId->value] = $this->getFactory($contentRepositoryId)->build();
         }
         return $this->contentRepositoryInstances[$contentRepositoryId->value];
+    }
+
+    public function getContentRepositoryIdByContentRepository(ContentRepository $contentRepository): ContentRepositoryId
+    {
+        $index = array_search($contentRepository, $this->contentRepositoryInstances, true);
+        if ($index === false) {
+            throw ContentRepositoryIdNotFoundException::notFound();
+        }
+
+        return ContentRepositoryId::fromString((string)$index);
     }
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
@@ -91,7 +101,7 @@ final class ContentRepositoryRegistry
      * @param ContentRepositoryId $contentRepositoryId
      * @param ContentRepositoryServiceFactoryInterface<T> $contentRepositoryServiceFactory
      * @return T
-     * @throws ContentRepositoryNotFound | InvalidConfigurationException
+     * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      * @template T of ContentRepositoryServiceInterface
      */
     public function getService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
@@ -103,7 +113,7 @@ final class ContentRepositoryRegistry
     }
 
     /**
-     * @throws ContentRepositoryNotFound | InvalidConfigurationException
+     * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
     private function getFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
     {
@@ -116,7 +126,7 @@ final class ContentRepositoryRegistry
     }
 
     /**
-     * @throws ContentRepositoryNotFound | InvalidConfigurationException
+     * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
     private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
     {
@@ -125,7 +135,7 @@ final class ContentRepositoryRegistry
         }
 
         if (!isset($this->settings['contentRepositories'][$contentRepositoryId->value]) || !is_array($this->settings['contentRepositories'][$contentRepositoryId->value])) {
-            throw ContentRepositoryNotFound::notConfigured($contentRepositoryId);
+            throw ContentRepositoryNotFoundException::notConfigured($contentRepositoryId);
         }
         $contentRepositorySettings = $this->settings['contentRepositories'][$contentRepositoryId->value];
         if (isset($contentRepositorySettings['preset'])) {

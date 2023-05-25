@@ -1,6 +1,6 @@
 preset: psr2
 
-version: 8.1
+version: 8.2
 
 finder:
   path:
