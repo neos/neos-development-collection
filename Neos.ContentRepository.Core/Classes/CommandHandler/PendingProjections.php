@@ -85,8 +85,8 @@ final class PendingProjections
     ) {
     }
 
-    public static function empty(
-    ): self {
+    public static function empty(): self
+    {
         return new self(Projections::create(), []);
     }
 

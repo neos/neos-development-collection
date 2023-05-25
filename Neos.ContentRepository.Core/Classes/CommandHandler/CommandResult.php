@@ -30,7 +30,8 @@ final class CommandResult
      * an empty command result which should not result in projection updates
      * @return self
      */
-    public static function empty(): self {
+    public static function empty(): self
+    {
         return new self(
             PendingProjections::empty(),
             new CommitResult(
