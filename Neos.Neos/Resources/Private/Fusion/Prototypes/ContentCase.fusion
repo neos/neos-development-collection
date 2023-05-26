@@ -16,12 +16,13 @@ prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
     @position = 'end 10000'
     condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.edit}
     renderer = afx`
-      <div style="all:unset;">
-        <link rel="stylesheet" type="text/css" href={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css')}/>
-        <link rel="stylesheet" type="text/css" href={StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css')}/>
-        <p>FALLBACK: Please implement the fusion prototype "{node.nodeType.name}" for frontend rendering.</p>
+      <script src={StaticResource.uri('Neos.Neos', 'Public/JavaScript/RawContent.js')}></script>
+      <neos-raw-content
+        styles={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css') + ',' + StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css')}
+        style="all: unset;"
+      >
         <Neos.Neos:RawContent.Node />
-      </div>
+      </neos-raw-content>
     `
   }
 
