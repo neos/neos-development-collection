@@ -13,12 +13,9 @@ class Neos_RawContentMode extends HTMLElement {
 		const styles = this.getAttribute("styles");
 		if (styles) {
 			const styleItems = styles.split(",");
-			for (var styleItem in styleItems) {
-				const link = document.createElement("link");
-				link.setAttribute("rel", "stylesheet");
-				link.setAttribute("href", styleItems[styleItem]);
-				shadow.appendChild(link);
-			}
+			const style = document.createElement('style');
+			style.innerHTML = '@import ' + styleItems.join(';\n @import ') + ';\n';
+			shadow.appendChild(style);
 		}
 
 		// Render slot
