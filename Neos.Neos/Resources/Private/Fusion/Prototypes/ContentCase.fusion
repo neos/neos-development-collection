@@ -17,12 +17,15 @@ prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
     condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.edit}
     renderer = afx`
       <script src={StaticResource.uri('Neos.Neos', 'Public/JavaScript/RawContent.js')}></script>
+      <template id={'raw_' + node.identifier}>
+        <Neos.Neos:RawContent.Node />
+      </template>
       <neos-raw-content
         styles={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css') + ',' + StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css')}
+        target={'raw_' + node.identifier}
         style="all: unset;"
-      >
-        <Neos.Neos:RawContent.Node />
-      </neos-raw-content>
+      ></neos-raw-content>
+
     `
   }
 

@@ -13,14 +13,17 @@ class Neos_RawContentMode extends HTMLElement {
 		const styles = this.getAttribute("styles");
 		if (styles) {
 			const styleItems = styles.split(",");
-			const style = document.createElement('style');
-			style.innerHTML = '@import ' + styleItems.join(';\n @import ') + ';\n';
-			shadow.appendChild(style);
+			for (var styleItem in styleItems) {
+				const link = document.createElement("link");
+				link.setAttribute("rel", "stylesheet");
+				link.setAttribute("href", styleItems[styleItem]);
+				shadow.appendChild(link);
+			}
 		}
 
-		// Render slot
-		const slot = document.createElement('slot');
-		shadow.appendChild(slot);
+		// Clone template
+		const template = document.getElementById(this.getAttribute("target"));
+		shadow.appendChild(template.content.cloneNode(true));
 	}
 
 	connectedCallback() {
