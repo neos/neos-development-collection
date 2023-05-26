@@ -391,7 +391,7 @@ class LinkingService
             ->setArgumentsToBeExcludedFromQueryString($argumentsToBeExcludedFromQueryString)
             ->setFormat($format ?: $request->getFormat())
             ->setCreateAbsoluteUri($absolute)
-            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos') . '&grrr';
+            ->uriFor($action, ['node' => $node], 'Frontend\Node', 'Neos.Neos');
     }
 
     /**
