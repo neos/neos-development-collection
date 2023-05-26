@@ -21,9 +21,8 @@ prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
         <Neos.Neos:RawContent.Node />
       </template>
       <neos-raw-content
-        styles={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css') + ',' + StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css')}
+        styles={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css') + ',' + StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css') + ',' + StaticResource.uri(Neos.Ui.StaticResources.compiledResourcePackage(), 'Public/Build/Host.css')}
         target={'raw_' + node.identifier}
-        style="all: unset;"
       ></neos-raw-content>
 
     `
