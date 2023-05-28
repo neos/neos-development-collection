@@ -120,6 +120,9 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
         if (isset($propertyConfiguration['ui']['inspector']['position'])) {
             $convertedConfiguration['position'] = $propertyConfiguration['ui']['inspector']['position'];
         }
+        if (isset($propertyConfiguration['ui']['inspector']['hidden'])) {
+            $convertedConfiguration['ui']['hidden'] = $propertyConfiguration['ui']['inspector']['hidden'];
+        }
 
         $editor = $propertyConfiguration['ui']['inspector']['editor'] ?? $dataTypeDefaultConfiguration['editor'] ?? 'Neos.Neos/Inspector/Editors/TextFieldEditor';
         $editorOptions = $propertyConfiguration['ui']['inspector']['editorOptions'] ?? [];

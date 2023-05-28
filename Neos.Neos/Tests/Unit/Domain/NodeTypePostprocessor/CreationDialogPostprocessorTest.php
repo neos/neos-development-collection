@@ -39,6 +39,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
                             'position' => 123,
                             'editor' => 'Some\Editor',
                             'editorOptions' => ['some' => 'option'],
+                            'hidden' => 'ClientEval:false'
                         ],
                     ],
                     'validation' => [
@@ -59,6 +60,7 @@ class CreationDialogPostprocessorTest extends UnitTestCase
                 'type' => 'string',
                 'ui' => [
                     'label' => 'somePropertyName',
+                    'hidden' => 'ClientEval:false',
                     'editor' => 'Some\Editor',
                     'editorOptions' => ['some' => 'option'],
                 ],
