@@ -99,7 +99,7 @@ class HtmlAugmenter
         /** @var $attribute \DOMAttr */
         foreach ($element->attributes as $attribute) {
             $oldAttributeValue = $attribute->hasChildNodes() ? $attribute->value : true;
-            $hasNewAttributeValue = array_key_exists($attribute->name, $newAttributes);
+            $hasNewAttributeValue = isset($newAttributes[$attribute->name]);
             $newAttributeValue = $newAttributes[$attribute->name] ?? null;
 
             if ($hasNewAttributeValue === false) {

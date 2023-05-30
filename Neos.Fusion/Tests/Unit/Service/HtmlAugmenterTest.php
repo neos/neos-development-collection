@@ -327,14 +327,31 @@ class HtmlAugmenterTest extends UnitTestCase
                 'allowEmpty' => false,
                 'expectedResult' => '<p>Null attribute</p>',
             ],
-            // Adding of array attributes
+            // Adding of Stringable attributes
             [
-                'html' => '<p>Array attribute</p>',
-                'attributes' => ['class' => ["Hello", "world"]],
+                'html' => '<p>Stringable attribute</p>',
+                'attributes' => ['data-stringable' => $mockObject],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p class="Hello world">Array attribute</p>',
+                'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
+            ],
+            [
+                'html' => '<p>Stringable attribute</p>',
+                'attributes' => ['data-stringable' => $mockObject],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
+            ],
+            // Adding of array attributes
+            [
+                'html' => '<p>Array attribute</p>',
+                'attributes' => ['class' => ["Hello", "world", $mockObject]],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p class="Hello world casted value">Array attribute</p>',
             ],
             [
                 'html' => '<p>Array attribute</p>',
@@ -342,7 +359,54 @@ class HtmlAugmenterTest extends UnitTestCase
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p class="">Array attribute</p>',
+                'expectedResult' => '<p class>Array attribute</p>',
+            ],
+
+            // https://github.com/neos/neos-development-collection/issues/3582
+            'empty string rendered as empty attribute' => [
+                'html' => '<p>text</p>',
+                'attributes' => ['data-bla' => ''],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla>text</p>',
+            ],
+
+            // https://github.com/neos/neos-development-collection/issues/4213
+            'null should not remove existing attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => null],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla>text</p>',
+            ],
+
+            'apply empty string on existing empty attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => ''],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla>text</p>',
+            ],
+
+            'apply string on existing empty attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => 'foobar'],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-bla="foobar">text</p>',
+            ],
+
+            'false removes attribute' => [
+                'html' => '<p data-bla>text</p>',
+                'attributes' => ['data-bla' => false],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p>text</p>',
             ]
         ];
     }

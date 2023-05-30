@@ -119,3 +119,7 @@ Neos:
           options:
             namespaces:
               neos.media: Neos\Media\ViewHelpers
+
+  Fusion:
+    defaultContext:
+      Neos.Media.Assets: 'Neos\Media\Eel\AssetsHelper'

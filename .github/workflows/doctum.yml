@@ -40,6 +40,10 @@ jobs:
           git config --local --unset-all "http.https://github.com/.extraheader"
           git config --global user.email "ops@neos.io"
           git config --global user.name "Neos Bot"
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git add .
           git commit -m "TASK: Update API docs from ${{ github.ref_name }}"
 
