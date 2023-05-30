@@ -327,14 +327,31 @@ class HtmlAugmenterTest extends UnitTestCase
                 'allowEmpty' => false,
                 'expectedResult' => '<p>Null attribute</p>',
             ],
-            // Adding of array attributes
+            // Adding of Stringable attributes
             [
-                'html' => '<p>Array attribute</p>',
-                'attributes' => ['class' => ["Hello", "world"]],
+                'html' => '<p>Stringable attribute</p>',
+                'attributes' => ['data-stringable' => $mockObject],
                 'fallbackTagName' => null,
                 'exclusiveAttributes' => null,
                 'allowEmpty' => true,
-                'expectedResult' => '<p class="Hello world">Array attribute</p>',
+                'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
+            ],
+            [
+                'html' => '<p>Stringable attribute</p>',
+                'attributes' => ['data-stringable' => $mockObject],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
+            ],
+            // Adding of array attributes
+            [
+                'html' => '<p>Array attribute</p>',
+                'attributes' => ['class' => ["Hello", "world", $mockObject]],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p class="Hello world casted value">Array attribute</p>',
             ],
             [
                 'html' => '<p>Array attribute</p>',
