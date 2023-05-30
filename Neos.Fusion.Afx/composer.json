@@ -8,7 +8,7 @@
   },
   "require": {
     "php": "^8.0",
-    "neos/fusion": "*"
+    "neos/fusion": "self.version"
   },
   "require-dev": {
     "phpunit/phpunit": "^9.0"
