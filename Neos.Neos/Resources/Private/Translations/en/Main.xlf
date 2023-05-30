@@ -839,6 +839,12 @@
 			<trans-unit id="login.loggedOut.body" xml:space="preserve">
 				<source>Successfully logged out</source>
 			</trans-unit>
+			<trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+			</trans-unit>
+			<trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
+			</trans-unit>
 			<trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="yes">
                 <source>Switched to the new user "{0}".</source>
             </trans-unit>
