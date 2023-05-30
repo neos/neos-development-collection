@@ -24,7 +24,7 @@ Neos\Neos\Domain\Service\FusionConfigurationCache:
           1:
             value: Neos_Neos_Fusion
     2:
-      setting: "Neos.Neos:fusion.enableObjectTreeCache"
+      setting: "Neos.Neos.fusion.enableObjectTreeCache"
 
 'Neos\ContentRepository\Domain\Service\ContentDimensionPresetSourceInterface':
   className: Neos\Neos\Domain\Service\ConfigurationContentDimensionPresetSource
