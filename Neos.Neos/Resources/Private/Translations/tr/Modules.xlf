@@ -650,7 +650,7 @@
       </trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
-        <target state="translated">Paketi Devre Dışı Bırak </target>
+        <target state="translated">Paketi Devre Dışı Bırak</target>
       </trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve">
 				<source>Activate Package</source>

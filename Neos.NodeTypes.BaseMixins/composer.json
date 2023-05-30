@@ -6,7 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/neos": "*"
+        "neos/neos": "self.version"
     },
     "autoload": {
         "psr-4": {
