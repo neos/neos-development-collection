@@ -1301,6 +1301,14 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
 				<source>Contains modules related to management of users</source>
         <target state="translated">Bevat modules gerelateerd aan het onderhoud van gebruikers</target>
       </trans-unit>
+      <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
+				<source>Publish selected changes to {0}</source>
+        <target state="translated">Publiceer geselecteerde wijzigingen naar {0}</target>
+      </trans-unit>
+      <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
+				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
+        <target state="translated">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace wilt annuleren?</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
