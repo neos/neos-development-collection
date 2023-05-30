@@ -453,7 +453,7 @@
       <group id="relatedNodes" restype="x-gettext-plurals">
         <trans-unit id="relatedNodes[0]">
           <source>{0} usages</source>
-          <target state="translated">{0} usos</target> </trans-unit>
+          <target state="translated">{0} uso</target> </trans-unit>
         <trans-unit id="relatedNodes[1]">
           <source>{0} usages</source>
           <target state="translated">{0} usos</target> </trans-unit>
