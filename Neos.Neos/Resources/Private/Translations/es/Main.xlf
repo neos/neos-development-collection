@@ -1130,6 +1130,14 @@
                 <source>Switch back to the orginal user account</source>
         <target state="translated">Vuelva a la cuenta del usuario original</target>
       </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+        <target state="needs-translation">Árbol de documentos</target>
+      </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
+        <target state="needs-translation">Árbol de contenidos</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -1130,6 +1130,14 @@
                 <source>Back to user "{0}"</source>
         <target state="translated">Terug naar gebruiker "{0}"</target>
       </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+        <target state="needs-translation">Documentboom</target>
+      </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
+        <target state="needs-translation">Contentboom</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
