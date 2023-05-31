@@ -1,9 +1,37 @@
-`8.2.4 (2023-05-30) <https://github.com/neos/neos-development-collection/releases/tag/8.2.4>`_
+`8.2.4 (2023-04-23) <https://github.com/neos/neos-development-collection/releases/tag/8.2.4>`_
 ==============================================================================================
 
 Overview of merged pull requests
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+`BUGFIX: Fusion Runtime `@apply` with integer indexed array <https://github.com/neos/neos-development-collection/pull/3936>`_
+-----------------------------------------------------------------------------------------------------------------------------
 
-`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.4...8.2.4>`_
+closes `#3585 <https://github.com/neos/neos-development-collection/issues/3585>`_
+
+starting with PHP 7.4 it's not cool to do offset access on integers (which returns null always)
+
+I did a little digging, and we have this skip keys logic 3 times in the runtime (probably not extracted for performance reasons)
+
+2 times this logic needs to be adjusted to only operate on strings. Those two snippets where introduced with `#2738 <https://github.com/neos/neos-development-collection/issues/2738>`_
+
+And 1 time this logic already has an is_string check. https://github.com/neos/neos-development-collection/blob/`046e5d02750af0ebf33cc52663799ce09683ba37 <https://github.com/neos/neos-development-collection/commit/046e5d02750af0ebf33cc52663799ce09683ba37>``_/Neos.Fusion/Classes/Core/Runtime.php#L667 This was adjusted when 7.4 compatibility was introduced via ``#2804 <https://github.com/neos/neos-development-collection/issues/2804>`_but the other two references where not adjusted
+
+**Upgrade instructions**
+
+**Review instructions**
+
+please dont make me write more fusion tests 😅
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Update dependabot configuration <https://github.com/neos/neos-development-collection/pull/3997>`_
+--------------------------------------------------------------------------------------------------------
+
+Add NPM configuration and enable just security fixes.
+For more information visit https://docs.github.com/en/enterprise-server@3.3/code-security/dependabot/dependabot-security-updates/configuring-dependabot-security-updates
+
+* Packages: ``Neos`` ``.github``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.3...8.2.4>`_
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
