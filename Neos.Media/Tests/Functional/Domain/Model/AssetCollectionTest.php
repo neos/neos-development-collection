@@ -108,7 +108,7 @@ class AssetCollectionTest extends AbstractTest
         $this->persistenceManager->clearState();
 
         $persistedChild = $this->assetCollectionRepository->findOneByTitle('child');
-        $persistedChild->setParent(null);
+        $persistedChild->unsetParent(null);
 
         $this->assetCollectionRepository->update($persistedChild);
         $this->persistenceManager->persistAll();
@@ -120,7 +120,7 @@ class AssetCollectionTest extends AbstractTest
         $children = $this->assetCollectionRepository->findByParent($persistedParent);
 
         self::assertNull($persistedChild->getParent());
-        self::assertEquals(0, count($children));
+        self::assertCount(0, $children);
     }
 
     /**
@@ -150,5 +150,28 @@ class AssetCollectionTest extends AbstractTest
 
         self::assertNull($persistedChild);
         self::assertNull($persistedParent);
+    }
+
+    /**
+     * @test
+     */
+    public function hasParentReturnsTrueIfParentIsSet(): void
+    {
+        $child = new AssetCollection('child');
+        $parent = new AssetCollection('parent');
+
+        $child->setParent($parent);
+
+        $this->assetCollectionRepository->add($parent);
+        $this->assetCollectionRepository->add($child);
+
+        $this->persistenceManager->persistAll();
+        $this->persistenceManager->clearState();
+
+        $persistedChild = $this->assetCollectionRepository->findOneByTitle('child');
+        $persistedParent = $this->assetCollectionRepository->findOneByTitle('parent');
+
+        self::assertTrue($persistedChild->hasParent());
+        self::assertFalse($persistedParent->hasParent());
     }
 }

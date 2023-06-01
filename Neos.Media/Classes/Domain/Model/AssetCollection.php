@@ -200,7 +200,7 @@ class AssetCollection
         $parent = $this->parent;
         while ($parent !== null) {
             $parent = $parent->getParent();
-            if ($parent === $this->parent) {
+            if ($parent && $parent === $this->parent) {
                 throw new \InvalidArgumentException(sprintf(
                     'Circular reference detected, parent AssetCollection "%s" appeared twice in the hierarchy',
                     $parent->getTitle()
@@ -209,9 +209,19 @@ class AssetCollection
         }
     }
 
-    public function setParent(?self $parent): void
+    public function setParent(self $parent): void
     {
         $this->parent = $parent;
         $this->validateCircularHierarchy();
+    }
+
+    public function unsetParent(): void
+    {
+        $this->parent = null;
+    }
+
+    public function hasParent(): bool
+    {
+        return $this->parent !== null;
     }
 }
