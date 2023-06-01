@@ -198,11 +198,13 @@ class AssetCollection
     private function validateCircularHierarchy(): void
     {
         $parent = $this->parent;
-        $parents = [$parent];
         while ($parent !== null) {
             $parent = $parent->getParent();
-            if (in_array($parent, $parents, true)) {
-                throw new \InvalidArgumentException('Circular reference detected', 1680328041);
+            if ($parent === $this->parent) {
+                throw new \InvalidArgumentException(sprintf(
+                    'Circular reference detected, parent AssetCollection "%s" appeared twice in the hierarchy',
+                    $parent->getTitle()
+                ), 1680328041);
             }
         }
     }

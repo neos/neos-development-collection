@@ -73,19 +73,22 @@ class AssetCollectionTest extends AbstractTest
     }
 
     /**
+     * Verifies the following hierarchie throws an error:
+     *   first -> second -> third -> first
+     *
      * @test
      */
     public function circularParentChildrenRelationThrowsErrorWhenSettingParent(): void
     {
-        $child = new AssetCollection('child');
-        $childOfChild = new AssetCollection('childOfChild');
-        $parent = new AssetCollection('parent');
+        $firstCollection = new AssetCollection('first');
+        $secondCollection = new AssetCollection('second');
+        $thirdCollection = new AssetCollection('third');
 
-        $child->setParent($parent);
-        $childOfChild->setParent($child);
+        $secondCollection->setParent($firstCollection);
+        $thirdCollection->setParent($secondCollection);
 
         $this->expectException(\InvalidArgumentException::class);
-        $parent->setParent($childOfChild);
+        $firstCollection->setParent($thirdCollection);
     }
 
     /**
