@@ -1132,11 +1132,11 @@
       </trans-unit>
       <trans-unit id="documentTree" xml:space="preserve">
 				<source>Document Tree</source>
-        <target state="needs-translation">Documentboom</target>
+        <target state="translated">Documentboom</target>
       </trans-unit>
       <trans-unit id="contentTree" xml:space="preserve">
 				<source>Content Tree</source>
-        <target state="needs-translation">Contentboom</target>
+        <target state="translated">Contentboom</target>
       </trans-unit>
     </body>
   </file>
