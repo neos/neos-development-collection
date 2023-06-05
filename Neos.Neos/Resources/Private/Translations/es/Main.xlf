@@ -1138,6 +1138,14 @@
 				<source>Content Tree</source>
         <target state="translated">Árbol de contenidos</target>
       </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+        <target state="translated">Árbol de documentos</target>
+      </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
+        <target state="translated">Árbol de contenidos</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
