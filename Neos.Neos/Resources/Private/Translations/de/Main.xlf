@@ -1102,6 +1102,14 @@
         <source>This is a shortcut to a specific target:</source>
         <target state="translated">Dies ist eine Verknüpfung zu einem gewählten Ziel:</target>
       </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+        <target state="needs-translation">Dokumentbaum</target>
+      </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
+        <target state="needs-translation">Inhaltsbaum</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
