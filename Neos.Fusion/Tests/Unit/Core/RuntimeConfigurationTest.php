@@ -16,7 +16,6 @@ use Neos\Flow\Tests\UnitTestCase;
 
 class RuntimeConfigurationTest extends UnitTestCase
 {
-
     /**
      * @test
      */
