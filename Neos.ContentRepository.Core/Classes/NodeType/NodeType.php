@@ -15,7 +15,10 @@ namespace Neos\ContentRepository\Core\NodeType;
  */
 
 
+use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
@@ -490,11 +493,31 @@ class NodeType
      */
     public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
     {
+        $this->initialize();
         return isset($this->fullConfiguration['childNodes'][$nodeName->value]['type'])
             ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][$nodeName->value]['type'])
             : null;
     }
 
+    /**
+     * Calculates the deterministic nodeAggregateIds for the auto-created childNodes.
+     */
+    public function tetheredNodeAggregateIds(NodeAggregateId $parentNodeAggregateId): NodeAggregateIdsByNodePaths
+    {
+        $this->initialize();
+        $nodeAggregateIdsByNodePaths = NodeAggregateIdsByNodePaths::createEmpty();
+        if (!isset($this->fullConfiguration['childNodes'])) {
+            return $nodeAggregateIdsByNodePaths;
+        }
+        // TODO: handle Multiple levels of autocreated child nodes
+        foreach (array_keys($this->fullConfiguration['childNodes']) as $tetheredNodeName) {
+            $nodeAggregateIdsByNodePaths = $nodeAggregateIdsByNodePaths->add(
+                NodePath::fromString($tetheredNodeName),
+                NodeAggregateId::fromParentNodeAggregateIdAndNodeName($parentNodeAggregateId, NodeName::fromString($tetheredNodeName))
+            );
+        }
+        return $nodeAggregateIdsByNodePaths;
+    }
 
     /**
      * Checks if the given NodeType is acceptable as sub-node with the configured constraints,

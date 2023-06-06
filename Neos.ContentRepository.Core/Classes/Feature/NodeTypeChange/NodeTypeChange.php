@@ -87,12 +87,6 @@ trait NodeTypeChange
         NodeType $nodeType
     ): bool;
 
-    abstract protected static function populateNodeAggregateIds(
-        NodeType $nodeType,
-        NodeAggregateIdsByNodePaths $nodeAggregateIds,
-        NodePath $childPath = null
-    ): NodeAggregateIdsByNodePaths;
-
     abstract protected function createEventsForMissingTetheredNode(
         NodeAggregate $parentNodeAggregate,
         Node $parentNode,
@@ -156,10 +150,9 @@ trait NodeTypeChange
         /**************
          * Preparation - make the command fully deterministic in case of rebase
          **************/
-        $descendantNodeAggregateIds = static::populateNodeAggregateIds(
-            $newNodeType,
-            $command->tetheredDescendantNodeAggregateIds
-        );
+        $descendantNodeAggregateIds = $newNodeType->tetheredNodeAggregateIds($command->nodeAggregateId)
+            ->merge($command->tetheredDescendantNodeAggregateIds ?? NodeAggregateIdsByNodePaths::createEmpty());
+
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);

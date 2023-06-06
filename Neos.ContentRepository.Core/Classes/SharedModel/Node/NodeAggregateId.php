@@ -50,6 +50,23 @@ final class NodeAggregateId implements \JsonSerializable
         return new self($value);
     }
 
+    /**
+     * Calculates a deterministic nodeAggregateId.
+     *
+     * Used for determining the nodeAggregateIds of tethered nodes.
+     *
+     * e.g. in case you want to get the main content collection node aggregate id:
+     *  NodeAggregateId::fromParentNodeAggregateIdAndNodeName($parentNodeAggregateId, NodeName::fromString('main'))
+     *
+     */
+    public static function fromParentNodeAggregateIdAndNodeName(NodeAggregateId $parentNodeAggregateId, NodeName $tetheredNodeName): self
+    {
+        $hex = md5($parentNodeAggregateId->value . '-' . $tetheredNodeName->value);
+        return new self(
+            substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12)
+        );
+    }
+
     public function equals(self $other): bool
     {
         return $this->value === $other->value;
