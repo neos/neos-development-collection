@@ -117,11 +117,12 @@ final class ContentRepositoryFactory
      * @return T
      */
     public function buildService(
+        ContentRepository $contentRepository,
         ContentRepositoryServiceFactoryInterface $serviceFactory
     ): ContentRepositoryServiceInterface {
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
-            $this->build(),
+            $contentRepository,
             $this->buildEventPersister(),
             $this->projections,
         );

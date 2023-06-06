@@ -107,7 +107,10 @@ final class ContentRepositoryRegistry
     public function getService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
     {
         if (!isset($this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)])) {
-            $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)] = $this->getFactory($contentRepositoryId)->buildService($contentRepositoryServiceFactory);
+            $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)] = $this->getFactory($contentRepositoryId)->buildService(
+                $this->get($contentRepositoryId),
+                $contentRepositoryServiceFactory
+            );
         }
         return $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)];
     }
