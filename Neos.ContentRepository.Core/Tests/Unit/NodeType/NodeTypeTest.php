@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -421,5 +422,67 @@ class NodeTypeTest extends TestCase
         $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('Neos.ContentRepository:Base')->getAutoCreatedChildNodes();
 
         self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
+    }
+
+    /**
+     * @test
+     */
+    public function tetheredNodeAggregateIdsAreDetermined(): void
+    {
+        $nodeTypeNameA = NodeTypeName::fromString('Neos.ContentRepository:A');
+        $nodeTypeConfigurationA = [
+            'childNodes' => [
+                'to-b' => [
+                    'type' => 'Neos.ContentRepository:B'
+                ],
+                'to-c' => [
+                    'type' => 'Neos.ContentRepository:C'
+                ]
+            ]
+        ];
+
+        $nodeTypeNameB = NodeTypeName::fromString('Neos.ContentRepository:B');
+        $nodeTypeConfigurationB = [
+            'childNodes' => [
+                'to-c-nested' => [
+                    'type' => 'Neos.ContentRepository:C'
+                ]
+            ]
+        ];
+
+        $nodeTypeNameC = NodeTypeName::fromString('Neos.ContentRepository:C');
+        $nodeTypeConfigurationC = [];
+
+        $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
+
+        /** @var list<NodeType> $nodeTypes */
+        $nodeTypes = [
+            $nodeTypeA = new NodeType($nodeTypeNameA, [], $nodeTypeConfigurationA, $mockNodeTypeManager, new DefaultNodeLabelGeneratorFactory()),
+            new NodeType($nodeTypeNameB, [], $nodeTypeConfigurationB, $mockNodeTypeManager, new DefaultNodeLabelGeneratorFactory()),
+            new NodeType($nodeTypeNameC, [], $nodeTypeConfigurationC, $mockNodeTypeManager, new DefaultNodeLabelGeneratorFactory())
+        ];
+
+        $mockNodeTypeManager->expects(self::any())->method('getNodeType')->willReturnCallback(function (string|NodeTypeName $nodeTypeName) use ($nodeTypes) {
+            $nodeTypeName = is_string($nodeTypeName) ? NodeTypeName::fromString($nodeTypeName) : $nodeTypeName;
+            foreach ($nodeTypes as $nodeType) {
+                if ($nodeTypeName->equals($nodeType->name)) {
+                    return $nodeType;
+                }
+            }
+            self::fail(sprintf('NodeTypeManagerMock doesnt know NodeTypeName: "%s"', $nodeTypeName->value));
+        });
+
+        $nodeAggregateId = NodeAggregateId::fromString('b5b00957-2ed3-480e-845b-03fe3620bd5e');
+
+        $tetheredNodeAggregateIds = $nodeTypeA->tetheredNodeAggregateIds($nodeAggregateId);
+
+        self::assertEquals(
+            [
+                'to-b' => NodeAggregateId::fromString('b9b6d9ac-dba4-2838-bec7-43baaf8a10d0'),
+                'to-b/to-c-nested' => NodeAggregateId::fromString('bf248c95-cdd0-53c2-e570-75378aef47f2'),
+                'to-c' => NodeAggregateId::fromString('59fbd163-06c5-4526-ffa6-0b20c81ae73a'),
+            ],
+            $tetheredNodeAggregateIds->getNodeAggregateIds()
+        );
     }
 }

@@ -504,17 +504,20 @@ class NodeType
      */
     public function tetheredNodeAggregateIds(NodeAggregateId $parentNodeAggregateId): NodeAggregateIdsByNodePaths
     {
-        $this->initialize();
         $nodeAggregateIdsByNodePaths = NodeAggregateIdsByNodePaths::createEmpty();
-        if (!isset($this->fullConfiguration['childNodes'])) {
-            return $nodeAggregateIdsByNodePaths;
-        }
-        // TODO: handle Multiple levels of autocreated child nodes
-        foreach (array_keys($this->fullConfiguration['childNodes']) as $tetheredNodeName) {
+        foreach ($this->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
             $nodeAggregateIdsByNodePaths = $nodeAggregateIdsByNodePaths->add(
-                NodePath::fromString($tetheredNodeName),
-                NodeAggregateId::fromParentNodeAggregateIdAndNodeName($parentNodeAggregateId, NodeName::fromString($tetheredNodeName))
+                $childNodePath = NodePath::fromString($childNodeName),
+                $childNodeAggregateId = NodeAggregateId::fromParentNodeAggregateIdAndNodeName($parentNodeAggregateId, NodeName::fromString($childNodeName))
             );
+
+            // handle multiple levels of autocreated child nodes
+            foreach ($childNodeType->tetheredNodeAggregateIds($childNodeAggregateId)->getNodeAggregateIds() as $nestedChildNodeName => $nodeAggregateId) {
+                $nodeAggregateIdsByNodePaths = $nodeAggregateIdsByNodePaths->add(
+                    $childNodePath->appendPathSegment(NodeName::fromString($nestedChildNodeName)),
+                    $nodeAggregateId
+                );
+            };
         }
         return $nodeAggregateIdsByNodePaths;
     }
