@@ -162,7 +162,11 @@ Migrating an existing (Neos < 9.0) Site
 Importing an existing (Neos >= 9.0) Site from an Export
 -------------------------------------------------------
 
-tbd
+.. code-block:: bash
+
+    # import the event stream from the Neos.Demo package
+    ./flow cr:import Packages/Sites/Neos.Demo/Resources/Private/Content
+
 
 Running Neos
 ============
