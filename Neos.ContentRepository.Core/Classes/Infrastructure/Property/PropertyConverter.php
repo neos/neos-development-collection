@@ -44,8 +44,8 @@ final class PropertyConverter
         $serializedPropertyValues = [];
 
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
-            if (!isset($nodeType->getProperties()[$propertyName]) && $propertyValue === null) {
-                // The property is undefined and the value null => we want to remove it, so we set it to null
+            if ($propertyValue === null) {
+                // We want to remove it, so we set it to null
                 $serializedPropertyValues[$propertyName] = null;
             } else {
                 $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
