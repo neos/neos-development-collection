@@ -39,8 +39,7 @@ final class PropertyType
     public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
     private function __construct(
-        public readonly string $value,
-        public readonly bool $isNullable
+        public readonly string $value
     ) {
     }
 
@@ -52,23 +51,17 @@ final class PropertyType
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName
     ): self {
-        if (\mb_strpos($declaration, '?') === 0) {
-            $declaration = \mb_substr($declaration, 1);
-            $isNullable = true;
-        }
-        // we always assume nullability for now
-        $isNullable = true;
         if ($declaration === 'reference' || $declaration === 'references') {
             throw PropertyTypeIsInvalid::becauseItIsReference($propertyName, $nodeTypeName);
         }
         if ($declaration === 'bool' || $declaration === 'boolean') {
-            return self::bool($isNullable);
+            return self::bool();
         }
         if ($declaration === 'int' || $declaration === 'integer') {
-            return self::int($isNullable);
+            return self::int();
         }
         if ($declaration === 'float' || $declaration === 'double') {
-            return self::float($isNullable);
+            return self::float();
         }
         if (
             in_array($declaration, [
@@ -80,7 +73,7 @@ final class PropertyType
                 '\DateTimeInterface'
             ])
         ) {
-            return self::date($isNullable);
+            return self::date();
         }
         if ($declaration === 'Uri' || $declaration === Uri::class || $declaration === UriInterface::class) {
             $declaration = Uri::class;
@@ -99,32 +92,32 @@ final class PropertyType
             throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
         }
 
-        return new self($declaration, $isNullable);
+        return new self($declaration);
     }
 
-    public static function bool(bool $isNullable): self
+    public static function bool(): self
     {
-        return new self(self::TYPE_BOOL, $isNullable);
+        return new self(self::TYPE_BOOL);
     }
 
-    public static function int(bool $isNullable): self
+    public static function int(): self
     {
-        return new self(self::TYPE_INT, $isNullable);
+        return new self(self::TYPE_INT);
     }
 
-    public static function string(bool $isNullable): self
+    public static function string(): self
     {
-        return new self(self::TYPE_STRING, $isNullable);
+        return new self(self::TYPE_STRING);
     }
 
-    public static function float(bool $isNullable): self
+    public static function float(): self
     {
-        return new self(self::TYPE_FLOAT, $isNullable);
+        return new self(self::TYPE_FLOAT);
     }
 
-    public static function date(bool $isNullable): self
+    public static function date(): self
     {
-        return new self(self::TYPE_DATE, $isNullable);
+        return new self(self::TYPE_DATE);
     }
 
     public function isBool(): bool
