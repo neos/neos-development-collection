@@ -38,7 +38,8 @@ final class PropertyType
 
     public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
-    private ?self $arrayOfType;
+    /** only set if {@see sef:: isArrayOf()} */
+    private self $arrayOfType;
 
     private function __construct(
         public readonly string $value
