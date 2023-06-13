@@ -25,7 +25,7 @@ Feature: Run projection integrity violation detection regarding node aggregate t
       | Key                         | Value                                     |
       | contentStreamId     | "cs-identifier"                           |
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
-      | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
+      | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
   Scenario: Create node variants of different type
