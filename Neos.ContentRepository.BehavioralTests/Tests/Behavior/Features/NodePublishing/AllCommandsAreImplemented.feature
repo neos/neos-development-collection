@@ -37,13 +37,11 @@ Feature: Publishing hide/show scenario of nodes
         image:
           type: string
     """
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-      | coveredDimensionSpacePoints | [{}]                          |
-      | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                               |
       | contentStreamId       | "cs-identifier"                                     |

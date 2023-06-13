@@ -27,13 +27,11 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
       | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
-      | coveredDimensionSpacePoints | [{}]                     |
-      | nodeAggregateClassification | "root"                   |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford

@@ -23,13 +23,11 @@ Feature: Move a node without content dimensions
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-      | coveredDimensionSpacePoints | [{}]                          |
-      | nodeAggregateClassification | "root"                        |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                     |
       | contentStreamId             | "cs-identifier"                           |

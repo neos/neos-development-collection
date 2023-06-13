@@ -21,13 +21,11 @@ Feature: Run projection integrity violation detection regarding node aggregate t
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                     |
       | contentStreamId     | "cs-identifier"                           |
       | nodeAggregateId     | "lady-eleonode-rootford"                  |
       | nodeTypeName                | "Neos.ContentRepository.Testing:Document" |
-      | coveredDimensionSpacePoints | [{"language":"de"},{"language":"gsw"}]    |
-      | nodeAggregateClassification | "root"                                    |
     And the graph projection is fully up to date
 
   Scenario: Create node variants of different type
