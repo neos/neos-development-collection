@@ -5,6 +5,11 @@ Feature: Change node name
 
   Background:
     Given I have no content dimensions
+    And I have the following NodeTypes configuration:
+    """
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Content': []
+    """
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -18,11 +23,6 @@ Feature: Change node name
       | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
-    And I have the following NodeTypes configuration:
-    """
-    'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:Content': []
-    """
 
   Scenario: Change node name of content node
     Given the event NodeAggregateWithNodeWasCreated was published with payload:
