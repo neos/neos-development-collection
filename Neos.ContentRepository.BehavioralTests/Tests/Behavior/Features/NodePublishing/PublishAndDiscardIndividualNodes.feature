@@ -11,11 +11,6 @@ Feature: Publishing and discard individual nodes (basics)
 
   Background:
     Given I have no content dimensions
-    And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value           |
-      | workspaceName              | "live"          |
-      | newContentStreamId | "cs-identifier" |
-    And the graph projection is fully up to date
     And I have the following NodeTypes configuration:
     """
     Neos.ContentRepository:Root: {}
@@ -28,6 +23,11 @@ Feature: Publishing and discard individual nodes (basics)
         image:
           type: string
     """
+    And the command CreateRootWorkspace is executed with payload:
+  | Key                        | Value           |
+  | workspaceName              | "live"          |
+  | newContentStreamId | "cs-identifier" |
+    And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
       | contentStreamId     | "cs-identifier"               |
