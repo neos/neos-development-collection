@@ -7,7 +7,9 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And I am user identified by "initiating-user-identifier"
     And I have the following NodeTypes configuration:
     """
-    'Neos.Neos:Sites': {}
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     'Neos.Neos:Document': {}
     'Neos.Neos:Content': {}
     'Neos.Neos:Test.Routing.Page':
