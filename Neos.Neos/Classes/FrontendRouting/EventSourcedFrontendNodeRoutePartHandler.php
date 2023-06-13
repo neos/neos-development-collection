@@ -16,7 +16,6 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
@@ -35,10 +34,10 @@ use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
+use Neos\Neos\FrontendRouting\Visibility\VisibilityResult;
 
 /**
  * A route part handler for finding nodes in the website's frontend. Like every RoutePartHandler,
@@ -256,6 +255,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             return false;
         }
         $currentRequestSiteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
+        $visibilityResult = VisibilityResult::fromRouteParameters($parameters);
 
         $nodeAddress = $routeValues[$this->name];
         // TODO: for cross-CR links: NodeAddressInContentRepository as a new value object
@@ -264,7 +264,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
         }
 
         try {
-            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
+            $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult, $visibilityResult);
         } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
@@ -283,7 +283,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
      */
     private function resolveNodeAddress(
         NodeAddress $nodeAddress,
-        SiteDetectionResult $currentRequestSiteDetectionResult
+        SiteDetectionResult $currentRequestSiteDetectionResult,
+        VisibilityResult $visibilityResult
     ): ResolveResult {
         // TODO: SOMEHOW FIND OTHER CONTENT REPOSITORY HERE FOR CROSS-CR LINKS!!
         $contentRepository = $this->contentRepositoryRegistry->get(
@@ -294,7 +295,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
-        if ($nodeInfo->isDisabled()) {
+
+        if ($visibilityResult->isRouteResolvingOfDisabledNodesAllowed() === false && $nodeInfo->isDisabled()) {
             throw new NodeNotFoundException(sprintf(
                 'The resolved node for address %s is disabled',
                 $nodeAddress
