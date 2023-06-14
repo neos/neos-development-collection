@@ -4,15 +4,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting\Visibility;
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * {@see VisibilityResult::fromRequest()}.
- *
- * @Flow\Proxy(false)
  */
 final class VisibilityResult
 {
