@@ -23,12 +23,12 @@ final class VisibilityResult
     ) {
     }
 
-    public static function createRouteResolvingOfDisabledNodesAllowed()
+    public static function createRouteResolvingOfDisabledNodesAllowed(): self
     {
         return new self(true);
     }
 
-    public static function createRouteResolvingOfDisabledNodesDenied()
+    public static function createRouteResolvingOfDisabledNodesDenied(): self
     {
         return new self(false);
     }
