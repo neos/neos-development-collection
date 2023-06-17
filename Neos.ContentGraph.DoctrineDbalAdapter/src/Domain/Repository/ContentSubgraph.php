@@ -23,6 +23,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
@@ -157,6 +158,20 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
+        $this->addRestrictionRelationConstraints($queryBuilder);
+        return $this->fetchNode($queryBuilder);
+    }
+
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
+    {
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('n.*, h.name, h.contentstreamid')
+            ->from($this->tableNamePrefix . '_node', 'n')
+            ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->where('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
+            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
+            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
+            ->andWhere('n.classification = "root"');
         $this->addRestrictionRelationConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }

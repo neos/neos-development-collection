@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
@@ -310,6 +311,24 @@ trait NodeTraversalTrait
                 'originalLastModified' => $node->timestamps->originalLastModified,
             ];
             Assert::assertEquals($expectedTimestamps, $actualTimestamps);
+        }
+    }
+
+
+    /**
+     * @When I execute the findRootNodeByType query for node type :serializedNodeTypeName I expect no node to be returned
+     * @When I execute the findRootNodeByType query for node type :serializedNodeTypeName I expect the node :serializedExpectedNodeId to be returned
+     */
+    public function iExecuteTheFindRootNodeByTypeQueryIExpectTheFollowingNodes(string $serializedNodeTypeName, string $serializedExpectedNodeId = null): void
+    {
+        $expectedNodeAggregateId = $serializedExpectedNodeId !== null
+            ? NodeAggregateId::fromString($serializedExpectedNodeId)
+            : null;
+
+        /** @var ContentSubgraphInterface $subgraph */
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $actualNode = $subgraph->findRootNodeByType(NodeTypeName::fromString($serializedNodeTypeName));
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
 }

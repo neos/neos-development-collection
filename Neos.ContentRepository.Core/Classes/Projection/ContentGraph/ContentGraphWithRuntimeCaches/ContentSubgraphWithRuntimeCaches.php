@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -123,6 +124,12 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             $cache->add($nodeAggregateId, $node);
         }
         return $node;
+    }
+
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
+    {
+        // TODO: implement runtime caches
+        return $this->wrappedContentSubgraph->findRootNodeByType($nodeTypeName);
     }
 
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node

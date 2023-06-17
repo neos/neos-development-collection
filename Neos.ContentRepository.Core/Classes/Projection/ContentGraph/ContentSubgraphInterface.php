@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -52,6 +54,14 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return Node|null the node or NULL if no node with the specified id is accessible in this subgraph
      */
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node;
+
+    /**
+     * Find a root node by its type
+     * Note that only one root node can exist per type as enforced by {@see RootNodeHandling}
+     *
+     * @return Node|null the node or null if no root node with the specified type is accessible in this subgraph
+     */
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node;
 
     /**
      * Find direct child nodes of the specified parent node that match the given $filter

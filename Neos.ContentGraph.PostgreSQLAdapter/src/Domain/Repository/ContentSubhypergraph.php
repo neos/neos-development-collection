@@ -25,6 +25,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
@@ -92,6 +93,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
             $this->visibilityConstraints,
             $this->dimensionSpacePoint
         ) : null;
+    }
+
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
+    {
+        // @todo implement me
+        return null;
     }
 
     public function findChildNodes(
