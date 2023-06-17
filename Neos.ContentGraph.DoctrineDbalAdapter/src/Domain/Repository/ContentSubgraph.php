@@ -193,9 +193,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNode($queryBuilder);
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath $path, ?NodeAggregateId $startingNodeAggregateId): ?Node
     {
-        $currentNode = $this->findNodeById($startingNodeAggregateId);
+        $currentNode = null;
+        if ($path->isAbsolute()) {
+            $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
+        } elseif ($startingNodeAggregateId) {
+            $currentNode = $this->findNodeById($startingNodeAggregateId);
+        }
         if ($currentNode === null) {
             return null;
         }

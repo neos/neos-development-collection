@@ -151,12 +151,15 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function countBackReferences(NodeAggregateId $nodeAggregateId, Filter\CountBackReferencesFilter $filter): int;
 
     /**
-     * Find a single node underneath $startingNodeAggregateId that matches the specified $path
+     * Find a single node underneath
+     * - the given root node type name if defined in the path
+     * - the given starting node aggregate ID else
+     * that matches the specified $path
      *
      * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
      * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
      */
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
+    public function findNodeByPath(NodePath $path, ?NodeAggregateId $startingNodeAggregateId): ?Node;
 
     /**
      * Determine the absolute path of a node

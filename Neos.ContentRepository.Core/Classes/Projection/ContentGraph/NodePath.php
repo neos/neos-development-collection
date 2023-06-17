@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
@@ -22,10 +23,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * It describes the hierarchy path of a node to a root node in a subgraph.
  * @api
  */
-final class NodePath implements \JsonSerializable
+final readonly class NodePath implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $value
+        public ?NodeTypeName $rootNodeTypeName,
+        public string $value
     ) {
         if ($this->value !== '/') {
             $pathParts = explode('/', ltrim($this->value, '/'));
@@ -44,7 +46,19 @@ final class NodePath implements \JsonSerializable
 
     public static function fromString(string $path): self
     {
-        return new self($path);
+        if (\str_starts_with($path, '/<')) {
+            $pivot = \mb_strpos($path, '>');
+            $nodeTypeName = NodeTypeName::fromString(
+                \mb_substr($path, 2, $pivot - 2)
+            );
+            $path = \mb_substr($path, $pivot + 2);
+            if (empty($path)) {
+                $path = '/';
+            }
+        } else {
+            $nodeTypeName = null;
+        }
+        return new self($nodeTypeName, $path);
     }
 
     /**
@@ -53,9 +67,9 @@ final class NodePath implements \JsonSerializable
     public static function fromPathSegments(array $pathSegments): self
     {
         if ($pathSegments === []) {
-            return new self('/');
+            return new self(null, '/');
         }
-        return new self('/' . implode('/', $pathSegments));
+        return new self(null, '/' . implode('/', $pathSegments));
     }
 
     public function isRoot(): bool
@@ -65,7 +79,7 @@ final class NodePath implements \JsonSerializable
 
     public function isAbsolute(): bool
     {
-        return strpos($this->value, '/') === 0;
+        return $this->rootNodeTypeName instanceof NodeTypeName;
     }
 
     /**
@@ -73,7 +87,7 @@ final class NodePath implements \JsonSerializable
      */
     public function appendPathSegment(NodeName $nodeName): self
     {
-        return new self($this->value . '/' . $nodeName->value);
+        return new self($this->rootNodeTypeName, $this->value . '/' . $nodeName->value);
     }
 
     /**
@@ -81,6 +95,9 @@ final class NodePath implements \JsonSerializable
      */
     public function getParts(): array
     {
+        if ($this->isRoot()) {
+            return [];
+        }
         $pathParts = explode('/', ltrim($this->value, '/'));
         return array_map(static fn (string $pathPart) => NodeName::fromString($pathPart), $pathParts);
     }
@@ -98,11 +115,14 @@ final class NodePath implements \JsonSerializable
 
     public function equals(NodePath $other): bool
     {
-        return $this->value === $other->value;
+        return $this->value === $other->value
+            && $this->rootNodeTypeName->equals($other->rootNodeTypeName);
     }
 
     public function jsonSerialize(): string
     {
-        return $this->value;
+        return $this->rootNodeTypeName
+            ? rtrim('/<' . $this->rootNodeTypeName->value . '>/' . (ltrim($this->value, '/')), '/')
+            : $this->value;
     }
 }

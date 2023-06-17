@@ -156,7 +156,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $parentNode;
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath $path, ?NodeAggregateId $startingNodeAggregateId): ?Node
     {
         // TODO implement runtime caches
         return $this->wrappedContentSubgraph->findNodeByPath($path, $startingNodeAggregateId);
