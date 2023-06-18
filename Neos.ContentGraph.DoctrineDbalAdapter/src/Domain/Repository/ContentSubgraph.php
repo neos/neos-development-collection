@@ -62,6 +62,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -171,7 +172,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('n.classification = "root"');
+            ->andWhere('n.classification = :nodeAggregateClassification')
+                ->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
         $this->addRestrictionRelationConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }

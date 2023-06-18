@@ -138,16 +138,17 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When I execute the findNodeByPath query for path :pathSerialized and no starting node aggregate id I expect no node to be returned
      * @When I execute the findNodeByPath query for path :pathSerialized and starting node aggregate id :startingNodeIdSerialized I expect no node to be returned
+     * @When I execute the findNodeByPath query for path :pathSerialized and no starting node aggregate id I expect the node :expectedNodeIdSerialized to be returned
      * @When I execute the findNodeByPath query for path :pathSerialized and starting node aggregate id :startingNodeIdSerialized I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindNodeByPathQueryIExpectTheFollowingNodes(string $pathSerialized, string $startingNodeIdSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindNodeByPathQueryIExpectTheFollowingNodes(string $pathSerialized, string $startingNodeIdSerialized = null, string $expectedNodeIdSerialized = null): void
     {
         $path = NodePath::fromString($pathSerialized);
-        $startingNodeAggregateId = NodeAggregateId::fromString($startingNodeIdSerialized);
+        $startingNodeAggregateId = $startingNodeIdSerialized !== null ? NodeAggregateId::fromString($startingNodeIdSerialized) : null;
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNode = $subgraph->findNodeByPath($path, $startingNodeAggregateId);
             Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);

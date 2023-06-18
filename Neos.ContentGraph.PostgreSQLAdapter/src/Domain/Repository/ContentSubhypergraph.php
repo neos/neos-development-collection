@@ -44,6 +44,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithS
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -97,8 +98,19 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
     {
-        // @todo implement me
-        return null;
+        $query = HypergraphQuery::create($this->contentStreamId, $this->tableNamePrefix);
+        $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
+            ->withNodeTypeName($nodeTypeName)
+            ->withClassification(NodeAggregateClassification::CLASSIFICATION_ROOT)
+            ->withRestriction($this->visibilityConstraints);
+
+        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
+
+        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
+            $nodeRow,
+            $this->visibilityConstraints,
+            $this->dimensionSpacePoint
+        ) : null;
     }
 
     public function findChildNodes(
