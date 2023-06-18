@@ -213,7 +213,6 @@ trait NodeTraversalTrait
     public function iExecuteTheRetrieveNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null, string $expectedExceptionMessage = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
-        $expectedNodePath = $expectedPathSerialized !== null ? NodePath::fromString($expectedPathSerialized) : null;
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
@@ -229,7 +228,7 @@ trait NodeTraversalTrait
             if ($expectedExceptionMessage !== null) {
                 Assert::fail('Expected an exception but none was thrown');
             }
-            Assert::assertSame($expectedNodePath->value, $actualNodePath->value);
+            Assert::assertSame($expectedPathSerialized, $actualNodePath->jsonSerialize());
         }
     }
 

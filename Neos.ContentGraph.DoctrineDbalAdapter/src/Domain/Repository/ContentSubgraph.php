@@ -246,7 +246,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): NodePath
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('h.name, h.parentnodeanchor')
+            ->select('h.name, h.parentnodeanchor, h.childnodeanchor')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
@@ -255,7 +255,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addRestrictionRelationConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('h.name, h.parentnodeanchor')
+            ->select('h.name, h.parentnodeanchor, h.childnodeanchor')
             ->from($this->tableNamePrefix . '_hierarchyrelation', 'h')
             ->innerJoin('h', 'nodePath', 'np', 'np.parentnodeanchor = h.childnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
@@ -272,7 +272,33 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($result === []) {
             throw new \InvalidArgumentException(sprintf('Failed to retrieve node path for node "%s"', $nodeAggregateId->value), 1678391715);
         }
-        return NodePath::fromPathSegments(array_reverse(array_column($result, 'name')));
+        $rows = array_reverse($result);
+        $rootNodeTypeNameQueryBuilder = $this->createQueryBuilder()
+            ->select('nodetypename')
+            ->from($this->tableNamePrefix . '_node')
+            ->where('relationanchorpoint = :relationAnchorPoint')
+            ->setParameter('relationAnchorPoint', $rows[0]['childnodeanchor']);
+        $nodeTypeNameRow = $this->executeQuery($rootNodeTypeNameQueryBuilder)->fetchAssociative();
+        $rootNodeTypeName = NodeTypeName::fromString($nodeTypeNameRow['nodetypename']);
+
+        $pathSegments = [];
+        foreach ($rows as $i => $row) {
+            if ($i !== 0) { // skip the root node, it's resolved by node type name
+                if ($row['name']) {
+                    $pathSegments[] = $row['name'];
+                } else {
+                    $nodeAggregateIdQueryBuilder = $this->createQueryBuilder()
+                        ->select('nodeaggregateid')
+                        ->from($this->tableNamePrefix . '_node')
+                        ->where('relationanchorpoint = :relationAnchorPoint')
+                        ->setParameter('relationAnchorPoint', $row['childnodeanchor']);
+                    $nodeAggregateRow = $this->executeQuery($nodeAggregateIdQueryBuilder)->fetchAssociative();
+                    $pathSegments[] = $nodeAggregateRow['nodeaggregateid'];
+                }
+            }
+        }
+
+        return NodePath::fromPathSegments($pathSegments, $rootNodeTypeName);
     }
 
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree

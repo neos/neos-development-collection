@@ -64,12 +64,12 @@ final readonly class NodePath implements \JsonSerializable
     /**
      * @param array<int,string> $pathSegments
      */
-    public static function fromPathSegments(array $pathSegments): self
+    public static function fromPathSegments(array $pathSegments, ?NodeTypeName $rootNodeTypeName = null): self
     {
         if ($pathSegments === []) {
-            return new self(null, '/');
+            return new self($rootNodeTypeName, '/');
         }
-        return new self(null, '/' . implode('/', $pathSegments));
+        return new self($rootNodeTypeName, '/' . implode('/', $pathSegments));
     }
 
     public function isRoot(): bool
