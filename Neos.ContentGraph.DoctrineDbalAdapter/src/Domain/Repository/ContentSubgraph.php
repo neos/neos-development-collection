@@ -198,7 +198,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     public function findNodeByPath(NodePath $path, ?NodeAggregateId $startingNodeAggregateId): ?Node
     {
         $currentNode = null;
-        if ($path->isAbsolute()) {
+        if ($path->rootNodeTypeName) {
             $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
         } elseif ($startingNodeAggregateId) {
             $currentNode = $this->findNodeById($startingNodeAggregateId);
@@ -278,8 +278,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->from($this->tableNamePrefix . '_node')
             ->where('relationanchorpoint = :relationAnchorPoint')
             ->setParameter('relationAnchorPoint', $rows[0]['childnodeanchor']);
-        $nodeTypeNameRow = $this->executeQuery($rootNodeTypeNameQueryBuilder)->fetchAssociative();
-        $rootNodeTypeName = NodeTypeName::fromString($nodeTypeNameRow['nodetypename']);
+        $rootNodeTypeNameRow = $this->executeQuery($rootNodeTypeNameQueryBuilder)->fetchAssociative();
+        if ($rootNodeTypeNameRow === false) {
+            throw new \InvalidArgumentException(sprintf('Failed to retrieve root node type for node "%s"', $nodeAggregateId->value), 1687111057);
+        }
+        $rootNodeTypeName = NodeTypeName::fromString($rootNodeTypeNameRow['nodetypename']);
 
         $pathSegments = [];
         foreach ($rows as $i => $row) {
@@ -292,8 +295,14 @@ final class ContentSubgraph implements ContentSubgraphInterface
                         ->from($this->tableNamePrefix . '_node')
                         ->where('relationanchorpoint = :relationAnchorPoint')
                         ->setParameter('relationAnchorPoint', $row['childnodeanchor']);
-                    $nodeAggregateRow = $this->executeQuery($nodeAggregateIdQueryBuilder)->fetchAssociative();
-                    $pathSegments[] = $nodeAggregateRow['nodeaggregateid'];
+                    $nodeAggregateIdRow = $this->executeQuery($nodeAggregateIdQueryBuilder)->fetchAssociative();
+                    if ($nodeAggregateIdRow === false) {
+                        throw new \InvalidArgumentException(
+                            sprintf('Failed to retrieve node aggregate id for ancestor of node "%s"', $nodeAggregateId->value),
+                            1687111110
+                        );
+                    }
+                    $pathSegments[] = $nodeAggregateIdRow['nodeaggregateid'];
                 }
             }
         }

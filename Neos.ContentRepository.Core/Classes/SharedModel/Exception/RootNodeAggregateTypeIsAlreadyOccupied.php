@@ -14,7 +14,7 @@ final class RootNodeAggregateTypeIsAlreadyOccupied extends \DomainException
     public static function butWasExpectedNotTo(NodeTypeName $nodeTypeName): self
     {
         return new self(
-            'Root node type  '. $nodeTypeName->value . ' is already occupied',
+            'Root node type  ' . $nodeTypeName->value . ' is already occupied',
             1687009058
         );
     }

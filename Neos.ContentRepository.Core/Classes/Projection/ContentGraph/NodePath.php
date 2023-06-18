@@ -115,8 +115,8 @@ final class NodePath implements \JsonSerializable
 
     public function equals(NodePath $other): bool
     {
-        return $this->value === $other->value
-            && $this->rootNodeTypeName->equals($other->rootNodeTypeName);
+        return $this->path === $other->path
+            && $this->rootNodeTypeName?->value === $other->rootNodeTypeName?->value;
     }
 
     public function __toString(): string

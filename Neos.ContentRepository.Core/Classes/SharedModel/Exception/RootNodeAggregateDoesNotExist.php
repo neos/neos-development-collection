@@ -14,7 +14,7 @@ final class RootNodeAggregateDoesNotExist extends \DomainException
     public static function butWasExpectedTo(NodeTypeName $nodeTypeName): self
     {
         return new self(
-            'No root node aggregate could be found for node type '. $nodeTypeName->value,
+            'No root node aggregate could be found for node type ' . $nodeTypeName->value,
             1687008819
         );
     }

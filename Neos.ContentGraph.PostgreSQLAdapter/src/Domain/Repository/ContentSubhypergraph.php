@@ -259,7 +259,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         ?NodeAggregateId $startingNodeAggregateId
     ): ?Node {
         $currentNode = null;
-        if ($path->isAbsolute()) {
+        if ($path->rootNodeTypeName) {
             $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
         } elseif ($startingNodeAggregateId) {
             $currentNode = $this->findNodeById($startingNodeAggregateId);
