@@ -117,7 +117,9 @@ class NodesController extends ActionController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $nodePath = NodePath::tryFromString($contextNode);
+        $nodePath = $contextNode
+            ? NodePath::tryFromString($contextNode)
+            : null;
         $nodeAddress = null;
         if (!$nodePath) {
             $nodeAddress = $contextNode
@@ -153,6 +155,7 @@ class NodesController extends ActionController
             if (!is_null($nodeAddress)) {
                 $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             } else {
+                /** @var NodePath $nodePath */
                 $entryNode = $subgraph->findNodeByPath($nodePath, null);
             }
 
