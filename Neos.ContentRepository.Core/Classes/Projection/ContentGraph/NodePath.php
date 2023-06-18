@@ -61,6 +61,15 @@ final class NodePath implements \JsonSerializable
         return new self($nodeTypeName, $path);
     }
 
+    public static function tryFromString(string $string): ?self
+    {
+        try {
+            return self::fromString($string);
+        } catch (\InvalidArgumentException) {
+            return null;
+        }
+    }
+
     /**
      * @param array<int,string> $pathSegments
      */

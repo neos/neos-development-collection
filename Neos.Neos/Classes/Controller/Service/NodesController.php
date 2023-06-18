@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -116,10 +117,13 @@ class NodesController extends ActionController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-
-        $nodeAddress = $contextNode
-            ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode)
-            : null;
+        $nodePath = NodePath::tryFromString($contextNode);
+        $nodeAddress = null;
+        if (!$nodePath) {
+            $nodeAddress = $contextNode
+                ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode)
+                : null;
+        }
 
         unset($contextNode);
         if (is_null($nodeAddress)) {
@@ -145,8 +149,13 @@ class NodesController extends ActionController
             );
         }
 
-        if ($nodeIds === [] && !is_null($nodeAddress)) {
-            $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        if ($nodeIds === [] && (!is_null($nodeAddress) || !is_null($nodePath))) {
+            if (!is_null($nodeAddress)) {
+                $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+            } else {
+                $entryNode = $subgraph->findNodeByPath($nodePath, null);
+            }
+
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
                 $entryNode->nodeAggregateId,
                 FindDescendantNodesFilter::create(
