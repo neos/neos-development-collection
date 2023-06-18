@@ -778,7 +778,7 @@ class WorkspacesController extends AbstractModuleController
 
             $node = $subgraph->findNodeById($change->nodeAggregateId);
             if ($node) {
-                $pathParts = explode('/', $subgraph->retrieveNodePath($node->nodeAggregateId)->value);
+                $pathParts = explode('/', $subgraph->retrieveNodePath($node->nodeAggregateId)->__toString());
                 if (count($pathParts) > 2) {
                     $siteNodeName = $pathParts[2];
                     $document = null;
@@ -799,12 +799,12 @@ class WorkspacesController extends AbstractModuleController
                         assert($document instanceof Node);
                         $documentPath = implode('/', array_slice(explode(
                             '/',
-                            $subgraph->retrieveNodePath($document->nodeAggregateId)->value
+                            $subgraph->retrieveNodePath($document->nodeAggregateId)->__toString()
                         ), 3));
                         $relativePath = str_replace(
                             sprintf('//%s/%s', $siteNodeName, $documentPath),
                             '',
-                            $subgraph->retrieveNodePath($node->nodeAggregateId)->value
+                            $subgraph->retrieveNodePath($node->nodeAggregateId)->__toString()
                         );
                         if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                             $siteChanges[$siteNodeName]['siteNode']

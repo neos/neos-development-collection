@@ -61,7 +61,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with($nodePathOrResult, $this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId)->value);
+        return str_starts_with($nodePathOrResult, $this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId)->__toString());
     }
 
     /**
@@ -80,7 +80,7 @@ class NodePrivilegeContext
             return $nodePathOrResult;
         }
 
-        return str_starts_with($this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId)->value, $nodePathOrResult);
+        return str_starts_with($this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId)->__toString(), $nodePathOrResult);
     }
 
     /**
@@ -186,7 +186,7 @@ class NodePrivilegeContext
             if (is_null($otherNode)) {
                 return false;
             }
-            return $this->getSubgraph()->retrieveNodePath($otherNode->nodeAggregateId)->value . '/';
+            return $this->getSubgraph()->retrieveNodePath($otherNode->nodeAggregateId)->__toString() . '/';
         } catch (\InvalidArgumentException $e) {
             return rtrim($nodePathOrIdentifier, '/') . '/';
         }

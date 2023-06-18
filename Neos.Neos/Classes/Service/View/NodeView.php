@@ -284,10 +284,10 @@ class NodeView extends JsonView
             if (
                 $expand === false
                 && $untilNode !== null
-                && strpos(
-                    $subgraph->retrieveNodePath($untilNode->nodeAggregateId)->value,
-                    $subgraph->retrieveNodePath($childNode->nodeAggregateId)->value,
-                ) === 0
+                && str_starts_with(
+                    $subgraph->retrieveNodePath($untilNode->nodeAggregateId)->__toString(),
+                    $subgraph->retrieveNodePath($childNode->nodeAggregateId)->__toString()
+                )
                 && $childNode !== $untilNode
             ) {
                 // in case $untilNode is set, and the current childNode is on the rootline of $untilNode
@@ -351,11 +351,11 @@ class NodeView extends JsonView
     public function collectParentNodeData(Node $rootNode, Nodes $nodes): array
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($rootNode);
-        $rootNodePath = $subgraph->retrieveNodePath($rootNode->nodeAggregateId)->value;
+        $rootNodePath = $subgraph->retrieveNodePath($rootNode->nodeAggregateId)->__toString();
         $nodeCollection = [];
 
         $addNode = function (Node $node, bool $matched) use ($subgraph, $rootNodePath, &$nodeCollection) {
-            $nodePath = $subgraph->retrieveNodePath($node->nodeAggregateId)->value;
+            $nodePath = $subgraph->retrieveNodePath($node->nodeAggregateId)->__toString();
             $path = str_replace('/', '.children.', substr($nodePath, strlen($rootNodePath) + 1));
             if ($path !== '') {
                 $nodeCollection = Arrays::setValueByPath($nodeCollection, $path . '.node', $node);

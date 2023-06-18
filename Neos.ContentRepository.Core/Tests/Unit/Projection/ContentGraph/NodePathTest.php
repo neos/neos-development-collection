@@ -33,7 +33,7 @@ class NodePathTest extends TestCase
     ): void {
         $subject = NodePath::fromString($serializedPath);
 
-        self::assertSame($expectedRelativePath, $subject->value);
+        self::assertSame($expectedRelativePath, $subject->path);
         self::assertSame($expectedRootNodeTypeName, $subject->rootNodeTypeName);
         self::assertSame($expectedRootState, $subject->isRoot());
         self::assertSame($expectedAbsoluteState, $subject->isAbsolute());
@@ -41,7 +41,7 @@ class NodePathTest extends TestCase
         if (!is_null($expectedDepth)) {
             self::assertSame($expectedDepth, $subject->getDepth());
         }
-        self::assertSame($serializedPath, $subject->jsonSerialize());
+        self::assertSame($serializedPath, $subject->__toString());
     }
 
     public static function serializedPathProvider(): iterable

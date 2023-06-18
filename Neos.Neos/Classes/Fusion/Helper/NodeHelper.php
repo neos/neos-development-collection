@@ -53,9 +53,9 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $contentCollectionType
                 ), 1409300545);
             }
-            $subNode = $this->findNodeByNodePath(
-                $node,
-                NodePath::fromString($nodePath)
+            $subNode = $this->contentRepositoryRegistry->subgraphForNode($node)->findNodeByPath(
+                NodePath::fromString($nodePath),
+                $node->nodeAggregateId
             );
 
             if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
@@ -68,7 +68,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     . ' You might want to adjust your node type configuration and create the missing child node'
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $nodePathOfNode->value,
+                    $nodePathOfNode->__toString(),
                     $nodePath,
                     $node->nodeType->name->value
                 ), 1389352984);
@@ -116,7 +116,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function path(Node $node): string
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        return $subgraph->retrieveNodePath($node->nodeAggregateId)->value;
+        return $subgraph->retrieveNodePath($node->nodeAggregateId)->__toString();
     }
 
     public function isLive(Node $node): bool
@@ -139,7 +139,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         return $node->nodeType->isOfType($nodeType);
     }
 
-
     public function serializedNodeAddress(Node $node): string
     {
         $contentRepository = $this->contentRepositoryRegistry->get(
@@ -147,46 +146,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
-    }
-
-    private function findNodeByNodePath(Node $node, NodePath $nodePath): ?Node
-    {
-        if ($nodePath->isAbsolute()) {
-            $node = $this->findRootNode($node);
-        }
-
-        return $this->findNodeByPath($node, $nodePath);
-    }
-
-
-
-    private function findRootNode(Node $node): Node
-    {
-        while (true) {
-            $parentNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateId);
-            if ($parentNode === null) {
-                // there is no parent, so the root node was the node before
-                return $node;
-            } else {
-                $node = $parentNode;
-            }
-        }
-    }
-
-    private function findNodeByPath(Node $node, NodePath $nodePath): ?Node
-    {
-        foreach ($nodePath->getParts() as $nodeName) {
-            $childNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findChildNodeConnectedThroughEdgeName($node->nodeAggregateId, $nodeName);
-            if ($childNode === null) {
-                // we cannot find the child node, so there is no node on this path
-                return null;
-            }
-            $node = $childNode;
-        }
-
-        return $node;
     }
 
     /**
