@@ -39,6 +39,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Exception as NeosException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Fusion\Helper\BackendHelper;
 use Psr\Http\Message\UriInterface;
 use Psr\Log\LoggerInterface;
 
@@ -370,11 +371,7 @@ class LinkingService
         $uriBuilder = clone $controllerContext->getUriBuilder();
         $uriBuilder->setRequest($request);
 
-        if (
-            $request->getControllerPackageKey() === 'Neos.Neos'
-            && $request->getControllerName() === "Frontend\Node"
-            && in_array($request->getControllerActionName(), ['edit', 'preview'])
-        ) {
+        if (BackendHelper::isEditMode($request) || BackendHelper::isPreviewMode($request)) {
             $action = $request->getControllerActionName();
             if ($request->hasArgument('editPreviewMode')) {
                 $arguments['editPreviewMode'] = $request->getArgument('editPreviewMode');

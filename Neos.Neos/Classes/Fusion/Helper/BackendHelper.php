@@ -41,36 +41,32 @@ class BackendHelper implements ProtectedContextAwareInterface
         return $this->userService->getInterfaceLanguage();
     }
 
-    public function isEditMode(ActionRequest $request): bool
+    public static function isEditMode(ActionRequest $request): bool
     {
         return ($request->getControllerPackageKey() === 'Neos.Neos'
-            && $request->getControllerName() === "Frontend\Node"
+            && $request->getControllerName() === 'Frontend\\Node'
             && $request->getControllerActionName() === 'edit'
         );
     }
 
-    public function isPreviewMode(ActionRequest $request): bool
+    public static function isPreviewMode(ActionRequest $request): bool
     {
         return ($request->getControllerPackageKey() === 'Neos.Neos'
-            && $request->getControllerName() === "Frontend\Node"
+            && $request->getControllerName() === 'Frontend\\Node'
             && $request->getControllerActionName() === 'preview'
         );
     }
 
-    public function renderingModeCacheIdentifier(ActionRequest $request): string
+    public static function renderingModeCacheIdentifier(ActionRequest $request): string
     {
-        if (
-            $request->getControllerPackageKey() === 'Neos.Neos'
-            && $request->getControllerName() === "Frontend\Node"
-            && ($request->getControllerActionName() === 'edit' || $request->getControllerActionName() === 'preview')
-        ) {
+        if (self::isEditMode($request) || self::isPreviewMode($request)) {
             $editPreviewModeArgument = $request->hasArgument('editPreviewMode') ? $request->getArgument('editPreviewMode') : null;
             if (is_string($editPreviewModeArgument)) {
                 return $request->getControllerActionName() . ':' . $editPreviewModeArgument;
             }
             return $request->getControllerActionName();
         } else {
-            return "show";
+            return 'show';
         }
     }
 
