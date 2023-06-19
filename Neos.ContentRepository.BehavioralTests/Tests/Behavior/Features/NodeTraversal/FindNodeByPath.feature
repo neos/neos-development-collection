@@ -91,18 +91,18 @@ Feature: Find nodes using the findNodeByPath query
 
   Scenario:
     # absolute paths without result
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:AnotherRoot>" and no starting node aggregate id I expect no node to be returned
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:AnotherRoot>/non-existing" and no starting node aggregate id I expect no node to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:AnotherRoot>" I expect no node to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:AnotherRoot>/non-existing" I expect no node to be returned
     # node "a2a2" is disabled and should not lead to a result
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:AnotherRoot>/home/a/a2/a2a/a2a2" and no starting node aggregate id I expect no node to be returned
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:AnotherRoot>/home/a/a2/a2a/a2a2/a2a2a" and no starting node aggregate id I expect no node to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:AnotherRoot>/home/a/a2/a2a/a2a2" I expect no node to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:AnotherRoot>/home/a/a2/a2a/a2a2/a2a2a" I expect no node to be returned
 
     # absolute paths  with result
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:Root>" and no starting node aggregate id I expect the node "lady-eleonode-rootford" to be returned
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:Root>/home" and no starting node aggregate id I expect the node "home" to be returned
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:Root>/home/a" and no starting node aggregate id I expect the node "a" to be returned
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:Root>/home/a/a1" and no starting node aggregate id I expect the node "a1" to be returned
-    When I execute the findNodeByPath query for path "/<Neos.ContentRepository:Root>/home/a/a2/a2a/a2a1" and no starting node aggregate id I expect the node "a2a1" to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:Root>" I expect the node "lady-eleonode-rootford" to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:Root>/home" I expect the node "home" to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:Root>/home/a" I expect the node "a" to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:Root>/home/a/a1" I expect the node "a1" to be returned
+    When I execute the findNodeByAbsolutePath query for path "/<Neos.ContentRepository:Root>/home/a/a2/a2a/a2a1" I expect the node "a2a1" to be returned
 
     # relative paths without result
     When I execute the findNodeByPath query for path "non-existing" and starting node aggregate id "non-existing" I expect no node to be returned

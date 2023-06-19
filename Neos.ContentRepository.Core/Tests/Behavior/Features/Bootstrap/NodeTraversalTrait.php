@@ -15,6 +15,7 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
@@ -138,19 +139,32 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findNodeByPath query for path :pathSerialized and no starting node aggregate id I expect no node to be returned
      * @When I execute the findNodeByPath query for path :pathSerialized and starting node aggregate id :startingNodeIdSerialized I expect no node to be returned
-     * @When I execute the findNodeByPath query for path :pathSerialized and no starting node aggregate id I expect the node :expectedNodeIdSerialized to be returned
      * @When I execute the findNodeByPath query for path :pathSerialized and starting node aggregate id :startingNodeIdSerialized I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindNodeByPathQueryIExpectTheFollowingNodes(string $pathSerialized, string $startingNodeIdSerialized = null, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindNodeByPathQueryIExpectTheFollowingNodes(string $pathSerialized, string $startingNodeIdSerialized, string $expectedNodeIdSerialized = null): void
     {
         $path = NodePath::fromString($pathSerialized);
-        $startingNodeAggregateId = $startingNodeIdSerialized !== null ? NodeAggregateId::fromString($startingNodeIdSerialized) : null;
+        $startingNodeAggregateId = NodeAggregateId::fromString($startingNodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNode = $subgraph->findNodeByPath($path, $startingNodeAggregateId);
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
+        }
+    }
+
+    /**
+     * @When I execute the findNodeByAbsolutePath query for path :pathSerialized I expect no node to be returned
+     * @When I execute the findNodeByAbsolutePath query for path :pathSerialized I expect the node :expectedNodeIdSerialized to be returned
+     */
+    public function iExecuteTheFindNodeByAbsolutePathQueryIExpectTheFollowingNodes(string $pathSerialized, string $expectedNodeIdSerialized = null): void
+    {
+        $path = AbsoluteNodePath::fromString($pathSerialized);
+        $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
+
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $actualNode = $subgraph->findNodeByAbsolutePath($path);
             Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
