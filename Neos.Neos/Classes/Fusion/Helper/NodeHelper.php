@@ -73,7 +73,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
                     $nodePathOfNode->serializeToString(),
-                    $nodePath,
+                    $nodePath->serializeToString(),
                     $node->nodeType->name->value
                 ), 1389352984);
             }
