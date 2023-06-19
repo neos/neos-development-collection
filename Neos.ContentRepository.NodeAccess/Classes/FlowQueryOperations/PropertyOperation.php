@@ -92,7 +92,7 @@ class PropertyOperation extends AbstractOperation
         $element = $context[0];
         if ($propertyName === '_path') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return $subgraph->retrieveNodePath($element->nodeAggregateId)->__toString();
+            return $subgraph->retrieveNodePath($element->nodeAggregateId)->serializeToString();
         }
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)

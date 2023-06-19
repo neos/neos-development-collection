@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Frontend;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -348,7 +349,7 @@ class NodeController extends ActionController
     private static function fillCacheInternal(
         Subtree $subtree,
         Node $parentNode,
-        NodePath $parentNodePath,
+        AbsoluteNodePath $parentNodePath,
         InMemoryCache $inMemoryCache
     ): void {
         $node = $subtree->node;

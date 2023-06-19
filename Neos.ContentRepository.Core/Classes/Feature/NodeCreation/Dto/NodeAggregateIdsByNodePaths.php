@@ -47,7 +47,7 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
                 );
             }
 
-            $this->nodeAggregateIds[$nodePath->__toString()] = $nodeAggregateId;
+            $this->nodeAggregateIds[$nodePath->serializeToString()] = $nodeAggregateId;
         }
     }
 
@@ -100,13 +100,13 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
 
     public function getNodeAggregateId(NodePath $nodePath): ?NodeAggregateId
     {
-        return $this->nodeAggregateIds[$nodePath->__toString()] ?? null;
+        return $this->nodeAggregateIds[$nodePath->serializeToString()] ?? null;
     }
 
     public function add(NodePath $nodePath, NodeAggregateId $nodeAggregateId): self
     {
         $nodeAggregateIds = $this->nodeAggregateIds;
-        $nodeAggregateIds[$nodePath->__toString()] = $nodeAggregateId;
+        $nodeAggregateIds[$nodePath->serializeToString()] = $nodeAggregateId;
 
         return new self($nodeAggregateIds);
     }

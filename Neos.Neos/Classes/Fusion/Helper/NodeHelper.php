@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -53,10 +54,13 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $contentCollectionType
                 ), 1409300545);
             }
-            $subNode = $this->contentRepositoryRegistry->subgraphForNode($node)->findNodeByPath(
-                NodePath::fromString($nodePath),
-                $node->nodeAggregateId
-            );
+            $nodePath = AbsoluteNodePath::tryFromString($nodePath)
+                ?: NodePath::fromString($nodePath);
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+
+            $subNode = $nodePath instanceof AbsoluteNodePath
+                ? $subgraph->findNodeByAbsolutePath($nodePath)
+                : $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
 
             if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
                 return $subNode;
@@ -68,7 +72,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     . ' You might want to adjust your node type configuration and create the missing child node'
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $nodePathOfNode->__toString(),
+                    $nodePathOfNode->serializeToString(),
                     $nodePath,
                     $node->nodeType->name->value
                 ), 1389352984);
@@ -116,7 +120,7 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function path(Node $node): string
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        return $subgraph->retrieveNodePath($node->nodeAggregateId)->__toString();
+        return $subgraph->retrieveNodePath($node->nodeAggregateId)->serializeToString();
     }
 
     public function isLive(Node $node): bool

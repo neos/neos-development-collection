@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 
 /**
  * Node ID -> Node Path cache
@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 final class NodePathCache
 {
     /**
-     * @var array<string,NodePath>
+     * @var array<string,AbsoluteNodePath>
      */
     protected array $nodePaths = [];
 
@@ -36,7 +36,7 @@ final class NodePathCache
         $this->isEnabled = $isEnabled;
     }
 
-    public function add(NodeAggregateId $nodeAggregateId, NodePath $nodePath): void
+    public function add(NodeAggregateId $nodeAggregateId, AbsoluteNodePath $nodePath): void
     {
         if ($this->isEnabled === false) {
             return;
@@ -44,7 +44,7 @@ final class NodePathCache
         $this->nodePaths[$nodeAggregateId->value] = $nodePath;
     }
 
-    public function get(NodeAggregateId $nodeAggregateId): ?NodePath
+    public function get(NodeAggregateId $nodeAggregateId): ?AbsoluteNodePath
     {
         if ($this->isEnabled === false) {
             return null;

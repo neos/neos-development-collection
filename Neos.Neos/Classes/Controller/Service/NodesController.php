@@ -17,6 +17,7 @@ namespace Neos\Neos\Controller\Service;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
@@ -118,7 +119,7 @@ class NodesController extends ActionController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $nodePath = $contextNode
-            ? NodePath::tryFromString($contextNode)
+            ? AbsoluteNodePath::tryFromString($contextNode)
             : null;
         $nodeAddress = null;
         if (!$nodePath) {
@@ -155,8 +156,8 @@ class NodesController extends ActionController
             if (!is_null($nodeAddress)) {
                 $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
             } else {
-                /** @var NodePath $nodePath */
-                $entryNode = $subgraph->findNodeByPath($nodePath, null);
+                /** @var AbsoluteNodePath $nodePath */
+                $entryNode = $subgraph->findNodeByAbsolutePath($nodePath);
             }
 
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(

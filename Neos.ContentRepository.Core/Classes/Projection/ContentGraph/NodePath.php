@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
@@ -26,17 +25,16 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 final class NodePath implements \JsonSerializable
 {
     private function __construct(
-        public readonly ?NodeTypeName $rootNodeTypeName,
-        public readonly string $path
+        public readonly string $value
     ) {
-        if ($this->path !== '/') {
-            $pathParts = explode('/', ltrim($this->path, '/'));
+        if ($this->value !== '/') {
+            $pathParts = explode('/', ltrim($this->value, '/'));
             foreach ($pathParts as $pathPart) {
                 if (preg_match(NodeName::PATTERN, $pathPart) !== 1) {
                     throw new \InvalidArgumentException(sprintf(
                         'The path "%s" is no valid NodePath because it contains a segment "%s"'
                         . ' that is no valid NodeName',
-                        $this->path,
+                        $this->value,
                         $pathPart
                     ), 1548157108);
                 }
@@ -46,19 +44,7 @@ final class NodePath implements \JsonSerializable
 
     public static function fromString(string $path): self
     {
-        if (\str_starts_with($path, '/<')) {
-            $pivot = \mb_strpos($path, '>');
-            $nodeTypeName = NodeTypeName::fromString(
-                \mb_substr($path, 2, $pivot - 2)
-            );
-            $path = \mb_substr($path, $pivot + 2);
-            if (empty($path)) {
-                $path = '/';
-            }
-        } else {
-            $nodeTypeName = null;
-        }
-        return new self($nodeTypeName, $path);
+        return new self($path);
     }
 
     public static function tryFromString(string $string): ?self
@@ -73,22 +59,17 @@ final class NodePath implements \JsonSerializable
     /**
      * @param array<int,string> $pathSegments
      */
-    public static function fromPathSegments(array $pathSegments, ?NodeTypeName $rootNodeTypeName = null): self
+    public static function fromPathSegments(array $pathSegments): self
     {
         if ($pathSegments === []) {
-            return new self($rootNodeTypeName, '/');
+            return new self('/');
         }
-        return new self($rootNodeTypeName, '/' . implode('/', $pathSegments));
+        return new self('/' . implode('/', $pathSegments));
     }
 
     public function isRoot(): bool
     {
-        return $this->path === '/';
-    }
-
-    public function isAbsolute(): bool
-    {
-        return $this->rootNodeTypeName instanceof NodeTypeName;
+        return $this->value === '/';
     }
 
     /**
@@ -96,47 +77,41 @@ final class NodePath implements \JsonSerializable
      */
     public function appendPathSegment(NodeName $nodeName): self
     {
-        return new self($this->rootNodeTypeName, $this->path . '/' . $nodeName->value);
+        return new self($this->value . '/' . $nodeName->value);
     }
 
     /**
-     * @return NodeName[]
+     * @return array<int,NodeName>
      */
     public function getParts(): array
     {
         if ($this->isRoot()) {
             return [];
         }
-        $pathParts = explode('/', ltrim($this->path, '/'));
+        $pathParts = explode('/', ltrim($this->value, '/'));
         return array_map(static fn (string $pathPart) => NodeName::fromString($pathPart), $pathParts);
     }
 
     public function getDepth(): int
     {
-        if (!$this->isAbsolute()) {
-            throw new \RuntimeException(sprintf(
-                'Depth of relative node path "%s" cannot be determined',
-                $this->path
-            ), 1548162166);
-        }
-        return count($this->getParts());
+        throw new \RuntimeException(sprintf(
+            'Depth of relative node path "%s" cannot be determined',
+            $this->value
+        ), 1548162166);
     }
 
     public function equals(NodePath $other): bool
     {
-        return $this->path === $other->path
-            && $this->rootNodeTypeName?->value === $other->rootNodeTypeName?->value;
+        return $this->value === $other->value;
     }
 
-    public function __toString(): string
+    public function serializeToString(): string
     {
-        return $this->rootNodeTypeName
-            ? rtrim('/<' . $this->rootNodeTypeName->value . '>/' . (ltrim($this->path, '/')), '/')
-            : $this->path;
+        return $this->value;
     }
 
     public function jsonSerialize(): string
     {
-        return $this->__toString();
+        return $this->serializeToString();
     }
 }

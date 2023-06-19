@@ -26,6 +26,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
@@ -254,30 +255,33 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         ) : null;
     }
 
-    public function findNodeByPath(
-        NodePath $path,
-        ?NodeAggregateId $startingNodeAggregateId
-    ): ?Node {
-        $currentNode = null;
-        if ($path->rootNodeTypeName) {
-            $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
-        } elseif ($startingNodeAggregateId) {
-            $currentNode = $this->findNodeById($startingNodeAggregateId);
-        }
-        if ($currentNode === null) {
-            return null;
-        }
+    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    {
+        $currentNode = $this->findNodeById($startingNodeAggregateId);
 
+        return $currentNode
+            ? $this->findNodeByPathFromStartingNode($currentNode, $path)
+            : null;
+    }
+
+    public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
+    {
+        $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
+
+        return $currentNode
+            ? $this->findNodeByPathFromStartingNode($currentNode, $path->path)
+            : null;
+    }
+
+    private function findNodeByPathFromStartingNode(Node $currentNode, NodePath $path): ?Node
+    {
         foreach ($path->getParts() as $edgeName) {
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName(
-                $currentNode->nodeAggregateId,
-                $edgeName
-            );
-            if (!$currentNode) {
+            // id exists here :)
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            if ($currentNode === null) {
                 return null;
             }
         }
-
         return $currentNode;
     }
 
@@ -360,9 +364,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToNodes($siblingsRows, $this->visibilityConstraints);
     }
 
-    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): NodePath
+    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
     {
-        return NodePath::fromString('/');
+        return AbsoluteNodePath::fromString('/');
     }
 
     public function findSubtree(
