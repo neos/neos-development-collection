@@ -75,6 +75,10 @@ final class AbsoluteNodePath implements \JsonSerializable
         );
     }
 
+    /**
+     * While all absolute node paths _have_ a root node type name,
+     * they _are_ root only if they point to exactly that root node and not one of its descendants
+     */
     public function isRoot(): bool
     {
         return $this->path->value === '/';
