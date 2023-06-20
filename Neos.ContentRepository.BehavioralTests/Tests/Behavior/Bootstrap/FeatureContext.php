@@ -100,7 +100,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->dbalClient = $this->getObjectManager()->get(DbalClientInterface::class);
         $this->setupEventSourcedTrait();
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
+            CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         }
         $this->setUpInterleavingLogger();
     }
