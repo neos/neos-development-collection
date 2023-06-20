@@ -1038,8 +1038,8 @@ Example::
 
 	breadcrumb = Neos.Neos:BreadcrumbMenu
 
-.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
-   you can use directly aswell.
+.. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__BreadcrumbMenuItems` which
+   you can use directly as well.
 
 .. _Neos_Neos__DimensionMenu:
 .. _Neos_Neos__DimensionsMenu:
