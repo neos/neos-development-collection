@@ -47,15 +47,6 @@ final class NodePath implements \JsonSerializable
         return new self($path);
     }
 
-    public static function tryFromString(string $string): ?self
-    {
-        try {
-            return self::fromString($string);
-        } catch (\InvalidArgumentException) {
-            return null;
-        }
-    }
-
     /**
      * @param array<int,string> $pathSegments
      */
@@ -90,14 +81,6 @@ final class NodePath implements \JsonSerializable
         }
         $pathParts = explode('/', ltrim($this->value, '/'));
         return array_map(static fn (string $pathPart) => NodeName::fromString($pathPart), $pathParts);
-    }
-
-    public function getDepth(): int
-    {
-        throw new \RuntimeException(sprintf(
-            'Depth of relative node path "%s" cannot be determined',
-            $this->value
-        ), 1548162166);
     }
 
     public function equals(NodePath $other): bool
