@@ -1,4 +1,8 @@
 prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Neos:MenuItems) {
+  // TODO Remove for Neos 9.0
+  @class = 'Neos\\Neos\\Fusion\\BreadcrumbMenuItemsImplementation'
+  includeSubItems = true
+
   itemCollection = ${q(documentNode).parents('[instanceof Neos.Neos:Document]').get()}
   @process {
     // Show always the current node, event when it is hidden in index
