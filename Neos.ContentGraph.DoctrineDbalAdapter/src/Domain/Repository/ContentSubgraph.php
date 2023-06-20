@@ -325,6 +325,25 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchCteCountResult($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
     }
 
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId): Nodes
+    {
+        // TODO, dummy implementation
+        $ancestors = [];
+        $node = $this->findNodeById($entryNodeAggregateId);
+        if (!$node) {
+            return Nodes::createEmpty();
+        }
+        do {
+            $node = $this->findParentNode($node->nodeAggregateId);
+            if ($node === null) {
+                // no parent found
+                break;
+            }
+            $ancestors[] = $node;
+        } while (true);
+        return Nodes::fromArray($ancestors);
+    }
+
     public function countNodes(): int
     {
         $queryBuilder = $this->createQueryBuilder()

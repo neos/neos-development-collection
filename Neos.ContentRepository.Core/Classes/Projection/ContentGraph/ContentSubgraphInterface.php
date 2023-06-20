@@ -102,6 +102,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int;
 
     /**
+     * @todo add filter
+     * @todo docs
+     */
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId): Nodes;
+
+    /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a tree
      *
      * Note: This returns a fragment of the existing tree structure. The structure is kept intact but nodes might be missing depending on the specified filter

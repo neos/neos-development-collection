@@ -440,6 +440,12 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return 0;
     }
 
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId): Nodes
+    {
+        // TODO: Implement findAncestorNodes() method.
+        return Nodes::createEmpty();
+    }
+
     /**
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception

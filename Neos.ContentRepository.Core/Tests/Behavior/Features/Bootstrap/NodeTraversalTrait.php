@@ -262,6 +262,22 @@ trait NodeTraversalTrait
     }
 
     /**
+     * @When /^I execute the findAncestorNodes query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned$/
+     */
+    public function iExecuteTheFindAncestorNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = ''): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
+        $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
+        $filter = FindDescendantNodesFilter::create(...$filterValues);
+        /** @var ContentSubgraphInterface $subgraph */
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findAncestorNodes($entryNodeAggregateId, $filter)));
+            Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
+        }
+    }
+
+    /**
      * @When /^I execute the findDescendantNodes query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
      */
     public function iExecuteTheFindDescendantNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', int $expectedTotalCount = null): void

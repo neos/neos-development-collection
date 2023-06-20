@@ -213,6 +213,12 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $this->wrappedContentSubgraph->countDescendantNodes($entryNodeAggregateId, $filter);
     }
 
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId): Nodes
+    {
+        // TODO: implement runtime caches
+        return $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId);
+    }
+
     public function countNodes(): int
     {
         // TODO: implement runtime caches
