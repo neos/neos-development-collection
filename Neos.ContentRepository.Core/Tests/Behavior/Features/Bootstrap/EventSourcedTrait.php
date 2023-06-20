@@ -73,6 +73,7 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\Mutabl
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
 use PHPUnit\Framework\Assert;
@@ -353,6 +354,10 @@ trait EventSourcedTrait
                 $propertyValue = PostalAddress::dummy();
             } elseif ($propertyValue === 'PostalAddress:anotherDummy') {
                 $propertyValue = PostalAddress::anotherDummy();
+            } elseif ($propertyValue === 'PriceSpecification:dummy') {
+                $propertyValue = PriceSpecification::dummy();
+            } elseif ($propertyValue === 'PriceSpecification:anotherDummy') {
+                $propertyValue = PriceSpecification::anotherDummy();
             }
             if (is_string($propertyValue)) {
                 if (\str_starts_with($propertyValue, 'DayOfWeek:')) {

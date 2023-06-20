@@ -34,6 +34,12 @@ Feature: Create a node aggregate with complex default values
             postalCode: '12345'
             addressLocality: 'City'
             addressCountry: 'Country'
+        price:
+          type: Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification
+          defaultValue:
+            price: 13.37
+            priceCurrency: 'EUR'
+
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -67,14 +73,15 @@ Feature: Create a node aggregate with complex default values
       | now           | Date:now                                        |
       | date          | Date:2020-08-20T18:56:15+00:00                  |
       | uri           | URI:https://neos.io                             |
+      | price         | PriceSpecification:dummy                        |
 
   Scenario: Create a node aggregate with complex initial and default values
     When the command CreateNodeAggregateWithNode is executed with payload:
-      | Key                   | Value                                                                                                                    |
-      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                       |
-      | nodeTypeName          | "Neos.ContentRepository.Testing:Node"                                                                                    |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                 |
-      | initialPropertyValues | {"dayOfWeek":"DayOfWeek:https://schema.org/Friday","postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io"} |
+      | Key                   | Value                                                                                                                                                                                                                 |
+      | nodeAggregateId       | "nody-mc-nodeface"                                                                                                                                                                                                    |
+      | nodeTypeName          | "Neos.ContentRepository.Testing:Node"                                                                                                                                                                                 |
+      | parentNodeAggregateId | "lady-eleonode-rootford"                                                                                                                                                                                              |
+      | initialPropertyValues | {"dayOfWeek":"DayOfWeek:https://schema.org/Friday","postalAddress":"PostalAddress:anotherDummy", "date":"Date:2021-03-13T17:33:17+00:00", "uri":"URI:https://www.neos.io", "price":"PriceSpecification:anotherDummy"} |
     And the graph projection is fully up to date
     Then I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
     And I expect this node to have the following properties:
@@ -85,3 +92,4 @@ Feature: Create a node aggregate with complex default values
       | now           | Date:now                                        |
       | date          | Date:2021-03-13T17:33:17+00:00                  |
       | uri           | URI:https://www.neos.io                         |
+      | price         | PriceSpecification:anotherDummy                 |

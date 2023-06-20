@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeDiscriminator
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodesByAdapter;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -315,6 +316,10 @@ trait ProjectedNodeTrait
                 return PostalAddress::dummy();
             case 'PostalAddress:anotherDummy':
                 return PostalAddress::anotherDummy();
+            case 'PriceSpecification:dummy':
+                return PriceSpecification::dummy();
+            case 'PriceSpecification:anotherDummy':
+                return PriceSpecification::anotherDummy();
             case 'Date:now':
                 return new \DateTimeImmutable();
             default:

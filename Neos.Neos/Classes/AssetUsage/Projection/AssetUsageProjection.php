@@ -180,7 +180,6 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
-        /** @var SerializedPropertyValue|null $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
             // skip removed properties ({@see SerializedPropertyValues})
             if ($propertyValue === null) {
@@ -200,15 +199,14 @@ final class AssetUsageProjection implements ProjectionInterface
     }
 
     /**
-     * @param string $type
-     * @param mixed $value
+     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
      * @return array<string>
      * @throws InvalidTypeException
      */
-    private function extractAssetIds(string $type, mixed $value): array
+    private function extractAssetIds(string $type, int|float|string|bool|array|\ArrayObject|null $value): array
     {
-        if ($type === 'string' || is_subclass_of($type, \Stringable::class)) {
-            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
+        if (is_string($value)) {
+            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class)) {
