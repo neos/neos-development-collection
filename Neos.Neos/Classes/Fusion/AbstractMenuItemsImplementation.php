@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Fusion\Exception as FusionException;
@@ -150,18 +152,19 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected function getCurrentNodeRootline(): array
     {
         if ($this->currentNodeRootline === null) {
-            /** @todo replace this */
-            /*
-            $nodeRootline = $this->currentNode->getContext()->getNodesOnPath(
-                $this->runtime->getCurrentContext()['site']->getPath(),
-                $this->currentNode->getPath()
-            );
-            $this->currentNodeRootline = [];
-
-            foreach ($nodeRootline as $rootlineElement) {
-                $this->currentNodeRootline[$this->getNodeLevelInSite($rootlineElement)] = $rootlineElement;
-            }*/
-            $this->currentNodeRootline = [];
+            $rootline = [$this->currentNode];
+            foreach (
+                $this->contentRepositoryRegistry->subgraphForNode($this->currentNode)
+                    ->findAncestorNodes(
+                        $this->currentNode->nodeAggregateId,
+                        FindAncestorNodesFilter::create()
+                    ) as $ancestorNode
+            ) {
+                if (!$ancestorNode->classification->isRoot()) {
+                    $rootline[] = $ancestorNode;
+                }
+            }
+            $this->currentNodeRootline = $rootline;
         }
 
         return $this->currentNodeRootline;
@@ -175,6 +178,9 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
 
-        return $subgraph->retrieveNodePath($node->nodeAggregateId)->getDepth() - 2; // sites always are depth 2;
+        return $subgraph->countAncestorNodes(
+            $node->nodeAggregateId,
+            CountAncestorNodesFilter::create()
+        ) - 1; // sites always are depth 1;
     }
 }

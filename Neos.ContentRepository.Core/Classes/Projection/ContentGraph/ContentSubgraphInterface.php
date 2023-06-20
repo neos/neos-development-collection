@@ -89,6 +89,17 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
 
     /**
+     * Recursively find all nodes above the $entryNodeAggregateId that match the specified $filter and return them as a flat list
+     */
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes;
+
+    /**
+     * Count all nodes above the $entryNodeAggregateId that match the specified $filter
+     * @see findAncestorNodes
+     */
+    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int;
+
+    /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
      *
      * Note: This is basically a set-based view of descendant nodes; so the ordering should not be relied upon

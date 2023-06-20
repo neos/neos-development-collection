@@ -88,6 +88,8 @@ class FeatureContext implements \Behat\Behat\Context\Context
      */
     protected $behatTestHelperObjectName = BehatTestHelper::class;
 
+    protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+
     public function __construct()
     {
         if (self::$bootstrap === null) {
