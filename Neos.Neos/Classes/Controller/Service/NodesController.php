@@ -98,7 +98,8 @@ class NodesController extends ActionController
      * Shows a list of nodes
      *
      * @param string $searchTerm An optional search term used for filtering the list of nodes
-     * @param array $nodeIdentifiers An optional list of node identifiers
+     * @param array $nodeIds An optional list of node identifiers
+     * @param array $nodeIdentifiers An optional list of legacy node identifiers, @deprecated
      * @param string $workspaceName Name of the workspace to search in, "live" by default
      * @param array $dimensions Optional list of dimensions
      *                                        and their values which should be used for querying
@@ -109,11 +110,13 @@ class NodesController extends ActionController
     public function indexAction(
         string $searchTerm = '',
         array $nodeIds = [],
+        array $nodeIdentifiers = [],
         string $workspaceName = 'live',
         array $dimensions = [],
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null
     ): void {
+        $nodeIds = $nodeIds ?: $nodeIdentifiers;
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
