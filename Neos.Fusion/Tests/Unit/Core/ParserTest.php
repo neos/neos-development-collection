@@ -714,7 +714,7 @@ class ParserTest extends UnitTestCase
     public function parserCorrectlyParsesFixture16()
     {
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16.fusion';
-        $sourceCode = file_get_contents($fixture, FILE_TEXT);
+        $sourceCode = file_get_contents($fixture);
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
@@ -729,7 +729,7 @@ class ParserTest extends UnitTestCase
     {
         $this->expectException(Exception::class);
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture16b.fusion';
-        $sourceCode = file_get_contents($fixture, FILE_TEXT);
+        $sourceCode = file_get_contents($fixture);
 
         $this->parser->parse($sourceCode, $fixture);
     }
@@ -740,7 +740,7 @@ class ParserTest extends UnitTestCase
     public function parserCorrectlyParsesFixture17()
     {
         $fixture = __DIR__ . '/Fixtures/ParserTestFusionFixture17.fusion';
-        $sourceCode = file_get_contents($fixture, FILE_TEXT);
+        $sourceCode = file_get_contents($fixture);
 
         $expectedParseTree = $this->getExpectedParseTreeForFixture16();
 
@@ -1005,6 +1005,6 @@ class ParserTest extends UnitTestCase
      */
     protected function readFusionFixture($fixtureName)
     {
-        return file_get_contents(__DIR__ . '/Fixtures/' . $fixtureName . '.fusion', FILE_TEXT);
+        return file_get_contents(__DIR__ . '/Fixtures/' . $fixtureName . '.fusion');
     }
 }

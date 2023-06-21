@@ -136,8 +136,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
     protected function replaceLinkTargets($processedContent)
     {
         $setNoOpener = $this->fusionValue('setNoOpener');
-        $externalLinkTarget = \trim($this->fusionValue('externalLinkTarget'));
-        $resourceLinkTarget = \trim($this->fusionValue('resourceLinkTarget'));
+        $externalLinkTarget = \trim((string)$this->fusionValue('externalLinkTarget'));
+        $resourceLinkTarget = \trim((string)$this->fusionValue('resourceLinkTarget'));
         $controllerContext = $this->runtime->getControllerContext();
         $host = $controllerContext->getRequest()->getHttpRequest()->getUri()->getHost();
         $processedContent = \preg_replace_callback(
