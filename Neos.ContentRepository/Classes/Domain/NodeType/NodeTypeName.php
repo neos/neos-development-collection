@@ -54,6 +54,7 @@ final class NodeTypeName implements \JsonSerializable
         return $this->value === $other->getValue();
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->value;
