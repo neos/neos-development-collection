@@ -201,7 +201,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $currentNode = $this->findNodeById($startingNodeAggregateId);
 
         return $currentNode
-            ? $this->findNodeByPathFromStartingNode($currentNode, $path)
+            ? $this->findNodeByPathFromStartingNode($path, $currentNode)
             : null;
     }
 
@@ -210,20 +210,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
 
         return $currentNode
-            ? $this->findNodeByPathFromStartingNode($currentNode, $path->path)
+            ? $this->findNodeByPathFromStartingNode($path->path, $currentNode)
             : null;
-    }
-
-    private function findNodeByPathFromStartingNode(Node $currentNode, NodePath $path): ?Node
-    {
-        foreach ($path->getParts() as $edgeName) {
-            // id exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
-            if ($currentNode === null) {
-                return null;
-            }
-        }
-        return $currentNode;
     }
 
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node
@@ -426,6 +414,18 @@ final class ContentSubgraph implements ContentSubgraphInterface
     }
 
     /** ------------------------------------------- */
+
+    private function findNodeByPathFromStartingNode(NodePath $path, Node $currentNode): ?Node
+    {
+        foreach ($path->getParts() as $edgeName) {
+            // id exists here :)
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            if ($currentNode === null) {
+                return null;
+            }
+        }
+        return $currentNode;
+    }
 
     private function createQueryBuilder(): QueryBuilder
     {
