@@ -165,7 +165,6 @@ trait NodeOperationsTrait
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightedSpecializations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'primaryGeneralizations', null, true);
-        ObjectAccess::setProperty($interDimensionalVariationGraph, 'rootGeneralizations', null, true);
         ObjectAccess::setProperty($interDimensionalVariationGraph, 'weightNormalizationBase', null, true);
     }
 }

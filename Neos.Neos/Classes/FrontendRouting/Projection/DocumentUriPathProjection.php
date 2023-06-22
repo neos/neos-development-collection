@@ -629,11 +629,13 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
                 match ($newLocation->destination::class) {
                     SucceedingSiblingNodeMoveDestination::class => $this->moveNode(
+                        /** @var SucceedingSiblingNodeMoveDestination $newLocation->destination */
                         $node,
                         $newLocation->destination->parentNodeAggregateId,
                         $newLocation->destination->nodeAggregateId
                     ),
                     ParentNodeMoveDestination::class => $this->moveNode(
+                        /** @var ParentNodeMoveDestination $newLocation->destination */
                         $node,
                         $newLocation->destination->nodeAggregateId,
                         null
