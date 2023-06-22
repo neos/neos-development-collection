@@ -101,9 +101,7 @@ class PageHandler extends AbstractRenderingExceptionHandler
                     $this->contentElementWrappingService->wrapCurrentDocumentMetadata(
                         $documentNode,
                         '<div id="neos-document-metadata"></div>',
-                        $fusionPath,
-                        [],
-                        $siteNode
+                        $fusionPath
                     )
                 );
             }
