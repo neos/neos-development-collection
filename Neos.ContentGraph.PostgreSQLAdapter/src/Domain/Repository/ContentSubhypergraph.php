@@ -443,13 +443,26 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->nodeFactory->mapNodeRowsToSubtree($nodeRows, $this->visibilityConstraints);
     }
 
+    public function findAncestorNodes(
+        NodeAggregateId $entryNodeAggregateId,
+        Filter\FindAncestorNodesFilter $filter
+    ): Nodes {
+        return Nodes::createEmpty();
+    }
+
+    public function countAncestorNodes(
+        NodeAggregateId $entryNodeAggregateId,
+        Filter\CountAncestorNodesFilter $filter
+    ): int {
+        return 0;
+    }
+
     public function findDescendantNodes(
         NodeAggregateId $entryNodeAggregateId,
         FindDescendantNodesFilter $filter
     ): Nodes {
         return Nodes::createEmpty();
     }
-
 
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
     {

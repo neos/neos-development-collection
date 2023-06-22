@@ -17,10 +17,12 @@ use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
@@ -291,6 +293,23 @@ trait NodeTraversalTrait
             Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
             $actualCount = $subgraph->countDescendantNodes($entryNodeAggregateId, CountDescendantNodesFilter::fromFindDescendantNodesFilter($filter));
             Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countDescendantNodes returned an unexpected result');
+        }
+    }
+
+    /**
+     * @When /^I execute the findAncestorNodes query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
+     */
+    public function iExecuteTheFindAncestorNodesQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeIdsSerialized = '', int $expectedTotalCount = null): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
+        $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
+        $filter = FindAncestorNodesFilter::create(...$filterValues);
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findAncestorNodes($entryNodeAggregateId, $filter)));
+            Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
+            $actualCount = $subgraph->countAncestorNodes($entryNodeAggregateId, CountAncestorNodesFilter::fromFindAncestorNodesFilter($filter));
+            Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countAncestorNodes returned an unexpected result');
         }
     }
 
