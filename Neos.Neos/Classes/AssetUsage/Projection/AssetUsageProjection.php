@@ -199,11 +199,11 @@ final class AssetUsageProjection implements ProjectionInterface
     }
 
     /**
-     * @param int|float|string|bool|array<int|string,mixed>|\ArrayObject<int|string,mixed>|null $value
+     * @param mixed $value
      * @return array<string>
      * @throws InvalidTypeException
      */
-    private function extractAssetIds(string $type, int|float|string|bool|array|\ArrayObject|null $value): array
+    private function extractAssetIds(string $type, mixed $value): array
     {
         if (is_string($value)) {
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
