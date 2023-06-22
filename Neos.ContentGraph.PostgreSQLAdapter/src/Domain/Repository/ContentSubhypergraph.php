@@ -266,10 +266,10 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
     {
-        $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
+        $startingNode = $this->findRootNodeByType($path->rootNodeTypeName);
 
-        return $currentNode
-            ? $this->findNodeByPathFromStartingNode($path->path, $currentNode)
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path->path, $startingNode)
             : null;
     }
 
@@ -480,8 +480,9 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         return $result ? $result[0] : 0;
     }
 
-    private function findNodeByPathFromStartingNode(NodePath $path, Node $currentNode): ?Node
+    private function findNodeByPathFromStartingNode(NodePath $path, Node $startingNode): ?Node
     {
+        $currentNode = $startingNode;
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
             $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
