@@ -33,11 +33,13 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  * the subgraph via $node->subgraphIdentity and then
  * call findChildNodes() on the subgraph.
  *
- *
- * @api
+ * @api Note: The constructor is not part of the public API
  */
 final class Node
 {
+    /**
+     * @internal
+     */
     public function __construct(
         public readonly ContentSubgraphIdentity $subgraphIdentity,
         /**
