@@ -83,6 +83,13 @@ final class NodePath implements \JsonSerializable
         return array_map(static fn (string $pathPart) => NodeName::fromString($pathPart), $pathParts);
     }
 
+    public function getLength(): int
+    {
+        return $this->isRoot()
+            ? 0
+            : \substr_count(ltrim($this->value, '/'), '/') + 1;
+    }
+
     public function equals(NodePath $other): bool
     {
         return $this->value === $other->value;

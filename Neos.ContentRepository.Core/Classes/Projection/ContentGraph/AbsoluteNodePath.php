@@ -87,7 +87,7 @@ final class AbsoluteNodePath implements \JsonSerializable
      */
     public function isRoot(): bool
     {
-        return $this->path->value === '/';
+        return $this->path->isRoot();
     }
 
     /**
@@ -100,7 +100,7 @@ final class AbsoluteNodePath implements \JsonSerializable
 
     public function getDepth(): int
     {
-        return count($this->path->getParts());
+        return $this->path->getLength();
     }
 
     public function equals(AbsoluteNodePath $other): bool

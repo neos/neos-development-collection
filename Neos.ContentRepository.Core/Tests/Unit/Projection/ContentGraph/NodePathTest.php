@@ -26,6 +26,7 @@ class NodePathTest extends TestCase
         bool $expectedRootState,
         /** @var array<int,NodeName> $expectedParts */
         array $expectedParts,
+        int $expectedLength
     ): void {
         $subject = NodePath::fromString($serializedPath);
 
@@ -33,6 +34,7 @@ class NodePathTest extends TestCase
         self::assertSame($expectedRootState, $subject->isRoot());
         self::assertEquals($expectedParts, $subject->getParts());
         self::assertSame($serializedPath, $subject->serializeToString());
+        self::assertSame($expectedLength, $subject->getLength());
     }
 
     public static function serializedPathProvider(): iterable
@@ -44,14 +46,16 @@ class NodePathTest extends TestCase
             'expectedParts' => [
                 NodeName::fromString('child'),
                 NodeName::fromString('grandchild'),
-            ]
+            ],
+            'expectedLength' => 2
         ];
 
         yield 'root' => [
             'serializedPath' => '/',
             'expectedRelativePath' => '/',
             'expectedRootState' => true,
-            'expectedParts' => []
+            'expectedParts' => [],
+            'expectedLength' => 0
         ];
     }
 }
