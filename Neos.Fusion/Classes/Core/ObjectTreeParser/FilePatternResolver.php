@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
  */
 
 use Neos\Fusion;
+use Neos\Utility\Files;
 
 /**
  * Resolve files after a pattern.
@@ -56,13 +57,14 @@ class FilePatternResolver
      * @return array|string[]
      * @throws Fusion\Exception
      */
-    public static function resolveFilesByPattern(string $filePattern, ?string $filePathForRelativeResolves = null, string $defaultFileEndForUnspecificGlobbing = '.fusion'): array
+    public static function resolveFilesByPattern(string $filePattern, ?string $filePathForRelativeResolves, string $defaultFileEndForUnspecificGlobbing): array
     {
-        $filePattern = trim($filePattern);
+        $filePattern = Files::getUnixStylePath(trim($filePattern));
         if ($filePattern === '') {
             throw new Fusion\Exception("cannot resolve empty pattern: '$filePattern'", 1636144288);
         }
-        if ($filePattern[0] === '/') {
+        $isAbsoluteWindowsPath = str_contains($filePattern, ':') && preg_match('`^[a-zA-Z]:/[^/]`', $filePattern) === 1;
+        if ($filePattern[0] === '/' || $isAbsoluteWindowsPath) {
             throw new Fusion\Exception("cannot resolve absolute pattern: '$filePattern'", 1636144292);
         }
         if (self::isPatternStreamWrapper($filePattern) === false) {
@@ -91,7 +93,7 @@ class FilePatternResolver
         if ($filePathForRelativeResolves === null) {
             throw new Fusion\Exception('Relative file resolves are only possible with the argument $filePathForRelativeResolves passed.', 1636144731);
         }
-        return dirname($filePathForRelativeResolves) . '/' . $filePattern;
+        return Files::concatenatePaths([dirname($filePathForRelativeResolves), $filePattern]);
     }
 
     protected static function parseGlobPatternAndResolveFiles(string $filePattern, string $defaultFileNameEnd): array
@@ -137,7 +139,7 @@ class FilePatternResolver
             $pathAndFilename = $fileInfo->getPathname();
 
             if (str_ends_with($pathAndFilename, $fileNameEnd)) {
-                $files[] = $pathAndFilename;
+                $files[] = Files::getUnixStylePath($pathAndFilename);
             }
         }
         return $files;
