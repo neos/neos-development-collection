@@ -257,7 +257,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
-        $currentNode = $this->findNodeById($startingNodeAggregateId);
+        $startingNode = $this->findNodeById($startingNodeAggregateId);
 
         return $startingNode
             ? $this->findNodeByPathFromStartingNode($path, $startingNode)
