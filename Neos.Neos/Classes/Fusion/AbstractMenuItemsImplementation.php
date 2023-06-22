@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -147,40 +146,27 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     /**
      * Get the rootline from the current node up to the site node.
      *
-     * @return array<int,Node>
+     * @return array<int,Node> nodes, indexed by depth
      */
     protected function getCurrentNodeRootline(): array
     {
         if ($this->currentNodeRootline === null) {
-            $rootline = [$this->currentNode];
-            foreach (
-                $this->contentRepositoryRegistry->subgraphForNode($this->currentNode)
-                    ->findAncestorNodes(
-                        $this->currentNode->nodeAggregateId,
-                        FindAncestorNodesFilter::create()
-                    ) as $ancestorNode
-            ) {
-                if (!$ancestorNode->classification->isRoot()) {
-                    $rootline[] = $ancestorNode;
+            $rootline = [];
+            $ancestors = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode)
+                ->findAncestorNodes(
+                    $this->currentNode->nodeAggregateId,
+                    FindAncestorNodesFilter::create()
+                );
+            foreach ($ancestors->reverse() as $i => $ancestor) {
+                if (!$ancestor->classification->isRoot()) {
+                    $rootline[$i] = $ancestor;
                 }
             }
+            $rootline[] = $this->currentNode;
+
             $this->currentNodeRootline = $rootline;
         }
 
         return $this->currentNodeRootline;
-    }
-
-    /**
-     * Node Level relative to site root node.
-     * 0 = Site root node
-     */
-    protected function getNodeLevelInSite(Node $node): int
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-
-        return $subgraph->countAncestorNodes(
-            $node->nodeAggregateId,
-            CountAncestorNodesFilter::create()
-        ) - 1; // sites always are depth 1;
     }
 }
