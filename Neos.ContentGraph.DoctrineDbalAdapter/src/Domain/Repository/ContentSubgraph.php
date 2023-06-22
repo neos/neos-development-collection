@@ -415,8 +415,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     /** ------------------------------------------- */
 
-    private function findNodeByPathFromStartingNode(NodePath $path, Node $currentNode): ?Node
+    private function findNodeByPathFromStartingNode(NodePath $path, Node $startingNode): ?Node
     {
+        $currentNode = $startingNode;
+
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
             $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
