@@ -644,7 +644,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
-            // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
             ->select('n.*, ph.name, ph.contentstreamid, ph.parentnodeanchor')
             ->from($this->tableNamePrefix . '_node', 'n')
             // we need to join with the hierarchy relation, because we need the node name.
