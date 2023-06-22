@@ -354,7 +354,7 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
 
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
     {
-        return AbsoluteNodePath::fromString('/');
+        return AbsoluteNodePath::fromString('/<Neos.ContentRepository:Root>');
     }
 
     public function findSubtree(

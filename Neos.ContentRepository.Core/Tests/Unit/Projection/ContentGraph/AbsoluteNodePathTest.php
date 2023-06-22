@@ -19,6 +19,52 @@ use PHPUnit\Framework\TestCase;
 class AbsoluteNodePathTest extends TestCase
 {
     /**
+     * @dataProvider patternMatchProvider
+     */
+    public function testPatternIsMatchedByString(
+        string $serializedPath,
+        bool $expectedResult
+    ) {
+        self::assertSame($expectedResult, AbsoluteNodePath::patternIsMatchedByString($serializedPath));
+    }
+
+    /**
+     * @return iterable<string,mixed>
+     */
+    public static function patternMatchProvider(): iterable
+    {
+        yield 'root' => [
+            'serializedPath' => '/<Neos.ContentRepository:Root>',
+            'expectedResult' => true
+        ];
+
+        yield 'nonRoot' => [
+            'serializedPath' => '/<Neos.ContentRepository:Root>/child/grandchild',
+            'expectedResult' => true
+        ];
+
+        yield 'invalidPattern' => [
+            'serializedPath' => '/<Neos.ContentRepository:Root/child/grandchild',
+            'expectedResult' => false
+        ];
+
+        yield 'anotherInvalidPattern' => [
+            'serializedPath' => 'Neos.ContentRepository:Root/child/grandchild',
+            'expectedResult' => false
+        ];
+
+        yield 'invalidRoot' => [
+            'serializedPath' => '/',
+            'expectedResult' => false
+        ];
+
+        yield 'invalidNonRoot' => [
+            'serializedPath' => '/child/grandchild',
+            'expectedResult' => false
+        ];
+    }
+
+    /**
      * @dataProvider serializedPathProvider
      */
     public function testDeserialization(
@@ -28,7 +74,7 @@ class AbsoluteNodePathTest extends TestCase
         bool $expectedRootState,
         /** @var array<int,NodeName> $expectedParts */
         array $expectedParts,
-        ?int $expectedDepth
+        int $expectedDepth
     ): void {
         $subject = AbsoluteNodePath::fromString($serializedPath);
 
@@ -36,15 +82,16 @@ class AbsoluteNodePathTest extends TestCase
         self::assertSame($expectedRootNodeTypeName, $subject->rootNodeTypeName);
         self::assertSame($expectedRootState, $subject->isRoot());
         self::assertEquals($expectedParts, $subject->getParts());
-        if (!is_null($expectedDepth)) {
-            self::assertSame($expectedDepth, $subject->getDepth());
-        }
+        self::assertSame($expectedDepth, $subject->getDepth());
         self::assertSame($serializedPath, $subject->serializeToString());
     }
 
+    /**
+     * @return iterable<string,mixed>
+     */
     public static function serializedPathProvider(): iterable
     {
-        yield 'emptyAbsolute' => [
+        yield 'root' => [
             'serializedPath' => '/<Neos.ContentRepository:Root>',
             'expectedRelativePath' => '/',
             'expectedRootNodeTypeName' => NodeTypeName::fromString('Neos.ContentRepository:Root'),
@@ -53,7 +100,7 @@ class AbsoluteNodePathTest extends TestCase
             'expectedDepth' => 0
         ];
 
-        yield 'absolute' => [
+        yield 'nonRoot' => [
             'serializedPath' => '/<Neos.ContentRepository:Root>/child/grandchild',
             'expectedRelativePath' => 'child/grandchild',
             'expectedRootNodeTypeName' => NodeTypeName::fromString('Neos.ContentRepository:Root'),

@@ -42,29 +42,35 @@ final class AbsoluteNodePath implements \JsonSerializable
         );
     }
 
+    public static function patternIsMatchedByString(string $value): bool
+    {
+        if (!\str_starts_with($value, '/<')) {
+            return false;
+        }
+        if (!(\mb_strpos($value, '>') > 0)) {
+            return false;
+        }
+
+        return true;
+    }
+
     public static function fromString(string $value): self
     {
-        if (\str_starts_with($value, '/<')) {
-            $pivot = \mb_strpos($value, '>');
-            if ($pivot > 0) {
-                $nodeTypeName = NodeTypeName::fromString(\mb_substr($value, 2, $pivot - 2));
-                $path = \mb_substr($value, $pivot + 2) ?: '/';
-            } else {
-                throw AbsoluteNodePathIsInvalid::becauseItDoesNotMatchTheRequiredPattern($value);
-            }
-        } else {
+        if (!self::patternIsMatchedByString($value)) {
             throw AbsoluteNodePathIsInvalid::becauseItDoesNotMatchTheRequiredPattern($value);
         }
+        $pivot = \mb_strpos($value, '>') ?: 0; // pivot is actually > 0 due to the pattern check above
+        $nodeTypeName = NodeTypeName::fromString(\mb_substr($value, 2, $pivot - 2));
+        $path = \mb_substr($value, $pivot + 2) ?: '/';
+
         return new self($nodeTypeName, NodePath::fromString($path));
     }
 
     public static function tryFromString(string $string): ?self
     {
-        try {
-            return self::fromString($string);
-        } catch (AbsoluteNodePathIsInvalid) {
-            return null;
-        }
+        return self::patternIsMatchedByString($string)
+            ? self::fromString($string)
+            : null;
     }
 
     public function appendPathSegment(NodeName $nodeName): self
