@@ -78,12 +78,11 @@ class AbsoluteNodePathTest extends TestCase
     ): void {
         $subject = AbsoluteNodePath::fromString($serializedPath);
 
-        self::assertSame($expectedRelativePath, $subject->path->value);
+        self::assertSame($serializedPath, $subject->serializeToString());
         self::assertSame($expectedRootNodeTypeName, $subject->rootNodeTypeName);
         self::assertSame($expectedRootState, $subject->isRoot());
         self::assertEquals($expectedParts, $subject->getParts());
         self::assertSame($expectedDepth, $subject->getDepth());
-        self::assertSame($serializedPath, $subject->serializeToString());
     }
 
     /**
@@ -93,7 +92,7 @@ class AbsoluteNodePathTest extends TestCase
     {
         yield 'root' => [
             'serializedPath' => '/<Neos.ContentRepository:Root>',
-            'expectedRelativePath' => '/',
+            'expectedRelativePath' => '',
             'expectedRootNodeTypeName' => NodeTypeName::fromString('Neos.ContentRepository:Root'),
             'expectedRootState' => true,
             'expectedParts' => [],

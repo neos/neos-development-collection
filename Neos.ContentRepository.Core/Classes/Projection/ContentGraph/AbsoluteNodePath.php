@@ -21,6 +21,12 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 /**
  * An absolute node path, composed of the root node's type and a relative path from there.
  *
+ * Example:
+ * root path: '/<Neos.ContentRepository:Root>' results in
+ *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": []}
+ * non-root path: '/<Neos.ContentRepository:Root>/my/site' results in
+ *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my","site"]}
+ *
  * It describes the hierarchy path of a node to and including its root node in a subgraph.
  * @api
  */
@@ -61,7 +67,7 @@ final class AbsoluteNodePath implements \JsonSerializable
         }
         $pivot = \mb_strpos($value, '>') ?: 0; // pivot is actually > 0 due to the pattern check above
         $nodeTypeName = NodeTypeName::fromString(\mb_substr($value, 2, $pivot - 2));
-        $path = \mb_substr($value, $pivot + 2) ?: '/';
+        $path = \mb_substr($value, $pivot + 2) ?: '';
 
         return new self($nodeTypeName, NodePath::fromString($path));
     }
@@ -105,13 +111,13 @@ final class AbsoluteNodePath implements \JsonSerializable
 
     public function equals(AbsoluteNodePath $other): bool
     {
-        return $this->path === $other->path
+        return $this->path->equals($other->path)
             && $this->rootNodeTypeName->equals($other->rootNodeTypeName);
     }
 
     public function serializeToString(): string
     {
-        return rtrim('/<' . $this->rootNodeTypeName->value . '>/' . (ltrim($this->path->value, '/')), '/');
+        return rtrim('/<' . $this->rootNodeTypeName->value . '>/' . $this->path->serializeToString(), '/');
     }
 
     public function jsonSerialize(): string

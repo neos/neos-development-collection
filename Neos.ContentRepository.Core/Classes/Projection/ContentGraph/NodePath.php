@@ -17,34 +17,48 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
- * The node path is a list of NodeNames. It can be either absolute or relative.
+ * The relative node path is a collection of NodeNames. If it contains no elements, it is considered root.
  *
- * It describes the hierarchy path of a node to a root node in a subgraph.
+ * Example:
+ * root path: '' is resolved to []
+ * non-root path: 'my/site' is resolved to ~ ['my', 'site']
+ *
+ * It describes the hierarchy path of a node to an ancestor node in a subgraph.
  * @api
  */
-final class NodePath implements \JsonSerializable
+final readonly class NodePath implements \JsonSerializable
 {
-    private function __construct(
-        public readonly string $value
-    ) {
-        if ($this->value !== '/') {
-            $pathParts = explode('/', ltrim($this->value, '/'));
-            foreach ($pathParts as $pathPart) {
-                if (preg_match(NodeName::PATTERN, $pathPart) !== 1) {
-                    throw new \InvalidArgumentException(sprintf(
-                        'The path "%s" is no valid NodePath because it contains a segment "%s"'
-                        . ' that is no valid NodeName',
-                        $this->value,
-                        $pathPart
-                    ), 1548157108);
-                }
-            }
-        }
+    /**
+     * @deprecated use {@see self::serializeToString()} instead
+     */
+    public string $value;
+
+    /**
+     * @var array<NodeName>
+     */
+    private array $nodeNames;
+
+    private function __construct(NodeName ...$nodeNames)
+    {
+        $this->nodeNames = $nodeNames;
+        $this->value = $this->serializeToString();
+    }
+
+    public static function forRoot(): self
+    {
+        return new self();
     }
 
     public static function fromString(string $path): self
     {
-        return new self($path);
+        $path = ltrim($path, '/');
+        if ($path === '') {
+            return self::forRoot();
+        }
+
+        return self::fromPathSegments(
+            explode('/', $path)
+        );
     }
 
     /**
@@ -52,15 +66,26 @@ final class NodePath implements \JsonSerializable
      */
     public static function fromPathSegments(array $pathSegments): self
     {
-        if ($pathSegments === []) {
-            return new self('/');
-        }
-        return new self('/' . implode('/', $pathSegments));
+        return new self(...array_map(
+            function (string $pathPart) use ($pathSegments): NodeName {
+                try {
+                    return NodeName::fromString($pathPart);
+                } catch (\InvalidArgumentException) {
+                    throw new \InvalidArgumentException(sprintf(
+                        'The path "%s" is no valid NodePath because it contains a segment "%s"'
+                            . ' that is no valid NodeName',
+                        implode('/', $pathSegments),
+                        $pathPart
+                    ), 1548157108);
+                }
+            },
+            $pathSegments
+        ));
     }
 
     public function isRoot(): bool
     {
-        return $this->value === '/';
+        return $this->getLength() === 0;
     }
 
     /**
@@ -68,7 +93,10 @@ final class NodePath implements \JsonSerializable
      */
     public function appendPathSegment(NodeName $nodeName): self
     {
-        return new self($this->value . '/' . $nodeName->value);
+        return new self(
+            ...$this->nodeNames,
+            ...[$nodeName]
+        );
     }
 
     /**
@@ -76,28 +104,28 @@ final class NodePath implements \JsonSerializable
      */
     public function getParts(): array
     {
-        if ($this->isRoot()) {
-            return [];
-        }
-        $pathParts = explode('/', ltrim($this->value, '/'));
-        return array_map(static fn (string $pathPart) => NodeName::fromString($pathPart), $pathParts);
+        return array_values($this->nodeNames);
     }
 
     public function getLength(): int
     {
-        return $this->isRoot()
-            ? 0
-            : \substr_count(ltrim($this->value, '/'), '/') + 1;
+        return count($this->nodeNames);
     }
 
     public function equals(NodePath $other): bool
     {
-        return $this->value === $other->value;
+        return $this->serializeToString() === $other->serializeToString();
     }
 
     public function serializeToString(): string
     {
-        return $this->value;
+        return implode(
+            '/',
+            array_map(
+                fn (NodeName $nodeName): string => $nodeName->value,
+                $this->nodeNames
+            )
+        );
     }
 
     public function jsonSerialize(): string
