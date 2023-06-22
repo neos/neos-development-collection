@@ -207,10 +207,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
     {
-        $currentNode = $this->findRootNodeByType($path->rootNodeTypeName);
+        $startingNode = $this->findRootNodeByType($path->rootNodeTypeName);
 
-        return $currentNode
-            ? $this->findNodeByPathFromStartingNode($path->path, $currentNode)
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path->path, $startingNode)
             : null;
     }
 
