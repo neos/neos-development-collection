@@ -399,6 +399,7 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                             'type' => 'TypeWithDataTypeConfig',
                             'ui' => [
                                 'editor' => 'EditorFromDataTypeConfig',
+                                'value' => 'fromDataTypeConfig',
                                 'dataTypeValue' => 'fromDataTypeConfig',
                             ]
                         ],
