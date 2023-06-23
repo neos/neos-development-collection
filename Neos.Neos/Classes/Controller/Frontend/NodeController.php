@@ -329,18 +329,13 @@ class NodeController extends ActionController
         if ($subtree === null) {
             return;
         }
-        $nodePathCache = $inMemoryCache->getNodePathCache();
 
         $currentDocumentNode = $subtree->node;
-
-        $nodePathOfDocumentNode = $subgraph->retrieveNodePath($currentDocumentNode->nodeAggregateId);
-        $nodePathCache->add($currentDocumentNode->nodeAggregateId, $nodePathOfDocumentNode);
 
         foreach ($subtree->children as $childSubtree) {
             self::fillCacheInternal(
                 $childSubtree,
                 $currentDocumentNode,
-                $nodePathOfDocumentNode,
                 $inMemoryCache
             );
         }
@@ -349,7 +344,6 @@ class NodeController extends ActionController
     private static function fillCacheInternal(
         Subtree $subtree,
         Node $parentNode,
-        AbsoluteNodePath $parentNodePath,
         InMemoryCache $inMemoryCache
     ): void {
         $node = $subtree->node;
@@ -358,10 +352,7 @@ class NodeController extends ActionController
             = $inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $namedChildNodeByNodeIdentifierCache = $inMemoryCache->getNamedChildNodeByNodeIdCache();
         $allChildNodesByNodeIdentifierCache = $inMemoryCache->getAllChildNodesByNodeIdCache();
-        $nodePathCache = $inMemoryCache->getNodePathCache();
         if ($node->nodeName !== null) {
-            $nodePath = $parentNodePath->appendPathSegment($node->nodeName);
-            $nodePathCache->add($node->nodeAggregateId, $nodePath);
             $namedChildNodeByNodeIdentifierCache->add(
                 $parentNode->nodeAggregateId,
                 $node->nodeName,
@@ -378,9 +369,7 @@ class NodeController extends ActionController
 
         $allChildNodes = [];
         foreach ($subtree->children as $childSubtree) {
-            if (isset($nodePath)) {
-                self::fillCacheInternal($childSubtree, $node, $nodePath, $inMemoryCache);
-            }
+            self::fillCacheInternal($childSubtree, $node, $inMemoryCache);
             $childNode = $childSubtree->node;
             $allChildNodes[] = $childNode;
         }

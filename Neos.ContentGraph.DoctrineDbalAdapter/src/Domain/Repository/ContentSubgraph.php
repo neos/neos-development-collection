@@ -245,72 +245,25 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
     {
-        $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('h.name, h.parentnodeanchor, h.childnodeanchor')
-            ->from($this->tableNamePrefix . '_node', 'n')
-            ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('n.nodeaggregateid = :nodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial);
-
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('h.name, h.parentnodeanchor, h.childnodeanchor')
-            ->from($this->tableNamePrefix . '_hierarchyrelation', 'h')
-            ->innerJoin('h', 'nodePath', 'np', 'np.parentnodeanchor = h.childnodeanchor')
-            ->where('h.contentstreamid = :contentStreamId')
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('nodePath')
-            ->setParameter('contentStreamId', $this->contentStreamId->value)
-            ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
-
-        $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'nodePath');
-        if ($result === []) {
-            throw new \InvalidArgumentException(sprintf('Failed to retrieve node path for node "%s"', $nodeAggregateId->value), 1678391715);
+        $leafNode = $this->findNodeById($nodeAggregateId);
+        if (!$leafNode) {
+            throw new \InvalidArgumentException(
+                'Failed to retrieve node path for node "' . $nodeAggregateId->value . '"',
+                1687513836
+            );
         }
-        $rows = array_reverse($result);
-        $rootNodeTypeNameQueryBuilder = $this->createQueryBuilder()
-            ->select('nodetypename')
-            ->from($this->tableNamePrefix . '_node')
-            ->where('relationanchorpoint = :relationAnchorPoint')
-            ->setParameter('relationAnchorPoint', $rows[0]['childnodeanchor']);
-        $rootNodeTypeNameRow = $this->executeQuery($rootNodeTypeNameQueryBuilder)->fetchAssociative();
-        if ($rootNodeTypeNameRow === false) {
-            throw new \InvalidArgumentException(sprintf('Failed to retrieve root node type for node "%s"', $nodeAggregateId->value), 1687111057);
-        }
-        $rootNodeTypeName = NodeTypeName::fromString($rootNodeTypeNameRow['nodetypename']);
+        $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())
+            ->reverse();
 
-        $pathSegments = [];
-        foreach ($rows as $i => $row) {
-            if ($i !== 0) { // skip the root node, it's resolved by node type name
-                if ($row['name']) {
-                    $pathSegments[] = $row['name'];
-                } else {
-                    $nodeAggregateIdQueryBuilder = $this->createQueryBuilder()
-                        ->select('nodeaggregateid')
-                        ->from($this->tableNamePrefix . '_node')
-                        ->where('relationanchorpoint = :relationAnchorPoint')
-                        ->setParameter('relationAnchorPoint', $row['childnodeanchor']);
-                    $nodeAggregateIdRow = $this->executeQuery($nodeAggregateIdQueryBuilder)->fetchAssociative();
-                    if ($nodeAggregateIdRow === false) {
-                        throw new \InvalidArgumentException(
-                            sprintf('Failed to retrieve node aggregate id for ancestor of node "%s"', $nodeAggregateId->value),
-                            1687111110
-                        );
-                    }
-                    $pathSegments[] = $nodeAggregateIdRow['nodeaggregateid'];
-                }
-            }
+        try {
+            return AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
+        } catch (\InvalidArgumentException $exception) {
+            throw new \InvalidArgumentException(
+                'Failed to retrieve node path for node "' . $nodeAggregateId->value . '"',
+                1687513836,
+                $exception
+            );
         }
-
-        return AbsoluteNodePath::fromComponents(
-            $rootNodeTypeName,
-            NodePath::fromPathSegments($pathSegments)
-        );
     }
 
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree

@@ -38,13 +38,52 @@ final class AbsoluteNodePath implements \JsonSerializable
     ) {
     }
 
-    public static function fromComponents(
+    public static function fromRootNodeTypeNameAndRelativePath(
         NodeTypeName $rootNodeTypeName,
         NodePath $path
     ): self {
         return new self(
             $rootNodeTypeName,
             $path
+        );
+    }
+
+    /**
+     * The ancestors must be ordered with the root node first, so if you call this using
+     * {@see ContentSubgraphInterface::findAncestorNodes()}, you need to call ${@see Nodes::reverse()} first
+     */
+    public static function fromLeafNodeAndAncestors(Node $leafNode, Nodes $ancestors): self
+    {
+        if ($leafNode->classification->isRoot()) {
+            return new self($leafNode->nodeTypeName, NodePath::forRoot());
+        }
+        $rootNode = $ancestors->first();
+        if (!$rootNode || !$rootNode->classification->isRoot()) {
+            throw new \InvalidArgumentException(
+                'Could not find a root node in ancestors',
+                1687511170
+            );
+        }
+        $ancestors = $ancestors->merge(Nodes::fromArray([$leafNode]));
+
+        $nodeNames = [];
+        foreach ($ancestors as $ancestor) {
+            if ($ancestor->classification->isRoot()) {
+                continue;
+            }
+            if (!$ancestor->nodeName) {
+                throw new \InvalidArgumentException(
+                    'Could not resolve node path for node ' . $leafNode->nodeAggregateId->value
+                    . ', ancestor ' . $ancestor->nodeAggregateId->value . ' is unnamed.',
+                    1687509348
+                );
+            }
+            $nodeNames[] = $ancestor->nodeName;
+        }
+
+        return new self(
+            $rootNode->nodeTypeName,
+            NodePath::fromNodeNames(...$nodeNames)
         );
     }
 

@@ -11,6 +11,8 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -92,7 +94,12 @@ class PropertyOperation extends AbstractOperation
         $element = $context[0];
         if ($propertyName === '_path') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
-            return $subgraph->retrieveNodePath($element->nodeAggregateId)->serializeToString();
+            $ancestors = $subgraph->findAncestorNodes(
+                $element->nodeAggregateId,
+                FindAncestorNodesFilter::create()
+            )->reverse();
+
+            return AbsoluteNodePath::fromLeafNodeAndAncestors($element, $ancestors)->serializeToString();
         }
         if ($propertyName === '_identifier') {
             // TODO: deprecated (Neos <9 case)

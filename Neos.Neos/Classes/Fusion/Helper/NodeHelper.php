@@ -16,6 +16,7 @@ namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -23,6 +24,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
+use Neos\Neos\Presentation\VisualNodePath;
 
 /**
  * Eel helper for ContentRepository Nodes
@@ -67,14 +69,20 @@ class NodeHelper implements ProtectedContextAwareInterface
             if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
                 return $subNode;
             } else {
-                $nodePathOfNode = $this->contentRepositoryRegistry->subgraphForNode($node)
-                    ->retrieveNodePath($node->nodeAggregateId);
+                $nodePathOfNode = VisualNodePath::fromAncestors(
+                    $node,
+                    $this->contentRepositoryRegistry->subgraphForNode($node)
+                        ->findAncestorNodes(
+                            $node->nodeAggregateId,
+                            FindAncestorNodesFilter::create()
+                        )
+                );
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
                     . ' through the "flow node:repair --node-type %s" command.',
                     $contentCollectionType,
-                    $nodePathOfNode->serializeToString(),
+                    $nodePathOfNode->value,
                     $nodePath->serializeToString(),
                     $node->nodeType->name->value
                 ), 1389352984);
@@ -109,14 +117,17 @@ class NodeHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * @param Node $node
-     * @return string
      * @deprecated do not rely on this, as it is rather expensive to calculate
      */
     public function path(Node $node): string
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        return $subgraph->retrieveNodePath($node->nodeAggregateId)->serializeToString();
+        $ancestors = $subgraph->findAncestorNodes(
+            $node->nodeAggregateId,
+            FindAncestorNodesFilter::create()
+        )->reverse();
+
+        return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
     }
 
     public function isLive(Node $node): bool

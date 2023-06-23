@@ -78,6 +78,8 @@ Feature: Find nodes using the retrieveNodePath query
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId  |
       | unnamed         | Neos.ContentRepository.Testing:Homepage | lady-eleonode-rootford |
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | child-of-unnamed | child | Neos.ContentRepository.Testing:Page | unnamed |
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "b1"          |
@@ -90,10 +92,13 @@ Feature: Find nodes using the retrieveNodePath query
     # node "b1" is disabled so it must not be returned
     When I execute the retrieveNodePath query for node aggregate id "b1" I expect an exception 'Failed to retrieve node path for node "b1"'
     When I execute the retrieveNodePath query for node aggregate id "b1a" I expect an exception 'Failed to retrieve node path for node "b1a"'
-
+    # node "unnamed" has no name
+    When I execute the retrieveNodePath query for node aggregate id "unnamed" I expect an exception 'Failed to retrieve node path for node "unnamed"'
+    # node "child-of-unnamed" has an unnamed ancestor
+    When I execute the retrieveNodePath query for node aggregate id "child-of-unnamed" I expect an exception 'Failed to retrieve node path for node "child-of-unnamed"'
 
     # retrieveNodePath queries with result
     When I execute the retrieveNodePath query for node aggregate id "lady-eleonode-rootford" I expect the path "/<Neos.ContentRepository:Root>" to be returned
-    When I execute the retrieveNodePath query for node aggregate id "unnamed" I expect the path "/<Neos.ContentRepository:Root>/unnamed" to be returned
+
     When I execute the retrieveNodePath query for node aggregate id "home" I expect the path "/<Neos.ContentRepository:Root>/home" to be returned
     When I execute the retrieveNodePath query for node aggregate id "a2a2" I expect the path "/<Neos.ContentRepository:Root>/home/a/a2/a2a/a2a2" to be returned

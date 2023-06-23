@@ -26,17 +26,17 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * It describes the hierarchy path of a node to an ancestor node in a subgraph.
  * @api
  */
-final readonly class NodePath implements \JsonSerializable
+final class NodePath implements \JsonSerializable
 {
     /**
      * @deprecated use {@see self::serializeToString()} instead
      */
-    public string $value;
+    public readonly string $value;
 
     /**
      * @var array<NodeName>
      */
-    private array $nodeNames;
+    private readonly array $nodeNames;
 
     private function __construct(NodeName ...$nodeNames)
     {
@@ -81,6 +81,11 @@ final readonly class NodePath implements \JsonSerializable
             },
             $pathSegments
         ));
+    }
+
+    public static function fromNodeNames(NodeName ...$nodeNames): self
+    {
+        return new self(...$nodeNames);
     }
 
     public function isRoot(): bool
