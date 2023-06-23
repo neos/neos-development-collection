@@ -110,11 +110,11 @@ class NodesController extends ActionController
     public function indexAction(
         string $searchTerm = '',
         array $nodeIds = [],
-        array $nodeIdentifiers = [],
         string $workspaceName = 'live',
         array $dimensions = [],
         array $nodeTypes = ['Neos.Neos:Document'],
-        string $contextNode = null
+        string $contextNode = null,
+        array $nodeIdentifiers = []
     ): void {
         $nodeIds = $nodeIds ?: $nodeIdentifiers;
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
