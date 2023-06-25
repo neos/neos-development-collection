@@ -58,7 +58,7 @@ final class ReferencePropertyOperation implements OperationInterface
 
     public static function getPriority(): int
     {
-        return 100;
+        return 99;
     }
 
     public static function isFinal(): bool
