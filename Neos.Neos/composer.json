@@ -14,11 +14,11 @@
         "neos/twitter-bootstrap": "*",
         "neos/content-repository": "~7.3.0",
         "neos/fusion": "~7.3.0",
-        "neos/fusion-afx": "*",
+        "neos/fusion-afx": "self.version",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/fluid-adaptor": "~7.3.0",
-        "behat/transliterator": "~1.0",
-        "neos/media": "~7.3.0"
+        "neos/media": "~7.3.0",
+        "behat/transliterator": "~1.0"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",

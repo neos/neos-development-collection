@@ -51,7 +51,6 @@ use Neos\Utility\PositionalArraySorter;
  */
 class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
 {
-
     /**
      * @var array
      * @Flow\InjectConfiguration(package="Neos.Neos", path="userInterface.inspector.dataTypes")
@@ -119,6 +118,9 @@ class CreationDialogPostprocessor implements NodeTypePostprocessorInterface
         }
         if (isset($propertyConfiguration['ui']['inspector']['position'])) {
             $convertedConfiguration['position'] = $propertyConfiguration['ui']['inspector']['position'];
+        }
+        if (isset($propertyConfiguration['ui']['inspector']['hidden'])) {
+            $convertedConfiguration['ui']['hidden'] = $propertyConfiguration['ui']['inspector']['hidden'];
         }
 
         $editor = $propertyConfiguration['ui']['inspector']['editor'] ?? $dataTypeDefaultConfiguration['editor'] ?? 'Neos.Neos/Inspector/Editors/TextFieldEditor';

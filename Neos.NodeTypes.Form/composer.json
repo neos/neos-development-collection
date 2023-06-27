@@ -7,9 +7,9 @@
     ],
     "require": {
         "php": "^7.3 || ^8.0",
-        "neos/neos": "*",
+        "neos/neos": "self.version",
         "neos/form": "*",
-        "neos/nodetypes-basemixins": "*"
+        "neos/nodetypes-basemixins": "self.version"
     },
     "autoload": {
         "psr-4": {
