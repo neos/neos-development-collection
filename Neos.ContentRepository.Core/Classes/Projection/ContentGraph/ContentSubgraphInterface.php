@@ -126,7 +126,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
      *
      * A reference is a node property of type "reference" or "references"
      * Because each reference has a name and can contain properties itself, this method does not return the target nodes
-     * directly, but actual {@see \Neos\ContentRepository\Core\Projection\ContentGraph\Reference} instances.
+     * directly, but a collection of references {@see References}.
      * The corresponding nodes can be retrieved via {@see References::getNodes()}
      */
     public function findReferences(NodeAggregateId $nodeAggregateId, Filter\FindReferencesFilter $filter): References;

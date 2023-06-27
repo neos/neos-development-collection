@@ -22,8 +22,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
@@ -122,7 +122,7 @@ final class NodeFactory
             );
             $result[] = new Reference(
                 $node,
-                PropertyName::fromString($nodeRow['referencename']),
+                ReferenceName::fromString($nodeRow['referencename']),
                 $nodeRow['referenceproperties']
                     ? $this->createPropertyCollectionFromJsonString($nodeRow['referenceproperties'])
                     : null
