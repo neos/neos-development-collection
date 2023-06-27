@@ -67,7 +67,7 @@ Example Ordering::
 	# order (o1 ... o9) is *always* fixed, no matter in which order the
 	# individual statements are defined.
 
-	myArray = Neos.Fusion:Join {
+	myString = Neos.Fusion:Join {
 		o1 = Neos.NodeTypes:Text
 		o1.@position = 'start 12'
 		o2 = Neos.NodeTypes:Text
@@ -99,7 +99,7 @@ to use ``@position`` and meaningful keys in your application, and not numeric on
 
 Example of numeric keys (discouraged)::
 
-	myArray = Neos.Fusion:Join {
+	myString = Neos.Fusion:Join {
 		10 = Neos.NodeTypes:Text
 		20 = Neos.NodeTypes:Text
 	}
