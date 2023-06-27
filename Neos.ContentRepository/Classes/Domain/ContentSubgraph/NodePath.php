@@ -103,6 +103,7 @@ final class NodePath implements \JsonSerializable
         return (string) $this === (string) $other;
     }
 
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->path;

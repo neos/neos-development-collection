@@ -1098,6 +1098,18 @@
 				<source>Successfully logged out</source>
         <target state="translated">Erfolgreich abgemeldet</target>
       </trans-unit>
+      <trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
+        <target state="translated">Inhaltsbaum</target>
+      </trans-unit>
+      <trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+        <target state="translated">Dokumentbaum</target>
+      </trans-unit>
+      <trans-unit id="shortcut.toSpecificTarget" xml:space="preserve">
+        <source>This is a shortcut to a specific target:</source>
+        <target state="translated">Dies ist eine Verknüpfung zu einem gewählten Ziel:</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -27,7 +27,6 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class ContentElementEditableService
 {
-
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
