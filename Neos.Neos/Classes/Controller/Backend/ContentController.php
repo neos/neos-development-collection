@@ -36,7 +36,6 @@ use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\Controller\CreateContentContextTrait;
 use Neos\Neos\Domain\Model\PluginViewDefinition;
-use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 
