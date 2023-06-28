@@ -76,6 +76,16 @@ final class UriPathResolver implements DimensionResolverInterface
         );
     }
 
+    public static function createForNoDimensions(): self
+    {
+        return new self(
+            [],
+            [],
+            Segments::create(),
+            DimensionSpacePoint::fromArray([])
+        );
+    }
+
     private static function validate(
         Segments $segments,
         Separator $separator,
