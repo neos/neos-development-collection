@@ -225,7 +225,7 @@
       </trans-unit>
       <trans-unit id="refresh" xml:space="preserve">
 				<source>Refresh</source>
-        <target state="translated">Actualizar</target>
+        <target state="translated">Actualiza</target>
       </trans-unit>
       <trans-unit id="save" xml:space="preserve" approved="yes">
 				<source>Save</source>
@@ -415,9 +415,9 @@
 				<source>Click to create new</source>
         <target state="final">Haz click para crear nuevo</target>
       </trans-unit>
-      <trans-unit id="state" xml:space="preserve" approved="yes">
+      <trans-unit id="state" xml:space="preserve" approved="no">
 				<source>Status</source>
-        <target state="final">Estado</target>
+        <target state="translated">Situación</target>
       </trans-unit>
       <trans-unit id="active" xml:space="preserve" approved="yes">
 				<source>Active</source>
