@@ -7,7 +7,10 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     And I am user identified by "initiating-user-identifier"
     And I have the following NodeTypes configuration:
     """
-    'Neos.Neos:Sites': {}
+    'Neos.ContentRepository:Root': {}
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     'Neos.Neos:Document': {}
     'Neos.Neos:Content': {}
     'Neos.Neos:Test.Routing.Page':
@@ -27,13 +30,11 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                    |
       | contentStreamId             | "cs-identifier"          |
       | nodeAggregateId             | "lady-eleonode-rootford" |
       | nodeTypeName                | "Neos.Neos:Sites"        |
-      | coveredDimensionSpacePoints | [{}]                     |
-      | nodeAggregateClassification | "root"                   |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford

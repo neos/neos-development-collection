@@ -42,13 +42,11 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceDescription       | "The live workspace"                   |
       | newContentStreamId | "cs-identifier"                        |
     And the graph projection is fully up to date
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                                                                                   |
       | contentStreamId     | "cs-identifier"                                                                                                                         |
       | nodeAggregateId     | "lady-eleonode-rootford"                                                                                                                |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                           |
-      | coveredDimensionSpacePoints | [{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | nodeAggregateClassification | "root"                                                                                                                                  |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                           | Value                                                                                                                                   |
       | contentStreamId       | "cs-identifier"                                                                                                                         |
