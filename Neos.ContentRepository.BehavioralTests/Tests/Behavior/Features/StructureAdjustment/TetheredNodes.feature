@@ -32,13 +32,11 @@ Feature: Tethered Nodes integrity violations
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                                                                                                                                                     |
       | contentStreamId     | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateId     | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.ContentRepository:Root"                                                                                                                                                                             |
-      | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     # We have to add another node since root nodes have no dimension space points and thus cannot be varied
     # Node /document
     And the event NodeAggregateWithNodeWasCreated was published with payload:

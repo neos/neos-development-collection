@@ -52,6 +52,7 @@ use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -116,6 +117,8 @@ trait EventSourcedTrait
     private ContentRepositoryId $contentRepositoryId;
     private ContentRepository $contentRepository;
     private ContentRepositoryInternals $contentRepositoryInternals;
+
+    protected ?UserId $currentUserId = null;
 
     protected function getContentRepositoryId(): ContentRepositoryId
     {

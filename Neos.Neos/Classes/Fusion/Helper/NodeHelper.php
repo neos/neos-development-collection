@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -98,15 +99,9 @@ class NodeHelper implements ProtectedContextAwareInterface
      */
     public function depth(Node $node): int
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $depth = 0;
-        while ($node !== null) {
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-            $depth++;
-        }
-        return $depth;
+        return $this->contentRepositoryRegistry->subgraphForNode($node)
+            ->countAncestorNodes($node->nodeAggregateId, CountAncestorNodesFilter::create());
     }
-
 
     /**
      * @param Node $node
