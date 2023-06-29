@@ -99,15 +99,17 @@ class FilePatternResolver
     protected static function parseGlobPatternAndResolveFiles(string $filePattern, string $defaultFileNameEnd): array
     {
         $fileIteratorCreator = match (1) {
+            // We SKIP_DOTS, as it might not be allowed to access `..` and we only are interested in files
+
             // Match recursive wildcard globbing '<base>/**/*<end>?'
             preg_match(self::RECURSIVE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir);
+                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS);
                 return new \RecursiveIteratorIterator($recursiveDirectoryIterator);
             },
 
             // Match simple wildcard globbing '<base>/*<end>?'
             preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                return new \DirectoryIterator($dir);
+                return new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS);
             },
 
             default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),
