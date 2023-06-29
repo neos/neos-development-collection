@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
@@ -53,21 +54,22 @@ use Psr\Clock\ClockInterface;
  *
  * @api
  */
-final class ContentRepository
+final readonly class ContentRepository
 {
     /**
-     * @internal use the {@see ContentRepositoryFactory::build()} to instantiate
+     * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
     public function __construct(
-        private readonly CommandBus $commandBus,
-        private readonly EventStoreInterface $eventStore,
-        private readonly Projections $projections,
-        private readonly EventPersister $eventPersister,
-        private readonly NodeTypeManager $nodeTypeManager,
-        private readonly InterDimensionalVariationGraph $variationGraph,
-        private readonly ContentDimensionSourceInterface $contentDimensionSource,
-        private readonly UserIdProviderInterface $userIdProvider,
-        private readonly ClockInterface $clock,
+        public ContentRepositoryId $id,
+        private CommandBus $commandBus,
+        private EventStoreInterface $eventStore,
+        private Projections $projections,
+        private EventPersister $eventPersister,
+        private NodeTypeManager $nodeTypeManager,
+        private InterDimensionalVariationGraph $variationGraph,
+        private ContentDimensionSourceInterface $contentDimensionSource,
+        private UserIdProviderInterface $userIdProvider,
+        private ClockInterface $clock,
     ) {
     }
 
