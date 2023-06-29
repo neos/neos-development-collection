@@ -489,6 +489,8 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      */
     protected function evaluateNodeTypesPath($requestedPath, $checkForExistence = true)
     {
+        // we normalize the path first, as `nodetypes://Foo.Bar\SomeFile.bar` might be requested on windows, and we split later on unix slash `/`
+        $requestedPath = Files::getUnixStylePath($requestedPath);
         $requestPathParts = explode('://', $requestedPath, 2);
         if ($requestPathParts[0] !== self::SCHEME) {
             throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
