@@ -124,14 +124,8 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
                 // - take configuration from dataType
                 // - take configuration from creationDialog elements (NodeTypes)
                 $mergedUiConfiguration = $this->editorDefaultConfiguration[$editor] ?? [];
-                $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule(
-                    $mergedUiConfiguration,
-                    $defaultConfigurationFromDataType
-                );
-                $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule(
-                    $mergedUiConfiguration,
-                    $elementConfiguration['ui']
-                );
+                $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedUiConfiguration, $defaultConfigurationFromDataType);
+                $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedUiConfiguration, $elementConfiguration['ui'] ?? []);
                 $elementConfiguration['ui'] = $mergedUiConfiguration;
                 $elementConfiguration['ui']['editor'] = $editor;
             }
