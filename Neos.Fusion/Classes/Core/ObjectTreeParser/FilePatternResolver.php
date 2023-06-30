@@ -14,6 +14,7 @@ namespace Neos\Fusion\Core\ObjectTreeParser;
  */
 
 use Neos\Fusion;
+use Neos\Utility\Files;
 
 /**
  * Resolve files after a pattern.
@@ -56,13 +57,17 @@ class FilePatternResolver
      * @return array|string[]
      * @throws Fusion\Exception
      */
-    public static function resolveFilesByPattern(string $filePattern, ?string $filePathForRelativeResolves = null, string $defaultFileEndForUnspecificGlobbing = '.fusion'): array
+    public static function resolveFilesByPattern(string $filePattern, ?string $filePathForRelativeResolves, string $defaultFileEndForUnspecificGlobbing): array
     {
         $filePattern = trim($filePattern);
         if ($filePattern === '') {
             throw new Fusion\Exception("cannot resolve empty pattern: '$filePattern'", 1636144288);
         }
-        if ($filePattern[0] === '/') {
+        if (str_contains($filePattern, '\\')) {
+            throw new Fusion\Exception("cannot resolve non-unix style pattern: '$filePattern'", 1688112067799);
+        }
+        $isAbsoluteWindowsPath = preg_match('`^[a-zA-Z]:/[^/]`', $filePattern) === 1;
+        if ($filePattern[0] === '/' || $isAbsoluteWindowsPath) {
             throw new Fusion\Exception("cannot resolve absolute pattern: '$filePattern'", 1636144292);
         }
         if (self::isPatternStreamWrapper($filePattern) === false) {
@@ -91,21 +96,24 @@ class FilePatternResolver
         if ($filePathForRelativeResolves === null) {
             throw new Fusion\Exception('Relative file resolves are only possible with the argument $filePathForRelativeResolves passed.', 1636144731);
         }
-        return dirname($filePathForRelativeResolves) . '/' . $filePattern;
+        return Files::concatenatePaths([dirname($filePathForRelativeResolves), $filePattern]);
     }
 
     protected static function parseGlobPatternAndResolveFiles(string $filePattern, string $defaultFileNameEnd): array
     {
         $fileIteratorCreator = match (1) {
+            // We use the flag SKIP_DOTS, as it might not be allowed to access `..` and we only are interested in files
+            // We use the flag UNIX_PATHS, so that stream wrapper paths are always valid on windows https://github.com/neos/neos-development-collection/issues/4358
+
             // Match recursive wildcard globbing '<base>/**/*<end>?'
             preg_match(self::RECURSIVE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir);
+                $recursiveDirectoryIterator = new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS|\FilesystemIterator::UNIX_PATHS);
                 return new \RecursiveIteratorIterator($recursiveDirectoryIterator);
             },
 
             // Match simple wildcard globbing '<base>/*<end>?'
             preg_match(self::SIMPLE_GLOB_PATTERN, $filePattern, $matches) => static function (string $dir): \Iterator {
-                return new \DirectoryIterator($dir);
+                return new \FilesystemIterator($dir, \FilesystemIterator::SKIP_DOTS|\FilesystemIterator::UNIX_PATHS);
             },
 
             default => throw new Fusion\Exception("The include glob pattern '$filePattern' is invalid. Only globbing with /**/* or /* is supported.", 1636144713),
