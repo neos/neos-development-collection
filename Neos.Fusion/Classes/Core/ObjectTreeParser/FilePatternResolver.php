@@ -59,11 +59,14 @@ class FilePatternResolver
      */
     public static function resolveFilesByPattern(string $filePattern, ?string $filePathForRelativeResolves, string $defaultFileEndForUnspecificGlobbing): array
     {
-        $filePattern = Files::getUnixStylePath(trim($filePattern));
+        $filePattern = trim($filePattern);
         if ($filePattern === '') {
             throw new Fusion\Exception("cannot resolve empty pattern: '$filePattern'", 1636144288);
         }
-        $isAbsoluteWindowsPath = str_contains($filePattern, ':') && preg_match('`^[a-zA-Z]:/[^/]`', $filePattern) === 1;
+        if (str_contains($filePattern, '\\')) {
+            throw new Fusion\Exception("cannot resolve non-unix style pattern: '$filePattern'", 1688112067799);
+        }
+        $isAbsoluteWindowsPath = preg_match('`^[a-zA-Z]:/[^/]`', $filePattern) === 1;
         if ($filePattern[0] === '/' || $isAbsoluteWindowsPath) {
             throw new Fusion\Exception("cannot resolve absolute pattern: '$filePattern'", 1636144292);
         }
@@ -142,7 +145,7 @@ class FilePatternResolver
             $pathAndFilename = $fileInfo->getPathname();
 
             if (str_ends_with($pathAndFilename, $fileNameEnd)) {
-                $files[] = Files::getUnixStylePath($pathAndFilename);
+                $files[] = $pathAndFilename;
             }
         }
         return $files;
