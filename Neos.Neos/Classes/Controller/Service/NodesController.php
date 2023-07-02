@@ -99,12 +99,11 @@ class NodesController extends ActionController
      *
      * @param string $searchTerm An optional search term used for filtering the list of nodes
      * @param array $nodeIds An optional list of node identifiers
-     * @param array $nodeIdentifiers An optional list of legacy node identifiers, @deprecated
      * @param string $workspaceName Name of the workspace to search in, "live" by default
-     * @param array $dimensions Optional list of dimensions
-     *                                        and their values which should be used for querying
+     * @param array $dimensions Optional list of dimensions and their values which should be used for querying
      * @param array $nodeTypes A list of node types the list should be filtered by (array(string)
      * @param string $contextNode a node to use as context for the search
+     * @param array $nodeIdentifiers An optional list of legacy node identifiers, @deprecated
      */
     /* @phpstan-ignore-next-line */
     public function indexAction(
