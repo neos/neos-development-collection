@@ -147,6 +147,9 @@
 			<trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			</trans-unit>
+			<trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+      	<source>Can't publish a single node in a new page</source>
+      </trans-unit>
 			<trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
 			</trans-unit>
