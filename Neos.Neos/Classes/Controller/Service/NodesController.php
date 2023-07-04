@@ -99,23 +99,25 @@ class NodesController extends ActionController
      *
      * @param string $searchTerm An optional search term used for filtering the list of nodes
      * @param array $nodeIds An optional list of node identifiers
+     * @phpstan-param array<string>|string $nodeIds
      * @param string $workspaceName Name of the workspace to search in, "live" by default
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying
      * @param array $nodeTypes A list of node types the list should be filtered by (array(string)
      * @param string $contextNode a node to use as context for the search
      * @param array $nodeIdentifiers An optional list of legacy node identifiers, @deprecated
+     * @phpstan-param array<string>|string $nodeIdentifiers
      */
-    /* @phpstan-ignore-next-line */
     public function indexAction(
         string $searchTerm = '',
-        array $nodeIds = [],
+        array|string $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
         array $nodeTypes = ['Neos.Neos:Document'],
         string $contextNode = null,
-        array $nodeIdentifiers = []
+        array|string $nodeIdentifiers = []
     ): void {
         $nodeIds = $nodeIds ?: $nodeIdentifiers;
+        $nodeIds = is_array($nodeIds) ? $nodeIds : [$nodeIds];
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
