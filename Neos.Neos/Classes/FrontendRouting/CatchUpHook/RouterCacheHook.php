@@ -78,7 +78,7 @@ final class RouterCacheHook implements CatchUpHookInterface
 
     private function onBeforeNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
 
@@ -114,11 +114,6 @@ final class RouterCacheHook implements CatchUpHookInterface
     private function getState(): DocumentUriPathFinder
     {
         return $this->contentRepository->projectionState(DocumentUriPathFinder::class);
-    }
-
-    private function isLiveContentStream(ContentStreamId $contentStreamId): bool
-    {
-        return $contentStreamId->equals($this->getState()->getLiveContentStreamId());
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo

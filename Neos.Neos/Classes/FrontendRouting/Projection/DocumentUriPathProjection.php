@@ -232,7 +232,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->coveredDimensionSpacePoints as $dimensionSpacePoint) {
@@ -248,7 +248,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenRootNodeAggregateDimensionsWereUpdated(RootNodeAggregateDimensionsWereUpdated $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
 
@@ -282,7 +282,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         if (!$this->isDocumentNodeType($event->nodeTypeName)) {
@@ -373,7 +373,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         if ($this->isShortcutNodeType($event->newNodeTypeName)) {
@@ -395,7 +395,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         $this->copyVariants(
@@ -408,7 +408,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         $this->copyVariants(
@@ -421,7 +421,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         $this->copyVariants(
@@ -462,7 +462,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -493,7 +493,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -524,7 +524,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
@@ -554,7 +554,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodePropertiesWereSet(NodePropertiesWereSet $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->isLiveContentStream($event->contentStreamId)) {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         $newPropertyValues = $event->propertyValues->getPlainValues();
@@ -625,7 +625,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
     {
-        if (!$this->isLiveContentStream($event->getContentStreamId())) {
+        if (!$this->getState()->isLiveContentStream($event->getContentStreamId())) {
             return;
         }
 
@@ -760,11 +760,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         // This is a deliberate side effect of this projector!
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType('Neos.Neos:Shortcut');
-    }
-
-    private function isLiveContentStream(ContentStreamId $contentStreamId): bool
-    {
-        return $contentStreamId->equals($this->getState()->getLiveContentStreamId());
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
@@ -952,7 +947,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
-        if ($this->isLiveContentStream($event->contentStreamId)) {
+        if ($this->getState()->isLiveContentStream($event->contentStreamId)) {
             $this->updateNodeQuery(
                 'SET dimensionspacepointhash = :newDimensionSpacePointHash
                         WHERE dimensionspacepointhash = :originalDimensionSpacePointHash',
@@ -976,7 +971,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
-        if ($this->isLiveContentStream($event->contentStreamId)) {
+        if ($this->getState()->isLiveContentStream($event->contentStreamId)) {
             try {
                 $this->dbal->executeStatement('INSERT INTO ' . $this->tableNamePrefix . '_uri (
                     nodeaggregateid,
