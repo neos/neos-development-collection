@@ -1110,6 +1110,10 @@
 				<source>Content Tree</source>
         <target state="translated">Contentboom</target>
       </trans-unit>
+      <trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+      	<source>Can't publish a single node in a new page</source>
+        <target state="translated">Niet mogelijk om een enkele node in een nieuwe pagina te publiceren</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
