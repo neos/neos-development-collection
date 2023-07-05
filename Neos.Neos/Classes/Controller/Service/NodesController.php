@@ -102,7 +102,9 @@ class NodesController extends ActionController
      * @phpstan-param array<string>|string $nodeIds
      * @param string $workspaceName Name of the workspace to search in, "live" by default
      * @param array $dimensions Optional list of dimensions and their values which should be used for querying
+     * @phpstan-param array<mixed> $dimensions
      * @param array $nodeTypes A list of node types the list should be filtered by (array(string)
+     * @phpstan-param array<string> $nodeTypes
      * @param string $contextNode a node to use as context for the search
      * @param array $nodeIdentifiers An optional list of legacy node identifiers, @deprecated
      * @phpstan-param array<string>|string $nodeIdentifiers
