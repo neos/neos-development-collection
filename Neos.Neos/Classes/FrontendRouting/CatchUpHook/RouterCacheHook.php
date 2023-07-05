@@ -25,11 +25,11 @@ use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisa
 use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 
-final class DocumentUriPathProjectionHookForRouteCacheFlushing implements CatchUpHookInterface
+final class RouterCacheHook implements CatchUpHookInterface
 {
     /**
      * Runtime cache to collect tags until they can get flushed.
-     * @var array<string, string>
+     * @var string[]
      */
     private array $tagsToFlush = [];
 
@@ -53,7 +53,6 @@ final class DocumentUriPathProjectionHookForRouteCacheFlushing implements CatchU
             NodeAggregateWasDisabled::class => $this->onBeforeNodeAggregateWasDisabled($eventInstance),
             default => null
         };
-
     }
 
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
@@ -104,6 +103,10 @@ final class DocumentUriPathProjectionHookForRouteCacheFlushing implements CatchU
 
     private function flushAllCollectedTags(): void
     {
+        if ($this->tagsToFlush === []) {
+            return;
+        }
+
         $this->routerCachingService->flushCachesByTags($this->tagsToFlush);
         $this->tagsToFlush = [];
     }

@@ -9,7 +9,7 @@ use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 
-final class DocumentUriPathProjectionHookForRouteCacheFlushingFactory implements CatchUpHookFactoryInterface
+final class RouterCacheHookFactory implements CatchUpHookFactoryInterface
 {
     public function __construct(
         protected readonly RouterCachingService $routerCachingService,
@@ -18,7 +18,7 @@ final class DocumentUriPathProjectionHookForRouteCacheFlushingFactory implements
 
     public function build(ContentRepository $contentRepository): CatchUpHookInterface
     {
-        return new DocumentUriPathProjectionHookForRouteCacheFlushing(
+        return new RouterCacheHook(
             $contentRepository,
             $this->routerCachingService
         );
