@@ -9,20 +9,11 @@ use Neos\EventStore\Model\EventEnvelope;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\RedirectHandler\NeosAdapter\Service\NodeRedirectService;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\Neos\Routing\Cache\RouteCacheFlusher;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 
 final class RouterCacheHook implements CatchUpHookInterface
@@ -47,9 +38,9 @@ final class RouterCacheHook implements CatchUpHookInterface
     public function onBeforeEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         match ($eventInstance::class) {
-//            NodeAggregateWasRemoved::class => $this->onBeforeNodeAggregateWasRemoved($eventInstance),
-//            NodePropertiesWereSet::class => $this->onBeforeNodePropertiesWereSet($eventInstance),
-//            NodeAggregateWasMoved::class => $this->onBeforeNodeAggregateWasMoved($eventInstance),
+            NodeAggregateWasRemoved::class => $this->onBeforeNodeAggregateWasRemoved($eventInstance),
+            NodePropertiesWereSet::class => $this->onBeforeNodePropertiesWereSet($eventInstance),
+            NodeAggregateWasMoved::class => $this->onBeforeNodeAggregateWasMoved($eventInstance),
             NodeAggregateWasDisabled::class => $this->onBeforeNodeAggregateWasDisabled($eventInstance),
             default => null
         };
@@ -58,9 +49,9 @@ final class RouterCacheHook implements CatchUpHookInterface
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         match ($eventInstance::class) {
-//            NodeAggregateWasRemoved::class => $this->onAfterNodeAggregateWasRemoved($eventInstance),
-//            NodePropertiesWereSet::class => $this->onAfterNodePropertiesWereSet($eventInstance),
-//            NodeAggregateWasMoved::class => $this->onAfterNodeAggregateWasMoved($eventInstance),
+            NodeAggregateWasRemoved::class => $this->flushAllCollectedTags(),
+            NodePropertiesWereSet::class => $this->flushAllCollectedTags(),
+            NodeAggregateWasMoved::class => $this->flushAllCollectedTags(),
             NodeAggregateWasDisabled::class => $this->flushAllCollectedTags(),
             default => null
         };
@@ -93,6 +84,88 @@ final class RouterCacheHook implements CatchUpHookInterface
             }
 
             $this->collectTagsToFlush($node);
+
+            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
+        }
+    }
+
+    private function onBeforeNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
+    {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+            return;
+        }
+
+        foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
+            $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $event->nodeAggregateId,
+                $dimensionSpacePoint->hash
+            ));
+            if ($node === null) {
+                // Probably not a document node
+                continue;
+            }
+
+            $this->collectTagsToFlush($node);
+
+            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
+        }
+    }
+
+    private function onBeforeNodePropertiesWereSet(NodePropertiesWereSet $event): void
+    {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+            return;
+        }
+
+        $newPropertyValues = $event->propertyValues->getPlainValues();
+        if (!isset($newPropertyValues['uriPathSegment'])) {
+            return;
+        }
+
+        foreach ($event->affectedDimensionSpacePoints as $affectedDimensionSpacePoint) {
+            $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
+                $event->nodeAggregateId,
+                $affectedDimensionSpacePoint->hash
+            ));
+            if ($node === null) {
+                // probably not a document node
+                continue;
+            }
+
+            $this->collectTagsToFlush($node);
+
+            $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+            array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
+        }
+    }
+
+    private function onBeforeNodeAggregateWasMoved(NodeAggregateWasMoved $event): void
+    {
+        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+            return;
+        }
+
+        foreach ($event->nodeMoveMappings as $moveMapping) {
+            /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
+            foreach ($moveMapping->newLocations as $newLocation) {
+                /* @var $newLocation CoverageNodeMoveMapping */
+                $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
+                    $event->nodeAggregateId,
+                    $newLocation->coveredDimensionSpacePoint->hash
+                ));
+
+                if (!$node) {
+                    // node probably no document node, skip
+                    continue;
+                }
+
+                $this->collectTagsToFlush($node);
+
+                $descendantsOfNode = $this->getState()->getDescendantsOfNode($node);
+                array_map($this->collectTagsToFlush(...), iterator_to_array($descendantsOfNode));
+            }
         }
     }
 

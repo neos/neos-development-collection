@@ -11,7 +11,7 @@ Neos:
             factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory
             catchUpHooks:
               'Neos.Neos:FlushRouteCache':
-                factoryObjectName: Neos\Neos\FrontendRouting\CatchUpHook\DocumentUriPathProjectionHookForRouteCacheFlushingFactory
+                factoryObjectName: Neos\Neos\FrontendRouting\CatchUpHook\RouterCacheHookFactory
 
           'Neos.Neos:PendingChangesProjection':
             factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory
