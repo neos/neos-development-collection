@@ -17,11 +17,13 @@ namespace Neos\Neos\Controller\Service;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -96,30 +98,41 @@ class NodesController extends ActionController
      * Shows a list of nodes
      *
      * @param string $searchTerm An optional search term used for filtering the list of nodes
-     * @param array $nodeIdentifiers An optional list of node identifiers
+     * @param array $nodeIds An optional list of node identifiers
+     * @phpstan-param array<string>|string $nodeIds
      * @param string $workspaceName Name of the workspace to search in, "live" by default
-     * @param array $dimensions Optional list of dimensions
-     *                                        and their values which should be used for querying
+     * @param array $dimensions Optional list of dimensions and their values which should be used for querying
+     * @phpstan-param array<mixed> $dimensions
      * @param array $nodeTypes A list of node types the list should be filtered by (array(string)
+     * @phpstan-param array<string> $nodeTypes
      * @param string $contextNode a node to use as context for the search
+     * @param array $nodeIdentifiers An optional list of legacy node identifiers, @deprecated
+     * @phpstan-param array<string>|string $nodeIdentifiers
      */
-    /* @phpstan-ignore-next-line */
     public function indexAction(
         string $searchTerm = '',
-        array $nodeIds = [],
+        array|string $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
         array $nodeTypes = ['Neos.Neos:Document'],
-        string $contextNode = null
+        string $contextNode = null,
+        array|string $nodeIdentifiers = []
     ): void {
+        $nodeIds = $nodeIds ?: $nodeIdentifiers;
+        $nodeIds = is_array($nodeIds) ? $nodeIds : [$nodeIds];
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-
-        $nodeAddress = $contextNode
-            ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode)
+        $nodePath = $contextNode
+            ? AbsoluteNodePath::tryFromString($contextNode)
             : null;
+        $nodeAddress = null;
+        if (!$nodePath) {
+            $nodeAddress = $contextNode
+                ? NodeAddressFactory::create($contentRepository)->createFromUriString($contextNode)
+                : null;
+        }
 
         unset($contextNode);
         if (is_null($nodeAddress)) {
@@ -145,8 +158,14 @@ class NodesController extends ActionController
             );
         }
 
-        if ($nodeIds === [] && !is_null($nodeAddress)) {
-            $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        if ($nodeIds === [] && (!is_null($nodeAddress) || !is_null($nodePath))) {
+            if (!is_null($nodeAddress)) {
+                $entryNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+            } else {
+                /** @var AbsoluteNodePath $nodePath */
+                $entryNode = $subgraph->findNodeByAbsolutePath($nodePath);
+            }
+
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
                 $entryNode->nodeAggregateId,
                 FindDescendantNodesFilter::create(

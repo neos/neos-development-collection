@@ -18,6 +18,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelation
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -88,6 +90,28 @@ final class HypergraphQuery implements HypergraphQueryInterface
 
         $parameters = $this->parameters;
         $parameters['nodeAggregateId'] = $nodeAggregateId->value;
+
+        return new self($query, $parameters, $this->tableNamePrefix);
+    }
+
+    public function withNodeTypeName(NodeTypeName $nodeTypeName): self
+    {
+        $query = $this->query .= '
+            AND n.nodetypename = :nodeTypeName';
+
+        $parameters = $this->parameters;
+        $parameters['nodeTypeName'] = $nodeTypeName->value;
+
+        return new self($query, $parameters, $this->tableNamePrefix);
+    }
+
+    public function withClassification(NodeAggregateClassification $nodeAggregateClassification): self
+    {
+        $query = $this->query .= '
+            AND n.classification = :nodeAggregateClassification';
+
+        $parameters = $this->parameters;
+        $parameters['nodeAggregateClassification'] = $nodeAggregateClassification->value;
 
         return new self($query, $parameters, $this->tableNamePrefix);
     }

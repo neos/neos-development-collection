@@ -18,9 +18,13 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -778,56 +782,64 @@ class WorkspacesController extends AbstractModuleController
 
             $node = $subgraph->findNodeById($change->nodeAggregateId);
             if ($node) {
-                $pathParts = explode('/', $subgraph->retrieveNodePath($node->nodeAggregateId)->value);
-                if (count($pathParts) > 2) {
-                    $siteNodeName = $pathParts[2];
-                    $document = null;
-                    $closestDocumentNode = $node;
-                    while ($closestDocumentNode) {
-                        if ($closestDocumentNode->nodeType->isOfType('Neos.Neos:Document')) {
-                            $document = $closestDocumentNode;
-                            break;
+                $documentNode = null;
+                $siteNode = null;
+                $ancestors = $subgraph->findAncestorNodes(
+                    $node->nodeAggregateId,
+                    FindAncestorNodesFilter::create()
+                );
+                $nodePathSegments = [];
+                $documentPathSegments = [];
+                foreach ($ancestors as $ancestor) {
+                    $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
+                    $nodePathSegments[] = $pathSegment;
+                    if ($ancestor->nodeType->isOfType('Neos.Neos:Document')) {
+                        $documentPathSegments[] = $pathSegment;
+                        if (is_null($documentNode)) {
+                            $documentNode = $ancestor;
                         }
-                        $closestDocumentNode = $subgraph->findParentNode(
-                            $closestDocumentNode->nodeAggregateId
-                        );
+                        // the site node is the last ancestor of type Document
+                        $siteNode = $documentNode;
                     }
+                }
 
-                    // $document will be null if we have a broken root line for this node.
-                    // This actually should never happen, but currently can in some scenarios.
-                    if ($document !== null) {
-                        assert($document instanceof Node);
-                        $documentPath = implode('/', array_slice(explode(
-                            '/',
-                            $subgraph->retrieveNodePath($document->nodeAggregateId)->value
-                        ), 3));
-                        $relativePath = str_replace(
-                            sprintf('//%s/%s', $siteNodeName, $documentPath),
-                            '',
-                            $subgraph->retrieveNodePath($node->nodeAggregateId)->value
-                        );
-                        if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
-                            $siteChanges[$siteNodeName]['siteNode']
-                                = $this->siteRepository->findOneByNodeName($siteNodeName);
-                        }
-                        $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $document;
-
-                        $change = [
-                            'node' => $node,
-                            'serializedNodeAddress' => $nodeAddressFactory->createFromNode($node)->serializeForUri(),
-                            'isRemoved' => $change->deleted,
-                            'isNew' => false,
-                            'contentChanges' => $this->renderContentChanges(
-                                $node,
-                                $change->contentStreamId,
-                                $contentRepository
-                            )
-                        ];
-                        if ($node->nodeType->isOfType('Neos.Neos:Node')) {
-                            $change['configuration'] = $node->nodeType->getFullConfiguration();
-                        }
-                        $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
+                // Neither $documentNode, $siteNode or its cannot really be null, this is just for type checks;
+                // We should probably throw an exception though
+                if ($documentNode !== null && $siteNode !== null && $siteNode->nodeName) {
+                    $siteNodeName = $siteNode->nodeName->value;
+                    $documentPath = implode('/', array_slice(array_map(
+                        fn (NodeName $nodeName): string => $nodeName->value,
+                        $documentPathSegments
+                    ), 2));
+                    $relativePath = str_replace(
+                        sprintf('//%s/%s', $siteNodeName, $documentPath),
+                        '',
+                        implode('/', array_map(
+                            fn (NodeName $nodeName): string => $nodeName->value,
+                            $nodePathSegments
+                        ))
+                    );
+                    if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
+                        $siteChanges[$siteNodeName]['siteNode']
+                            = $this->siteRepository->findOneByNodeName(SiteNodeName::fromString($siteNodeName));
                     }
+                    $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $documentNode;
+
+                    $change = [
+                        'node' => $node,
+                        'serializedNodeAddress' => $nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                        'isRemoved' => $change->deleted,
+                        'isNew' => false,
+                        'contentChanges' => $this->renderContentChanges(
+                            $node,
+                            $change->contentStreamId,
+                            $contentRepository
+                        )
+                    ];
+                    if ($node->nodeType->isOfType('Neos.Neos:Node')) {
+                        $change['configuration'] = $node->nodeType->getFullConfiguration();
+                    }
+                    $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
             }
         }

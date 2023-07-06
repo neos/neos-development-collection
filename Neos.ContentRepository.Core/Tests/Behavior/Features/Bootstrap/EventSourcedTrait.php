@@ -118,7 +118,7 @@ trait EventSourcedTrait
     private ContentRepository $contentRepository;
     private ContentRepositoryInternals $contentRepositoryInternals;
 
-    protected ?UserId $currentUserId = null;
+    private ?UserId $currentUserId = null;
 
     protected function getContentRepositoryId(): ContentRepositoryId
     {
