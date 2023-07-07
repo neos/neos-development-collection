@@ -532,7 +532,7 @@ Options Reference:
               editorOptions:
                 nodeTypes: ['My.Website:Tag']
                 createNew:
-                  path: /sites/yoursite/tags
+                  path: /<Neos.Neos:Sites>/yoursite/tags
                   type: 'My.Website:Tag'
 
 ``disabled`` (boolean)

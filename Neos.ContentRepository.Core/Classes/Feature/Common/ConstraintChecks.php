@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
@@ -42,6 +43,7 @@ use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateCur
 use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\DimensionSpacePointIsAlreadyOccupied;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateTypeIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
@@ -136,6 +138,22 @@ trait ConstraintChecks
                 'Node type "' . $nodeType->name->value . '" is of type root.',
                 1541765806
             );
+        }
+    }
+
+    protected function requireRootNodeTypeToBeUnoccupied(
+        NodeTypeName $nodeTypeName,
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): void {
+        try {
+            $rootNodeAggregate = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
+                $contentStreamId,
+                $nodeTypeName
+            );
+            throw RootNodeAggregateTypeIsAlreadyOccupied::butWasExpectedNotTo($nodeTypeName);
+        } catch (RootNodeAggregateDoesNotExist $exception) {
+            // all is well
         }
     }
 

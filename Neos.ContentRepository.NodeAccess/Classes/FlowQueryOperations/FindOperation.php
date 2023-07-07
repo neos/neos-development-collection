@@ -12,6 +12,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -140,7 +141,8 @@ class FindOperation extends AbstractOperation
                 $filterResults = $this->addNodesById($nodeAggregateId, $entryPoints, $filterResults);
                 $generatedNodes = true;
             } elseif (isset($filter['PropertyNameFilter']) || isset($filter['PathFilter'])) {
-                $nodePath = NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
+                $nodePath = AbsoluteNodePath::tryFromString($filter['PropertyNameFilter'] ?? $filter['PathFilter'])
+                    ?: NodePath::fromString($filter['PropertyNameFilter'] ?? $filter['PathFilter']);
                 $filterResults = $this->addNodesByPath($nodePath, $entryPoints, $filterResults);
                 $generatedNodes = true;
             }
@@ -232,21 +234,15 @@ class FindOperation extends AbstractOperation
      * @param array<int,Node> $result
      * @return array<int,Node>
      */
-    protected function addNodesByPath(NodePath $nodePath, array $entryPoints, array $result): array
+    protected function addNodesByPath(NodePath|AbsoluteNodePath $nodePath, array $entryPoints, array $result): array
     {
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
             foreach ($entryPoint['nodes'] as $node) {
                 /** @var Node $node */
-                if ($nodePath->isAbsolute()) {
-                    $rootNode = $node;
-                    while ($rootNode instanceof Node && !$rootNode->classification->isRoot()) {
-                        $rootNode = $subgraph->findParentNode($rootNode->nodeAggregateId);
-                    }
-                    if ($rootNode instanceof Node) {
-                        $nodeByPath = $subgraph->findNodeByPath($nodePath, $rootNode->nodeAggregateId);
-                    }
+                if ($nodePath instanceof AbsoluteNodePath) {
+                    $nodeByPath = $subgraph->findNodeByAbsolutePath($nodePath);
                 } else {
                     $nodeByPath = $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
                 }

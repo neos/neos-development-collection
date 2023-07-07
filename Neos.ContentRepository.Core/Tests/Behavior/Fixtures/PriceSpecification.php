@@ -14,47 +14,44 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Fixtures;
  */
 
 /**
- * A postal address value object
+ * A price specification value object as an example for an array-based but stringable property value
  *
- * @see https://schema.org/PostalAddress
+ * @see https://schema.org/PriceSpecification
  */
-final readonly class PostalAddress
+final readonly class PriceSpecification implements \Stringable
 {
     private function __construct(
-        public string $streetAddress,
-        public string $postalCode,
-        public string $addressLocality,
-        public string $addressCountry
+        public float $price,
+        public string $priceCurrency
     ) {
     }
 
     public static function fromArray(array $array): self
     {
         return new self(
-            $array['streetAddress'],
-            $array['postalCode'],
-            $array['addressLocality'],
-            $array['addressCountry']
+            $array['price'],
+            $array['priceCurrency']
         );
     }
 
     public static function dummy(): self
     {
         return new self(
-            '28 31st of February Street',
-            '12345',
-            'City',
-            'Country'
+            13.37,
+            'EUR'
         );
     }
 
     public static function anotherDummy(): self
     {
         return new self(
-            '29 31st of February Street',
-            '12346',
-            'Another city',
-            'Another country'
+            84.72,
+            'EUR'
         );
+    }
+
+    public function __toString(): string
+    {
+        return $this->price . ' ' . $this->priceCurrency;
     }
 }
