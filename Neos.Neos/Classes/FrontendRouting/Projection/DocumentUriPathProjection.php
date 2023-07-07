@@ -617,8 +617,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 ]
             );
             $this->getState()->purgeCacheFor($node);
-
-            $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $eventEnvelope);
         }
     }
 
@@ -1014,17 +1012,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 ), 1599646608, $e);
             }
         }
-    }
-
-    /**
-     * @Flow\Signal
-     */
-    public function emitDocumentUriPathChanged(
-        string $oldUriPath,
-        string $newUriPath,
-        NodePropertiesWereSet $event,
-        EventEnvelope $eventEnvelope
-    ): void {
     }
 
     public function markStale(): void
