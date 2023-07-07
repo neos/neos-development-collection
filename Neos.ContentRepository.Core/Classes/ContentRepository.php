@@ -54,22 +54,22 @@ use Psr\Clock\ClockInterface;
  *
  * @api
  */
-final readonly class ContentRepository
+final class ContentRepository
 {
     /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
     public function __construct(
-        public ContentRepositoryId $id,
-        private CommandBus $commandBus,
-        private EventStoreInterface $eventStore,
-        private Projections $projections,
-        private EventPersister $eventPersister,
-        private NodeTypeManager $nodeTypeManager,
-        private InterDimensionalVariationGraph $variationGraph,
-        private ContentDimensionSourceInterface $contentDimensionSource,
-        private UserIdProviderInterface $userIdProvider,
-        private ClockInterface $clock,
+        public readonly ContentRepositoryId $id,
+        private readonly CommandBus $commandBus,
+        private readonly EventStoreInterface $eventStore,
+        private readonly Projections $projections,
+        private readonly EventPersister $eventPersister,
+        private readonly NodeTypeManager $nodeTypeManager,
+        private readonly InterDimensionalVariationGraph $variationGraph,
+        private readonly ContentDimensionSourceInterface $contentDimensionSource,
+        private readonly UserIdProviderInterface $userIdProvider,
+        private readonly ClockInterface $clock,
     ) {
     }
 
