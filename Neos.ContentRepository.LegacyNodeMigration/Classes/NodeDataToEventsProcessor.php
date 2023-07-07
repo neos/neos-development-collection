@@ -234,7 +234,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $nodePath = NodePath::fromString(strtolower($nodeDataRow['path']));
         $parentNodeAggregate = $this->visitedNodes->findMostSpecificParentNodeInDimensionGraph($nodePath, $originDimensionSpacePoint, $this->interDimensionalVariationGraph);
         if ($parentNodeAggregate === null) {
-            $this->dispatch(Severity::ERROR, 'Failed to find parent node for node with id "%s" and dimensions: %s. The old CR can sometimes have orphaned nodes.', $nodeAggregateId->value, $originDimensionSpacePoint->toJson());
+            $this->dispatch(Severity::ERROR, 'Failed to find parent node for node with id "%s" and dimensions: %s. Please ensure that the new content repository has a valid content dimension configuration. Also note that the old CR can sometimes have orphaned nodes.', $nodeAggregateId->value, $originDimensionSpacePoint->toJson());
             return;
         }
         $pathParts = $nodePath->getParts();
