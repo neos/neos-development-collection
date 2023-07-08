@@ -108,6 +108,8 @@ class ChangeProjection implements ProjectionInterface
         $changeTable->addColumn('contentStreamId', Types::STRING)
             ->setLength(40)
             ->setNotnull(true);
+        $changeTable->addColumn('created', Types::BOOLEAN)
+            ->setNotnull(true);
         $changeTable->addColumn('changed', Types::BOOLEAN)
             ->setNotnull(true);
         $changeTable->addColumn('moved', Types::BOOLEAN)
@@ -257,7 +259,7 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeAggregateWithNodeWasCreated(NodeAggregateWithNodeWasCreated $event): void
     {
-        $this->markAsChanged(
+        $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
             $event->originDimensionSpacePoint
@@ -319,12 +321,13 @@ class ChangeProjection implements ProjectionInterface
                 $this->getDatabaseConnection()->executeUpdate(
                     'INSERT INTO ' . $this->tableName . '
                             (contentStreamId, nodeAggregateId, originDimensionSpacePoint,
-                             originDimensionSpacePointHash, deleted, changed, moved, removalAttachmentPoint)
+                             originDimensionSpacePointHash, created, deleted, changed, moved, removalAttachmentPoint)
                         VALUES (
                             :contentStreamId,
                             :nodeAggregateId,
                             :originDimensionSpacePoint,
                             :originDimensionSpacePointHash,
+                            0,
                             1,
                             0,
                             0,
@@ -369,7 +372,7 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeSpecializationVariantWasCreated(NodeSpecializationVariantWasCreated $event): void
     {
-        $this->markAsChanged(
+        $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
             $event->specializationOrigin
@@ -378,7 +381,7 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodeGeneralizationVariantWasCreated(NodeGeneralizationVariantWasCreated $event): void
     {
-        $this->markAsChanged(
+        $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
             $event->generalizationOrigin
@@ -387,7 +390,7 @@ class ChangeProjection implements ProjectionInterface
 
     private function whenNodePeerVariantWasCreated(NodePeerVariantWasCreated $event): void
     {
-        $this->markAsChanged(
+        $this->markAsCreated(
             $event->contentStreamId,
             $event->nodeAggregateId,
             $event->peerOrigin
@@ -422,12 +425,55 @@ class ChangeProjection implements ProjectionInterface
                     $contentStreamId,
                     $nodeAggregateId,
                     $originDimensionSpacePoint,
+                    false,
                     true,
                     false,
                     false
                 );
                 $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
             } else {
+                $change->changed = true;
+                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
+            }
+        });
+    }
+
+    private function markAsCreated(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+    ): void {
+        $this->transactional(function () use (
+            $contentStreamId,
+            $nodeAggregateId,
+            $originDimensionSpacePoint
+        ) {
+            // HACK: basically we are not allowed to read other Projection's finder methods here;
+            // but we nevertheless do it.
+            // we can maybe figure out another way of solving this lateron.
+            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
+            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
+                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+                return;
+            }
+            $change = $this->getChange(
+                $contentStreamId,
+                $nodeAggregateId,
+                $originDimensionSpacePoint
+            );
+            if ($change === null) {
+                $change = new Change(
+                    $contentStreamId,
+                    $nodeAggregateId,
+                    $originDimensionSpacePoint,
+                    true,
+                    true,
+                    false,
+                    false
+                );
+                $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
+            } else {
+                $change->created = true;
                 $change->changed = true;
                 $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
             }
@@ -459,6 +505,7 @@ class ChangeProjection implements ProjectionInterface
                     $contentStreamId,
                     $nodeAggregateId,
                     $originDimensionSpacePoint,
+                    false,
                     false,
                     true,
                     false
