@@ -402,40 +402,14 @@ class ChangeProjection implements ProjectionInterface
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): void {
-        $this->transactional(function () use (
+        $this->modifyChange(
             $contentStreamId,
             $nodeAggregateId,
-            $originDimensionSpacePoint
-        ) {
-            // HACK: basically we are not allowed to read other Projection's finder methods here;
-            // but we nevertheless do it.
-            // we can maybe figure out another way of solving this lateron.
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
-            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
-                // Workspace is the live workspace (has no base workspace); we do not need to do anything
-                return;
-            }
-            $change = $this->getChange(
-                $contentStreamId,
-                $nodeAggregateId,
-                $originDimensionSpacePoint
-            );
-            if ($change === null) {
-                $change = new Change(
-                    $contentStreamId,
-                    $nodeAggregateId,
-                    $originDimensionSpacePoint,
-                    false,
-                    true,
-                    false,
-                    false
-                );
-                $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
-            } else {
+            $originDimensionSpacePoint,
+            static function (Change $change) {
                 $change->changed = true;
-                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
             }
-        });
+        );
     }
 
     private function markAsCreated(
@@ -443,10 +417,43 @@ class ChangeProjection implements ProjectionInterface
         NodeAggregateId $nodeAggregateId,
         OriginDimensionSpacePoint $originDimensionSpacePoint,
     ): void {
+        $this->modifyChange(
+            $contentStreamId,
+            $nodeAggregateId,
+            $originDimensionSpacePoint,
+            static function (Change $change) {
+                $change->created = true;
+                $change->changed = true;
+            }
+        );
+    }
+
+    private function markAsMoved(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+    ): void {
+        $this->modifyChange(
+            $contentStreamId,
+            $nodeAggregateId,
+            $originDimensionSpacePoint,
+            static function (Change $change) {
+                $change->moved = true;
+            }
+        );
+    }
+
+    private function modifyChange(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $nodeAggregateId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        callable $modifyFn
+    ): void {
         $this->transactional(function () use (
             $contentStreamId,
             $nodeAggregateId,
-            $originDimensionSpacePoint
+            $originDimensionSpacePoint,
+            $modifyFn
         ) {
             // HACK: basically we are not allowed to read other Projection's finder methods here;
             // but we nevertheless do it.
@@ -456,63 +463,15 @@ class ChangeProjection implements ProjectionInterface
                 // Workspace is the live workspace (has no base workspace); we do not need to do anything
                 return;
             }
-            $change = $this->getChange(
-                $contentStreamId,
-                $nodeAggregateId,
-                $originDimensionSpacePoint
-            );
-            if ($change === null) {
-                $change = new Change(
-                    $contentStreamId,
-                    $nodeAggregateId,
-                    $originDimensionSpacePoint,
-                    true,
-                    true,
-                    false,
-                    false
-                );
-                $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
-            } else {
-                $change->created = true;
-                $change->changed = true;
-                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
-            }
-        });
-    }
 
-    private function markAsMoved(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-    ): void {
-        $this->transactional(function () use (
-            $contentStreamId,
-            $nodeAggregateId,
-            $originDimensionSpacePoint
-        ) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
-            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
-                // Workspace is the live workspace (has no base workspace); we do not need to do anything
-                return;
-            }
-            $change = $this->getChange(
-                $contentStreamId,
-                $nodeAggregateId,
-                $originDimensionSpacePoint
-            );
+            $change = $this->getChange($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint);
+
             if ($change === null) {
-                $change = new Change(
-                    $contentStreamId,
-                    $nodeAggregateId,
-                    $originDimensionSpacePoint,
-                    false,
-                    false,
-                    true,
-                    false
-                );
+                $change = new Change($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, false, false, false, false);
+                $modifyFn($change);
                 $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
             } else {
-                $change->moved = true;
+                $modifyFn($change);
                 $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
             }
         });
