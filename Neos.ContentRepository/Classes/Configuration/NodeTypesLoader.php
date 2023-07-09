@@ -43,7 +43,11 @@ class NodeTypesLoader implements LoaderInterface
         foreach ($packages as $package) {
             $nodeTypesDirectory = Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes']);
             if (\is_dir($nodeTypesDirectory)) {
-                $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($nodeTypesDirectory));
+                $iterator = new \RecursiveIteratorIterator(
+                    new RecursiveDirectoryIteratorWithSorting(
+                        new \RecursiveDirectoryIterator($nodeTypesDirectory)
+                    )
+                );
                 $allYamlFilesIterator = new \CallbackFilterIterator($iterator, static function (\SplFileInfo $fileInfo) {
                     return $fileInfo->isFile() && $fileInfo->getExtension() === 'yaml';
                 });
