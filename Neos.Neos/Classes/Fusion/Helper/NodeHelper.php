@@ -84,13 +84,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         return new NodeLabelToken($node);
     }
 
-    public function inBackend(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
-    }
-
     /**
      * @param Node $node
      * @return int

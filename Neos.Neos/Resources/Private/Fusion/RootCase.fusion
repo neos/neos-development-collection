@@ -39,7 +39,7 @@ root {
 
   rawContent {
     @position = 'end 10000'
-    condition = ${Neos.Node.inBackend(documentNode) && Neos.Backend.isEditMode(request)}
+    condition = ${Neos.Backend.isEditMode(request)}
     renderer = Neos.Neos:RawContent.Document
   }
 
