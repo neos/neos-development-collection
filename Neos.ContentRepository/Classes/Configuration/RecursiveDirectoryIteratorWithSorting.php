@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Configuration;
 
+use Neos\Flow\Annotations as Flow;
+
 /**
  * The {@see \RecursiveDirectoryIterator} doesn't order the returned files.
  *
@@ -12,7 +14,7 @@ namespace Neos\ContentRepository\Configuration;
  *
  * To enforce a deterministic behavior, we wrap the RecursiveDirectoryIterator and sort the files level per level.
  *
- * This iterator is not lazy, as the construction alone will evaluate the inner RecursiveDirectoryIterator
+ * This iterator is lazy, but even fetching one item will evaluate the inner RecursiveDirectoryIterator (one level of the directories)
  *
  * The sorting strategy is as follows:
  *
@@ -43,6 +45,8 @@ namespace Neos\ContentRepository\Configuration;
  * Content/Columns/B.yaml
  * Content/Z.yaml
  *
+ * @Flow\Proxy(false)
+ * @internal
  */
 class RecursiveDirectoryIteratorWithSorting implements \RecursiveIterator
 {
@@ -52,19 +56,35 @@ class RecursiveDirectoryIteratorWithSorting implements \RecursiveIterator
 
     private const CHILDREN = 2;
 
-    private \RecursiveDirectoryIterator $recursiveDirectoryIterator;
+    /**
+     * @var \RecursiveDirectoryIterator
+     */
+    private $innerRecursiveDirectoryIterator;
 
+    /**
+     * The initialized one level structure of the inner RecursiveDirectoryIterator
+     * @var array<string, array<int, mixed>
+     */
     private array $files;
 
     public function __construct(\RecursiveDirectoryIterator $recursiveDirectoryIterator)
     {
-        $this->recursiveDirectoryIterator = $recursiveDirectoryIterator;
+        $this->innerRecursiveDirectoryIterator = $recursiveDirectoryIterator;
+    }
+
+    private function initialize(): void
+    {
+        if (isset($this->files)) {
+            return;
+        }
         $files = [];
-        foreach ($this->recursiveDirectoryIterator as $fileInfo) {
+        foreach ($this->innerRecursiveDirectoryIterator as $key => $fileInfo) {
             $files[$fileInfo->getFilename()] = [
                 self::FILE_INFO => $fileInfo,
-                self::CHILDREN => $this->recursiveDirectoryIterator->hasChildren() ? $this->recursiveDirectoryIterator->getChildren() : null,
-                self::KEY => $this->recursiveDirectoryIterator->key()
+                self::CHILDREN => $this->innerRecursiveDirectoryIterator->hasChildren()
+                    ? new self($this->innerRecursiveDirectoryIterator->getChildren())
+                    : null,
+                self::KEY => $key
             ];
         }
         ksort($files);
@@ -74,6 +94,7 @@ class RecursiveDirectoryIteratorWithSorting implements \RecursiveIterator
     #[\ReturnTypeWillChange]
     public function current()
     {
+        $this->initialize();
         if (($c = current($this->files)) === false) {
             return false;
         }
@@ -82,12 +103,14 @@ class RecursiveDirectoryIteratorWithSorting implements \RecursiveIterator
 
     public function next(): void
     {
+        $this->initialize();
         next($this->files);
     }
 
     #[\ReturnTypeWillChange]
     public function key()
     {
+        $this->initialize();
         if (($c = current($this->files)) === false) {
             throw new \OutOfBoundsException();
         }
@@ -96,16 +119,19 @@ class RecursiveDirectoryIteratorWithSorting implements \RecursiveIterator
 
     public function valid(): bool
     {
+        $this->initialize();
         return current($this->files) !== false;
     }
 
     public function rewind(): void
     {
+        $this->initialize();
         reset($this->files);
     }
 
     public function hasChildren(): bool
     {
+        $this->initialize();
         if (($c = current($this->files)) === false) {
             throw new \OutOfBoundsException();
         }
@@ -114,10 +140,11 @@ class RecursiveDirectoryIteratorWithSorting implements \RecursiveIterator
 
     public function getChildren(): \RecursiveIterator
     {
+        $this->initialize();
         if (!$this->hasChildren()) {
             throw new \UnexpectedValueException(sprintf('Cannot recurse into %s', current($this->files)[self::FILE_INFO]->getFilename()));
         }
         $c = current($this->files);
-        return new self($c[self::CHILDREN]);
+        return $c[self::CHILDREN];
     }
 }
