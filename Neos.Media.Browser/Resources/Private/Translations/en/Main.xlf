@@ -428,7 +428,7 @@
 				<source>No document node found for this node</source>
 			</trans-unit>
 			<trans-unit id="createMissingVariants" xml:space="preserve">
-				<source>Create missing Variants</source>
+				<source>Create missing variants</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -476,7 +476,7 @@ class AssetController extends ActionController
     }
 
     /**
-     * (Re-)create all variants for the given image
+     * Create missing variants for the given image
      *
      * @param string $assetSourceIdentifier
      * @param string $assetProxyIdentifier
