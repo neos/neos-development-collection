@@ -305,8 +305,8 @@ final class AssetUsageProjection implements ProjectionInterface
     private function findOriginalAssetId(string $assetId): ?string
     {
         if (!array_key_exists($assetId, $this->originalAssetIdMappingRuntimeCache)) {
-            /** @var AssetInterface|null $asset */
             try {
+                /** @var AssetInterface|null $asset */
                 $asset = $this->assetRepository->findByIdentifier($assetId);
             } /** @noinspection PhpRedundantCatchClauseInspection */ catch (ORMException) {
                 return null;
