@@ -137,6 +137,9 @@
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
             ],
+            "Neos\\ContentRepository\\TestSuite\\": [
+                "Neos.ContentRepository.TestSuite/Classes"
+            ],
             "Neos\\ContentRepository\\Core\\": [
                 "Neos.ContentRepository.Core/Classes"
             ],
