@@ -57,14 +57,16 @@
                                             </label>
                                         </f:for>
                                     </f:if>
-                                    <f:if condition="{assetCollections}">
-                                        <label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
-                                        <f:for each="{assetCollections}" as="assetCollection">
-                                            <label class="neos-checkbox neos-inline">
-                                                <m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
-                                            </label>
-                                        </f:for>
-                                    </f:if>
+                                    <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
+                                        <f:if condition="{assetCollections}">
+                                            <label>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</label>
+                                            <f:for each="{assetCollections}" as="assetCollection">
+                                                <label class="neos-checkbox neos-inline">
+                                                    <m:form.checkbox property="assetCollections" multiple="TRUE" value="{assetCollection}" /><span></span> {assetCollection.title}
+                                                </label>
+                                            </f:for>
+                                        </f:if>
+                                    </f:security.ifAccess>
                                 </fieldset>
                                 <fieldset>
                                     <legend>{neos:backend.translate(id: 'metadata', package: 'Neos.Media.Browser')}</legend>
