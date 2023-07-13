@@ -52,6 +52,7 @@
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
+        "neos/contentrepository-tests": "self.version",
         "neos/contentrepository-core": "self.version",
         "neos/contentrepository-export": "self.version",
         "neos/contentrepository-legacynodemigration": "self.version",
