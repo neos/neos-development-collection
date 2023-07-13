@@ -1,5 +1,5 @@
 {
-    "name": "neos/contentrepository-tests",
+    "name": "neos/contentrepository-testsuite",
     "type": "neos-package",
     "description": "Testing support suite for the Neos Content Repository. Contains fixtures and helpers for all layers of tests",
     "license": [
@@ -10,7 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\ContentRepository\\Tests\\": "Classes"
+            "Neos\\ContentRepository\\TestSuite\\": "Classes"
         }
     },
     "extra": {
