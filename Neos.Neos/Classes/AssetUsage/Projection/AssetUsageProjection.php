@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Projection;
 
+use Doctrine\ORM\Exception\ORMException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -305,7 +306,11 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         if (!array_key_exists($assetId, $this->originalAssetIdMappingRuntimeCache)) {
             /** @var AssetInterface|null $asset */
-            $asset = $this->assetRepository->findByIdentifier($assetId);
+            try {
+                $asset = $this->assetRepository->findByIdentifier($assetId);
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (ORMException) {
+                return null;
+            }
             /** @phpstan-ignore-next-line  */
             $this->originalAssetIdMappingRuntimeCache[$assetId] = $asset instanceof AssetVariantInterface ? $asset->getOriginalAsset()->getIdentifier() : null;
         }
