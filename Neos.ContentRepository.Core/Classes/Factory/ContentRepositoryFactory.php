@@ -94,6 +94,7 @@ final class ContentRepositoryFactory
                 $this->buildCommandBus(),
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projections,
+                $this->projectionFactoryDependencies->eventNormalizer,
                 $this->buildEventPersister(),
                 $this->projectionFactoryDependencies->nodeTypeManager,
                 $this->projectionFactoryDependencies->interDimensionalVariationGraph,

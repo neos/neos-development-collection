@@ -31,7 +31,6 @@ final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
         Projections $projectionsSoFar,
     ): AssetUsageProjection {
         return new AssetUsageProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->assetRepository,
             $projectionFactoryDependencies->contentRepositoryId,
             $this->dbal,

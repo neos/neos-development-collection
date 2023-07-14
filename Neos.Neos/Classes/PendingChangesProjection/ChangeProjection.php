@@ -19,32 +19,29 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
-use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -61,7 +58,6 @@ class ChangeProjection implements ProjectionInterface
     private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly WorkspaceFinder $workspaceFinder,
         private readonly string $tableName,
@@ -146,10 +142,9 @@ class ChangeProjection implements ProjectionInterface
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-        return in_array($eventClassName, [
+        return in_array($event::class, [
             NodeAggregateWasMoved::class,
             NodePropertiesWereSet::class,
             NodeReferencesWereSet::class,
@@ -164,50 +159,29 @@ class ChangeProjection implements ProjectionInterface
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
-    }
-
-    private function apply(EventEnvelope $eventEnvelope): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
+        if (!$this->canHandle($event)) {
             return;
         }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-        if ($eventInstance instanceof NodeAggregateWasMoved) {
-            $this->whenNodeAggregateWasMoved($eventInstance);
-        } elseif ($eventInstance instanceof NodePropertiesWereSet) {
-            $this->whenNodePropertiesWereSet($eventInstance);
-        } elseif ($eventInstance instanceof NodeReferencesWereSet) {
-            $this->whenNodeReferencesWereSet($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWithNodeWasCreated) {
-            $this->whenNodeAggregateWithNodeWasCreated($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWasDisabled) {
-            $this->whenNodeAggregateWasDisabled($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWasEnabled) {
-            $this->whenNodeAggregateWasEnabled($eventInstance);
-        } elseif ($eventInstance instanceof NodeAggregateWasRemoved) {
-            $this->whenNodeAggregateWasRemoved($eventInstance);
-        } elseif ($eventInstance instanceof DimensionSpacePointWasMoved) {
-            $this->whenDimensionSpacePointWasMoved($eventInstance);
-        } elseif ($eventInstance instanceof NodeSpecializationVariantWasCreated) {
-            $this->whenNodeSpecializationVariantWasCreated($eventInstance);
-        } elseif ($eventInstance instanceof NodeGeneralizationVariantWasCreated) {
-            $this->whenNodeGeneralizationVariantWasCreated($eventInstance);
-        } elseif ($eventInstance instanceof NodePeerVariantWasCreated) {
-            $this->whenNodePeerVariantWasCreated($eventInstance);
-        } else {
-            throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
-        }
+        match ($event::class) {
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
+            NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
+            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+        };
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): ChangeFinder

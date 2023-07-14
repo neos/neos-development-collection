@@ -43,7 +43,6 @@ class ContentStreamProjectionFactory implements ProjectionFactoryInterface
             (new \ReflectionClass(ContentStreamProjection::class))->getShortName()
         ));
         return new ContentStreamProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_%s',

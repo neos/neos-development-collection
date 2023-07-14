@@ -19,31 +19,28 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
+use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
  * @internal
@@ -60,7 +57,6 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     private WorkspaceRuntimeCache $workspaceRuntimeCache;
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly DbalClientInterface $dbalClient,
         private readonly string $tableName,
     ) {
@@ -125,10 +121,9 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
     }
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-        return in_array($eventClassName, [
+        return in_array($event::class, [
             WorkspaceWasCreated::class,
             WorkspaceWasRenamed::class,
             RootWorkspaceWasCreated::class,
@@ -144,52 +139,30 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
-        $catchUp->run($eventStream);
-    }
-
-    private function apply(EventEnvelope $eventEnvelope): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
+        if (!$this->canHandle($event)) {
             return;
         }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-
-        if ($eventInstance instanceof WorkspaceWasCreated) {
-            $this->whenWorkspaceWasCreated($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasRenamed) {
-            $this->whenWorkspaceWasRenamed($eventInstance);
-        } elseif ($eventInstance instanceof RootWorkspaceWasCreated) {
-            $this->whenRootWorkspaceWasCreated($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasDiscarded) {
-            $this->whenWorkspaceWasDiscarded($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasPartiallyDiscarded) {
-            $this->whenWorkspaceWasPartiallyDiscarded($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasPartiallyPublished) {
-            $this->whenWorkspaceWasPartiallyPublished($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasPublished) {
-            $this->whenWorkspaceWasPublished($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasRebased) {
-            $this->whenWorkspaceWasRebased($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceRebaseFailed) {
-            $this->whenWorkspaceRebaseFailed($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceWasRemoved) {
-            $this->whenWorkspaceWasRemoved($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceOwnerWasChanged) {
-            $this->whenWorkspaceOwnerWasChanged($eventInstance);
-        } elseif ($eventInstance instanceof WorkspaceBaseWorkspaceWasChanged) {
-            $this->whenWorkspaceBaseWorkspaceWasChanged($eventInstance);
-        } else {
-            throw new \RuntimeException('Not supported: ' . get_class($eventInstance));
-        }
+        match ($event::class) {
+            WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
+            WorkspaceWasRenamed::class => $this->whenWorkspaceWasRenamed($event),
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            WorkspaceWasDiscarded::class => $this->whenWorkspaceWasDiscarded($event),
+            WorkspaceWasPartiallyDiscarded::class => $this->whenWorkspaceWasPartiallyDiscarded($event),
+            WorkspaceWasPartiallyPublished::class => $this->whenWorkspaceWasPartiallyPublished($event),
+            WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
+            WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
+            WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
+            WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
+            WorkspaceOwnerWasChanged::class => $this->whenWorkspaceOwnerWasChanged($event),
+            WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
+        };
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): WorkspaceFinder

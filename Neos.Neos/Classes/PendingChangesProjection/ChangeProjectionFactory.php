@@ -48,7 +48,6 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
             (new \ReflectionClass(ChangeProjection::class))->getShortName()
         ));
         return new ChangeProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             $workspaceFinder,
             sprintf(

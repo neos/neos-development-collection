@@ -134,6 +134,9 @@ final class EventNormalizer
         );
     }
 
+    /**
+     * @return class-string<EventInterface>
+     */
     public function getEventClassName(Event $event): string
     {
         return $this->shortEventTypeToFullClassName[$event->type->value] ?? throw new \InvalidArgumentException(

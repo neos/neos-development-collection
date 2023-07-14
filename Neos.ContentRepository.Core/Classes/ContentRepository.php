@@ -17,10 +17,11 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
-use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -32,11 +33,11 @@ use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\User\StaticUserIdProvider;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\EventStore\ProvidesSetupInterface;
@@ -62,6 +63,7 @@ final class ContentRepository
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
         private readonly Projections $projections,
+        private readonly EventNormalizer $eventNormalizer,
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
@@ -119,6 +121,7 @@ final class ContentRepository
         return $this->eventPersister->publishEvents($eventsToPublish);
     }
 
+
     /**
      * @template T of ProjectionStateInterface
      * @param class-string<T> $projectionStateClassName
@@ -138,7 +141,20 @@ final class ContentRepository
         // TODO allow custom stream name per projection
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
-        $projection->catchUp($eventStream, $this);
+
+        $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            // TODO $catchUpHook->onBeforeEvent($event, $eventEnvelope);
+            $projection->apply($event, $eventEnvelope);
+            // TODO $catchUpHook->onAfterEvent($event, $eventEnvelope);
+        };
+
+        $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
+        // TODO $catchUpHook = $this->catchUpHookFactory->build($this);
+        // TODO $catchUpHook->onBeforeCatchUp();
+        // TODO $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
+        $catchUp->run($eventStream);
+        // TODO $catchUpHook->onAfterCatchUp();
     }
 
     public function setUp(): SetupResult

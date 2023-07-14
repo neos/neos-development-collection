@@ -6,7 +6,9 @@ namespace Neos\ContentRepository\Core\Projection;
 
 use Neos\ContentRepository\Core\CommandHandler\PendingProjections;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\Event;
@@ -28,36 +30,11 @@ interface ProjectionInterface
      */
     public function setUp(): void;
 
-    /**
-     * Can the projection handle this event? Must be deterministic.
-     *
-     * Used to determine whether this projection should be triggered in response to an event; and also
-     * needed as part of the Blocking logic ({@see PendingProjections}).
-     *
-     * @param Event $event
-     * @return bool
-     */
-    public function canHandle(Event $event): bool;
+    public function canHandle(EventInterface $event): bool;
 
-    /**
-     * Catch up the projection, consuming the not-yet-seen events in the given event stream.
-     *
-     * How this is called depends a lot on your infrastructure - usually via some indirection
-     * from {@see ProjectionCatchUpTriggerInterface}.
-     *
-     * @param EventStreamInterface $eventStream
-     * @param ContentRepository $contentRepository
-     * @return void
-     */
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void;
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void;
 
-    /**
-     * Part of the Blocking implementation of commands - usually delegates to an internal
-     * {@see CheckpointStorageInterface::getHighestAppliedSequenceNumber()}.
-     *
-     * See {@see PendingProjections} for implementation details.
-     */
-    public function getSequenceNumber(): SequenceNumber;
+    public function getCheckpointStorage(): CheckpointStorageInterface;
 
     /**
      * NOTE: The ProjectionStateInterface returned must be ALWAYS THE SAME INSTANCE.

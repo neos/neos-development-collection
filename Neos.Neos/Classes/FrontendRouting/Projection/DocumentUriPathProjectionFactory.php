@@ -44,11 +44,9 @@ final class DocumentUriPathProjectionFactory implements ProjectionFactoryInterfa
     ): DocumentUriPathProjection {
 
         return new DocumentUriPathProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $projectionFactoryDependencies->nodeTypeManager,
             $this->dbal,
             self::projectionTableNamePrefix($projectionFactoryDependencies->contentRepositoryId),
-            $catchUpHookFactory
         );
     }
 }

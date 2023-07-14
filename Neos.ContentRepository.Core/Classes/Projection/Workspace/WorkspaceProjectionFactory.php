@@ -43,7 +43,6 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
             (new \ReflectionClass(WorkspaceProjection::class))->getShortName()
         ));
         return new WorkspaceProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_%s',

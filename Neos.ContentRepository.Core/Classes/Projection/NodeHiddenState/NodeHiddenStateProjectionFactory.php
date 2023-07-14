@@ -44,7 +44,6 @@ class NodeHiddenStateProjectionFactory implements ProjectionFactoryInterface
         ));
 
         return new NodeHiddenStateProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_%s',
