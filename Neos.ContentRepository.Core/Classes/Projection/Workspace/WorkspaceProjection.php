@@ -41,6 +41,7 @@ use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use function sprintf;
 
 /**
  * @internal
@@ -141,9 +142,6 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         match ($event::class) {
             WorkspaceWasCreated::class => $this->whenWorkspaceWasCreated($event),
             WorkspaceWasRenamed::class => $this->whenWorkspaceWasRenamed($event),
@@ -157,6 +155,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             WorkspaceWasRemoved::class => $this->whenWorkspaceWasRemoved($event),
             WorkspaceOwnerWasChanged::class => $this->whenWorkspaceOwnerWasChanged($event),
             WorkspaceBaseWorkspaceWasChanged::class => $this->whenWorkspaceBaseWorkspaceWasChanged($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

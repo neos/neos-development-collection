@@ -144,6 +144,9 @@ final class ContentRepository
 
         $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            if (!$projection->canHandle($event)) {
+                return;
+            }
             // TODO $catchUpHook->onBeforeEvent($event, $eventEnvelope);
             $projection->apply($event, $eventEnvelope);
             // TODO $catchUpHook->onAfterEvent($event, $eventEnvelope);

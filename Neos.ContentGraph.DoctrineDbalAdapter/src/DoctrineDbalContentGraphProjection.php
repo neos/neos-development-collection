@@ -59,6 +59,7 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
+use function get_debug_type;
 
 /**
  * @implements ProjectionInterface<ContentGraph>
@@ -178,9 +179,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         match ($event::class) {
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
@@ -200,6 +198,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
             NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

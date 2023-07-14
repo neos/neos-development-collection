@@ -42,6 +42,7 @@ use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use function sprintf;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -161,9 +162,6 @@ class ChangeProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         match ($event::class) {
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
@@ -176,6 +174,7 @@ class ChangeProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

@@ -41,6 +41,7 @@ use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use function sprintf;
 
 /**
  * See {@see ContentStreamFinder} for explanation.
@@ -138,9 +139,6 @@ class ContentStreamProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         if ($event instanceof EmbedsContentStreamAndNodeAggregateId) {
             $this->updateContentStreamVersion($event, $eventEnvelope);
             return;
@@ -157,6 +155,7 @@ class ContentStreamProjection implements ProjectionInterface
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             WorkspaceRebaseFailed::class => $this->whenWorkspaceRebaseFailed($event),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event, $eventEnvelope),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

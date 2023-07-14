@@ -51,6 +51,7 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
+use function sprintf;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
@@ -183,9 +184,6 @@ final class HypergraphProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         match ($event::class) {
             // ContentStreamForking
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
@@ -209,6 +207,7 @@ final class HypergraphProjection implements ProjectionInterface
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

@@ -34,6 +34,7 @@ use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\NodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
+use function sprintf;
 
 /**
  * @implements ProjectionInterface<AssetUsageFinder>
@@ -255,10 +256,6 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
-
         match ($event::class) {
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event, $eventEnvelope),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
@@ -271,7 +268,7 @@ final class AssetUsageProjection implements ProjectionInterface
             WorkspaceWasPublished::class => $this->whenWorkspaceWasPublished($event),
             WorkspaceWasRebased::class => $this->whenWorkspaceWasRebased($event),
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
-            default => null,
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

@@ -44,6 +44,7 @@ use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use function sprintf;
 
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
@@ -135,9 +136,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         match ($event::class) {
             RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
@@ -154,6 +152,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 

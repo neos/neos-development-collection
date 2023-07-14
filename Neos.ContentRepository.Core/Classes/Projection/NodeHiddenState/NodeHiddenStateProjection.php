@@ -30,6 +30,7 @@ use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
+use function sprintf;
 
 /**
  * TODO: this class needs proper testing
@@ -111,14 +112,12 @@ class NodeHiddenStateProjection implements ProjectionInterface
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        if (!$this->canHandle($event)) {
-            return;
-        }
         match ($event::class) {
             NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
             NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
 
