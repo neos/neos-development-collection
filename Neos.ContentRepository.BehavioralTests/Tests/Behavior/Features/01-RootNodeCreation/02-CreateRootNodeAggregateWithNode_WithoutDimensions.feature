@@ -11,6 +11,9 @@ Feature: Create a root node aggregate
     And I have the following NodeTypes configuration:
     """
     'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository:AnotherRoot':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     'Neos.ContentRepository.Testing:NonRoot': []
     """
     And I am user identified by "initiating-user-identifier"
@@ -76,14 +79,14 @@ Feature: Create a root node aggregate
     When the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "nody-mc-nodeface"            |
-      | nodeTypeName    | "Neos.ContentRepository:Root" |
+      | nodeTypeName    | "Neos.ContentRepository:AnotherRoot" |
 
     Then I expect exactly 3 events to be published on stream "ContentStream:cs-identifier"
     And event at index 2 is of type "RootNodeAggregateWithNodeWasCreated" with payload:
       | Key                         | Expected                      |
       | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "nody-mc-nodeface"            |
-      | nodeTypeName                | "Neos.ContentRepository:Root" |
+      | nodeTypeName                | "Neos.ContentRepository:AnotherRoot" |
       | coveredDimensionSpacePoints | [[]]                          |
       | nodeAggregateClassification | "root"                        |
 
@@ -93,7 +96,7 @@ Feature: Create a root node aggregate
     And I expect this node aggregate to have no child node aggregates
     And I expect the node aggregate "nody-mc-nodeface" to exist
     And I expect this node aggregate to be classified as "root"
-    And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
+    And I expect this node aggregate to be of type "Neos.ContentRepository:AnotherRoot"
     And I expect this node aggregate to be unnamed
     And I expect this node aggregate to occupy dimension space points [[]]
     And I expect this node aggregate to cover dimension space points [[]]
@@ -105,7 +108,7 @@ Feature: Create a root node aggregate
     And I expect a node identified by cs-identifier;lady-eleonode-rootford;{} to exist in the content graph
     And I expect a node identified by cs-identifier;nody-mc-nodeface;{} to exist in the content graph
     And I expect this node to be classified as "root"
-    And I expect this node to be of type "Neos.ContentRepository:Root"
+    And I expect this node to be of type "Neos.ContentRepository:AnotherRoot"
     And I expect this node to be unnamed
     And I expect this node to have no properties
 

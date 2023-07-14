@@ -48,6 +48,8 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
@@ -66,6 +68,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
+        private readonly CatchUpHookFactoryInterface $catchUpHookFactory
     ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $this->dbal,
@@ -141,17 +144,25 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
     {
-        $catchUp = CatchUp::create($this->apply(...), $this->checkpointStorage);
+        $catchUpHook = $this->catchUpHookFactory->build($contentRepository);
+        $catchUpHook->onBeforeCatchUp();
+        $catchUp = CatchUp::create(
+            fn(EventEnvelope $eventEnvelope) => $this->apply($eventEnvelope, $catchUpHook),
+            $this->checkpointStorage
+        );
+        $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
         $catchUp->run($eventStream);
+        $catchUpHook->onAfterCatchUp();
     }
 
-    private function apply(\Neos\EventStore\Model\EventEnvelope $eventEnvelope): void
+    private function apply(\Neos\EventStore\Model\EventEnvelope $eventEnvelope, CatchUpHookInterface $catchUpHook): void
     {
         if (!$this->canHandle($eventEnvelope->event)) {
             return;
         }
 
         $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
+        $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
 
         $this->dbal->beginTransaction();
 
@@ -177,6 +188,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
         try {
             $this->dbal->commit();
+            $catchUpHook->onAfterEvent($eventInstance, $eventEnvelope);
         } catch (ConnectionException $e) {
             throw new \RuntimeException(sprintf(
                 'Failed to commit transaction in %s: %s',
@@ -536,6 +548,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'nodeAggregateId' => $node->getNodeAggregateId()->value,
                 'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
             ]);
+            $this->getState()->purgeCacheFor($node);
         }
     }
 
@@ -604,6 +617,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                     'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
                 ]
             );
+            $this->getState()->purgeCacheFor($node);
+
             $this->emitDocumentUriPathChanged($oldUriPath, $newUriPath, $event, $eventEnvelope);
         }
     }
@@ -641,6 +656,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                         null
                     ),
                 };
+
+                $this->getState()->purgeCacheFor($node);
             }
         }
     }

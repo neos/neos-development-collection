@@ -77,7 +77,7 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         NodeAggregateId $nodeAggregateId,
         string $dimensionSpacePointHash
     ): DocumentNodeInfo {
-        $cacheKey = $nodeAggregateId->value . '#' . $dimensionSpacePointHash;
+        $cacheKey = $this->calculateCacheKey($nodeAggregateId, $dimensionSpacePointHash);
         if ($this->cacheEnabled && isset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey])) {
             return $this->getByIdAndDimensionSpacePointHashCache[$cacheKey];
         }
@@ -257,9 +257,69 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
         return DocumentNodeInfo::fromDatabaseRow($row);
     }
 
+    /**
+     * @param string $where
+     * @param array<string> $parameters
+     * @return DocumentNodeInfos
+     */
+    private function fetchMultiple(string $where, array $parameters): DocumentNodeInfos
+    {
+        try {
+            $rows = $this->dbal->fetchAllAssociative(
+                'SELECT * FROM ' . $this->tableNamePrefix . '_uri
+                     WHERE ' . $where,
+                $parameters,
+                DocumentUriPathProjection::COLUMN_TYPES_DOCUMENT_URIS
+            );
+        } catch (DBALException $e) {
+            throw new \RuntimeException(sprintf(
+                'Failed to load node for query "%s": %s',
+                $where,
+                $e->getMessage()
+            ), 1683808640, $e);
+        }
+
+        return DocumentNodeInfos::create(
+            array_map(DocumentNodeInfo::fromDatabaseRow(...), $rows)
+        );
+    }
+
+    private function calculateCacheKey(NodeAggregateId $nodeAggregateId, string $dimensionSpacePointHash): string
+    {
+        return $nodeAggregateId->value . '#' . $dimensionSpacePointHash;
+    }
+
+    public function purgeCacheFor(DocumentNodeInfo $nodeInfo): void
+    {
+        if ($this->cacheEnabled) {
+            $cacheKey = $this->calculateCacheKey($nodeInfo->getNodeAggregateId(), $nodeInfo->getDimensionSpacePointHash());
+            unset($this->getByIdAndDimensionSpacePointHashCache[$cacheKey]);
+        }
+    }
+
     public function disableCache(): void
     {
         $this->cacheEnabled = false;
         $this->getByIdAndDimensionSpacePointHashCache = [];
+    }
+
+    /**
+     * Returns the DocumentNodeInfos of all descendants of a given node.
+     * Note: This will not exclude *disabled* nodes in order to allow the calling side
+     * to make a distinction (e.g. in order to display a custom error)
+     *
+     * @param DocumentNodeInfo $node
+     * @return DocumentNodeInfos
+     */
+    public function getDescendantsOfNode(DocumentNodeInfo $node): DocumentNodeInfos
+    {
+        return $this->fetchMultiple(
+            'dimensionSpacePointHash = :dimensionSpacePointHash 
+            AND nodeAggregateIdPath LIKE :childNodeAggregateIdPathPrefix',
+            [
+                'dimensionSpacePointHash' => $node->getDimensionSpacePointHash(),
+                'childNodeAggregateIdPathPrefix' => $node->getNodeAggregateIdPath() . '/%',
+            ]
+        );
     }
 }

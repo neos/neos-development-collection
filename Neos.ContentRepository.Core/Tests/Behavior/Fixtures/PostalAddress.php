@@ -18,26 +18,14 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Fixtures;
  *
  * @see https://schema.org/PostalAddress
  */
-final class PostalAddress
+final readonly class PostalAddress
 {
-    private string $streetAddress;
-
-    private string $postalCode;
-
-    private string $addressLocality;
-
-    private string $addressCountry;
-
     private function __construct(
-        string $streetAddress,
-        string $postalCode,
-        string $addressLocality,
-        string $addressCountry
+        public string $streetAddress,
+        public string $postalCode,
+        public string $addressLocality,
+        public string $addressCountry
     ) {
-        $this->streetAddress = $streetAddress;
-        $this->postalCode = $postalCode;
-        $this->addressLocality = $addressLocality;
-        $this->addressCountry = $addressCountry;
     }
 
     public static function fromArray(array $array): self
@@ -68,25 +56,5 @@ final class PostalAddress
             'Another city',
             'Another country'
         );
-    }
-
-    public function getStreetAddress(): string
-    {
-        return $this->streetAddress;
-    }
-
-    public function getPostalCode(): string
-    {
-        return $this->postalCode;
-    }
-
-    public function getAddressLocality(): string
-    {
-        return $this->addressLocality;
-    }
-
-    public function getAddressCountry(): string
-    {
-        return $this->addressCountry;
     }
 }

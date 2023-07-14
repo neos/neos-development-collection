@@ -12,7 +12,9 @@ namespace Neos\ContentRepository\Security\Authorization\Privilege\Node;
  */
 
 use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -56,12 +58,25 @@ class NodePrivilegeContext
      */
     public function isAncestorNodeOf(string $nodePathOrIdentifier): bool
     {
-        $nodePathOrResult = $this->resolveNodePathOrResult($nodePathOrIdentifier);
-        if (is_bool($nodePathOrResult)) {
-            return $nodePathOrResult;
+        $referenceNodeAggregateId = $this->resolveNodeAggregateIdFromNodePathOrId($nodePathOrIdentifier);
+        if (!$referenceNodeAggregateId) {
+            return false;
         }
 
-        return str_starts_with($nodePathOrResult, $this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId)->value);
+        if ($referenceNodeAggregateId->equals($this->node->nodeAggregateId)) {
+            return true;
+        }
+
+        foreach ($this->getSubgraph()->findAncestorNodes(
+            $referenceNodeAggregateId,
+            FindAncestorNodesFilter::create()
+        ) as $ancestorNode) {
+            if ($ancestorNode->nodeAggregateId->equals($this->node->nodeAggregateId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -75,12 +90,25 @@ class NodePrivilegeContext
      */
     public function isDescendantNodeOf(string $nodePathOrIdentifier): bool
     {
-        $nodePathOrResult = $this->resolveNodePathOrResult($nodePathOrIdentifier);
-        if (is_bool($nodePathOrResult)) {
-            return $nodePathOrResult;
+        $referenceNodeAggregateId = $this->resolveNodeAggregateIdFromNodePathOrId($nodePathOrIdentifier);
+        if (!$referenceNodeAggregateId) {
+            return false;
         }
 
-        return str_starts_with($this->getSubgraph()->retrieveNodePath($this->node->nodeAggregateId)->value, $nodePathOrResult);
+        if ($referenceNodeAggregateId->equals($this->node->nodeAggregateId)) {
+            return true;
+        }
+
+        foreach ($this->getSubgraph()->findAncestorNodes(
+            $this->node->nodeAggregateId,
+            FindAncestorNodesFilter::create()
+        ) as $ancestorNode) {
+            if ($ancestorNode->nodeAggregateId->equals($referenceNodeAggregateId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -168,27 +196,19 @@ class NodePrivilegeContext
     }
 
     /**
-     * Resolves the given $nodePathOrIdentifier and returns its absolute path and or a boolean,
-     * if the result directly matches the currently selected node
+     * Resolves the given $nodePathOrIdentifier and returns its node aggregate id if possible
      *
      * @param string $nodePathOrIdentifier identifier or absolute path for the node to resolve
-     * @return bool|string true if the node matches the selected node, false if the corresponding node does not exist.
-     * Otherwise the resolved absolute path with trailing slash
+     * @return NodeAggregateId|null depending on whether the given string can be resolved or not
      */
-    protected function resolveNodePathOrResult(string $nodePathOrIdentifier): bool|string
+    protected function resolveNodeAggregateIdFromNodePathOrId(string $nodePathOrIdentifier): ?NodeAggregateId
     {
-        try {
-            $nodeAggregateId = NodeAggregateId::fromString($nodePathOrIdentifier);
-            if ($nodeAggregateId->equals($this->node->nodeAggregateId)) {
-                return true;
-            }
-            $otherNode = $this->getSubgraph()->findNodeById($nodeAggregateId);
-            if (is_null($otherNode)) {
-                return false;
-            }
-            return $this->getSubgraph()->retrieveNodePath($otherNode->nodeAggregateId)->value . '/';
-        } catch (\InvalidArgumentException $e) {
-            return rtrim($nodePathOrIdentifier, '/') . '/';
+        if (AbsoluteNodePath::patternIsMatchedByString($nodePathOrIdentifier)) {
+            return $this->getSubgraph()->findNodeByAbsolutePath(
+                AbsoluteNodePath::fromString($nodePathOrIdentifier)
+            )?->nodeAggregateId;
+        } else {
+            return NodeAggregateId::fromString($nodePathOrIdentifier);
         }
     }
 

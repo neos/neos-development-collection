@@ -16,7 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -52,6 +52,8 @@ interface ContentGraphInterface extends ProjectionStateInterface
      *
      * Also throws exceptions if multiple root node aggregates of the given $nodeTypeName were found,
      * as this would lead to nondeterministic results in your code.
+     *
+     * @throws RootNodeAggregateDoesNotExist
      */
     public function findRootNodeAggregateByType(
         ContentStreamId $contentStreamId,
