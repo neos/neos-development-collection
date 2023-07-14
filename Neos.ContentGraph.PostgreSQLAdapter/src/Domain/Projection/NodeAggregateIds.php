@@ -76,7 +76,7 @@ final class NodeAggregateIds implements \IteratorAggregate
         $nodeAggregateIds = $this->ids;
         if ($succeedingSibling) {
             $pivot = (int)array_search($succeedingSibling, $nodeAggregateIds);
-            array_splice($nodeAggregateIds, $pivot, 0, $nodeAggregateId);
+            array_splice($nodeAggregateIds, $pivot, 0, [$nodeAggregateId]);
         } else {
             $nodeAggregateIds[$nodeAggregateId->value] = $nodeAggregateId;
         }

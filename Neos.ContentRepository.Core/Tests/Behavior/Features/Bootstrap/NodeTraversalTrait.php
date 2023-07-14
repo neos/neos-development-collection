@@ -14,6 +14,8 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -148,9 +150,23 @@ trait NodeTraversalTrait
         $startingNodeAggregateId = NodeAggregateId::fromString($startingNodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
             $actualNode = $subgraph->findNodeByPath($path, $startingNodeAggregateId);
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
+        }
+    }
+
+    /**
+     * @When I execute the findNodeByAbsolutePath query for path :pathSerialized I expect no node to be returned
+     * @When I execute the findNodeByAbsolutePath query for path :pathSerialized I expect the node :expectedNodeIdSerialized to be returned
+     */
+    public function iExecuteTheFindNodeByAbsolutePathQueryIExpectTheFollowingNodes(string $pathSerialized, string $expectedNodeIdSerialized = null): void
+    {
+        $path = AbsoluteNodePath::fromString($pathSerialized);
+        $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
+
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $actualNode = $subgraph->findNodeByAbsolutePath($path);
             Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
@@ -213,7 +229,6 @@ trait NodeTraversalTrait
     public function iExecuteTheRetrieveNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null, string $expectedExceptionMessage = null): void
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
-        $expectedNodePath = $expectedPathSerialized !== null ? NodePath::fromString($expectedPathSerialized) : null;
 
         /** @var ContentSubgraphInterface $subgraph */
         foreach ($this->getCurrentSubgraphs() as $subgraph) {
@@ -229,7 +244,7 @@ trait NodeTraversalTrait
             if ($expectedExceptionMessage !== null) {
                 Assert::fail('Expected an exception but none was thrown');
             }
-            Assert::assertSame($expectedNodePath->value, $actualNodePath->value);
+            Assert::assertSame($expectedPathSerialized, $actualNodePath->serializeToString());
         }
     }
 
@@ -329,6 +344,24 @@ trait NodeTraversalTrait
                 'originalLastModified' => $node->timestamps->originalLastModified,
             ];
             Assert::assertEquals($expectedTimestamps, $actualTimestamps);
+        }
+    }
+
+
+    /**
+     * @When I execute the findRootNodeByType query for node type :serializedNodeTypeName I expect no node to be returned
+     * @When I execute the findRootNodeByType query for node type :serializedNodeTypeName I expect the node :serializedExpectedNodeId to be returned
+     */
+    public function iExecuteTheFindRootNodeByTypeQueryIExpectTheFollowingNodes(string $serializedNodeTypeName, string $serializedExpectedNodeId = null): void
+    {
+        $expectedNodeAggregateId = $serializedExpectedNodeId !== null
+            ? NodeAggregateId::fromString($serializedExpectedNodeId)
+            : null;
+
+        /** @var ContentSubgraphInterface $subgraph */
+        foreach ($this->getCurrentSubgraphs() as $subgraph) {
+            $actualNode = $subgraph->findRootNodeByType(NodeTypeName::fromString($serializedNodeTypeName));
+            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
         }
     }
 }
