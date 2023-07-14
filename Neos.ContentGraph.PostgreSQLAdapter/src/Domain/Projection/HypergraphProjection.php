@@ -30,9 +30,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\SchemaBuilder\Hypergra
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
@@ -46,18 +44,13 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
 
 /**
  * The alternate reality-aware hypergraph projector for the PostgreSQL backend via Doctrine DBAL
@@ -87,7 +80,6 @@ final class HypergraphProjection implements ProjectionInterface
 
     public function __construct(
         private readonly PostgresDbalClientInterface $databaseClient,
-        private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix,

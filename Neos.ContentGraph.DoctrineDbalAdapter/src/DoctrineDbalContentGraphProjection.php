@@ -88,7 +88,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         private readonly NodeFactory $nodeFactory,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly ProjectionContentGraph $projectionContentGraph,
-        private readonly CatchUpHookFactoryInterface $catchUpHookFactory,
         private readonly string $tableNamePrefix,
     ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(

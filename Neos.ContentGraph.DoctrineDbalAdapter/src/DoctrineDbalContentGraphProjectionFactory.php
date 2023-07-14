@@ -59,7 +59,6 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
                     $this->dbalClient,
                     $tableNamePrefix
                 ),
-                $catchUpHookFactory,
                 $tableNamePrefix
             )
         );

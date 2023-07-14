@@ -42,7 +42,6 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
 
         return new HypergraphProjection(
             $this->dbalClient,
-            $catchUpHookFactory,
             new NodeFactory(
                 $projectionFactoryDependencies->contentRepositoryId,
                 $projectionFactoryDependencies->nodeTypeManager,
