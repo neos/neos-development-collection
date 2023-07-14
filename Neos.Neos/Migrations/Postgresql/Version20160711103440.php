@@ -13,7 +13,7 @@ class Version20160711103440 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 
@@ -25,7 +25,7 @@ class Version20160711103440 extends AbstractMigration
     /**
      * @param Schema $schema
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "postgresql");
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\DBAL\Migrations\AbortMigrationException;

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
@@ -13,7 +14,7 @@ class Version20141114115241 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
@@ -25,7 +26,7 @@ class Version20141114115241 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function down(Schema $schema): void 
+    public function down(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != "mysql");
 
