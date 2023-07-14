@@ -119,7 +119,17 @@ class PropertyTypeTest extends TestCase
                 ['array<' . Asset::class . '>'],
                 [[$asset], [$image], null],
                 [$bool, $int, $float, $string, $array, $date, $uri, $postalAddress, $image, $asset]
-            ]
+            ],
+            [
+                ['array<string>'],
+                [[], [$string], [$string, ''], null],
+                [$bool, $int, $float, $string, [$string, $int], $date, $uri, $postalAddress, $image, $asset, [$bool], [$float]]
+            ],
+            [
+                ['array<integer>'],
+                [[], [$int], [$int, 23432], null],
+                [$bool, $int, $float, $string, $date, $uri, $postalAddress, $image, $asset, [$bool], [$float]]
+            ],
         ];
     }
 

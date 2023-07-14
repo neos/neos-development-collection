@@ -38,9 +38,22 @@ final class PropertyType
 
     public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
+    /** only set if {@see sef:: isArrayOf()} */
+    private self $arrayOfType;
+
     private function __construct(
         public readonly string $value
     ) {
+        if ($this->isArrayOf()) {
+            $arrayOfType = self::tryFromString($this->getArrayOf());
+            if (!$arrayOfType && !$arrayOfType->isArray()) {
+                throw new \DomainException(sprintf(
+                    'Array declaration "%s" has invalid subType. Expected either class string or int',
+                    $this->value
+                ));
+            }
+            $this->arrayOfType = $arrayOfType;
+        }
     }
 
     /**
@@ -53,6 +66,18 @@ final class PropertyType
     ): self {
         if ($declaration === 'reference' || $declaration === 'references') {
             throw PropertyTypeIsInvalid::becauseItIsReference($propertyName, $nodeTypeName);
+        }
+        $type = self::tryFromString($declaration);
+        if (!$type) {
+            throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
+        }
+        return $type;
+    }
+
+    private static function tryFromString(string $declaration): ?self
+    {
+        if ($declaration === 'reference' || $declaration === 'references') {
+            return null;
         }
         if ($declaration === 'bool' || $declaration === 'boolean') {
             return self::bool();
@@ -89,7 +114,7 @@ final class PropertyType
             && !interface_exists($className)
             && !preg_match(self::PATTERN_ARRAY_OF, $declaration)
         ) {
-            throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
+            return null;
         }
 
         return new self($declaration);
@@ -160,9 +185,9 @@ final class PropertyType
         return $this->value;
     }
 
-    public function getArrayOfClassName(): string
+    private function getArrayOf(): string
     {
-        return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
+        return \mb_substr($this->value, 6, -1);
     }
 
     public function isMatchedBy(mixed $propertyValue): bool
@@ -189,15 +214,15 @@ final class PropertyType
             return $propertyValue instanceof \DateTimeInterface;
         }
         if ($this->isArrayOf()) {
-            if (is_array($propertyValue)) {
-                $className = $this->getArrayOfClassName();
-                foreach ($propertyValue as $object) {
-                    if (!$object instanceof $className) {
-                        return false;
-                    }
-                }
-                return true;
+            if (!is_array($propertyValue)) {
+                return false;
             }
+            foreach ($propertyValue as $value) {
+                if (!$this->arrayOfType->isMatchedBy($value)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         $className = $this->value[0] != '\\'
