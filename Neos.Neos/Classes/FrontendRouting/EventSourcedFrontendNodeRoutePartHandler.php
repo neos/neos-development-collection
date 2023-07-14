@@ -275,6 +275,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     }
 
     /**
+     * Resolves a node address for uri building.
+     *
+     * NOTE: The resolving of nodes is also done for disabled/hidden nodes.
+     *       To disallow showing a node actually disabled/hidden itself has to be ensured in matching a request path,
+     *       not in building one.
+     *
      * @param NodeAddress $nodeAddress
      * @param SiteDetectionResult $currentRequestSiteDetectionResult
      * @return ResolveResult
@@ -294,12 +300,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $nodeAddress->nodeAggregateId,
             $nodeAddress->dimensionSpacePoint->hash
         );
-        if ($nodeInfo->isDisabled()) {
-            throw new NodeNotFoundException(sprintf(
-                'The resolved node for address %s is disabled',
-                $nodeAddress
-            ), 1599668357);
-        }
+
         if ($nodeInfo->isShortcut()) {
             $nodeInfo = $this->nodeShortcutResolver->resolveNode($nodeInfo, $contentRepository);
             if ($nodeInfo instanceof UriInterface) {

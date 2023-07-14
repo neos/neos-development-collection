@@ -13,13 +13,11 @@ Feature: Routing functionality with multiple content dimensions
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
-    And the event RootNodeAggregateWithNodeWasCreated was published with payload:
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                                                                                                                                                                                                     |
       | contentStreamId             | "cs-identifier"                                                                                                                                                                                           |
       | nodeAggregateId             | "lady-eleonode-rootford"                                                                                                                                                                                  |
       | nodeTypeName                | "Neos.Neos:Sites"                                                                                                                                                                                         |
-      | coveredDimensionSpacePoints | [{"market":"DE", "language":"en"},{"market":"DE", "language":"de"},{"market":"DE", "language":"gsw"},{"market":"CH", "language":"en"},{"market":"CH", "language":"de"},{"market":"CH", "language":"gsw"}] |
-      | nodeAggregateClassification | "root"                                                                                                                                                                                                    |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"en"}
     And the following CreateNodeAggregateWithNode commands are executed:

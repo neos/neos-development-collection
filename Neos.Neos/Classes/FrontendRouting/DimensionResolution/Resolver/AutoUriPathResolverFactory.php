@@ -30,7 +30,6 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segme
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segments;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 
-
 /**
  * @api
  */
@@ -50,33 +49,35 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
             ->getContentDimensionSource()
             ->getContentDimensionsOrderedByPriority();
 
-        if (count($contentDimensions) >= 2) {
-            throw new AutoUriPathResolverConfigurationException(
-                'The AutoUriPathResolverFactory is only meant for single-dimension use cases.'
+        switch (count($contentDimensions)) {
+            case 0:
+                return UriPathResolver::createForNoDimensions();
+            case 1:
+                $contentDimension = reset($contentDimensions);
+                assert($contentDimension instanceof ContentDimension);
+                $mapping = [];
+                foreach ($contentDimension->values as $value) {
+                    // we'll take the Dimension Value as Uri Path Segment value.
+                    $mapping[] = SegmentMappingElement::create($value, $value->value);
+                }
+
+                $segments = Segments::create(
+                    Segment::create(
+                        $contentDimension->id,
+                        SegmentMapping::create(...$mapping)
+                    )
+                );
+                return UriPathResolver::create(
+                    $segments,
+                    Separator::fromString('-'),
+                    $contentRepository->getContentDimensionSource(),
+                    $siteConfiguration->defaultDimensionSpacePoint
+                );
+            default:
+                throw new AutoUriPathResolverConfigurationException(
+                    'The AutoUriPathResolverFactory is only meant for single-dimension use cases.'
                     . ' For everything more advanced, please manually configure UriPathResolver in Settings.yaml.'
-            );
+                );
         }
-
-        $contentDimension = reset($contentDimensions);
-        assert($contentDimension instanceof ContentDimension);
-        $mapping = [];
-        foreach ($contentDimension->values as $value) {
-            // we'll take the Dimension Value as Uri Path Segment value.
-            $mapping[] = SegmentMappingElement::create($value, $value->value);
-        }
-
-        $segments = Segments::create(
-            Segment::create(
-                $contentDimension->id,
-                SegmentMapping::create(...$mapping)
-            )
-        );
-
-        return UriPathResolver::create(
-            $segments,
-            Separator::fromString('-'),
-            $contentRepository->getContentDimensionSource(),
-            $siteConfiguration->defaultDimensionSpacePoint
-        );
     }
 }
