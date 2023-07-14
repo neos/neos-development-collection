@@ -15,12 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\Utility;
 
 use Behat\Transliterator\Transliterator;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\Exception\InvalidLocaleIdentifierException;
-use Neos\Flow\I18n\Locale;
 use Neos\Neos\Exception;
 use Neos\Neos\Service\TransliterationService;
 
@@ -32,6 +29,9 @@ class NodeUriPathSegmentGenerator
 {
     #[Flow\Inject]
     protected TransliterationService $transliterationService;
+
+    #[Flow\Inject]
+    protected LocaleUtility $localeUtility;
 
     /**
      * Generates a URI path segment for a given node taking its language dimension value into account
@@ -47,30 +47,13 @@ class NodeUriPathSegmentGenerator
 
         $textForNode = $text ?: $node->getLabel() ?: $node->nodeName?->value ?? '';
 
-        return $this->generateUriPathSegmentFromTextForDimension(
-            $textForNode,
-            $node?->originDimensionSpacePoint->toDimensionSpacePoint() ?? DimensionSpacePoint::fromArray([])
+        $locale = $this->localeUtility->createForDimensionSpacePoint(
+            $node?->originDimensionSpacePoint->toDimensionSpacePoint() ?? DimensionSpacePoint::fromArray([]),
+            $node->subgraphIdentity->contentRepositoryId
         );
-    }
 
-    /**
-     * Generates a URI path segment for a given text taking the language dimension value into account
-     *
-     * @param string $text
-     * @param DimensionSpacePoint $dimensionSpacePoint to determine language dimension value from
-     */
-    public function generateUriPathSegmentFromTextForDimension(string $text, DimensionSpacePoint $dimensionSpacePoint): string
-    {
-        $languageDimensionValue = $dimensionSpacePoint->getCoordinate(new ContentDimensionId('language'));
-        $language = null;
-        if ($languageDimensionValue !== null) {
-            try {
-                $language = (new Locale($languageDimensionValue))->getLanguage();
-            } catch (InvalidLocaleIdentifierException $e) {
-                // we don't need to do anything here; we'll just transliterate the text.
-            }
-        }
-        $transliteratedText = $this->transliterationService->transliterate($text, $language);
+        $transliteratedText = $this->transliterationService->transliterate($textForNode, $locale?->getLanguage());
         return Transliterator::urlize($transliteratedText);
+
     }
 }

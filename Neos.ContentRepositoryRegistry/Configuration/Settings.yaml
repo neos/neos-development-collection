@@ -10,6 +10,7 @@ Neos:
     contentRepositories:
       default:
         preset: default
+        # localeDimensionKey: "language"
         contentDimensions:
           # NOTE: Dimensions Config follows here
 
