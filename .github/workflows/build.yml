@@ -263,7 +263,7 @@ jobs:
             echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
 
             echo "copying logs"
-            cp -R Data/Logs Data/DebugDatabaseDumps/Logs
+            cp -R Data/Logs ${{ github.workspace }}/Data/DebugDatabaseDumps/Logs
 
             sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
             sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove
