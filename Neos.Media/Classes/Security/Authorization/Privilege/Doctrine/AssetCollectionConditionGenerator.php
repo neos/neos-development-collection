@@ -57,7 +57,7 @@ class AssetCollectionConditionGenerator extends EntityConditionGenerator
 
         return $propertyConditionGenerator->equals($collectionIdentifier);
     }
-    
+
     /**
      * @param string $collectionTitle
      * @return PropertyConditionGenerator
@@ -90,5 +90,4 @@ class AssetCollectionConditionGenerator extends EntityConditionGenerator
 
         return $propertyConditionGenerator->like('%' . $collectionTitle . '%');
     }
-
 }
