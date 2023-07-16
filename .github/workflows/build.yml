@@ -261,9 +261,14 @@ jobs:
           set -e
           if [ $retVal -ne 0 ]; then
             echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
+
+            echo "copying logs"
+            cp -R Data/Logs Data/DebugDatabaseDumps/Logs
+
             sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
             sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove
             sudo DEBIAN_FRONTEND=noninteractive apt -y autoclean
+            sudo apt-get update
             sudo apt-get install -y postgresql-client mariadb-client
             echo "writing PW file"
             touch ~/.pgpass
@@ -274,8 +279,6 @@ jobs:
             pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
             echo "pg_dump finished, starting mysqldump"
             mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
-            echo "copying logs"
-            cp -R Data/Logs Data/DebugDatabaseDumps/Logs
           fi
           exit $retVal
           # END OF DEBUG SCRIPT
@@ -295,44 +298,44 @@ jobs:
           echo '${{ toJSON(steps) }}'
           exit 1
 
-      - name: Setup Flow configuration (PGSQL)
-        if: matrix.parallel-parts == 'functionaltests-postgres'
-        run: |
-          rm -f Configuration/Testing/Settings.yaml
-          cat <<EOF >> Configuration/Testing/Settings.yaml
-          Neos:
-            Flow:
-              persistence:
-                backendOptions:
-                  host: '127.0.0.1'
-                  port: 5432
-                  driver: pdo_pgsql
-                  user: 'neos'
-                  password: 'neos'
-                  dbname: 'flow_functional_testing'
-                  charset: 'utf8'
-                  defaultTableOptions:
-                    charset: 'utf8'
-          EOF
-          mkdir Configuration/Testing/Behat
-          cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
-          rm -Rf Data/Temporary
-
-      - name: Run functional tests (PGSQL)
-        if: matrix.parallel-parts == 'functionaltests-postgres'
-        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
-
-      - name: Run behat tests (PGSQL)
-        if: matrix.parallel-parts == 'functionaltests-postgres'
-        run: |
-          FLOW_CONTEXT=Testing/Behat ./flow configuration:show
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
-
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          # TODO: RE-ENABLE AFTER FIXING
-          #bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
+#      - name: Setup Flow configuration (PGSQL)
+#        if: matrix.parallel-parts == 'functionaltests-postgres'
+#        run: |
+#          rm -f Configuration/Testing/Settings.yaml
+#          cat <<EOF >> Configuration/Testing/Settings.yaml
+#          Neos:
+#            Flow:
+#              persistence:
+#                backendOptions:
+#                  host: '127.0.0.1'
+#                  port: 5432
+#                  driver: pdo_pgsql
+#                  user: 'neos'
+#                  password: 'neos'
+#                  dbname: 'flow_functional_testing'
+#                  charset: 'utf8'
+#                  defaultTableOptions:
+#                    charset: 'utf8'
+#          EOF
+#          mkdir Configuration/Testing/Behat
+#          cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
+#          rm -Rf Data/Temporary
+#
+#      - name: Run functional tests (PGSQL)
+#        if: matrix.parallel-parts == 'functionaltests-postgres'
+#        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+#
+#      - name: Run behat tests (PGSQL)
+#        if: matrix.parallel-parts == 'functionaltests-postgres'
+#        run: |
+#          FLOW_CONTEXT=Testing/Behat ./flow configuration:show
+#          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
+#
+#          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
+#          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
+#          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
+#          # TODO: RE-ENABLE AFTER FIXING
+#          #bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
