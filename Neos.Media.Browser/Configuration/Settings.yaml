@@ -23,10 +23,16 @@ Neos:
       features:
          # By default, disable the beta feature "variants tab":
         variantsTab:
-          enable: false
+          enable: true
         # By default, enable the option to create redirects for replaced asset resources
         createAssetRedirectsOption:
           enable: true
+        # Show all media collections
+        showAllCollections:
+          enable: false
+        # Show  media tags
+        showMediaTags:
+          enable: false
 
   Flow:
     security:

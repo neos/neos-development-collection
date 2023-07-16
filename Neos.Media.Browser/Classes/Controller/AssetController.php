@@ -206,6 +206,8 @@ class AssetController extends ActionController
             'assetSources' => $this->assetSources,
             'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable'],
             'constraints' => $this->assetConstraints,
+            'showAllCollections' => $this->settings['features']['showAllCollections']['enable'],
+            'showMediaTags' => $this->settings['features']['showMediaTags']['enable'],
         ]);
     }
 
