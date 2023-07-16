@@ -15,6 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Experimental\ContentRepositoryExperiments;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
@@ -158,6 +159,7 @@ final class ContentRepositoryRegistry
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
                 $clock,
+                $this->buildExperiments($contentRepositoryId, $contentRepositorySettings)
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
@@ -266,5 +268,10 @@ final class ContentRepositoryRegistry
             throw InvalidConfigurationException::fromMessage('clock.factoryObjectName for content repository "%s" is not an instance of %s but %s.', $contentRepositoryIdentifier->value, ClockFactoryInterface::class, get_debug_type($clockFactory));
         }
         return $clockFactory->build($contentRepositoryIdentifier, $contentRepositorySettings['clock']['options'] ?? []);
+    }
+
+    private function buildExperiments(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ContentRepositoryExperiments
+    {
+        return ContentRepositoryExperiments::fromArray($contentRepositorySettings['experiments'] ?? []);
     }
 }
