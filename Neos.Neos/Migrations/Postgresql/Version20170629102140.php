@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Flow\Persistence\Doctrine\Migrations;
 
 use Doctrine\Migrations\AbstractMigration;
@@ -12,7 +13,7 @@ class Version20170629102140 extends AbstractMigration
     /**
      * @return string
      */
-    public function getDescription(): string 
+    public function getDescription(): string
     {
         return 'Set default for event uid column';
     }
@@ -21,7 +22,7 @@ class Version20170629102140 extends AbstractMigration
      * @param Schema $schema
      * @return void
      */
-    public function up(Schema $schema): void 
+    public function up(Schema $schema): void
     {
         $this->abortIf($this->connection->getDatabasePlatform()->getName() != 'postgresql', 'Migration can only be executed safely on "postgresql".');
 

@@ -102,6 +102,6 @@ final class CrCommandController extends CommandController
         );
         $workspaceMaintenanceService->pruneAll();
 
-        $this->replayAllCommand();
+        $this->replayAllCommand($contentRepository);
     }
 }

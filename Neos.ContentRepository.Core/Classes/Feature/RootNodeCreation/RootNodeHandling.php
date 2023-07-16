@@ -70,6 +70,11 @@ trait RootNodeHandling
         $nodeType = $this->requireNodeType($command->nodeTypeName);
         $this->requireNodeTypeToNotBeAbstract($nodeType);
         $this->requireNodeTypeToBeOfTypeRoot($nodeType);
+        $this->requireRootNodeTypeToBeUnoccupied(
+            $nodeType->name,
+            $command->contentStreamId,
+            $contentRepository
+        );
 
         $events = Events::with(
             $this->createRootWithNode(

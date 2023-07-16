@@ -9,6 +9,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
@@ -55,9 +56,7 @@ class PropertyAdjustment
                             StructureAdjustment::OBSOLETE_PROPERTY,
                             'The property "' . $propertyKey
                                 . '" is not defined anymore in the current NodeType schema. Suggesting to remove it.',
-                            function () use ($node, $propertyKey) {
-                                return $this->removeProperty($node, $propertyKey);
-                            }
+                            fn() => $this->removeProperty($nodeAggregate, $node, $propertyKey)
                         );
                     }
 
@@ -75,9 +74,7 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::NON_DESERIALIZABLE_PROPERTY,
                             $message,
-                            function () use ($node, $propertyKey) {
-                                return $this->removeProperty($node, $propertyKey);
-                            }
+                            fn() => $this->removeProperty($nodeAggregate, $node, $propertyKey)
                         );
                     }
                 }
@@ -92,9 +89,7 @@ class PropertyAdjustment
                             $node,
                             StructureAdjustment::MISSING_DEFAULT_VALUE,
                             'The property "' . $propertyKey . '" is is missing in the node. Suggesting to add it.',
-                            function () use ($node, $propertyKey, $defaultValue) {
-                                return $this->addProperty($node, $propertyKey, $defaultValue);
-                            }
+                            fn() => $this->addProperty($nodeAggregate, $node, $propertyKey, $defaultValue)
                         );
                     }
                 }
@@ -102,23 +97,24 @@ class PropertyAdjustment
         }
     }
 
-    private function removeProperty(Node $node, string $propertyKey): EventsToPublish
+    private function removeProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey): EventsToPublish
     {
         $serializedPropertyValues = SerializedPropertyValues::fromArray([$propertyKey => null]);
-        return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
+        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
     }
 
-    private function addProperty(Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
+    private function addProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
     {
         $propertyType = $node->nodeType->getPropertyType($propertyKey);
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
             $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)
         ]);
 
-        return $this->publishNodePropertiesWereSet($node, $serializedPropertyValues);
+        return $this->publishNodePropertiesWereSet($nodeAggregate, $node, $serializedPropertyValues);
     }
 
     private function publishNodePropertiesWereSet(
+        NodeAggregate $nodeAggregate,
         Node $node,
         SerializedPropertyValues $serializedPropertyValues
     ): EventsToPublish {
@@ -127,6 +123,7 @@ class PropertyAdjustment
                 $node->subgraphIdentity->contentStreamId,
                 $node->nodeAggregateId,
                 $node->originDimensionSpacePoint,
+                $nodeAggregate->getCoverageByOccupant($node->originDimensionSpacePoint),
                 $serializedPropertyValues,
             )
         );

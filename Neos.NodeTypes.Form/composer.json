@@ -6,10 +6,10 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.1",
-        "neos/neos": "*",
+        "php": "^8.2",
+        "neos/neos": "self.version",
         "neos/form": "*",
-        "neos/nodetypes-basemixins": "*"
+        "neos/nodetypes-basemixins": "self.version"
     },
     "autoload": {
         "psr-4": {

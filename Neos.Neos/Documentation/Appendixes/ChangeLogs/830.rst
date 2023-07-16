@@ -1,0 +1,487 @@
+`8.3.0 (2023-04-25) <https://github.com/neos/neos-development-collection/releases/tag/8.3.0>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`FEATURE: Change wallpaper images <https://github.com/neos/neos-development-collection/pull/4206>`_
+---------------------------------------------------------------------------------------------------
+
+I was told, i could create a pull request for the wallpaper.
+So, here i am. As this is my first ever pull request on github, i hope everything is correct.
+
+I tried to find a sweet spot between image resolution and image size.
+
+- cropped it to 16:10
+- resized to 2500px width
+- exported with "quality by 4 of 6" (photoshop)
+- another compression via tinypng
+- converted to webp
+
+If you need another aspect ratio or anything, just let me know :)
+
+* Packages: ``Neos``
+
+`FEATURE: NodeType configuration command controller <https://github.com/neos/neos-development-collection/pull/4091>`_
+---------------------------------------------------------------------------------------------------------------------
+
+
+### ``./flow nodetypes:show``
+
+ **Show NodeType Configuration**
+
+ Shows the merged configuration (including supertypes) of a NodeType
+
+ **Examples:**
+
+ ``./flow nodeTypes:show Vendor.Site:Content``
+
+ ``./flow nodeTypes:show Vendor.Site:Content --path="properties.bar"``
+
+
+ _Options_
+
+ ``--node-type-name`` The name of the NodeType to show
+ ``--path`` Optional path of the NodeType-configuration which will be shown
+
+
+### ``./flow nodetypes: list ``
+
+ **List NodeTypes**
+
+ Lists all declared NodeTypes grouped by namespace
+
+ **Examples:**
+
+ ``./flow nodeTypes:list --filter Vendor.Site:``
+
+ ``./flow nodeTypes:list --filter Vendor.Site:Document  --include-abstract``
+
+
+ _Options_
+
+ ``--filter`` Only NodeType-names containing this string will be listed
+ ``--include-abstract``  List abstract NodeTypes
+
+
+
+**Upgrade instructions**
+
+**Review instructions**
+
+adresses https://github.com/neos/flow-development-collection/pull/1903#issuecomment-580656209
+i figured even if the cli could handle dot paths https://github.com/neos/flow-development-collection/pull/2973 (which it wont in the future) one would be able to dump the nodeType config for a single node but what good is it, if you dont get the merged superType config.
+
+
+
+* Packages: ``Neos``
+
+`FEATURE: Assets Eel helper for Neos.Media <https://github.com/neos/neos-development-collection/pull/4155>`_
+------------------------------------------------------------------------------------------------------------
+
+This helper provides access to assets in Neos by either searching by Tag, AssetCollection, or
+a searchTerm combined with optionally Tags and an AssetCollection.
+
+**Review instructions**
+
+Add some assets to collections and tag them, then use the helpers in Fusion like this:
+
+```
+assetsByTag = ${Neos.Media.Assets.findByTag('MyTag')}
+assetsByCollection = ${Neos.Media.Assets.findByCollection('MyCollection')}
+assetsBySearchTerm = ${Neos.Media.Assets.findBySearchTerm('alice')}
+```
+
+
+* Packages: ``Neos`` ``Media``
+
+`FEATURE: Add commands `media:listVariantPresets` and `media:removeVariants` <https://github.com/neos/neos-development-collection/pull/3843>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+Currently there is an option to create custom ImageVariant out of the ``Settings.Neos.Media.yaml``. These VariantPresets can be edited, but variants with old/removed/outdated presets will not be deleted.
+
+To solve this problem, I wrote a few lines of code and added two new commands...
+
+1. list all found configurations for variants - from file and database, to get every single variant configuration, still existing or not
+2. delete a variant preset by identifier and name provided by the other command
+
+ISSUE: https://github.com/neos/neos-development-collection/issues/3086
+
+**Upgrade instructions**
+
+Nothing I know about so far
+
+
+* Packages: ``Neos`` ``Media``
+
+`FEATURE: Support `iterables` that do not implement `countable` in `Neos.Fusion:Map`, `Neos.Fusion:Loop` and `Neos.Fusion:Reduce` <https://github.com/neos/neos-development-collection/pull/4168>`_
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Previously passing an object to a Map or a loop that did not implement countable lead to an error. Since we the only value that cannot be calculated is the isLast the code is adjusted to skip the calculation of isLast in that case.
+
+
+* Packages: ``Fusion`` ``Neos``
+
+`FEATURE: Introduce node:migrationcreate command <https://github.com/neos/neos-development-collection/pull/4038>`_
+------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Implements: `#3881 <https://github.com/neos/neos-development-collection/issues/3881>`_
+
+## Description
+
+This pull request introduces the new CLI command: ``node:migrationcreate``.
+
+This command is useful for creating node migrations via the CLI. I can specify a ``packageKey`` as an argument, and the given packageKey is the key for the respective site package. For example ``Neos.Demo``
+
+## Demo:
+
+https://user-images.githubusercontent.com/39345336/221870464-0352f045-299c-47cd-9853-7c16d8cdbcfa.mov
+
+The node migration is created as usual, with the ``Version`` appendix and also the current ``timeStamp`` in the respective package directory under: ``Migrations/ContentRepository``. And it comes also with a template, which can be customized directly. The template also contains a link to the node migrations part in the Neos documentation.
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`FEATURE: add dimensions hash to node event model <https://github.com/neos/neos-development-collection/pull/3279>`_
+-------------------------------------------------------------------------------------------------------------------
+
+I want to extended the history view of the package https://github.com/aertmann/history with a filter for the dimension. With this website admins get a much needed additional filter for the history view of a web site with several dimensions and dimension values. In preparation for the extensions of the https://github.com/aertmann/history package I created these changes to the node event model. Please let me know, if additional changes are needed. Thank you in advanced.
+
+- [x] Code follows the PSR-2 coding style
+- [ ] Tests have been created, run and adjusted as needed
+
+* Packages: ``Neos``
+
+`FEATURE: Allow non eel labels in nodetypes <https://github.com/neos/neos-development-collection/pull/4083>`_
+-------------------------------------------------------------------------------------------------------------
+
+Previously only valid eel expressions were allowed as the main label for a nodetypes.
+Now the label just be returned if it doesn’t match the eel pattern and not throw an eel exception anymore.
+
+* Resolves: `#4082 <https://github.com/neos/neos-development-collection/issues/4082>`_
+
+**Upgrade instructions**
+
+n/a
+
+**Review instructions**
+
+Set a plain label in a nodetype instead of an eel expression (not ui.label)
+
+```yaml
+My.Vendor:NodeType:
+  label: 'Hello world'
+```
+
+And check the included tests
+
+
+* Packages: ``Fusion`` ``ContentRepository``
+
+`FEATURE: `Neos.Fusion:Component` `@private` props <https://github.com/neos/neos-development-collection/pull/3943>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The key ``@private`` is added to ``Neos.Fusion:Component`` (and derived prototypes like ``Neos.Neos:ContentComponent``) to allow calculating of values for the renderer with access to the props. The ``@private`` key can only be defined together with the prototype and must not be overridden from outside. Inside the renderer the calculated private values are accessible as private.XXX
+
+This feature replaces various patterns like nested components with ``@apply.props`` or using the ``this`` reference.
+
+See the documentation for more details: https://neos.readthedocs.io/en/stable/References/NeosFusionReference.html#neos-fusion-component
+
+**Example::**
+
+```
+prototype(Vendor.Site:Component) < prototype(Neos.Fusion:Component) {
+    title = 'Hello World'
+    titleTagName = 'h1'
+    bold = false
+
+    @private {
+        computedTitle = ${String.toLowercase(props.title)}
+        funnyTitle = Neos.Fusion:Value {
+            value = ${props.titleTagName + " " + private.computedTitle}
+        }
+    }
+
+    renderer = Neos.Fusion:Tag {
+        attributes.class {
+            component = 'component'
+            bold = ${props.bold && 'component--bold'}
+        }
+        content = Neos.Fusion:Join {
+            headline = Neos.Fusion:Tag {
+                tagName = ${props.titleTagName}
+                content = ${private.funnyTitle}
+            }
+            // nestedComponentScope = Neos.Fusion:Component {
+            //   prop1 = ${props.title} // works
+            //   renderer = ${props.title} // doest work!
+            // }
+      }
+    }
+}
+```
+
+
+**Review instructions**
+
+|                    |                                                                                                                                                                                                                           |
+|--------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **[key]**          | (mixed) The public API of your component: Lazy evaluated props that will be available inside the current component's scope under the context ``props`` (is iterable)                                                      |
+| **``@private.[key]``** | (mixed) Can only be set inside the root component declaration: Lazy evaluated private props that will be available inside the current component's scope under the context ``private`` (is not iterable / is only a proxy) |
+| **renderer**       | (mixed, **required**) The value which gets rendered                                                                                                                                                                       |
+
+
+> **Note**
+> The context ``props`` and ``private`` is only available in the components scope
+> The component's scope will be available inside the ``renderer`` and ``@private`` and will extend inwards until inside another component's renderer
+> That means inside ``@private`` it's even allowed to reference another private prop (be carefully of circular references, though!)
+> But normal props are not inside the component's scope and thus cannot reference each other or ``private``
+
+
+Spec:
+- private is not Iterable but a simple proxy (no var_dump)
+- self referencing is allowed
+- in scope of the current component (a new component will have as usual its own scope)
+- can only be declared within the root prototype declaration (not "at call time")
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`FEATURE: Add inspector group `default` to `Neos.Neos:Node` <https://github.com/neos/neos-development-collection/pull/4068>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+The group ``default`` can be used for basic properties instead introducing a custom group.
+
+* Resolves: `#4060 <https://github.com/neos/neos-development-collection/issues/4060>`_
+
+
+* Packages: ``Neos``
+
+`FEATURE: Improve behavior of workspace review buttons <https://github.com/neos/neos-development-collection/pull/4014>`_
+------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_Empty_
+
+**Review instructions**
+
+* Resolves: `#4003 <https://github.com/neos/neos-development-collection/issues/4003>`_ 
+
+# Description
+
+My pull request is about improving the behavior of the workspace review buttons.
+When I look at the change in a workspace, I don't always want to publish, or discard all changes. Because I also have the option to discard, or publish individual changes. But if I don't do that regularly, it could happen that you accidentally press the wrong button.
+
+## Solution
+
+The behavior should be such that when I select a single change, or all changes, the respective buttons should not be displayed. This provides better clarity, and less confusion for the backend user. Thanks to @bwaidelich for the idea regarding the new behavior ❤️ !
+
+### Demos
+
+Here I have included two examples to show the new behavior of the review buttons.
+
+#### Publish to Live Priviliges
+
+
+https://user-images.githubusercontent.com/39345336/214127918-96f6370e-66fb-40f5-a735-5769f323c7b0.mov
+
+
+#### No Publish to Live Priviliges
+
+
+
+https://user-images.githubusercontent.com/39345336/214128277-b9421ab7-d99d-4348-8db4-328d10d52b8c.mov
+
+
+
+* Packages: ``Neos``
+
+`FEATURE: Support search by property & exact value in NodeDataRepository <https://github.com/neos/neos-development-collection/pull/1>`_
+---------------------------------------------------------------------------------------------------------------------------------------
+
+Currently it is only possible to search through the properties by
+giving a string that matches for any key or value found in the
+jsonified properties field.
+
+With this change, the term can also be an array to match exactly on a
+given key / value combination.
+The search term could be given as ``['key' => 'value']``.
+
+NEOS-1460 #close
+
+`FEATURE: Allow including resources for all backend modules <https://github.com/neos/neos-development-collection/pull/4011>`_
+-----------------------------------------------------------------------------------------------------------------------------
+
+With this change it’s now possible to add stylesheets and javascript to all backend modules at the same time 
+without requiring to add the resources to each module separately.
+
+Example:
+
+```yaml
+Neos:
+  Neos:
+    moduleConfiguration:
+      additionalResources:
+        styleSheets:
+          'My.Package': 'resource://My.Package/Public/JavaScript/Main.css'
+        javaScripts:
+          'My.Package': 'resource://My.Package/Public/JavaScript/Main.js'
+```
+
+
+* Packages: ``Neos`` ``SiteKickstarter``
+
+`!!! BUGFIX: Refactor FusionService API & And strict FusionCodeCollection in FusionParser <https://github.com/neos/neos-development-collection/pull/3839>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Improve the API of the fusion parser and introduce FusionSourceCodeFactory to create fusion auto includes.
+
+In the past the auto includes were added to the main Root.Fusion from the current website. With the addition of the Fusion Ast Cache in Development context this caused issues when site packages included the Root.fusion of other site packages as the same cache entry was used for the file wether it was included as main or not.
+
+The change introduces the parseFromSource() Method that accepts a FusionSourceCodeCollection DTO to the Fusion parser and deprecates the parse() method.
+
+resolves: `#3835 <https://github.com/neos/neos-development-collection/issues/3835>`_
+resolves: `#3834 <https://github.com/neos/neos-development-collection/issues/3834>`_
+
+**Upgrade Instructions**
+
+While this change does not alter the api it deprecates the method ``Neos\\Fusion\\Core\\Parser::parse()``
+You should update it to ``Neos\\Fusion\\Core\\Parser::parseFromSource()``. The external api of the ``Neos\\Neos\\Domain\\Service\\FusionService`` was not changed. In the unlikely case that you extended this service and used internal methods you probably will have to adjust your code. 
+
+**Review Instructions**
+
+As discussed in https://github.com/neos/neos-development-collection/issues/3835#issuecomment-1181840848 a ``FusionCodeCollection`` can now be provided as argument to ``$fusionParser-> parseFromSource()``. This enforces that not accidentally differing ``$sourceCode`` and ``$contextPathAndFilename`` are given, which confuses the cache.
+
+Also we all love to cure our `primitive (type) obsession <https://refactoring.guru/smells/primitive-obsession>`_ :smile: 
+
+The change is made backwards compatible, so one can still provide the primitive types.
+
+To achieve the current dangerous behavior, provide differing ``$sourceCode`` and ``$contextPathAndFilename``, use the ``->parse()`` API with primitive types, or use the escape hatch left open via ``FusionCode::fromDangerousPotentiallyDifferingSourceCodeAndContextPath()``, in order to make AOP / Fusion preprocessing still possible - but with caution ;)
+
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Adjust version and release variables <https://github.com/neos/neos-development-collection/pull/4207>`_
+---------------------------------------------------------------------------------------------------------------
+
+Without the change, the docs will render a wrong version information on the index page.
+
+<img width="1108" alt="Screenshot 2023-04-23 at 21 16 52" src="https://user-images.githubusercontent.com/1014126/233860295-8da2a358-a3c8-420b-bee0-fd61ba1dec59.png">
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Make functional tests run <https://github.com/neos/neos-development-collection/pull/4169>`_
+----------------------------------------------------------------------------------------------------
+
+The ``Neos.Demo`` has an implication on the functional tests, and the ``Neos.Demo`` removed the ``.html`` suffix. Therefore, the tests for the URIs are now failing.
+
+**Upgrade instructions**
+
+Nothing to upgrade.
+
+**Review instructions**
+
+Tests are green again :)
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix .composer.json which was not updated via jenkins job <https://github.com/neos/neos-development-collection/pull/4013>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+The jenkins job which created the 8.3 branch did not update the composer manifest file with the correct ``neos/flow-development-collection`` requirement.
+
+related: `#85 <https://github.com/neos/neos-development-distribution/issues/85>`_
+
+
+* Packages: ``Neos``
+
+`TASK: Deprecate PluginView <https://github.com/neos/neos-development-collection/pull/4069>`_
+---------------------------------------------------------------------------------------------
+
+The concept of PluginViews which means rendering specific views of a plugin on a different document is deprecated. It has been used in very fews cases and causes trouble in maintenance and thus will be removed without replacement in Neos 9.
+
+Right now no changes are needed. If there are cases where this feature is still used it can be replaced by rendering a url combining the main and the plugin request arguments before upgrading to Neos 9.
+
+* Resolves: `#4070 <https://github.com/neos/neos-development-collection/issues/4070>`_
+Relates: https://github.com/neos/neos-ui/issues/3408
+
+
+* Packages: ``Neos``
+
+`TASK: Use NodeTypes folder in core packages <https://github.com/neos/neos-development-collection/pull/4116>`_
+--------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+Not breaking
+
+**Review instructions**
+
+All nodetypes should still be loaded
+
+
+* Packages: ``Fusion`` ``ContentRepository``
+
+`TASK: Unify fusion tag attribute rendering <https://github.com/neos/neos-development-collection/pull/4081>`_
+-------------------------------------------------------------------------------------------------------------
+
+The rendering of html-attributes is centralized with a trait to ensure that Neos.Fusion:Tag, Neos.Fusion:Augmenter and Neos.Fusion:Attributes behave identical.
+
+This causes a minimal change in behavior of the Augmenter for attributes that are set to null. The old implementation created empty tag-attributes for ``null`` values. Now ``null``  and ``false`` cause an attribute to be omitted while ``true`` renders an attribute without value or an empty value depending on the ``allowEmptyAttributes`` setting. 
+
+Since this is quite esoteric we consider the change to be minor and consider the unified behavior correct.
+
+resolves: `#3582 <https://github.com/neos/neos-development-collection/issues/3582>`_
+
+**Review instructions**
+
+The tests for the html augmenter are adjusted to since the meaning of null has changed slightly.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/4132>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/Kox94Q>`_.
+
+* Packages: ``Neos`` ``ContentRepository`` ``Fusion.Afx`` ``Fusion`` ``Media`` ``SiteKickstarter``
+
+`TASK: Refactor AfxService <https://github.com/neos/neos-development-collection/pull/3596>`_
+--------------------------------------------------------------------------------------------
+
+remove wrong php docs and add php types.
+use multiple 'nested' generators to create the attributes.
+astBooleanToFusion could technically now also render 'false', what is never the case but still.
+removed unnecessary checks against truthy or null, when method never returns falsy.
+restructure code.
+
+
+* Packages: ``Neos`` ``Fusion.Afx``
+
+`TASK: enable blockquote formatting in text mixin <https://github.com/neos/neos-development-collection/pull/4027>`_
+-------------------------------------------------------------------------------------------------------------------
+
+## Description
+
+This PR enables the ``blockquote`` formatting in the text mixin as this is now available as text style in the neos-ui.
+
+Regarding PR: https://github.com/neos/neos-ui/pull/3333
+
+This PR is in draft, until the PR in the neos-ui is ready.
+
+
+* Packages: ``NodeTypes.BaseMixins``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.4...8.3.0>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

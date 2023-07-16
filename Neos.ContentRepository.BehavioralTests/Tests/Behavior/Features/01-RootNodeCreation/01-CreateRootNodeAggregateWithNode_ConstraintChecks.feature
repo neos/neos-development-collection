@@ -45,6 +45,13 @@ Feature: Create a root node aggregate
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyExists"
 
+  Scenario: Try to create a root node aggregate in a content stream where a root node of its type is already present:
+    When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
+      | Key             | Value                         |
+      | nodeAggregateId | "nody-mc-nodeface"            |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+    Then the last command should have thrown an exception of type "RootNodeAggregateTypeIsAlreadyOccupied"
+
   Scenario: Try to create a root node aggregate of an abstract root node type:
     When the command CreateRootNodeAggregateWithNode is executed with payload and exceptions are caught:
       | Key             | Value                                         |

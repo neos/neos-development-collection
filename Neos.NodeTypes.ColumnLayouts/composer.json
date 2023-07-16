@@ -6,8 +6,8 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/neos": "*",
-        "neos/nodetypes-basemixins": "*"
+        "neos/neos": "self.version",
+        "neos/nodetypes-basemixins": "self.version"
     },
     "autoload": {
         "psr-4": {

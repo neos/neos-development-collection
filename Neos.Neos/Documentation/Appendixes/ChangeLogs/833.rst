@@ -1,0 +1,96 @@
+`8.3.3 (2023-05-30) <https://github.com/neos/neos-development-collection/releases/tag/8.3.3>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Use correct configuration path for enableObjectTreeCache <https://github.com/neos/neos-development-collection/pull/4301>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+Due to the wrong path the value of enableObjectTreeCache was always interpreted as ``false``. So in Neos in production context the Cache was disabled.
+
+* Packages: ``Neos``
+
+`BUGFIX: RenderAttributesTrait allows Stringable objects <https://github.com/neos/neos-development-collection/pull/4267>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+RenderAttributesTrait converts Stringable objects to strings via ``__toString()``
+
+related: `#4225 <https://github.com/neos/neos-development-collection/issues/4225>`_
+
+**Upgrade instructions**
+
+Not sure what to write here :thinking: 
+
+**Review instructions**
+
+Up until 8.3 it was possible to use EelHelpers with a fluent interface like API for attributes. E.g. the following was working fine in fusion afx:
+```
+class={[block.element('subline').modifier('light')]}
+```
+The variable ``block`` is an EelHelper which returns ``self``. In 8.3 this fails with an Exception
+```
+$attributes may contain values of type array<string|bool|null> type: array...
+```
+The reason is, that with PR #4225, in ``RenderAttributesTrait`` there are two different ways the object is processed:
+1. In case ``$attributeValue`` is not an array, e.g. an object, it is basically converted to a string
+2. In case of an array it is checked if ``$attributeValuePart`` is actually of type plain string, boolean or null. In case  of an object an exception is raised. This exception then breaks the previous behaviour in case of a ``\\Stringable`` object.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: point to 8.3.x-dev branch in README <https://github.com/neos/neos-development-collection/pull/4260>`_
+--------------------------------------------------------------------------------------------------------------
+
+Set the correct branch name to setup the neos-development-collection for ``8.3.x-dev``
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Add translation keys in translation files <https://github.com/neos/neos-development-collection/pull/4237>`_
+--------------------------------------------------------------------------------------------------------------------
+
+The following translation keys are missing their translation in the Main.xlf file.
+
+https://github.com/neos/neos-ui/blob/7.3/packages/neos-ui/src/Containers/LeftSideBar/index.js#L82
+https://github.com/neos/neos-ui/blob/7.3/packages/neos-ui/src/Containers/LeftSideBar/NodeTreeToolBar/Buttons/ToggleContentTree/index.js#L39
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix missing icon in case of fusion errors <https://github.com/neos/neos-development-collection/pull/4224>`_
+--------------------------------------------------------------------------------------------------------------------
+
+Change html class for icon which gets rendered if a fusion error occurs.
+
+Closes `#4223 <https://github.com/neos/neos-development-collection/issues/4223>`_
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: make pagination work with Traversable <https://github.com/neos/neos-development-collection/pull/4220>`_
+----------------------------------------------------------------------------------------------------------------
+
+Fixes a warning: ``array_slice() expects parameter 1 to be array, object given in /…/Neos_ContentRepository_ViewHelpers_Widget_Controller_PaginateController.php line 124``
+
+Variant of `#3891 <https://github.com/neos/neos-development-collection/pull/3891>`_ based on the (correct) 7.3 branch.
+
+* See: `#1112 <https://github.com/neos/neos-development-collection/issues/1112>`_ 
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Require all collection packages as self.version <https://github.com/neos/neos-development-collection/pull/4258>`_
+------------------------------------------------------------------------------------------------------------------------
+
+Any dependency from one package in the collection to another should always be "to the same version".
+
+This changes makes sure this is the case by using ``self.version`` as the required version.
+
+See `#4257 <https://github.com/neos/neos-development-collection/issues/4257>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``CliSetup`` ``Fusion.Afx`` ``NodeTypes.AssetList`` ``NodeTypes.BaseMixins`` ``NodeTypes.ColumnLayouts`` ``NodeTypes.ContentReferences`` ``NodeTypes.Form`` ``NodeTypes.Html`` ``NodeTypes.Navigation``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.2...8.3.3>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
