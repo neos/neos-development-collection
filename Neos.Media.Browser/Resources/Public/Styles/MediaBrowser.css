@@ -489,6 +489,9 @@
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li + li {
   margin-top: 1px;
 }
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li + li {
+  margin-top: 0;
+}
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a {
   display: block;
   color: #fff;
@@ -498,6 +501,9 @@
   font-weight: 400;
   font-size: 14px;
   line-height: 1.5;
+}
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li > a {
+  padding: 2px 100px 3px 4px;
 }
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li > a > img {
   height: 16px;
@@ -548,6 +554,9 @@
   padding: 4px;
   line-height: 1;
 }
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li > a > span {
+  top: 2px;
+}
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li .neos-sidelist-edit-actions {
   display: none;
   position: absolute;
@@ -567,6 +576,21 @@
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li .neos-sidelist-edit-actions a:hover.neos-button-danger,
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li .neos-sidelist-edit-actions button:hover.neos-button-danger {
   background-color: #ff460d;
+}
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li .neos-sidelist-edit-actions a,
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li .neos-sidelist-edit-actions button {
+  position: relative;
+  top: 2px;
+  padding: 0 9px;
+  height: 22px;
+  line-height: 21px;
+}
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li .neos-sidelist-edit-actions button:visited {
+
+}
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li .neos-sidelist-edit-actions a:hover,
+.neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list.tree-view li .neos-sidelist-edit-actions button:hover {
+  z-index: 10;
 }
 .neos.media-browser aside.neos-media-aside .neos-media-aside-group .neos-media-aside-list li .neos-sidelist-edit-actions form {
   display: inline-block;
