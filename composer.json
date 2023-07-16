@@ -112,7 +112,7 @@
         "test:behavioral:stop-on-failure": [
             "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "cd Neos.Neos/Tests/Behavior/; ../../../../../bin/behat -vvv --stop-on-failure -f progress -c behat.yml.dist --tags ~@browser Features/FrontendRouting/Basic.feature"
+            "cd Neos.Neos/Tests/Behavior/; ../../../../../bin/behat -vvv --stop-on-failure -f progress -c behat.yml.dist --tags ~@browser"
         ],
         "test": [
             "@test:unit",
