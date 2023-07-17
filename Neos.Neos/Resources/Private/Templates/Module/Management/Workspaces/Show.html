@@ -69,9 +69,19 @@
 										</td>
 										<td class="neos-action">
 											<f:if condition="{canPublishToBaseWorkspace}">
-												<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-primary neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip">
-													<i class="fas fa-check icon-white"></i>
-												</button>
+												<f:if condition="{document.isNew}">
+													<f:then>
+														<div class="neos-button neos-disabled neos-button-primary neos-pull-right"
+																 title="{neos:backend.translate(id: 'cantPublishSingleNodeInNewPage', source: 'Main', package: 'Neos.Neos')}">
+															<i class="fas fa-check icon-white"></i>
+														</div>
+													</f:then>
+													<f:else>
+														<button form="postHelper" formaction="{f:uri.action(action: 'publishNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-primary neos-pull-right" title="{neos:backend.translate(id: 'publish', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip">
+															<i class="fas fa-check icon-white"></i>
+														</button>
+													</f:else>
+												</f:if>
 											</f:if>
 											<button form="postHelper" formaction="{f:uri.action(action: 'discardNode', arguments: {node: change.node.contextPath, selectedWorkspace: selectedWorkspace})}" type="submit" class="neos-button neos-button-danger neos-pull-right" title="{neos:backend.translate(id: 'discard', source: 'Main', package: 'Neos.Neos')}" data-neos-toggle="tooltip" data-placement="bottom">
 												<i class="fas fa-trash-alt icon-white"></i>
