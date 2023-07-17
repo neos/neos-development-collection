@@ -6,6 +6,15 @@ prototype(Neos.NodeTypes.ContentReferences:ContentReferences) < prototype(Neos.N
     items = ${referenceNodesArray}
     itemRenderer = Neos.Neos:ContentCase
     itemName = 'node'
+
+    // Disable ContentElementWrapping for references itself
+    prototype(Neos.Neos:ContentElementWrapping) {
+      @if.render = false
+    }
+    // Disable InlineEditable for references itself
+    prototype(Neos.Neos:Editable) {
+      renderer.editable.condition = false
+    }
   }
   hasReferences = ${!!referenceNodesArray}
   @cache {
