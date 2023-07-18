@@ -129,7 +129,7 @@ class LinkingService
             $uri = (string)$uri;
         }
 
-        return preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
+        return $uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri) === 1;
     }
 
     /**
@@ -142,7 +142,7 @@ class LinkingService
             return $uri->getScheme();
         }
 
-        if (preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+        if ($uri !== null && preg_match(self::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
             return $matches[1];
         }
 
