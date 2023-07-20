@@ -107,12 +107,12 @@
             "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
+            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
         ],
         "test:behavioral:stop-on-failure": [
             "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "cd Neos.Neos/Tests/Behavior/; ../../../../../bin/behat -vvv --stop-on-failure -f progress -c behat.yml.dist --tags ~@browser"
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
         ],
         "test": [
             "@test:unit",
