@@ -261,9 +261,14 @@ jobs:
           set -e
           if [ $retVal -ne 0 ]; then
             echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
+
+            echo "copying logs"
+            cp -R Data/Logs ${{ github.workspace }}/Data/DebugDatabaseDumps/Logs
+
             sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
             sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove
             sudo DEBIAN_FRONTEND=noninteractive apt -y autoclean
+            sudo apt-get update
             sudo apt-get install -y postgresql-client mariadb-client
             echo "writing PW file"
             touch ~/.pgpass

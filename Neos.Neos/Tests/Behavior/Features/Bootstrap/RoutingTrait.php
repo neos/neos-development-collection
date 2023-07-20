@@ -168,7 +168,11 @@ trait RoutingTrait
      */
     public function theDocumenturipathProjectionIsUpToDate(): void
     {
-        $this->getContentRepository()->catchUpProjection(DocumentUriPathProjection::class);
+        if ($this->lastCommandOrEventResult === null) {
+            // we just blocked in "The graph projection is up to date"
+            return;
+        }
+        $this->lastCommandOrEventResult->block();
     }
 
     /**
