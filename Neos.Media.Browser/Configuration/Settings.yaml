@@ -23,7 +23,7 @@ Neos:
       features:
          # By default, disable the beta feature "variants tab":
         variantsTab:
-          enable: true
+          enable: false
         # By default, enable the option to create redirects for replaced asset resources
         createAssetRedirectsOption:
           enable: true
