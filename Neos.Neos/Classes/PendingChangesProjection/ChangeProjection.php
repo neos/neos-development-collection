@@ -46,6 +46,7 @@ use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStream\EventStreamInterface;
+use function in_array;
 
 /**
  * TODO: this class needs testing and probably a major refactoring!
@@ -59,6 +60,11 @@ class ChangeProjection implements ProjectionInterface
      * so that always the same instance is returned
      */
     private ?ChangeFinder $changeFinder = null;
+
+    /**
+     * @var array<string>|null
+     */
+    private ?array $liveContentStreamIdsRuntimeCache = null;
     private DoctrineCheckpointStorage $checkpointStorage;
 
     public function __construct(
@@ -320,11 +326,7 @@ class ChangeProjection implements ProjectionInterface
     private function whenNodeAggregateWasRemoved(NodeAggregateWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId(
-                $event->contentStreamId
-            );
-            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
-                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+            if ($this->isLiveContentStream($event->contentStreamId)) {
                 return;
             }
 
@@ -435,12 +437,7 @@ class ChangeProjection implements ProjectionInterface
             $nodeAggregateId,
             $originDimensionSpacePoint
         ) {
-            // HACK: basically we are not allowed to read other Projection's finder methods here;
-            // but we nevertheless do it.
-            // we can maybe figure out another way of solving this lateron.
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
-            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
-                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+            if ($this->isLiveContentStream($contentStreamId)) {
                 return;
             }
             $change = $this->getChange(
@@ -475,9 +472,7 @@ class ChangeProjection implements ProjectionInterface
             $nodeAggregateId,
             $originDimensionSpacePoint
         ) {
-            $workspace = $this->workspaceFinder->findOneByCurrentContentStreamId($contentStreamId);
-            if ($workspace instanceof Workspace && $workspace->baseWorkspaceName === null) {
-                // Workspace is the live workspace (has no base workspace); we do not need to do anything
+            if ($this->isLiveContentStream($contentStreamId)) {
                 return;
             }
             $change = $this->getChange(
@@ -534,5 +529,13 @@ AND n.originDimensionSpacePointHash = :originDimensionSpacePointHash',
     private function getDatabaseConnection(): Connection
     {
         return $this->dbalClient->getConnection();
+    }
+
+    private function isLiveContentStream(ContentStreamId $contentStreamId): bool
+    {
+        if ($this->liveContentStreamIdsRuntimeCache === null) {
+            $this->liveContentStreamIdsRuntimeCache = $this->getDatabaseConnection()->fetchFirstColumn('SELECT contentstreamid FROM ' . $this->tableNamePrefix . '_livecontentstreams');
+        }
+        return in_array($contentStreamId->value, $this->liveContentStreamIdsRuntimeCache, true);
     }
 }
