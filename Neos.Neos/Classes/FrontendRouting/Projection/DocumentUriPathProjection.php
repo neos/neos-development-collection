@@ -44,6 +44,7 @@ use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+
 use function sprintf;
 
 /**

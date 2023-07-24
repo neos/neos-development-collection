@@ -17,12 +17,8 @@ namespace Neos\Neos\PendingChangesProjection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\Neos\PendingChangesProjection\ChangeProjection;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjection;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 
 /**
  * @implements ProjectionFactoryInterface<ChangeProjection>
@@ -40,20 +36,11 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
         CatchUpHookFactoryInterface $catchUpHookFactory,
         Projections $projectionsSoFar
     ): ChangeProjection {
-        $workspaceFinder = $projectionsSoFar->get(WorkspaceProjection::class)->getState();
-        assert($workspaceFinder instanceof WorkspaceFinder);
-        $projectionShortName = strtolower(str_replace(
-            'Projection',
-            '',
-            (new \ReflectionClass(ChangeProjection::class))->getShortName()
-        ));
         return new ChangeProjection(
             $this->dbalClient,
-            $workspaceFinder,
             sprintf(
-                'cr_%s_p_neos_%s',
+                'cr_%s_p_neos_change',
                 $projectionFactoryDependencies->contentRepositoryId->value,
-                $projectionShortName
             ),
         );
     }
