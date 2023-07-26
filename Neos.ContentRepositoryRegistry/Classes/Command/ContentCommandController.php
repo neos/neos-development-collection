@@ -40,7 +40,7 @@ final class ContentCommandController extends CommandController
     }
 
     /**
-     * Refreshes the root node dimensions in the specified content repository for the specified workspace
+     * Refreshes the root node dimensions in the specified content repository for the specified workspace.
      *
      * @param string $contentRepository test
      * @param string $workspace test
