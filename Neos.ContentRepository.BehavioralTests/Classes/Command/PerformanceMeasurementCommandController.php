@@ -37,7 +37,11 @@ final class PerformanceMeasurementCommandController extends CommandController
     }
 
     /**
-     * @throws \Throwable
+     * Prepare the performance test by removing existing data and creating nodes for the test.
+     *
+     * @param int $nodesPerLevel The number of nodes to create per level.
+     * @param int $levels The number of levels in the node tree.
+     * @internal
      */
     public function preparePerformanceTestCommand(int $nodesPerLevel, int $levels): void
     {
@@ -51,7 +55,9 @@ final class PerformanceMeasurementCommandController extends CommandController
     }
 
     /**
-     * @throws \Throwable
+     * Test the performance of forking a content stream and measure the time taken.
+     *
+     * @internal
      */
     public function testPerformanceCommand(): void
     {

@@ -42,9 +42,11 @@ final class ContentCommandController extends CommandController
     /**
      * Refreshes the root node dimensions in the specified content repository for the specified workspace.
      *
-     * @param string $contentRepository test
-     * @param string $workspace test
-     * @return void
+     * In the content repository, the root node has to cover all existing dimension space points.
+     * With this command, the root node can be updated such that it represents all configured dimensions
+     *
+     * @param string $contentRepository The content repository identifier. (Default: 'default')
+     * @param string $workspace The workspace name. (Default: 'live')
      */
     public function refreshRootNodeDimensionsCommand(string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
@@ -76,6 +78,22 @@ final class ContentCommandController extends CommandController
         $this->outputFormatted('Done!');
     }
 
+    /**
+     * Moves a dimension space point from the source to the target in the specified workspace and content repository.
+     *
+     * With this command all nodes for a given content dimension can be moved to a different dimension. This can be necessary
+     * if a dimension configuration has been added or renamed.
+     *
+     * *Note:* source and target dimensions have to be specified as JSON, for example:
+     * ```
+     * ./flow content:movedimensionspacepoint '{"language": "de"}' '{"language": "en"}'
+     * ```
+     *
+     * @param string $source The JSON representation of the source dimension space point. (Example: '{"language": "de"}')
+     * @param string $target The JSON representation of the target dimension space point. (Example: '{"language": "en"}')
+     * @param string $contentRepository The content repository identifier. (Default: 'default')
+     * @param string $workspace The workspace name. (Default: 'live')
+     */
     public function moveDimensionSpacePointCommand(string $source, string $target, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
         // TODO: CLI arguments: $contentRepositoryId => $contentRepository (in other CLI commands)
@@ -99,6 +117,21 @@ final class ContentCommandController extends CommandController
         $this->outputFormatted('Done!');
     }
 
+    /**
+     * Creates node variants recursively from the source to the target dimension space point in the specified workspace and content repository.
+     *
+     * This can be necessary if a new content dimension specialization was added (for example a more specific language)
+     *
+     * *Note:* source and target dimensions have to be specified as JSON, for example:
+     * ```
+     * ./flow content:createvariantsrecursively '{"language": "de"}' '{"language": "de_ch"}'
+     * ```
+     *
+     * @param string $source The JSON representation of the source dimension space point. (Example: '{"language": "de"}')
+     * @param string $target The JSON representation of the target origin dimension space point.  (Example: '{"language": "en"}')
+     * @param string $contentRepository The content repository identifier. (Default: 'default')
+     * @param string $workspace The workspace name. (Default: 'live')
+     */
     public function createVariantsRecursivelyCommand(string $source, string $target, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
