@@ -16,19 +16,6 @@ class ContentStreamCommandController extends CommandController
     protected $contentRepositoryRegistry;
 
     /**
-     * @throws \Neos\Flow\Cli\Exception\StopCommandException
-     */
-    public function exportCommand(string $contentStream, string $contentRepository = 'default', int $startSequenceNumber = 0): void
-    {
-        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        throw new \RuntimeException('TODO IMPL??');
-        // TODO??$events = $this->contentRepositoryEventStore->load(
-        //    StreamName::fromString($contentStream),
-        //    $startSequenceNumber
-        //);
-    }
-
-    /**
      * Imports events to a content stream from the given file.
      * Note that the events in the file need to come from the same content stream you import to for now!
      *
