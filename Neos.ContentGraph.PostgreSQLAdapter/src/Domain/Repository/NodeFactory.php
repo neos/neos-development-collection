@@ -203,6 +203,7 @@ final class NodeFactory
         $occupationByCovered = [];
         /** @var DimensionSpacePoint[] $disabledDimensionSpacePoints */
         $disabledDimensionSpacePoints = [];
+
         foreach ($nodeRows as $nodeRow) {
             $contentStreamId = $contentStreamId
                 ?: ContentStreamId::fromString($nodeRow['contentstreamid']);

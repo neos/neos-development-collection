@@ -16,11 +16,14 @@ namespace Neos\ContentRepository\Core\Feature\NodeRemoval;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
+use Neos\ContentRepository\Core\SharedModel\Exception\ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Exception\TetheredNodeAggregateCannotBeRemoved;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -28,6 +31,10 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
+use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointHasNoPrimaryGeneralization;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -85,6 +92,77 @@ trait NodeRemoval
                     $this->getInterDimensionalVariationGraph()
                 ),
                 $command->removalAttachmentPoint
+            )
+        );
+
+        return new EventsToPublish(
+            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+                ->getEventStreamName(),
+            NodeAggregateEventPublisher::enrichWithCommand(
+                $command,
+                $events
+            ),
+            ExpectedVersion::ANY()
+        );
+    }
+
+    public function handleRestoreNodeAggregateCoverage(
+        RestoreNodeAggregateCoverage $command,
+        ContentRepository $contentRepository
+    ): EventsToPublish {
+        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $nodeAggregate = $this->requireProjectedNodeAggregate(
+            $command->contentStreamId,
+            $command->nodeAggregateId,
+            $contentRepository
+        );
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
+        $this->requireNodeAggregateToNotBeRoot($nodeAggregate);
+        $this->requireDimensionSpacePointToExist($command->dimensionSpacePointToCover);
+        $primaryGeneralization = $this->interDimensionalVariationGraph->getPrimaryGeneralization(
+            $command->dimensionSpacePointToCover
+        );
+        if (!$primaryGeneralization instanceof DimensionSpacePoint) {
+            throw DimensionSpacePointHasNoPrimaryGeneralization::butWasSupposedToHave(
+                $command->dimensionSpacePointToCover
+            );
+        }
+        $this->requireNodeAggregateToCoverDimensionSpacePoint(
+            $nodeAggregate,
+            $primaryGeneralization
+        );
+
+        $this->requireNodeAggregateToNotCoverDimensionSpacePoint($nodeAggregate, $command->dimensionSpacePointToCover);
+        $parentNodeAggregate = $this->requireProjectedParentNodeAggregateInDimensionSpacePoint(
+            $command->contentStreamId,
+            $command->nodeAggregateId,
+            $primaryGeneralization,
+            $contentRepository
+        );
+        if (!$parentNodeAggregate->coversDimensionSpacePoint($command->dimensionSpacePointToCover)) {
+            throw ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
+                $command->nodeAggregateId,
+                $command->dimensionSpacePointToCover,
+                $command->contentStreamId
+            );
+        }
+
+        $affectedDimensionSpacePoints = $command->withSpecializations
+            ? NodeVariantSelectionStrategy::STRATEGY_ALL_SPECIALIZATIONS
+                ->resolveAffectedDimensionSpacePoints(
+                    $command->dimensionSpacePointToCover,
+                    $parentNodeAggregate,
+                    $this->interDimensionalVariationGraph
+                )
+            : new DimensionSpacePointSet([$command->dimensionSpacePointToCover]);
+
+        $events = Events::with(
+            new NodeAggregateCoverageWasRestored(
+                $command->contentStreamId,
+                $command->nodeAggregateId,
+                $primaryGeneralization,
+                $affectedDimensionSpacePoints,
+                $command->recursionMode
             )
         );
 

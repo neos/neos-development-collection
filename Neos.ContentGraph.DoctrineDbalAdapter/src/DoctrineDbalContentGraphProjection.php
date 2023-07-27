@@ -13,7 +13,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelationRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
@@ -56,6 +56,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
@@ -175,6 +176,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             DimensionSpacePointWasMoved::class,
             DimensionShineThroughWasAdded::class,
             NodeAggregateWasRemoved::class,
+            NodeAggregateCoverageWasRestored::class,
             NodeAggregateWasMoved::class,
             NodeSpecializationVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
@@ -232,6 +234,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->whenDimensionShineThroughWasAdded($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWasRemoved) {
             $this->whenNodeAggregateWasRemoved($eventInstance);
+        } elseif ($eventInstance instanceof NodeAggregateCoverageWasRestored) {
+            $this->whenNodeAggregateCoverageWasRestored($eventInstance);
         } elseif ($eventInstance instanceof NodeAggregateWasMoved) {
             $this->whenNodeAggregateWasMoved($eventInstance);
         } elseif ($eventInstance instanceof NodeSpecializationVariantWasCreated) {
@@ -550,7 +554,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $dimensionSpacePoint
             );
 
-            $hierarchyRelation = new HierarchyRelation(
+            $hierarchyRelation = new HierarchyRelationRecord(
                 $parentNodeAnchorPoint,
                 $childNodeAnchorPoint,
                 $relationName,
@@ -963,22 +967,22 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * @param HierarchyRelation $sourceHierarchyRelation
+     * @param HierarchyRelationRecord $sourceHierarchyRelation
      * @param ContentStreamId $contentStreamId
      * @param DimensionSpacePoint $dimensionSpacePoint
      * @param NodeRelationAnchorPoint|null $newParent
      * @param NodeRelationAnchorPoint|null $newChild
-     * @return HierarchyRelation
+     * @return HierarchyRelationRecord
      * @throws \Doctrine\DBAL\DBALException
      */
     protected function copyHierarchyRelationToDimensionSpacePoint(
-        HierarchyRelation $sourceHierarchyRelation,
+        HierarchyRelationRecord $sourceHierarchyRelation,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         ?NodeRelationAnchorPoint $newParent = null,
         ?NodeRelationAnchorPoint $newChild = null
-    ): HierarchyRelation {
-        $copy = new HierarchyRelation(
+    ): HierarchyRelationRecord {
+        $copy = new HierarchyRelationRecord(
             $newParent ?: $sourceHierarchyRelation->parentNodeAnchor,
             $newChild ?: $sourceHierarchyRelation->childNodeAnchor,
             $sourceHierarchyRelation->name,

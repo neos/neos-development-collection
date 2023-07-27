@@ -16,6 +16,7 @@ use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnab
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Event\NodeAggregateNameWasChanged;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
@@ -78,6 +79,7 @@ final class EventNormalizer
             NodeAggregateWasEnabled::class,
             NodeAggregateWasMoved::class,
             NodeAggregateWasRemoved::class,
+            NodeAggregateCoverageWasRestored::class,
             NodeAggregateWithNodeWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodePeerVariantWasCreated::class,

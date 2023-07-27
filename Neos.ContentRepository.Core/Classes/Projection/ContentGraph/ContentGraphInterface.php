@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Dto\DescendantAssignments;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -110,6 +111,15 @@ interface ContentGraphInterface extends ProjectionStateInterface
         ContentStreamId $contentStreamId,
         NodeAggregateId $childNodeAggregateId,
         OriginDimensionSpacePoint $childOriginDimensionSpacePoint
+    ): ?NodeAggregate;
+
+    /**
+     * @internal only for consumption inside the Command Handler
+     */
+    public function findParentNodeAggregateByChildDimensionSpacePoint(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
+        DimensionSpacePoint $childDimensionSpacePoint
     ): ?NodeAggregate;
 
     /**

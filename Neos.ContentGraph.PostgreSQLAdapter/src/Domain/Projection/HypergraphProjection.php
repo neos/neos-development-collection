@@ -49,6 +49,7 @@ use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event;
@@ -65,6 +66,8 @@ use Neos\EventStore\Model\EventStream\EventStreamInterface;
  */
 final class HypergraphProjection implements ProjectionInterface
 {
+    public const ANCHOR_POINT_SORT_FROM_RESULT = '00000000-0000-0000-0000-000000000000';
+
     use ContentStreamForking;
     use NodeCreation;
     use NodeDisabling;
@@ -121,12 +124,12 @@ final class HypergraphProjection implements ProjectionInterface
             $connection->executeStatement($statement);
         }
         $connection->executeStatement('
-            CREATE INDEX IF NOT EXISTS node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
+            CREATE INDEX IF NOT EXISTS ' . $this->tableNamePrefix . '_node_properties ON ' . $this->tableNamePrefix . '_node USING GIN(properties);
 
-            create index if not exists hierarchy_children
+            create index if not exists ' . $this->tableNamePrefix . '_hierarchy_children
                 on ' . $this->tableNamePrefix . '_hierarchyhyperrelation using gin (childnodeanchors);
 
-            create index if not exists restriction_affected
+            create index if not exists ' . $this->tableNamePrefix . '_restriction_affected
                 on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
         ');
 
@@ -173,6 +176,7 @@ final class HypergraphProjection implements ProjectionInterface
             NodeReferencesWereSet::class,
             // NodeRemoval
             NodeAggregateWasRemoved::class,
+            NodeAggregateCoverageWasRestored::class,
             // NodeRenaming
             NodeAggregateNameWasChanged::class,
             // NodeTypeChange
@@ -228,6 +232,7 @@ final class HypergraphProjection implements ProjectionInterface
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($eventInstance),
             // NodeRemoval
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($eventInstance),
+            NodeAggregateCoverageWasRestored::class => $this->whenNodeAggregateCoverageWasRestored($eventInstance),
             // NodeRenaming
             NodeAggregateNameWasChanged::class => $this->whenNodeAggregateNameWasChanged($eventInstance),
             // NodeTypeChange
@@ -258,6 +263,11 @@ final class HypergraphProjection implements ProjectionInterface
             );
         }
         return $this->contentHypergraph;
+    }
+
+    protected function getHierarchyRelationTableName(): string
+    {
+        return $this->getDatabaseConnection()->quoteIdentifier($this->tableNamePrefix . '_hierarchyhyperrelation');
     }
 
     protected function getProjectionHypergraph(): ProjectionHypergraph

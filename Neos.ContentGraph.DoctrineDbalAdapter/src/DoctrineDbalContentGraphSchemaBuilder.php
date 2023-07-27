@@ -64,8 +64,8 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setDefault(null);
         $table
             ->setPrimaryKey(['relationanchorpoint'])
-            ->addIndex(['nodeaggregateid'], 'NODE_AGGREGATE_ID')
-            ->addIndex(['nodetypename'], 'NODE_TYPE_NAME');
+            ->addIndex(['nodeaggregateid'], $this->tableNamePrefix . '_NODE_AGGREGATE_ID')
+            ->addIndex(['nodetypename'], $this->tableNamePrefix . '_NODE_TYPE_NAME');
     }
 
     private function createHierarchyRelationTable(Schema $schema): void
@@ -91,10 +91,10 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setLength(255)
             ->setNotnull(true);
         $table
-            ->addIndex(['childnodeanchor'], 'CHILDNODEANCHOR')
-            ->addIndex(['contentstreamid'], 'CONTENTSTREAMID')
-            ->addIndex(['parentnodeanchor'], 'PARENTNODEANCHOR')
-            ->addIndex(['contentstreamid', 'dimensionspacepointhash'], 'SUBGRAPH_ID');
+            ->addIndex(['childnodeanchor'], $this->tableNamePrefix . '_CHILDNODEANCHOR')
+            ->addIndex(['contentstreamid'], $this->tableNamePrefix . '_CONTENTSTREAMID')
+            ->addIndex(['parentnodeanchor'], $this->tableNamePrefix . '_PARENTNODEANCHOR')
+            ->addIndex(['contentstreamid', 'dimensionspacepointhash'], $this->tableNamePrefix . '_SUBGRAPH_ID');
     }
 
     private function createReferenceRelationTable(Schema $schema): void

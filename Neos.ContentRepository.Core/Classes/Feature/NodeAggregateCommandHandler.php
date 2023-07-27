@@ -51,6 +51,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConstraintException;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
 
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
@@ -122,6 +123,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 => $this->handleSetSerializedNodeReferences($command, $contentRepository),
             ChangeNodeAggregateType::class => $this->handleChangeNodeAggregateType($command, $contentRepository),
             RemoveNodeAggregate::class => $this->handleRemoveNodeAggregate($command, $contentRepository),
+            RestoreNodeAggregateCoverage::class
+                => $this->handleRestoreNodeAggregateCoverage($command, $contentRepository),
             CreateNodeAggregateWithNode::class
                 => $this->handleCreateNodeAggregateWithNode($command, $contentRepository),
             CreateNodeAggregateWithNodeAndSerializedProperties::class

@@ -19,9 +19,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RemoveNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\RecursionMode;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Command\RestoreNodeAggregateCoverage;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -96,5 +97,48 @@ trait NodeRemoval
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 
         $this->publishEvent('NodeAggregateWasRemoved', $streamName->getEventStreamName(), $eventPayload);
+    }
+
+
+    /**
+     * @Given /^the command RestoreNodeAggregateCoverage is executed with payload:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandRestoreNodeAggregateCoverageIsExecutedWithPayload(TableNode $payloadTable)
+    {
+        $commandArguments = $this->readPayloadTable($payloadTable);
+        $contentStreamIdentifier = isset($commandArguments['contentStreamId'])
+            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
+            : $this->getCurrentContentStreamId();
+        $dimensionSpacePointToCover = DimensionSpacePoint::fromArray($commandArguments['dimensionSpacePointToCover']);
+        $initiatingUserIdentifier = isset($commandArguments['initiatingUserId'])
+            ? UserId::fromString($commandArguments['initiatingUserId'])
+            : $this->getCurrentUserId();
+
+        $command = new RestoreNodeAggregateCoverage(
+            $contentStreamIdentifier,
+            NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
+            $dimensionSpacePointToCover,
+            $commandArguments['withSpecializations'],
+            RecursionMode::from($commandArguments['recursionMode']),
+            $initiatingUserIdentifier
+        );
+
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+    }
+
+    /**
+     * @Given /^the command RestoreNodeAggregateCoverage is executed with payload and exceptions are caught:$/
+     * @param TableNode $payloadTable
+     * @throws \Exception
+     */
+    public function theCommandRestoreNodeAggregateCoverageIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable)
+    {
+        try {
+            $this->theCommandRestoreNodeAggregateCoverageIsExecutedWithPayload($payloadTable);
+        } catch (\Exception $exception) {
+            $this->lastCommandException = $exception;
+        }
     }
 }

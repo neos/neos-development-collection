@@ -42,7 +42,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /** @codingStandardsIgnoreStart */
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy;
-/** @codingStandardsIgnoreEnd  */
+/** @codingStandardsIgnoreEnd */
 
 /**
  * @internal implementation detail of Command Handlers

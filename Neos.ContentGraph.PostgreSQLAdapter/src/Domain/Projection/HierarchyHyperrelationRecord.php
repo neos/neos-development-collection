@@ -26,27 +26,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class HierarchyHyperrelationRecord
 {
-    public ContentStreamId $contentStreamId;
-
-    public DimensionSpacePoint $dimensionSpacePoint;
-
-    public NodeRelationAnchorPoint $parentNodeAnchor;
-
-    /**
-     * The child node relation anchor points, indexed by sorting position
-     */
-    public NodeRelationAnchorPoints $childNodeAnchors;
-
     public function __construct(
-        ContentStreamId $contentStreamId,
-        NodeRelationAnchorPoint $parentNodeAnchor,
-        DimensionSpacePoint $dimensionSpacePoint,
-        NodeRelationAnchorPoints $childNodeAnchorPoints
+        public ContentStreamId $contentStreamId,
+        public NodeRelationAnchorPoint $parentNodeAnchor,
+        public DimensionSpacePoint $dimensionSpacePoint,
+        /** The child node relation anchor points, indexed by sorting position */
+        public NodeRelationAnchorPoints $childNodeAnchors
     ) {
-        $this->contentStreamId = $contentStreamId;
-        $this->parentNodeAnchor = $parentNodeAnchor;
-        $this->dimensionSpacePoint = $dimensionSpacePoint;
-        $this->childNodeAnchors = $childNodeAnchorPoints;
     }
 
     /**
@@ -106,6 +92,34 @@ final class HierarchyHyperrelationRecord
             $succeedingSiblingAnchor
         );
         $this->updateChildNodeAnchors($childNodeAnchors, $databaseConnection, $tableNamePrefix);
+    }
+
+    /**
+     * There might be multiple candidates for the role of succeeding sibling.
+     * The first match from the actually available ones will be selected.
+     */
+    public function addChildNodeAnchorAfterFirstCandidate(
+        NodeRelationAnchorPoint $childNodeAnchor,
+        NodeRelationAnchorPoints $succeedingSiblingCandidates,
+        Connection $databaseConnection,
+        string $tableNamePrefix
+    ): void {
+        $succeedingSiblingAnchor = null;
+        if (!$succeedingSiblingCandidates->isEmpty()) {
+            foreach ($this->childNodeAnchors as $childNodeAnchor) {
+                if ($succeedingSiblingCandidates->contains($childNodeAnchor)) {
+                    $succeedingSiblingAnchor = $childNodeAnchor;
+                    break;
+                }
+            }
+        }
+
+        $this->addChildNodeAnchor(
+            $childNodeAnchor,
+            $succeedingSiblingAnchor,
+            $databaseConnection,
+            $tableNamePrefix
+        );
     }
 
     public function removeChildNodeAnchor(

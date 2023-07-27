@@ -17,10 +17,12 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\EventCouldNotBeAppliedToContentGraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HierarchyHyperrelationRecord;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\HypergraphProjection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ReferenceRelationRecord;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateCoverageWasRestored;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -33,6 +35,7 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
  */
 trait NodeRemoval
 {
+
     /**
      * @throws \Throwable
      */
@@ -156,9 +159,6 @@ trait NodeRemoval
     }
 
     /**
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @param NodeAggregateId $nodeAggregateId
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
@@ -181,6 +181,120 @@ trait NodeRemoval
             );
         }
     }
+
+    public function whenNodeAggregateCoverageWasRestored(NodeAggregateCoverageWasRestored $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $descendantAssignments = $this->projectionHypergraph->findDescendantAssignments(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $event->sourceDimensionSpacePoint,
+                $event->affectedCoveredDimensionSpacePoints,
+                $event->recursionMode
+            );
+
+            $hierarchyRecords = [];
+            $restrictionRecords = [];
+            foreach ($descendantAssignments as $descendantAssignment) {
+                $dspHash = $descendantAssignment['dimensionspacepointhash'];
+                $parentAnchor = $descendantAssignment['parentrelationanchorpoint'];
+                $succeedingSiblingAnchor = $descendantAssignment['succeedingsiblingrelationanchorpoint'];
+                if ($succeedingSiblingAnchor) {
+                    if ($succeedingSiblingAnchor === HypergraphProjection::ANCHOR_POINT_SORT_FROM_RESULT) {
+                        if (isset($hierarchyRecords[$dspHash][$parentAnchor])) {
+                            $hierarchyRecords[$dspHash][$parentAnchor]['childnodeanchors'][]
+                                = $descendantAssignment['childrelationanchorpoint'];
+                        } else {
+                            $hierarchyRecords[$dspHash][$parentAnchor] = [
+                                'contentstreamidentifier' => $event->contentStreamId->getValue(),
+                                'parentnodeanchor' => $descendantAssignment['parentrelationanchorpoint'],
+                                'dimensionspacepointhash' => $descendantAssignment['dimensionspacepointhash'],
+                                'dimensionspacepoint' => $descendantAssignment['dimensionspacepoint'],
+                                'childnodeanchors' => [$descendantAssignment['childrelationanchorpoint']],
+                            ];
+                        }
+                    } else {
+                        $query = 'UPDATE ' . $this->getHierarchyRelationTableName() . '
+                        SET childnodeanchors = (childnodeanchors[:array_position(childnodeanchors,\'' . $succeedingSiblingAnchor . '\')-1]
+                            || \'' . $descendantAssignment['childrelationanchorpoint'] . '\'::uuid
+                            || childnodeanchors[array_position(childnodeanchors,\'' . $succeedingSiblingAnchor . '\'):])
+                        WHERE dimensionspacepointhash=\'' . $descendantAssignment['dimensionspacepointhash'] . '\'
+                            AND contentstreamidentifier = \'' . $event->contentStreamId . '\'
+                            AND parentnodeanchor = \'' . $descendantAssignment['parentrelationanchorpoint'] . '\'';
+                        $this->getDatabaseConnection()->executeStatement($query);
+                    }
+                } else {
+                    $hierarchyRecords[$dspHash][$parentAnchor] = [
+                        'contentstreamidentifier' => $event->contentStreamId->getValue(),
+                        'parentnodeanchor' => $descendantAssignment['parentrelationanchorpoint'],
+                        'dimensionspacepointhash' => $descendantAssignment['dimensionspacepointhash'],
+                        'dimensionspacepoint' => $descendantAssignment['dimensionspacepoint'],
+                        'childnodeanchors' => [$descendantAssignment['childrelationanchorpoint']],
+                    ];
+                }
+                 $restrictionRecords[$dspHash][] = [
+                     'parentnodeaggregateid' => $descendantAssignment['parentnodeaggregateid'],
+                     'childnodeaggregateid' => $descendantAssignment['childnodeaggregateid'],
+                 ];
+            }
+
+            foreach ($hierarchyRecords as $hierarchyRecordsInDsp) {
+                foreach ($hierarchyRecordsInDsp as $hierarchyRecord) {
+                    $hierarchyRecord['childnodeanchors']
+                        = '{"' . implode('","', $hierarchyRecord['childnodeanchors']) . '"}';
+                    $this->getDatabaseConnection()->insert(
+                        $this->getHierarchyRelationTableName(),
+                        $hierarchyRecord
+                    );
+                }
+            }
+
+            foreach ($restrictionRecords as $dimensionSpacePointHash => $restrictionRecordsForDsp) {
+                foreach ($restrictionRecordsForDsp as $restrictionRecord) {
+                    $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
+                        'INSERT INTO ' . $this->tableNamePrefix . '_restrictionhyperrelation (
+                        contentstreamidentifier,
+                        dimensionspacepointhash,
+                        originnodeaggregateidentifier,
+                        affectednodeaggregateidentifiers
+                    )
+                    SELECT contentstreamidentifier, :dimensionSpacePointHash,
+                        originnodeaggregateidentifier, :affectedNodeAggregateIds
+                    FROM ' . $this->tableNamePrefix . '_restrictionhyperrelation source
+                    WHERE source.contentstreamidentifier = :contentStreamId
+                        AND source.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                        AND source.originnodeaggregateidentifier = :sourceNodeAggregateId',
+                        [
+                            'contentStreamId' => (string)$event->contentStreamId,
+                            'sourceDimensionSpacePointHash' => $event->sourceDimensionSpacePoint->hash,
+                            'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                            'sourceNodeAggregateId' => $restrictionRecord['childnodeaggregateid'],
+                            'affectedNodeAggregateIds' => '{' . $restrictionRecord['childnodeaggregateid'] . '}'
+                        ]
+                    );
+                    $this->getDatabaseConnection()->executeQuery(/** @lang PostgreSQL */
+                        'UPDATE ' . $this->tableNamePrefix . '_restrictionhyperrelation
+                        SET affectednodeaggregateidentifiers = array_append(
+                            affectednodeaggregateidentifiers,
+                            :childNodeAggregateId
+                        )
+                        WHERE contentstreamidentifier = :contentStreamId
+                            AND dimensionspacepointhash = :dimensionSpacePointHash
+                            AND :parentNodeAggregateId = ANY(affectednodeaggregateidentifiers)
+                            AND NOT (:childNodeAggregateId = ANY(affectednodeaggregateidentifiers))',
+                        [
+                            'contentStreamId' => (string)$event->contentStreamId,
+                            'dimensionSpacePointHash' => $dimensionSpacePointHash,
+                            'childNodeAggregateId' => $restrictionRecord['childnodeaggregateid'],
+                            'parentNodeAggregateId' => $restrictionRecord['parentnodeaggregateid']
+                        ]
+                    );
+                }
+            }
+        });
+    }
+
+    abstract protected function getHierarchyRelationTableName(): string;
 
     abstract protected function getProjectionHypergraph(): ProjectionHypergraph;
 

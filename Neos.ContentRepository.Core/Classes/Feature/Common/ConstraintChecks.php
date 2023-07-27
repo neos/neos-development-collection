@@ -37,6 +37,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsNotOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsOfTypeRoot;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Exception\ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Exception\ReferenceCannotBeSet;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDisablesDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Exception\NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint;
@@ -55,6 +56,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithS
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateAlreadyCoversDimensionSpacePoint;
 
 /**
  * @internal implementation details of command handlers
@@ -443,6 +445,32 @@ trait ConstraintChecks
     }
 
     /**
+     * @throws NodeAggregateCurrentlyDoesNotExist
+     */
+    public function requireProjectedParentNodeAggregateInDimensionSpacePoint(
+        ContentStreamId $contentStreamIdentifier,
+        NodeAggregateId $childNodeAggregateIdentifier,
+        DimensionSpacePoint $dimensionSpacePoint,
+        ContentRepository $contentRepository
+    ): NodeAggregate {
+        $parentNodeAggregate = $contentRepository->getContentGraph()->findParentNodeAggregateByChildDimensionSpacePoint(
+            $contentStreamIdentifier,
+            $childNodeAggregateIdentifier,
+            $dimensionSpacePoint
+        );
+
+        if (!$parentNodeAggregate instanceof NodeAggregate) {
+            throw ParentsNodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint::butWasSupposedTo(
+                $childNodeAggregateIdentifier,
+                $dimensionSpacePoint,
+                $contentStreamIdentifier
+            );
+        }
+
+        return $parentNodeAggregate;
+    }
+
+    /**
      * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
      */
     protected function requireNodeAggregateToCoverDimensionSpacePoint(
@@ -471,6 +499,21 @@ trait ConstraintChecks
                 $nodeAggregate->nodeAggregateId,
                 $dimensionSpacePointSet,
                 $nodeAggregate->coveredDimensionSpacePoints
+            );
+        }
+    }
+
+    /**
+     * @throws NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint
+     */
+    protected function requireNodeAggregateToNotCoverDimensionSpacePoint(
+        NodeAggregate $nodeAggregate,
+        DimensionSpacePoint $dimensionSpacePoint
+    ): void {
+        if ($nodeAggregate->coversDimensionSpacePoint($dimensionSpacePoint)) {
+            throw NodeAggregateAlreadyCoversDimensionSpacePoint::butWasNotSupposedTo(
+                $nodeAggregate->nodeAggregateId,
+                $dimensionSpacePoint
             );
         }
     }

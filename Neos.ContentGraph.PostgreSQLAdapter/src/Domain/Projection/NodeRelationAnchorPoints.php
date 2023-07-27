@@ -61,6 +61,17 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
         return '{' . implode(',', $this->nodeRelationAnchorPoints) .  '}';
     }
 
+    public function contains(NodeRelationAnchorPoint $point): bool
+    {
+        foreach ($this->nodeRelationAnchorPoints as $nodeRelationAnchorPoint) {
+            if ($nodeRelationAnchorPoint->equals($point)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function add(
         NodeRelationAnchorPoint $nodeRelationAnchorPoint,
         ?NodeRelationAnchorPoint $succeedingSibling
@@ -113,5 +124,10 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
     public function count(): int
     {
         return count($this->nodeRelationAnchorPoints);
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->nodeRelationAnchorPoints) === 0;
     }
 }

@@ -30,40 +30,16 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
  */
 final class NodeRecord
 {
-    public NodeRelationAnchorPoint $relationAnchorPoint;
-
-    public NodeAggregateId $nodeAggregateId;
-
-    public OriginDimensionSpacePoint $originDimensionSpacePoint;
-
-    public string $originDimensionSpacePointHash;
-
-    public SerializedPropertyValues $properties;
-
-    public NodeTypeName $nodeTypeName;
-
-    public NodeAggregateClassification $classification;
-
-    public ?NodeName $nodeName;
-
     public function __construct(
-        NodeRelationAnchorPoint $relationAnchorPoint,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint,
-        string $originDimensionSpacePointHash,
-        SerializedPropertyValues $properties,
-        NodeTypeName $nodeTypeName,
-        NodeAggregateClassification $classification,
-        ?NodeName $nodeName = null
+        public NodeRelationAnchorPoint $relationAnchorPoint,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public string $originDimensionSpacePointHash,
+        public SerializedPropertyValues $properties,
+        public NodeTypeName $nodeTypeName,
+        public NodeAggregateClassification $classification,
+        public ?NodeName $nodeName = null
     ) {
-        $this->relationAnchorPoint = $relationAnchorPoint;
-        $this->nodeAggregateId = $nodeAggregateId;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
-        $this->originDimensionSpacePointHash = $originDimensionSpacePointHash;
-        $this->properties = $properties;
-        $this->nodeTypeName = $nodeTypeName;
-        $this->classification = $classification;
-        $this->nodeName = $nodeName;
     }
 
     /**

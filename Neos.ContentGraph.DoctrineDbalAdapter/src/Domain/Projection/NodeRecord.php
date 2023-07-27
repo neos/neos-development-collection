@@ -30,6 +30,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  */
 final class NodeRecord
 {
+    public const TABLE_NAME_SUFFIX = '_node';
+
     public function __construct(
         public NodeRelationAnchorPoint $relationAnchorPoint,
         public NodeAggregateId $nodeAggregateId,
@@ -51,7 +53,7 @@ final class NodeRecord
      */
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert($tableNamePrefix . '_node', [
+        $databaseConnection->insert($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
             'relationanchorpoint' => $this->relationAnchorPoint->value,
             'nodeaggregateid' => $this->nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
@@ -78,7 +80,7 @@ final class NodeRecord
     public function updateToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            $tableNamePrefix . '_node',
+            $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             [
                 'nodeaggregateid' => $this->nodeAggregateId->value,
                 'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
@@ -106,7 +108,7 @@ final class NodeRecord
      */
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete($tableNamePrefix . '_node', [
+        $databaseConnection->delete($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
             'relationanchorpoint' => $this->relationAnchorPoint->value
         ]);
     }

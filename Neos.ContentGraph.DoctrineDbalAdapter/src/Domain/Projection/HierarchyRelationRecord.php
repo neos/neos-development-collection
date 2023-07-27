@@ -24,8 +24,10 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * @internal
  */
-final class HierarchyRelation
+final class HierarchyRelationRecord
 {
+    public const TABLE_NAME_SUFFIX = '_hierarchyrelation';
+
     public function __construct(
         public NodeRelationAnchorPoint $parentNodeAnchor,
         public NodeRelationAnchorPoint $childNodeAnchor,
@@ -42,7 +44,7 @@ final class HierarchyRelation
      */
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->insert($tableNamePrefix . '_hierarchyrelation', [
+        $databaseConnection->insert($tableNamePrefix . self::TABLE_NAME_SUFFIX, [
             'parentnodeanchor' => $this->parentNodeAnchor->value,
             'childnodeanchor' => $this->childNodeAnchor->value,
             'name' => $this->name?->value,
@@ -58,7 +60,7 @@ final class HierarchyRelation
      */
     public function removeFromDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
-        $databaseConnection->delete($tableNamePrefix . '_hierarchyrelation', $this->getDatabaseId());
+        $databaseConnection->delete($tableNamePrefix . self::TABLE_NAME_SUFFIX, $this->getDatabaseId());
     }
 
     /**
@@ -95,7 +97,7 @@ final class HierarchyRelation
             $data['position'] = $position;
         }
         $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
+            $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             $data,
             $this->getDatabaseId()
         );
@@ -104,7 +106,7 @@ final class HierarchyRelation
     public function assignNewPosition(int $position, Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->update(
-            $tableNamePrefix . '_hierarchyrelation',
+            $tableNamePrefix . self::TABLE_NAME_SUFFIX,
             [
                 'position' => $position
             ],
