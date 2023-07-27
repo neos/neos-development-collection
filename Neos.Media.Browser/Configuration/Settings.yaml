@@ -33,6 +33,10 @@ Neos:
         # Show  media tags
         showMediaTags:
           enable: false
+        # collection hierarchical tree view / separation character
+        # set to '' (empty string) to disable
+        collectionTree:
+          separator: '/'
 
   Flow:
     security:

@@ -116,26 +116,41 @@
             </f:security.ifAccess>
         </f:if>
         <f:if condition="{assetCollections -> f:count()}">
-            <ul class="neos-media-aside-list">
+            <ul class="neos-media-aside-list {f:if(condition: collectionSeparator, then: ' tree-view')}">
                 <f:if condition="{showAllCollections}">
+									<f:then>
                     <li>
                         <f:link.action action="index" class="{f:if(condition: activeAssetCollection, else: ' neos-active')}" title="{neos:backend.translate(id: 'allCollections', package: 'Neos.Media.Browser')}" arguments="{view: view, collectionMode: 1}" addQueryString="true">
                             {neos:backend.translate(id: 'filter.all', package: 'Neos.Media.Browser')}
                             <span class="count">{allCollectionsCount}</span>
                         </f:link.action>
                     </li>
+									</f:then>
+									<f:else>
+										<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
+										</f:security.ifAccess>
+									</f:else>
                 </f:if>
                 <f:for each="{assetCollections}" as="assetCollection">
                     <li>
                         <f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} === {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object, collectionMode: 0}" addQueryString="true" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
-                            {assetCollection.object.title}
-                            <span class="count">{assetCollection.count}</span>
+														<f:if condition="{assetCollection.depth} > 0">
+															<f:then>
+																<f:format.raw>{assetCollection.title}</f:format.raw>
+															</f:then>
+															<f:else>
+																{assetCollection.object.title}
+															</f:else>
+														</f:if>
+													<span class="count">{assetCollection.count}</span>
                         </f:link.action>
                         <f:if condition="!{activeAssetSource.readOnly}">
+													<f:if condition="{assetCollection.depth} <= 0 || {assetCollection.depth} > 1">
                             <div class="neos-sidelist-edit-actions">
                                 <f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection.object}" addQueryString="true" title="{neos:backend.translate(id: 'editCollection', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
-                                <button type="submit" class="neos-button neos-button-danger" data-toggle="modal" href="#delete-assetcollection-modal" data-object-identifier="{assetCollection.object -> f:format.identifier()}" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser', arguments:'{0: assetCollection.object.title}')}" title="{neos:backend.translate(id: 'deleteCollection', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="fas fa-trash"></i></button>
+															  <button type="submit" class="neos-button neos-button-danger" data-toggle="modal" href="#delete-assetcollection-modal" data-object-identifier="{assetCollection.object -> f:format.identifier()}" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser', arguments:'{0: assetCollection.object.title}')}" title="{neos:backend.translate(id: 'deleteCollection', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="fas fa-trash"></i></button>
                             </div>
+													</f:if>
                         </f:if>
                     </li>
                 </f:for>
@@ -160,7 +175,7 @@
                                 <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
                                 <f:form action="deleteAssetCollection" addQueryString="true" class="neos-inline">
                                     <f:form.hidden name="assetCollection" id="modal-form-object"/>
-                                    <button type="submit" class="neos-button neos-button-danger">
+																		<button type="submit" class="neos-button neos-button-danger">
                                         {neos:backend.translate(id: 'message.confirmDeleteCollection', package: 'Neos.Media.Browser')}
                                     </button>
                                     <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}"/>
