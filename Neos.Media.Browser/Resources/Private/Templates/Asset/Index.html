@@ -126,10 +126,6 @@
                         </f:link.action>
                     </li>
 									</f:then>
-									<f:else>
-										<f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
-										</f:security.ifAccess>
-									</f:else>
                 </f:if>
                 <f:for each="{assetCollections}" as="assetCollection">
                     <li>
