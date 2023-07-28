@@ -312,7 +312,7 @@ class NodesController extends ActionController
                 ));
 
             $this->redirect('show', null, null, [
-                'identifier' => $nodeAggregateId,
+                'identifier' => $nodeAggregateId->value,
                 'workspaceName' => $workspaceName,
                 'dimensions' => $dimensions
             ]);

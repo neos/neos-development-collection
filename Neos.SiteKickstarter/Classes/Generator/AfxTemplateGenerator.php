@@ -60,9 +60,6 @@ class AfxTemplateGenerator extends GeneratorService implements SitePackageGenera
             'type' => 'neos-site',
             "require" => [
                 "neos/neos" => "*"
-            ],
-            "suggest" => [
-                "neos/seo" => "*"
             ]
         ]);
 
