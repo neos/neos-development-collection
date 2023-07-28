@@ -49,7 +49,7 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
             $contentRepositoryId,
         );
 
-        $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->getService(
+        $dimensionMenuItemsImplementationInternals = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new DimensionsMenuItemsImplementationInternalsFactory()
         );

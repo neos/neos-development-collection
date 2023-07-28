@@ -59,7 +59,7 @@ class ContentDimensionsController extends ActionController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $controllerInternals = $this->contentRepositoryRegistry->getService(
+        $controllerInternals = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ContentDimensionsControllerInternalsFactory()
         );

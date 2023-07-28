@@ -42,7 +42,7 @@ trait MigrationsTrait
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
         $contentStreamIds = array_map(fn (string $cs) => ContentStreamId::fromString($cs), explode(',', $contentStreams));
         $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
-        $nodeMigrationService = $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new NodeMigrationServiceFactory());
+        $nodeMigrationService = $this->getContentRepositoryRegistry()->buildService($this->getContentRepositoryId(), new NodeMigrationServiceFactory());
         $nodeMigrationService->executeMigration($command);
     }
 
