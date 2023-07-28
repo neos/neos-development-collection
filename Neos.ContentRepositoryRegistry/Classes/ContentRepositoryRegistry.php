@@ -80,19 +80,6 @@ final class ContentRepositoryRegistry
      * @return T
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      * @template T of ContentRepositoryServiceInterface
-     * @deprecated in favor of {@see self::buildService()}
-     */
-    public function getService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
-    {
-        return $this->buildService($contentRepositoryId, $contentRepositoryServiceFactory);
-    }
-
-    /**
-     * @param ContentRepositoryId $contentRepositoryId
-     * @param ContentRepositoryServiceFactoryInterface<T> $contentRepositoryServiceFactory
-     * @return T
-     * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
-     * @template T of ContentRepositoryServiceInterface
      */
     public function buildService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
     {
