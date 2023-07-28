@@ -27,6 +27,16 @@ Neos:
         # By default, enable the option to create redirects for replaced asset resources
         createAssetRedirectsOption:
           enable: true
+        # Show all media collections
+        showAllCollections:
+          enable: true
+        # Show  media tags
+        showMediaTags:
+          enable: true
+        # collection hierarchical tree view / separation character
+        # set to some character to enable (for example '/')
+        collectionTree:
+          separator: ''
 
   Flow:
     security:
