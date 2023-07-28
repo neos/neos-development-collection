@@ -15,6 +15,8 @@ use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 
 final class RouterCacheHook implements CatchUpHookInterface
 {
@@ -74,10 +76,7 @@ final class RouterCacheHook implements CatchUpHookInterface
         }
 
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
-                $event->nodeAggregateId,
-                $dimensionSpacePoint->hash
-            ));
+            $node = $this->findDocumentNodeInfoByIdAndDimensionSpacePoint($event->nodeAggregateId, $dimensionSpacePoint);
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -97,10 +96,7 @@ final class RouterCacheHook implements CatchUpHookInterface
         }
 
         foreach ($event->affectedCoveredDimensionSpacePoints as $dimensionSpacePoint) {
-            $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
-                $event->nodeAggregateId,
-                $dimensionSpacePoint->hash
-            ));
+            $node = $this->findDocumentNodeInfoByIdAndDimensionSpacePoint($event->nodeAggregateId, $dimensionSpacePoint);
             if ($node === null) {
                 // Probably not a document node
                 continue;
@@ -125,10 +121,7 @@ final class RouterCacheHook implements CatchUpHookInterface
         }
 
         foreach ($event->affectedDimensionSpacePoints as $affectedDimensionSpacePoint) {
-            $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
-                $event->nodeAggregateId,
-                $affectedDimensionSpacePoint->hash
-            ));
+            $node = $this->findDocumentNodeInfoByIdAndDimensionSpacePoint($event->nodeAggregateId, $affectedDimensionSpacePoint);
             if ($node === null) {
                 // probably not a document node
                 continue;
@@ -151,11 +144,7 @@ final class RouterCacheHook implements CatchUpHookInterface
             /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveMapping */
             foreach ($moveMapping->newLocations as $newLocation) {
                 /* @var $newLocation CoverageNodeMoveMapping */
-                $node = $this->tryGetNode(fn() => $this->getState()->getByIdAndDimensionSpacePointHash(
-                    $event->nodeAggregateId,
-                    $newLocation->coveredDimensionSpacePoint->hash
-                ));
-
+                $node = $this->findDocumentNodeInfoByIdAndDimensionSpacePoint($event->nodeAggregateId, $newLocation->coveredDimensionSpacePoint);
                 if (!$node) {
                     // node probably no document node, skip
                     continue;
@@ -189,10 +178,13 @@ final class RouterCacheHook implements CatchUpHookInterface
         return $this->contentRepository->projectionState(DocumentUriPathFinder::class);
     }
 
-    private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
+    private function findDocumentNodeInfoByIdAndDimensionSpacePoint(NodeAggregateId $nodeAggregateId, DimensionSpacePoint $dimensionSpacePoint): ?DocumentNodeInfo
     {
         try {
-            return $closure();
+            return $this->getState()->getByIdAndDimensionSpacePointHash(
+                $nodeAggregateId,
+                $dimensionSpacePoint->hash
+            );
         } catch (NodeNotFoundException $_) {
             /** @noinspection BadExceptionsProcessingInspection */
             return null;
