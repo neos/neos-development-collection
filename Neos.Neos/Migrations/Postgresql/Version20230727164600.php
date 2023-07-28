@@ -20,7 +20,7 @@ final class Version20230727164600 extends AbstractMigration
      */
     public function up(Schema $schema) : void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
         $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event ADD dimensionshash VARCHAR(32) DEFAULT NULL');
         $this->addSql('CREATE INDEX dimensionshash ON neos_neos_eventlog_domain_model_event (dimensionshash)');
@@ -32,9 +32,9 @@ final class Version20230727164600 extends AbstractMigration
      */
     public function down(Schema $schema) : void
     {
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on \'postgresql\'.');
+        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'postgresql', 'Migration can only be executed safely on "postgresql".');
 
-        $this->addSql('DROP INDEX dimensionshash ON neos_neos_eventlog_domain_model_event');
+        $this->addSql('DROP INDEX dimensionshash');
         $this->addSql('ALTER TABLE neos_neos_eventlog_domain_model_event DROP dimensionshash');
     }
 
