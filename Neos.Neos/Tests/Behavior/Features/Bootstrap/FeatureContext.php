@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperations
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
@@ -124,6 +125,9 @@ class FeatureContext extends MinkContext
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
         $this->setupEventSourcedTrait(true);
+        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
+            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
+        }
     }
 
     protected function initCleanContentRepository(array $adapterKeys): void

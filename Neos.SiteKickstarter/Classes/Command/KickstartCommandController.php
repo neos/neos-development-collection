@@ -74,8 +74,9 @@ class KickstartCommandController extends CommandController
         }
 
         $generatorName = $this->output->select(
-            'What generator do you want to use?',
-            $selection
+            sprintf('What generator do you want to use? (<info>%s</info>): ', array_key_first($selection)),
+            $selection,
+            array_key_first($selection)
         );
 
         $generatorClass = $nameToClassMap[$generatorName];
