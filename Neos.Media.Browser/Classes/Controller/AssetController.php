@@ -204,6 +204,8 @@ class AssetController extends ActionController
             'assetSources' => $this->assetSources,
             'variantsTabFeatureEnabled' => $this->settings['features']['variantsTab']['enable'],
             'constraints' => $this->assetConstraints,
+            'showAllCollections' => $this->settings['features']['showAllCollections']['enable'],
+            'showMediaTags' => $this->settings['features']['showMediaTags']['enable'],
         ]);
     }
 
@@ -253,10 +255,20 @@ class AssetController extends ActionController
         $searchResultCount = 0;
         $untaggedCount = 0;
 
+        $collectionSeparator = $this->settings['features']['collectionTree']['separator'];
+
         try {
             foreach ($this->assetCollectionRepository->findAll()->toArray() as $retrievedAssetCollection) {
                 assert($retrievedAssetCollection instanceof AssetCollection);
-                $assetCollections[] = ['object' => $retrievedAssetCollection, 'count' => $this->assetRepository->countByAssetCollection($retrievedAssetCollection)];
+                $collectionDepth = 0;
+                $title = $retrievedAssetCollection->getTitle();
+                if (!empty($collectionSeparator)) {
+                    $titleParts = explode($collectionSeparator, $title);
+                    if (($collectionDepth = count($titleParts)) > 1) {
+                        $title = ($collectionDepth > 2 ? str_repeat('&nbsp;', $collectionDepth - 1) : '') . '&rdca; ' . $titleParts[$collectionDepth - 1];
+                    }
+                }
+                $assetCollections[] = ['object' => $retrievedAssetCollection, 'count' => $this->assetRepository->countByAssetCollection($retrievedAssetCollection), 'depth' => $collectionDepth, 'title' => $title];
             }
 
             foreach ($activeAssetCollection !== null ? $activeAssetCollection->getTags() : $this->tagRepository->findAll() as $retrievedTag) {
@@ -297,7 +309,8 @@ class AssetController extends ActionController
             'maximumFileUploadSize' => $this->getMaximumFileUploadSize(),
             'humanReadableMaximumFileUploadSize' => Files::bytesToSizeString($this->getMaximumFileUploadSize()),
             'activeAssetSource' => $activeAssetSource,
-            'activeAssetSourceSupportsSorting' => $assetProxyRepository instanceof SupportsSortingInterface
+            'activeAssetSourceSupportsSorting' => $assetProxyRepository instanceof SupportsSortingInterface,
+            'collectionSeparator' => $collectionSeparator,
         ]);
     }
 
@@ -763,6 +776,24 @@ class AssetController extends ActionController
      */
     public function deleteAssetCollectionAction(AssetCollection $assetCollection): void
     {
+        $collectionSeparator = $this->settings['features']['collectionTree']['separator'];
+        if (!empty($collectionSeparator)) {
+            // find all assets in $assetCollection and move to base assetCollection
+            $baseAssetCollection = null;
+            $baseTitle = explode($collectionSeparator, $assetCollection->getTitle())[0];
+            foreach ($this->assetCollectionRepository->findAll()->toArray() as $tempAssetCollection) {
+                /** @var $tempAssetCollection AssetCollection */
+                if ($tempAssetCollection->getTitle() === $baseTitle) {
+                    $baseAssetCollection = $tempAssetCollection;
+                    break;
+                }
+            }
+            if (!empty($baseAssetCollection)) {
+                foreach ($assetCollection->getAssets() as $asset) {
+                    $this->addAssetToCollectionAction($asset, $baseAssetCollection);
+                }
+            }
+        }
         $this->forwardWithConstraints('delete', 'AssetCollection', ['assetCollection' => $assetCollection]);
     }
 

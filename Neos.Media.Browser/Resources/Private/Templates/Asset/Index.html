@@ -10,7 +10,7 @@
             <f:if condition="{searchTerm}"> {neos:backend.translate(id: 'search.foundMatches', arguments: {0: searchTerm}, package: 'Neos.Media.Browser')}</f:if>
         </span>
         <f:if condition="!{activeAssetSource.readOnly}">
-        <f:link.action action="new" addQueryString="true"><i class="fas fa-upload"></i> {neos:backend.translate(id: 'upload', package: 'Neos.Media.Browser')}</f:link.action>
+            <f:link.action action="new" addQueryString="true"><i class="fas fa-upload"></i> {neos:backend.translate(id: 'upload', package: 'Neos.Media.Browser')}</f:link.action>
         </f:if>
     </div>
     <div class="neos-view-options">
@@ -31,7 +31,7 @@
             </div>
         </f:if>
         <f:if condition="{activeAssetSourceSupportsSorting}">
-        <div class="neos-dropdown" id="neos-sort-menu">
+            <div class="neos-dropdown" id="neos-sort-menu">
             <span title="{neos:backend.translate(id: 'tooltip.sortOptions', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">
                 <a class="dropdown-toggle" href="#" data-neos-toggle="dropdown" data-target="#neos-sort-menu">
                     <f:if condition="{sortDirection} === 'ASC'">
@@ -44,27 +44,27 @@
                     </f:if>
                 </a>
             </span>
-            <div class="neos-dropdown-menu-list neos-pull-right" role="menu">
-                <span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'sortby', package: 'Neos.Media.Browser')}</span>
-                <ul>
-                    <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Modified'}" addQueryString="true" class="{f:if(condition: '{sortBy} === \'Modified\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-amount-up', else: 'fa-sort-amount-down')}"></i> {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}</f:link.action>
-                    </li>
-                    <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Name'}" addQueryString="true" class="{f:if(condition: '{sortBy} === \'Name\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-alpha-up', else: 'fa-sort-alpha-down')}"></i> {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}</f:link.action>
-                    </li>
-                </ul>
-                <span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'sortDirection', package: 'Neos.Media.Browser')}</span>
-                <ul>
-                    <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.asc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'ASC'}" addQueryString="true" class="{f:if(condition: '{sortDirection} === \'ASC\'', then: 'neos-active')}"><i class="fas fa-{f:if(condition: '{sortBy} === \'Name\'', then: 'sort-alpha-up', else: 'sort-amount-up')}"></i> {neos:backend.translate(id: 'sortDirection.asc', package: 'Neos.Media.Browser')}</f:link.action>
-                    </li>
-                    <li>
-                        <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.desc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'DESC'}" addQueryString="true" class="{f:if(condition: '{sortDirection} === \'DESC\'', then: 'neos-active')}"><i class="fas fa-{f:if(condition: '{sortBy} === \'Name\'', then: 'sort-alpha-down', else: 'sort-amount-down')}"></i> {neos:backend.translate(id: 'sortDirection.desc', package: 'Neos.Media.Browser')}</f:link.action>
-                    </li>
-                </ul>
+                <div class="neos-dropdown-menu-list neos-pull-right" role="menu">
+                    <span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'sortby', package: 'Neos.Media.Browser')}</span>
+                    <ul>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortByLastModified', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Modified'}" addQueryString="true" class="{f:if(condition: '{sortBy} === \'Modified\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-amount-up', else: 'fa-sort-amount-down')}"></i> {neos:backend.translate(id: 'field.lastModified', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortByName', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortBy: 'Name'}" addQueryString="true" class="{f:if(condition: '{sortBy} === \'Name\'', then: 'neos-active')}"><i class="fas {f:if(condition: '{sortDirection} === \'ASC\'', then: 'fa-sort-alpha-up', else: 'fa-sort-alpha-down')}"></i> {neos:backend.translate(id: 'field.name', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                    </ul>
+                    <span class="neos-dropdown-menu-list-title">{neos:backend.translate(id: 'sortDirection', package: 'Neos.Media.Browser')}</span>
+                    <ul>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.asc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'ASC'}" addQueryString="true" class="{f:if(condition: '{sortDirection} === \'ASC\'', then: 'neos-active')}"><i class="fas fa-{f:if(condition: '{sortBy} === \'Name\'', then: 'sort-alpha-up', else: 'sort-amount-up')}"></i> {neos:backend.translate(id: 'sortDirection.asc', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                        <li>
+                            <f:link.action action="index" title="{neos:backend.translate(id: 'sortDirection.desc.tooltip', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip', placement: 'left'}" arguments="{sortDirection: 'DESC'}" addQueryString="true" class="{f:if(condition: '{sortDirection} === \'DESC\'', then: 'neos-active')}"><i class="fas fa-{f:if(condition: '{sortBy} === \'Name\'', then: 'sort-alpha-down', else: 'sort-amount-down')}"></i> {neos:backend.translate(id: 'sortDirection.desc', package: 'Neos.Media.Browser')}</f:link.action>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
         </f:if>
         <f:if condition="{view} === 'Thumbnail'">
             <f:then>
@@ -85,90 +85,103 @@
         </div>
     </f:form>
     <f:if condition="{assetSources -> f:count()} > 1">
-    <div class="neos-media-aside-group">
-        <h2>{neos:backend.translate(id: 'mediaSources', package: 'Neos.Media.Browser')}</h2>
-        <ul class="neos-media-aside-list">
-            <f:for each="{assetSources}" key="assetSourceIdentifier" as="assetSource">
-                <li>
-                    <f:link.action action="index" title="{f:if(condition:assetSource.description, then: assetSource.description, else: assetSource.label)}" class="{f:if(condition: '{assetSourceIdentifier} === {activeAssetSource.identifier}', then: ' neos-active')}" arguments="{assetSourceIdentifier: assetSourceIdentifier}" addQueryString="true">
-                      <f:if condition="{assetSource.iconUri}"><img class="neos-media-assetsource-icon" src="{assetSource.iconUri}" /></f:if>
-                      {assetSource.label}
-                    </f:link.action>
-                </li>
-            </f:for>
-        </ul>
-    </div>
+        <div class="neos-media-aside-group">
+            <h2>{neos:backend.translate(id: 'mediaSources', package: 'Neos.Media.Browser')}</h2>
+            <ul class="neos-media-aside-list">
+                <f:for each="{assetSources}" key="assetSourceIdentifier" as="assetSource">
+                    <li>
+                        <f:link.action action="index" title="{f:if(condition:assetSource.description, then: assetSource.description, else: assetSource.label)}" class="{f:if(condition: '{assetSourceIdentifier} === {activeAssetSource.identifier}', then: ' neos-active')}" arguments="{assetSourceIdentifier: assetSourceIdentifier}" addQueryString="true">
+                            <f:if condition="{assetSource.iconUri}"><img class="neos-media-assetsource-icon" src="{assetSource.iconUri}" /></f:if>
+                            {assetSource.label}
+                        </f:link.action>
+                    </li>
+                </f:for>
+            </ul>
+        </div>
     </f:if>
     <div class="neos-media-aside-group">
         <f:if condition="!{activeAssetSource.readOnly}">
-        <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
-            <f:then>
-                <h2>
-                    {neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}
-                    <span class="neos-media-aside-list-edit-toggle neos-button" title="{neos:backend.translate(id: 'editCollections', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="{f:if(condition: assetCollections, then: 'fas fa-pencil-alt', else: 'fas fa-plus')}"></i></span>
-                </h2>
-            </f:then>
-            <f:else>
-                <f:if condition="{assetCollections}">
-                    <h2>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</h2>
-                </f:if>
-            </f:else>
-        </f:security.ifAccess>
+            <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
+                <f:then>
+                    <h2>
+                        {neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}
+                        <span class="neos-media-aside-list-edit-toggle neos-button" title="{neos:backend.translate(id: 'editCollections', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="{f:if(condition: assetCollections, then: 'fas fa-pencil-alt', else: 'fas fa-plus')}"></i></span>
+                    </h2>
+                </f:then>
+                <f:else>
+                    <f:if condition="{assetCollections}">
+                        <h2>{neos:backend.translate(id: 'collections', package: 'Neos.Media.Browser')}</h2>
+                    </f:if>
+                </f:else>
+            </f:security.ifAccess>
         </f:if>
         <f:if condition="{assetCollections -> f:count()}">
-            <ul class="neos-media-aside-list">
-                <li>
-                    <f:link.action action="index" class="{f:if(condition: activeAssetCollection, else: ' neos-active')}" title="{neos:backend.translate(id: 'allCollections', package: 'Neos.Media.Browser')}" arguments="{view: view, collectionMode: 1}" addQueryString="true">
-                        {neos:backend.translate(id: 'filter.all', package: 'Neos.Media.Browser')}
-                        <span class="count">{allCollectionsCount}</span>
-                    </f:link.action>
-                </li>
+            <ul class="neos-media-aside-list{f:if(condition: collectionSeparator, then: ' tree-view')}">
+                <f:if condition="{showAllCollections}">
+                    <f:then>
+                        <li>
+                            <f:link.action action="index" class="{f:if(condition: activeAssetCollection, else: ' neos-active')}" title="{neos:backend.translate(id: 'allCollections', package: 'Neos.Media.Browser')}" arguments="{view: view, collectionMode: 1}" addQueryString="true">
+                                {neos:backend.translate(id: 'filter.all', package: 'Neos.Media.Browser')}
+                                <span class="count">{allCollectionsCount}</span>
+                            </f:link.action>
+                        </li>
+                    </f:then>
+                </f:if>
                 <f:for each="{assetCollections}" as="assetCollection">
                     <li>
                         <f:link.action action="index" title="{assetCollection.object.title}" class="droppable-assetcollection{f:if(condition: '{assetCollection.object} === {activeAssetCollection}', then: ' neos-active')}" arguments="{view: view, assetCollection: assetCollection.object, collectionMode: 0}" addQueryString="true" data="{assetcollection-identifier: '{assetCollection.object -> f:format.identifier()}'}">
-                            {assetCollection.object.title}
+                            <f:if condition="{assetCollection.depth} > 0">
+                                <f:then>
+                                    <f:format.raw>{assetCollection.title}</f:format.raw>
+                                </f:then>
+                                <f:else>
+                                    {assetCollection.object.title}
+                                </f:else>
+                            </f:if>
                             <span class="count">{assetCollection.count}</span>
                         </f:link.action>
                         <f:if condition="!{activeAssetSource.readOnly}">
-                        <div class="neos-sidelist-edit-actions">
-                            <f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection.object}" addQueryString="true" title="{neos:backend.translate(id: 'editCollection', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
-                            <button type="submit" class="neos-button neos-button-danger" data-toggle="modal" href="#delete-assetcollection-modal" data-object-identifier="{assetCollection.object -> f:format.identifier()}" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser', arguments:'{0: assetCollection.object.title}')}" title="{neos:backend.translate(id: 'deleteCollection', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="fas fa-trash"></i></button>
-                        </div>
+                            <f:if condition="{assetCollection.depth} <= 0 || {assetCollection.depth} > 1">
+                                <div class="neos-sidelist-edit-actions">
+                                    <f:link.action class="neos-button" action="editAssetCollection" arguments="{assetCollection: assetCollection.object}" addQueryString="true" title="{neos:backend.translate(id: 'editCollection', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
+                                    <button type="submit" class="neos-button neos-button-danger" data-toggle="modal" href="#delete-assetcollection-modal" data-object-identifier="{assetCollection.object -> f:format.identifier()}" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser', arguments:'{0: assetCollection.object.title}')}" title="{neos:backend.translate(id: 'deleteCollection', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </f:if>
                         </f:if>
                     </li>
                 </f:for>
             </ul>
             <f:if condition="!{activeAssetSource.readOnly}">
-            <div class="neos-hide" id="delete-assetcollection-modal">
-                <div class="neos-modal-centered">
-                    <div class="neos-modal-content">
-                        <div class="neos-modal-header">
-                            <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-                            <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser')}</div>
-                            <div>
-                                <div class="neos-subheader">
-                                    <p>
-                                        {neos:backend.translate(id: 'message.willDeleteCollection', package: 'Neos.Media.Browser')}<br />
-                                        {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
-                                    </p>
+                <div class="neos-hide" id="delete-assetcollection-modal">
+                    <div class="neos-modal-centered">
+                        <div class="neos-modal-content">
+                            <div class="neos-modal-header">
+                                <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                                <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteCollection', package: 'Neos.Media.Browser')}</div>
+                                <div>
+                                    <div class="neos-subheader">
+                                        <p>
+                                            {neos:backend.translate(id: 'message.willDeleteCollection', package: 'Neos.Media.Browser')}<br />
+                                            {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="neos-modal-footer">
-                            <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <f:form action="deleteAssetCollection" addQueryString="true" class="neos-inline">
-                                <f:form.hidden name="assetCollection" id="modal-form-object" />
-                                <button type="submit" class="neos-button neos-button-danger">
-                                    {neos:backend.translate(id: 'message.confirmDeleteCollection', package: 'Neos.Media.Browser')}
-                                </button>
-                                <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
-                            </f:form>
+                            <div class="neos-modal-footer">
+                                <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
+                                <f:form action="deleteAssetCollection" addQueryString="true" class="neos-inline">
+                                    <f:form.hidden name="assetCollection" id="modal-form-object" />
+                                    <button type="submit" class="neos-button neos-button-danger">
+                                        {neos:backend.translate(id: 'message.confirmDeleteCollection', package: 'Neos.Media.Browser')}
+                                    </button>
+                                    <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
+                                </f:form>
+                            </div>
                         </div>
                     </div>
+                    <div class="neos-modal-backdrop neos-in"></div>
                 </div>
-                <div class="neos-modal-backdrop neos-in"></div>
-            </div>
-          </f:if>
+            </f:if>
         </f:if>
         <f:security.ifAccess privilegeTarget="Neos.Media.Browser:ManageAssetCollections">
             <f:form action="createAssetCollection" addQueryString="true" id="neos-assetcollections-create-form">
@@ -179,94 +192,96 @@
         </f:security.ifAccess>
     </div>
 
-    <div class="neos-media-aside-group">
-        <h2>
-            {neos:backend.translate(id: 'tags', package: 'Neos.Media.Browser')}
-            <f:if condition="!{activeAssetSource.readOnly}">
-            <span class="neos-media-aside-list-edit-toggle neos-button" title="{neos:backend.translate(id: 'editTags', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="{f:if(condition: tags, then: 'fas fa-pencil-alt', else: 'fas fa-plus')}"></i></span>
-            </f:if>
-        </h2>
-        <ul class="neos-media-aside-list">
-            <li class="neos-media-list-all">
-                <f:link.action action="index" title="{neos:backend.translate(id: 'tags.title.all', package: 'Neos.Media.Browser')}" class="{f:if(condition: '{tagMode} === 1', then: 'neos-active')}" arguments="{tagMode: 1}" addQueryString="true">
-                    {neos:backend.translate(id: 'tags.all', package: 'Neos.Media.Browser')}
-                    <span class="count">{allCount}</span>
-                </f:link.action>
-            </li>
-            <li class="neos-media-list-untagged">
-                <f:link.action action="index" title="{neos:backend.translate(id: 'untaggedAssets', package: 'Neos.Media.Browser')}" class="{f:if(condition: '{tagMode} === 2', then: 'neos-active')}" arguments="{tagMode: 2}" addQueryString="true">
-                    {neos:backend.translate(id: 'untagged', package: 'Neos.Media.Browser')}
-                    <span class="count">{untaggedCount}</span>
-                </f:link.action>
-            </li>
-            <f:for each="{tags}" as="tag">
-                <li>
-                    <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object, tagMode: 0}" addQueryString="true" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
-                        {tag.object.label}
-                        <span class="count">{tag.count}</span>
+    <f:if condition="{showMediaTags}">
+        <div class="neos-media-aside-group">
+            <h2>
+                {neos:backend.translate(id: 'tags', package: 'Neos.Media.Browser')}
+                <f:if condition="!{activeAssetSource.readOnly}">
+                    <span class="neos-media-aside-list-edit-toggle neos-button" title="{neos:backend.translate(id: 'editTags', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip"><i class="{f:if(condition: tags, then: 'fas fa-pencil-alt', else: 'fas fa-plus')}"></i></span>
+                </f:if>
+            </h2>
+            <ul class="neos-media-aside-list">
+                <li class="neos-media-list-all">
+                    <f:link.action action="index" title="{neos:backend.translate(id: 'tags.title.all', package: 'Neos.Media.Browser')}" class="{f:if(condition: '{tagMode} === 1', then: 'neos-active')}" arguments="{tagMode: 1}" addQueryString="true">
+                        {neos:backend.translate(id: 'tags.all', package: 'Neos.Media.Browser')}
+                        <span class="count">{allCount}</span>
                     </f:link.action>
-                    <f:if condition="!{activeAssetSource.readOnly}">
-                    <div class="neos-sidelist-edit-actions">
-                        <f:link.action class="neos-button" action="editTag" arguments="{tag: tag.object}" addQueryString="true" title="{neos:backend.translate(id: 'editTag', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
-                        <button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'deleteTag', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-toggle="modal" href="#delete-tag-modal" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteTag', package: 'Neos.Media.Browser', arguments:'{0: tag.object.label}')}" data-object-identifier="{tag.object -> f:format.identifier()}"><i class="fas fa-trash"></i></button>
-                    </div>
-                    </f:if>
                 </li>
-            </f:for>
-            <f:if condition="!{activeAssetSource.readOnly}">
-            <div class="neos-hide" id="delete-tag-modal">
-                <div class="neos-modal-centered">
-                    <div class="neos-modal-content">
-                        <div class="neos-modal-header">
-                            <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-                            <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteTag', package: 'Neos.Media.Browser')}</div>
-                            <div>
-                                <div class="neos-subheader">
-                                    <p>
-                                        {neos:backend.translate(id: 'message.willDeleteTag', package: 'Neos.Media.Browser')}<br />
-                                        {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
-                                    </p>
+                <li class="neos-media-list-untagged">
+                    <f:link.action action="index" title="{neos:backend.translate(id: 'untaggedAssets', package: 'Neos.Media.Browser')}" class="{f:if(condition: '{tagMode} === 2', then: 'neos-active')}" arguments="{tagMode: 2}" addQueryString="true">
+                        {neos:backend.translate(id: 'untagged', package: 'Neos.Media.Browser')}
+                        <span class="count">{untaggedCount}</span>
+                    </f:link.action>
+                </li>
+                <f:for each="{tags}" as="tag">
+                    <li>
+                        <f:link.action action="index" title="{tag.object.label}" class="droppable-tag{f:if(condition: '{tag.object} === {activeTag}', then: ' neos-active')}" arguments="{tag: tag.object, tagMode: 0}" addQueryString="true" data="{tag-identifier: '{tag.object -> f:format.identifier()}'}">
+                            {tag.object.label}
+                            <span class="count">{tag.count}</span>
+                        </f:link.action>
+                        <f:if condition="!{activeAssetSource.readOnly}">
+                            <div class="neos-sidelist-edit-actions">
+                                <f:link.action class="neos-button" action="editTag" arguments="{tag: tag.object}" addQueryString="true" title="{neos:backend.translate(id: 'editTag', package: 'Neos.Media.Browser')}" data="{neos-toggle: 'tooltip'}"><i class="fas fa-pencil-alt"></i></f:link.action>
+                                <button class="neos-button neos-button-danger" title="{neos:backend.translate(id: 'deleteTag', package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip" data-toggle="modal" href="#delete-tag-modal" data-modal-header="{neos:backend.translate(id: 'message.reallyDeleteTag', package: 'Neos.Media.Browser', arguments:'{0: tag.object.label}')}" data-object-identifier="{tag.object -> f:format.identifier()}"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </f:if>
+                    </li>
+                </f:for>
+                <f:if condition="!{activeAssetSource.readOnly}">
+                    <div class="neos-hide" id="delete-tag-modal">
+                        <div class="neos-modal-centered">
+                            <div class="neos-modal-content">
+                                <div class="neos-modal-header">
+                                    <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                                    <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteTag', package: 'Neos.Media.Browser')}</div>
+                                    <div>
+                                        <div class="neos-subheader">
+                                            <p>
+                                                {neos:backend.translate(id: 'message.willDeleteTag', package: 'Neos.Media.Browser')}<br />
+                                                {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="neos-modal-footer">
+                                    <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
+                                    <f:form action="deleteTag" addQueryString="true" class="neos-inline">
+                                        <f:form.hidden name="tag" id="modal-form-object" />
+                                        <button type="submit" class="neos-button neos-button-danger">
+                                            {neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}
+                                        </button>
+                                        <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
+                                    </f:form>
                                 </div>
                             </div>
                         </div>
-                        <div class="neos-modal-footer">
-                            <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <f:form action="deleteTag" addQueryString="true" class="neos-inline">
-                                <f:form.hidden name="tag" id="modal-form-object" />
-                                <button type="submit" class="neos-button neos-button-danger">
-                                    {neos:backend.translate(id: 'message.confirmDeleteTag', package: 'Neos.Media.Browser')}
-                                </button>
-                                <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
-                            </f:form>
-                        </div>
+                        <div class="neos-modal-backdrop neos-in"></div>
                     </div>
-                </div>
-                <div class="neos-modal-backdrop neos-in"></div>
-            </div>
+                </f:if>
+            </ul>
+            <f:if condition="!{activeAssetSource.readOnly}">
+                <f:form action="createTag" addQueryString="true" id="neos-tags-create-form">
+                    <f:form.textfield name="label" placeholder="{neos:backend.translate(id: 'placeholder.createTag', package: 'Neos.Media.Browser')}" /><br /><br />
+                    <button type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'createTag', package: 'Neos.Media.Browser')}</button>
+                    <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
+                </f:form>
             </f:if>
-        </ul>
-        <f:if condition="!{activeAssetSource.readOnly}">
-        <f:form action="createTag" addQueryString="true" id="neos-tags-create-form">
-            <f:form.textfield name="label" placeholder="{neos:backend.translate(id: 'placeholder.createTag', package: 'Neos.Media.Browser')}" /><br /><br />
-            <button type="submit" class="neos-button neos-button-primary">{neos:backend.translate(id: 'createTag', package: 'Neos.Media.Browser')}</button>
-            <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
-        </f:form>
-        </f:if>
-    </div>
+        </div>
+    </f:if>
 </f:section>
 
 <f:section name="Content">
     <f:if condition="!{activeAssetSource.readOnly}">
-    <div id="dropzone" class="neos-upload-area">
-        <div title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'dropFiles', package: 'Neos.Media.Browser')}<i class="fas fa-arrow-down"></i><span> {neos:backend.translate(id: 'clickToUpload', package: 'Neos.Media.Browser')}</span></div>
-        <f:form method="post" action="create" addQueryString="true" object="{asset}" objectName="asset" enctype="multipart/form-data">
-            <f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required', accept: constraints.mediaTypeAcceptAttribute}" />
-            <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
-        </f:form>
-    </div>
-    <div id="uploader">
-        <div id="filelist"></div>
-    </div>
+        <div id="dropzone" class="neos-upload-area">
+            <div title="{neos:backend.translate(id: 'maxUploadSize', arguments: {0: humanReadableMaximumFileUploadSize}, package: 'Neos.Media.Browser')}" data-neos-toggle="tooltip">{neos:backend.translate(id: 'dropFiles', package: 'Neos.Media.Browser')}<i class="fas fa-arrow-down"></i><span> {neos:backend.translate(id: 'clickToUpload', package: 'Neos.Media.Browser')}</span></div>
+            <f:form method="post" action="create" addQueryString="true" object="{asset}" objectName="asset" enctype="multipart/form-data">
+                <f:form.upload id="resource" property="resource" additionalAttributes="{required: 'required', accept: constraints.mediaTypeAcceptAttribute}" />
+                <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
+            </f:form>
+        </div>
+        <div id="uploader">
+            <div id="filelist"></div>
+        </div>
     </f:if>
     <f:if condition="{connectionError}">
         <f:then>
@@ -275,46 +290,46 @@
         </f:then>
         <f:else>
             <f:if condition="{assetProxies -> f:count()}">
-        <f:then>
+                <f:then>
                     <f:if condition="!{activeAssetSource.readOnly}">
-            <div class="neos-media-content-help">
-                <i class="fas fa-info-circle"></i> {neos:backend.translate(id: 'dragHelp', package: 'Neos.Media.Browser')}
-            </div>
+                        <div class="neos-media-content-help">
+                            <i class="fas fa-info-circle"></i> {neos:backend.translate(id: 'dragHelp', package: 'Neos.Media.Browser')}
+                        </div>
                     </f:if>
                     <f:render partial="{view}View" arguments="{assetProxies: assetProxies, activeAssetSource: activeAssetSource, activeAssetSourceSupportsSorting: activeAssetSourceSupportsSorting, sortBy: sortBy, sortDirection: sortDirection}" />
 
-            <div class="neos-hide" id="delete-asset-modal">
-                <div class="neos-modal-centered">
-                    <div class="neos-modal-content">
-                        <div class="neos-modal-header">
-                            <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
-                            <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', package: 'Neos.Media.Browser')}</div>
-                            <div>
-                                <div class="neos-subheader">
-                                    <p>
-                                        {neos:backend.translate(id: 'message.willBeDeleted', package: 'Neos.Media.Browser')}<br />
-                                        {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
-                                    </p>
+                    <div class="neos-hide" id="delete-asset-modal">
+                        <div class="neos-modal-centered">
+                            <div class="neos-modal-content">
+                                <div class="neos-modal-header">
+                                    <button type="button" class="neos-close neos-button" data-dismiss="modal"></button>
+                                    <div class="neos-header">{neos:backend.translate(id: 'message.reallyDeleteAsset', package: 'Neos.Media.Browser')}</div>
+                                    <div>
+                                        <div class="neos-subheader">
+                                            <p>
+                                                {neos:backend.translate(id: 'message.willBeDeleted', package: 'Neos.Media.Browser')}<br />
+                                                {neos:backend.translate(id: 'message.operationCannotBeUndone', package: 'Neos.Media.Browser')}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="neos-modal-footer">
+                                    <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
+                                    <f:form action="delete" addQueryString="true" method="post" class="neos-inline">
+                                        <f:form.hidden name="asset" id="modal-form-object" />
+                                        <button type="submit" class="neos-button neos-button-mini neos-button-danger">
+                                            {neos:backend.translate(id: 'message.confirmDelete', package: 'Neos.Media.Browser')}
+                                        </button>
+                                        <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
+                                    </f:form>
                                 </div>
                             </div>
                         </div>
-                        <div class="neos-modal-footer">
-                            <a href="#" class="neos-button" data-dismiss="modal">{neos:backend.translate(id: 'cancel', package: 'Neos.Neos')}</a>
-                            <f:form action="delete" addQueryString="true" method="post" class="neos-inline">
-                                <f:form.hidden name="asset" id="modal-form-object" />
-                                <button type="submit" class="neos-button neos-button-mini neos-button-danger">
-                                    {neos:backend.translate(id: 'message.confirmDelete', package: 'Neos.Media.Browser')}
-                                </button>
-                                <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
-                            </f:form>
-                        </div>
+                        <div class="neos-modal-backdrop neos-in"></div>
                     </div>
-                </div>
-                <div class="neos-modal-backdrop neos-in"></div>
-            </div>
-        </f:then>
-        <f:else>
-            <p>{neos:backend.translate(id: 'noAssetsFound', package: 'Neos.Media.Browser')}</p>
+                </f:then>
+                <f:else>
+                    <p>{neos:backend.translate(id: 'noAssetsFound', package: 'Neos.Media.Browser')}</p>
                 </f:else>
             </f:if>
         </f:else>
@@ -324,26 +339,26 @@
 <f:section name="Scripts">
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/jquery-ui/js/jquery-ui-1.10.3.custom.js')}"></script>
     <f:if condition="!{activeAssetSource.readOnly}">
-    <script type="text/javascript">
-        var uploadUrl = "{f:uri.action(action: 'upload', addQueryString: true, additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
-        var maximumFileUploadSize = {maximumFileUploadSize};
-<![CDATA[
-        if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {
-            window.parent.NeosMediaBrowserCallbacks.refreshThumbnail();
-        }
-]]>
-    </script>
-    <f:form action="tagAsset" addQueryString="true" id="tag-asset-form" format="json">
-        <f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />
-        <f:form.hidden name="tag[__identity]" id="tag-asset-form-tag" />
-    </f:form>
-    <f:form action="addAssetToCollection" addQueryString="true" id="link-asset-to-assetcollection-form" format="json">
-        <f:form.hidden name="asset[__identity]" id="link-asset-to-assetcollection-form-asset" />
-        <f:form.hidden name="assetCollection[__identity]" id="link-asset-to-assetcollection-form-assetcollection" />
-    </f:form>
-    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/plupload/plupload.full.min.js')}"></script>
-    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/upload.js')}"></script>
-    <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/collections-and-tagging.js')}"></script>
+        <script type="text/javascript">
+            var uploadUrl = "{f:uri.action(action: 'upload', addQueryString: true, additionalParams: {__csrfToken: '{f:security.csrfToken()}'}, absolute: true) -> f:format.raw()}";
+            var maximumFileUploadSize = {maximumFileUploadSize};
+            <![CDATA[
+            if (window.parent !== window && window.parent.NeosMediaBrowserCallbacks && window.parent.NeosMediaBrowserCallbacks.refreshThumbnail) {
+                window.parent.NeosMediaBrowserCallbacks.refreshThumbnail();
+            }
+            ]]>
+        </script>
+        <f:form action="tagAsset" addQueryString="true" id="tag-asset-form" format="json">
+            <f:form.hidden name="asset[__identity]" id="tag-asset-form-asset" />
+            <f:form.hidden name="tag[__identity]" id="tag-asset-form-tag" />
+        </f:form>
+        <f:form action="addAssetToCollection" addQueryString="true" id="link-asset-to-assetcollection-form" format="json">
+            <f:form.hidden name="asset[__identity]" id="link-asset-to-assetcollection-form-asset" />
+            <f:form.hidden name="assetCollection[__identity]" id="link-asset-to-assetcollection-form-assetcollection" />
+        </f:form>
+        <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'Libraries/plupload/plupload.full.min.js')}"></script>
+        <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/upload.js')}"></script>
+        <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/collections-and-tagging.js')}"></script>
     </f:if>
     <script type="text/javascript" src="{f:uri.resource(package: 'Neos.Media.Browser', path: 'JavaScript/select.js')}"></script>
 </f:section>
