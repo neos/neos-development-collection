@@ -116,7 +116,7 @@
         </f:security.ifAccess>
         </f:if>
         <f:if condition="{assetCollections -> f:count()}">
-            <ul class="neos-media-aside-list">
+            <ul class="neos-media-aside-list{f:if(condition: collectionSeparator, then: ' tree-view')}">
 								<f:if condition="{showAllCollections}">
 									<f:then>
 										<li>
