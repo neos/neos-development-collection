@@ -11,23 +11,23 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\PositionalArraySorter;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception;
-use Neos\Flow\Security\Exception as SecurityException;
+use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Eel\Utility as EelUtility;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Fusion Runtime
@@ -95,10 +95,8 @@ class Runtime
 
     /**
      * Default context with helper definitions
-     *
-     * @var array
      */
-    protected $defaultContextVariables;
+    protected FusionDefaultContextVariables $defaultContextVariables;
 
     /**
      * @var array
@@ -107,6 +105,7 @@ class Runtime
 
     /**
      * @var ControllerContext
+     * @deprecated
      */
     protected $controllerContext;
 
@@ -130,15 +129,38 @@ class Runtime
      */
     protected $lastEvaluationStatus;
 
-    public function __construct(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext)
-    {
+    /**
+     * Please use {@see RuntimeFactory} for instantiating.
+     */
+    public function __construct(
+        FusionConfiguration $fusionConfiguration,
+        FusionDefaultContextVariables $defaultContextVariables
+    ) {
         $this->runtimeConfiguration = new RuntimeConfiguration(
-            $fusionConfiguration instanceof FusionConfiguration
-                ? $fusionConfiguration->toArray()
-                : $fusionConfiguration
+            $fusionConfiguration->toArray()
         );
-        $this->controllerContext = $controllerContext;
         $this->runtimeContentCache = new RuntimeContentCache($this);
+        $this->defaultContextVariables = $defaultContextVariables;
+    }
+
+    /**
+     * @deprecated {@see self::getControllerContext()}
+     * @internal
+     */
+    public function setControllerContext(ControllerContext $controllerContext): void
+    {
+        $this->controllerContext = $controllerContext;
+    }
+
+    /**
+     * Returns the context which has been passed by the currently active MVC Controller
+     *
+     * @deprecated use `Runtime::getContextVariable('request')` instead {@see Runtime::getContextVariable}
+     * @internal
+     */
+    public function getControllerContext(): ?ControllerContext
+    {
+        return $this->controllerContext;
     }
 
     /**
@@ -225,6 +247,15 @@ class Runtime
     public function getCurrentContext()
     {
         return $this->currentContext;
+    }
+
+    /**
+     * @param string $name the key of the variable like `request` or `node`.
+     * @return mixed null if not set
+     */
+    private function getContextVariable(string $name): mixed
+    {
+        return $this->currentContext[$name] ?? $this->defaultContextVariables->value[$name] ?? null;
     }
 
     public function popApplyValues(array $paths): void
@@ -684,7 +715,7 @@ class Runtime
             $expression = '${' . $expression . '}';
         }
 
-        $contextVariables = array_merge($this->getDefaultContextVariables(), $this->currentContext);
+        $contextVariables = array_merge($this->defaultContextVariables->value, $this->currentContext);
 
         if (isset($contextVariables['this'])) {
             throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current Fusion object.', 1344325044);
@@ -829,34 +860,6 @@ class Runtime
         }
 
         return true;
-    }
-
-    /**
-     * Returns the context which has been passed by the currently active MVC Controller
-     *
-     * @return ControllerContext
-     */
-    public function getControllerContext()
-    {
-        return $this->controllerContext;
-    }
-
-    /**
-     * Get variables from configuration that should be set in the context by default.
-     * For example Eel helpers are made available by this.
-     *
-     * @return array Array with default context variable objects.
-     */
-    protected function getDefaultContextVariables()
-    {
-        if ($this->defaultContextVariables === null) {
-            $this->defaultContextVariables = [];
-            if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
-                $this->defaultContextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
-            }
-            $this->defaultContextVariables['request'] = $this->controllerContext->getRequest();
-        }
-        return $this->defaultContextVariables;
     }
 
     /**
