@@ -1138,6 +1138,10 @@
 				<source>Content Tree</source>
         <target state="translated">Árbol de contenidos</target>
       </trans-unit>
+      <trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+      	<source>Can't publish a single node in a new page</source>
+        <target state="translated">No se puede publicar un solo nodo en una página nueva</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
