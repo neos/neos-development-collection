@@ -128,7 +128,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
             $this->contentRepository->setUp();
             self::$wasContentRepositorySetupCalled = true;
         }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService(
+        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService(
             $this->contentRepositoryId,
             new ContentRepositoryInternalsFactory()
         );
@@ -150,7 +150,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $contentRepositoryRegistry = $this->contentRepositoryRegistry
             ?: $this->objectManager->get(ContentRepositoryRegistry::class);
 
-        return $contentRepositoryRegistry->getService(
+        return $contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             $factory
         );

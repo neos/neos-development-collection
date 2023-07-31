@@ -128,7 +128,7 @@ class ContentStreamCommandController extends CommandController
     public function pruneCommand(string $contentRepositoryIdentifier = 'default', bool $removeTemporary = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryId, new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->prune($removeTemporary);
         $unusedContentStreamsPresent = false;
@@ -147,7 +147,7 @@ class ContentStreamCommandController extends CommandController
     public function pruneRemovedFromEventStreamCommand(string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
-        $contentStreamPruner = $this->contentRepositoryRegistry->getService($contentRepositoryId, new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new ContentStreamPrunerFactory());
 
         $unusedContentStreams = $contentStreamPruner->pruneRemovedFromEventStream();
         $unusedContentStreamsPresent = false;
