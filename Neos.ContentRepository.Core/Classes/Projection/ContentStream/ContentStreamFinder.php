@@ -117,10 +117,10 @@ final class ContentStreamFinder implements ProjectionStateInterface
     public function findAllIds(): iterable
     {
         $connection = $this->client->getConnection();
-        $databaseRows = $connection->executeQuery('SELECT contentstreamid FROM ' . $this->tableName)->fetchAllAssociative();
+        $contentStreamIds = $connection->executeQuery('SELECT contentstreamid FROM ' . $this->tableName)->fetchFirstColumn();
         return array_map(
-            static fn(array $databaseRow): ContentStreamId => ContentStreamId::fromString($databaseRow['contentstreamid']),
-            $databaseRows
+            static fn(string $contentStreamId): ContentStreamId => ContentStreamId::fromString(...),
+            $contentStreamIds
         );
     }
 
