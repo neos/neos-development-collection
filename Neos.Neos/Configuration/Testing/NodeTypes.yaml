@@ -59,7 +59,7 @@
       ui:
         inlineEditable: true
 
-'Acme.Demo:Texti':
+'Acme.Demo:Text':
   superTypes:
     'Neos.Neos:Content': true
   ui:
