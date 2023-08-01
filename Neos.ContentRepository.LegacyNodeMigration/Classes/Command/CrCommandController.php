@@ -129,13 +129,13 @@ class CrCommandController extends CommandController
         $this->connection->executeStatement('TRUNCATE ' . $connection->quoteIdentifier($eventTableName));
         // we also need to reset the projections; in order to ensure the system runs deterministically. We
         // do this by replaying the just-truncated event stream.
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionReplayServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
         $projectionService->replayAllProjections();
         $this->outputLine('Truncated events');
 
         $liveContentStreamId = ContentStreamId::create();
 
-        $legacyMigrationService = $this->contentRepositoryRegistry->getService(
+        $legacyMigrationService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new LegacyMigrationServiceFactory(
                 $connection,

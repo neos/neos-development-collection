@@ -31,7 +31,7 @@ class DimensionController extends AbstractModuleController
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
-        $dimensionControllerInternals = $this->contentRepositoryRegistry->getService(
+        $dimensionControllerInternals = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new DimensionControllerInternalsFactory()
         );

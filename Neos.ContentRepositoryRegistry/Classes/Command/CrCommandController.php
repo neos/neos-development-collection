@@ -48,7 +48,7 @@ final class CrCommandController extends CommandController
     public function replayCommand(string $projection, string $contentRepository = 'default', bool $quiet = false, int $until = 0): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
 
         if (!$quiet) {
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
@@ -70,7 +70,7 @@ final class CrCommandController extends CommandController
     public function replayAllCommand(string $contentRepository = 'default', bool $quiet = false): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $projectionService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->projectionServiceFactory);
+        $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionServiceFactory);
         if (!$quiet) {
             $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
             // TODO start progress bar
@@ -90,18 +90,18 @@ final class CrCommandController extends CommandController
 
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
-        $contentStreamPruner = $this->contentRepositoryRegistry->getService(
+        $contentStreamPruner = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ContentStreamPrunerFactory()
         );
         $contentStreamPruner->pruneAll();
 
-        $workspaceMaintenanceService = $this->contentRepositoryRegistry->getService(
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspaceMaintenanceServiceFactory()
         );
         $workspaceMaintenanceService->pruneAll();
 
-        $this->replayAllCommand();
+        $this->replayAllCommand($contentRepository);
     }
 }
