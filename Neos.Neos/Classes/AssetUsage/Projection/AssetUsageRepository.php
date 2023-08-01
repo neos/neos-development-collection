@@ -83,11 +83,11 @@ final class AssetUsageRepository
 
         $table
             ->addUniqueIndex(['assetid', 'originalassetid', 'contentstreamid', 'nodeaggregateid', 'origindimensionspacepointhash', 'propertyname'], 'assetperproperty')
-            ->addIndex(['assetid'], 'assetid')
-            ->addIndex(['originalassetid'], 'originalassetid')
-            ->addIndex(['contentstreamid'], 'contentstreamid')
-            ->addIndex(['nodeaggregateid'], 'nodeaggregateid')
-            ->addIndex(['origindimensionspacepointhash'], 'origindimensionspacepointhash');
+            ->addIndex(['assetid'])
+            ->addIndex(['originalassetid'])
+            ->addIndex(['contentstreamid'])
+            ->addIndex(['nodeaggregateid'])
+            ->addIndex(['origindimensionspacepointhash']);
 
         return $schema;
     }
