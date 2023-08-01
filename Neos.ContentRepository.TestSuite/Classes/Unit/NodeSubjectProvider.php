@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository.DimensionSpace package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -93,6 +93,7 @@ final class NodeSubjectProvider
                 $nodeType->getPropertyType($propertyName)
             );
         }
+        $serializedDefaultPropertyValues = SerializedPropertyValues::fromArray($defaultPropertyValues);
         return new Node(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),
@@ -106,8 +107,9 @@ final class NodeSubjectProvider
             $nodeType->name,
             $nodeType,
             new PropertyCollection(
-                SerializedPropertyValues::fromArray($defaultPropertyValues)
-                    ->merge($propertyValues),
+                $propertyValues
+                    ? $serializedDefaultPropertyValues->merge($propertyValues)
+                    : $serializedDefaultPropertyValues,
                 $this->propertyConverter
             ),
             $nodeName,

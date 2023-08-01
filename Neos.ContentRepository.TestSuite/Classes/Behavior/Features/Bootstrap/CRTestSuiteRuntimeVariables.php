@@ -28,7 +28,6 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUs
  */
 trait CRTestSuiteRuntimeVariables
 {
-
     protected ?ContentStreamId $currentContentStreamId = null;
 
     protected ?DimensionSpacePoint $currentDimensionSpacePoint = null;

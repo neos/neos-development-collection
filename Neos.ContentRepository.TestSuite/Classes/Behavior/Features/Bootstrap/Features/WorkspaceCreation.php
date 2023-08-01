@@ -87,7 +87,7 @@ trait WorkspaceCreation
             isset($commandArguments['workspaceOwner']) ? UserId::fromString($commandArguments['workspaceOwner']) : null
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
 
@@ -109,6 +109,6 @@ trait WorkspaceCreation
             $rebasedContentStreamId,
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 }

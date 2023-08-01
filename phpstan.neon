@@ -4,6 +4,7 @@ parameters:
         - Neos.ContentGraph.DoctrineDbalAdapter/src
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
+        - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepository.Core/Classes
         - Neos.ContentRepository.Security/Classes
         - Neos.Neos/Classes

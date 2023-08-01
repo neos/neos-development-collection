@@ -55,7 +55,7 @@ trait WorkspacePublishing
             $contentStreamIdForRemainingPart
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**
@@ -71,7 +71,7 @@ trait WorkspacePublishing
             WorkspaceName::fromString($commandArguments['workspaceName']),
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);;
+        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
     }
 
     /**
