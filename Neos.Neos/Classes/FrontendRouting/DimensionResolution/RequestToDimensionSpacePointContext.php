@@ -33,7 +33,7 @@ final class RequestToDimensionSpacePointContext
             $routeParameters,
             $initialUriPath,
             DimensionSpacePoint::fromArray([]),
-            $resolvedSite
+            $resolvedSite,
         );
     }
 

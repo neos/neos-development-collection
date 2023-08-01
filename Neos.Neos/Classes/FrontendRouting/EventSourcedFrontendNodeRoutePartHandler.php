@@ -146,35 +146,20 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 {
     private string $splitString = '';
 
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var NodeShortcutResolver
-     */
-    protected $nodeShortcutResolver;
+    #[Flow\Inject]
+    protected NodeShortcutResolver $nodeShortcutResolver;
 
-    /**
-     * @Flow\Inject
-     * @var DelegatingResolver
-     */
-    protected $delegatingResolver;
+    #[Flow\Inject]
+    protected DelegatingResolver $delegatingResolver;
 
-    /**
-     * @Flow\Inject
-     * @var CrossSiteLinkerInterface
-     */
-    protected $crossSiteLinker;
+    #[Flow\Inject]
+    protected CrossSiteLinkerInterface $crossSiteLinker;
 
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
 
     /**
      * Incoming URLs
@@ -275,7 +260,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
-        } catch (NodeNotFoundException|InvalidShortcutException $exception) {
+        } catch (NodeNotFoundException | InvalidShortcutException $exception) {
             // TODO log exception
             return false;
         }

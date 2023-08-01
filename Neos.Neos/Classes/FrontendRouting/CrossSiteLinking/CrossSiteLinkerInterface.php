@@ -38,6 +38,6 @@ interface CrossSiteLinkerInterface
      */
     public function applyCrossSiteUriConstraints(
         Site $targetSite,
-        UriConstraints $uriConstraints
+        UriConstraints $uriConstraints,
     ): UriConstraints;
 }

@@ -67,7 +67,7 @@ final class CompositeResolver implements DimensionResolverInterface
                 $filteredDimensionSpacePoint,
                 $targetNodeInfo,
                 $targetSite,
-                $uriConstraints
+                $uriConstraints,
             );
         }
         return $uriConstraints;
