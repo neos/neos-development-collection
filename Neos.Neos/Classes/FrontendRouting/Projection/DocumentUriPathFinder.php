@@ -322,4 +322,9 @@ final class DocumentUriPathFinder implements ProjectionStateInterface
             ]
         );
     }
+
+    public function isLiveContentStream(ContentStreamId $contentStreamId): bool
+    {
+        return $contentStreamId->equals($this->getLiveContentStreamId());
+    }
 }
