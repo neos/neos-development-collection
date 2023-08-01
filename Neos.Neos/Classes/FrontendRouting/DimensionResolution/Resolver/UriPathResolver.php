@@ -26,6 +26,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Segme
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\Separator;
 use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolver\UriPathResolverConfigurationException;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * URI path segment based dimension value resolver
@@ -64,7 +65,7 @@ final class UriPathResolver implements DimensionResolverInterface
         DimensionSpacePoint $defaultDimensionSpacePoint,
     ): self {
         self::validate($segments, $separator, $contentDimensionSource);
-        list($uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath) = self::calculateUriPaths(
+        [$uriPathToDimensionSpacePoint, $dimensionSpacePointHashToUriPath] = self::calculateUriPaths(
             $segments,
             $separator
         );
@@ -227,7 +228,8 @@ final class UriPathResolver implements DimensionResolverInterface
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $dimensionSpacePoint,
         DocumentNodeInfo $targetNodeInfo,
-        UriConstraints $uriConstraints
+        Site $targetSite,
+        UriConstraints $uriConstraints,
     ): UriConstraints {
         $filteredDimensionSpacePoint = $this->reduceDimensionSpacePointToConfiguredDimensions($dimensionSpacePoint);
         unset($dimensionSpacePoint);

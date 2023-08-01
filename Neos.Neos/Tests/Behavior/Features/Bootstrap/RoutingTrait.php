@@ -344,7 +344,7 @@ trait RoutingTrait
         $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), $siteConfiguration->contentRepositoryId);
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
-        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
+        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite($this->requestUrl->getPath(), $routeParameters);
         $dimensionResolverContext = $dimensionResolver->fromRequestToDimensionSpacePoint($dimensionResolverContext);
         $this->dimensionResolverContext = $dimensionResolverContext;
     }

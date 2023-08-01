@@ -16,7 +16,6 @@ namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Mvc\Routing\RoutingMiddleware;
@@ -35,10 +34,11 @@ use Neos\Neos\FrontendRouting\CrossSiteLinking\CrossSiteLinkerInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\DelegatingResolver;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\FrontendRouting\Exception\TargetSiteNotFoundException;
 
 /**
  * A route part handler for finding nodes in the website's frontend. Like every RoutePartHandler,
@@ -171,6 +171,12 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
     protected $crossSiteLinker;
 
     /**
+     * @Flow\Inject
+     * @var SiteRepository
+     */
+    protected $siteRepository;
+
+    /**
      * Incoming URLs
      *
      * @param mixed $requestPath
@@ -183,12 +189,16 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             return false;
         }
 
-        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath);
+        $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
+        $resolvedSite = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
+
+        $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $resolvedSite->getConfiguration()->uriPathSuffix);
 
         $dimensionResolvingResult = $this->delegatingResolver->fromRequestToDimensionSpacePoint(
-            RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters(
+            RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite(
                 $requestPath,
-                $parameters
+                $parameters,
+                $resolvedSite,
             )
         );
         $dimensionSpacePoint = $dimensionResolvingResult->resolvedDimensionSpacePoint;
@@ -265,7 +275,7 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         try {
             $resolveResult = $this->resolveNodeAddress($nodeAddress, $currentRequestSiteDetectionResult);
-        } catch (NodeNotFoundException | InvalidShortcutException $exception) {
+        } catch (NodeNotFoundException|InvalidShortcutException $exception) {
             // TODO log exception
             return false;
         }
@@ -308,27 +318,39 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             }
         }
 
-        $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints(
-            $nodeInfo,
-            $currentRequestSiteDetectionResult
-        );
+        $targetSite = $this->siteRepository->findOneByNodeName($nodeInfo->getSiteNodeName()->value);
+
+        if ($targetSite === null) {
+            throw new TargetSiteNotFoundException(sprintf('No site found for siteNodeName "%s"', $nodeInfo->getSiteNodeName()->value));
+        }
+
+        $uriConstraints = UriConstraints::create();
+        if (!$targetSite->getNodeName()->equals($currentRequestSiteDetectionResult->siteNodeName)) {
+            $uriConstraints = $this->crossSiteLinker->applyCrossSiteUriConstraints(
+                $targetSite,
+                $uriConstraints
+            );
+        }
+
         $uriConstraints = $this->delegatingResolver->fromDimensionSpacePointToUriConstraints(
             $nodeAddress->dimensionSpacePoint,
             $nodeInfo,
+            $targetSite,
             $uriConstraints
         );
 
-        if (!empty($this->options['uriPathSuffix']) && $nodeInfo->hasUriPath()) {
-            $uriConstraints = $uriConstraints->withPathSuffix($this->options['uriPathSuffix']);
+        if ($targetSite->getConfiguration()->uriPathSuffix !== '' && $nodeInfo->hasUriPath()) {
+            $uriConstraints = $uriConstraints->withPathSuffix($targetSite->getConfiguration()->uriPathSuffix);
         }
+
         return new ResolveResult($nodeInfo->getUriPath(), $uriConstraints, $nodeInfo->getRouteTags());
     }
 
 
-    private function truncateRequestPathAndReturnRemainder(string &$requestPath): string
+    private function truncateRequestPathAndReturnRemainder(string &$requestPath, string $uriPathSuffix): string
     {
-        if (!empty($this->options['uriPathSuffix'])) {
-            $suffixPosition = strpos($requestPath, $this->options['uriPathSuffix']);
+        if ($uriPathSuffix !== '') {
+            $suffixPosition = strpos($requestPath, $uriPathSuffix);
             if ($suffixPosition === false) {
                 return '';
             }
