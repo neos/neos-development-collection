@@ -31,7 +31,6 @@ use Neos\Neos\Domain\Model\Site;
 interface CrossSiteLinkerInterface
 {
     /**
-     * @param DocumentNodeInfo $targetNode the target node where we want to generate the link to
      * @param Site $targetSite
      * @param UriConstraints $uriConstraints
      * @return UriConstraints

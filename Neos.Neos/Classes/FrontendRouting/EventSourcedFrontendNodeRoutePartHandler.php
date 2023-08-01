@@ -39,6 +39,7 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Psr\Http\Message\UriInterface;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\Exception\TargetSiteNotFoundException;
+use Neos\Neos\FrontendRouting\Exception\ResolvedSiteNotFoundException;
 
 /**
  * A route part handler for finding nodes in the website's frontend. Like every RoutePartHandler,
@@ -176,6 +177,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
 
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($parameters);
         $resolvedSite = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
+
+        if ($resolvedSite === null) {
+            throw new ResolvedSiteNotFoundException(sprintf('No site found for siteNodeName "%s"', $siteDetectionResult->siteNodeName->value));
+        }
 
         $remainingRequestPath = $this->truncateRequestPathAndReturnRemainder($requestPath, $resolvedSite->getConfiguration()->uriPathSuffix);
 
