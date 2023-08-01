@@ -168,7 +168,7 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspacesControllerInternals = $this->contentRepositoryRegistry->getService(
+        $workspacesControllerInternals = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new WorkspacesControllerInternalsFactory()
         );

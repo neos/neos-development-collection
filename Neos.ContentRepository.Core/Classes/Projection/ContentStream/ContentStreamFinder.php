@@ -117,18 +117,8 @@ final class ContentStreamFinder implements ProjectionStateInterface
     public function findAllIds(): iterable
     {
         $connection = $this->client->getConnection();
-        $databaseRows = $connection->executeQuery(
-            '
-            SELECT contentStreamId FROM ' . $this->tableName . '
-            ',
-        )->fetchAllAssociative();
-
-        return array_map(
-            fn(array $databaseRow): ContentStreamId => ContentStreamId::fromString(
-                $databaseRow['contentStreamId']
-            ),
-            $databaseRows
-        );
+        $contentStreamIds = $connection->executeQuery('SELECT contentstreamid FROM ' . $this->tableName)->fetchFirstColumn();
+        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
     }
 
     /**
@@ -148,9 +138,9 @@ final class ContentStreamFinder implements ProjectionStateInterface
         }
 
         $connection = $this->client->getConnection();
-        $databaseRows = $connection->executeQuery(
+        $contentStreamIds = $connection->executeQuery(
             '
-            SELECT contentStreamId FROM ' . $this->tableName . '
+            SELECT contentstreamid FROM ' . $this->tableName . '
                 WHERE removed = FALSE
                 AND state IN (:state)
             ',
@@ -160,14 +150,8 @@ final class ContentStreamFinder implements ProjectionStateInterface
             [
                 'state' => Connection::PARAM_STR_ARRAY
             ]
-        )->fetchAllAssociative();
-
-        $contentStreams = [];
-        foreach ($databaseRows as $databaseRow) {
-            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentStreamId']);
-        }
-
-        return $contentStreams;
+        )->fetchFirstColumn();
+        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
     }
 
     /**
@@ -181,13 +165,13 @@ final class ContentStreamFinder implements ProjectionStateInterface
         $state = $connection->executeQuery(
             '
             SELECT state FROM ' . $this->tableName . '
-                WHERE contentStreamId = :contentStreamId
+                WHERE contentstreamid = :contentStreamId
                 AND removed = FALSE
             ',
             [
                 'contentStreamId' => $contentStreamId->value,
             ]
-        )->fetchColumn();
+        )->fetchOne();
 
         if ($state === false) {
             return null;
@@ -202,11 +186,11 @@ final class ContentStreamFinder implements ProjectionStateInterface
     public function findUnusedAndRemovedContentStreams(): iterable
     {
         $connection = $this->client->getConnection();
-        $databaseRows = $connection->executeQuery(
+        $contentStreamIds = $connection->executeQuery(
             '
-            WITH RECURSIVE transitiveUsedContentStreams (contentStreamId) AS (
+            WITH RECURSIVE transitiveUsedContentStreams (contentstreamid) AS (
                     -- initial case: find all content streams currently in direct use by a workspace
-                    SELECT contentStreamId FROM ' . $this->tableName . '
+                    SELECT contentstreamid FROM ' . $this->tableName . '
                     WHERE
                         state = :inUseState
                         AND removed = false
@@ -222,26 +206,20 @@ final class ContentStreamFinder implements ProjectionStateInterface
             )
 
             -- now, we check for removed content streams which we do not need anymore transitively
-            SELECT contentStreamId FROM ' . $this->tableName . ' AS cs
+            SELECT contentstreamid FROM ' . $this->tableName . ' AS cs
                 WHERE removed = true
                 AND NOT EXISTS (
                     SELECT 1
                     FROM transitiveUsedContentStreams
                     WHERE
-                        cs.contentStreamId = transitiveUsedContentStreams.contentStreamId
+                        cs.contentstreamid = transitiveUsedContentStreams.contentstreamid
                 )
             ',
             [
                 'inUseState' => self::STATE_IN_USE_BY_WORKSPACE
             ]
-        )->fetchAll();
-
-        $contentStreams = [];
-        foreach ($databaseRows as $databaseRow) {
-            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentStreamId']);
-        }
-
-        return $contentStreams;
+        )->fetchFirstColumn();
+        return array_map(ContentStreamId::fromString(...), $contentStreamIds);
     }
 
     public function findVersionForContentStream(ContentStreamId $contentStreamId): MaybeVersion
