@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -21,8 +23,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -30,11 +31,9 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 trait NodeDisabling
 {
+    use CRTestSuiteRuntimeVariables;
+
     abstract protected function getContentRepository(): ContentRepository;
-
-    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
-
-    abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -50,10 +49,10 @@ trait NodeDisabling
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->getCurrentContentStreamId();
+            : $this->currentContentStreamId;
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
-            : $this->getCurrentDimensionSpacePoint();
+            : $this->currentDimensionSpacePoint;
 
         $command = new DisableNodeAggregate(
             $contentStreamId,
@@ -86,11 +85,10 @@ trait NodeDisabling
     public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
-        }
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            ContentStreamId::fromString($eventPayload['contentStreamId'])
+            array_key_exists('contentStreamId', $eventPayload)
+                ? ContentStreamId::fromString($eventPayload['contentStreamId'])
+                : $this->currentContentStreamId
         );
 
         $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
@@ -105,11 +103,10 @@ trait NodeDisabling
     public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
-        if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
-        }
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
-            ContentStreamId::fromString($eventPayload['contentStreamId'])
+            array_key_exists('contentStreamId', $eventPayload)
+                ? ContentStreamId::fromString($eventPayload['contentStreamId'])
+                : $this->currentContentStreamId
         );
 
         $this->publishEvent('NodeAggregateWasEnabled', $streamName->getEventStreamName(), $eventPayload);
@@ -126,10 +123,10 @@ trait NodeDisabling
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->getCurrentContentStreamId();
+            : $this->currentContentStreamId;
         $coveredDimensionSpacePoint = isset($commandArguments['coveredDimensionSpacePoint'])
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
-            : $this->getCurrentDimensionSpacePoint();
+            : $this->currentDimensionSpacePoint;
 
         $command = new EnableNodeAggregate(
             $contentStreamId,

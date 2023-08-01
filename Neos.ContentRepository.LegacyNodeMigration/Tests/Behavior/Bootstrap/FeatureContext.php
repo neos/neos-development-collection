@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -51,7 +51,7 @@ class FeatureContext implements Context
 {
     use FlowContextTrait;
     use NodeOperationsTrait;
-    use EventSourcedTrait;
+    use CRTestSuiteTrait;
 
     protected $isolated = false;
 

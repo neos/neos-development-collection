@@ -12,28 +12,12 @@ declare(strict_types=1);
  */
 
 require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/ContentStreamForking.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeCopying.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeCreation.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeDisabling.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeModification.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeMove.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeReferencing.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeRemoval.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeRenaming.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeTypeChange.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeVariation.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspaceCreation.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspaceDiscarding.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspacePublishing.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
+require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CRTestSuiteTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
@@ -42,6 +26,7 @@ require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
+use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
@@ -49,8 +34,9 @@ use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
@@ -59,6 +45,9 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperations
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
@@ -78,7 +67,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
-    use EventSourcedTrait;
+    use CRTestSuiteTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
     use MigrationsTrait;
@@ -215,5 +204,37 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 
         return $contentRepositoryRegistry;
+    }
+
+    protected function deserializeProperties(array $properties): PropertyValuesToWrite
+    {
+        foreach ($properties as &$propertyValue) {
+            if ($propertyValue === 'PostalAddress:dummy') {
+                $propertyValue = PostalAddress::dummy();
+            } elseif ($propertyValue === 'PostalAddress:anotherDummy') {
+                $propertyValue = PostalAddress::anotherDummy();
+            } elseif ($propertyValue === 'PriceSpecification:dummy') {
+                $propertyValue = PriceSpecification::dummy();
+            } elseif ($propertyValue === 'PriceSpecification:anotherDummy') {
+                $propertyValue = PriceSpecification::anotherDummy();
+            }
+            if (is_string($propertyValue)) {
+                if (\str_starts_with($propertyValue, 'DayOfWeek:')) {
+                    $propertyValue = DayOfWeek::from(\mb_substr($propertyValue, 10));
+                } elseif (\str_starts_with($propertyValue, 'Date:')) {
+                    $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
+                } elseif (\str_starts_with($propertyValue, 'URI:')) {
+                    $propertyValue = new Uri(\mb_substr($propertyValue, 4));
+                } else {
+                    try {
+                        $propertyValue = \json_decode($propertyValue, true, 512, JSON_THROW_ON_ERROR);
+                    } catch (\JsonException) {
+                        // then don't, just keep the value
+                    }
+                }
+            }
+        }
+
+        return PropertyValuesToWrite::fromArray($properties);
     }
 }

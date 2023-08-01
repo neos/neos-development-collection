@@ -13,24 +13,8 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
-require_once(__DIR__ . '/Features/ContentStreamForking.php');
-require_once(__DIR__ . '/Features/NodeCopying.php');
-require_once(__DIR__ . '/Features/NodeCreation.php');
-require_once(__DIR__ . '/Features/NodeDisabling.php');
-require_once(__DIR__ . '/Features/NodeModification.php');
-require_once(__DIR__ . '/Features/NodeMove.php');
-require_once(__DIR__ . '/Features/NodeReferencing.php');
-require_once(__DIR__ . '/Features/NodeRemoval.php');
-require_once(__DIR__ . '/Features/NodeRenaming.php');
-require_once(__DIR__ . '/Features/NodeTypeChange.php');
-require_once(__DIR__ . '/Features/NodeVariation.php');
-require_once(__DIR__ . '/Features/WorkspaceCreation.php');
-require_once(__DIR__ . '/Features/WorkspaceDiscarding.php');
-require_once(__DIR__ . '/Features/WorkspacePublishing.php');
-
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -52,29 +36,25 @@ use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeCopying;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeCreation;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeDisabling;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeModification;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeMove;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeReferencing;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeRemoval;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeRenaming;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeTypeChange;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\NodeVariation;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\MutableClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
-use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
-use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeDisabling;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeModification;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeMove;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeReferencing;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRemoval;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeRenaming;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeTypeChange;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeVariation;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
 use PHPUnit\Framework\Assert;
@@ -82,11 +62,11 @@ use PHPUnit\Framework\Assert;
 /**
  * Features context
  */
-trait EventSourcedTrait
+trait CRTestSuiteTrait
 {
+    use CRTestSuiteRuntimeVariables;
+
     use CurrentSubgraphTrait;
-    use CurrentUserTrait;
-    use CurrentDateTimeTrait;
     use NodeTraversalTrait;
     use ProjectedNodeAggregateTrait;
     use ProjectedNodeTrait;
@@ -113,13 +93,10 @@ trait EventSourcedTrait
 
     protected ContentGraphs $activeContentGraphs;
 
-    protected ?NodeAggregateId $rootNodeAggregateId;
-
     private ContentRepositoryId $contentRepositoryId;
     private ContentRepository $contentRepository;
     private ContentRepositoryInternals $contentRepositoryInternals;
 
-    private ?UserId $currentUserId = null;
 
     protected function getContentRepositoryId(): ContentRepositoryId
     {
@@ -216,12 +193,11 @@ trait EventSourcedTrait
             : $this->availableContentGraphs->reduceTo($adapterKeys);
 
 
-        $this->visibilityConstraints = VisibilityConstraints::frontend();
-        $this->dimensionSpacePoint = null;
-        $this->rootNodeAggregateId = null;
-        $this->contentStreamId = null;
+        $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
+        $this->currentDimensionSpacePoint = null;
+        $this->currentRootNodeAggregateId = null;
+        $this->currentContentStreamId = null;
         $this->currentNodeAggregates = null;
-        $this->currentUserId = null;
         $this->currentNodes = null;
 
         $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
@@ -322,7 +298,7 @@ trait EventSourcedTrait
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
                     'currentNodeAggregateId' => $this->currentNodeAggregateId()->value,
-                    'contentStreamId' => $this->contentStreamId->value,
+                    'contentStreamId' => $this->currentContentStreamId->value,
                     default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
                 };
             } else {
@@ -348,38 +324,6 @@ trait EventSourcedTrait
         $firstNode = reset($currentNodes);
         assert($firstNode instanceof Node);
         return $firstNode->nodeAggregateId;
-    }
-
-    protected function deserializeProperties(array $properties): PropertyValuesToWrite
-    {
-        foreach ($properties as &$propertyValue) {
-            if ($propertyValue === 'PostalAddress:dummy') {
-                $propertyValue = PostalAddress::dummy();
-            } elseif ($propertyValue === 'PostalAddress:anotherDummy') {
-                $propertyValue = PostalAddress::anotherDummy();
-            } elseif ($propertyValue === 'PriceSpecification:dummy') {
-                $propertyValue = PriceSpecification::dummy();
-            } elseif ($propertyValue === 'PriceSpecification:anotherDummy') {
-                $propertyValue = PriceSpecification::anotherDummy();
-            }
-            if (is_string($propertyValue)) {
-                if (\str_starts_with($propertyValue, 'DayOfWeek:')) {
-                    $propertyValue = DayOfWeek::from(\mb_substr($propertyValue, 10));
-                } elseif (\str_starts_with($propertyValue, 'Date:')) {
-                    $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
-                } elseif (\str_starts_with($propertyValue, 'URI:')) {
-                    $propertyValue = new Uri(\mb_substr($propertyValue, 4));
-                } else {
-                    try {
-                        $propertyValue = \json_decode($propertyValue, true, 512, JSON_THROW_ON_ERROR);
-                    } catch (\JsonException) {
-                        // then don't, just keep the value
-                    }
-                }
-            }
-        }
-
-        return PropertyValuesToWrite::fromArray($properties);
     }
 
     /**
@@ -450,7 +394,7 @@ trait EventSourcedTrait
             $expectedRows = $table->getHash();
 
             $subtree = $contentGraph
-                ->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints)
+                ->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints)
                 ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
 
             /** @var Subtree[] $flattenedSubtree */
@@ -492,13 +436,13 @@ trait EventSourcedTrait
 
     protected function getRootNodeAggregateId(): ?NodeAggregateId
     {
-        if ($this->rootNodeAggregateId) {
-            return $this->rootNodeAggregateId;
+        if ($this->currentRootNodeAggregateId) {
+            return $this->currentRootNodeAggregateId;
         }
 
         $contentGraphs = $this->getActiveContentGraphs()->getIterator()->getArrayCopy();
         $contentGraph = reset($contentGraphs);
-        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->contentStreamId, NodeTypeName::fromString('Neos.Neos:Sites'));
+        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->currentContentStreamId, NodeTypeName::fromString('Neos.Neos:Sites'));
         if ($sitesNodeAggregate) {
             assert($sitesNodeAggregate instanceof NodeAggregate);
             return $sitesNodeAggregate->nodeAggregateId;
@@ -524,7 +468,7 @@ trait EventSourcedTrait
      */
     public function theCurrentContentStreamHasState(string $expectedState)
     {
-        $this->theContentStreamHasState($this->contentStreamId->value, $expectedState);
+        $this->theContentStreamHasState($this->currentContentStreamId->value, $expectedState);
     }
 
     /**
@@ -561,4 +505,9 @@ trait EventSourcedTrait
         ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface;
+
+    protected function deserializeProperties(array $properties): PropertyValuesToWrite
+    {
+        return PropertyValuesToWrite::fromArray($properties);
+    }
 }

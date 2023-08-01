@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +10,12 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
+
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -27,10 +28,9 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregate
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -38,11 +38,9 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 trait NodeCreation
 {
+    use CRTestSuiteRuntimeVariables;
+
     abstract protected function getContentRepository(): ContentRepository;
-
-    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
-
-    abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
     abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
 
@@ -61,7 +59,7 @@ trait NodeCreation
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->getCurrentContentStreamId();
+            : $this->currentContentStreamId;
         $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
 
         $command = new CreateRootNodeAggregateWithNode(
@@ -71,7 +69,7 @@ trait NodeCreation
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
-        $this->rootNodeAggregateId = $nodeAggregateId;
+        $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
     /**
@@ -96,14 +94,14 @@ trait NodeCreation
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
+            $eventPayload['contentStreamId'] = $this->currentContentStreamId?->value;
         }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $nodeAggregateId = NodeAggregateId::fromString($eventPayload['nodeAggregateId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId);
 
         $this->publishEvent('RootNodeAggregateWithNodeWasCreated', $streamName->getEventStreamName(), $eventPayload);
-        $this->rootNodeAggregateId = $nodeAggregateId;
+        $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
     /**
@@ -117,7 +115,7 @@ trait NodeCreation
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->getCurrentContentStreamId();
+            : $this->currentContentStreamId;
         $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
 
         $command = new UpdateRootNodeAggregateDimensions(
@@ -126,7 +124,7 @@ trait NodeCreation
         );
 
         $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
-        $this->rootNodeAggregateId = $nodeAggregateId;
+        $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
     /**
@@ -138,10 +136,10 @@ trait NodeCreation
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->getCurrentContentStreamId();
+            : $this->currentContentStreamId;
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
-            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
+            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
 
         $command = new CreateNodeAggregateWithNode(
             $contentStreamId,
@@ -187,10 +185,10 @@ trait NodeCreation
         foreach ($table->getHash() as $row) {
             $contentStreamId = isset($row['contentStreamId'])
                 ? ContentStreamId::fromString($row['contentStreamId'])
-                : $this->getCurrentContentStreamId();
+                : $this->currentContentStreamId;
             $originDimensionSpacePoint = isset($row['originDimensionSpacePoint'])
                 ? OriginDimensionSpacePoint::fromJsonString($row['originDimensionSpacePoint'])
-                : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
+                : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
             $command = new CreateNodeAggregateWithNode(
                 $contentStreamId,
                 NodeAggregateId::fromString($row['nodeAggregateId']),
@@ -236,10 +234,10 @@ trait NodeCreation
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->getCurrentContentStreamId();
+            : $this->currentContentStreamId;
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
-            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->getCurrentDimensionSpacePoint());
+            : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
 
         $command = new CreateNodeAggregateWithNodeAndSerializedProperties(
             $contentStreamId,

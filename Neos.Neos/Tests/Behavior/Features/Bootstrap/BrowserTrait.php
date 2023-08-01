@@ -103,17 +103,17 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
         Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
             $nodeAggregateId,
             $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
+                ->findOneByCurrentContentStreamId($this->currentContentStreamId)
                 ->workspaceName
         );
     }
@@ -126,7 +126,7 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->contentGraph->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         if (!$this->getRootNodeAggregateId()) {
             throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
@@ -134,11 +134,11 @@ trait BrowserTrait
         Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
             $node->nodeAggregateId,
             $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
+                ->findOneByCurrentContentStreamId($this->currentContentStreamId)
                 ->workspaceName
         );
     }

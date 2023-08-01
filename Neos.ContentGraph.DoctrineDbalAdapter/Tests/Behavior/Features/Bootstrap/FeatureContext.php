@@ -69,7 +69,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use FlowContextTrait;
     use IsolatedBehatStepsTrait;
     use ProjectionIntegrityViolationDetectionTrait;
-    use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+    use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
     use NodeOperationsTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;

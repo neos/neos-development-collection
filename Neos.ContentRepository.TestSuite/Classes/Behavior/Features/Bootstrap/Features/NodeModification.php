@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,17 +10,19 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
+
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 use PHPUnit\Framework\Assert;
 
@@ -31,11 +31,9 @@ use PHPUnit\Framework\Assert;
  */
 trait NodeModification
 {
+    use CRTestSuiteRuntimeVariables;
+
     abstract protected function getContentRepository(): ContentRepository;
-
-    abstract protected function getCurrentContentStreamId(): ?ContentStreamId;
-
-    abstract protected function getCurrentDimensionSpacePoint(): ?DimensionSpacePoint;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -49,10 +47,10 @@ trait NodeModification
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         if (!isset($commandArguments['contentStreamId'])) {
-            $commandArguments['contentStreamId'] = $this->getCurrentContentStreamId()->value;
+            $commandArguments['contentStreamId'] = $this->currentContentStreamId->value;
         }
         if (!isset($commandArguments['originDimensionSpacePoint'])) {
-            $commandArguments['originDimensionSpacePoint'] = $this->getCurrentDimensionSpacePoint()->jsonSerialize();
+            $commandArguments['originDimensionSpacePoint'] = $this->currentDimensionSpacePoint->jsonSerialize();
         }
 
         $command = new SetNodeProperties(
@@ -87,10 +85,10 @@ trait NodeModification
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         if (!isset($eventPayload['contentStreamId'])) {
-            $eventPayload['contentStreamId'] = (string)$this->getCurrentContentStreamId();
+            $eventPayload['contentStreamId'] = $this->currentContentStreamId->value;
         }
         if (!isset($eventPayload['originDimensionSpacePoint'])) {
-            $eventPayload['originDimensionSpacePoint'] = json_encode($this->getCurrentDimensionSpacePoint());
+            $eventPayload['originDimensionSpacePoint'] = json_encode($this->currentDimensionSpacePoint);
         }
         $contentStreamId = ContentStreamId::fromString($eventPayload['contentStreamId']);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
