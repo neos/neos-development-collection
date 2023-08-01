@@ -37,7 +37,6 @@ final class DelegatingResolver implements DimensionResolverInterface
 {
     public function __construct(
         private readonly ObjectManagerInterface $objectManager,
-        private readonly SiteRepository $siteRepository,
     ) {
     }
 
@@ -45,13 +44,7 @@ final class DelegatingResolver implements DimensionResolverInterface
         RequestToDimensionSpacePointContext $context
     ): RequestToDimensionSpacePointContext {
         $siteDetectionResult = SiteDetectionResult::fromRouteParameters($context->routeParameters);
-        $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
-        if ($site === null) {
-            throw new \RuntimeException(
-                'Did not find site object for identifier ' . $siteDetectionResult->siteNodeName->value
-            );
-        }
-        $siteConfiguration = $site->getConfiguration();
+        $siteConfiguration = $context->resolvedSite->getConfiguration();
 
         $factory = $this->objectManager->get($siteConfiguration->contentDimensionResolverFactoryClassName);
         assert($factory instanceof DimensionResolverFactoryInterface);
