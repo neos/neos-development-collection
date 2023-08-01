@@ -143,7 +143,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            SELECT contentStreamId FROM ' . $this->tableName . '
+            SELECT contentstreamid FROM ' . $this->tableName . '
                 WHERE removed = FALSE
                 AND state IN (:state)
             ',
@@ -157,7 +157,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
 
         $contentStreams = [];
         foreach ($databaseRows as $databaseRow) {
-            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentStreamId']);
+            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentstreamid']);
         }
 
         return $contentStreams;
@@ -174,11 +174,11 @@ final class ContentStreamFinder implements ProjectionStateInterface
         $state = $connection->executeQuery(
             '
             SELECT state FROM ' . $this->tableName . '
-                WHERE contentStreamId = :contentStreamId
+                WHERE contentstreamid = :contentStreamId
                 AND removed = FALSE
             ',
             [
-                'contentStreamId' => $contentStreamId->value,
+                'contentstreamid' => $contentStreamId->value,
             ]
         )->fetchColumn();
 
@@ -197,9 +197,9 @@ final class ContentStreamFinder implements ProjectionStateInterface
         $connection = $this->client->getConnection();
         $databaseRows = $connection->executeQuery(
             '
-            WITH RECURSIVE transitiveUsedContentStreams (contentStreamId) AS (
+            WITH RECURSIVE transitiveUsedContentStreams (contentstreamid) AS (
                     -- initial case: find all content streams currently in direct use by a workspace
-                    SELECT contentStreamId FROM ' . $this->tableName . '
+                    SELECT contentstreamid FROM ' . $this->tableName . '
                     WHERE
                         state = :inUseState
                         AND removed = false
@@ -215,13 +215,13 @@ final class ContentStreamFinder implements ProjectionStateInterface
             )
 
             -- now, we check for removed content streams which we do not need anymore transitively
-            SELECT contentStreamId FROM ' . $this->tableName . ' AS cs
+            SELECT contentstreamid FROM ' . $this->tableName . ' AS cs
                 WHERE removed = true
                 AND NOT EXISTS (
                     SELECT 1
                     FROM transitiveUsedContentStreams
                     WHERE
-                        cs.contentStreamId = transitiveUsedContentStreams.contentStreamId
+                        cs.contentstreamid = transitiveUsedContentStreams.contentstreamid
                 )
             ',
             [
@@ -231,7 +231,7 @@ final class ContentStreamFinder implements ProjectionStateInterface
 
         $contentStreams = [];
         foreach ($databaseRows as $databaseRow) {
-            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentStreamId']);
+            $contentStreams[] = ContentStreamId::fromString($databaseRow['contentstreamid']);
         }
 
         return $contentStreams;
