@@ -495,10 +495,10 @@ class ChangeProjection implements ProjectionInterface
             if ($change === null) {
                 $change = new Change($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, false, false, false, false);
                 $modifyFn($change);
-                $change->addToDatabase($this->getDatabaseConnection(), $this->tableName);
+                $change->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             } else {
                 $modifyFn($change);
-                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableName);
+                $change->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             }
         });
     }
