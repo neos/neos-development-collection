@@ -14,6 +14,7 @@ namespace Neos\ContentRepository\Core\Tests\Unit\SharedModel\Node;
  * source code.
  */
 
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -56,5 +57,20 @@ class NodeNameTest extends TestCase
     public function transliterateFromStringWorksForNodeNames($source, $expectedNodeName)
     {
         Assert::assertEquals($expectedNodeName, NodeName::transliterateFromString($source)->value);
+    }
+
+    /**
+     * @test
+     */
+    public function nodeAggregateIdForTetheredNodesCanBeCalculatedDeterministic(): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString('b2e41ac5-671f-82ed-639d-3c8226631a74');
+
+        $childNodeAggregateId = NodeName::fromString('main')->tetheredNodeAggregateIdByParent($nodeAggregateId);
+
+        self::assertEquals(
+            NodeAggregateId::fromString('ada70507-eb1e-a6aa-ebc6-4f7eddd441ac'),
+            $childNodeAggregateId
+        );
     }
 }

@@ -508,7 +508,7 @@ class NodeType
         foreach ($this->getAutoCreatedChildNodes() as $childNodeName => $childNodeType) {
             $nodeAggregateIdsByNodePaths = $nodeAggregateIdsByNodePaths->add(
                 $childNodePath = NodePath::fromString($childNodeName),
-                $childNodeAggregateId = NodeAggregateId::fromParentNodeAggregateIdAndNodeName($parentNodeAggregateId, NodeName::fromString($childNodeName))
+                $childNodeAggregateId = NodeName::fromString($childNodeName)->tetheredNodeAggregateIdByParent($parentNodeAggregateId)
             );
 
             // handle multiple levels of autocreated child nodes

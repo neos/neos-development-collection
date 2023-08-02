@@ -60,7 +60,7 @@ final class CreateNodeAggregateWithNode implements CommandInterface
      * this registry is indexed using relative node paths to the node to create in the first place.
      *
      * Specifying them is optional, and otherwise they are calculated deterministic based on the $nodeAggregateId and the tethered nodeName.
-     * So you can determine the child node identifier via {@see NodeAggregateId::fromParentNodeAggregateIdAndNodeName()}
+     * So you can determine the child node identifier via {@see NodeName::tetheredNodeAggregateIdByParent()}
      */
     public readonly NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds;
 

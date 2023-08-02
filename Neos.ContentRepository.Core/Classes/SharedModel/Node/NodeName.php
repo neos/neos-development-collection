@@ -79,6 +79,23 @@ final class NodeName implements \JsonSerializable
         return new self($name);
     }
 
+    /**
+     * Calculates a deterministic nodeAggregateId.
+     *
+     * Used for determining the nodeAggregateIds of tethered nodes.
+     *
+     * e.g. in case you want to get the main content collection node aggregate id:
+     *  NodeName::fromString('main')->tetheredNodeAggregateIdByParent($parentNodeAggregateId)
+     *
+     */
+    public function tetheredNodeAggregateIdByParent(NodeAggregateId $parentNodeAggregateId): NodeAggregateId
+    {
+        $hex = md5($parentNodeAggregateId->value . '-' . $this->value);
+        return NodeAggregateId::fromString(
+            substr($hex, 0, 8) . '-' . substr($hex, 8, 4) . '-' . substr($hex, 12, 4) . '-' . substr($hex, 16, 4) . '-' . substr($hex, 20, 12)
+        );
+    }
+
     public function jsonSerialize(): string
     {
         return $this->value;
