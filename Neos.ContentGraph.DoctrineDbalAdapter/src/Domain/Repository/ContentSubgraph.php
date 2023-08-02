@@ -270,7 +270,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             // @see https://mariadb.com/kb/en/library/recursive-common-table-expressions-overview/#cast-to-avoid-data-truncation
-            ->select('n.*, h.name, h.contentstreamid, CAST("ROOT" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
+            ->select('n.*, h.name, h.contentstreamid, CAST("root" AS CHAR(50)) AS parentNodeAggregateId, 0 AS level, 0 AS position')
             ->from($this->tableNamePrefix . '_node', 'n')
             ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
@@ -279,7 +279,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addRestrictionRelationConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.name, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
+            ->select('c.*, h.name, h.contentstreamid, CAST(p.nodeaggregateid AS CHAR(50)) AS parentNodeAggregateId, p.level + 1 AS level, h.position')
             ->from('tree', 'p')
             ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = h.childnodeanchor')
@@ -312,7 +312,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 $this->visibilityConstraints
             );
             $subtree = new Subtree((int)$nodeData['level'], $node);
-            $subtreesByNodeId[$nodeData['parentNodeAggregateId']]->add($subtree);
+            $subtreesByNodeId[trim($nodeData['parentNodeAggregateId'])]->add($subtree);
             $subtreesByNodeId[$nodeData['nodeaggregateid']] = $subtree;
         }
         return $rootSubtrees->first();
