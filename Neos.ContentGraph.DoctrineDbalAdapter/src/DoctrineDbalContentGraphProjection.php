@@ -426,7 +426,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         // TODO: still unsure why we need an "INSERT IGNORE" here;
         // normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
-                INSERT IGNORE INTO ' . $this->tableNamePrefix . '_restrictionrelation (
+                INSERT INTO ' . $this->tableNamePrefix . '_restrictionrelation (
                   contentstreamid,
                   dimensionspacepointhash,
                   originnodeaggregateid,
@@ -436,13 +436,19 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   r.contentstreamid,
                   r.dimensionspacepointhash,
                   r.originnodeaggregateid,
-                  "' . $newlyCreatedNodeAggregateId->value . '" as affectednodeaggregateid
+                  \'' . $newlyCreatedNodeAggregateId->value . '\' as affectednodeaggregateid
                 FROM
                     ' . $this->tableNamePrefix . '_restrictionrelation r
                     WHERE
                         r.contentstreamid = :sourceContentStreamId
                         and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
                         and r.affectednodeaggregateid = :parentNodeAggregateId
+                ON CONFLICT (
+                    contentstreamid,
+                    dimensionspacepointhash,
+                    originnodeaggregateid,
+                    affectednodeaggregateid
+                ) DO NOTHING
             ', [
             'sourceContentStreamId' => $contentStreamId->value,
             'visibleDimensionSpacePoints' => $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
