@@ -35,7 +35,7 @@ trait NodeDisabling
             $this->getDatabaseConnection()->executeStatement(
                 '
 -- GraphProjector::whenNodeAggregateWasDisabled
-insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
+insert into ' . $this->getTableNamePrefix() . '_restrictionrelation
     (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid)
 
     -- we build a recursive tree
@@ -81,7 +81,13 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
         "' . $event->nodeAggregateId->value . '" as originnodeaggregateid,
         nodeaggregateid as affectednodeaggregateid
     from tree
-            ',
+
+    on conflict (
+        contentstreamid,
+        dimensionspacepointhash,
+        originnodeaggregateid,
+        affectednodeaggregateid
+    ) do nothing',
                 [
                     'entryNodeAggregateId' => $event->nodeAggregateId->value,
                     'contentStreamId' => $event->contentStreamId->value,
