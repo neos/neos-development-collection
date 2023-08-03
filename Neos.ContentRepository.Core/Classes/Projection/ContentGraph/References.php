@@ -15,7 +15,23 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 /**
- * An immutable, type-safe collection of Reference objects
+ * An immutable, 0-indexed, type-safe collection of Reference objects
+ *
+ * A reference is a node property of type "reference" or "references"
+ *
+ * Each reference describes the edge with its properties to another node.
+ *
+ * - references:
+ *  In the case of "outgoing" references {@see ContentSubgraphInterface::findReferences()}
+ *  each reference name {@see Reference::$name} corresponds to the reference property name from the "outgoing" node, to wich node {@see Reference::$node} the reference points to.
+ *
+ * - back-references:
+ *  In the case of "incoming" references {@see ContentSubgraphInterface::findBackReferences()}
+ *  each reference name {@see Reference::$name} corresponds to the reference property name from wich "incoming" node {@see Reference::$node} the reference points from.
+ *
+ * The properties {@see Reference::$properties} are declared directly on the reference, and can provide information how one node is linked to another.
+ *
+ * If multiple "outgoing" references are allowed via type "references", this collection will return multiple references with the same name {@see Reference::$name}.
  *
  * @implements \IteratorAggregate<int,Reference>
  * @implements \ArrayAccess<int,Reference>
