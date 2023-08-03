@@ -46,7 +46,7 @@ final class ContentRepositoryFactory
     private Projections $projections;
 
     public function __construct(
-        ContentRepositoryId $contentRepositoryId,
+        private readonly ContentRepositoryId $contentRepositoryId,
         EventStoreInterface $eventStore,
         NodeTypeManager $nodeTypeManager,
         ContentDimensionSourceInterface $contentDimensionSource,
@@ -87,10 +87,11 @@ final class ContentRepositoryFactory
      * @return ContentRepository
      * @api
      */
-    public function build(): ContentRepository
+    public function getOrBuild(): ContentRepository
     {
         if (!$this->contentRepository) {
             $this->contentRepository = new ContentRepository(
+                $this->contentRepositoryId,
                 $this->buildCommandBus(),
                 $this->projectionFactoryDependencies->eventStore,
                 $this->projections,
@@ -122,7 +123,7 @@ final class ContentRepositoryFactory
     ): ContentRepositoryServiceInterface {
         $serviceFactoryDependencies = ContentRepositoryServiceFactoryDependencies::create(
             $this->projectionFactoryDependencies,
-            $this->build(),
+            $this->getOrBuild(),
             $this->buildEventPersister(),
             $this->projections,
         );
