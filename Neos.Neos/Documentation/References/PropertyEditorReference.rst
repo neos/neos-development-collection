@@ -392,7 +392,7 @@ The searchbox will accept:
 By default, links to generic ``Neos.Neos:Document`` nodes are allowed; but by setting the ``nodeTypes`` option,
 this can be further restricted (like with the ``reference`` editor). Additionally, links to assets can be disabled
 by setting ``assets`` to ``FALSE``. Links to external URLs are always possible. If you need a reference towards
-only an asset, use the ``asset`` property type; for a reference to another node, use the ``reference`` node type.
+only an asset, use the ``asset`` property type; for a reference to another node, use the ``reference`` property type.
 Furthermore, the placeholder text can be customized by setting the ``placeholder`` option::
 
 

@@ -124,6 +124,7 @@ final class NeosAssetProxyQueryResult implements AssetProxyQueryResultInterface
     /**
      * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->flowPersistenceQueryResult->rewind();

@@ -6,16 +6,18 @@ namespace Neos\ContentRepositoryRegistry;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Factory\ProjectionsFactory;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Experimental\ContentRepositoryExperiments;
+use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\ContentRepositoryRegistry\Exception\InvalidConfigurationException;
 use Neos\ContentRepositoryRegistry\Factory\Clock\ClockFactoryInterface;
@@ -23,9 +25,7 @@ use Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ContentDimensi
 use Neos\ContentRepositoryRegistry\Factory\EventStore\EventStoreFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\ProjectionCatchUpTriggerFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryInterface;
-use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -35,7 +35,6 @@ use Psr\Clock\ClockInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
-use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryIdNotFoundException;
 
 /**
  * @api
@@ -43,15 +42,6 @@ use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryIdNotFoundExceptio
 #[Flow\Scope("singleton")]
 final class ContentRepositoryRegistry
 {
-    /**
-     * @var array<string, ContentRepository>
-     */
-    private array $contentRepositoryInstances = [];
-
-    /**
-     * @var array<string, array<string, ContentRepositoryServiceInterface>>
-     */
-    private array $contentRepositoryServiceInstances = [];
 
     /**
      * @var array<string, ContentRepositoryFactory>
@@ -59,7 +49,7 @@ final class ContentRepositoryRegistry
     private array $factoryInstances = [];
 
     /**
-     * @param array<mixed> $settings
+     * @param array<string, mixed> $settings
      */
     public function __construct(
         private readonly array $settings,
@@ -72,20 +62,7 @@ final class ContentRepositoryRegistry
      */
     public function get(ContentRepositoryId $contentRepositoryId): ContentRepository
     {
-        if (!array_key_exists($contentRepositoryId->value, $this->contentRepositoryInstances)) {
-            $this->contentRepositoryInstances[$contentRepositoryId->value] = $this->getFactory($contentRepositoryId)->build();
-        }
-        return $this->contentRepositoryInstances[$contentRepositoryId->value];
-    }
-
-    public function getContentRepositoryIdByContentRepository(ContentRepository $contentRepository): ContentRepositoryId
-    {
-        $index = array_search($contentRepository, $this->contentRepositoryInstances, true);
-        if ($index === false) {
-            throw ContentRepositoryIdNotFoundException::notFound();
-        }
-
-        return ContentRepositoryId::fromString((string)$index);
+        return $this->getFactory($contentRepositoryId)->getOrBuild();
     }
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface
@@ -105,12 +82,9 @@ final class ContentRepositoryRegistry
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      * @template T of ContentRepositoryServiceInterface
      */
-    public function getService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
+    public function buildService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $contentRepositoryServiceFactory): ContentRepositoryServiceInterface
     {
-        if (!isset($this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)])) {
-            $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)] = $this->getFactory($contentRepositoryId)->buildService($contentRepositoryServiceFactory);
-        }
-        return $this->contentRepositoryServiceInstances[$contentRepositoryId->value][get_class($contentRepositoryServiceFactory)];
+        return $this->getFactory($contentRepositoryId)->buildService($contentRepositoryServiceFactory);
     }
 
     /**

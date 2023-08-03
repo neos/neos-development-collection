@@ -76,7 +76,7 @@ class SiteService
      */
     public function pruneSite(Site $site): void
     {
-        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
             $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
@@ -173,7 +173,7 @@ class SiteService
         $site->setName($siteName);
         $this->siteRepository->add($site);
 
-        $siteServiceInternals = $this->contentRepositoryRegistry->getService(
+        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
             $site->getConfiguration()->contentRepositoryId,
             new SiteServiceInternalsFactory()
         );
