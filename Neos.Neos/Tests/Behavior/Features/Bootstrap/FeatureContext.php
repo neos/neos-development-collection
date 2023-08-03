@@ -113,7 +113,6 @@ class FeatureContext extends MinkContext
      * @var Environment
      */
     protected $environment;
-
     public function __construct()
     {
         if (self::$bootstrap === null) {
@@ -130,7 +129,7 @@ class FeatureContext extends MinkContext
         }
     }
 
-    protected function initCleanContentRepository(array $adapterKeys): void
+    protected function initCleanContentRepository(array $adapterKeys = null): void
     {
         $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
 

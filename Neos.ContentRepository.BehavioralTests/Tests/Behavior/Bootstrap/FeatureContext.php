@@ -89,6 +89,8 @@ class FeatureContext implements \Behat\Behat\Context\Context
     protected $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+    private array $contentRepositoryExperiments = [];
+    private ?array $adapterKeys = null;
 
     public function __construct()
     {
@@ -106,6 +108,24 @@ class FeatureContext implements \Behat\Behat\Context\Context
         }
         $this->setUpInterleavingLogger();
     }
+
+    /**
+     * @BeforeScenario @contentrepository
+     */
+    public function resetExperiments()
+    {
+        $this->contentRepositoryExperiments = [];
+    }
+
+    /**
+     * @When /^the content repository experiment "([^"]*)" has value "([^"]*)"$/
+     */
+    public function theContentRepositoryExperimentHasValue($experimentName, $experimentValue)
+    {
+        $this->contentRepositoryExperiments[$experimentName] = $experimentValue;
+        $this->initCleanContentRepository();
+    }
+
 
     private function setUpInterleavingLogger(): void
     {
@@ -134,8 +154,14 @@ class FeatureContext implements \Behat\Behat\Context\Context
      * @param array<string> $adapterKeys "DoctrineDBAL" if
      * @return void
      */
-    protected function initCleanContentRepository(array $adapterKeys): void
+    protected function initCleanContentRepository(array $adapterKeys = null): void
     {
+        if ($adapterKeys !== null) {
+            $this->adapterKeys = $adapterKeys;
+        } else {
+            // re-use old adapter keys if not explicitly given
+            $adapterKeys = $this->adapterKeys;
+        }
         $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
 
         $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
@@ -155,6 +181,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         }
         $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
         $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
+        $registrySettings['presets'][$this->contentRepositoryId->value]['experiments'] = $this->contentRepositoryExperiments;
 
         $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
             $registrySettings,

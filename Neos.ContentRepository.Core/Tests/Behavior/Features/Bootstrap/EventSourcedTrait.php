@@ -189,7 +189,7 @@ trait EventSourcedTrait
      * @param array<string> $adapterKeys "DoctrineDBAL" if
      * @return void
      */
-    abstract protected function initCleanContentRepository(array $adapterKeys): void;
+    abstract protected function initCleanContentRepository(array $adapterKeys = null): void;
 
     /**
      * @BeforeScenario @contentrepository

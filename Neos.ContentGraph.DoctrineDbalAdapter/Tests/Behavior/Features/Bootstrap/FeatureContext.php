@@ -102,7 +102,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         return $this->objectManager->get(Environment::class);
     }
 
-    protected function initCleanContentRepository(array $adapterKeys): void
+    protected function initCleanContentRepository(array $adapterKeys = null): void
     {
         $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
 
