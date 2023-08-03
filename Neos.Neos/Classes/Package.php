@@ -141,32 +141,6 @@ class Package extends BasePackage
             'relayEditorAuthentication'
         );
 
-        $dispatcher->connect(
-            DocumentUriPathProjection::class,
-            'documentUriPathChanged',
-            function (string $oldUriPath, string $newUriPath, $_, EventEnvelope $eventEnvelope) use ($bootstrap) {
-                /** @var RouterCachingService $routerCachingService */
-                $routerCachingService = $bootstrap->getObjectManager()->get(RouterCachingService::class);
-                $routerCachingService->flushCachesForUriPath($oldUriPath);
-
-                if (class_exists(RedirectStorageInterface::class)) {
-                    if (!$bootstrap->getObjectManager()->isRegistered(RedirectStorageInterface::class)) {
-                        return;
-                    }
-                    /** @var RedirectStorageInterface $redirectStorage */
-                    $redirectStorage = $bootstrap->getObjectManager()->get(RedirectStorageInterface::class);
-                    $redirectStorage->addRedirect(
-                        $oldUriPath,
-                        $newUriPath,
-                        301,
-                        [],
-                        (string)$eventEnvelope->event->metadata->get('initiatingUserId'),
-                        'via DocumentUriPathProjector'
-                    );
-                }
-            }
-        );
-
         $dispatcher->connect(AssetService::class, 'assetRemoved', function (AssetInterface $asset) use ($bootstrap) {
 
             /** @var GlobalAssetUsageService $globalAssetUsageService */

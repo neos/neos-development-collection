@@ -1299,7 +1299,7 @@ Hoe hoger de prioriteit, des te groter de ondoorzichtbaarheid. Klik op een van d
       </trans-unit>
       <trans-unit id="workspaces.discardSelectedChangesInWorkspaceConfirmation" xml:space="preserve">
 				<source>Do you really want to discard the selected changes in the "{0}" workspace?</source>
-        <target state="translated">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace ongedaan wilt maken?</target>
+        <target state="translated">Weet u zeker dat u de geselecteerde wijzigingen in de "{0}" workspace wilt annuleren?</target>
       </trans-unit>
       <trans-unit id="workspaces.publishSelectedChangesTo" xml:space="preserve">
 				<source>Publish selected changes to {0}</source>

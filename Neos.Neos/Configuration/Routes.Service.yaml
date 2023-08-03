@@ -172,3 +172,14 @@
     '@action':     'index'
   appendExceedingArguments: true
   httpMethods: ['GET']
+
+-
+  name: 'Services - ContentDimensionController->show()'
+  uriPattern: 'content-dimensions/{dimensionName}(.{@format})'
+  defaults:
+    '@package':    'Neos.Neos'
+    '@controller': 'Service\ContentDimensions'
+    '@action':     'show'
+    '@format':     'html'
+  appendExceedingArguments: true
+  httpMethods: ['GET']

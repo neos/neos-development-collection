@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\AssetUsage\Projection;
 
+use Doctrine\ORM\Exception\ORMException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -180,7 +181,6 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         /** @var array<string, array<AssetIdAndOriginalAssetId>> $assetIds */
         $assetIds = [];
-        /** @var SerializedPropertyValue|null $propertyValue */
         foreach ($propertyValues as $propertyName => $propertyValue) {
             // skip removed properties ({@see SerializedPropertyValues})
             if ($propertyValue === null) {
@@ -200,15 +200,14 @@ final class AssetUsageProjection implements ProjectionInterface
     }
 
     /**
-     * @param string $type
      * @param mixed $value
      * @return array<string>
      * @throws InvalidTypeException
      */
     private function extractAssetIds(string $type, mixed $value): array
     {
-        if ($type === 'string' || is_subclass_of($type, \Stringable::class)) {
-            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
+        if (is_string($value)) {
+            preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', $value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class)) {
@@ -306,8 +305,12 @@ final class AssetUsageProjection implements ProjectionInterface
     private function findOriginalAssetId(string $assetId): ?string
     {
         if (!array_key_exists($assetId, $this->originalAssetIdMappingRuntimeCache)) {
-            /** @var AssetInterface|null $asset */
-            $asset = $this->assetRepository->findByIdentifier($assetId);
+            try {
+                /** @var AssetInterface|null $asset */
+                $asset = $this->assetRepository->findByIdentifier($assetId);
+            } /** @noinspection PhpRedundantCatchClauseInspection */ catch (ORMException) {
+                return null;
+            }
             /** @phpstan-ignore-next-line  */
             $this->originalAssetIdMappingRuntimeCache[$assetId] = $asset instanceof AssetVariantInterface ? $asset->getOriginalAsset()->getIdentifier() : null;
         }

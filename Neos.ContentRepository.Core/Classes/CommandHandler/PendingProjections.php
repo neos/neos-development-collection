@@ -85,6 +85,11 @@ final class PendingProjections
     ) {
     }
 
+    public static function empty(): self
+    {
+        return new self(Projections::create(), []);
+    }
+
     public static function fromProjectionsAndEventsAndSequenceNumber(
         Projections $allProjections,
         Events $events,

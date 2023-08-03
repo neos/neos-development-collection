@@ -1,0 +1,23 @@
+`8.3.2 (2023-05-01) <https://github.com/neos/neos-development-collection/releases/tag/8.3.2>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: HtmlAugmenter & Attributes Rendering <https://github.com/neos/neos-development-collection/pull/4225>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4213 <https://github.com/neos/neos-development-collection/issues/4213>`_ - null should not remove existing attribute
+
+Fixes applying string on existing empty attribute
+(or empty string)
+
+Thanks to @tellenrieder @ClaraRuna and @KommunikativCh and @fcool  ;) 
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.3.1...8.3.2>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

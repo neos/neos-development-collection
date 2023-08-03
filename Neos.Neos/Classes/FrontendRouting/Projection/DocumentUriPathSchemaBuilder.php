@@ -67,6 +67,9 @@ class DocumentUriPathSchemaBuilder
         $table->addColumn('shortcuttarget', Types::STRING)
             ->setLength(1000)
             ->setNotnull(false);
+        $table->addColumn('nodetypename', Types::STRING)
+            ->setLength(255)
+            ->setNotnull(true);
 
         $table
             ->addUniqueIndex(['nodeaggregateid', 'dimensionspacepointhash'], 'variant')
@@ -75,7 +78,7 @@ class DocumentUriPathSchemaBuilder
                 'precedingnodeaggregateid',
                 'succeedingnodeaggregateid'
             ], 'preceding_succeeding')
-            ->addIndex(['sitenodename', 'uripath'], 'sitenode_uripath', [], ['lengths' => [null,100]]);
+            ->addIndex(['sitenodename', 'uripath'], null, [], ['lengths' => [null,100]]);
     }
 
     private function createLiveContentStreamsTable(Schema $schema): void

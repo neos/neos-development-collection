@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
@@ -56,9 +57,10 @@ use Psr\Clock\ClockInterface;
 final class ContentRepository
 {
     /**
-     * @internal use the {@see ContentRepositoryFactory::build()} to instantiate
+     * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
     public function __construct(
+        public readonly ContentRepositoryId $id,
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
         private readonly Projections $projections,

@@ -168,7 +168,11 @@ trait RoutingTrait
      */
     public function theDocumenturipathProjectionIsUpToDate(): void
     {
-        $this->getContentRepository()->catchUpProjection(DocumentUriPathProjection::class);
+        if ($this->lastCommandOrEventResult === null) {
+            // we just blocked in "The graph projection is up to date"
+            return;
+        }
+        $this->lastCommandOrEventResult->block();
     }
 
     /**
@@ -213,6 +217,19 @@ trait RoutingTrait
     {
         $matchedNodeAddress = $this->match(new Uri($url));
         Assert::assertNull($matchedNodeAddress, 'Expected no node to be found, but instead the following node address was matched: ' . $matchedNodeAddress ?? '- none -');
+    }
+
+    /**
+     * @Then The URL :url should match the node :nodeAggregateId in content stream :contentStreamId and dimension :dimensionSpacePoint
+     */
+    public function theUrlShouldMatchTheNodeInContentStreamAndDimension(string $url, $nodeAggregateId, $contentStreamId, $dimensionSpacePoint): void
+    {
+        $matchedNodeAddress = $this->match(new Uri($url));
+
+        Assert::assertNotNull($matchedNodeAddress, 'Expected node to be found, but instead nothing was found.');
+        Assert::assertEquals(NodeAggregateId::fromString($nodeAggregateId), $matchedNodeAddress->nodeAggregateId, 'Expected nodeAggregateId doesn\'t match.');
+        Assert::assertEquals(ContentStreamId::fromString($contentStreamId), $matchedNodeAddress->contentStreamId, 'Expected contentStreamId doesn\'t match.');
+        Assert::assertTrue($matchedNodeAddress->dimensionSpacePoint->equals(DimensionSpacePoint::fromJsonString($dimensionSpacePoint)), 'Expected dimensionSpacePoint doesn\'t match.');
     }
 
     private $eventListenerRegistered = false;

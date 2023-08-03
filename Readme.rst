@@ -43,11 +43,11 @@ Contributing
 
 If you want to contribute to Neos and want to set up a development environment, then follow these steps:
 
-``composer create-project neos/neos-development-distribution neos-development 8.2.x-dev --keep-vcs``
+``composer create-project neos/neos-development-distribution neos-development 8.3.x-dev --keep-vcs``
 
 Note the **-distribution** repository you create a project from, instead of just checking out this repository.
 
-If you need a different branch, you can either use it from the start (replace the ``8.2.x-dev`` by ``9.0.x-dev`` or whatever you need), or switch after checkout (just make sure to run composer update afterwards to get matching dependencies installed.) In a nutshell, to switch the branch you intend to work on, run:
+If you need a different branch, you can either use it from the start (replace the ``8.3.x-dev`` by ``9.0.x-dev`` or whatever you need), or switch after checkout (just make sure to run composer update afterwards to get matching dependencies installed.) In a nutshell, to switch the branch you intend to work on, run:
 
 ``git checkout 9.0 && composer update``
 
@@ -162,7 +162,11 @@ Migrating an existing (Neos < 9.0) Site
 Importing an existing (Neos >= 9.0) Site from an Export
 -------------------------------------------------------
 
-tbd
+.. code-block:: bash
+
+    # import the event stream from the Neos.Demo package
+    ./flow cr:import Packages/Sites/Neos.Demo/Resources/Private/Content
+
 
 Running Neos
 ============
@@ -180,14 +184,14 @@ we use the right versions etc).
 
    .. code-block:: bash
 
-       pushd Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior
+       bin/behat -c Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
 
-       ../../../../../bin/behat -c behat.yml.dist Features/
+Running all tests can take a long time, depending on the hardware.
+To speed up the process, Behat tests can be executed in a "synchronous" mode by setting the `CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION` environment variable:
 
-       # To run tests in speed mode, run CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1
-       CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 ../../../../../bin/behat -c behat.yml.dist Features/
+   .. code-block:: bash
 
-       popd
+       CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 bin/behat -c Packages/Neos/Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist
 
 Alternatively, if you want to reproduce errors as they happen inside the CI system, but you
 develop on Mac OS, you might want to run the Behat tests in a Docker container (= a linux environment)

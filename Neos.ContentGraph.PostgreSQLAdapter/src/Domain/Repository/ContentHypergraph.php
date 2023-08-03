@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
@@ -128,7 +129,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $rootNodeAggregate = $rootNodeAggregates->first();
 
         if ($rootNodeAggregate === null) {
-            throw new \RuntimeException('Root Node Aggregate not found');
+            throw RootNodeAggregateDoesNotExist::butWasExpectedTo($nodeTypeName);
         }
 
         return $rootNodeAggregate;

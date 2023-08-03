@@ -15,6 +15,7 @@ use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
+use Neos\EventStore\Model\EventStore\CommitResult;
 
 /**
  * Internal service to persist {@see EventInterface} with the proper normalization, and triggering the
@@ -39,6 +40,9 @@ final class EventPersister
      */
     public function publishEvents(EventsToPublish $eventsToPublish): CommandResult
     {
+        if ($eventsToPublish->events->isEmpty()) {
+            return CommandResult::empty();
+        }
         // the following logic could also be done in an AppEventStore::commit method (being called
         // directly from the individual Command Handlers).
         $normalizedEvents = Events::fromArray(

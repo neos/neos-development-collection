@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -54,6 +56,14 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node;
 
     /**
+     * Find a root node by its type
+     * Note that only one root node can exist per type as enforced by {@see RootNodeHandling}
+     *
+     * @return Node|null the node or null if no root node with the specified type is accessible in this subgraph
+     */
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node;
+
+    /**
      * Find direct child nodes of the specified parent node that match the given $filter
      */
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, Filter\FindChildNodesFilter $filter): Nodes;
@@ -87,6 +97,17 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @return Node|null the node that is connected to its parent with the specified $edgeName, or NULL if no matching node exists or the parent node is not accessible
      */
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
+
+    /**
+     * Recursively find all nodes above the $entryNodeAggregateId that match the specified $filter and return them as a flat list
+     */
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes;
+
+    /**
+     * Count all nodes above the $entryNodeAggregateId that match the specified $filter
+     * @see findAncestorNodes
+     */
+    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int;
 
     /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
@@ -149,12 +170,20 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
 
     /**
-     * Determine the absolute path of a node
+     * Find a single node underneath that matches the specified absolute $path
      *
      * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
+     * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
+     */
+    public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node;
+
+    /**
+     * Determine the absolute path of a node
+     *
+     * @deprecated use ${@see self::findAncestorNodes()} instead
      * @throws \InvalidArgumentException if the node path could not be retrieved because it is inaccessible or contains no valid path. The latter can happen if any node in the hierarchy has no name
      */
-    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): NodePath;
+    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath;
 
     /**
      * Count all nodes in this subgraph, including inaccessible ones!

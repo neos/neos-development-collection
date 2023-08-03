@@ -47,12 +47,13 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"    |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
+    # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
   Scenario: Try to enable an already enabled node aggregate
-    When the command EnableNodeAggregate is executed with payload and exceptions are caught:
+    When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotDisableDimensionSpacePoint"
+    Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
     When the command EnableNodeAggregate is executed with payload and exceptions are caught:

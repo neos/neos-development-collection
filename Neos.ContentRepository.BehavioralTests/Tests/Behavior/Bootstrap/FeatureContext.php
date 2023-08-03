@@ -88,6 +88,8 @@ class FeatureContext implements \Behat\Behat\Context\Context
      */
     protected $behatTestHelperObjectName = BehatTestHelper::class;
 
+    protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+
     public function __construct()
     {
         if (self::$bootstrap === null) {
@@ -166,7 +168,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
             $this->contentRepository->setUp();
             self::$wasContentRepositorySetupCalled = true;
         }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->getService($this->contentRepositoryId, new ContentRepositoryInternalsFactory());
+        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService($this->contentRepositoryId, new ContentRepositoryInternalsFactory());
 
         $availableContentGraphs = [];
         $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
@@ -199,7 +201,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
 
     protected function getContentRepositoryService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $factory): ContentRepositoryServiceInterface
     {
-        return $this->getContentRepositoryRegistry()->getService($contentRepositoryId, $factory);
+        return $this->getContentRepositoryRegistry()->buildService($contentRepositoryId, $factory);
     }
 
     protected function getDbalClient(): DbalClientInterface

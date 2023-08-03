@@ -12,6 +12,3 @@
         pluginSettings:
           label: i18n
           icon: 'icon-sliders'
-  postprocessors:
-    'PluginPostprocessor':
-      postprocessor: 'Neos\Neos\NodeTypePostprocessor\PluginNodeTypePostprocessor'

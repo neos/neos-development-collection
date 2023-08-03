@@ -31,7 +31,7 @@ final class MigrateEventsCommandController extends CommandController
     public function fillAffectedDimensionSpacePointsInNodePropertiesWereSetCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $eventMigrationService = $this->contentRepositoryRegistry->getService($contentRepositoryId, $this->eventMigrationServiceFactory);
+        $eventMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->eventMigrationServiceFactory);
         $eventMigrationService->fillAffectedDimensionSpacePointsInNodePropertiesWereSet($this->outputLine(...));
     }
 }

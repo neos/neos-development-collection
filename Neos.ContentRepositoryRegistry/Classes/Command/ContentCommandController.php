@@ -43,75 +43,85 @@ final class ContentCommandController extends CommandController
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        if ($workspaceInstance === null) {
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
+            $this->quit(1);
+        }
+        $this->outputLine('Refreshing root node dimensions in workspace <b>%s</b> (content repository <b>%s</b>)', [$workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
+        $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
-        $this->outputFormatted('Refreshing root node dimensions in workspace %s (content repository %s)', [$workspace->workspaceName->value, $contentRepositoryId->value]);
-        $this->outputFormatted('Resolved content stream %s', [$workspace->currentContentStreamId]);
-
-        $rootNodeAggregates = $contentRepository->getContentGraph()->findRootNodeAggregates(
-            $workspace->currentContentStreamId,
+        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph()->findRootNodeAggregates(
+            $workspaceInstance->currentContentStreamId,
             FindRootNodeAggregatesFilter::create()
         );
 
         foreach ($rootNodeAggregates as $rootNodeAggregate) {
-            $this->outputFormatted('Refreshing dimensions for root node aggregate %s (of type %s)', [
+            $this->outputLine('Refreshing dimensions for root node aggregate %s (of type %s)', [
                 $rootNodeAggregate->nodeAggregateId->value,
                 $rootNodeAggregate->nodeTypeName->value
             ]);
-            $contentRepository->handle(
+            $contentRepositoryInstance->handle(
                 new UpdateRootNodeAggregateDimensions(
-                    $workspace->currentContentStreamId,
+                    $workspaceInstance->currentContentStreamId,
                     $rootNodeAggregate->nodeAggregateId
                 )
             )->block();
         }
-        $this->outputFormatted('Done!');
+        $this->outputLine('<success>Done!</success>');
     }
 
     public function moveDimensionSpacePointCommand(string $source, string $target, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
-        // TODO: CLI arguments: $contentRepositoryId => $contentRepository (in other CLI commands)
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $source = DimensionSpacePoint::fromJsonString($source);
-        $target = DimensionSpacePoint::fromJsonString($target);
+        $sourceDimensionSpacePoint = DimensionSpacePoint::fromJsonString($source);
+        $targetDimensionSpacePoint = DimensionSpacePoint::fromJsonString($target);
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        if ($workspaceInstance === null) {
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
+            $this->quit(1);
+        }
 
-        $this->outputFormatted('Moving %s to %s in workspace %s (content repository %s)', [$source, $target, $workspace->workspaceName, $contentRepositoryId]);
-        $this->outputFormatted('Resolved content stream %s', [$workspace->currentContentStreamId]);
+        $this->outputLine('Moving <b>%s</b> to <b>%s</b> in workspace <b>%s</b> (content repository <b>%s</b>)', [$sourceDimensionSpacePoint->toJson(), $targetDimensionSpacePoint->toJson(), $workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
+        $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
-        $contentRepository->handle(
+        $contentRepositoryInstance->handle(
             new MoveDimensionSpacePoint(
-                $workspace->currentContentStreamId,
-                $source,
-                $target
+                $workspaceInstance->currentContentStreamId,
+                $sourceDimensionSpacePoint,
+                $targetDimensionSpacePoint
             )
         )->block();
-        $this->outputFormatted('Done!');
+        $this->outputLine('<success>Done!</success>');
     }
 
     public function createVariantsRecursivelyCommand(string $source, string $target, string $contentRepository = 'default', string $workspace = WorkspaceName::WORKSPACE_NAME_LIVE): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $source = DimensionSpacePoint::fromJsonString($source);
-        $target = OriginDimensionSpacePoint::fromJsonString($target);
+        $sourceSpacePoint = DimensionSpacePoint::fromJsonString($source);
+        $targetSpacePoint = OriginDimensionSpacePoint::fromJsonString($target);
 
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        $contentRepositoryInstance = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspaceInstance = $contentRepositoryInstance->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspace));
+        if ($workspaceInstance === null) {
+            $this->outputLine('<error>Workspace "%s" does not exist</error>', [$workspace]);
+            $this->quit(1);
+        }
 
-        $this->outputFormatted('Creating %s to %s in workspace %s (content repository %s)', [$source, $target, $workspace->workspaceName->value, $contentRepositoryId->value]);
-        $this->outputFormatted('Resolved content stream %s', [$workspace->currentContentStreamId]);
+        $this->outputLine('Creating <b>%s</b> to <b>%s</b> in workspace <b>%s</b> (content repository <b>%s</b>)', [$sourceSpacePoint->toJson(), $targetSpacePoint->toJson(), $workspaceInstance->workspaceName->value, $contentRepositoryId->value]);
+        $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
-        $sourceSubgraph = $contentRepository->getContentGraph()->getSubgraph(
-            $workspace->currentContentStreamId,
-            $source,
+        $sourceSubgraph = $contentRepositoryInstance->getContentGraph()->getSubgraph(
+            $workspaceInstance->currentContentStreamId,
+            $sourceSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
 
-        $rootNodeAggregates = $contentRepository->getContentGraph()
-            ->findRootNodeAggregates($workspace->currentContentStreamId, FindRootNodeAggregatesFilter::create());
+        $rootNodeAggregates = $contentRepositoryInstance->getContentGraph()
+            ->findRootNodeAggregates($workspaceInstance->currentContentStreamId, FindRootNodeAggregatesFilter::create());
 
 
         foreach ($rootNodeAggregates as $rootNodeAggregate) {
@@ -120,14 +130,14 @@ final class ContentCommandController extends CommandController
                     0,
                     $rootNodeAggregate->nodeAggregateId,
                     $sourceSubgraph,
-                    $target,
-                    $workspace->currentContentStreamId,
-                    $contentRepository,
+                    $targetSpacePoint,
+                    $workspaceInstance->currentContentStreamId,
+                    $contentRepositoryInstance,
                 )
             );
         }
 
-        $this->outputFormatted('Done!');
+        $this->outputLine('<success>Done!</success>');
     }
 
     private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, ContentStreamId $contentStreamId, ContentRepository $contentRepository) {

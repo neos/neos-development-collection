@@ -49,4 +49,9 @@ final class Events implements \IteratorAggregate
     {
         return array_map($callback, $this->events);
     }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->events);
+    }
 }

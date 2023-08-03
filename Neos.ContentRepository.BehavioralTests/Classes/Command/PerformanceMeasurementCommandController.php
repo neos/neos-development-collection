@@ -28,7 +28,7 @@ final class PerformanceMeasurementCommandController extends CommandController
         ContentRepositoryRegistry $contentRepositoryRegistry,
         PerformanceMeasurementServiceFactory $performanceMeasurementServiceFactory
     ) {
-        $this->performanceMeasurementService = $contentRepositoryRegistry->getService(
+        $this->performanceMeasurementService = $contentRepositoryRegistry->buildService(
             ContentRepositoryId::fromString('default'),
             $performanceMeasurementServiceFactory
         );

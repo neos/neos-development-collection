@@ -52,6 +52,7 @@ use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -73,6 +74,7 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\Mutabl
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
+use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\CheckpointException;
 use PHPUnit\Framework\Assert;
@@ -116,6 +118,8 @@ trait EventSourcedTrait
     private ContentRepositoryId $contentRepositoryId;
     private ContentRepository $contentRepository;
     private ContentRepositoryInternals $contentRepositoryInternals;
+
+    private ?UserId $currentUserId = null;
 
     protected function getContentRepositoryId(): ContentRepositoryId
     {
@@ -353,6 +357,10 @@ trait EventSourcedTrait
                 $propertyValue = PostalAddress::dummy();
             } elseif ($propertyValue === 'PostalAddress:anotherDummy') {
                 $propertyValue = PostalAddress::anotherDummy();
+            } elseif ($propertyValue === 'PriceSpecification:dummy') {
+                $propertyValue = PriceSpecification::dummy();
+            } elseif ($propertyValue === 'PriceSpecification:anotherDummy') {
+                $propertyValue = PriceSpecification::anotherDummy();
             }
             if (is_string($propertyValue)) {
                 if (\str_starts_with($propertyValue, 'DayOfWeek:')) {

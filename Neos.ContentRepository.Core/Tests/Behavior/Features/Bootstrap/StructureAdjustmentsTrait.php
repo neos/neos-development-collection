@@ -32,7 +32,7 @@ trait StructureAdjustmentsTrait
 
     protected function getStructureAdjustmentService(): StructureAdjustmentService
     {
-        return $this->getContentRepositoryRegistry()->getService($this->getContentRepositoryId(), new StructureAdjustmentServiceFactory());
+        return $this->getContentRepositoryRegistry()->buildService($this->getContentRepositoryId(), new StructureAdjustmentServiceFactory());
     }
 
     /**

@@ -94,7 +94,7 @@ class FusionExceptionView extends AbstractView
 
         $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
-        $fusionExceptionViewInternals = $this->contentRepositoryRegistry->getService(
+        $fusionExceptionViewInternals = $this->contentRepositoryRegistry->buildService(
             $siteDetectionResult->contentRepositoryId,
             new FusionExceptionViewInternalsFactory()
         );

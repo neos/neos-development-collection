@@ -20,6 +20,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Reflection\ReflectionService;
@@ -31,7 +32,9 @@ use Neos\Media\Domain\Model\AssetSource\AssetSourceAwareInterface;
 use Neos\Media\Domain\Model\Tag;
 use Neos\Media\Domain\Model\VariantSupportInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Media\Domain\Repository\ImageVariantRepository;
 use Neos\Media\Domain\Repository\ThumbnailRepository;
+use Neos\Media\Domain\Service\AssetService;
 use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Domain\Service\ThumbnailService;
 use Neos\Media\Domain\Strategy\AssetModelMappingStrategyInterface;
@@ -72,6 +75,18 @@ class MediaCommandController extends CommandController
      * @var ThumbnailRepository
      */
     protected $thumbnailRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ImageVariantRepository
+     */
+    protected $imageVariantRepository;
+
+    /**
+     * @Flow\Inject
+     * @var AssetService
+     */
+    protected $assetService;
 
     /**
      * @Flow\Inject
@@ -258,7 +273,7 @@ class MediaCommandController extends CommandController
 
         if ($unusedAssetCount === 0) {
             !$quiet && $this->output->outputLine(PHP_EOL . 'No unused assets found.');
-            exit;
+            $this->quit(1);
         }
 
         foreach ($tableRowsByAssetSource as $assetSourceIdentifier => $tableRows) {
@@ -274,7 +289,7 @@ class MediaCommandController extends CommandController
 
         if ($assumeYes === false) {
             if (!$this->output->askConfirmation(sprintf('Do you want to remove <b>%s</b> unused assets?', $unusedAssetCount))) {
-                exit(1);
+                $this->quit(1);
             }
         }
 
@@ -293,7 +308,7 @@ class MediaCommandController extends CommandController
      * Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
      * thumbnails for a specific thumbnail preset configuration.
      *
-     * Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
+     * Additionally, accepts a ``async`` parameter determining if the created thumbnails are generated when created.
      *
      * @param string|null $preset Preset name, if not provided thumbnails are created for all presets
      * @param bool $async Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
@@ -384,6 +399,124 @@ class MediaCommandController extends CommandController
                 break;
             }
         }
+    }
+
+    /**
+     * List all configurations for your imageVariants.
+     *
+     * Doesn't matter if configured under 'Neos.Media.variantPresets' or already deleted from this configuration.
+     * This command will find every single one for you.
+     */
+    public function listVariantPresetsCommand(): void
+    {
+        $currentPresets = $this->assetVariantGenerator->getVariantPresets();
+
+        if (empty($currentPresets)) {
+            $this->outputLine('<b>No configuration</b> for variant presets was found.');
+        } else {
+            $outputPresets = [];
+            foreach ($currentPresets as $presetIdentifier => $variantPreset) {
+                $variantNames = array_keys($variantPreset->variants());
+                foreach ($variantNames as $variantName) {
+                    $outputPresets[] = [$presetIdentifier, $variantName];
+                }
+            }
+            $this->outputLine('The following <b>configured variant presets</b> were found:');
+            $this->output->outputTable($outputPresets, ['Identifier', 'Variant name']);
+        }
+
+        $databaseVariants = $this->imageVariantRepository->findAllWithOutdatedPresets();
+
+        if (empty($databaseVariants)) {
+            $this->outputLine('There were <b>no outdated variant presets</b> in your database.');
+        } else {
+            $formattedDatabaseVariants = [];
+            foreach ($databaseVariants as $variant) {
+                if (!isset($formattedDatabaseVariants[$variant->getPresetIdentifier()][$variant->getPresetVariantName()])) {
+                    $formattedDatabaseVariants[$variant->getPresetIdentifier()][$variant->getPresetVariantName()] = 1;
+                } else {
+                    $formattedDatabaseVariants[$variant->getPresetIdentifier()][$variant->getPresetVariantName()]++;
+                }
+            }
+
+            $outputPresets = [];
+            foreach ($formattedDatabaseVariants as $presetIdentifier => $presetVariantNames) {
+                $presetVariantKeys = array_keys($presetVariantNames);
+
+                foreach ($presetVariantKeys as $key) {
+                    $outputPresets[] = [$presetIdentifier, $key, $presetVariantNames[$key]];
+                }
+            }
+
+            $this->outputLine('<b>No configuration</b> for the following <b>variant presets</b> could be found:');
+            $this->output->outputTable($outputPresets, ['Identifier', 'Variant name', 'Occurrences']);
+
+            $this->outputLine('To delete them, please use the <b>media:removeVariants</b> command.');
+        }
+    }
+
+    /**
+     * Cleanup imageVariants with provided identifier and variant name.
+     * Image variants that are still configured are removed without usage check and
+     * can be regenerated afterwards with `media:renderVariants`.
+     *
+     * This command will not remove any custom cropped image variants.
+     *
+     * @param string $identifier Identifier of variants to remove.
+     * @param string $variantName Variants with this name will be removed (if exist).
+     * @param bool $quiet If set, only errors and questions will be displayed.
+     * @param bool $assumeYes If set, "yes" is assumed for the "shall I remove ..." dialog.
+     * @param int|null $limit Limit the result of unused assets displayed and removed for this run.
+     *
+     * @throws StopCommandException
+     */
+    public function removeVariantsCommand(string $identifier, string $variantName, bool $quiet = false, bool $assumeYes = false, int $limit = null)
+    {
+        $variantsToRemove = $this->imageVariantRepository->findVariantsByIdentifierAndVariantName($identifier, $variantName, $limit);
+        if (empty($variantsToRemove)) {
+            !$quiet && $this->output->outputLine('<em>Did not find any variants with name ' . $variantName . ' in ' . $identifier . '</em>');
+            $this->quit(1);
+        }
+
+        if (!$quiet) {
+            $notLimitedDeletableOutput = '<b>There are %s asset variants ready to be deleted.</b>';
+            $this->outputLine($notLimitedDeletableOutput, [count($variantsToRemove)]);
+            if ($limit) {
+                $this->outputLine('<em> find more by running without the "--limit" parameter</em>');
+            }
+        }
+
+        // if --assume-yes not used: user decision to delete variants
+        if (!$assumeYes && !$this->output->askConfirmation(PHP_EOL . 'Do you want to remove the found variants? [Y,n] ')) {
+            $this->output->outputLine(PHP_EOL . '<em>No variants have been deleted.</em>');
+            $this->quit(1);
+        }
+
+        !$quiet && $this->outputLine(PHP_EOL . '<b>Removing variants:</b>');
+        !$quiet && $this->output->progressStart(count($variantsToRemove));
+
+        $outdatedVariantSize = 0;
+        foreach ($variantsToRemove as $variantToRemove) {
+            !$quiet && $this->output->progressAdvance();
+            $variantSize = $variantToRemove->getResource()->getFileSize();
+
+            try {
+                $variantToRemove->getResource()->disableLifecycleEvents();
+
+                $this->assetRepository->removeWithoutUsageChecks($variantToRemove);
+                $this->persistenceManager->persistAll();
+            } catch (IllegalObjectTypeException $e) {
+                $this->output->outputLine(PHP_EOL . 'Unable to remove %s: "%s"', [get_class($variantToRemove), $variantToRemove->getTitle()]);
+                $this->output->outputLine(PHP_EOL . $e->getMessage());
+                $this->quit(1);
+            }
+
+            $outdatedVariantSize += $variantSize;
+        }
+        !$quiet && $this->output->progressFinish();
+
+        $readableStorageSize = Files::bytesToSizeString($outdatedVariantSize);
+        $this->outputLine(PHP_EOL . '<success>Removed ' . $readableStorageSize . '</success>');
     }
 
     /**

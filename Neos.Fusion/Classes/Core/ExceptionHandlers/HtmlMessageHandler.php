@@ -82,7 +82,7 @@ class HtmlMessageHandler extends AbstractRenderingExceptionHandler
         }
 
         $message = sprintf(
-            '<div class="neos-message-header"><div class="neos-message-icon"><i class="icon-warning-sign"></i></div><h1>An exception was thrown while Neos tried to render your page</h1></div>' .
+            '<div class="neos-message-header"><div class="neos-message-icon"><i class="fa fa-exclamation-triangle"></i></div><h1>An exception was thrown while Neos tried to render your page</h1></div>' .
             '<div class="neos-message-wrapper">%s</div>',
             $messageBody
         );

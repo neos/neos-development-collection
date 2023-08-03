@@ -59,7 +59,7 @@ class CrCommandController extends CommandController
         Files::createDirectoryRecursively($path);
         $filesystem = new Filesystem(new LocalFilesystemAdapter($path));
 
-        $exportService = $this->contentRepositoryRegistry->getService(
+        $exportService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ExportServiceFactory(
                 $filesystem,
@@ -88,7 +88,7 @@ class CrCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $contentStreamIdentifier = ContentStreamId::create();
 
-        $importService = $this->contentRepositoryRegistry->getService(
+        $importService = $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             new ImportServiceFactory(
                 $filesystem,
@@ -109,7 +109,7 @@ class CrCommandController extends CommandController
         }
 
         $this->outputLine('Replaying projections');
-        Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepositoryIdentifier' => $contentRepositoryId->value]);
+        Scripts::executeCommand('neos.contentrepositoryregistry:cr:replayall', $this->flowSettings, false, ['contentRepository' => $contentRepositoryId->value]);
 
         $this->outputLine('<success>Done</success>');
     }

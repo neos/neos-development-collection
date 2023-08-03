@@ -130,7 +130,7 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
                 );
                 $mergedUiConfiguration = Arrays::arrayMergeRecursiveOverrule(
                     $mergedUiConfiguration,
-                    $elementConfiguration['ui']
+                    $elementConfiguration['ui'] ?? []
                 );
                 $elementConfiguration['ui'] = $mergedUiConfiguration;
                 $elementConfiguration['ui']['editor'] = $editor;

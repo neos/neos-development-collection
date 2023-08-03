@@ -23,11 +23,15 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
@@ -61,6 +65,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -161,6 +166,21 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNode($queryBuilder);
     }
 
+    public function findRootNodeByType(NodeTypeName $nodeTypeName): ?Node
+    {
+        $queryBuilder = $this->createQueryBuilder()
+            ->select('n.*, h.name, h.contentstreamid')
+            ->from($this->tableNamePrefix . '_node', 'n')
+            ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
+            ->where('n.nodetypename = :nodeTypeName')->setParameter('nodeTypeName', $nodeTypeName->value)
+            ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
+            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
+            ->andWhere('n.classification = :nodeAggregateClassification')
+                ->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
+        $this->addRestrictionRelationConstraints($queryBuilder);
+        return $this->fetchNode($queryBuilder);
+    }
+
     public function findParentNode(NodeAggregateId $childNodeAggregateId): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
@@ -180,18 +200,20 @@ final class ContentSubgraph implements ContentSubgraphInterface
 
     public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
-        $currentNode = $this->findNodeById($startingNodeAggregateId);
-        if ($currentNode === null) {
-            return null;
-        }
-        foreach ($path->getParts() as $edgeName) {
-            // id exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
-            if ($currentNode === null) {
-                return null;
-            }
-        }
-        return $currentNode;
+        $startingNode = $this->findNodeById($startingNodeAggregateId);
+
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path, $startingNode)
+            : null;
+    }
+
+    public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
+    {
+        $startingNode = $this->findRootNodeByType($path->rootNodeTypeName);
+
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path->path, $startingNode)
+            : null;
     }
 
     public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node
@@ -221,36 +243,27 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNodes($queryBuilder);
     }
 
-    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): NodePath
+    public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath
     {
-        $queryBuilderInitial = $this->createQueryBuilder()
-            ->select('h.name, h.parentnodeanchor')
-            ->from($this->tableNamePrefix . '_node', 'n')
-            ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = n.relationanchorpoint')
-            ->where('h.contentstreamid = :contentStreamId')
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
-            ->andWhere('n.nodeaggregateid = :nodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial);
-
-        $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('h.name, h.parentnodeanchor')
-            ->from($this->tableNamePrefix . '_hierarchyrelation', 'h')
-            ->innerJoin('h', 'nodePath', 'np', 'np.parentnodeanchor = h.childnodeanchor')
-            ->where('h.contentstreamid = :contentStreamId')
-            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-
-        $queryBuilderCte = $this->createQueryBuilder()
-            ->select('*')
-            ->from('nodePath')
-            ->setParameter('contentStreamId', $this->contentStreamId->value)
-            ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->setParameter('nodeAggregateId', $nodeAggregateId->value);
-
-        $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'nodePath');
-        if ($result === []) {
-            throw new \InvalidArgumentException(sprintf('Failed to retrieve node path for node "%s"', $nodeAggregateId->value), 1678391715);
+        $leafNode = $this->findNodeById($nodeAggregateId);
+        if (!$leafNode) {
+            throw new \InvalidArgumentException(
+                'Failed to retrieve node path for node "' . $nodeAggregateId->value . '"',
+                1687513836
+            );
         }
-        return NodePath::fromPathSegments(array_reverse(array_column($result, 'name')));
+        $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())
+            ->reverse();
+
+        try {
+            return AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
+        } catch (\InvalidArgumentException $exception) {
+            throw new \InvalidArgumentException(
+                'Failed to retrieve node path for node "' . $nodeAggregateId->value . '"',
+                1687513836,
+                $exception
+            );
+        }
     }
 
     public function findSubtree(NodeAggregateId $entryNodeAggregateId, FindSubtreeFilter $filter): ?Subtree
@@ -305,6 +318,43 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $rootSubtrees->first();
     }
 
+    public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter $filter): Nodes
+    {
+        [
+            'queryBuilderInitial' => $queryBuilderInitial,
+            'queryBuilderRecursive' => $queryBuilderRecursive,
+            'queryBuilderCte' => $queryBuilderCte
+        ] = $this->buildAncestorNodesQueries($entryNodeAggregateId, $filter);
+        $nodeRows = $this->fetchCteResults(
+            $queryBuilderInitial,
+            $queryBuilderRecursive,
+            $queryBuilderCte,
+            'ancestry'
+        );
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
+    }
+
+    public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, CountAncestorNodesFilter $filter): int
+    {
+        [
+            'queryBuilderInitial' => $queryBuilderInitial,
+            'queryBuilderRecursive' => $queryBuilderRecursive,
+            'queryBuilderCte' => $queryBuilderCte
+        ] = $this->buildAncestorNodesQueries($entryNodeAggregateId, $filter);
+
+        return $this->fetchCteCountResult(
+            $queryBuilderInitial,
+            $queryBuilderRecursive,
+            $queryBuilderCte,
+            'ancestry'
+        );
+    }
+
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
         ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
@@ -356,6 +406,20 @@ final class ContentSubgraph implements ContentSubgraphInterface
     }
 
     /** ------------------------------------------- */
+
+    private function findNodeByPathFromStartingNode(NodePath $path, Node $startingNode): ?Node
+    {
+        $currentNode = $startingNode;
+
+        foreach ($path->getParts() as $edgeName) {
+            // id exists here :)
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            if ($currentNode === null) {
+                return null;
+            }
+        }
+        return $currentNode;
+    }
 
     private function createQueryBuilder(): QueryBuilder
     {
@@ -597,6 +661,47 @@ final class ContentSubgraph implements ContentSubgraphInterface
             $this->applyPagination($queryBuilder, $filter->pagination);
         }
         return $queryBuilder;
+    }
+
+    /**
+     * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
+     */
+    private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter $filter): array
+    {
+        $queryBuilderInitial = $this->createQueryBuilder()
+            ->select('n.*, ph.name, ph.contentstreamid, ph.parentnodeanchor')
+            ->from($this->tableNamePrefix . '_node', 'n')
+            // we need to join with the hierarchy relation, because we need the node name.
+            ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ch', 'ch.parentnodeanchor = n.relationanchorpoint')
+            ->innerJoin('ch', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = ch.childnodeanchor')
+            ->innerJoin('n', $this->tableNamePrefix . '_hierarchyrelation', 'ph', 'n.relationanchorpoint = ph.childnodeanchor')
+            ->where('ch.contentstreamid = :contentStreamId')
+            ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash')
+            ->andWhere('ph.contentstreamid = :contentStreamId')
+            ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
+            ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
+        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'ph');
+        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'c', 'ch');
+
+        $queryBuilderRecursive = $this->createQueryBuilder()
+            ->select('p.*, h.name, h.contentstreamid, h.parentnodeanchor')
+            ->from('ancestry', 'c')
+            ->innerJoin('c', $this->tableNamePrefix . '_node', 'p', 'p.relationanchorpoint = c.parentnodeanchor')
+            ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = p.relationanchorpoint')
+            ->where('h.contentstreamid = :contentStreamId')
+            ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
+        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'p');
+
+        $queryBuilderCte = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ancestry', 'p')
+            ->setParameter('contentStreamId', $this->contentStreamId->value)
+            ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
+            ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
+        if ($filter->nodeTypeConstraints !== null) {
+            $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints, 'p');
+        }
+        return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
 
     /**

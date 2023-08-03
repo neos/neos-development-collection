@@ -66,7 +66,7 @@ class NodeMigrationCommandController extends CommandController
                 $this->quit(1);
             }
 
-            $nodeMigrationService = $this->contentRepositoryRegistry->getService($contentRepositoryId, new NodeMigrationServiceFactory());
+            $nodeMigrationService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, new NodeMigrationServiceFactory());
             $nodeMigrationService->executeMigration(
                 new ExecuteMigration(
                     $migrationConfiguration,

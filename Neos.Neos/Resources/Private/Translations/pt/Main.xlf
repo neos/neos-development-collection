@@ -1123,6 +1123,26 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
                 <source>Switch back to the orginal user account</source>
         <target state="translated">Voltar à conta de utilizador original</target>
       </trans-unit>
+      <trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="no">
+                <source>Switched to the new user "{0}".</source>
+        <target state="needs-translation">Alternado para o novo utilizador "{0}".</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.impersonateUser" xml:space="preserve" approved="no">
+                <source>Could not switch to the selected user.</source>
+        <target state="needs-translation">Não foi possível alternar para o utilizador selecionado.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.error.restoreUser" xml:space="preserve" approved="no">
+                <source>Could not switch back to the original user.</source>
+        <target state="needs-translation">Não foi possível voltar ao utilizador original.</target>
+      </trans-unit>
+      <trans-unit id="impersonate.success.restoreUser" xml:space="preserve" approved="no">
+                <source>Switched back from "{0}" to the orginal user "{1}"</source>
+        <target state="needs-translation">Voltado de "{0}" ao utilizador original "{1}"</target>
+      </trans-unit>
+      <trans-unit id="impersonate.title.restoreUserButton" xml:space="preserve" approved="no">
+                <source>Switch back to the orginal user account</source>
+        <target state="needs-translation">Voltar à conta de utilizador original</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
