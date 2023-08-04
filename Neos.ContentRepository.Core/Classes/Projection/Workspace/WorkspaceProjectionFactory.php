@@ -34,8 +34,6 @@ class WorkspaceProjectionFactory implements ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): WorkspaceProjection {
         $projectionShortName = strtolower(str_replace(
             'Projection',

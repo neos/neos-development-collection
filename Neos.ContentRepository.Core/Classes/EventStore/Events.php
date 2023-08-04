@@ -10,7 +10,7 @@ namespace Neos\ContentRepository\Core\EventStore;
  * @implements \IteratorAggregate<EventInterface|DecoratedEvent>
  * @internal only used during event publishing (from within command handlers) - and their implementation is not API
  */
-final class Events implements \IteratorAggregate
+final class Events implements \IteratorAggregate, \Countable
 {
     /**
      * @var array<EventInterface|DecoratedEvent>
@@ -53,5 +53,10 @@ final class Events implements \IteratorAggregate
     public function isEmpty(): bool
     {
         return empty($this->events);
+    }
+
+    public function count(): int
+    {
+        return count($this->events);
     }
 }

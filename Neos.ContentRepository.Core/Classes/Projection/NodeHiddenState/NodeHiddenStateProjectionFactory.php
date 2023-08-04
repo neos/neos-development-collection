@@ -16,9 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<NodeHiddenStateProjection>
@@ -34,8 +32,6 @@ class NodeHiddenStateProjectionFactory implements ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): NodeHiddenStateProjection {
         $projectionShortName = strtolower(str_replace(
             'Projection',

@@ -9,11 +9,8 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGra
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphProjection;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * Use this class as ProjectionFactory in your configuration to construct a content graph
@@ -38,8 +35,6 @@ final class DoctrineDbalContentGraphProjectionFactory implements ProjectionFacto
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): ContentGraphProjection {
         $tableNamePrefix = self::graphProjectionTableNamePrefix(
             $projectionFactoryDependencies->contentRepositoryId

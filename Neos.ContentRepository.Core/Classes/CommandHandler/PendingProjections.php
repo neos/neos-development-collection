@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\CommandHandler;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
-use Neos\EventStore\Model\Events;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventStore\CommitResult;
 
@@ -87,7 +88,7 @@ final class PendingProjections
 
     public static function empty(): self
     {
-        return new self(Projections::create(), []);
+        return new self(Projections::empty(), []);
     }
 
     public static function fromProjectionsAndEventsAndSequenceNumber(
@@ -96,20 +97,23 @@ final class PendingProjections
         SequenceNumber $highestCommittedSequenceNumber
     ): self {
         $sequenceNumberInteger = $highestCommittedSequenceNumber->value - $events->count() + 1;
-        $pendingProjections = Projections::create();
+        $pendingProjectionsArray = [];
         $sequenceNumberPerProjection = [];
         foreach ($events as $event) {
             foreach ($allProjections as $projection) {
+                if ($event instanceof DecoratedEvent) {
+                    $event = $event->innerEvent;
+                }
                 if ($projection->canHandle($event)) {
                     $sequenceNumberPerProjection[$projection::class] = $sequenceNumberInteger;
-                    if (!$pendingProjections->has($projection::class)) {
-                        $pendingProjections = $pendingProjections->with($projection);
+                    if (!in_array($projection, $pendingProjectionsArray, true)) {
+                        $pendingProjectionsArray[] = $projection;
                     }
                 }
             }
             $sequenceNumberInteger++;
         }
-        return new self($pendingProjections, $sequenceNumberPerProjection);
+        return new self(Projections::fromArray($pendingProjectionsArray), $sequenceNumberPerProjection);
     }
 
     /**

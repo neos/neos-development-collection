@@ -19,7 +19,5 @@ interface ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): ProjectionInterface;
 }

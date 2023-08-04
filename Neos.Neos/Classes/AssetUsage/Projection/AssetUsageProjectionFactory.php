@@ -6,9 +6,8 @@ namespace Neos\Neos\AssetUsage\Projection;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
+use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
@@ -27,8 +26,6 @@ final class AssetUsageProjectionFactory implements ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar,
     ): AssetUsageProjection {
         return new AssetUsageProjection(
             $this->assetRepository,
