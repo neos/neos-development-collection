@@ -33,11 +33,14 @@ final class SiteConfiguration
 
         $defaultDimensionSpacePoint = DimensionSpacePoint::fromArray($configuration['contentDimensions']['defaultDimensionSpacePoint'] ?? []);
 
+        $uriPathSuffix = $configuration['uriPathSuffix'] ?? '';
+
         return new self(
             ContentRepositoryId::fromString($contentRepositoryId),
             $contentDimensionResolverFactoryClassName,
             $contentDimensionResolverOptions,
-            $defaultDimensionSpacePoint
+            $defaultDimensionSpacePoint,
+            $uriPathSuffix,
         );
     }
 
@@ -52,6 +55,7 @@ final class SiteConfiguration
         public readonly string $contentDimensionResolverFactoryClassName,
         public readonly array $contentDimensionResolverOptions,
         public readonly DimensionSpacePoint $defaultDimensionSpacePoint,
+        public readonly string $uriPathSuffix,
     ) {
     }
 }

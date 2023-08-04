@@ -23,7 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
+use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -139,7 +139,7 @@ final class NodeFactory
                     null,
                     $contentStreamId
                 ),
-                PropertyName::fromString($referenceRow['referencename']),
+                ReferenceName::fromString($referenceRow['referencename']),
                 $referenceRow['referenceproperties']
                     ? new PropertyCollection(
                         SerializedPropertyValues::fromJsonString($referenceRow['referenceproperties']),

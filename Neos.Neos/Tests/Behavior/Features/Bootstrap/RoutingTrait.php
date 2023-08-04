@@ -341,10 +341,13 @@ trait RoutingTrait
         assert($dimensionResolverFactory instanceof DimensionResolverFactoryInterface);
         $dimensionResolver = $dimensionResolverFactory->create($siteConfiguration->contentRepositoryId, $siteConfiguration);
 
-        $siteDetectionResult = SiteDetectionResult::create(SiteNodeName::fromString("site-node"), $siteConfiguration->contentRepositoryId);
+        $siteNodeName = SiteNodeName::fromString("site-node");
+        $siteDetectionResult = SiteDetectionResult::create($siteNodeName, $siteConfiguration->contentRepositoryId);
         $routeParameters = $siteDetectionResult->storeInRouteParameters(RouteParameters::createEmpty());
 
-        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParameters($this->requestUrl->getPath(), $routeParameters);
+        $site = new Site($siteNodeName->value);
+
+        $dimensionResolverContext = RequestToDimensionSpacePointContext::fromUriPathAndRouteParametersAndResolvedSite($this->requestUrl->getPath(), $routeParameters, $site);
         $dimensionResolverContext = $dimensionResolver->fromRequestToDimensionSpacePoint($dimensionResolverContext);
         $this->dimensionResolverContext = $dimensionResolverContext;
     }

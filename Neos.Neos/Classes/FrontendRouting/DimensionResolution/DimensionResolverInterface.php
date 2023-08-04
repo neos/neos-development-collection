@@ -11,6 +11,7 @@ use Neos\Neos\FrontendRouting\DimensionResolution\Resolver\CompositeResolver;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * Common interface for content dimension resolvers which are hooked into the Frontend Routing.
@@ -115,6 +116,7 @@ interface DimensionResolverInterface
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $filteredDimensionSpacePoint,
         DocumentNodeInfo $targetNodeInfo,
-        UriConstraints $uriConstraints
+        Site $targetSite,
+        UriConstraints $uriConstraints,
     ): UriConstraints;
 }

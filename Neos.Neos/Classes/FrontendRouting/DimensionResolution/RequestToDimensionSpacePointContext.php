@@ -7,6 +7,7 @@ namespace Neos\Neos\FrontendRouting\DimensionResolution;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\Flow\Mvc\Routing\Dto\RouteParameters;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * See {@see DimensionResolverInterface} for documentation.
@@ -21,16 +22,18 @@ final class RequestToDimensionSpacePointContext
         public readonly RouteParameters $routeParameters,
         public readonly string $remainingUriPath,
         public readonly DimensionSpacePoint $resolvedDimensionSpacePoint,
+        public readonly Site $resolvedSite,
     ) {
     }
 
-    public static function fromUriPathAndRouteParameters(string $initialUriPath, RouteParameters $routeParameters): self
+    public static function fromUriPathAndRouteParametersAndResolvedSite(string $initialUriPath, RouteParameters $routeParameters, Site $resolvedSite): self
     {
         return new self(
             $initialUriPath,
             $routeParameters,
             $initialUriPath,
-            DimensionSpacePoint::fromArray([])
+            DimensionSpacePoint::fromArray([]),
+            $resolvedSite,
         );
     }
 
@@ -45,7 +48,8 @@ final class RequestToDimensionSpacePointContext
             $this->initialUriPath,
             $this->routeParameters,
             $this->remainingUriPath,
-            DimensionSpacePoint::fromArray($coordinatesSoFar)
+            DimensionSpacePoint::fromArray($coordinatesSoFar),
+            $this->resolvedSite,
         );
     }
 
@@ -55,7 +59,8 @@ final class RequestToDimensionSpacePointContext
             $this->initialUriPath,
             $this->routeParameters,
             $remainingUriPath,
-            $this->resolvedDimensionSpacePoint
+            $this->resolvedDimensionSpacePoint,
+            $this->resolvedSite,
         );
     }
 }

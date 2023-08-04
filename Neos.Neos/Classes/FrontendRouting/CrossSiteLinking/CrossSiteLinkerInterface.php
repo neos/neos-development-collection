@@ -18,6 +18,7 @@ use Neos\Flow\Mvc\Routing\Dto\UriConstraints;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
 use Neos\Neos\FrontendRouting\EventSourcedFrontendNodeRoutePartHandler;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * The {@see CrossSiteLinkerInterface} is responsible for adjusting a built URL in case it needs to
@@ -30,12 +31,12 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 interface CrossSiteLinkerInterface
 {
     /**
-     * @param DocumentNodeInfo $targetNode the target node where we want to generate the link to
-     * @param SiteDetectionResult $currentRequestSiteDetectionResult
+     * @param Site $targetSite
+     * @param UriConstraints $uriConstraints
      * @return UriConstraints
      */
     public function applyCrossSiteUriConstraints(
-        DocumentNodeInfo $targetNode,
-        SiteDetectionResult $currentRequestSiteDetectionResult
+        Site $targetSite,
+        UriConstraints $uriConstraints,
     ): UriConstraints;
 }
