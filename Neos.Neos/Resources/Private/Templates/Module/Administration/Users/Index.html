@@ -21,7 +21,7 @@
 
 		<f:if condition="{users}">
 			<f:widget.paginate objects="{users}" as="paginatedUsers">
-			<table class="neos-table">
+			<table class="neos-table users-table">
 					<thead>
 						<tr>
 							<th>
@@ -134,14 +134,14 @@
 				<f:then>
 					<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'DESC', sortBy: sortingField}" addQueryString="TRUE">
 						<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+						<i class="fas fa-caret-up"></i>
 					</f:link.action>
-					<i class="fas fa-caret-up"></i>
 				</f:then>
 				<f:else>
 					<f:link.action action="index" data="{neos-toggle: 'tooltip'}" arguments="{sortDirection: 'ASC', sortBy: sortingField}" addQueryString="TRUE">
 						<neos:backend.translate id="{labelIdentifier}" source="Modules" package="Neos.Neos"/>
+						<i class="fas fa-caret-down"></i>
 					</f:link.action>
-					<i class="fas fa-caret-down"></i>
 				</f:else>
 			</f:if>
 		</f:then>

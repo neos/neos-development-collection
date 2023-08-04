@@ -1,0 +1,13 @@
+.users-table {
+	thead {
+		tr {
+			th {
+				a {
+					&:hover {
+						color: #{$blue}
+					}
+				}
+			}
+		}
+	}
+}
