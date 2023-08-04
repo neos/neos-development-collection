@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * @api
@@ -81,6 +81,29 @@ class NodeAddressFactory
             $dimensionSpacePoint,
             $nodeAggregateId,
             $workspaceName
+        );
+    }
+
+    public function createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+        ContentStreamId $contentStreamId,
+        DimensionSpacePoint $dimensionSpacePoint,
+        NodeAggregateId $nodeAggregateId
+    ): NodeAddress {
+        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+            $contentStreamId
+        );
+        if ($workspace === null) {
+            throw new \RuntimeException(
+                'Cannot build a NodeAddress for traversable node of aggregate ' . $nodeAggregateId->value
+                . ', because the content stream ' . $contentStreamId->value
+                . ' is not assigned to a workspace.'
+            );
+        }
+        return new NodeAddress(
+            $contentStreamId,
+            $dimensionSpacePoint,
+            $nodeAggregateId,
+            $workspace->workspaceName,
         );
     }
 }

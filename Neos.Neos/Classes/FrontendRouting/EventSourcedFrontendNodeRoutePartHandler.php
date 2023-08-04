@@ -236,11 +236,10 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriPath,
             $dimensionSpacePoint->hash
         );
-        $nodeAddress = new NodeAddress(
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
             $documentUriPathFinder->getLiveContentStreamId(),
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
-            WorkspaceName::forLive()
         );
         return new MatchResult($nodeAddress->serializeForUri(), $nodeInfo->getRouteTags());
     }
