@@ -2,7 +2,6 @@
 
 namespace Neos\ContentRepository\Core\SharedModel\Experimental;
 
-
 /**
  * This class can change without notice, and is meant for running experiments by the Neos team.
  *
@@ -15,9 +14,11 @@ final class ContentRepositoryExperiments
 {
     private function __construct(
         private readonly string $compactCommands
-    ) {}
+    ) {
+    }
 
     /**
+     * @param array<string,mixed> $in
      * @api
      */
     public static function fromArray(array $in): self
@@ -30,6 +31,7 @@ final class ContentRepositoryExperiments
     /**
      * @internal
      */
+    // phpcs:ignore
     public function compactCommands_compressSimple(): bool
     {
         return $this->compactCommands === 'compress-simple';

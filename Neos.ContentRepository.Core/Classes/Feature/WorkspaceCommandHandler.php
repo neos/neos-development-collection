@@ -459,7 +459,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @return array<int,object>
+     * @return array<int,CommandInterface>
      */
     private function extractCommandsFromContentStreamMetadata(
         ContentStreamEventStreamName $workspaceContentStreamName,
@@ -922,6 +922,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         return false;
     }
 
+    /**
+     * @param array<CommandInterface> $commands
+     * @return array<CommandInterface>
+     */
     private function compactCommands(array $commands): array
     {
         if ($this->experiments->compactCommands_compressSimple()) {
@@ -929,9 +933,11 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
             /* @var $lastSetSerializedNodePropertiesCommand \Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties */
             $lastSetSerializedNodePropertiesCommand = null;
             foreach ($commands as $command) {
-                if ($command instanceof SetSerializedNodeProperties
+                if (
+                    $command instanceof SetSerializedNodeProperties
                     && $lastSetSerializedNodePropertiesCommand !== null
-                    && $lastSetSerializedNodePropertiesCommand->appliesToSameNode($command)) {
+                    && $lastSetSerializedNodePropertiesCommand->appliesToSameNode($command)
+                ) {
                     // COMPATIBLE: we can merge with a previous command, and reduce the command count.
                     $lastSetSerializedNodePropertiesCommand = $lastSetSerializedNodePropertiesCommand->mergeWith($command);
                 } elseif ($command instanceof SetSerializedNodeProperties) {
