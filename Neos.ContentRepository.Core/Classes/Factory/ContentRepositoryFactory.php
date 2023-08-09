@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\SharedModel\Experimental\ContentRepositoryExperiments;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
@@ -55,6 +56,7 @@ final class ContentRepositoryFactory
         private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly ContentRepositoryExperiments $experiments,
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -138,7 +140,8 @@ final class ContentRepositoryFactory
                 new WorkspaceCommandHandler(
                     $this->buildEventPersister(),
                     $this->projectionFactoryDependencies->eventStore,
-                    $this->projectionFactoryDependencies->eventNormalizer
+                    $this->projectionFactoryDependencies->eventNormalizer,
+                    $this->experiments
                 ),
                 new NodeAggregateCommandHandler(
                     $this->projectionFactoryDependencies->nodeTypeManager,
