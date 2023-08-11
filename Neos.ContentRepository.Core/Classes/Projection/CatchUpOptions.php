@@ -36,8 +36,7 @@ final class CatchUpOptions
     public static function create(
         SequenceNumber|int|null $maximumSequenceNumber = null,
         Closure|null $progressCallback = null,
-    ): self
-    {
+    ): self {
         if (is_int($maximumSequenceNumber)) {
             $maximumSequenceNumber = SequenceNumber::fromInteger($maximumSequenceNumber);
         }
