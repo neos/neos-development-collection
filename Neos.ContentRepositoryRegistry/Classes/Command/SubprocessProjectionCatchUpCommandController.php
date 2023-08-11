@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
@@ -25,6 +26,6 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
     {
 
         $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryIdentifier));
-        $contentRepository->catchUpProjection($projectionClassName);
+        $contentRepository->catchUpProjection($projectionClassName, CatchUpOptions::create());
     }
 }

@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -155,7 +156,7 @@ final class ContentRepository
     /**
      * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
      */
-    public function catchUpProjection(string $projectionClassName): void
+    public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
     {
         $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
 
