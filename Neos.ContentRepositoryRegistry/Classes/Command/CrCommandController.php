@@ -56,7 +56,7 @@ final class CrCommandController extends CommandController
             // TODO start progress bar
         }
         $options = CatchUpOptions::create();
-        if ($until !== null) {
+        if ($until > 0) {
             $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
         }
         $projectionService->replayProjection($projection, $options);
