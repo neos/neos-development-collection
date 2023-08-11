@@ -38,10 +38,22 @@ final class PropertyType
 
     public const PATTERN_ARRAY_OF = '/array<[^>]+>/';
 
+    /** only set if {@see sef:: isArrayOf()} */
+    private self $arrayOfType;
+
     private function __construct(
-        public readonly string $value,
-        public readonly bool $isNullable
+        public readonly string $value
     ) {
+        if ($this->isArrayOf()) {
+            $arrayOfType = self::tryFromString($this->getArrayOf());
+            if (!$arrayOfType || $arrayOfType->isArray()) {
+                throw new \DomainException(sprintf(
+                    'Array declaration "%s" has invalid subType. Expected either class string or int',
+                    $this->value
+                ));
+            }
+            $this->arrayOfType = $arrayOfType;
+        }
     }
 
     /**
@@ -52,23 +64,29 @@ final class PropertyType
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName
     ): self {
-        if (\mb_strpos($declaration, '?') === 0) {
-            $declaration = \mb_substr($declaration, 1);
-            $isNullable = true;
-        }
-        // we always assume nullability for now
-        $isNullable = true;
         if ($declaration === 'reference' || $declaration === 'references') {
             throw PropertyTypeIsInvalid::becauseItIsReference($propertyName, $nodeTypeName);
         }
+        $type = self::tryFromString($declaration);
+        if (!$type) {
+            throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
+        }
+        return $type;
+    }
+
+    private static function tryFromString(string $declaration): ?self
+    {
+        if ($declaration === 'reference' || $declaration === 'references') {
+            return null;
+        }
         if ($declaration === 'bool' || $declaration === 'boolean') {
-            return self::bool($isNullable);
+            return self::bool();
         }
         if ($declaration === 'int' || $declaration === 'integer') {
-            return self::int($isNullable);
+            return self::int();
         }
         if ($declaration === 'float' || $declaration === 'double') {
-            return self::float($isNullable);
+            return self::float();
         }
         if (
             in_array($declaration, [
@@ -80,7 +98,7 @@ final class PropertyType
                 '\DateTimeInterface'
             ])
         ) {
-            return self::date($isNullable);
+            return self::date();
         }
         if ($declaration === 'Uri' || $declaration === Uri::class || $declaration === UriInterface::class) {
             $declaration = Uri::class;
@@ -96,35 +114,35 @@ final class PropertyType
             && !interface_exists($className)
             && !preg_match(self::PATTERN_ARRAY_OF, $declaration)
         ) {
-            throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
+            return null;
         }
 
-        return new self($declaration, $isNullable);
+        return new self($declaration);
     }
 
-    public static function bool(bool $isNullable): self
+    public static function bool(): self
     {
-        return new self(self::TYPE_BOOL, $isNullable);
+        return new self(self::TYPE_BOOL);
     }
 
-    public static function int(bool $isNullable): self
+    public static function int(): self
     {
-        return new self(self::TYPE_INT, $isNullable);
+        return new self(self::TYPE_INT);
     }
 
-    public static function string(bool $isNullable): self
+    public static function string(): self
     {
-        return new self(self::TYPE_STRING, $isNullable);
+        return new self(self::TYPE_STRING);
     }
 
-    public static function float(bool $isNullable): self
+    public static function float(): self
     {
-        return new self(self::TYPE_FLOAT, $isNullable);
+        return new self(self::TYPE_FLOAT);
     }
 
-    public static function date(bool $isNullable): self
+    public static function date(): self
     {
-        return new self(self::TYPE_DATE, $isNullable);
+        return new self(self::TYPE_DATE);
     }
 
     public function isBool(): bool
@@ -167,9 +185,9 @@ final class PropertyType
         return $this->value;
     }
 
-    public function getArrayOfClassName(): string
+    private function getArrayOf(): string
     {
-        return \mb_substr($this->value, 6, \mb_strlen($this->value) - 7);
+        return \mb_substr($this->value, 6, -1);
     }
 
     public function isMatchedBy(mixed $propertyValue): bool
@@ -196,15 +214,15 @@ final class PropertyType
             return $propertyValue instanceof \DateTimeInterface;
         }
         if ($this->isArrayOf()) {
-            if (is_array($propertyValue)) {
-                $className = $this->getArrayOfClassName();
-                foreach ($propertyValue as $object) {
-                    if (!$object instanceof $className) {
-                        return false;
-                    }
-                }
-                return true;
+            if (!is_array($propertyValue)) {
+                return false;
             }
+            foreach ($propertyValue as $value) {
+                if (!$this->arrayOfType->isMatchedBy($value)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         $className = $this->value[0] != '\\'

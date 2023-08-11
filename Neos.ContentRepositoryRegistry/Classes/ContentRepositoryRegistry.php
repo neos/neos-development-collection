@@ -195,7 +195,7 @@ final class ContentRepositoryRegistry
     {
         (isset($contentRepositorySettings['projections']) && is_array($contentRepositorySettings['projections'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projections configured, or the value is no array.', $contentRepositoryId->value);
         $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
-        foreach ((new PositionalArraySorter($contentRepositorySettings['projections']))->toArray() as $projectionName => $projectionOptions) {
+        foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
             $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
                 throw InvalidConfigurationException::fromMessage('Projection factory object name for projection "%s" (content repository "%s") is not an instance of %s but %s.', $projectionName, $contentRepositoryId->value, ProjectionFactoryInterface::class, get_debug_type($projectionFactory));
