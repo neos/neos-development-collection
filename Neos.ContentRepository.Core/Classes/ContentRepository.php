@@ -166,6 +166,9 @@ final class ContentRepository
         // TODO allow custom stream name per projection
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
+        if ($options->maximumSequenceNumber !== null) {
+            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+        }
 
         $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook) {
             $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
