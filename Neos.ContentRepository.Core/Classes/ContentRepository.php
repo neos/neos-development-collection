@@ -167,7 +167,7 @@ final class ContentRepository
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
         if ($options->maximumSequenceNumber !== null) {
-            //$eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
         }
 
         $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook, $options) {
