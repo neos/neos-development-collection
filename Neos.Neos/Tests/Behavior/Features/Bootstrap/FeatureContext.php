@@ -22,19 +22,12 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -55,12 +48,10 @@ use PHPUnit\Framework\Assert;
 
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
@@ -68,7 +59,6 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 
@@ -85,7 +75,6 @@ class FeatureContext extends MinkContext
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;
-    use NodeOperationsTrait;
 
     use CRTestSuiteTrait;
     use RoutingTrait;
@@ -135,52 +124,12 @@ class FeatureContext extends MinkContext
         }
     }
 
-    protected function initCleanContentRepository(array $adapterKeys): void
-    {
-        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
-
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $registrySettings = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepositoryRegistry'
-        );
-
-        unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $registrySettings,
-            $this->getObjectManager()
-        );
-
-
-        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
-        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
-        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
-            $this->contentRepository->setUp();
-            self::$wasContentRepositorySetupCalled = true;
-        }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService(
-            $this->contentRepositoryId,
-            new ContentRepositoryInternalsFactory()
-        );
-
-        $availableContentGraphs = [];
-        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-
-        if (count($availableContentGraphs) === 0) {
-            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
-        }
-        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-    }
-
     protected function getContentRepositoryService(
         ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface {
         /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->contentRepositoryRegistry
+        $contentRepositoryRegistry = $this->getContentRepositoryRegistry()
             ?: $this->objectManager->get(ContentRepositoryRegistry::class);
 
         return $contentRepositoryRegistry->buildService(
@@ -189,13 +138,7 @@ class FeatureContext extends MinkContext
         );
     }
 
-    protected function getDbalClient(): DbalClientInterface
-    {
-        return $this->dbalClient;
-    }
-
-
-    protected function getContentRepositoryRegistry(): \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry
+    protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
     {
         /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
         $contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);

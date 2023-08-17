@@ -30,7 +30,6 @@ trait StructureAdjustmentsTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getContentRepositoryId(): ContentRepositoryId;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     protected function getStructureAdjustmentService(): StructureAdjustmentService

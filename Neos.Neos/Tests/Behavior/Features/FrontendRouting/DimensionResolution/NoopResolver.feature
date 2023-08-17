@@ -2,7 +2,11 @@
 Feature: NoopResolver does nothing (boilerplate testcase)
 
   Background:
-    Given I have no content dimensions
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
+    """
+    'Neos.ContentRepository:Root': []
+    """
 
   Scenario: Match homepage URL
     When I am on URL "/"

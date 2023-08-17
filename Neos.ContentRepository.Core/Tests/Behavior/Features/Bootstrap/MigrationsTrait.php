@@ -14,11 +14,9 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\PyStringNode;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
-use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -32,9 +30,6 @@ trait MigrationsTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    protected NodeMigrationService $nodeMigrationService;
-
-    abstract protected function getContentRepositoryId(): ContentRepositoryId;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     /**

@@ -2,7 +2,8 @@
 Feature: Exceptional cases during migrations
 
   Background:
-    Given I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'unstructured': []
     'Some.Package:SomeNodeType':
@@ -11,10 +12,10 @@ Feature: Exceptional cases during migrations
           type: string
           defaultValue: 'My default text'
     'Some.Package:SomeOtherNodeType': []
-      """
+    """
 
   Scenario: Node variant with different type
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
@@ -29,7 +30,6 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Node with missing parent
-    Given I have no content dimensions
     When I have the following node data rows:
       | Identifier | Path       |
       | sites      | /sites     |
@@ -43,7 +43,6 @@ Feature: Exceptional cases during migrations
 
   # TODO: is it possible that nodes are processed in an order where a ancestor node is processed after a child node? -> in that case the following example should work (i.e. the scenario should fail)
   Scenario: Nodes out of order
-    Given I have no content dimensions
     When I have the following node data rows:
       | Identifier | Path       |
       | sites      | /sites     |
@@ -57,7 +56,7 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Invalid dimension configuration (unknown value)
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
@@ -68,7 +67,6 @@ Feature: Exceptional cases during migrations
     Then I expect a MigrationError
 
   Scenario: Invalid dimension configuration (no json)
-    Given I have no content dimensions
     When I have the following node data rows:
       | Identifier | Path     | Dimension Values |
       | sites      | /sites   |                  |
@@ -77,7 +75,6 @@ Feature: Exceptional cases during migrations
     Then I expect a MigrationError
 
   Scenario: Invalid node properties (no JSON)
-    Given I have no content dimensions
     When I have the following node data rows:
       | Identifier | Path     | Properties | Node Type                 |
       | sites      | /sites   |            |                           |
@@ -89,7 +86,7 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Node variants with the same dimension
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
@@ -105,7 +102,7 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Duplicate nodes
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:

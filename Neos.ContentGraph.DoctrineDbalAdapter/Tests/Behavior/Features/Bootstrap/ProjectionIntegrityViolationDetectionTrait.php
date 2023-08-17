@@ -42,8 +42,6 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     protected Result $lastIntegrityViolationDetectionResult;
 
-    abstract protected function getContentRepositoryId(): ContentRepositoryId;
-
     protected function getTableNamePrefix(): string
     {
         return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
@@ -337,6 +335,4 @@ trait ProjectionIntegrityViolationDetectionTrait
             $error->getCode()
         );
     }
-
-    abstract protected function getDbalClient(): DbalClientInterface;
 }

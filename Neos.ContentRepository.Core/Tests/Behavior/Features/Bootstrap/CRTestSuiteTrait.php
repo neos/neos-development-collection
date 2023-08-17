@@ -30,13 +30,11 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
@@ -54,7 +52,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\Worksp
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
 use Neos\EventStore\EventStoreInterface;
-use Neos\EventStore\Exception\CheckpointException;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -86,40 +83,6 @@ trait CRTestSuiteTrait
     use WorkspaceCreation;
     use WorkspaceDiscarding;
     use WorkspacePublishing;
-
-    protected ContentGraphs $availableContentGraphs;
-
-    protected ContentGraphs $activeContentGraphs;
-
-    private ?ContentRepositoryId $contentRepositoryId = null;
-
-    private ContentRepositoryInternals $contentRepositoryInternals;
-
-    /**
-     * @deprecated
-     */
-    protected function getContentRepositoryId(): ContentRepositoryId
-    {
-        return $this->currentContentRepository->id;
-    }
-
-    /**
-     * @return ContentRepositoryInternals
-     * @deprecated ideally we would not need this in tests
-     */
-    protected function getContentRepositoryInternals(): ContentRepositoryInternals
-    {
-        return $this->contentRepositoryInternals;
-    }
-
-    /**
-     * @return WorkspaceFinder
-     * @deprecated
-     */
-    protected function getWorkspaceFinder(): WorkspaceFinder
-    {
-        return $this->currentContentRepository->getWorkspaceFinder();
-    }
 
     protected function getAvailableContentGraphs(): ContentGraphs
     {
@@ -159,12 +122,6 @@ trait CRTestSuiteTrait
 
 
     private static bool $wasContentRepositorySetupCalled = false;
-
-    /**
-     * @param array<string> $adapterKeys "DoctrineDBAL" if
-     * @return void
-     */
-    abstract protected function initCleanContentRepository(array $adapterKeys): void;
 
     /**
      * @BeforeScenario @contentrepository
@@ -229,7 +186,7 @@ trait CRTestSuiteTrait
     /**
      * @When /^the graph projection is fully up to date$/
      */
-    public function theGraphProjectionIsFullyUpToDate()
+    public function theGraphProjectionIsFullyUpToDate(): void
     {
         if ($this->lastCommandOrEventResult === null) {
             throw new \RuntimeException('lastCommandOrEventResult not filled; so I cannot block!');

@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/ContentStreamForking.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeCopying.php');
@@ -30,14 +29,12 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspacePublishing.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
@@ -51,15 +48,8 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Utility\Environment;
@@ -73,7 +63,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use IsolatedBehatStepsTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-    use NodeOperationsTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
@@ -106,46 +95,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
         return $this->objectManager->get(Environment::class);
     }
 
-    protected function initCleanContentRepository(array $adapterKeys): void
-    {
-        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
-
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $registrySettings = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepositoryRegistry'
-        );
-
-        unset($registrySettings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-        $registrySettings['presets']['default']['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-        $registrySettings['presets']['default']['clock']['factoryObjectName'] = FakeClockFactory::class;
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $registrySettings,
-            $this->getObjectManager()
-        );
-
-
-        $this->contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString('default'));
-        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
-        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
-            $this->contentRepository->setUp();
-            self::$wasContentRepositorySetupCalled = true;
-        }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService(
-            ContentRepositoryId::fromString('default'),
-            new ContentRepositoryInternalsFactory()
-        );
-
-        $availableContentGraphs = [];
-        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-
-        if (count($availableContentGraphs) === 0) {
-            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
-        }
-        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-    }
-
     protected function getContentRepositoryService(
         ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
@@ -158,11 +107,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
             $contentRepositoryId,
             $factory
         );
-    }
-
-    protected function getDbalClient(): DbalClientInterface
-    {
-        return $this->dbalClient;
     }
 
     protected function createContentRepository(

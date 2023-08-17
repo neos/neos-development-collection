@@ -16,7 +16,6 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentSubgraphs;
@@ -32,7 +31,6 @@ trait CurrentSubgraphTrait
 
     abstract protected function getActiveContentGraphs(): ContentGraphs;
 
-    abstract protected function getWorkspaceFinder(): WorkspaceFinder;
 
     /**
      * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
@@ -41,7 +39,7 @@ trait CurrentSubgraphTrait
     public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
     {
         $workspaceName = WorkspaceName::fromString($workspaceName);
-        $workspace = $this->getWorkspaceFinder()->findOneByName($workspaceName);
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName->value), 1548149355);
         }

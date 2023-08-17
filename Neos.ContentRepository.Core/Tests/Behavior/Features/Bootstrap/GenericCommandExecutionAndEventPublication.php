@@ -31,7 +31,6 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
@@ -55,8 +54,6 @@ trait GenericCommandExecutionAndEventPublication
     protected ?\Exception $lastCommandException = null;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
-
-    abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
@@ -99,63 +96,39 @@ trait GenericCommandExecutionAndEventPublication
         }
     }
 
-    /**
-     * @param $shortCommandName
-     * @return array
-     * @throws \Exception
-     */
-    protected static function resolveShortCommandName($shortCommandName): string
+    protected static function resolveShortCommandName(string $shortCommandName): string
     {
-        switch ($shortCommandName) {
-            case 'CreateRootWorkspace':
-                return CreateRootWorkspace::class;
-            case 'CreateWorkspace':
-                return CreateWorkspace::class;
-            case 'PublishWorkspace':
-                return PublishWorkspace::class;
-            case 'PublishIndividualNodesFromWorkspace':
-                return PublishIndividualNodesFromWorkspace::class;
-            case 'RebaseWorkspace':
-                return RebaseWorkspace::class;
-            case 'CreateNodeAggregateWithNodeAndSerializedProperties':
-                return CreateNodeAggregateWithNodeAndSerializedProperties::class;
-            case 'ForkContentStream':
-                return ForkContentStream::class;
-            case 'ChangeNodeAggregateName':
-                return ChangeNodeAggregateName::class;
-            case 'SetSerializedNodeProperties':
-                return SetSerializedNodeProperties::class;
-            case 'DisableNodeAggregate':
-                return DisableNodeAggregate::class;
-            case 'EnableNodeAggregate':
-                return EnableNodeAggregate::class;
-            case 'MoveNodeAggregate':
-                return MoveNodeAggregate::class;
-            case 'SetNodeReferences':
-                return SetNodeReferences::class;
-
-            default:
-                throw new \Exception('The short command name "' . $shortCommandName . '" is currently not supported by the tests.');
-        }
+        return match ($shortCommandName) {
+            'CreateRootWorkspace' => CreateRootWorkspace::class,
+            'CreateWorkspace' => CreateWorkspace::class,
+            'PublishWorkspace' => PublishWorkspace::class,
+            'PublishIndividualNodesFromWorkspace' => PublishIndividualNodesFromWorkspace::class,
+            'RebaseWorkspace' => RebaseWorkspace::class,
+            'CreateNodeAggregateWithNodeAndSerializedProperties' => CreateNodeAggregateWithNodeAndSerializedProperties::class,
+            'ForkContentStream' => ForkContentStream::class,
+            'ChangeNodeAggregateName' => ChangeNodeAggregateName::class,
+            'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
+            'DisableNodeAggregate' => DisableNodeAggregate::class,
+            'EnableNodeAggregate' => EnableNodeAggregate::class,
+            'MoveNodeAggregate' => MoveNodeAggregate::class,
+            'SetNodeReferences' => SetNodeReferences::class,
+            default => throw new \Exception(
+                'The short command name "' . $shortCommandName . '" is currently not supported by the tests.'
+            ),
+        };
     }
 
     /**
      * @Given /^the Event "([^"]*)" was published to stream "([^"]*)" with payload:$/
-     * @param $eventType
-     * @param $streamName
-     * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventWasPublishedToStreamWithPayload(string $eventType, string $streamName, TableNode $payloadTable)
+    public function theEventWasPublishedToStreamWithPayload(string $eventType, string $streamName, TableNode $payloadTable): void
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $this->publishEvent($eventType, StreamName::fromString($streamName), $eventPayload);
     }
 
     /**
-     * @param $eventType
-     * @param StreamName $streamName
-     * @param $eventPayload
      * @throws \Exception
      * @throws \Symfony\Component\Serializer\Exception\ExceptionInterface
      */
@@ -182,11 +155,9 @@ trait GenericCommandExecutionAndEventPublication
 
     /**
      * @Then /^the last command should have thrown an exception of type "([^"]*)"(?: with code (\d*))?$/
-     * @param string $shortExceptionName
-     * @param int|null $expectedCode
      * @throws \ReflectionException
      */
-    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null)
+    public function theLastCommandShouldHaveThrown(string $shortExceptionName, ?int $expectedCode = null): void
     {
         Assert::assertNotNull($this->lastCommandException, 'Command did not throw exception');
         $lastCommandExceptionShortName = (new \ReflectionClass($this->lastCommandException))->getShortName();

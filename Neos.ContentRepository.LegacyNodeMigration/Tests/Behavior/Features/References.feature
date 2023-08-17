@@ -2,8 +2,8 @@
 Feature: Migrations that contain nodes with "reference" or "references properties
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Some.Package:Homepage': []
     'Some.Package:SomeNodeType':
@@ -42,7 +42,7 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
 
 
   Scenario: Node with references in one dimension
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:

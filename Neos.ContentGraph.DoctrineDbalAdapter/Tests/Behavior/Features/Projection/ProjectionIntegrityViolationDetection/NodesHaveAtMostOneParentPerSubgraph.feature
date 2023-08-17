@@ -4,10 +4,10 @@ Feature: Run integrity violation detection regarding parent relations
   As a user of the CR I want to know whether there are nodes that have multiple parents per subgraph
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, fr | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []

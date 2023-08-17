@@ -19,17 +19,16 @@ require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CRTestSuiteTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
+use Behat\Behat\Context\Context as BehatContext;
 use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -41,14 +40,11 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
@@ -64,10 +60,9 @@ use Neos\Flow\Utility\Environment;
 /**
  * Features context
  */
-class FeatureContext implements \Behat\Behat\Context\Context
+class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
-    use NodeOperationsTrait;
     use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
@@ -76,14 +71,9 @@ class FeatureContext implements \Behat\Behat\Context\Context
     use StructureAdjustmentsTrait;
     use MigrationsTrait;
 
-    /**
-     * @var string
-     */
-    protected $behatTestHelperObjectName = BehatTestHelper::class;
+    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    private ContentRepository $contentRepository;
 
     public function __construct()
     {
@@ -147,46 +137,12 @@ class FeatureContext implements \Behat\Behat\Context\Context
         );
     }
 
-
-    /**
-     * @param array<string> $adapterKeys "DoctrineDBAL" if
-     * @return void
-     */
-    protected function initCleanContentRepository(array $adapterKeys): void
-    {
-        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
-        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
-        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
-            $this->contentRepository->setUp();
-            self::$wasContentRepositorySetupCalled = true;
-        }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService($this->contentRepositoryId, new ContentRepositoryInternalsFactory());
-
-        $availableContentGraphs = [];
-        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-        // NOTE: to disable a content graph (do not run the tests for it), you can use "null" as value.
-        if (in_array('Postgres', $adapterKeys)) {
-            $availableContentGraphs['Postgres'] = $this->contentRepository->projectionState(ContentHypergraph::class);
-        }
-
-        if (count($availableContentGraphs) === 0) {
-            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
-        }
-        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-    }
-
-    /**
-     * @return ObjectManagerInterface
-     */
     protected function getObjectManager(): ObjectManagerInterface
     {
         return $this->objectManager;
     }
 
-    /**
-     * @return Environment
-     */
-    protected function getEnvironment()
+    protected function getEnvironment(): Environment
     {
         return $this->objectManager->get(Environment::class);
     }
@@ -194,11 +150,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
     protected function getContentRepositoryService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $factory): ContentRepositoryServiceInterface
     {
         return $this->contentRepositoryRegistry->buildService($contentRepositoryId, $factory);
-    }
-
-    protected function getDbalClient(): DbalClientInterface
-    {
-        return $this->dbalClient;
     }
 
     protected function getDatabaseConnection(): Connection

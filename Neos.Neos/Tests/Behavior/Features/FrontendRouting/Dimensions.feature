@@ -3,10 +3,14 @@
 Feature: Routing functionality with multiple content dimensions
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values      | Generalizations |
       | market     | DE, CH      | CH->DE          |
       | language   | en, de, gsw | gsw->de->en     |
+    And the following NodeTypes to define content repository "default":
+    """
+    'Neos.Neos:Sites': []
+    """
     And I am user identified by "initiating-user-identifier"
 
     And the command CreateRootWorkspace is executed with payload:
@@ -134,7 +138,7 @@ Feature: Routing functionality with multiple content dimensions
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Move Dimension, then resolving should still work
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values         | Generalizations |
       | market     | DE, CH         | CH->DE          |
       | language   | en, de_DE, gsw | gsw->de_DE->en  |
@@ -203,7 +207,7 @@ Feature: Routing functionality with multiple content dimensions
     Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Add Dimension shine through, then resolving should still work
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values          | Generalizations         |
       | market     | DE, CH          | CH->DE                  |
       | language   | en, de, gsw, at | gsw->de->en, at->de->en |
@@ -270,7 +274,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
     # new "fr" language
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values          | Generalizations |
       | market     | DE, CH          | CH->DE          |
       | language   | en, de, gsw, fr | gsw->de->en     |
@@ -334,7 +338,7 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
     # new "fr" language
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values          | Generalizations |
       | market     | DE, CH          | CH->DE          |
       | language   | en, de, gsw, fr | gsw->de->en     |

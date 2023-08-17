@@ -3,9 +3,8 @@
 Feature: Route cache invalidation
 
   Background:
-    Given I have no content dimensions
-    And I am user identified by "initiating-user-identifier"
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
@@ -26,6 +25,7 @@ Feature: Route cache invalidation
         uriPathSegment:
           type: string
     """
+    And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "live"          |

@@ -2,10 +2,10 @@
 Feature: Migrating nodes with content dimensions
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'unstructured': {}
     'Some.Package:SomeNodeType':
@@ -46,7 +46,7 @@ Feature: Migrating nodes with content dimensions
       | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "ch"}, "generalizationOrigin": {"language": "de"}, "generalizationCoverage": [{"language": "de"}]}                                                                                                                                 |
 
   Scenario: Node variant with a subset of the original dimension space points (NodeSpecializationVariantWasCreated covers languages "de" _and_ "ch")
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Default | Values          | Generalizations |
       | language   | mul     | mul, en, de, ch | ch->de->mul     |
     When I have the following node data rows:

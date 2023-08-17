@@ -3,9 +3,8 @@
 Feature: Basic routing functionality (match & resolve document nodes in one dimension)
 
   Background:
-    Given I have no content dimensions
-    And I am user identified by "initiating-user-identifier"
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
@@ -26,7 +25,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
         uriPathSegment:
           type: string
     """
-    And the command CreateRootWorkspace is executed with payload:
+    And I am user identified by "initiating-user-identifier"
+
+    When the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |

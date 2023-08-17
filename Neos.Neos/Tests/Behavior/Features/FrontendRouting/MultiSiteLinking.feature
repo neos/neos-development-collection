@@ -3,7 +3,11 @@
 Feature: Linking between multiple websites
 
   Background:
-    Given I have no content dimensions
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
+    """
+    'Neos.Neos:Sites': []
+    """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |

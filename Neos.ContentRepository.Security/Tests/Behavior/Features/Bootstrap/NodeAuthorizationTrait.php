@@ -24,7 +24,7 @@ use PHPUnit\Framework\Assert;
  * * $this->nodeAuthorizationService
  * * $this->nodeTypeManager
  *
- * Note: This trait expects the IsolatedBehatStepsTrait and the NodeOperationsTrait to be available!
+ * Note: This trait expects the IsolatedBehatStepsTrait to be available!
  */
 trait NodeAuthorizationTrait
 {

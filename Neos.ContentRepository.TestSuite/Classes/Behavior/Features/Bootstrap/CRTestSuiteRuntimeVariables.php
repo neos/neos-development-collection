@@ -254,6 +254,7 @@ trait CRTestSuiteRuntimeVariables
          * Catch Up process and the testcase reset.
          */
 
+        // @todo reset eventstore instead of doing database stuff here
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $this->getDatabaseConnection()->executeStatement('TRUNCATE ' . $eventTableName);
 

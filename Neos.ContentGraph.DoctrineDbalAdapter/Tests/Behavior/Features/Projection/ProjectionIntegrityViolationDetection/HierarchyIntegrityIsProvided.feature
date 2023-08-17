@@ -4,10 +4,10 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
   As a user of the CR I want to know whether there are nodes or hierarchy relations with invalid hashes or parents / children
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, fr | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
