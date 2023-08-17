@@ -4,10 +4,10 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
   Background:
     Given the current date and time is "2023-03-16T12:00:00+01:00"
-    And I have the following content dimensions:
+    And I use the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':

@@ -81,7 +81,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
      */
     protected $behatTestHelperObjectName = BehatTestHelper::class;
 
-    protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     private ContentRepository $contentRepository;
 
@@ -100,6 +100,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
             CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
         }
         $this->setUpInterleavingLogger();
+        $this->setUpContentRepositoryRegistry();
     }
 
     private function setUpInterleavingLogger(): void
@@ -124,6 +125,28 @@ class FeatureContext implements \Behat\Behat\Context\Context
         }
     }
 
+    private function setUpContentRepositoryRegistry(): void
+    {
+        $this->logToRaceConditionTracker(['msg' => 'setUpContentRepositoryRegistry']);
+
+        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
+        $registrySettings = $configurationManager->getConfiguration(
+            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
+            'Neos.ContentRepositoryRegistry'
+        );
+        foreach ($registrySettings['presets'] as &$preset) {
+            // @todo decide on this
+            unset($preset['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
+            $preset['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
+            $preset['clock']['factoryObjectName'] = FakeClockFactory::class;
+        }
+
+        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
+            $registrySettings,
+            $this->getObjectManager()
+        );
+    }
+
 
     /**
      * @param array<string> $adapterKeys "DoctrineDBAL" if
@@ -131,32 +154,6 @@ class FeatureContext implements \Behat\Behat\Context\Context
      */
     protected function initCleanContentRepository(array $adapterKeys): void
     {
-        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
-
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $registrySettings = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepositoryRegistry'
-        );
-
-        if (!in_array('Postgres', $adapterKeys)) {
-            // in case we do not have tests annotated with @adapters=Postgres, we
-            // REMOVE the Postgres projection from the Registry settings. This way, we won't trigger
-            // Postgres projection catchup for tests which are not yet postgres-aware.
-            //
-            // This is to make the testcases more stable and deterministic. We can remove this workaround
-            // once the Postgres adapter is fully ready.
-            unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-        }
-        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $registrySettings,
-            $this->getObjectManager()
-        );
-
-
         $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
         if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
@@ -196,7 +193,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
 
     protected function getContentRepositoryService(ContentRepositoryId $contentRepositoryId, ContentRepositoryServiceFactoryInterface $factory): ContentRepositoryServiceInterface
     {
-        return $this->getContentRepositoryRegistry()->buildService($contentRepositoryId, $factory);
+        return $this->contentRepositoryRegistry->buildService($contentRepositoryId, $factory);
     }
 
     protected function getDbalClient(): DbalClientInterface
@@ -211,10 +208,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
 
     protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
     {
-        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
-
-        return $contentRepositoryRegistry;
+        return $this->contentRepositoryRegistry;
     }
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
@@ -254,7 +248,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         ContentDimensionSourceInterface $contentDimensionSource,
         NodeTypeManager $nodeTypeManager
     ): ContentRepository {
-        return $this->getContentRepositoryRegistry()->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
+        return $this->contentRepositoryRegistry->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
             $contentRepositoryId,
             $contentDimensionSource,
             $nodeTypeManager
