@@ -4,10 +4,10 @@ Feature: Create an intact content graph and run integrity violation detection
   As a user of the CR I want to be able to get an empty integrity violation detection result on an intact content graph
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []

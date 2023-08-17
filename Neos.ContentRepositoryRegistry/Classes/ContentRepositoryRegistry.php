@@ -64,6 +64,9 @@ final class ContentRepositoryRegistry
         return $this->getFactory($contentRepositoryId)->getOrBuild();
     }
 
+    /**
+     * @internal For testing purposes
+     */
     public function buildFactoryWithContentDimensionSourceAndNodeTypeManager(
         ContentRepositoryId $contentRepositoryId,
         ContentDimensionSourceInterface $contentDimensionSource,

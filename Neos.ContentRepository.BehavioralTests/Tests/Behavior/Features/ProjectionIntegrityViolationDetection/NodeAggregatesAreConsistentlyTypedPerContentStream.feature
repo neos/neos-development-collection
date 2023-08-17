@@ -4,10 +4,10 @@ Feature: Run projection integrity violation detection regarding node aggregate t
   As a user of the CR I want to be able to detect whether there are node aggregates of ambiguous type in a content stream
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []

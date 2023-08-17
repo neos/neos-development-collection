@@ -4,12 +4,12 @@ Feature: Unknown node types
   As a user of the CR I want to be able to detect and remove unknown node types
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes with fallback to "Neos.ContentRepository:Fallback" to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
-    'Neos.Neos:FallbackNode': []
+    'Neos.ContentRepository:Fallback': []
     """
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
@@ -38,10 +38,11 @@ Feature: Unknown node types
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: When removing "Neos.ContentRepository.Testing:Document", we find a missing node type.
-    When I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes with fallback to "Neos.ContentRepository:Fallback" to override content repository "default":
     """
     'Neos.ContentRepository:Root': []
-    'Neos.Neos:FallbackNode': []
+    'Neos.ContentRepository:Fallback': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type              | nodeAggregateId |

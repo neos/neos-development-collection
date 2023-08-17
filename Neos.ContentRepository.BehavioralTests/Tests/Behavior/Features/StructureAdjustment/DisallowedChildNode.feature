@@ -3,14 +3,12 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
   As a user of the CR I want to be able to detect and remove disallowed child nodes according to the constraints
 
-  Background:
-    Given I have no content dimensions
-
   Scenario: Direct constraints
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
@@ -67,7 +65,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # Actual Test
     ########################
-    When I have the following NodeTypes configuration:
+    When I use no content dimensions
+    And the following NodeTypes to override content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
@@ -93,7 +92,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       childNodes:
@@ -153,15 +153,24 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # Actual Test
     ########################
-    When I have the following additional NodeTypes configuration:
+
+    Given I use no content dimensions
+    And the following NodeTypes to override content repository "default":
     """
     'Neos.ContentRepository:Root':
       childNodes:
         document:
+          type: 'Neos.ContentRepository.Testing:Document'
           constraints:
             nodeTypes:
               'Neos.ContentRepository.Testing:SubDocument': false
 
+    'Neos.ContentRepository.Testing:Document':
+      constraints:
+        nodeTypes:
+          '*': false
+
+    'Neos.ContentRepository.Testing:SubDocument': []
     """
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"

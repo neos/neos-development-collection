@@ -2,8 +2,8 @@
 Feature: Single Node operations on multiple workspaces/content streams; e.g. copy on write!
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Content':

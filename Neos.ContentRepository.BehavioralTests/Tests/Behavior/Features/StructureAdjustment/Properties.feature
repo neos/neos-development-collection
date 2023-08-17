@@ -7,8 +7,8 @@ Feature: Properties
   - remove obsolete properties
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
@@ -48,11 +48,11 @@ Feature: Properties
       | myProp | "Foo" |
 
   Scenario: The property is removed
-    When I have the following additional NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to override content repository "default":
     """
-    'Neos.ContentRepository.Testing:Document':
-      properties:
-        myProp: ~
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Document': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type              | nodeAggregateId        |
@@ -65,10 +65,15 @@ Feature: Properties
     And I expect this node to have no properties
 
   Scenario: a new property default value is set
-    When I have the following additional NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to override content repository "default":
     """
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
+        myProp:
+          type: string
+          defaultValue: "Foo"
         otherProp:
           type: string
           defaultValue: "foo"
@@ -87,10 +92,15 @@ Feature: Properties
       | otherProp | "foo" |
 
   Scenario: a new property default value is not set if the value already contains the empty string
-    When I have the following additional NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to override content repository "default":
     """
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
+        myProp:
+          type: string
+          defaultValue: "Foo"
         otherProp:
           type: string
           defaultValue: "foo"
@@ -106,13 +116,15 @@ Feature: Properties
 
   Scenario: a broken property (which cannot be deserialized) is detected and removed
 
-    Given I have the following additional NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to override content repository "default":
     """
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         myProp:
           # we need to disable the default value; as otherwise, the "MISSING_DEFAULT_VALUE" check will trigger after the property has been removed.
-          defaultValue: ~
+          type: string
     """
 
     And the Event "NodePropertiesWereSet" was published to stream "ContentStream:cs-identifier" with payload:

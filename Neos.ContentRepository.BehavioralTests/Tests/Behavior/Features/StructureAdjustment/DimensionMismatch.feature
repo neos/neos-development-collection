@@ -9,10 +9,10 @@ Feature: Dimension mismatch
   - -> the node still has the "de" incoming edge; and that's not allowed because that's more general than "en"
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values | Generalizations |
       | language   | en, de | de->en          |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
@@ -42,7 +42,7 @@ Feature: Dimension mismatch
       | parentNodeAggregateId | "lady-eleonode-rootford"                  |
     And the graph projection is fully up to date
 
-    When I have the following content dimensions:
+    When I use the following content dimensions to override content repository "default":
       | Identifier | Values | Generalizations |
       | language   | en, de | en->de          |
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":

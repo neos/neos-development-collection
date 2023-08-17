@@ -3,8 +3,8 @@ Feature: If content streams are not in use anymore by the workspace, they can be
   tested here.
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': {}
     """

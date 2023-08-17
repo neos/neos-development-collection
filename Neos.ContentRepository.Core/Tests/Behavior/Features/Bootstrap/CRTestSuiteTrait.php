@@ -380,7 +380,7 @@ trait CRTestSuiteTrait
     public function iPruneUnusedContentStreams()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryService($this->contentRepositoryId, new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentRepositoryService($this->currentContentRepository->id, new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
         $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }

@@ -35,7 +35,13 @@ trait StructureAdjustmentsTrait
 
     protected function getStructureAdjustmentService(): StructureAdjustmentService
     {
-        return $this->getContentRepositoryRegistry()->buildService($this->currentContentRepository->id, new StructureAdjustmentServiceFactory());
+        return $this->getContentRepositoryRegistry()->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
+            $this->currentContentRepository->id,
+            $this->currentContentRepository->getContentDimensionSource(),
+            $this->currentContentRepository->getNodeTypeManager()
+        )->buildService(
+            new StructureAdjustmentServiceFactory()
+        );
     }
 
     /**

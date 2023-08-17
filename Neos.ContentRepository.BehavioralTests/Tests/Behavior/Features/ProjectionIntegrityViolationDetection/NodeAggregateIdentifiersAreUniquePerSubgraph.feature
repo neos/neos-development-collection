@@ -4,10 +4,10 @@ Feature: Create two nodes with the same node aggregate identifier in the same su
   As a user of the CR I want to be able to check whether there are ambiguous node aggregates
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
