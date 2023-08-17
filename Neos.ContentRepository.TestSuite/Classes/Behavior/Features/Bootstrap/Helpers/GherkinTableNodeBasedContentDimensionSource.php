@@ -62,6 +62,7 @@ final class GherkinTableNodeBasedContentDimensionSource implements ContentDimens
             }
 
             foreach (Arrays::trimExplode(',', $row['Values']) as $rawDimensionValue) {
+                /** @var string $rawDimensionValue */
                 $dimensionValueConfiguration = [];
                 $dimensionValues[$rawDimensionValue] = new ContentDimensionValue(
                     $rawDimensionValue,
@@ -76,8 +77,10 @@ final class GherkinTableNodeBasedContentDimensionSource implements ContentDimens
             }
 
             $dimensionConfiguration = [];
-            $dimensions[$row['Identifier']] = new ContentDimension(
-                new ContentDimensionId($row['Identifier']),
+            /** @var string $dimensionId */
+            $dimensionId = $row['Identifier'];
+            $dimensions[$dimensionId] = new ContentDimension(
+                new ContentDimensionId($dimensionId),
                 new ContentDimensionValues($dimensionValues),
                 new ContentDimensionValueVariationEdges($variationEdges),
                 $dimensionConfiguration

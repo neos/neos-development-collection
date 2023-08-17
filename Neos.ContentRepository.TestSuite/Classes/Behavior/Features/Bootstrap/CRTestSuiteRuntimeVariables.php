@@ -279,7 +279,8 @@ trait CRTestSuiteRuntimeVariables
         return new NodeTypeManager(
             fn (): array => Yaml::parse($serializedNodeTypesConfiguration->getRaw()),
             new class implements NodeLabelGeneratorFactoryInterface {
-                public function create(NodeType $nodeType): NodeLabelGeneratorInterface {
+                public function create(NodeType $nodeType): NodeLabelGeneratorInterface
+                {
                     return new class implements NodeLabelGeneratorInterface {
                         public function getLabel(Node $node): string
                         {
