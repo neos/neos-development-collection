@@ -151,7 +151,7 @@ The following options are allowed for defining a NodeType:
 
     Current:
     In Neos 4.0, Fontawesome 5 was introduced, enabling the usage of all free Fontawesome icons:
-    https://fontawesome.com/icons?d=gallery&m=free
+    https://fontawesome.com/v5/search?o=r&m=free
     Those can still be referenced via "icon-[name]", as the UI includes a fallback to the "fas"
     prefix-classes. To be sure which icon will be used, they can also be referenced by their
     icon-classes, e.g. "fas fa-check".
