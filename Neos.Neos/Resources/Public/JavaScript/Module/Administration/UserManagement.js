@@ -11,7 +11,7 @@ export default class UserManagement {
         this._apiService = new ApiService(BASE_PATH, this._csrfToken)
 
         if (!isNil(_root)) {
-            this._initialize()
+            window.NeosCMS?.I18n?.initialized ? this._initialize() : document.addEventListener('Neos.I18n.initialized', this._initialize())
         }
     }
 
