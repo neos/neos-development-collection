@@ -9,14 +9,13 @@ Feature: Add Dimension Specialization
   !! Constraint: the Target Dimension Space should be empty.
 
   Background:
-    Given I have the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | language   | mul, de, en | de->mul         |
-
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
+    Given I use the following content dimensions:
+      | Identifier | Values      | Generalizations |
+      | language   | mul, de, en | de->mul         |
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
@@ -54,13 +53,12 @@ Feature: Add Dimension Specialization
       | initialPropertyValues     | {"text": "hello" }                        |
     And the graph projection is fully up to date
 
-
   Scenario: Success Case - simple
     # we change the dimension configuration
-    When I have the following content dimensions:
+    ########################
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
-
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
     """
     migration:
@@ -152,7 +150,7 @@ Feature: Add Dimension Specialization
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I use the following content dimensions to override content repository "default":
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
@@ -188,7 +186,7 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I use the following content dimensions to override content repository "default":
       | Identifier | Values          | Generalizations |
       | language   | mul, de, ch, en | ch->de->mul     |
 
@@ -229,7 +227,7 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (1)
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values       | Generalizations |
       | language   | mul, de, foo | de->mul         |
 
@@ -248,7 +246,7 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (2)
-    Given I have the following content dimensions:
+    Given I use the following content dimensions to override content repository "default":
       | Identifier | Values       | Generalizations   |
       | language   | mul, de, foo | de->mul, foo->mul |
 

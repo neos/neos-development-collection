@@ -4,8 +4,8 @@ Feature: Node References without Dimensions
   As a user of the CR I want to be able to create, overwrite, reorder and delete reference between nodes
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':

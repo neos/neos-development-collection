@@ -6,10 +6,10 @@ Feature: Node References with Dimensions
   References between nodes are created are available in specializations but not in generalizations or peer variants.
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':

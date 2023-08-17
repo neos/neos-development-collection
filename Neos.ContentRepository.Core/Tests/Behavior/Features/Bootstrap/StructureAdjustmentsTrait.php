@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use PHPUnit\Framework\Assert;
 
@@ -27,12 +28,14 @@ use PHPUnit\Framework\Assert;
  */
 trait StructureAdjustmentsTrait
 {
+    use CRTestSuiteRuntimeVariables;
+
     abstract protected function getContentRepositoryId(): ContentRepositoryId;
     abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     protected function getStructureAdjustmentService(): StructureAdjustmentService
     {
-        return $this->getContentRepositoryRegistry()->buildService($this->getContentRepositoryId(), new StructureAdjustmentServiceFactory());
+        return $this->getContentRepositoryRegistry()->buildService($this->currentContentRepository->id, new StructureAdjustmentServiceFactory());
     }
 
     /**

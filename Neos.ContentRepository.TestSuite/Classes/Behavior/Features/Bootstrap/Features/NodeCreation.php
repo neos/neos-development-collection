@@ -40,8 +40,6 @@ trait NodeCreation
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getContentRepository(): ContentRepository;
-
     abstract protected function deserializeProperties(array $properties): PropertyValuesToWrite;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
@@ -68,7 +66,7 @@ trait NodeCreation
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -123,7 +121,7 @@ trait NodeCreation
             $nodeAggregateId,
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
     }
 
@@ -161,7 +159,7 @@ trait NodeCreation
                 : null
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -208,7 +206,7 @@ trait NodeCreation
                     ? NodeAggregateIdsByNodePaths::fromJsonString($row['tetheredDescendantNodeAggregateIds'])
                     : null
             );
-            $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+            $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
             $this->theGraphProjectionIsFullyUpToDate();
         }
     }
@@ -259,7 +257,7 @@ trait NodeCreation
                 : null
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**

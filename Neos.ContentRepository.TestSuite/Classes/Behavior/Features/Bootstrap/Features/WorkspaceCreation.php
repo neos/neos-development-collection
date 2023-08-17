@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -25,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
@@ -32,7 +32,7 @@ use Neos\EventStore\Model\Event\StreamName;
  */
 trait WorkspaceCreation
 {
-    abstract protected function getContentRepository(): ContentRepository;
+    use CRTestSuiteRuntimeVariables;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -54,7 +54,7 @@ trait WorkspaceCreation
             ContentStreamId::fromString($commandArguments['newContentStreamId'])
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
     /**
      * @Given /^the event RootWorkspaceWasCreated was published with payload:$/
@@ -87,7 +87,7 @@ trait WorkspaceCreation
             isset($commandArguments['workspaceOwner']) ? UserId::fromString($commandArguments['workspaceOwner']) : null
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
 
@@ -109,6 +109,6 @@ trait WorkspaceCreation
             $rebasedContentStreamId,
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 }

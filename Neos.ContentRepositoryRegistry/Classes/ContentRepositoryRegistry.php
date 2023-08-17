@@ -64,6 +64,18 @@ final class ContentRepositoryRegistry
         return $this->getFactory($contentRepositoryId)->getOrBuild();
     }
 
+    public function buildFactoryWithContentDimensionSourceAndNodeTypeManager(
+        ContentRepositoryId $contentRepositoryId,
+        ContentDimensionSourceInterface $contentDimensionSource,
+        NodeTypeManager $nodeTypeManager
+    ): ContentRepositoryFactory {
+        return $this->buildFactory(
+            $contentRepositoryId,
+            $contentDimensionSource,
+            $nodeTypeManager
+        );
+    }
+
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
@@ -89,8 +101,9 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function getFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
-    {
+    private function getFactory(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepositoryFactory {
         // This cache is CRUCIAL, because it ensures that the same CR always deals with the same objects internally, even if multiple services
         // are called on the same CR.
         if (!array_key_exists($contentRepositoryId->value, $this->factoryInstances)) {
@@ -102,8 +115,11 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
-    {
+    private function buildFactory(
+        ContentRepositoryId $contentRepositoryId,
+        ?ContentDimensionSourceInterface $contentDimensionSource = null,
+        ?NodeTypeManager $nodeTypeManager = null
+    ): ContentRepositoryFactory {
         if (!is_array($this->settings['contentRepositories'] ?? null)) {
             throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
         }
@@ -125,8 +141,8 @@ final class ContentRepositoryRegistry
             return new ContentRepositoryFactory(
                 $contentRepositoryId,
                 $this->buildEventStore($contentRepositoryId, $contentRepositorySettings, $clock),
-                $this->buildNodeTypeManager($contentRepositoryId, $contentRepositorySettings),
-                $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
+                $nodeTypeManager ?: $this->buildNodeTypeManager($contentRepositoryId, $contentRepositorySettings),
+                $contentDimensionSource ?: $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),

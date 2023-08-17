@@ -5,13 +5,21 @@ Feature: Create node aggregate with node
   in a specific dimension space point.
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values           | Generalizations       |
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
+    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
+      properties:
+        defaultText:
+          defaultValue: 'my default'
+          type: string
+        text:
+          type: string
+        nullText:
+          type: string
     """
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
@@ -29,18 +37,6 @@ Feature: Create node aggregate with node
     And the graph projection is fully up to date
 
   Scenario:  Create node aggregate with initial node with content dimensions
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
-      properties:
-        defaultText:
-          defaultValue: 'my default'
-          type: string
-        text:
-          type: string
-        nullText:
-          type: string
-    """
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | originDimensionSpacePoint | nodeName   | parentNodeAggregateId  | nodeTypeName                                                 | initialPropertyValues    |
       | sir-david-nodenborough     | {"language":"mul"}        | node       | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {"text": "initial text"} |

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -32,8 +31,6 @@ use PHPUnit\Framework\Assert;
 trait NodeModification
 {
     use CRTestSuiteRuntimeVariables;
-
-    abstract protected function getContentRepository(): ContentRepository;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -60,7 +57,7 @@ trait NodeModification
             $this->deserializeProperties($commandArguments['propertyValues']),
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**

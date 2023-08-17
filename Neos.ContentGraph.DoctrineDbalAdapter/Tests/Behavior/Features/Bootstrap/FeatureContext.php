@@ -46,10 +46,13 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavi
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
@@ -75,6 +78,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+    private ContentRepository $contentRepository;
 
     public function __construct()
     {
@@ -112,9 +116,9 @@ class FeatureContext implements \Behat\Behat\Context\Context
             'Neos.ContentRepositoryRegistry'
         );
 
-        unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
+        unset($registrySettings['presets']['default']['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
+        $registrySettings['presets']['default']['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
+        $registrySettings['presets']['default']['clock']['factoryObjectName'] = FakeClockFactory::class;
 
         $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
             $registrySettings,
@@ -122,14 +126,14 @@ class FeatureContext implements \Behat\Behat\Context\Context
         );
 
 
-        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
+        $this->contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString('default'));
         // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
         if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
             $this->contentRepository->setUp();
             self::$wasContentRepositorySetupCalled = true;
         }
         $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService(
-            $this->contentRepositoryId,
+            ContentRepositoryId::fromString('default'),
             new ContentRepositoryInternalsFactory()
         );
 
@@ -159,5 +163,13 @@ class FeatureContext implements \Behat\Behat\Context\Context
     protected function getDbalClient(): DbalClientInterface
     {
         return $this->dbalClient;
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId,
+        ContentDimensionSourceInterface $contentDimensionSource,
+        NodeTypeManager $nodeTypeManager
+    ): ContentRepository {
+        return $this->contentRepository;
     }
 }

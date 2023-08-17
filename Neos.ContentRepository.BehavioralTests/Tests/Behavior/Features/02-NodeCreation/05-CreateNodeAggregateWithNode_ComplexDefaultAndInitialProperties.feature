@@ -4,8 +4,8 @@ Feature: Create a node aggregate with complex default values
   As a user of the CR I want default properties of complex types to be un/serialized
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Node':

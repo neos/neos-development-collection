@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -30,8 +29,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 trait NodeTypeChange
 {
     use CRTestSuiteRuntimeVariables;
-
-    abstract protected function getContentRepository(): ContentRepository;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -58,7 +55,7 @@ trait NodeTypeChange
             $tetheredDescendantNodeAggregateIds
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**

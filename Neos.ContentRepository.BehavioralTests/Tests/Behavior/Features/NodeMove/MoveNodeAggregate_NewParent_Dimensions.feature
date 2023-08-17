@@ -9,104 +9,104 @@ Feature: Move a node with content dimensions
   These are the test cases for moving nodes with content dimensions being involved, which is a lot more fun!
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values           | Generalizations       |
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And the command CreateRootWorkspace is executed with payload:
-      | Key                        | Value                                  |
-      | workspaceName              | "live"                                 |
-      | workspaceTitle             | "Live"                                 |
-      | workspaceDescription       | "The live workspace"                   |
-      | newContentStreamId | "cs-identifier"                        |
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | contentStreamId | "cs-identifier"               |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the event NodeAggregateWithNodeWasCreated was published with payload:
       | Key                         | Value                                                                              |
-      | contentStreamId     | "cs-identifier"                                                                    |
-      | nodeAggregateId     | "lady-eleonode-rootford"                                                           |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                                                      |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "sir-david-nodenborough"                                                           |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                                           |
+      | nodeName                    | "document"                                                                         |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "sir-david-nodenborough"                                                           |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                                                           |
-      | nodeName                      | "document"                                                                         |
-      | nodeAggregateClassification   | "regular"                                                                          |
+      | Key                         | Value                                                                              |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "anthony-destinode"                                                                |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                                                           |
+      | nodeName                    | "child-document-a"                                                                 |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "anthony-destinode"                                                                |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "sir-david-nodenborough"                                                           |
-      | nodeName                      | "child-document-a"                                                                 |
-      | nodeAggregateClassification   | "regular"                                                                          |
+      | Key                         | Value                                                                              |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "berta-destinode"                                                                  |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                                                           |
+      | nodeName                    | "child-document-b"                                                                 |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "berta-destinode"                                                                  |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "sir-david-nodenborough"                                                           |
-      | nodeName                      | "child-document-b"                                                                 |
-      | nodeAggregateClassification   | "regular"                                                                          |
+      | Key                         | Value                                                                              |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "carl-destinode"                                                                   |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "sir-david-nodenborough"                                                           |
+      | nodeName                    | "child-document-c"                                                                 |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "carl-destinode"                                                                   |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "sir-david-nodenborough"                                                           |
-      | nodeName                      | "child-document-c"                                                                 |
-      | nodeAggregateClassification   | "regular"                                                                          |
+      | Key                         | Value                                                                              |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "sir-nodeward-nodington-iii"                                                       |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                                           |
+      | nodeName                    | "esquire"                                                                          |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "sir-nodeward-nodington-iii"                                                       |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                                                           |
-      | nodeName                      | "esquire"                                                                          |
-      | nodeAggregateClassification   | "regular"                                                                          |
+      | Key                         | Value                                                                              |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "nody-mc-nodeface"                                                                 |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "sir-nodeward-nodington-iii"                                                       |
+      | nodeName                    | "child-document-n"                                                                 |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "nody-mc-nodeface"                                                                 |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "sir-nodeward-nodington-iii"                                                       |
-      | nodeName                      | "child-document-n"                                                                 |
-      | nodeAggregateClassification   | "regular"                                                                          |
-    And the event NodeAggregateWithNodeWasCreated was published with payload:
-      | Key                           | Value                                                                              |
-      | contentStreamId       | "cs-identifier"                                                                    |
-      | nodeAggregateId       | "lady-abigail-nodenborough"                                                        |
-      | nodeTypeName                  | "Neos.ContentRepository.Testing:Document"                                          |
-      | originDimensionSpacePoint     | {"language": "mul"}                                                                |
-      | coveredDimensionSpacePoints   | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
-      | parentNodeAggregateId | "lady-eleonode-rootford"                                                           |
-      | nodeName                      | "document2"                                                                        |
-      | nodeAggregateClassification   | "regular"                                                                          |
+      | Key                         | Value                                                                              |
+      | contentStreamId             | "cs-identifier"                                                                    |
+      | nodeAggregateId             | "lady-abigail-nodenborough"                                                        |
+      | nodeTypeName                | "Neos.ContentRepository.Testing:Document"                                          |
+      | originDimensionSpacePoint   | {"language": "mul"}                                                                |
+      | coveredDimensionSpacePoints | [{"language": "mul"}, {"language": "de"}, {"language": "en"}, {"language": "gsw"}] |
+      | parentNodeAggregateId       | "lady-eleonode-rootford"                                                           |
+      | nodeName                    | "document2"                                                                        |
+      | nodeAggregateClassification | "regular"                                                                          |
     And the graph projection is fully up to date
 
   Scenario: Move a complete node aggregate to a new parent before the first of its new siblings
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "mul"}      |
+      | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
     And the graph projection is fully up to date
@@ -124,20 +124,20 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent before the first of its new siblings - which does not exist in all variants
     Given the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value                 |
-      | contentStreamId              | "cs-identifier"       |
-      | nodeAggregateId              | "anthony-destinode"   |
+      | contentStreamId                      | "cs-identifier"       |
+      | nodeAggregateId                      | "anthony-destinode"   |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "mul"}      |
+      | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "anthony-destinode"      |
-      | relationDistributionStrategy                | "gatherAll"              |
+      | relationDistributionStrategy        | "gatherAll"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -161,10 +161,10 @@ Feature: Move a node with content dimensions
 
   Scenario: Move a complete node aggregate to a new parent before one of its new siblings
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "mul"}      |
+      | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
     And the graph projection is fully up to date
@@ -183,17 +183,17 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent before one of its siblings - which does not exist in all variants
     Given the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value                 |
-      | contentStreamId              | "cs-identifier"       |
-      | nodeAggregateId              | "berta-destinode"     |
+      | contentStreamId                      | "cs-identifier"       |
+      | nodeAggregateId                      | "berta-destinode"     |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "mul"}      |
+      | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
     And the graph projection is fully up to date
@@ -222,17 +222,17 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent after another of its new siblings - which does not exist in all variants
     Given the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value                 |
-      | contentStreamId              | "cs-identifier"       |
-      | nodeAggregateId              | "carl-destinode"      |
+      | contentStreamId                      | "cs-identifier"       |
+      | nodeAggregateId                      | "carl-destinode"      |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                        | Value                    |
+      | Key                                | Value                    |
       | contentStreamId                    | "cs-identifier"          |
       | nodeAggregateId                    | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                        | {"language": "mul"}      |
+      | dimensionSpacePoint                | {"language": "mul"}      |
       | newParentNodeAggregateId           | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId | "berta-destinode"        |
     And the graph projection is fully up to date
@@ -260,17 +260,17 @@ Feature: Move a node with content dimensions
   Scenario: Move a complete node aggregate to a new parent after the last of its new siblings - with a predecessor which does not exist in all variants
     Given the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value                 |
-      | contentStreamId              | "cs-identifier"       |
-      | nodeAggregateId              | "carl-destinode"      |
+      | contentStreamId                      | "cs-identifier"       |
+      | nodeAggregateId                      | "carl-destinode"      |
       | affectedOccupiedDimensionSpacePoints | []                    |
       | affectedCoveredDimensionSpacePoints  | [{"language": "gsw"}] |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "mul"}      |
+      | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
     And the graph projection is fully up to date
@@ -296,13 +296,13 @@ Feature: Move a node with content dimensions
 
   Scenario: Move a single node in a node aggregate to a new parent after the last of its new siblings
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "de"}       |
+      | dimensionSpacePoint                 | {"language": "de"}       |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | relationDistributionStrategy                | "scatter"                |
+      | relationDistributionStrategy        | "scatter"                |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -323,13 +323,13 @@ Feature: Move a node with content dimensions
 
   Scenario: Move a node and its specializations in a node aggregate to a new parent after the last of its new siblings
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "de"}       |
+      | dimensionSpacePoint                 | {"language": "de"}       |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                     |
-      | relationDistributionStrategy                | "gatherSpecializations"  |
+      | relationDistributionStrategy        | "gatherSpecializations"  |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -360,24 +360,24 @@ Feature: Move a node with content dimensions
 
   Scenario: Move a complete node aggregate to a new parent between siblings with different parents in other variants
     Given the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                       |
+      | Key                                 | Value                       |
       | contentStreamId                     | "cs-identifier"             |
       | nodeAggregateId                     | "berta-destinode"           |
-      | dimensionSpacePoint                         | {"language": "gsw"}         |
+      | dimensionSpacePoint                 | {"language": "gsw"}         |
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                        |
-      | relationDistributionStrategy                | "scatter"                   |
+      | relationDistributionStrategy        | "scatter"                   |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                    |
+      | Key                                 | Value                    |
       | contentStreamId                     | "cs-identifier"          |
       | nodeAggregateId                     | "nody-mc-nodeface"       |
-      | dimensionSpacePoint                         | {"language": "mul"}      |
+      | dimensionSpacePoint                 | {"language": "mul"}      |
       | newParentNodeAggregateId            | "sir-david-nodenborough" |
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode"      |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"        |
-      | relationDistributionStrategy                | "gatherAll"              |
+      | relationDistributionStrategy        | "gatherAll"              |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}
@@ -404,23 +404,23 @@ Feature: Move a node with content dimensions
 
   Scenario: Move a complete node aggregate between siblings with different parents in other variants (without explicit new parent)
     Given the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value                       |
+      | Key                                 | Value                       |
       | contentStreamId                     | "cs-identifier"             |
       | nodeAggregateId                     | "berta-destinode"           |
-      | dimensionSpacePoint                         | {"language": "gsw"}         |
+      | dimensionSpacePoint                 | {"language": "gsw"}         |
       | newParentNodeAggregateId            | "lady-abigail-nodenborough" |
       | newSucceedingSiblingNodeAggregateId | null                        |
-      | relationDistributionStrategy                | "scatter"                   |
+      | relationDistributionStrategy        | "scatter"                   |
     And the graph projection is fully up to date
 
     When the command MoveNodeAggregate is executed with payload:
-      | Key                                         | Value               |
+      | Key                                 | Value               |
       | contentStreamId                     | "cs-identifier"     |
       | nodeAggregateId                     | "nody-mc-nodeface"  |
-      | dimensionSpacePoint                         | {"language": "mul"} |
+      | dimensionSpacePoint                 | {"language": "mul"} |
       | newPrecedingSiblingNodeAggregateId  | "anthony-destinode" |
       | newSucceedingSiblingNodeAggregateId | "berta-destinode"   |
-      | relationDistributionStrategy                | "gatherAll"         |
+      | relationDistributionStrategy        | "gatherAll"         |
     And the graph projection is fully up to date
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "mul"}

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -31,8 +30,6 @@ use Neos\EventStore\Model\Event\StreamName;
 trait NodeMove
 {
     use CRTestSuiteRuntimeVariables;
-
-    abstract protected function getContentRepository(): ContentRepository;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -75,7 +72,7 @@ trait NodeMove
             $relationDistributionStrategy,
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**

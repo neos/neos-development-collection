@@ -4,10 +4,10 @@ Feature: Constraint checks on SetNodeReferences
   As a user of the CR I expect invalid SetNodeReferences commands to be blocked
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, en | gsw->de, en     |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':

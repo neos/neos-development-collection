@@ -2,26 +2,16 @@
 Feature: Remove Nodes
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values           | Generalizations       |
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
-
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
           'Neos.ContentRepository.Testing:Document': true
           'Neos.ContentRepository.Testing:OtherDocument': true
-
-    'Neos.ContentRepository.Testing:Document': []
-    """
-
-    ########################
-    # SETUP
-    ########################
-    Given I have the following additional NodeTypes configuration:
-    """
     'Neos.ContentRepository.Testing:Document':
       properties:
         text:

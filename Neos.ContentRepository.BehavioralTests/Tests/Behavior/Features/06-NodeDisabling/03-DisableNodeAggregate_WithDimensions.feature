@@ -6,10 +6,10 @@ Feature: Disable a node aggregate
   These are the test cases with dimensions being involved
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values                | Generalizations                     |
       | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':

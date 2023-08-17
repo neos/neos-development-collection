@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\TestingNodeAggregateId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
@@ -35,6 +36,8 @@ use PHPUnit\Framework\Assert;
  */
 trait ProjectionIntegrityViolationDetectionTrait
 {
+    use CRTestSuiteRuntimeVariables;
+
     private DbalClient $dbalClient;
 
     protected Result $lastIntegrityViolationDetectionResult;
@@ -44,7 +47,7 @@ trait ProjectionIntegrityViolationDetectionTrait
     protected function getTableNamePrefix(): string
     {
         return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
-            $this->getContentRepositoryId()
+            $this->currentContentRepository->id
         );
     }
 
@@ -303,7 +306,7 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService($this->getContentRepositoryId(), new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService($this->currentContentRepository->id, new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
         $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 

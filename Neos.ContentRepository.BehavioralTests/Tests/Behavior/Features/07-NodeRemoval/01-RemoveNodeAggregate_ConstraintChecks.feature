@@ -6,10 +6,10 @@ Feature: Remove NodeAggregate
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, en | gsw->de, en     |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Tethered': []

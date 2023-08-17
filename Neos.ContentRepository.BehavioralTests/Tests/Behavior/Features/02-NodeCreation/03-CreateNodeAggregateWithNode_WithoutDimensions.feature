@@ -7,14 +7,21 @@ Feature: Create node aggregate with node
   This is the tale of venerable root node aggregate Lady Eleonode Rootford already persistent in the content graph
   and its soon-to-be descendants
 
-  Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+  Scenario: Create node aggregate with initial node without auto-created child nodes
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
+    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
+      properties:
+        defaultText:
+          defaultValue: 'my default'
+          type: string
+        text:
+          type: string
+        nullText:
+          type: string
     """
-
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -31,19 +38,6 @@ Feature: Create node aggregate with node
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
-  Scenario: Create node aggregate with initial node without auto-created child nodes
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
-      properties:
-        defaultText:
-          defaultValue: 'my default'
-          type: string
-        text:
-          type: string
-        nullText:
-          type: string
-    """
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId            | nodeName   | parentNodeAggregateId  | nodeTypeName                                                 | initialPropertyValues    |
       | sir-david-nodenborough     | node       | lady-eleonode-rootford | Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes | {"text": "initial text"} |
@@ -192,6 +186,28 @@ Feature: Create node aggregate with node
     And I expect this node to have no succeeding siblings
 
   Scenario: Create node aggregate with initial node without auto-created child nodes before another one
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
+    """
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
+    """
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier"
+    And I am in dimension space point {}
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
+
     Given the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                                          |
       | nodeAggregateId           | "sir-david-nodenborough"                                       |
@@ -234,7 +250,8 @@ Feature: Create node aggregate with node
       | cs-identifier;sir-david-nodenborough;{} |
 
   Scenario: Create node aggregate with node with tethered child nodes
-    Given I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubSubNode':
@@ -259,6 +276,21 @@ Feature: Create node aggregate with node
           defaultValue: 'my default'
           type: string
     """
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier"
+    And I am in dimension space point {}
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                                                             |

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferencesToWrite;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\NodeReferenceToWrite;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
@@ -34,8 +33,6 @@ use Neos\EventStore\Model\Event\StreamName;
 trait NodeReferencing
 {
     use CRTestSuiteRuntimeVariables;
-
-    abstract protected function getContentRepository(): ContentRepository;
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
@@ -77,7 +74,7 @@ trait NodeReferencing
             $references,
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**

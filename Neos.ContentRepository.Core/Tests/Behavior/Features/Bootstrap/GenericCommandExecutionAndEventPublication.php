@@ -32,6 +32,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndi
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
@@ -45,6 +46,8 @@ use PHPUnit\Framework\Assert;
  */
 trait GenericCommandExecutionAndEventPublication
 {
+    use CRTestSuiteRuntimeVariables;
+
     private ?array $currentEventStreamAsArray = null;
 
     protected CommandResult|null $lastCommandOrEventResult = null;
@@ -53,7 +56,6 @@ trait GenericCommandExecutionAndEventPublication
 
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
-    abstract protected function getContentRepository(): ContentRepository;
     abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
     /**
@@ -82,7 +84,7 @@ trait GenericCommandExecutionAndEventPublication
 
         $command = $commandClassName::fromArray($commandArguments);
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -165,9 +167,13 @@ trait GenericCommandExecutionAndEventPublication
             Event\EventData::fromString(json_encode($eventPayload)),
             Event\EventMetadata::fromArray([])
         );
-        $event = $this->getContentRepositoryInternals()->eventNormalizer->denormalize($artificiallyConstructedEvent);
+        $eventPersister = (new \ReflectionClass($this->currentContentRepository))->getProperty('eventPersister')
+            ->getValue($this->currentContentRepository);
+        $eventNormalizer = (new \ReflectionClass($eventPersister))->getProperty('eventNormalizer')
+            ->getValue($eventPersister);
+        $event = $eventNormalizer->denormalize($artificiallyConstructedEvent);
 
-        $this->lastCommandOrEventResult = $this->getContentRepositoryInternals()->eventPersister->publishEvents(new EventsToPublish(
+        $this->lastCommandOrEventResult = $eventPersister->publishEvents(new EventsToPublish(
             $streamName,
             Events::with($event),
             ExpectedVersion::ANY()

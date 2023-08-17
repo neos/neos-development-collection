@@ -13,11 +13,11 @@ Feature: Move node to a new parent / within the current parent before a sibling 
         - sir-nodeward-nodington-iii (Neos.ContentRepository.Testing:Document)
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values      | Generalizations |
       | market     | DE, CH      | CH->DE          |
       | language   | de, gsw, fr | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []

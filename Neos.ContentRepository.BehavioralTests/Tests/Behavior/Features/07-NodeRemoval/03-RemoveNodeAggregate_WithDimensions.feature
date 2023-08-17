@@ -6,10 +6,10 @@ Feature: Remove NodeAggregate
   These are the test cases without dimensions being involved
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values          | Generalizations     |
       | language   | en, de, gsw, fr | gsw->de->en, fr->en |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Document':

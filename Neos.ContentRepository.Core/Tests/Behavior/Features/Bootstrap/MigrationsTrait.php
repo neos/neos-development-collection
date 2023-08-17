@@ -21,6 +21,7 @@ use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Symfony\Component\Yaml\Yaml;
 
@@ -29,6 +30,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait MigrationsTrait
 {
+    use CRTestSuiteRuntimeVariables;
+
     protected NodeMigrationService $nodeMigrationService;
 
     abstract protected function getContentRepositoryId(): ContentRepositoryId;
@@ -40,9 +43,17 @@ trait MigrationsTrait
     public function iRunTheFollowingNodeMigration(string $workspaceName, string $contentStreams, PyStringNode $string)
     {
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
-        $contentStreamIds = array_map(fn (string $cs) => ContentStreamId::fromString($cs), explode(',', $contentStreams));
+        $contentStreamIds = array_map(
+            fn (string $cs) => ContentStreamId::fromString($cs),
+            explode(',', $contentStreams)
+        );
         $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
-        $nodeMigrationService = $this->getContentRepositoryRegistry()->buildService($this->getContentRepositoryId(), new NodeMigrationServiceFactory());
+        $nodeMigrationService = $this->getContentRepositoryRegistry()->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
+            $this->currentContentRepository->id,
+            $this->currentContentRepository->getContentDimensionSource(),
+            $this->currentContentRepository->getNodeTypeManager()
+        )->buildService(new NodeMigrationServiceFactory());
+
         $nodeMigrationService->executeMigration($command);
     }
 

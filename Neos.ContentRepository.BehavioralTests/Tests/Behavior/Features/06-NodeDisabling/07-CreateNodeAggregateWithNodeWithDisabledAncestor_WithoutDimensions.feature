@@ -7,8 +7,8 @@ Feature: Creation of nodes underneath disabled nodes
   These are the test cases without dimensions
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Document': {}

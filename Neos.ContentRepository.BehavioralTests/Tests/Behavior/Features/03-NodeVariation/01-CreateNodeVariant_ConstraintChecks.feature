@@ -4,11 +4,11 @@ Feature: Create node variant
   As a user of the CR I want to create a copy of a node within an aggregate to another dimension space point.
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values  | Generalizations |
       | market     | DE, CH  | CH->DE          |
       | language   | de, gsw | gsw->de         |
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':

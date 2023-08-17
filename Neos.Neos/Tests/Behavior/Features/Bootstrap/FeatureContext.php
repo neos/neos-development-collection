@@ -17,10 +17,13 @@ use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
@@ -113,6 +116,8 @@ class FeatureContext extends MinkContext
      * @var Environment
      */
     protected $environment;
+
+    private ContentRepository $contentRepository;
 
     public function __construct()
     {
@@ -613,5 +618,18 @@ class FeatureContext extends MinkContext
         /** @var SiteImportService $siteImportService */
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId,
+        ContentDimensionSourceInterface $contentDimensionSource,
+        NodeTypeManager $nodeTypeManager
+    ): ContentRepository {
+        return $this->contentRepository;
+    }
+
+    protected function getContentRepository(): ContentRepository
+    {
+        return $this->contentRepository;
     }
 }

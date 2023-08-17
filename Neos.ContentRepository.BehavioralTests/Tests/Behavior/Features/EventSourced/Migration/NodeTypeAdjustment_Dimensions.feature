@@ -2,15 +2,10 @@
 Feature: Adjust node types with a node migration
 
   Background:
-    Given I have the following content dimensions:
+    Given I use the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-
-  Scenario: Success Case
-    ########################
-    # SETUP
-    ########################
-    And I have the following NodeTypes configuration:
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
@@ -21,7 +16,12 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And the command CreateRootWorkspace is executed with payload:
+
+  Scenario: Success Case
+    ########################
+    # SETUP
+    ########################
+    When the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
       | workspaceTitle             | "Live"               |
@@ -48,10 +48,13 @@ Feature: Adjust node types with a node migration
     # Actual Test
     ########################
     # we remove the Document node type (which still exists in the CR)
-    And I have the following NodeTypes configuration:
+    And I use the following content dimensions:
+      | Identifier | Values          | Generalizations      |
+      | language   | mul, de, en, ch | ch->de->mul, en->mul |
+    And the following NodeTypes with fallback to "Neos.ContentRepository:Fallback" to override content repository "default":
     """
     # !!fallback node is needed!! - TODO DISCUSS
-    'Neos.Neos:FallbackNode': []
+    'Neos.ContentRepository:Fallback': []
 
     'Neos.ContentRepository:Root':
       constraints:

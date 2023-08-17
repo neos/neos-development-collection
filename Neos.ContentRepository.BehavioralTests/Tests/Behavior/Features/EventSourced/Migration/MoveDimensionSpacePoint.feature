@@ -10,14 +10,13 @@ Feature: Move dimension space point
   !! Constraint: the Target Dimension Space should be empty.
 
   Background:
-    Given I have the following content dimensions:
-      | Identifier | Values          | Generalizations      |
-      | language   | mul, de, en, ch | ch->de->mul, en->mul |
-
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
+    Given I use the following content dimensions:
+      | Identifier | Values          | Generalizations      |
+      | language   | mul, de, en, ch | ch->de->mul, en->mul |
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
@@ -54,8 +53,8 @@ Feature: Move dimension space point
 
   Scenario: Success Case - simple
     # we change the dimension configuration
-    When I have the following content dimensions:
-      | Identifier | Values     | Generalizations |
+    Given I use the following content dimensions to override content repository "default":
+      | Identifier | Values          | Generalizations      |
       | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
@@ -104,7 +103,7 @@ Feature: Move dimension space point
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I use the following content dimensions to override content repository "default":
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
@@ -139,7 +138,7 @@ Feature: Move dimension space point
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I have the following content dimensions:
+    When I use the following content dimensions to override content repository "default":
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
 

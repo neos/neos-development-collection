@@ -2,22 +2,13 @@
 Feature: Add New Property
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
+    Given I use no content dimensions
+    And the following NodeTypes to define content repository "default":
     """
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
           'Neos.ContentRepository.Testing:Document': true
-
-    'Neos.ContentRepository.Testing:Document': []
-    """
-
-    ########################
-    # SETUP
-    ########################
-    Given I have the following additional NodeTypes configuration:
-    """
     'Neos.ContentRepository.Testing:Document':
       properties:
         text:

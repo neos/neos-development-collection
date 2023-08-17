@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\Dimension\ContentDimensionValueSpecializationDep
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdge;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionValueVariationEdges;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternals;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Utility\Arrays;
 use Neos\Utility\ObjectAccess;
 use Symfony\Component\Yaml\Yaml;
@@ -35,13 +36,13 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait NodeOperationsTrait
 {
+    use CRTestSuiteRuntimeVariables;
 
     /**
      * @var array
      */
     private $nodeTypesConfiguration = [];
 
-    abstract protected function getContentRepository(): ContentRepository;
     abstract protected function getContentRepositoryInternals(): ContentRepositoryInternals;
 
     /**
@@ -52,7 +53,7 @@ trait NodeOperationsTrait
         if ($this->isolated === true) {
             $this->callStepInSubProcess(__METHOD__);
         } else {
-            $this->getContentRepository()->getNodeTypeManager()->overrideNodeTypes([]);
+            $this->currentContentRepository->getNodeTypeManager()->overrideNodeTypes([]);
         }
     }
 
@@ -70,7 +71,7 @@ trait NodeOperationsTrait
                 $this->nodeTypesConfiguration = Yaml::parse($nodeTypesConfiguration->getRaw());
                 $configuration = $this->nodeTypesConfiguration;
             }
-            $this->getContentRepository()->getNodeTypeManager()->overrideNodeTypes($configuration);
+            $this->currentContentRepository->getNodeTypeManager()->overrideNodeTypes($configuration);
         }
     }
 

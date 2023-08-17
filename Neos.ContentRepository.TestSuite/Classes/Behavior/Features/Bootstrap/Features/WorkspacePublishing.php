@@ -15,19 +15,20 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 
 /**
  * The workspace publishing feature trait for behavioral tests
  */
 trait WorkspacePublishing
 {
-    abstract protected function getContentRepository(): ContentRepository;
+    use CRTestSuiteRuntimeVariables;
+
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
@@ -55,7 +56,7 @@ trait WorkspacePublishing
             $contentStreamIdForRemainingPart
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**
@@ -71,7 +72,7 @@ trait WorkspacePublishing
             WorkspaceName::fromString($commandArguments['workspaceName']),
         );
 
-        $this->lastCommandOrEventResult = $this->getContentRepository()->handle($command);
+        $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**

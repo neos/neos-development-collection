@@ -17,12 +17,10 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
@@ -93,19 +91,16 @@ trait CRTestSuiteTrait
 
     protected ContentGraphs $activeContentGraphs;
 
-    private ContentRepositoryId $contentRepositoryId;
-    private ContentRepository $contentRepository;
+    private ?ContentRepositoryId $contentRepositoryId = null;
+
     private ContentRepositoryInternals $contentRepositoryInternals;
 
-
+    /**
+     * @deprecated
+     */
     protected function getContentRepositoryId(): ContentRepositoryId
     {
-        return $this->contentRepositoryId;
-    }
-
-    protected function getContentRepository(): ContentRepository
-    {
-        return $this->contentRepository;
+        return $this->currentContentRepository->id;
     }
 
     /**
@@ -123,17 +118,21 @@ trait CRTestSuiteTrait
      */
     protected function getWorkspaceFinder(): WorkspaceFinder
     {
-        return $this->getContentRepository()->getWorkspaceFinder();
+        return $this->currentContentRepository->getWorkspaceFinder();
     }
 
     protected function getAvailableContentGraphs(): ContentGraphs
     {
-        return $this->availableContentGraphs;
+        return new ContentGraphs([
+            'DoctrineDBAL' => $this->currentContentRepository->getContentGraph()
+        ]);
     }
 
     protected function getActiveContentGraphs(): ContentGraphs
     {
-        return $this->activeContentGraphs;
+        return new ContentGraphs([
+            'DoctrineDBAL' => $this->currentContentRepository->getContentGraph()
+        ]);
     }
 
     private bool $alwaysRunContentRepositorySetup = false;
@@ -142,7 +141,6 @@ trait CRTestSuiteTrait
     protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false)
     {
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
-        $this->contentRepositoryId = ContentRepositoryId::fromString('default');
     }
 
     /**
@@ -175,113 +173,15 @@ trait CRTestSuiteTrait
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
     {
-        $adapterTagPrefix = 'adapters=';
-        $adapterTagPrefixLength = \mb_strlen($adapterTagPrefix);
-        /** @var array<int,string> $adapterKeys */
-        $adapterKeys = [];
-        foreach ($scope->getFeature()->getTags() as $tagName) {
-            if (\str_starts_with($tagName, $adapterTagPrefix)) {
-                $adapterKeys = explode(',', \mb_substr($tagName, $adapterTagPrefixLength));
-                break;
-            }
-        }
-
-        $this->initCleanContentRepository($adapterKeys);
-
-        $this->activeContentGraphs = count($adapterKeys) === 0
-            ? $this->availableContentGraphs
-            : $this->availableContentGraphs->reduceTo($adapterKeys);
-
-
+        $this->contentDimensionsToUse = null;
+        $this->contentRepositories = [];
+        $this->currentContentRepository = null;
         $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
         $this->currentContentStreamId = null;
         $this->currentNodeAggregates = null;
         $this->currentNodes = null;
-
-        $connection = $this->objectManager->get(DbalClientInterface::class)->getConnection();
-        // copied from DoctrineEventStoreFactory
-
-        /**
-         * Reset projections and events
-         * ============================
-         *
-         * PITFALL: for a long time, the code below was a two-liner (it is not anymore, for reasons explained here):
-         * - reset projections (truncate table contents)
-         * - truncate events table.
-         *
-         * This code has SERIOUS Race Condition and Bug Potential.
-         * tl;dr: It is CRUCIAL that *FIRST* the event store is emptied, and *then* the projection state is reset;
-         * so the OPPOSITE order as described above.
-         *
-         * If doing it in the way described initially, the following can happen (time flows from top to bottom):
-         *
-         * ```
-         * Main Behat Process                        Dangling Projection catch up worker
-         * ==================                        ===================================
-         *
-         *                                           (hasn't started working yet, simply sleeping)
-         *
-         * 1) Projection State reset
-         *                                           "oh, I have some work to do to catch up EVERYTHING"
-         *                                           "query the events table"
-         *
-         * 2) Event Table Reset
-         *                                           (events table is already loaded into memory) -> replay WIP
-         *
-         * (new commands/events start happening,
-         * in the new testcase)
-         *                                           ==> ERRORS because the projection now contains the result of both
-         *                                               old AND new events (of the two different testcases) <==
-         * ```
-         *
-         * This was an actual bug which bit us and made our tests unstable :D :D
-         *
-         * How did we find this? By the virtue of our Race Tracker (Docs: see {@see RaceTrackerCatchUpHook}), which
-         * checks for events being applied multiple times to a projection.
-         * ... and additionally by using {@see logToRaceConditionTracker()} to find the interleavings between the
-         * Catch Up process and the testcase reset.
-         */
-
-        $eventTableName = sprintf('cr_%s_events', $this->contentRepositoryId->value);
-        $connection->executeStatement('TRUNCATE ' . $eventTableName);
-
-        // TODO: WORKAROUND: UGLY AS HELL CODE: Projection Reset may fail because the lock cannot be acquired, so we
-        //       try again.
-        //
-        // TODO: inside the projections, the code to reset looks like this:
-        //        $this->truncateDatabaseTables();
-        //        $this->checkpointStorage->acquireLock();
-        //        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-        //  -> it'd say we need to change this; to:
-        //        $this->checkpointStorage->acquireLock();
-        //        $this->truncateDatabaseTables();
-        //        $this->checkpointStorage->updateAndReleaseLock(SequenceNumber::none());
-        // TODO: Rename to "tryToAcquireLock"?
-        $projectionsWereReset = false;
-        $retryCount = 0;
-        do {
-            try {
-                $retryCount++;
-                $this->contentRepository->resetProjectionStates();
-
-                // if we end up here without exception, we know the projection states were properly reset.
-                $projectionsWereReset = true;
-            } catch (CheckpointException $checkpointException) {
-                // TODO: HACK: UGLY CODE!!!
-                if ($checkpointException->getCode() === 1652279016 && $retryCount < 20) { // we wait for 10 seconds max.
-                    // another process is in the critical section; a.k.a.
-                    // the lock is acquired already by another process.
-                    //
-                    // -> we sleep for 0.5s and retry
-                    usleep(500000);
-                } else {
-                    // some error error - we re-throw
-                    throw $checkpointException;
-                }
-            }
-        } while ($projectionsWereReset !== true);
     }
 
     /**
@@ -343,9 +243,9 @@ trait CRTestSuiteTrait
      */
     public function workspacesPointToDifferentContentStreams(string $rawWorkspaceNameA, string $rawWorkspaceNameB): void
     {
-        $workspaceA = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
+        $workspaceA = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameA));
         Assert::assertInstanceOf(Workspace::class, $workspaceA, 'Workspace "' . $rawWorkspaceNameA . '" does not exist.');
-        $workspaceB = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
+        $workspaceB = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceNameB));
         Assert::assertInstanceOf(Workspace::class, $workspaceB, 'Workspace "' . $rawWorkspaceNameB . '" does not exist.');
         if ($workspaceA && $workspaceB) {
             Assert::assertNotEquals(
@@ -361,7 +261,7 @@ trait CRTestSuiteTrait
      */
     public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId)
     {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
         Assert::assertNotEquals($rawContentStreamId, $workspace->currentContentStreamId->value);
     }
@@ -431,7 +331,10 @@ trait CRTestSuiteTrait
      */
     protected function getEventStore(): EventStoreInterface
     {
-        return $this->getContentRepositoryInternals()->eventStore;
+        $reflectedContentRepository = new \ReflectionClass($this->currentContentRepository);
+
+        return $reflectedContentRepository->getProperty('eventStore')
+            ->getValue($this->currentContentRepository);
     }
 
     protected function getRootNodeAggregateId(): ?NodeAggregateId
@@ -457,7 +360,7 @@ trait CRTestSuiteTrait
     public function theContentStreamHasState(string $contentStreamId, string $expectedState)
     {
         $contentStreamId = ContentStreamId::fromString($contentStreamId);
-        $contentStreamFinder = $this->getContentRepository()->getContentStreamFinder();
+        $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
 
         $actual = $contentStreamFinder->findStateForContentStream($contentStreamId);
         Assert::assertEquals($expectedState, $actual);
@@ -488,7 +391,7 @@ trait CRTestSuiteTrait
     public function iPruneRemovedContentStreamsFromTheEventStream()
     {
         /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryService($this->getContentRepositoryId(), new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentRepositoryService($this->currentContentRepository->id, new ContentStreamPrunerFactory());
         $contentStreamPruner->pruneRemovedFromEventStream();
     }
 
@@ -497,8 +400,8 @@ trait CRTestSuiteTrait
      */
     public function iReplayTheProjection(string $projectionName)
     {
-        $this->contentRepository->resetProjectionState($projectionName);
-        $this->contentRepository->catchUpProjection($projectionName);
+        $this->currentContentRepository->resetProjectionState($projectionName);
+        $this->currentContentRepository->catchUpProjection($projectionName);
     }
 
     abstract protected function getContentRepositoryService(

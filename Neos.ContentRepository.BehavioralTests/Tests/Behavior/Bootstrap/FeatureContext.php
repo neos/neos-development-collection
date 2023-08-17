@@ -26,16 +26,20 @@ require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
+use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
@@ -78,6 +82,8 @@ class FeatureContext implements \Behat\Behat\Context\Context
     protected $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+
+    private ContentRepository $contentRepository;
 
     public function __construct()
     {
@@ -198,6 +204,11 @@ class FeatureContext implements \Behat\Behat\Context\Context
         return $this->dbalClient;
     }
 
+    protected function getDatabaseConnection(): Connection
+    {
+        return $this->dbalClient->getConnection();
+    }
+
     protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
     {
         /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
@@ -236,5 +247,17 @@ class FeatureContext implements \Behat\Behat\Context\Context
         }
 
         return PropertyValuesToWrite::fromArray($properties);
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId,
+        ContentDimensionSourceInterface $contentDimensionSource,
+        NodeTypeManager $nodeTypeManager
+    ): ContentRepository {
+        return $this->getContentRepositoryRegistry()->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
+            $contentRepositoryId,
+            $contentDimensionSource,
+            $nodeTypeManager
+        )->getOrBuild();
     }
 }
