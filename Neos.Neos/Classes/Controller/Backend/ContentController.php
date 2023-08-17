@@ -44,7 +44,6 @@ use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Service\PluginService;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 
 /**
@@ -79,14 +78,6 @@ class ContentController extends ActionController
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * The pluginService
-     *
-     * @var PluginService
-     * @Flow\Inject
-     */
-    protected $pluginService;
 
     /**
      * @Flow\Inject
@@ -391,66 +382,13 @@ class ContentController extends ActionController
      * @return string
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @deprecated remove with UI editors
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
         $this->response->setContentType('application/json');
 
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
-        if (is_null($workspace)) {
-            throw new \InvalidArgumentException('Could not resolve workspace "' . $workspaceName . '"', 1651848878);
-        }
-        $subgraph = $contentRepository->getContentGraph()
-            ->getSubgraph(
-                $workspace->currentContentStreamId,
-                DimensionSpacePoint::fromArray($dimensions),
-                VisibilityConstraints::withoutRestrictions()
-            );
-        $node = $identifier
-            ? $subgraph->findNodeById(NodeAggregateId::fromString($identifier))
-            : null;
-
         $views = [];
-        if ($node instanceof Node) {
-            $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType(
-                $node->nodeType
-            );
-            foreach ($pluginViewDefinitions as $pluginViewDefinition) {
-                $label = $pluginViewDefinition->getLabel();
-
-                $views[$pluginViewDefinition->getName()] = ['label' => $label];
-
-                $pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin(
-                    $node,
-                    $pluginViewDefinition->getName()
-                );
-                if ($pluginViewNode === null) {
-                    continue;
-                }
-                $documentNode = $this->findClosestDocumentNode($pluginViewNode);
-                if ($documentNode === null) {
-                    continue;
-                }
-                $contentRepository = $this->contentRepositoryRegistry->get(
-                    $documentNode->subgraphIdentity->contentRepositoryId
-                );
-                $documentAddress = NodeAddressFactory::create($contentRepository)->createFromNode($documentNode);
-                $uri = $this->uriBuilder
-                    ->reset()
-                    ->uriFor('show', ['node' => $documentAddress->serializeForUri()], 'Frontend\Node', 'Neos.Neos');
-                $views[$pluginViewDefinition->getName()] = [
-                    'label' => $label,
-                    'pageNode' => [
-                        'title' => $documentNode->getLabel(),
-                        'uri' => $uri
-                    ]
-                ];
-            }
-        }
         return json_encode((object)$views, JSON_THROW_ON_ERROR);
     }
 
@@ -463,38 +401,12 @@ class ContentController extends ActionController
      *                          which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
      * @throws \Neos\Eel\Exception
+     * @deprecated remove with UI editors
      */
     public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-
         $this->response->setContentType('application/json');
-
-        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions(
-            WorkspaceName::fromString($workspaceName),
-            DimensionSpacePoint::fromArray($dimensions),
-            $contentRepositoryId
-        );
-
         $masterPlugins = [];
-        foreach ($pluginNodes as $pluginNode) {
-            $documentNode = $this->findClosestDocumentNode($pluginNode);
-            if ($documentNode === null) {
-                continue;
-            }
-            $translationHelper = new TranslationHelper();
-            $masterPlugins[$pluginNode->nodeAggregateId->value] = $translationHelper->translate(
-                'masterPlugins.nodeTypeOnPageLabel',
-                null,
-                [
-                    'nodeTypeName' => $translationHelper->translate($pluginNode->nodeType->getLabel()),
-                    'pageLabel' => $documentNode->getLabel()
-                ],
-                'Main',
-                'Neos.Neos'
-            );
-        }
 
         return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
     }

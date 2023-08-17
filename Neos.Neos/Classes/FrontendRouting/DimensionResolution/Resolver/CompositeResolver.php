@@ -20,6 +20,7 @@ use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverInterface;
 use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * Helper class implementing a Resolver Chain.
@@ -57,14 +58,16 @@ final class CompositeResolver implements DimensionResolverInterface
     public function fromDimensionSpacePointToUriConstraints(
         DimensionSpacePoint $filteredDimensionSpacePoint,
         DocumentNodeInfo $targetNodeInfo,
-        UriConstraints $uriConstraints
+        Site $targetSite,
+        UriConstraints $uriConstraints,
     ): UriConstraints {
         foreach (array_reverse($this->resolvers) as $resolver) {
             assert($resolver instanceof DimensionResolverInterface);
             $uriConstraints = $resolver->fromDimensionSpacePointToUriConstraints(
                 $filteredDimensionSpacePoint,
                 $targetNodeInfo,
-                $uriConstraints
+                $targetSite,
+                $uriConstraints,
             );
         }
         return $uriConstraints;

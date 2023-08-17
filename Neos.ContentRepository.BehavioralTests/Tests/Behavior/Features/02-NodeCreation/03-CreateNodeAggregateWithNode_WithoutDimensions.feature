@@ -443,3 +443,67 @@ Feature: Create node aggregate with node
     And I expect this node to have no succeeding siblings
     And I expect this node to have no references
     And I expect this node to not be referenced
+
+  Scenario: Create node aggregate with node with tethered child node of invalid configured name
+    Given I have the following NodeTypes configuration:
+    """
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:SubNode': []
+    'Neos.ContentRepository.Testing:NodeWithTetheredChildNodes':
+      childNodes:
+        invalidCasedName:
+          # transliterated invalidcasedname
+          type: 'Neos.ContentRepository.Testing:SubNode'
+        'invalidChäractörs':
+          # transliterated invalidcharactors
+          type: 'Neos.ContentRepository.Testing:SubNode'
+    """
+
+    When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
+      | Key                                | Value                                                                                    |
+      | nodeAggregateId                    | "sir-david-nodenborough"                                                                 |
+      | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes"                              |
+      | originDimensionSpacePoint          | {}                                                                                       |
+      | parentNodeAggregateId              | "lady-eleonode-rootford"                                                                 |
+      | nodeName                           | "node"                                                                                   |
+      | tetheredDescendantNodeAggregateIds | {"invalidcasedname": "nody-mc-nodeface", "invalidcharactors": "lord-from-nodding-hill"}  |
+    And the graph projection is fully up to date
+
+    And I expect the node aggregate "lady-eleonode-rootford" to exist
+    And I expect this node aggregate to be classified as "root"
+    And I expect this node aggregate to be of type "Neos.ContentRepository:Root"
+    And I expect this node aggregate to be unnamed
+    And I expect this node aggregate to occupy dimension space points [[]]
+    And I expect this node aggregate to cover dimension space points [[]]
+    And I expect this node aggregate to disable dimension space points []
+    And I expect this node aggregate to have no parent node aggregates
+    And I expect this node aggregate to have the child node aggregates ["sir-david-nodenborough"]
+
+    And I expect the node aggregate "sir-david-nodenborough" to exist
+    And I expect this node aggregate to be classified as "regular"
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:NodeWithTetheredChildNodes"
+    And I expect this node aggregate to be named "node"
+    And I expect this node aggregate to occupy dimension space points [[]]
+    And I expect this node aggregate to cover dimension space points [[]]
+    And I expect this node aggregate to have the parent node aggregates ["lady-eleonode-rootford"]
+    And I expect this node aggregate to have the child node aggregates ["nody-mc-nodeface", "lord-from-nodding-hill"]
+
+    And I expect the node aggregate "nody-mc-nodeface" to exist
+    And I expect this node aggregate to be classified as "tethered"
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:SubNode"
+    And I expect this node aggregate to be named "invalidcasedname"
+    And I expect this node aggregate to occupy dimension space points [[]]
+    And I expect this node aggregate to cover dimension space points [[]]
+    And I expect this node aggregate to disable dimension space points []
+    And I expect this node aggregate to have the parent node aggregates ["sir-david-nodenborough"]
+    And I expect this node aggregate to have no child node aggregates
+
+    And I expect the node aggregate "lord-from-nodding-hill" to exist
+    And I expect this node aggregate to be classified as "tethered"
+    And I expect this node aggregate to be of type "Neos.ContentRepository.Testing:SubNode"
+    And I expect this node aggregate to be named "invalidcharactors"
+    And I expect this node aggregate to occupy dimension space points [[]]
+    And I expect this node aggregate to cover dimension space points [[]]
+    And I expect this node aggregate to disable dimension space points []
+    And I expect this node aggregate to have the parent node aggregates ["sir-david-nodenborough"]
+    And I expect this node aggregate to have no child node aggregates
