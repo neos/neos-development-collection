@@ -18,15 +18,13 @@ use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\NodeMigration\NodeMigrationService;
+use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -124,28 +122,6 @@ class FeatureContext extends MinkContext
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
             CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
         }
-    }
-
-    protected function getContentRepositoryService(
-        ContentRepositoryId $contentRepositoryId,
-        ContentRepositoryServiceFactoryInterface $factory
-    ): ContentRepositoryServiceInterface {
-        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->getContentRepositoryRegistry()
-            ?: $this->objectManager->get(ContentRepositoryRegistry::class);
-
-        return $contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
-            $factory
-        );
-    }
-
-    protected function getContentRepositoryRegistry(): ContentRepositoryRegistry
-    {
-        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
-
-        return $contentRepositoryRegistry;
     }
 
     /**
@@ -565,16 +541,19 @@ class FeatureContext extends MinkContext
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
     }
 
-    protected function createContentRepository(
-        ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
-    ): ContentRepository {
-        return $this->contentRepository;
+    protected function getContentStreamPruner(): ContentStreamPruner
+    {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            new ContentStreamPrunerFactory()
+        );
     }
 
-    protected function getContentRepository(): ContentRepository
+    protected function getNodeMigrationService(): NodeMigrationService
     {
-        return $this->contentRepository;
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            new NodeMigrationServiceFactory()
+        );
     }
 }

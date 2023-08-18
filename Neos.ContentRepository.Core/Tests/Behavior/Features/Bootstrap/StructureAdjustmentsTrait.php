@@ -13,14 +13,11 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -30,18 +27,7 @@ trait StructureAdjustmentsTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
-
-    protected function getStructureAdjustmentService(): StructureAdjustmentService
-    {
-        return $this->getContentRepositoryRegistry()->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-            $this->currentContentRepository->id,
-            $this->currentContentRepository->getContentDimensionSource(),
-            $this->currentContentRepository->getNodeTypeManager()
-        )->buildService(
-            new StructureAdjustmentServiceFactory()
-        );
-    }
+    abstract protected function getStructureAdjustmentService(): StructureAdjustmentService;
 
     /**
      * @When /^I adjust the node structure for node type "([^"]*)"$/
@@ -85,7 +71,6 @@ trait StructureAdjustmentsTrait
 
     protected function assertEqualStructureAdjustments(TableNode $expectedAdjustments, array $actualAdjustments): void
     {
-        $convertedViolations = [];
         Assert::assertCount(count($expectedAdjustments->getHash()), $actualAdjustments, 'Number of adjustments must match.');
 
         foreach ($expectedAdjustments->getHash() as $i => $row) {

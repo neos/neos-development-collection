@@ -14,13 +14,12 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  */
 
 use Behat\Gherkin\Node\PyStringNode;
-use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
+use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -29,8 +28,6 @@ use Symfony\Component\Yaml\Yaml;
 trait MigrationsTrait
 {
     use CRTestSuiteRuntimeVariables;
-
-    abstract protected function getContentRepositoryRegistry(): ContentRepositoryRegistry;
 
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:
@@ -43,14 +40,11 @@ trait MigrationsTrait
             explode(',', $contentStreams)
         );
         $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
-        $nodeMigrationService = $this->getContentRepositoryRegistry()->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-            $this->currentContentRepository->id,
-            $this->currentContentRepository->getContentDimensionSource(),
-            $this->currentContentRepository->getNodeTypeManager()
-        )->buildService(new NodeMigrationServiceFactory());
 
-        $nodeMigrationService->executeMigration($command);
+        $this->getNodeMigrationService()->executeMigration($command);
     }
+
+    abstract protected function getNodeMigrationService(): NodeMigrationService;
 
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams and exceptions are caught:

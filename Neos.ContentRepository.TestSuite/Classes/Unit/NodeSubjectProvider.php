@@ -39,8 +39,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer;
-use Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\ProxyAwareObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Serializer;
@@ -69,9 +67,7 @@ final class NodeSubjectProvider
                 new ValueObjectFloatDenormalizer(),
                 new ValueObjectIntDenormalizer(),
                 new ValueObjectStringDenormalizer(),
-                new DoctrinePersistentObjectNormalizer(),
-                new CollectionTypeDenormalizer(),
-                new ProxyAwareObjectNormalizer()
+                new CollectionTypeDenormalizer()
             ])
         );
     }

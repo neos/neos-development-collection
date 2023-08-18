@@ -17,9 +17,6 @@ use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
@@ -31,7 +28,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -334,10 +330,9 @@ trait CRTestSuiteTrait
     /**
      * @When I prune unused content streams
      */
-    public function iPruneUnusedContentStreams()
+    public function iPruneUnusedContentStreams(): void
     {
-        /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryService($this->currentContentRepository->id, new ContentStreamPrunerFactory());
+        $contentStreamPruner = $this->getContentStreamPruner();
         $contentStreamPruner->prune();
         $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
@@ -345,12 +340,12 @@ trait CRTestSuiteTrait
     /**
      * @When I prune removed content streams from the event stream
      */
-    public function iPruneRemovedContentStreamsFromTheEventStream()
+    public function iPruneRemovedContentStreamsFromTheEventStream(): void
     {
-        /** @var ContentStreamPruner $contentStreamPruner */
-        $contentStreamPruner = $this->getContentRepositoryService($this->currentContentRepository->id, new ContentStreamPrunerFactory());
-        $contentStreamPruner->pruneRemovedFromEventStream();
+        $this->getContentStreamPruner()->pruneRemovedFromEventStream();
     }
+
+    abstract protected function getContentStreamPruner(): ContentStreamPruner;
 
     /**
      * @When I replay the :projectionName projection
@@ -360,11 +355,6 @@ trait CRTestSuiteTrait
         $this->currentContentRepository->resetProjectionState($projectionName);
         $this->currentContentRepository->catchUpProjection($projectionName);
     }
-
-    abstract protected function getContentRepositoryService(
-        ContentRepositoryId $contentRepositoryId,
-        ContentRepositoryServiceFactoryInterface $factory
-    ): ContentRepositoryServiceInterface;
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
     {

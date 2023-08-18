@@ -17,8 +17,9 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
@@ -32,8 +33,8 @@ use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PHPUnit\Framework\Assert;
@@ -46,6 +47,7 @@ class FeatureContext implements Context
 {
     use FlowContextTrait;
     use CRTestSuiteTrait;
+    use CRRegistrySubjectProvider;
 
     protected $isolated = false;
 
@@ -352,21 +354,11 @@ class FeatureContext implements Context
         }, $table->getHash());
     }
 
-    protected function createContentRepository(
-        \Neos\ContentRepository\Core\Factory\ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
-    ): ContentRepository {
-        return $this->contentRepository;
-    }
-
-    protected function initCleanContentRepository(array $adapterKeys): void
+    protected function getContentStreamPruner(): ContentStreamPruner
     {
-    }
-
-    protected function getContentRepositoryService(
-        \Neos\ContentRepository\Core\Factory\ContentRepositoryId $contentRepositoryId,
-        \Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface $factory
-    ): \Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            new ContentStreamPrunerFactory()
+        );
     }
 }
