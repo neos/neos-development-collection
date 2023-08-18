@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CurrentSubgraphTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeDisabling;
