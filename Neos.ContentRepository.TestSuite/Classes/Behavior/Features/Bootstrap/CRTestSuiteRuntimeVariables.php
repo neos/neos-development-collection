@@ -18,10 +18,14 @@ use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClock;
 use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProvider;
 
@@ -43,6 +47,10 @@ trait CRTestSuiteRuntimeVariables
     protected ?CommandResult $lastCommandOrEventResult = null;
 
     protected ?\Exception $lastCommandException = null;
+
+    protected ?Node $currentNode = null;
+
+    protected ?NodeAggregate $currentNodeAggregate = null;
 
     /**
      * @Given /^I am in content repository "([^"]*)"$/
@@ -82,6 +90,19 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
+     * @Given /^I am in the active content stream of workspace "([^"]*)"$/
+     * @throws \Exception
+     */
+    public function iAmInTheActiveContentStreamOfWorkspace(string $workspaceName): void
+    {
+        $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($workspaceName));
+        if ($workspace === null) {
+            throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
+        }
+        $this->currentContentStreamId = $workspace->currentContentStreamId;
+    }
+
+    /**
      * @Given /^I am in dimension space point (.*)$/
      */
     public function iAmInDimensionSpacePoint(string $dimensionSpacePoint): void
@@ -99,6 +120,16 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
+     * @Given /^I am in the active content stream of workspace "([^"]*)" and dimension space point (.*)$/
+     * @throws \Exception
+     */
+    public function iAmInTheActiveContentStreamOfWorkspaceAndDimensionSpacePoint(string $workspaceName, string $dimensionSpacePoint): void
+    {
+        $this->iAmInTheActiveContentStreamOfWorkspace($workspaceName);
+        $this->iAmInDimensionSpacePoint($dimensionSpacePoint);
+    }
+
+    /**
      * @When /^VisibilityConstraints are set to "(withoutRestrictions|frontend)"$/
      */
     public function visibilityConstraintsAreSetTo(string $restrictionType): void
@@ -108,5 +139,20 @@ trait CRTestSuiteRuntimeVariables
             'frontend' => VisibilityConstraints::frontend(),
             default => throw new \InvalidArgumentException('Visibility constraint "' . $restrictionType . '" not supported.'),
         };
+    }
+
+    public function getCurrentSubgraph(): ContentSubgraphInterface
+    {
+        return $this->currentContentRepository->getContentGraph()->getSubgraph(
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
+            $this->currentVisibilityConstraints
+        );
+    }
+
+    protected function getCurrentNodeAggregateId(): NodeAggregateId
+    {
+        assert($this->currentNode instanceof Node);
+        return $this->currentNode->nodeAggregateId;
     }
 }

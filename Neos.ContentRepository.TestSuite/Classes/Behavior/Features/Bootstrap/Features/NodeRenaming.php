@@ -28,10 +28,6 @@ trait NodeRenaming
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function readPayloadTable(TableNode $payloadTable): array;
-
-    abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
-
     /**
      * @Then /^I expect the node "([^"]*)" to have the name "([^"]*)"$/
      * @param string $nodeAggregateId
@@ -39,10 +35,7 @@ trait NodeRenaming
      */
     public function iExpectTheNodeToHaveTheName(string $nodeAggregateId, string $nodeName)
     {
-        foreach ($this->getCurrentSubgraphs() as $adapterName => $subgraph) {
-            assert($subgraph instanceof ContentSubgraphInterface);
-            $node = $subgraph->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
-            Assert::assertEquals($nodeName, $node->nodeName->value, 'Node Names do not match in adapter ' . $adapterName);
-        }
+        $node = $this->getCurrentSubgraph()->findNodeById(NodeAggregateId::fromString($nodeAggregateId));
+        Assert::assertEquals($nodeName, $node->nodeName->value, 'Node Names do not match');
     }
 }

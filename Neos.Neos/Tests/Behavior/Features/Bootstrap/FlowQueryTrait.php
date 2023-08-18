@@ -16,7 +16,6 @@ use Neos\ContentRepository\NodeAccess\FlowQueryOperations\FindOperation;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\Eel\FlowQuery\FlowQuery;
 use PHPUnit\Framework\Assert;
 
@@ -44,8 +43,6 @@ trait FlowQueryTrait
      * @var DimensionSpacePoint
      */
     private ?DimensionSpacePoint $dimensionSpacePoint = null;
-
-    abstract protected function getAvailableContentGraphs(): ContentGraphs;
 
     /**
      * @When /^I have a FlowQuery with node "([^"]*)"$/

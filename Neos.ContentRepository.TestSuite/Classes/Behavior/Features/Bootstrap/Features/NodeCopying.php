@@ -15,15 +15,12 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Command\CopyNodesRecursively;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodesByAdapter;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 
 /**
@@ -33,28 +30,19 @@ trait NodeCopying
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getAvailableContentGraphs(): ContentGraphs;
-
-    abstract protected function getCurrentNodes(): ?NodesByAdapter;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
      * @When /^the command CopyNodesRecursively is executed, copying the current node aggregate with payload:$/
      */
-    public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable)
+    public function theCommandCopyNodesRecursivelyIsExecutedCopyingTheCurrentNodeAggregateWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentGraphs = $this->getAvailableContentGraphs()->getIterator()->getArrayCopy();
-        $contentGraph = reset($contentGraphs);
-        assert($contentGraph instanceof ContentGraphInterface);
-        $subgraph = $contentGraph->getSubgraph(
+        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph(
             $this->currentContentStreamId,
             $this->currentDimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $currentNodes = $this->getCurrentNodes()->getIterator()->getArrayCopy();
-        $currentNode = reset($currentNodes);
         $targetDimensionSpacePoint = isset($commandArguments['targetDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['targetDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
@@ -67,7 +55,7 @@ trait NodeCopying
 
         $command = CopyNodesRecursively::createFromSubgraphAndStartNode(
             $subgraph,
-            $currentNode,
+            $this->currentNode,
             $targetDimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['targetParentNodeAggregateId']),
             $targetSucceedingSiblingNodeAggregateId,

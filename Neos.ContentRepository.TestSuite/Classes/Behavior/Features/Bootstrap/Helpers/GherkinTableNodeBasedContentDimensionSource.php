@@ -29,11 +29,11 @@ use Neos\Utility\Arrays;
 /**
  * The node creation trait for behavioral tests
  */
-final readonly class GherkinTableNodeBasedContentDimensionSource implements ContentDimensionSourceInterface
+final class GherkinTableNodeBasedContentDimensionSource implements ContentDimensionSourceInterface
 {
     private function __construct(
         /** @var array<string,ContentDimension> */
-        private array $contentDimensions
+        private readonly array $contentDimensions
     ) {
     }
 

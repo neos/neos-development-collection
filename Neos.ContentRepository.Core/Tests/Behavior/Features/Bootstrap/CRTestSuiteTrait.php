@@ -19,19 +19,16 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
@@ -80,24 +77,10 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function getAvailableContentGraphs(): ContentGraphs
-    {
-        return new ContentGraphs([
-            'DoctrineDBAL' => $this->currentContentRepository->getContentGraph()
-        ]);
-    }
-
-    protected function getActiveContentGraphs(): ContentGraphs
-    {
-        return new ContentGraphs([
-            'DoctrineDBAL' => $this->currentContentRepository->getContentGraph()
-        ]);
-    }
-
     private bool $alwaysRunContentRepositorySetup = false;
     private bool $raceConditionTrackerEnabled = false;
 
-    protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false)
+    protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false): void
     {
         $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
     }
@@ -109,7 +92,7 @@ trait CRTestSuiteTrait
      * It is helpful to do this during debugging; in order to figure out whether an issue is an actual bug
      * or a situation which can only happen during test runs.
      */
-    public function logToRaceConditionTracker(array $payload)
+    public function logToRaceConditionTracker(array $payload): void
     {
         if ($this->raceConditionTrackerEnabled) {
             RedisInterleavingLogger::trace(TraceEntryType::DebugLog, $payload);
@@ -124,7 +107,7 @@ trait CRTestSuiteTrait
      * @return void
      * @throws \Exception
      */
-    public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope)
+    public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope): void
     {
         $this->contentDimensionsToUse = null;
         $this->contentRepositories = [];
@@ -133,8 +116,8 @@ trait CRTestSuiteTrait
         $this->currentDimensionSpacePoint = null;
         $this->currentRootNodeAggregateId = null;
         $this->currentContentStreamId = null;
-        $this->currentNodeAggregates = null;
-        $this->currentNodes = null;
+        $this->currentNodeAggregate = null;
+        $this->currentNode = null;
     }
 
     /**
@@ -150,7 +133,7 @@ trait CRTestSuiteTrait
                 // Special case: Referencing stuff from the context here
                 $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
-                    'currentNodeAggregateId' => $this->currentNodeAggregateId()->value,
+                    'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
                     'contentStreamId' => $this->currentContentStreamId->value,
                     default => method_exists($this, $propertyOrMethodName) ? (string)$this->$propertyOrMethodName() : (string)$this->$propertyOrMethodName,
                 };
@@ -165,18 +148,6 @@ trait CRTestSuiteTrait
         }
 
         return $eventPayload;
-    }
-
-    /**
-     * called by {@see readPayloadTable()} above, from RebasingAutoCreatedChildNodesWorks.feature
-     * @return NodeAggregateId
-     */
-    protected function currentNodeAggregateId(): NodeAggregateId
-    {
-        $currentNodes = $this->currentNodes->getIterator()->getArrayCopy();
-        $firstNode = reset($currentNodes);
-        assert($firstNode instanceof Node);
-        return $firstNode->nodeAggregateId;
     }
 
     /**
@@ -223,12 +194,10 @@ trait CRTestSuiteTrait
      * @Then /^I expect the graph projection to consist of exactly (\d+) node(?:s)?$/
      * @param int $expectedNumberOfNodes
      */
-    public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes)
+    public function iExpectTheGraphProjectionToConsistOfExactlyNodes(int $expectedNumberOfNodes): void
     {
-        foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
-            $actualNumberOfNodes = $contentGraph->countNodes();
-            Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph in adapter "' . $adapterName . '" consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
-        }
+        $actualNumberOfNodes = $this->currentContentRepository->getContentGraph()->countNodes();
+        Assert::assertSame($expectedNumberOfNodes, $actualNumberOfNodes, 'Content graph consists of ' . $actualNumberOfNodes . ' nodes, expected were ' . $expectedNumberOfNodes . '.');
     }
 
     /**
@@ -242,31 +211,27 @@ trait CRTestSuiteTrait
     ): void {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
         $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
-        foreach ($this->getActiveContentGraphs() as $adapterName => $contentGraph) {
-            assert($contentGraph instanceof ContentGraphInterface);
-            $expectedRows = $table->getHash();
+        $expectedRows = $table->getHash();
 
-            $subtree = $contentGraph
-                ->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints)
-                ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
+        $subtree = $this->getCurrentSubgraph()
+            ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
 
-            /** @var Subtree[] $flattenedSubtree */
-            $flattenedSubtree = [];
-            if ($subtree !== null) {
-                self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
-            }
+        /** @var Subtree[] $flattenedSubtree */
+        $flattenedSubtree = [];
+        if ($subtree !== null) {
+            self::flattenSubtreeForComparison($subtree, $flattenedSubtree);
+        }
 
-            Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match (adapter: ' . $adapterName . ')');
+        Assert::assertEquals(count($expectedRows), count($flattenedSubtree), 'number of expected subtrees do not match');
 
-            foreach ($expectedRows as $i => $expectedRow) {
-                $expectedLevel = (int)$expectedRow['Level'];
-                $actualLevel = $flattenedSubtree[$i]->level;
-                Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel . ' (adapter: ' . $adapterName . ')');
-                $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
-                $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
-                Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId),
-                    'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '" (adapter: ' . $adapterName . ')');
-            }
+        foreach ($expectedRows as $i => $expectedRow) {
+            $expectedLevel = (int)$expectedRow['Level'];
+            $actualLevel = $flattenedSubtree[$i]->level;
+            Assert::assertSame($expectedLevel, $actualLevel, 'Level does not match in index ' . $i . ', expected: ' . $expectedLevel . ', actual: ' . $actualLevel);
+            $expectedNodeAggregateId = NodeAggregateId::fromString($expectedRow['nodeAggregateId']);
+            $actualNodeAggregateId = $flattenedSubtree[$i]->node->nodeAggregateId;
+            Assert::assertTrue($expectedNodeAggregateId->equals($actualNodeAggregateId),
+                'NodeAggregateId does not match in index ' . $i . ', expected: "' . $expectedNodeAggregateId->value . '", actual: "' . $actualNodeAggregateId->value . '"');
         }
     }
 
@@ -296,15 +261,14 @@ trait CRTestSuiteTrait
             return $this->currentRootNodeAggregateId;
         }
 
-        $contentGraphs = $this->getActiveContentGraphs()->getIterator()->getArrayCopy();
-        $contentGraph = reset($contentGraphs);
-        $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType($this->currentContentStreamId, NodeTypeName::fromString('Neos.Neos:Sites'));
-        if ($sitesNodeAggregate) {
-            assert($sitesNodeAggregate instanceof NodeAggregate);
-            return $sitesNodeAggregate->nodeAggregateId;
+        try {
+            return $this->currentContentRepository->getContentGraph()->findRootNodeAggregateByType(
+                $this->currentContentStreamId,
+                NodeTypeName::fromString('Neos.Neos:Sites')
+            )->nodeAggregateId;
+        } catch (RootNodeAggregateDoesNotExist) {
+            return null;
         }
-
-        return null;
     }
 
     /**

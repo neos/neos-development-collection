@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -43,7 +44,7 @@ use PHPUnit\Framework\Assert;
  */
 trait NodeTraversalTrait
 {
-    use CurrentSubgraphTrait;
+    use CRTestSuiteRuntimeVariables;
 
     /**
      * @When /^I execute the findChildNodes query for parent node aggregate id "(?<parentNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the nodes "(?<expectedNodeIdsSerialized>[^"]*)"|no nodes) to be returned( and the total count to be (?<expectedTotalCount>\d+))?$/
@@ -54,14 +55,12 @@ trait NodeTraversalTrait
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindChildNodesFilter::create(...$filterValues);
+        $subgraph = $this->getCurrentSubgraph();
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findChildNodes($parentNodeAggregateId, $filter)));
-            Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findChildNodes returned an unexpected result');
-            $actualCount = $subgraph->countChildNodes($parentNodeAggregateId, CountChildNodesFilter::fromFindChildNodesFilter($filter));
-            Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countChildNodes returned an unexpected result');
-        }
+        $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findChildNodes($parentNodeAggregateId, $filter)));
+        Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findChildNodes returned an unexpected result');
+        $actualCount = $subgraph->countChildNodes($parentNodeAggregateId, CountChildNodesFilter::fromFindChildNodesFilter($filter));
+        Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countChildNodes returned an unexpected result');
     }
 
     /**
@@ -73,17 +72,15 @@ trait NodeTraversalTrait
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindReferencesFilter::create(...$filterValues);
+        $subgraph = $this->getCurrentSubgraph();
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualReferences = array_map(static fn(Reference $reference) => [
-                'nodeAggregateId' => $reference->node->nodeAggregateId->value,
-                'name' => $reference->name->value,
-                'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
-            ], iterator_to_array($subgraph->findReferences($nodeAggregateId, $filter)));
-            Assert::assertSame($expectedReferences, $actualReferences);
-            Assert::assertSame($expectedTotalCount ?? count($expectedReferences), $subgraph->countReferences($nodeAggregateId, CountReferencesFilter::fromFindReferencesFilter($filter)));
-        }
+        $actualReferences = array_map(static fn(Reference $reference) => [
+            'nodeAggregateId' => $reference->node->nodeAggregateId->value,
+            'name' => $reference->name->value,
+            'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
+        ], iterator_to_array($subgraph->findReferences($nodeAggregateId, $filter)));
+        Assert::assertSame($expectedReferences, $actualReferences);
+        Assert::assertSame($expectedTotalCount ?? count($expectedReferences), $subgraph->countReferences($nodeAggregateId, CountReferencesFilter::fromFindReferencesFilter($filter)));
     }
 
     /**
@@ -95,17 +92,14 @@ trait NodeTraversalTrait
         $expectedReferences = $referencesSerialized !== null ? json_decode($referencesSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindBackReferencesFilter::create(...$filterValues);
-
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualReferences = array_map(static fn(Reference $reference) => [
-                'nodeAggregateId' => $reference->node->nodeAggregateId->value,
-                'name' => $reference->name->value,
-                'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
-            ], iterator_to_array($subgraph->findBackReferences($nodeAggregateId, $filter)));
-            Assert::assertSame($expectedReferences, $actualReferences);
-            Assert::assertSame($expectedTotalCount ?? count($expectedReferences), $subgraph->countBackReferences($nodeAggregateId, CountBackReferencesFilter::fromFindBackReferencesFilter($filter)));
-        }
+        $subgraph = $this->getCurrentSubgraph();
+        $actualReferences = array_map(static fn(Reference $reference) => [
+            'nodeAggregateId' => $reference->node->nodeAggregateId->value,
+            'name' => $reference->name->value,
+            'properties' => json_decode(json_encode($reference->properties?->serialized(), JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR)
+        ], iterator_to_array($subgraph->findBackReferences($nodeAggregateId, $filter)));
+        Assert::assertSame($expectedReferences, $actualReferences);
+        Assert::assertSame($expectedTotalCount ?? count($expectedReferences), $subgraph->countBackReferences($nodeAggregateId, CountBackReferencesFilter::fromFindBackReferencesFilter($filter)));
     }
 
     /**
@@ -117,11 +111,8 @@ trait NodeTraversalTrait
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNode = $subgraph->findNodeById($nodeAggregateId);
-            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
-        }
+        $actualNode = $this->getCurrentSubgraph()->findNodeById($nodeAggregateId);
+        Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
     /**
@@ -133,11 +124,8 @@ trait NodeTraversalTrait
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualParentNode = $subgraph->findParentNode($nodeAggregateId);
-            Assert::assertSame($actualParentNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
-        }
+        $actualParentNode = $this->getCurrentSubgraph()->findParentNode($nodeAggregateId);
+        Assert::assertSame($actualParentNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
     /**
@@ -150,10 +138,8 @@ trait NodeTraversalTrait
         $startingNodeAggregateId = NodeAggregateId::fromString($startingNodeIdSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNode = $subgraph->findNodeByPath($path, $startingNodeAggregateId);
-            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
-        }
+        $actualNode = $this->getCurrentSubgraph()->findNodeByPath($path, $startingNodeAggregateId);
+        Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
     /**
@@ -165,10 +151,8 @@ trait NodeTraversalTrait
         $path = AbsoluteNodePath::fromString($pathSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNode = $subgraph->findNodeByAbsolutePath($path);
-            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
-        }
+        $actualNode = $this->getCurrentSubgraph()->findNodeByAbsolutePath($path);
+        Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
     /**
@@ -181,11 +165,8 @@ trait NodeTraversalTrait
         $edgeName = NodeName::fromString($edgeNameSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNode = $subgraph->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
-            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
-        }
+        $actualNode = $this->getCurrentSubgraph()->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
+        Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 
     /**
@@ -198,11 +179,11 @@ trait NodeTraversalTrait
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindSucceedingSiblingNodesFilter::create(...$filterValues);
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter)));
-            Assert::assertSame($expectedNodeIds, $actualNodeIds);
-        }
+        $actualNodeIds = array_map(
+            static fn(Node $node) => $node->nodeAggregateId->value,
+            iterator_to_array($this->getCurrentSubgraph()->findSucceedingSiblingNodes($siblingNodeAggregateId, $filter))
+        );
+        Assert::assertSame($expectedNodeIds, $actualNodeIds);
     }
 
     /**
@@ -215,11 +196,11 @@ trait NodeTraversalTrait
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindPrecedingSiblingNodesFilter::create(...$filterValues);
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter)));
-            Assert::assertSame($expectedNodeIds, $actualNodeIds);
-        }
+        $actualNodeIds = array_map(
+            static fn(Node $node) => $node->nodeAggregateId->value,
+            iterator_to_array($this->getCurrentSubgraph()->findPrecedingSiblingNodes($siblingNodeAggregateId, $filter))
+        );
+        Assert::assertSame($expectedNodeIds, $actualNodeIds);
     }
 
     /**
@@ -228,23 +209,17 @@ trait NodeTraversalTrait
      */
     public function iExecuteTheRetrieveNodePathQueryIExpectTheFollowingNodes(string $nodeIdSerialized, string $expectedPathSerialized = null, string $expectedExceptionMessage = null): void
     {
-        $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
-
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            try {
-                $actualNodePath = $subgraph->retrieveNodePath($nodeAggregateId);
-            } catch (\InvalidArgumentException $exception) {
-                if ($expectedExceptionMessage === null) {
-                    throw $exception;
-                }
-                Assert::assertSame($expectedExceptionMessage, $exception->getMessage(), 'Exception message mismatch');
-                continue;
-            }
+        try {
+            $actualNodePath = $this->getCurrentSubgraph()->retrieveNodePath(NodeAggregateId::fromString($nodeIdSerialized));
             if ($expectedExceptionMessage !== null) {
                 Assert::fail('Expected an exception but none was thrown');
             }
             Assert::assertSame($expectedPathSerialized, $actualNodePath->serializeToString());
+        } catch (\InvalidArgumentException $exception) {
+            if ($expectedExceptionMessage === null) {
+                throw $exception;
+            }
+            Assert::assertSame($expectedExceptionMessage, $exception->getMessage(), 'Exception message mismatch');
         }
     }
 
@@ -260,22 +235,19 @@ trait NodeTraversalTrait
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindSubtreeFilter::create(...$filterValues);
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $result = [];
-            $subtreeStack = [];
-            $subtree = $subgraph->findSubtree($entryNodeAggregateId, $filter);
-            if ($subtree !== null) {
-                $subtreeStack[] = $subtree;
-            }
-            while ($subtreeStack !== []) {
-                /** @var Subtree $subtree */
-                $subtree = array_shift($subtreeStack);
-                $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value;
-                $subtreeStack = [...$subtree->children, ...$subtreeStack];
-            }
-            Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));
+        $result = [];
+        $subtreeStack = [];
+        $subtree = $this->getCurrentSubgraph()->findSubtree($entryNodeAggregateId, $filter);
+        if ($subtree !== null) {
+            $subtreeStack[] = $subtree;
         }
+        while ($subtreeStack !== []) {
+            /** @var Subtree $subtree */
+            $subtree = array_shift($subtreeStack);
+            $result[] = str_repeat(' ', $subtree->level) . $subtree->node->nodeAggregateId->value;
+            $subtreeStack = [...$subtree->children, ...$subtreeStack];
+        }
+        Assert::assertSame($expectedTree?->getRaw() ?? '', implode(chr(10), $result));
     }
 
     /**
@@ -287,13 +259,12 @@ trait NodeTraversalTrait
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindDescendantNodesFilter::create(...$filterValues);
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
-            Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
-            $actualCount = $subgraph->countDescendantNodes($entryNodeAggregateId, CountDescendantNodesFilter::fromFindDescendantNodesFilter($filter));
-            Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countDescendantNodes returned an unexpected result');
-        }
+        $subgraph = $this->getCurrentSubgraph();
+
+        $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
+        Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
+        $actualCount = $subgraph->countDescendantNodes($entryNodeAggregateId, CountDescendantNodesFilter::fromFindDescendantNodesFilter($filter));
+        Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countDescendantNodes returned an unexpected result');
     }
 
     /**
@@ -305,12 +276,11 @@ trait NodeTraversalTrait
         $expectedNodeIds = array_filter(explode(',', $expectedNodeIdsSerialized));
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
         $filter = FindAncestorNodesFilter::create(...$filterValues);
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findAncestorNodes($entryNodeAggregateId, $filter)));
-            Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
-            $actualCount = $subgraph->countAncestorNodes($entryNodeAggregateId, CountAncestorNodesFilter::fromFindAncestorNodesFilter($filter));
-            Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countAncestorNodes returned an unexpected result');
-        }
+        $subgraph = $this->getCurrentSubgraph();
+        $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findAncestorNodes($entryNodeAggregateId, $filter)));
+        Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
+        $actualCount = $subgraph->countAncestorNodes($entryNodeAggregateId, CountAncestorNodesFilter::fromFindAncestorNodesFilter($filter));
+        Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countAncestorNodes returned an unexpected result');
     }
 
     /**
@@ -318,10 +288,7 @@ trait NodeTraversalTrait
      */
     public function iExecuteTheCountNodesQueryIExpectTheFollowingResult(int $expectedResult): void
     {
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            Assert::assertSame($expectedResult, $subgraph->countNodes());
-        }
+        Assert::assertSame($expectedResult, $this->getCurrentSubgraph()->countNodes());
     }
 
     /**
@@ -331,20 +298,18 @@ trait NodeTraversalTrait
     {
         $nodeAggregateId = NodeAggregateId::fromString($nodeIdSerialized);
         $expectedTimestamps = array_map(static fn (string $timestamp) => $timestamp === '' ? null : \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $timestamp), $expectedTimestampsTable->getHash()[0]);
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $node = $subgraph->findNodeById($nodeAggregateId);
-            if ($node === null) {
-                Assert::fail(sprintf('Failed to find node with aggregate id "%s"', $nodeAggregateId->value));
-            }
-            $actualTimestamps = [
-                'created' => $node->timestamps->created,
-                'originalCreated' => $node->timestamps->originalCreated,
-                'lastModified' => $node->timestamps->lastModified,
-                'originalLastModified' => $node->timestamps->originalLastModified,
-            ];
-            Assert::assertEquals($expectedTimestamps, $actualTimestamps);
+
+        $node = $this->getCurrentSubgraph()->findNodeById($nodeAggregateId);
+        if ($node === null) {
+            Assert::fail(sprintf('Failed to find node with aggregate id "%s"', $nodeAggregateId->value));
         }
+        $actualTimestamps = [
+            'created' => $node->timestamps->created,
+            'originalCreated' => $node->timestamps->originalCreated,
+            'lastModified' => $node->timestamps->lastModified,
+            'originalLastModified' => $node->timestamps->originalLastModified,
+        ];
+        Assert::assertEquals($expectedTimestamps, $actualTimestamps);
     }
 
 
@@ -358,10 +323,7 @@ trait NodeTraversalTrait
             ? NodeAggregateId::fromString($serializedExpectedNodeId)
             : null;
 
-        /** @var ContentSubgraphInterface $subgraph */
-        foreach ($this->getCurrentSubgraphs() as $subgraph) {
-            $actualNode = $subgraph->findRootNodeByType(NodeTypeName::fromString($serializedNodeTypeName));
-            Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
-        }
+        $actualNode = $this->getCurrentSubgraph()->findRootNodeByType(NodeTypeName::fromString($serializedNodeTypeName));
+        Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 }

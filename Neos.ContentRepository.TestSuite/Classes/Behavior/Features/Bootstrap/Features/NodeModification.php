@@ -100,8 +100,8 @@ trait NodeModification
      */
     public function iExpectThisNodeToNotHaveTheProperty(string $propertyName)
     {
-        $this->assertOnCurrentNodes(function (Node $currentNode, string $adapterName) use ($propertyName) {
-            Assert::assertFalse($currentNode->hasProperty($propertyName), 'Node should not exist for adapter ' . $adapterName);
+        $this->assertOnCurrentNode(function (Node $currentNode) use ($propertyName) {
+            Assert::assertFalse($currentNode->hasProperty($propertyName), 'Node should not exist');
         });
     }
 }
