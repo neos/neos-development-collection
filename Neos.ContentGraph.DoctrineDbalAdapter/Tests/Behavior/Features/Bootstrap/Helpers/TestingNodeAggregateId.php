@@ -1,8 +1,7 @@
-<?php declare(strict_types=1);
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
+<?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,6 +9,10 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers;
 
 /**
  * The testing node aggregate identifier value object

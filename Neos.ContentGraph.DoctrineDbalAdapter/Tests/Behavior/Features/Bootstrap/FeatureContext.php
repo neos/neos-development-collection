@@ -13,32 +13,10 @@ declare(strict_types=1);
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/ContentStreamForking.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeCopying.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeCreation.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeDisabling.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeModification.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeMove.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeReferencing.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeRemoval.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeRenaming.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeTypeChange.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/NodeVariation.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspaceCreation.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspaceDiscarding.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/Features/WorkspacePublishing.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 
+use Behat\Behat\Context\Context as BehatContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
@@ -48,24 +26,26 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Utility\Environment;
 
 /**
  * Features context
  */
-class FeatureContext implements \Behat\Behat\Context\Context
+class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
     use IsolatedBehatStepsTrait;
     use ProjectionIntegrityViolationDetectionTrait;
-    use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+    use CRTestSuiteTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
-    protected ?ContentRepositoryRegistry $contentRepositoryRegistry = null;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
     private ContentRepository $contentRepository;
 
     public function __construct()
@@ -76,6 +56,7 @@ class FeatureContext implements \Behat\Behat\Context\Context
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->setupEventSourcedTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();
+        $this->contentRepository = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
     /**
@@ -86,23 +67,11 @@ class FeatureContext implements \Behat\Behat\Context\Context
         return $this->objectManager;
     }
 
-    /**
-     * @return Environment
-     */
-    protected function getEnvironment()
-    {
-        return $this->objectManager->get(Environment::class);
-    }
-
     protected function getContentRepositoryService(
         ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface {
-        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->contentRepositoryRegistry
-            ?: $this->objectManager->get(ContentRepositoryRegistry::class);
-
-        return $contentRepositoryRegistry->buildService(
+        return $this->contentRepositoryRegistry->buildService(
             $contentRepositoryId,
             $factory
         );
@@ -113,6 +82,23 @@ class FeatureContext implements \Behat\Behat\Context\Context
         ContentDimensionSourceInterface $contentDimensionSource,
         NodeTypeManager $nodeTypeManager
     ): ContentRepository {
-        return $this->contentRepository;
+        return $this->contentRepositoryRegistry->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
+            $contentRepositoryId,
+            $contentDimensionSource,
+            $nodeTypeManager
+        )->getOrBuild();
+    }
+
+    protected function getContentRepository(ContentRepositoryId $id): ContentRepository
+    {
+        return $this->contentRepositoryRegistry->get($id);
+    }
+
+    protected function getContentStreamPruner(): ContentStreamPruner
+    {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            new ContentStreamPrunerFactory()
+        );
     }
 }

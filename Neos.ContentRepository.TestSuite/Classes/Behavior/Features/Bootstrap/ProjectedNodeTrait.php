@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
@@ -27,13 +29,12 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\NodeDiscriminator;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\NodeDiscriminator;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -44,8 +45,6 @@ trait ProjectedNodeTrait
     use CRTestSuiteRuntimeVariables;
 
     abstract protected function getRootNodeAggregateId(): ?NodeAggregateId;
-
-    abstract protected function readPayloadTable(TableNode $payloadTable): array;
 
     /**
      * @When /^I go to the parent node of node aggregate "([^"]*)"$/
@@ -82,15 +81,15 @@ trait ProjectedNodeTrait
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
             $currentNode = $contentGraph->findNodeByIdAndOriginDimensionSpacePoint(
-                $nodeDiscriminator->getContentStreamId(),
-                $nodeDiscriminator->getNodeAggregateId(),
-                $nodeDiscriminator->getOriginDimensionSpacePoint()
+                $nodeDiscriminator->contentStreamId,
+                $nodeDiscriminator->nodeAggregateId,
+                $nodeDiscriminator->originDimensionSpacePoint
             );
             Assert::assertNotNull(
                 $currentNode,
-                'Node with aggregate id "' . $nodeDiscriminator->getNodeAggregateId()->value
-                . '" and originating in dimension space point "' . $nodeDiscriminator->getOriginDimensionSpacePoint()->toJson()
-                . '" was not found in content stream "' . $nodeDiscriminator->getContentStreamId()->value . '"'
+                'Node with aggregate id "' . $nodeDiscriminator->nodeAggregateId->value
+                . '" and originating in dimension space point "' . $nodeDiscriminator->originDimensionSpacePoint->toJson()
+                . '" was not found in content stream "' . $nodeDiscriminator->contentStreamId->value . '"'
             );
 
             return $currentNode;

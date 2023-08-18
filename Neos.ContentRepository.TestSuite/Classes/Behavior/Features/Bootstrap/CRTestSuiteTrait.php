@@ -1,10 +1,7 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -13,10 +10,12 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
-use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
@@ -29,9 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotEx
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CurrentSubgraphTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeDisabling;
@@ -78,34 +75,14 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    private bool $alwaysRunContentRepositorySetup = false;
-    private bool $raceConditionTrackerEnabled = false;
-
     protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false): void
     {
-        $this->alwaysRunContentRepositorySetup = $alwaysRunCrSetup;
     }
-
-    /**
-     * This function logs a message into the race condition tracker's event log,
-     * which can be inspected by calling ./flow raceConditionTracker:analyzeTrace.
-     *
-     * It is helpful to do this during debugging; in order to figure out whether an issue is an actual bug
-     * or a situation which can only happen during test runs.
-     */
-    public function logToRaceConditionTracker(array $payload): void
-    {
-        if ($this->raceConditionTrackerEnabled) {
-            RedisInterleavingLogger::trace(TraceEntryType::DebugLog, $payload);
-        }
-    }
-
 
     private static bool $wasContentRepositorySetupCalled = false;
 
     /**
-     * @BeforeScenario @contentrepository
-     * @return void
+     * @BeforeScenario
      * @throws \Exception
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope): void
@@ -122,17 +99,16 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @param TableNode $payloadTable
-     * @return array
+     * @return array<string,mixed>
      * @throws \Exception
      */
     protected function readPayloadTable(TableNode $payloadTable): array
     {
         $eventPayload = [];
         foreach ($payloadTable->getHash() as $line) {
-            if (strpos($line['Value'], '$this->') === 0) {
+            if (\str_starts_with($line['Value'], '$this->')) {
                 // Special case: Referencing stuff from the context here
-                $propertyOrMethodName = substr($line['Value'], strlen('$this->'));
+                $propertyOrMethodName = \mb_substr($line['Value'], \mb_strlen('$this->'));
                 $value = match ($propertyOrMethodName) {
                     'currentNodeAggregateId' => $this->getCurrentNodeAggregateId()->value,
                     'contentStreamId' => $this->currentContentStreamId->value,
@@ -184,7 +160,7 @@ trait CRTestSuiteTrait
     /**
      * @Then /^workspace "([^"]*)" does not point to content stream "([^"]*)"$/
      */
-    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId)
+    public function workspaceDoesNotPointToContentStream(string $rawWorkspaceName, string $rawContentStreamId): void
     {
         $workspace = $this->currentContentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::fromString($rawWorkspaceName));
 
@@ -245,7 +221,6 @@ trait CRTestSuiteTrait
     }
 
     /**
-     * @return EventStoreInterface
      * @deprecated
      */
     protected function getEventStore(): EventStoreInterface
@@ -275,7 +250,7 @@ trait CRTestSuiteTrait
     /**
      * @Then the content stream :contentStreamId has state :expectedState
      */
-    public function theContentStreamHasState(string $contentStreamId, string $expectedState)
+    public function theContentStreamHasState(string $contentStreamId, string $expectedState): void
     {
         $contentStreamId = ContentStreamId::fromString($contentStreamId);
         $contentStreamFinder = $this->currentContentRepository->getContentStreamFinder();
@@ -287,7 +262,7 @@ trait CRTestSuiteTrait
     /**
      * @Then the current content stream has state :expectedState
      */
-    public function theCurrentContentStreamHasState(string $expectedState)
+    public function theCurrentContentStreamHasState(string $expectedState): void
     {
         $this->theContentStreamHasState($this->currentContentStreamId->value, $expectedState);
     }
@@ -315,7 +290,7 @@ trait CRTestSuiteTrait
     /**
      * @When I replay the :projectionName projection
      */
-    public function iReplayTheProjection(string $projectionName)
+    public function iReplayTheProjection(string $projectionName): void
     {
         $this->currentContentRepository->resetProjectionState($projectionName);
         $this->currentContentRepository->catchUpProjection($projectionName);

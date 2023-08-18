@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -72,9 +72,9 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
     public function areSimilarTo(NodeDiscriminators $other): bool
     {
         $theseDiscriminators = $this->discriminators;
-        sort($theseDiscriminators);
+        \sort($theseDiscriminators);
         $otherDiscriminators = $other->getIterator()->getArrayCopy();
-        sort($otherDiscriminators);
+        \sort($otherDiscriminators);
 
         return $theseDiscriminators == $otherDiscriminators;
     }

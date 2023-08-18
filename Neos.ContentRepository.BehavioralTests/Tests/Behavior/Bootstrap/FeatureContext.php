@@ -12,15 +12,8 @@ declare(strict_types=1);
  */
 
 require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CRTestSuiteTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
@@ -28,6 +21,7 @@ use Behat\Behat\Context\Context as BehatContext;
 use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
@@ -41,12 +35,12 @@ use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeClockFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeUserIdProviderFactory;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
@@ -80,6 +74,8 @@ class FeatureContext implements BehatContext
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    private bool $raceConditionTrackerEnabled = false;
 
     public function __construct()
     {
@@ -141,6 +137,20 @@ class FeatureContext implements BehatContext
             $registrySettings,
             $this->getObjectManager()
         );
+    }
+
+    /**
+     * This function logs a message into the race condition tracker's event log,
+     * which can be inspected by calling ./flow raceConditionTracker:analyzeTrace.
+     *
+     * It is helpful to do this during debugging; in order to figure out whether an issue is an actual bug
+     * or a situation which can only happen during test runs.
+     */
+    public function logToRaceConditionTracker(array $payload): void
+    {
+        if ($this->raceConditionTrackerEnabled) {
+            RedisInterleavingLogger::trace(TraceEntryType::DebugLog, $payload);
+        }
     }
 
     protected function getObjectManager(): ObjectManagerInterface

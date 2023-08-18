@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +12,8 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Helper;
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
 
-use Neos\Cache\CacheAwareInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -28,22 +27,13 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  * * the node's aggregate's external id
  * * the dimension space point the node originates in within its aggregate
  */
-final class NodeDiscriminator implements \JsonSerializable
+final readonly class NodeDiscriminator implements \JsonSerializable
 {
-    private ContentStreamId $contentStreamId;
-
-    private NodeAggregateId $nodeAggregateId;
-
-    private OriginDimensionSpacePoint $originDimensionSpacePoint;
-
     private function __construct(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
+        public ContentStreamId $contentStreamId,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
-        $this->contentStreamId = $contentStreamId;
-        $this->nodeAggregateId = $nodeAggregateId;
-        $this->originDimensionSpacePoint = $originDimensionSpacePoint;
     }
 
     public static function fromShorthand(string $shorthand): self
@@ -59,35 +49,23 @@ final class NodeDiscriminator implements \JsonSerializable
 
     public static function fromNode(Node $node): self
     {
-        return new NodeDiscriminator(
+        return new self(
             $node->subgraphIdentity->contentStreamId,
             $node->nodeAggregateId,
             $node->originDimensionSpacePoint
         );
     }
 
-    public function getContentStreamId(): ContentStreamId
+    public function equals(self $other): bool
     {
-        return $this->contentStreamId;
+        return $this->contentStreamId->equals($other->contentStreamId)
+            && $this->nodeAggregateId->equals($other->nodeAggregateId)
+            && $this->originDimensionSpacePoint->equals($other->originDimensionSpacePoint);
     }
 
-    public function getNodeAggregateId(): NodeAggregateId
-    {
-        return $this->nodeAggregateId;
-    }
-
-    public function getOriginDimensionSpacePoint(): OriginDimensionSpacePoint
-    {
-        return $this->originDimensionSpacePoint;
-    }
-
-    public function equals(NodeDiscriminator $other): bool
-    {
-        return $this->contentStreamId->equals($other->getContentStreamId())
-            && $this->getNodeAggregateId()->equals($other->getNodeAggregateId())
-            && $this->getOriginDimensionSpacePoint()->equals($other->getOriginDimensionSpacePoint());
-    }
-
+    /**
+     * @return array<string,mixed>
+     */
     public function jsonSerialize(): array
     {
         return [

@@ -1,9 +1,7 @@
 <?php
-declare(strict_types=1);
-namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -12,9 +10,11 @@ namespace Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
-use Neos\ContentRepository\Core\CommandHandler\CommandResult;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
@@ -31,7 +31,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspac
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
+use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\StreamName;
 use Neos\EventStore\Model\EventEnvelope;
@@ -49,21 +49,17 @@ trait GenericCommandExecutionAndEventPublication
 
     private ?array $currentEventStreamAsArray = null;
 
-    protected CommandResult|null $lastCommandOrEventResult = null;
-
-    protected ?\Exception $lastCommandException = null;
-
     abstract protected function readPayloadTable(TableNode $payloadTable): array;
+
+    abstract protected function getEventStore(): EventStoreInterface;
 
     /**
      * @When /^the command "([^"]*)" is executed with payload:$/
      * @Given /^the command "([^"]*)" was executed with payload:$/
-     * @param string $shortCommandName
-     * @param TableNode|null $payloadTable
-     * @param null $commandArguments
+     * @param array<string,mixed>|null $commandArguments
      * @throws \Exception
      */
-    public function theCommandIsExecutedWithPayload(string $shortCommandName, TableNode $payloadTable = null, $commandArguments = null)
+    public function theCommandIsExecutedWithPayload(string $shortCommandName, TableNode $payloadTable = null, array $commandArguments = null): void
     {
         $commandClassName = self::resolveShortCommandName($shortCommandName);
         if ($commandArguments === null && $payloadTable !== null) {
@@ -87,7 +83,7 @@ trait GenericCommandExecutionAndEventPublication
     /**
      * @When /^the command "([^"]*)" is executed with payload and exceptions are caught:$/
      */
-    public function theCommandIsExecutedWithPayloadAndExceptionsAreCaught($shortCommandName, TableNode $payloadTable)
+    public function theCommandIsExecutedWithPayloadAndExceptionsAreCaught($shortCommandName, TableNode $payloadTable): void
     {
         try {
             $this->theCommandIsExecutedWithPayload($shortCommandName, $payloadTable);
