@@ -2,9 +2,9 @@
 Feature: Exceptional cases during migrations
 
   Background:
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'unstructured': []
     'Some.Package:SomeNodeType':
       properties:
@@ -13,9 +13,11 @@ Feature: Exceptional cases during migrations
           defaultValue: 'My default text'
     'Some.Package:SomeOtherNodeType': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Node variant with different type
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
@@ -56,7 +58,7 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Invalid dimension configuration (unknown value)
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
@@ -86,7 +88,7 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Node variants with the same dimension
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
@@ -102,7 +104,7 @@ Feature: Exceptional cases during migrations
     """
 
   Scenario: Duplicate nodes
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:

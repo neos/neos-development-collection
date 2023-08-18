@@ -6,14 +6,16 @@ Feature: Enable a node aggregate
   These are the base test cases for the NodeAggregateCommandHandler to block invalid commands.
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, en | gsw->de, en     |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |

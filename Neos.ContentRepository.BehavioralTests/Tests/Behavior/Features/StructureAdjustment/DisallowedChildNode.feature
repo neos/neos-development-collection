@@ -7,9 +7,9 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # SETUP
     ########################
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -22,6 +22,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:SubDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -65,9 +67,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # Actual Test
     ########################
-    When I use no content dimensions
-    And the following NodeTypes to override content repository "default":
-    """
+    When I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -92,9 +93,9 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # SETUP
     ########################
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       childNodes:
         document:
@@ -111,6 +112,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:SubDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -154,9 +157,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     # Actual Test
     ########################
 
-    Given I use no content dimensions
-    And the following NodeTypes to override content repository "default":
-    """
+    When I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root':
       childNodes:
         document:

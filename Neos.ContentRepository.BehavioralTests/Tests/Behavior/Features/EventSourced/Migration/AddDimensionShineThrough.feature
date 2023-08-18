@@ -12,11 +12,11 @@ Feature: Add Dimension Specialization
     ########################
     # SETUP
     ########################
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, en | de->mul         |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -29,6 +29,8 @@ Feature: Add Dimension Specialization
           type: string
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -56,11 +58,11 @@ Feature: Add Dimension Specialization
   Scenario: Success Case - simple
     # we change the dimension configuration
     ########################
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -150,12 +152,12 @@ Feature: Add Dimension Specialization
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I use the following content dimensions to override content repository "default":
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values      | Generalizations |
       | language   | mul, de, ch | ch->de->mul     |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -186,7 +188,7 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I use the following content dimensions to override content repository "default":
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values          | Generalizations |
       | language   | mul, de, ch, en | ch->de->mul     |
 
@@ -199,7 +201,7 @@ Feature: Add Dimension Specialization
       | targetOrigin    | {"language":"en"}        |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -213,7 +215,7 @@ Feature: Add Dimension Specialization
 
   Scenario: Error case - the target dimension is not configured
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -227,12 +229,12 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (1)
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values       | Generalizations |
       | language   | mul, de, foo | de->mul         |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -246,12 +248,12 @@ Feature: Add Dimension Specialization
 
 
   Scenario: Error case - the target dimension is not a specialization of the source dimension (2)
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values       | Generalizations   |
       | language   | mul, de, foo | de->mul, foo->mul |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:

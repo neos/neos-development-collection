@@ -4,11 +4,11 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   As a user of the CR I want to change the type of a node aggregate.
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AutoCreated': []
     'Neos.ContentRepository.Testing:ParentNodeType':
@@ -58,6 +58,8 @@ Feature: Change node aggregate type - behavior of DELETE strategy
           'Neos.ContentRepository.Testing:ChildOfNodeTypeA': false
           'Neos.ContentRepository.Testing:ChildOfNodeTypeB': false
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |

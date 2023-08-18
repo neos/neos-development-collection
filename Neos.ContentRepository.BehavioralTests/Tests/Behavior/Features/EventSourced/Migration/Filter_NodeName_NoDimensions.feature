@@ -2,9 +2,9 @@
 Feature: Filter - Node Name
 
   Background:
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -14,6 +14,8 @@ Feature: Filter - Node Name
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -66,7 +68,7 @@ Feature: Filter - Node Name
 
   Scenario: Fixed newValue
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:

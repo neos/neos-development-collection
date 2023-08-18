@@ -5,15 +5,17 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
   as well.
 
   Background:
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     Neos.ContentRepository:Root: {}
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |

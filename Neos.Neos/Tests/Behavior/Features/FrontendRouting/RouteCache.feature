@@ -3,9 +3,9 @@
 Feature: Route cache invalidation
 
   Background:
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
@@ -25,6 +25,8 @@ Feature: Route cache invalidation
         uriPathSegment:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |

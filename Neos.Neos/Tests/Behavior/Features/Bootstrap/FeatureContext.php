@@ -28,6 +28,7 @@ use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrai
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
+use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -77,6 +78,7 @@ class FeatureContext extends MinkContext
     use HistoryDefinitionsTrait;
 
     use CRTestSuiteTrait;
+    use CRRegistrySubjectProvider;
     use RoutingTrait;
     use MigrationsTrait;
 

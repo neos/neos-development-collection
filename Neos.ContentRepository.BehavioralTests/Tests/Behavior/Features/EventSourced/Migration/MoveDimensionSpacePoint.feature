@@ -13,11 +13,11 @@ Feature: Move dimension space point
     ########################
     # SETUP
     ########################
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -27,6 +27,8 @@ Feature: Move dimension space point
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -35,10 +37,10 @@ Feature: Move dimension space point
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                                                    |
-      | contentStreamId             | "cs-identifier"                                          |
-      | nodeAggregateId             | "lady-eleonode-rootford"                                 |
-      | nodeTypeName                | "Neos.ContentRepository:Root"                            |
+      | Key             | Value                         |
+      | contentStreamId | "cs-identifier"               |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
     # Node /document
     When the command CreateNodeAggregateWithNode is executed with payload:
@@ -53,12 +55,12 @@ Feature: Move dimension space point
 
   Scenario: Success Case - simple
     # we change the dimension configuration
-    Given I use the following content dimensions to override content repository "default":
-      | Identifier | Values          | Generalizations      |
+    Given I change the content dimensions in content repository "default" to:
+      | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -103,12 +105,12 @@ Feature: Move dimension space point
     When VisibilityConstraints are set to "frontend"
 
     # we change the dimension configuration
-    When I use the following content dimensions to override content repository "default":
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values     | Generalizations |
       | language   | mul, de_DE | de_DE->mul      |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -138,12 +140,12 @@ Feature: Move dimension space point
 
   Scenario: Error case - there's already an edge in the target dimension
     # we change the dimension configuration
-    When I use the following content dimensions to override content repository "default":
+    When I change the content dimensions in content repository "default" to:
       | Identifier | Values  | Generalizations |
       | language   | mul, ch | ch->mul         |
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -157,7 +159,7 @@ Feature: Move dimension space point
 
   Scenario: Error case - the target dimension is not configured
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         transformations:

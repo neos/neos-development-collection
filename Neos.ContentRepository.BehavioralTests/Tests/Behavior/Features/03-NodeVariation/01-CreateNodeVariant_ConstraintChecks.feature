@@ -4,12 +4,12 @@ Feature: Create node variant
   As a user of the CR I want to create a copy of a node within an aggregate to another dimension space point.
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | market     | DE, CH  | CH->DE          |
       | language   | de, gsw | gsw->de         |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -17,6 +17,8 @@ Feature: Create node variant
           type: 'Neos.ContentRepository.Testing:Tethered'
     'Neos.ContentRepository.Testing:Tethered': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |

@@ -4,12 +4,12 @@ Feature: Tethered Nodes integrity violations
   As a user of the CR I want to be able to detect and fix tethered nodes that are missing, not allowed or otherwise incorrect
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | market     | DE, CH      | CH->DE          |
       | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -25,6 +25,8 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -77,12 +79,8 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
-    Given I use the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | market     | DE, CH      | CH->DE          |
-      | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to override content repository "default":
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -105,12 +103,9 @@ Feature: Tethered Nodes integrity violations
       | TETHERED_NODE_MISSING | sir-david-nodenborough  |
 
 
-  Scenario: Adding missing tethered nodes resolves the corresponding integrity violationsGiven I use the following content dimensions:
-  | Identifier | Values      | Generalizations |
-  | market     | DE, CH      | CH->DE          |
-  | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to override content repository "default":
-    """
+  Scenario: Adding missing tethered nodes resolves the corresponding integrity violations
+    Given I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -138,12 +133,8 @@ Feature: Tethered Nodes integrity violations
       | foo | "my default applied" |
 
   Scenario: Adding the same
-    Given I use the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | market     | DE, CH      | CH->DE          |
-      | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to override content repository "default":
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -167,12 +158,8 @@ Feature: Tethered Nodes integrity violations
     Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation (which can be fixed)
-    Given I use the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | market     | DE, CH      | CH->DE          |
-      | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to override content repository "default":
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:Tethered':
@@ -195,12 +182,8 @@ Feature: Tethered Nodes integrity violations
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
 
   Scenario: Adjusting the schema changing the type of a tethered node leads to a InvalidTetheredNodeType integrity violation
-    Given I use the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | market     | DE, CH      | CH->DE          |
-      | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to override content repository "default":
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:

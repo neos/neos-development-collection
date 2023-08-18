@@ -4,10 +4,10 @@ Feature: Run integrity violation detection regarding restriction relations
   As a user of the CR I want to know whether there are nodes with restriction relations missing from their ancestors
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, fr | gsw->de         |
-    And the following NodeTypes to define content repository "default":
+    And using the following node types:
     """
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []

@@ -3,14 +3,16 @@
 Feature: Routing functionality with multiple content dimensions
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | market     | DE, CH      | CH->DE          |
       | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.Neos:Sites': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
 
     And the command CreateRootWorkspace is executed with payload:
@@ -44,7 +46,7 @@ Feature: Routing functionality with multiple content dimensions
       | propertyValues            | {"uriPathSegment": "karl-de"}    |
     And A site exists for node name "node1"
     And the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:
@@ -84,7 +86,7 @@ Feature: Routing functionality with multiple content dimensions
     # => that's why when we want to generate a URL for the homepage with the default dimensionSpacePoint,
     #    this must generate "/" (and not ("/en" f.e.)
     When the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:
@@ -138,12 +140,12 @@ Feature: Routing functionality with multiple content dimensions
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}' should resolve to URL "/de/nody/karl-de"
 
   Scenario: Move Dimension, then resolving should still work
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values         | Generalizations |
       | market     | DE, CH         | CH->DE          |
       | language   | en, de_DE, gsw | gsw->de_DE->en  |
     And the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:
@@ -163,7 +165,7 @@ Feature: Routing functionality with multiple content dimensions
     """
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -207,12 +209,12 @@ Feature: Routing functionality with multiple content dimensions
     Then the matched node should be "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"de"}'
 
   Scenario: Add Dimension shine through, then resolving should still work
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values          | Generalizations         |
       | market     | DE, CH          | CH->DE                  |
       | language   | en, de, gsw, at | gsw->de->en, at->de->en |
     And the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:
@@ -233,7 +235,7 @@ Feature: Routing functionality with multiple content dimensions
     """
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         transformations:
@@ -274,12 +276,12 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
     # new "fr" language
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values          | Generalizations |
       | market     | DE, CH          | CH->DE          |
       | language   | en, de, gsw, fr | gsw->de->en     |
     And the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:
@@ -338,12 +340,12 @@ Feature: Routing functionality with multiple content dimensions
 
   Scenario: Create new Dimension value and adjust root node, then root node resolving should still work.
     # new "fr" language
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Values          | Generalizations |
       | market     | DE, CH          | CH->DE          |
       | language   | en, de, gsw, fr | gsw->de->en     |
     And the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:

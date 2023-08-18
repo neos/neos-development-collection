@@ -4,11 +4,11 @@ Feature: Set node properties: Constraint checks
   As a user of the CR I want to modify node properties.
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values  | Generalizations |
       | language   | de, gsw | gsw->de         |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
@@ -17,6 +17,8 @@ Feature: Set node properties: Constraint checks
         postalAddress:
           type: 'Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |

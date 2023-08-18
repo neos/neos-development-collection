@@ -2,11 +2,11 @@
 Feature: Rename Node Aggregate
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -17,6 +17,8 @@ Feature: Rename Node Aggregate
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
@@ -55,7 +57,7 @@ Feature: Rename Node Aggregate
 
   Scenario: Rename Node Aggregate
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -91,7 +93,7 @@ Feature: Rename Node Aggregate
 
   Scenario: Rename Node Aggregate will fail when restricted to a single Dimension
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         filters:

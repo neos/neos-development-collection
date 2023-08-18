@@ -2,11 +2,11 @@
 Feature: Remove Nodes
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values           | Generalizations       |
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -17,6 +17,8 @@ Feature: Remove Nodes
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -54,7 +56,7 @@ Feature: Remove Nodes
 
   Scenario: Remove nodes in a given dimension space point removes the node with all virtual specializations
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -97,7 +99,7 @@ Feature: Remove Nodes
 
   Scenario: Remove nodes in a given dimension space point removes the node without shine-throughs with strategy "allSpecializations"
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -143,7 +145,7 @@ Feature: Remove Nodes
 
   Scenario: allVariants is not supported in RemoveNode, as this would violate the filter configuration potentially
     When I run the following node migration for workspace "live", creating content streams "migration-cs" and exceptions are caught:
-    """
+    """yaml
     migration:
       -
         filters:
@@ -167,7 +169,7 @@ Feature: Remove Nodes
 
   Scenario: Remove nodes in a virtual specialization (gsw)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -213,7 +215,7 @@ Feature: Remove Nodes
 
   Scenario: Remove nodes in a shine-through dimension space point (gsw)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -254,7 +256,7 @@ Feature: Remove Nodes
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -299,7 +301,7 @@ Feature: Remove Nodes
 
   Scenario: Remove nodes in a shine-through dimension space point (DE,gsw) - variant 2
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:

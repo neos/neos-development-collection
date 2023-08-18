@@ -5,11 +5,11 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
   we focus more on dimension selection (using the new DimensionSpace Filter)
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -20,7 +20,8 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
         text:
           type: string
     """
-
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -57,7 +58,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
   Scenario: change materialized "de" node, should shine through in "ch", but not in "en"
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -129,7 +130,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -176,7 +177,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
     And the graph projection is fully up to date
 
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -215,7 +216,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = FALSE - default)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:
@@ -252,7 +253,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = TRUE)
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:

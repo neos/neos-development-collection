@@ -8,9 +8,9 @@ Feature: Create node aggregate with node
   and its soon-to-be descendants
 
   Scenario: Create node aggregate with initial node without auto-created child nodes
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
       properties:
@@ -22,6 +22,8 @@ Feature: Create node aggregate with node
         nullText:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -186,12 +188,14 @@ Feature: Create node aggregate with node
     And I expect this node to have no succeeding siblings
 
   Scenario: Create node aggregate with initial node without auto-created child nodes before another one
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -250,9 +254,9 @@ Feature: Create node aggregate with node
       | cs-identifier;sir-david-nodenborough;{} |
 
   Scenario: Create node aggregate with node with tethered child nodes
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubSubNode':
       properties:
@@ -276,6 +280,8 @@ Feature: Create node aggregate with node
           defaultValue: 'my default'
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
@@ -445,8 +451,9 @@ Feature: Create node aggregate with node
     And I expect this node to not be referenced
 
   Scenario: Create node aggregate with node with tethered child node of invalid configured name
-    Given I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:SubNode': []
     'Neos.ContentRepository.Testing:NodeWithTetheredChildNodes':
@@ -458,6 +465,23 @@ Feature: Create node aggregate with node
           # transliterated invalidcharactors
           type: 'Neos.ContentRepository.Testing:SubNode'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And the command CreateRootWorkspace is executed with payload:
+      | Key                  | Value                |
+      | workspaceName        | "live"               |
+      | workspaceTitle       | "Live"               |
+      | workspaceDescription | "The live workspace" |
+      | newContentStreamId   | "cs-identifier"      |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier"
+    And I am in dimension space point {}
+    And I am user identified by "initiating-user-identifier"
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value                         |
+      | nodeAggregateId | "lady-eleonode-rootford"      |
+      | nodeTypeName    | "Neos.ContentRepository:Root" |
+    And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                                                                    |

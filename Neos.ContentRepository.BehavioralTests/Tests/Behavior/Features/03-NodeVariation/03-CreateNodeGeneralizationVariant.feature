@@ -4,12 +4,12 @@ Feature: Create node generalization
   As a user of the CR I want to create a copy of a node within an aggregate to a more general dimension space point.
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | market     | DE, CH      | CH->DE          |
       | language   | en, de, gsw | gsw->de->en     |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -22,6 +22,8 @@ Feature: Create node generalization
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     'Neos.ContentRepository.Testing:LeafDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |

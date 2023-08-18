@@ -2,11 +2,11 @@
 Feature: Export of used Assets, Image Variants and Persistent Resources
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'unstructured': {}
     'Some.Package:SomeNodeType':
       properties:
@@ -19,6 +19,8 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
         'assets':
           type: 'array<Neos\Media\Domain\Model\Asset>'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the following PersistentResources exist
       | identifier | filename       | collectionName | mediaType       |
       | resource1  | Some-File1.jpg | persistent     | image/jpeg      |

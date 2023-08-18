@@ -2,9 +2,9 @@
 Feature: Adjust node types with a node migration
 
   Background:
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -14,6 +14,8 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Success case
     ########################
@@ -46,9 +48,8 @@ Feature: Adjust node types with a node migration
     # Actual Test
     ########################
     # we remove the Document node type (which still exists in the CR)
-    And I use no content dimensions
-    And the following NodeTypes with fallback to "Neos.ContentRepository:Fallback" to override content repository "default":
-    """
+    And I change the node types in content repository "default" with fallback "Neos.ContentRepository:Fallback" to:
+    """yaml
     # !!fallback node is needed!! - TODO DISCUSS
     'Neos.ContentRepository:Fallback': []
 
@@ -61,7 +62,7 @@ Feature: Adjust node types with a node migration
     """
     # we should be able to rename the node type
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:

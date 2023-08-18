@@ -2,11 +2,11 @@
 Feature: Migrating nodes with content dimensions
 
   Background:
-    Given I use the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
-    And the following NodeTypes to define content repository "default":
-    """
+    And using the following node types:
+    """yaml
     'unstructured': {}
     'Some.Package:SomeNodeType':
       properties:
@@ -14,6 +14,8 @@ Feature: Migrating nodes with content dimensions
           type: string
           defaultValue: 'My default text'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Node specialization variants are prioritized over peer variants
     When I have the following node data rows:
@@ -46,7 +48,7 @@ Feature: Migrating nodes with content dimensions
       | NodeGeneralizationVariantWasCreated | {"nodeAggregateId": "site-node-id", "sourceOrigin": {"language": "ch"}, "generalizationOrigin": {"language": "de"}, "generalizationCoverage": [{"language": "de"}]}                                                                                                                                 |
 
   Scenario: Node variant with a subset of the original dimension space points (NodeSpecializationVariantWasCreated covers languages "de" _and_ "ch")
-    Given I use the following content dimensions to override content repository "default":
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values          | Generalizations |
       | language   | mul     | mul, en, de, ch | ch->de->mul     |
     When I have the following node data rows:

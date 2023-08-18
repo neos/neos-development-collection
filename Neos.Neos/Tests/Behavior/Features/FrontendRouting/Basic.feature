@@ -3,9 +3,9 @@
 Feature: Basic routing functionality (match & resolve document nodes in one dimension)
 
   Background:
-    Given I use no content dimensions
-    And the following NodeTypes to define content repository "default":
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
@@ -25,6 +25,8 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
         uriPathSegment:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
 
     When the command CreateRootWorkspace is executed with payload:
@@ -55,7 +57,7 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | nody-mc-nodeface       | shernode-homes         | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "nody"}               | node5    |
     And A site exists for node name "node1"
     And the sites configuration is:
-    """
+    """yaml
     Neos:
       Neos:
         sites:
