@@ -228,7 +228,7 @@ trait ProjectedNodeTrait
         $expectedNodeTypeName = NodeTypeName::fromString($serializedExpectedNodeTypeName);
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedNodeTypeName) {
             $actualNodeTypeName = $currentNode->nodeTypeName;
-            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName->value .'" does not match expected "' . $expectedNodeTypeName->value . '"');
+            Assert::assertSame($expectedNodeTypeName, $actualNodeTypeName, 'Actual node type name "' . $actualNodeTypeName->value . '" does not match expected "' . $expectedNodeTypeName->value . '"');
         });
     }
 
@@ -241,7 +241,7 @@ trait ProjectedNodeTrait
         $expectedNodeName = NodeName::fromString($serializedExpectedNodeName);
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedNodeName) {
             $actualNodeName = $currentNode->nodeName;
-            Assert::assertSame($expectedNodeName->value, $actualNodeName->value, 'Actual node name "' . $actualNodeName->value .'" does not match expected "' . $expectedNodeName->value . '"');
+            Assert::assertSame($expectedNodeName->value, $actualNodeName->value, 'Actual node name "' . $actualNodeName->value . '" does not match expected "' . $expectedNodeName->value . '"');
         });
     }
 
@@ -496,7 +496,7 @@ trait ProjectedNodeTrait
                 if (isset($row['NodeDiscriminator'])) {
                     $expectedNodeDiscriminator = NodeDiscriminator::fromShorthand($row['NodeDiscriminator']);
                     $actualNodeDiscriminator = NodeDiscriminator::fromNode($actualChildNodes[$index]);
-                    Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . json_encode($expectedNodeDiscriminator->jsonSerialize()). ' Actual: ' . json_encode($actualNodeDiscriminator));
+                    Assert::assertTrue($expectedNodeDiscriminator->equals($actualNodeDiscriminator), 'ContentSubgraph::findChildNodes: Node discriminator in index ' . $index . ' does not match. Expected: ' . json_encode($expectedNodeDiscriminator->jsonSerialize()) . ' Actual: ' . json_encode($actualNodeDiscriminator));
                 }
             }
         });
@@ -523,9 +523,11 @@ trait ProjectedNodeTrait
     {
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedPrecedingSiblingsTable) {
             $actualSiblings = [];
-            foreach ($this->getCurrentSubgraph()
-                         ->findPrecedingSiblingNodes($currentNode->nodeAggregateId, FindPrecedingSiblingNodesFilter::create())
-                     as $actualSibling
+            foreach (
+                $this->getCurrentSubgraph()->findPrecedingSiblingNodes(
+                    $currentNode->nodeAggregateId,
+                    FindPrecedingSiblingNodesFilter::create()
+                ) as $actualSibling
             ) {
                 $actualSiblings[] = $actualSibling;
             }
@@ -559,9 +561,10 @@ trait ProjectedNodeTrait
         $this->assertOnCurrentNode(function (Node $currentNode) use ($expectedSucceedingSiblingsTable) {
             $actualSiblings = [];
             foreach (
-                $this->getCurrentSubgraph()
-                    ->findSucceedingSiblingNodes($currentNode->nodeAggregateId, FindSucceedingSiblingNodesFilter::create())
-                as $actualSibling
+                $this->getCurrentSubgraph()->findSucceedingSiblingNodes(
+                    $currentNode->nodeAggregateId,
+                    FindSucceedingSiblingNodesFilter::create()
+                ) as $actualSibling
             ) {
                 $actualSiblings[] = $actualSibling;
             }

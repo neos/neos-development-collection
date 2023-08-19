@@ -11,6 +11,9 @@ use Neos\ContentRepositoryRegistry\Factory\UserIdProvider\UserIdProviderFactoryI
 
 final class FakeUserIdProviderFactory implements UserIdProviderFactoryInterface
 {
+    /**
+     * @param array<string,mixed> $options
+     */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): UserIdProviderInterface
     {
         return new FakeUserIdProvider();

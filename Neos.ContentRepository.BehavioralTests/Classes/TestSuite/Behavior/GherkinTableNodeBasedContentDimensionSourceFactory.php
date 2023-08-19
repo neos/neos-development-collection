@@ -14,8 +14,14 @@ class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimen
 {
     public static ?ContentDimensionSourceInterface $contentDimensionsToUse = null;
 
+    /**
+     * @param array<string,mixed> $options
+     */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentDimensionSourceInterface
     {
+        if (!self::$contentDimensionsToUse) {
+            throw new \DomainException('Content dimension source not initialized.');
+        }
         return self::$contentDimensionsToUse;
     }
 

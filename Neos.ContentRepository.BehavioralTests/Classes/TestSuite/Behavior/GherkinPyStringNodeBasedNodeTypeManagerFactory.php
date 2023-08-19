@@ -33,6 +33,9 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
 
     public static ?string $fallbackNodeTypeName = null;
 
+    /**
+     * @param array<string,mixed> $options
+     */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
         if (!self::$nodeTypesToUse) {

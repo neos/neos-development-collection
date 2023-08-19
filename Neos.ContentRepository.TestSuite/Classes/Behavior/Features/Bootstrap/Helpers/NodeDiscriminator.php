@@ -27,12 +27,12 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
  * * the node's aggregate's external id
  * * the dimension space point the node originates in within its aggregate
  */
-final readonly class NodeDiscriminator implements \JsonSerializable
+final class NodeDiscriminator implements \JsonSerializable
 {
     private function __construct(
-        public ContentStreamId $contentStreamId,
-        public NodeAggregateId $nodeAggregateId,
-        public OriginDimensionSpacePoint $originDimensionSpacePoint
+        public readonly ContentStreamId $contentStreamId,
+        public readonly NodeAggregateId $nodeAggregateId,
+        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint
     ) {
     }
 
@@ -77,6 +77,6 @@ final readonly class NodeDiscriminator implements \JsonSerializable
 
     public function __toString(): string
     {
-        return sha1(json_encode($this));
+        return sha1(json_encode($this, JSON_THROW_ON_ERROR));
     }
 }

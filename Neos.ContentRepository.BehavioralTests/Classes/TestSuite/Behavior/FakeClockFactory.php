@@ -11,6 +11,9 @@ use Psr\Clock\ClockInterface;
 
 final class FakeClockFactory implements ClockFactoryInterface
 {
+    /**
+     * @param array<string,mixed> $options
+     */
     public function build(ContentRepositoryId $contentRepositoryIdentifier, array $options): ClockInterface
     {
         return new FakeClock();

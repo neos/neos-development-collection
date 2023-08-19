@@ -20,25 +20,19 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 /**
  * The node discriminator value object collection
  *
- * @implements \IteratorAggregate<string,NodeDiscriminator>
- * @implements \ArrayAccess<string,NodeDiscriminator>
+ * @implements \IteratorAggregate<int|string,NodeDiscriminator>
+ * @implements \ArrayAccess<int|string,NodeDiscriminator>
  */
 final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \JsonSerializable
 {
     /**
-     * @var array<int,NodeDiscriminator>
+     * @var array<int|string,NodeDiscriminator>
      */
     private array $discriminators;
-
-    /**
-     * @var \ArrayIterator<int,NodeDiscriminator>
-     */
-    private \ArrayIterator $iterator;
 
     private function __construct(NodeDiscriminator ...$iterable)
     {
         $this->discriminators = $iterable;
-        $this->iterator = new \ArrayIterator($iterable);
     }
 
     public static function fromJsonString(string $jsonString): self
@@ -48,6 +42,9 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
         return self::fromArray($discriminators);
     }
 
+    /**
+     * @param array<string> $array
+     */
     public static function fromArray(array $array): self
     {
         return new self(...array_map(
@@ -60,31 +57,31 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
     {
         return new self(...array_map(
             fn (Node $node): NodeDiscriminator => NodeDiscriminator::fromNode($node),
-            $nodes->getIterator()->getArrayCopy()
+            iterator_to_array($nodes)
         ));
     }
 
-    public function equal(NodeDiscriminators $other): bool
+    public function equal(self $other): bool
     {
-        return $this->discriminators == $other->getIterator()->getArrayCopy();
+        return $this->discriminators == iterator_to_array($other->getIterator());
     }
 
-    public function areSimilarTo(NodeDiscriminators $other): bool
+    public function areSimilarTo(self $other): bool
     {
         $theseDiscriminators = $this->discriminators;
         \sort($theseDiscriminators);
-        $otherDiscriminators = $other->getIterator()->getArrayCopy();
+        $otherDiscriminators = iterator_to_array($other);
         \sort($otherDiscriminators);
 
         return $theseDiscriminators == $otherDiscriminators;
     }
 
     /**
-     * @return \ArrayIterator<int,NodeDiscriminator>
+     * @return \Traversable<int|string,NodeDiscriminator>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->discriminators);
     }
 
     public function offsetGet(mixed $offset): ?NodeDiscriminator
@@ -108,7 +105,7 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
     }
 
     /**
-     * @return array<int,NodeDiscriminator>
+     * @return array<int|string,NodeDiscriminator>
      */
     public function jsonSerialize(): array
     {
