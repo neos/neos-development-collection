@@ -12,25 +12,39 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers;
+namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\NodeTypeManagerFactoryInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Factory for node type managers from gherkin py strings
  */
-final class GherkinPyStringNodeBasedNodeTypeManagerFactory
+final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
 {
-    public static function create(PyStringNode $serializedNodeTypesConfiguration, ?string $fallbackNodeTypeName = null): NodeTypeManager
+    public static ?NodeTypeManager $nodeTypesToUse = null;
+
+    public static ?string $fallbackNodeTypeName = null;
+
+    public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
-        return new NodeTypeManager(
-            fn (): array => Yaml::parse($serializedNodeTypesConfiguration->getRaw()),
+        if (!self::$nodeTypesToUse) {
+            throw new \DomainException('NodeTypeManagerFactory uninitialized');
+        }
+        return self::$nodeTypesToUse;
+    }
+
+    public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse, ?string $fallbackNodeTypeName = null): void
+    {
+        self::$nodeTypesToUse = new NodeTypeManager(
+            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()),
             new class implements NodeLabelGeneratorFactoryInterface {
                 public function create(NodeType $nodeType): NodeLabelGeneratorInterface
                 {
@@ -44,5 +58,10 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory
             },
             $fallbackNodeTypeName
         );
+    }
+
+    public static function reset(): void
+    {
+        self::$nodeTypesToUse = null;
     }
 }

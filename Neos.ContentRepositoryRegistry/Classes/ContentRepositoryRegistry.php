@@ -65,18 +65,13 @@ final class ContentRepositoryRegistry
     }
 
     /**
-     * @internal For testing purposes
+     * @internal for test cases only
      */
-    public function buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-        ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
-    ): ContentRepositoryFactory {
-        return $this->buildFactory(
-            $contentRepositoryId,
-            $contentDimensionSource,
-            $nodeTypeManager
-        );
+    public function resetFactoryInstance(ContentRepositoryId $contentRepositoryId): void
+    {
+        if (array_key_exists($contentRepositoryId->value, $this->factoryInstances)) {
+            unset($this->factoryInstances[$contentRepositoryId->value]);
+        }
     }
 
     public function subgraphForNode(Node $node): ContentSubgraphInterface

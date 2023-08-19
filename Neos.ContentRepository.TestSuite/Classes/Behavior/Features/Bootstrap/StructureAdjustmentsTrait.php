@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\StructureAdjustment\Adjustment\StructureAdjustment;
 use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
+use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -28,43 +29,42 @@ trait StructureAdjustmentsTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    abstract protected function getStructureAdjustmentService(): StructureAdjustmentService;
-
     /**
      * @When /^I adjust the node structure for node type "([^"]*)"$/
-     * @param string $nodeTypeName
-     * @param string $tetheredNodeName
      * @throws NodeTypeNotFoundException
      */
     public function iAdjustTheNodeStructureForNodeType(string $nodeTypeName): void
     {
-        $errors = $this->getStructureAdjustmentService()->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
+        /** @var StructureAdjustmentService $structureAdjustmentService */
+        $structureAdjustmentService = $this->getContentRepositoryService(new StructureAdjustmentServiceFactory());
+        $errors = $structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         foreach ($errors as $error) {
-            $this->getStructureAdjustmentService()->fixError($error);
+            $structureAdjustmentService->fixError($error);
         }
     }
 
     /**
      * @Then I expect no needed structure adjustments for type :nodeTypeName
-     * @param string $nodeTypeName
      * @throws NodeTypeNotFoundException
      */
     public function iExpectNoStructureAdjustmentsForType(string $nodeTypeName): void
     {
-        $errors = $this->getStructureAdjustmentService()->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
+        /** @var StructureAdjustmentService $structureAdjustmentService */
+        $structureAdjustmentService = $this->getContentRepositoryService(new StructureAdjustmentServiceFactory());
+        $errors = $structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $errors = iterator_to_array($errors);
         Assert::assertEmpty($errors, implode(', ', array_map(fn (StructureAdjustment $adjustment) => $adjustment->render(), $errors)));
     }
 
     /**
      * @Then /^I expect the following structure adjustments for type "([^"]*)":$/
-     * @param string $nodeTypeName
-     * @param TableNode $expectedAdjustments
      * @throws NodeTypeNotFoundException
      */
     public function iExpectTheFollowingStructureAdjustmentsForType(string $nodeTypeName, TableNode $expectedAdjustments): void
     {
-        $actualAdjustments = $this->getStructureAdjustmentService()->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
+        /** @var StructureAdjustmentService $structureAdjustmentService */
+        $structureAdjustmentService = $this->getContentRepositoryService(new StructureAdjustmentServiceFactory());
+        $actualAdjustments = $structureAdjustmentService->findAdjustmentsForNodeType(NodeTypeName::fromString($nodeTypeName));
         $actualAdjustments = iterator_to_array($actualAdjustments);
 
         $this->assertEqualStructureAdjustments($expectedAdjustments, $actualAdjustments);

@@ -25,30 +25,22 @@ use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\Tra
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Service\ContentStreamPruner;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeClockFactory;
-use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\FakeUserIdProviderFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
-use Neos\ContentRepository\NodeMigration\NodeMigrationService;
-use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentService;
-use Neos\ContentRepository\StructureAdjustment\StructureAdjustmentServiceFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Configuration\ConfigurationManager;
@@ -92,7 +84,7 @@ class FeatureContext implements BehatContext
             CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
         }
         $this->setUpInterleavingLogger();
-        $this->setUpContentRepositoryRegistry();
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
     private function setUpInterleavingLogger(): void
@@ -114,29 +106,8 @@ class FeatureContext implements BehatContext
                     $raceConditionTrackerConfig['redis']['port']
                 );
             }
+            $this->logToRaceConditionTracker(['msg' => 'setUpFeatureContext']);
         }
-    }
-
-    private function setUpContentRepositoryRegistry(): void
-    {
-        $this->logToRaceConditionTracker(['msg' => 'setUpContentRepositoryRegistry']);
-
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $registrySettings = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepositoryRegistry'
-        );
-        foreach ($registrySettings['presets'] as &$preset) {
-            // @todo decide on this
-            unset($preset['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-            $preset['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-            $preset['clock']['factoryObjectName'] = FakeClockFactory::class;
-        }
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $registrySettings,
-            $this->getObjectManager()
-        );
     }
 
     /**
@@ -158,45 +129,11 @@ class FeatureContext implements BehatContext
         return $this->objectManager;
     }
 
-    protected function getDatabaseConnection(): Connection
-    {
-        return $this->dbalClient->getConnection();
-    }
-
-    protected function getNodeMigrationService(): NodeMigrationService
-    {
-        return $this->contentRepositoryRegistry->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-            $this->currentContentRepository->id,
-            $this->currentContentRepository->getContentDimensionSource(),
-            $this->currentContentRepository->getNodeTypeManager()
-        )->buildService(new NodeMigrationServiceFactory());
-    }
-
-    protected function getStructureAdjustmentService(): StructureAdjustmentService
-    {
-        return $this->contentRepositoryRegistry->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-            $this->currentContentRepository->id,
-            $this->currentContentRepository->getContentDimensionSource(),
-            $this->currentContentRepository->getNodeTypeManager()
-        )->buildService(
-            new StructureAdjustmentServiceFactory()
-        );
-    }
-
-    protected function getContentStreamPruner(): ContentStreamPruner
-    {
-        return $this->contentRepositoryRegistry->buildService(
-            $this->currentContentRepository->id,
-            new ContentStreamPrunerFactory()
-        );
-    }
-
     protected function getContentRepositoryService(
-        ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface {
         return $this->contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
+            $this->currentContentRepository->id,
             $factory
         );
     }
@@ -234,14 +171,13 @@ class FeatureContext implements BehatContext
     }
 
     protected function createContentRepository(
-        ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
+        ContentRepositoryId $contentRepositoryId
     ): ContentRepository {
-        return $this->contentRepositoryRegistry->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-            $contentRepositoryId,
-            $contentDimensionSource,
-            $nodeTypeManager
-        )->getOrBuild();
+        $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+
+        return $contentRepository;
     }
 }

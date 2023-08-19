@@ -18,21 +18,15 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\GherkinTableNodeBasedContentDimensionSource;
+use Neos\EventStore\EventStoreInterface;
 
 /**
  * Subject provider for behavioral tests
  */
 trait CRBehavioralTestsSubjectProvider
 {
-    protected ?ContentDimensionSourceInterface $contentDimensionsToUse = null;
-
-    protected ?NodeTypeManager $nodeTypesToUse = null;
-
     /**
      * @var array<string,ContentRepository>
      */
@@ -63,7 +57,7 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingNoContentDimensions(): void
     {
-        $this->contentDimensionsToUse = GherkinTableNodeBasedContentDimensionSource::createEmpty();
+        GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = GherkinTableNodeBasedContentDimensionSource::createEmpty();
     }
 
     /**
@@ -71,7 +65,7 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingTheFollowingContentDimensions(TableNode $contentDimensions): void
     {
-        $this->contentDimensionsToUse = GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensions);
+        GherkinTableNodeBasedContentDimensionSourceFactory::initializeFromTableNode($contentDimensions);
     }
 
     /**
@@ -79,7 +73,8 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingTheFollowingNodeTypes(PyStringNode $serializedNodeTypesConfiguration): void
     {
-        $this->nodeTypesToUse = GherkinPyStringNodeBasedNodeTypeManagerFactory::create($serializedNodeTypesConfiguration);
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::$fallbackNodeTypeName = null;
     }
 
     /**
@@ -87,10 +82,8 @@ trait CRBehavioralTestsSubjectProvider
      */
     public function usingTheFollowingNodeTypesWithFallback(string $fallbackNodeTypeName, PyStringNode $serializedNodeTypesConfiguration): void
     {
-        $this->nodeTypesToUse = GherkinPyStringNodeBasedNodeTypeManagerFactory::create(
-            $serializedNodeTypesConfiguration,
-            $fallbackNodeTypeName
-        );
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::$fallbackNodeTypeName = $fallbackNodeTypeName;
     }
 
     /**
@@ -101,13 +94,7 @@ trait CRBehavioralTestsSubjectProvider
         if (array_key_exists($contentRepositoryId, $this->contentRepositories)) {
             throw new \DomainException('already defined content repository ' . $contentRepositoryId);
         } else {
-            $this->contentRepositories[$contentRepositoryId] = $this->setUpContentRepository(
-                ContentRepositoryId::fromString($contentRepositoryId),
-                $this->contentDimensionsToUse,
-                $this->nodeTypesToUse
-            );
-            $this->contentDimensionsToUse = null;
-            $this->nodeTypesToUse = null;
+            $this->contentRepositories[$contentRepositoryId] = $this->setUpContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
         }
     }
 
@@ -120,11 +107,9 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(
-                ContentRepositoryId::fromString($contentRepositoryId),
-                GherkinTableNodeBasedContentDimensionSource::fromGherkinTableNode($contentDimensions),
-                $contentRepository->getNodeTypeManager()
-            );
+            GherkinPyStringNodeBasedNodeTypeManagerFactory::$nodeTypesToUse = $contentRepository->getNodeTypeManager();
+            GherkinTableNodeBasedContentDimensionSourceFactory::initializeFromTableNode($contentDimensions);
+            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
             }
@@ -142,11 +127,9 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(
-                ContentRepositoryId::fromString($contentRepositoryId),
-                $contentRepository->getContentDimensionSource(),
-                GherkinPyStringNodeBasedNodeTypeManagerFactory::create($serializedNodeTypesConfiguration)
-            );
+            GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
+            GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = $contentRepository->getContentDimensionSource();
+            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
             }
@@ -165,25 +148,20 @@ trait CRBehavioralTestsSubjectProvider
             throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(
-                ContentRepositoryId::fromString($contentRepositoryId),
-                $contentRepository->getContentDimensionSource(),
-                GherkinPyStringNodeBasedNodeTypeManagerFactory::create(
-                    $serializedNodeTypesConfiguration,
-                    $fallbackNodeTypeName
-                )
+            GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode(
+                $serializedNodeTypesConfiguration,
+                $fallbackNodeTypeName
             );
+            GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = $contentRepository->getContentDimensionSource();
+            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
                 $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
             }
         }
     }
 
-    protected function setUpContentRepository(
-        ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
-    ): ContentRepository {
+    protected function setUpContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository
+    {
         /**
          * Reset events and projections
          * ============================
@@ -225,14 +203,14 @@ trait CRBehavioralTestsSubjectProvider
          * Catch Up process and the testcase reset.
          */
 
-        $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
-        $this->getDatabaseConnection()->executeStatement('TRUNCATE ' . $eventTableName);
 
-        $contentRepository = $this->createContentRepository(
-            $contentRepositoryId,
-            $contentDimensionSource,
-            $nodeTypeManager
-        );
+        $contentRepository = $this->createContentRepository($contentRepositoryId);
+        /** @var EventStoreInterface $eventStore */
+        $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
+        /** @var Connection $databaseConnection */
+        $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
+        $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
+        $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
 
         if (!in_array($contentRepository->id, $this->alreadySetUpContentRepositories)) {
             $contentRepository->setUp();
@@ -242,11 +220,5 @@ trait CRBehavioralTestsSubjectProvider
         return $contentRepository;
     }
 
-    abstract protected function getDatabaseConnection(): Connection;
-
-    abstract protected function createContentRepository(
-        ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
-    ): ContentRepository;
+    abstract protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository;
 }

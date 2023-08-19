@@ -21,11 +21,9 @@ use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
 use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
@@ -46,7 +44,6 @@ class FeatureContext implements BehatContext
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-    private ContentRepository $contentRepository;
 
     public function __construct()
     {
@@ -56,7 +53,7 @@ class FeatureContext implements BehatContext
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->setupEventSourcedTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();
-        $this->contentRepository = $this->objectManager->get(ContentRepositoryRegistry::class);
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
     /**
@@ -68,25 +65,17 @@ class FeatureContext implements BehatContext
     }
 
     protected function getContentRepositoryService(
-        ContentRepositoryId $contentRepositoryId,
         ContentRepositoryServiceFactoryInterface $factory
     ): ContentRepositoryServiceInterface {
         return $this->contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
+            $this->currentContentRepository->id,
             $factory
         );
     }
 
-    protected function createContentRepository(
-        ContentRepositoryId $contentRepositoryId,
-        ContentDimensionSourceInterface $contentDimensionSource,
-        NodeTypeManager $nodeTypeManager
-    ): ContentRepository {
-        return $this->contentRepositoryRegistry->buildFactoryWithContentDimensionSourceAndNodeTypeManager(
-            $contentRepositoryId,
-            $contentDimensionSource,
-            $nodeTypeManager
-        )->getOrBuild();
+    protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository
+    {
+        return $this->contentRepositoryRegistry->get($contentRepositoryId);
     }
 
     protected function getContentRepository(ContentRepositoryId $id): ContentRepository

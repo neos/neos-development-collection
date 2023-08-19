@@ -16,6 +16,10 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
@@ -24,6 +28,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\Service\ContentStreamPruner;
+use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -87,7 +92,8 @@ trait CRTestSuiteTrait
      */
     public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope): void
     {
-        $this->contentDimensionsToUse = null;
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
         $this->contentRepositories = [];
         $this->currentContentRepository = null;
         $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
@@ -272,7 +278,8 @@ trait CRTestSuiteTrait
      */
     public function iPruneUnusedContentStreams(): void
     {
-        $contentStreamPruner = $this->getContentStreamPruner();
+        /** @var ContentStreamPruner $contentStreamPruner */
+        $contentStreamPruner = $this->getContentRepositoryService(new ContentStreamPrunerFactory());
         $contentStreamPruner->prune();
         $this->lastCommandOrEventResult = $contentStreamPruner->getLastCommandResult();
     }
@@ -282,10 +289,12 @@ trait CRTestSuiteTrait
      */
     public function iPruneRemovedContentStreamsFromTheEventStream(): void
     {
-        $this->getContentStreamPruner()->pruneRemovedFromEventStream();
+        $this->getContentRepositoryService(new ContentStreamPrunerFactory())->pruneRemovedFromEventStream();
     }
 
-    abstract protected function getContentStreamPruner(): ContentStreamPruner;
+    abstract protected function getContentRepositoryService(
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface;
 
     /**
      * @When I replay the :projectionName projection

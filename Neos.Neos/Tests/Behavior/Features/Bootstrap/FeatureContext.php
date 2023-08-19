@@ -531,20 +531,4 @@ class FeatureContext extends MinkContext
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
     }
-
-    protected function getContentStreamPruner(): ContentStreamPruner
-    {
-        return $this->contentRepositoryRegistry->buildService(
-            $this->currentContentRepository->id,
-            new ContentStreamPrunerFactory()
-        );
-    }
-
-    protected function getNodeMigrationService(): NodeMigrationService
-    {
-        return $this->contentRepositoryRegistry->buildService(
-            $this->currentContentRepository->id,
-            new NodeMigrationServiceFactory()
-        );
-    }
 }

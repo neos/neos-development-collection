@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -28,8 +29,6 @@ use Symfony\Component\Yaml\Yaml;
 trait MigrationsTrait
 {
     use CRTestSuiteRuntimeVariables;
-
-    abstract protected function getNodeMigrationService(): NodeMigrationService;
 
     /**
      * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:
@@ -43,7 +42,9 @@ trait MigrationsTrait
         );
         $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
 
-        $this->getNodeMigrationService()->executeMigration($command);
+        /** @var NodeMigrationService $nodeMigrationService */
+        $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());
+        $nodeMigrationService->executeMigration($command);
     }
 
     /**
