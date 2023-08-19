@@ -94,7 +94,9 @@ trait CRTestSuiteTrait
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
-        $this->contentRepositories = [];
+        if (isset($this->contentRepositories)) {
+            $this->contentRepositories = [];
+        }
         $this->currentContentRepository = null;
         $this->currentVisibilityConstraints = VisibilityConstraints::frontend();
         $this->currentDimensionSpacePoint = null;
@@ -307,6 +309,11 @@ trait CRTestSuiteTrait
 
     protected function deserializeProperties(array $properties): PropertyValuesToWrite
     {
-        return PropertyValuesToWrite::fromArray($properties);
+        return PropertyValuesToWrite::fromArray(
+            array_map(
+                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
+                $properties
+            )
+        );
     }
 }

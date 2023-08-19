@@ -18,7 +18,6 @@ require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Featu
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
-use Doctrine\DBAL\Connection;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
@@ -157,7 +156,7 @@ class FeatureContext implements BehatContext
                     $propertyValue = \DateTimeImmutable::createFromFormat(\DateTimeInterface::W3C, \mb_substr($propertyValue, 5));
                 } elseif (\str_starts_with($propertyValue, 'URI:')) {
                     $propertyValue = new Uri(\mb_substr($propertyValue, 4));
-                } else {
+                } elseif (\str_starts_with($propertyValue, '{') || \str_starts_with($propertyValue, '[')) {
                     try {
                         $propertyValue = \json_decode($propertyValue, true, 512, JSON_THROW_ON_ERROR);
                     } catch (\JsonException) {
@@ -167,7 +166,12 @@ class FeatureContext implements BehatContext
             }
         }
 
-        return PropertyValuesToWrite::fromArray($properties);
+        return PropertyValuesToWrite::fromArray(
+            array_map(
+                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
+                $properties
+            )
+        );
     }
 
     protected function createContentRepository(

@@ -202,8 +202,6 @@ trait CRBehavioralTestsSubjectProvider
          * ... and additionally by using {@see logToRaceConditionTracker()} to find the interleavings between the
          * Catch Up process and the testcase reset.
          */
-
-
         $contentRepository = $this->createContentRepository($contentRepositoryId);
         /** @var EventStoreInterface $eventStore */
         $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);

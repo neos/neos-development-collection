@@ -213,12 +213,8 @@ trait NodeCreation
     private function parsePropertyValuesJsonString(string $jsonString): PropertyValuesToWrite
     {
         $array = \json_decode($jsonString, true, 512, JSON_THROW_ON_ERROR);
-        return PropertyValuesToWrite::fromArray(
-            array_map(
-                static fn (mixed $value) => is_array($value) && isset($value['__type']) ? new $value['__type']($value['value']) : $value,
-                $array
-            )
-        );
+
+        return $this->deserializeProperties($array);
     }
 
     /**

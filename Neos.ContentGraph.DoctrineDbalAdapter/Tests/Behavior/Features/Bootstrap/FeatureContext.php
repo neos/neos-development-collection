@@ -24,8 +24,6 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Service\ContentStreamPruner;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
@@ -73,21 +71,8 @@ class FeatureContext implements BehatContext
         );
     }
 
-    protected function createContentRepository(ContentRepositoryId $contentRepositoryId): ContentRepository
-    {
-        return $this->contentRepositoryRegistry->get($contentRepositoryId);
-    }
-
     protected function getContentRepository(ContentRepositoryId $id): ContentRepository
     {
         return $this->contentRepositoryRegistry->get($id);
-    }
-
-    protected function getContentStreamPruner(): ContentStreamPruner
-    {
-        return $this->contentRepositoryRegistry->buildService(
-            $this->currentContentRepository->id,
-            new ContentStreamPrunerFactory()
-        );
     }
 }
