@@ -12,8 +12,6 @@ use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Service\ContentStreamPruner;
-use Neos\ContentRepository\Core\Service\ContentStreamPrunerFactory;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
@@ -346,13 +344,5 @@ class FeatureContext implements Context
                 return json_decode($jsonValue, true, 512, JSON_THROW_ON_ERROR);
             }, $row);
         }, $table->getHash());
-    }
-
-    protected function getContentStreamPruner(): ContentStreamPruner
-    {
-        return $this->contentRepositoryRegistry->buildService(
-            $this->currentContentRepository->id,
-            new ContentStreamPrunerFactory()
-        );
     }
 }
