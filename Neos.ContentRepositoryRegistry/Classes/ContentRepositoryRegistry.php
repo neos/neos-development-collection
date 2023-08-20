@@ -113,11 +113,7 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function buildFactory(
-        ContentRepositoryId $contentRepositoryId,
-        ?ContentDimensionSourceInterface $contentDimensionSource = null,
-        ?NodeTypeManager $nodeTypeManager = null
-    ): ContentRepositoryFactory {
+    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory {
         if (!is_array($this->settings['contentRepositories'] ?? null)) {
             throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
         }
@@ -139,8 +135,8 @@ final class ContentRepositoryRegistry
             return new ContentRepositoryFactory(
                 $contentRepositoryId,
                 $this->buildEventStore($contentRepositoryId, $contentRepositorySettings, $clock),
-                $nodeTypeManager ?: $this->buildNodeTypeManager($contentRepositoryId, $contentRepositorySettings),
-                $contentDimensionSource ?: $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
+                $this->buildNodeTypeManager($contentRepositoryId, $contentRepositorySettings),
+                $this->buildContentDimensionSource($contentRepositoryId, $contentRepositorySettings),
                 $this->buildPropertySerializer($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionsFactory($contentRepositoryId, $contentRepositorySettings),
                 $this->buildProjectionCatchUpTrigger($contentRepositoryId, $contentRepositorySettings),
