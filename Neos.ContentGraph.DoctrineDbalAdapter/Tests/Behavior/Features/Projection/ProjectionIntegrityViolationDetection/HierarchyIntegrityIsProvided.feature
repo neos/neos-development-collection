@@ -8,10 +8,12 @@ Feature: Run integrity violation detection regarding hierarchy relations and nod
       | Identifier | Values      | Generalizations |
       | language   | de, gsw, fr | gsw->de         |
     And using the following node types:
-    """
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
