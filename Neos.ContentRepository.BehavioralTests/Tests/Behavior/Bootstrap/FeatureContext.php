@@ -18,6 +18,7 @@ require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Featu
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
@@ -121,6 +122,16 @@ class FeatureContext implements BehatContext
         if ($this->raceConditionTrackerEnabled) {
             RedisInterleavingLogger::trace(TraceEntryType::DebugLog, $payload);
         }
+    }
+
+    /**
+     * @BeforeScenario
+     * @throws \Exception
+     */
+    public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope): void
+    {
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
     }
 
     protected function getObjectManager(): ObjectManagerInterface
