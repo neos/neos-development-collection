@@ -29,7 +29,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrai
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
@@ -73,31 +72,16 @@ class FeatureContext extends MinkContext
     use RoutingTrait;
     use MigrationsTrait;
 
-
-    /**
-     * @var string
-     */
-    protected $behatTestHelperObjectName = BehatTestHelper::class;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     /**
      * @var ElementInterface
      */
     protected $selectedContentElement;
 
-    /**
-     * @var string
-     */
-    protected $lastExportedSiteXmlPathAndFilename = '';
+    protected string $lastExportedSiteXmlPathAndFilename = '';
 
-    /**
-     * @var Environment
-     */
-    protected $environment;
+    protected Environment $environment;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -108,11 +92,11 @@ class FeatureContext extends MinkContext
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
-
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+
         $this->setupSecurity();
         $this->setupCRTestSuiteTrait(true);
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
     /**

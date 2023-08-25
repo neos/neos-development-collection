@@ -26,7 +26,7 @@ Feature: UriPathResolver works as expected
   - TODO different separator
   - TODO positional array sorting
 
-  Scenario: No dimension
+  Background:
     Given using no content dimensions
     And using the following node types:
     """yaml
@@ -34,6 +34,8 @@ Feature: UriPathResolver works as expected
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
+
+  Scenario: No dimension
     When I am on URL "/"
 
     And I invoke the Dimension Resolver from site configuration:

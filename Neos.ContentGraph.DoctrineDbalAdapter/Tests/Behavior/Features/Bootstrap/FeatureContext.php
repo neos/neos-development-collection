@@ -30,7 +30,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 
 /**
@@ -54,9 +53,10 @@ class FeatureContext implements BehatContext
             self::$bootstrap = $this->initializeFlow();
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+
         $this->setupCRTestSuiteTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }
 
     /**
@@ -66,14 +66,6 @@ class FeatureContext implements BehatContext
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
-    }
-
-    /**
-     * @return ObjectManagerInterface
-     */
-    protected function getObjectManager(): ObjectManagerInterface
-    {
-        return $this->objectManager;
     }
 
     protected function getContentRepositoryService(

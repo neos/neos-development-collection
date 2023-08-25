@@ -1,5 +1,4 @@
 @fixtures @contentrepository
-# Note: For the routing tests to work we rely on Configuration/Testing/Behat/NodeTypes.Test.Routing.yaml
 Feature: Routing functionality with multiple content dimensions
 
   Background:
@@ -9,7 +8,34 @@ Feature: Routing functionality with multiple content dimensions
       | language   | en, de, gsw | gsw->de->en     |
     And using the following node types:
     """yaml
-    'Neos.Neos:Sites': []
+    'Neos.ContentRepository:Root': []
+
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Document':
+      properties:
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Content': []
+
+    'Neos.Neos:Test.Routing.Page':
+      superTypes:
+        'Neos.Neos:Document': true
+      constraints:
+        nodeTypes:
+          '*': true
+          'Neos.Neos:Test.Routing.Page': true
+          'Neos.Neos:Test.Routing.SomeOtherPage': true
+          'Neos.Neos:Test.Routing.Content': true
+
+    'Neos.Neos:Test.Routing.Content':
+      superTypes:
+        'Neos.Neos:Content': true
+
+    'Neos.Neos:Test.Routing.SomeOtherPage':
+      superTypes:
+        'Neos.Neos:Test.Routing.Page': true
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"

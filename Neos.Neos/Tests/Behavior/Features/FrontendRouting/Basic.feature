@@ -1,5 +1,4 @@
 @fixtures @contentrepository
-# Note: For the routing tests to work we rely on Configuration/Testing/Behat/NodeTypes.Test.Routing.yaml
 Feature: Basic routing functionality (match & resolve document nodes in one dimension)
 
   Background:
