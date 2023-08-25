@@ -42,7 +42,6 @@ use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -79,10 +78,7 @@ class FeatureContext implements BehatContext
         $this->setupSecurity();
         $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->dbalClient = $this->getObjectManager()->get(DbalClientInterface::class);
-        $this->setupEventSourcedTrait();
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
-        }
+        $this->setupCRTestSuiteTrait();
         $this->setUpInterleavingLogger();
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
     }

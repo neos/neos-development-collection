@@ -45,6 +45,7 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeVa
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceCreation;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspaceDiscarding;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\WorkspacePublishing;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\EventStore\EventStoreInterface;
 use PHPUnit\Framework\Assert;
 
@@ -78,8 +79,11 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function setupEventSourcedTrait(bool $alwaysRunCrSetup = false): void
+    protected function setupCRTestSuiteTrait(bool $alwaysRunCrSetup = false): void
     {
+        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
+            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
+        }
     }
 
     private static bool $wasContentRepositorySetupCalled = false;

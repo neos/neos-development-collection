@@ -17,9 +17,13 @@ require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Be
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
@@ -38,6 +42,7 @@ class FeatureContext implements BehatContext
     use IsolatedBehatStepsTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use CRTestSuiteTrait;
+    use CRBehavioralTestsSubjectProvider;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
@@ -49,9 +54,18 @@ class FeatureContext implements BehatContext
             self::$bootstrap = $this->initializeFlow();
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
-        $this->setupEventSourcedTrait();
+        $this->setupCRTestSuiteTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
+    {
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
     }
 
     /**
@@ -71,8 +85,14 @@ class FeatureContext implements BehatContext
         );
     }
 
-    protected function getContentRepository(ContentRepositoryId $id): ContentRepository
-    {
-        return $this->contentRepositoryRegistry->get($id);
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepository {
+        $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+
+        return $contentRepository;
     }
 }

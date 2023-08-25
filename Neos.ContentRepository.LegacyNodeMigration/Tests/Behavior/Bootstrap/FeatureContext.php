@@ -63,7 +63,7 @@ class FeatureContext implements Context
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
-        $this->setupEventSourcedTrait();
+        $this->setupCRTestSuiteTrait();
 
     }
 

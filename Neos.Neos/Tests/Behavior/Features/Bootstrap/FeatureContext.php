@@ -11,18 +11,24 @@
  */
 
 use Behat\Behat\Definition\Call\Then;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
-use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -63,7 +69,7 @@ class FeatureContext extends MinkContext
     use HistoryDefinitionsTrait;
 
     use CRTestSuiteTrait;
-    use CRRegistrySubjectProvider;
+    use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;
     use MigrationsTrait;
 
@@ -93,7 +99,7 @@ class FeatureContext extends MinkContext
      */
     protected $environment;
 
-    private ContentRepository $contentRepository;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function __construct()
     {
@@ -105,10 +111,17 @@ class FeatureContext extends MinkContext
 
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->setupSecurity();
-        $this->setupEventSourcedTrait(true);
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
-        }
+        $this->setupCRTestSuiteTrait(true);
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
+    {
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
     }
 
     /**
@@ -526,5 +539,25 @@ class FeatureContext extends MinkContext
         /** @var SiteImportService $siteImportService */
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
+    }
+
+    protected function getContentRepositoryService(
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            $factory
+        );
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepository {
+        $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+
+        return $contentRepository;
     }
 }
