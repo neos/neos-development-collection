@@ -203,16 +203,15 @@ trait CRBehavioralTestsSubjectProvider
          * Catch Up process and the testcase reset.
          */
         $contentRepository = $this->createContentRepository($contentRepositoryId);
+        if (!in_array($contentRepository->id, $this->alreadySetUpContentRepositories)) {
+            $contentRepository->setUp();
+        }
         /** @var EventStoreInterface $eventStore */
         $eventStore = (new \ReflectionClass($contentRepository))->getProperty('eventStore')->getValue($contentRepository);
         /** @var Connection $databaseConnection */
         $databaseConnection = (new \ReflectionClass($eventStore))->getProperty('connection')->getValue($eventStore);
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId->value);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
-
-        if (!in_array($contentRepository->id, $this->alreadySetUpContentRepositories)) {
-            $contentRepository->setUp();
-        }
         $contentRepository->resetProjectionStates();
 
         return $contentRepository;
