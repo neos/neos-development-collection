@@ -42,8 +42,6 @@ use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 
-use function sprintf;
-
 /**
  * See {@see ContentStreamFinder} for explanation.
  *

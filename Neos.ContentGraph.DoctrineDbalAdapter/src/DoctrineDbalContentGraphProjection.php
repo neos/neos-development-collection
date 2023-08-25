@@ -60,8 +60,6 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 
-use function get_debug_type;
-
 /**
  * @implements ProjectionInterface<ContentGraph>
  * @internal but the graph projection is api
