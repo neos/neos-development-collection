@@ -126,9 +126,8 @@ class FeatureContext implements BehatContext
 
     /**
      * @BeforeScenario
-     * @throws \Exception
      */
-    public function beforeEventSourcedScenarioDispatcher(BeforeScenarioScope $scope): void
+    public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
