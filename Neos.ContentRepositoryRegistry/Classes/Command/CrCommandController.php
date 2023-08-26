@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -54,7 +55,11 @@ final class CrCommandController extends CommandController
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
             // TODO start progress bar
         }
-        $projectionService->replayProjection($projection, $until !== 0 ? SequenceNumber::fromInteger($until) : null);
+        $options = CatchUpOptions::create();
+        if ($until > 0) {
+            $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
+        }
+        $projectionService->replayProjection($projection, $options);
         if (!$quiet) {
             // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');
@@ -75,7 +80,7 @@ final class CrCommandController extends CommandController
             $this->outputLine('Replaying events for all projections of Content Repository "%s" ...', [$contentRepositoryId->value]);
             // TODO start progress bar
         }
-        $projectionService->replayAllProjections();
+        $projectionService->replayAllProjections(CatchUpOptions::create());
         if (!$quiet) {
             // TODO finish progress bar
             $this->outputLine('<success>Done.</success>');

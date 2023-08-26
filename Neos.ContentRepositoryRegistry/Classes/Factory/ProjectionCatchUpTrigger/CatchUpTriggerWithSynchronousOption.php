@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger;
 
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
@@ -66,7 +67,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
             $contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
             foreach ($projections as $projection) {
                 $projectionClassName = get_class($projection);
-                $contentRepository->catchUpProjection($projectionClassName);
+                $contentRepository->catchUpProjection($projectionClassName, CatchUpOptions::create());
             }
         } else {
             $this->inner->triggerCatchUp($projections);

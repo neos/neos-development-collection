@@ -61,7 +61,7 @@ final class CommandResult
     private function blockProjection(ProjectionInterface $projection, SequenceNumber $expectedSequenceNumber): void
     {
         $attempts = 0;
-        while ($projection->getSequenceNumber()->value < $expectedSequenceNumber->value) {
+        while ($projection->getCheckpointStorage()->getHighestAppliedSequenceNumber()->value < $expectedSequenceNumber->value) {
             usleep(50000); // 50000μs = 50ms
             if (++$attempts > 100) { // 5 seconds
                 throw new \RuntimeException(

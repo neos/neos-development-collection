@@ -17,27 +17,29 @@ namespace Neos\ContentRepository\Core;
 use Neos\ContentRepository\Core\CommandHandler\CommandBus;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
-use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
-use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\EventStore\DecoratedEvent;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\EventStore\EventPersister;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
-use Neos\ContentRepository\Core\SharedModel\User\StaticUserIdProvider;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
+use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\EventStore\Model\EventStream\VirtualStreamName;
 use Neos\EventStore\ProvidesSetupInterface;
@@ -57,13 +59,20 @@ use Psr\Clock\ClockInterface;
 final class ContentRepository
 {
     /**
+     * @var array<class-string<ProjectionStateInterface>, ProjectionStateInterface>
+     */
+    private array $projectionStateCache;
+
+
+    /**
      * @internal use the {@see ContentRepositoryFactory::getOrBuild()} to instantiate
      */
     public function __construct(
         public readonly ContentRepositoryId $id,
         private readonly CommandBus $commandBus,
         private readonly EventStoreInterface $eventStore,
-        private readonly Projections $projections,
+        private readonly ProjectionsAndCatchUpHooks $projectionsAndCatchUpHooks,
+        private readonly EventNormalizer $eventNormalizer,
         private readonly EventPersister $eventPersister,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly InterDimensionalVariationGraph $variationGraph,
@@ -121,6 +130,7 @@ final class ContentRepository
         return $this->eventPersister->publishEvents($eventsToPublish);
     }
 
+
     /**
      * @template T of ProjectionStateInterface
      * @param class-string<T> $projectionStateClassName
@@ -128,19 +138,56 @@ final class ContentRepository
      */
     public function projectionState(string $projectionStateClassName): ProjectionStateInterface
     {
-        return $this->projections->getProjectionState($projectionStateClassName);
+        if (isset($this->projectionStateCache[$projectionStateClassName])) {
+            /** @var T $projectionState */
+            $projectionState = $this->projectionStateCache[$projectionStateClassName];
+            return $projectionState;
+        }
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+            $projectionState = $projection->getState();
+            if ($projectionState instanceof $projectionStateClassName) {
+                $this->projectionStateCache[$projectionStateClassName] = $projectionState;
+                return $projectionState;
+            }
+        }
+        throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
     }
 
     /**
      * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName
      */
-    public function catchUpProjection(string $projectionClassName): void
+    public function catchUpProjection(string $projectionClassName, CatchUpOptions $options): void
     {
-        $projection = $this->projections->get($projectionClassName);
+        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
+
+        $catchUpHookFactory = $this->projectionsAndCatchUpHooks->getCatchUpHookFactoryForProjection($projection);
+        $catchUpHook = $catchUpHookFactory?->build($this);
+
         // TODO allow custom stream name per projection
         $streamName = VirtualStreamName::all();
         $eventStream = $this->eventStore->load($streamName);
-        $projection->catchUp($eventStream, $this);
+        if ($options->maximumSequenceNumber !== null) {
+            $eventStream = $eventStream->withMaximumSequenceNumber($options->maximumSequenceNumber);
+        }
+
+        $eventApplier = function (EventEnvelope $eventEnvelope) use ($projection, $catchUpHook) {
+            $event = $this->eventNormalizer->denormalize($eventEnvelope->event);
+            if (!$projection->canHandle($event)) {
+                return;
+            }
+            $catchUpHook?->onBeforeEvent($event, $eventEnvelope);
+            $projection->apply($event, $eventEnvelope);
+            $catchUpHook?->onAfterEvent($event, $eventEnvelope);
+        };
+
+        $catchUp = CatchUp::create($eventApplier, $projection->getCheckpointStorage());
+
+        if ($catchUpHook !== null) {
+            $catchUpHook->onBeforeCatchUp();
+            $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
+        }
+        $catchUp->run($eventStream);
+        $catchUpHook?->onAfterCatchUp();
     }
 
     public function setUp(): SetupResult
@@ -152,7 +199,7 @@ final class ContentRepository
                 return $result;
             }
         }
-        foreach ($this->projections as $projection) {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
             $projection->setUp();
         }
         return SetupResult::success('done');
@@ -160,7 +207,7 @@ final class ContentRepository
 
     public function resetProjectionStates(): void
     {
-        foreach ($this->projections as $projection) {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
             $projection->reset();
         }
     }
@@ -170,7 +217,7 @@ final class ContentRepository
      */
     public function resetProjectionState(string $projectionClassName): void
     {
-        $projection = $this->projections->get($projectionClassName);
+        $projection = $this->projectionsAndCatchUpHooks->projections->get($projectionClassName);
         $projection->reset();
     }
 

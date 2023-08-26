@@ -7,16 +7,16 @@ use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 
 /**
- * @api
+ * @api for custom framework integrations, not for users of the CR
  */
-final class ProjectionsFactory
+final class ProjectionsAndCatchUpHooksFactory
 {
     /**
-     * @phpstan-ignore-next-line
-     * @var array
+     * @var array<string, array{factory: ProjectionFactoryInterface<ProjectionInterface<ProjectionStateInterface>>, options: array<string, mixed>, catchUpHooksFactories: array<CatchUpHookFactoryInterface>}>
      */
     private array $factories = [];
 
@@ -31,7 +31,7 @@ final class ProjectionsFactory
         $this->factories[get_class($factory)] = [
             'factory' => $factory,
             'options' => $options,
-            'catchUpHooks' => []
+            'catchUpHooksFactories' => []
         ];
     }
 
@@ -41,41 +41,37 @@ final class ProjectionsFactory
      * @return void
      * @api
      */
-    public function registerCatchUpHookFactory(
-        ProjectionFactoryInterface $factory,
-        CatchUpHookFactoryInterface $catchUpHookFactory
-    ): void {
-        $this->factories[get_class($factory)]['catchUpHooks'][] = [
-            'catchUpHookFactory' => $catchUpHookFactory,
-        ];
+    public function registerCatchUpHookFactory(ProjectionFactoryInterface $factory, CatchUpHookFactoryInterface $catchUpHookFactory): void
+    {
+        $this->factories[get_class($factory)]['catchUpHooksFactories'][] = $catchUpHookFactory;
     }
 
     /**
      * @internal this method is only called by the {@see ContentRepositoryFactory}, and not by anybody in userland
      */
-    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): Projections
+    public function build(ProjectionFactoryDependencies $projectionFactoryDependencies): ProjectionsAndCatchUpHooks
     {
-        $projections = Projections::create();
+        $projectionsArray = [];
+        $catchUpHookFactoriesByProjectionClassName = [];
         foreach ($this->factories as $factoryDefinition) {
             $factory = $factoryDefinition['factory'];
             $options = $factoryDefinition['options'];
             assert($factory instanceof ProjectionFactoryInterface);
 
             $catchUpHookFactories = CatchUpHookFactories::create();
-            foreach ($factoryDefinition['catchUpHooks'] as $catchUpHookDefinition) {
-                $catchUpHookFactory = $catchUpHookDefinition['catchUpHookFactory'];
+            foreach ($factoryDefinition['catchUpHooksFactories'] as $catchUpHookFactory) {
                 assert($catchUpHookFactory instanceof CatchUpHookFactoryInterface);
                 $catchUpHookFactories = $catchUpHookFactories->with($catchUpHookFactory);
             }
 
-            $projections = $projections->with($factory->build(
+            $projection = $factory->build(
                 $projectionFactoryDependencies,
                 $options,
-                $catchUpHookFactories,
-                $projections
-            ));
+            );
+            $catchUpHookFactoriesByProjectionClassName[$projection::class] = $catchUpHookFactories;
+            $projectionsArray[] = $projection;
         }
 
-        return $projections;
+        return new ProjectionsAndCatchUpHooks(Projections::fromArray($projectionsArray), $catchUpHookFactoriesByProjectionClassName);
     }
 }
