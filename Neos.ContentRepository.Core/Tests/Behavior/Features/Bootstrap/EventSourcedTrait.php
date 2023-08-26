@@ -40,6 +40,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -554,7 +555,7 @@ trait EventSourcedTrait
     public function iReplayTheProjection(string $projectionName)
     {
         $this->contentRepository->resetProjectionState($projectionName);
-        $this->contentRepository->catchUpProjection($projectionName);
+        $this->contentRepository->catchUpProjection($projectionName, CatchUpOptions::create());
     }
 
     abstract protected function getContentRepositoryService(

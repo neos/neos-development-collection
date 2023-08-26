@@ -16,9 +16,7 @@ namespace Neos\Neos\PendingChangesProjection;
 
 use Neos\ContentRepository\Core\Factory\ProjectionFactoryDependencies;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionFactoryInterface;
-use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
  * @implements ProjectionFactoryInterface<ChangeProjection>
@@ -33,11 +31,8 @@ class ChangeProjectionFactory implements ProjectionFactoryInterface
     public function build(
         ProjectionFactoryDependencies $projectionFactoryDependencies,
         array $options,
-        CatchUpHookFactoryInterface $catchUpHookFactory,
-        Projections $projectionsSoFar
     ): ChangeProjection {
         return new ChangeProjection(
-            $projectionFactoryDependencies->eventNormalizer,
             $this->dbalClient,
             sprintf(
                 'cr_%s_p_neos_change',

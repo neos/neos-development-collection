@@ -5,50 +5,43 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\Projection;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\ConnectionException;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
+use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\SucceedingSiblingNodeMoveDestination;
+use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
+use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
+use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
-use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
-use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
-use Neos\EventStore\CatchUp\CatchUp;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
-use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
-use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 
 /**
  * @implements ProjectionInterface<DocumentUriPathFinder>
@@ -63,11 +56,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     private ?DocumentUriPathFinder $stateAccessor = null;
 
     public function __construct(
-        private readonly EventNormalizer $eventNormalizer,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly Connection $dbal,
         private readonly string $tableNamePrefix,
-        private readonly CatchUpHookFactoryInterface $catchUpHookFactory
     ) {
         $this->checkpointStorage = new DoctrineCheckpointStorage(
             $this->dbal,
@@ -119,10 +110,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     }
 
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
-        $eventClassName = $this->eventNormalizer->getEventClassName($event);
-        return in_array($eventClassName, [
+        return in_array($event::class, [
             RootWorkspaceWasCreated::class,
             RootNodeAggregateWithNodeWasCreated::class,
             RootNodeAggregateDimensionsWereUpdated::class,
@@ -141,65 +131,31 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         ]);
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $catchUpHook = $this->catchUpHookFactory->build($contentRepository);
-        $catchUpHook->onBeforeCatchUp();
-        $catchUp = CatchUp::create(
-            fn(EventEnvelope $eventEnvelope) => $this->apply($eventEnvelope, $catchUpHook),
-            $this->checkpointStorage
-        );
-        $catchUp = $catchUp->withOnBeforeBatchCompleted(fn() => $catchUpHook->onBeforeBatchCompleted());
-        $catchUp->run($eventStream);
-        $catchUpHook->onAfterCatchUp();
-    }
-
-    private function apply(\Neos\EventStore\Model\EventEnvelope $eventEnvelope, CatchUpHookInterface $catchUpHook): void
-    {
-        if (!$this->canHandle($eventEnvelope->event)) {
-            return;
-        }
-
-        $eventInstance = $this->eventNormalizer->denormalize($eventEnvelope->event);
-        $catchUpHook->onBeforeEvent($eventInstance, $eventEnvelope);
-
-        $this->dbal->beginTransaction();
-
-        // @codingStandardsIgnoreStart @phpstan-ignore-next-line
-        match ($eventInstance::class) {
-            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($eventInstance),
-            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($eventInstance),
-            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($eventInstance),
-            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($eventInstance),
-            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($eventInstance),
-            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($eventInstance),
-            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($eventInstance),
-            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($eventInstance),
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($eventInstance),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($eventInstance),
-            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($eventInstance),
-            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($eventInstance, $eventEnvelope),
-            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($eventInstance),
-            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($eventInstance),
-            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($eventInstance),
+        match ($event::class) {
+            RootWorkspaceWasCreated::class => $this->whenRootWorkspaceWasCreated($event),
+            RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
+            RootNodeAggregateDimensionsWereUpdated::class => $this->whenRootNodeAggregateDimensionsWereUpdated($event),
+            NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
+            NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event),
+            NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
+            NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
+            NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
+            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
+            NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
+            NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
+            DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
+            DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
+            default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
-        // @codingStandardsIgnoreEnd
-
-        try {
-            $this->dbal->commit();
-            $catchUpHook->onAfterEvent($eventInstance, $eventEnvelope);
-        } catch (ConnectionException $e) {
-            throw new \RuntimeException(sprintf(
-                'Failed to commit transaction in %s: %s',
-                __METHOD__,
-                $e->getMessage()
-            ), 1599580555, $e);
-        }
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        return $this->checkpointStorage->getHighestAppliedSequenceNumber();
+        return $this->checkpointStorage;
     }
 
     public function getState(): DocumentUriPathFinder

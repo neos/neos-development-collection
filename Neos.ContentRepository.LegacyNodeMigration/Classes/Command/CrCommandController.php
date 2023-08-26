@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationService;
 use Neos\ContentRepository\LegacyNodeMigration\LegacyMigrationServiceFactory;
@@ -130,7 +131,7 @@ class CrCommandController extends CommandController
         // we also need to reset the projections; in order to ensure the system runs deterministically. We
         // do this by replaying the just-truncated event stream.
         $projectionService = $this->contentRepositoryRegistry->buildService($contentRepositoryId, $this->projectionReplayServiceFactory);
-        $projectionService->replayAllProjections();
+        $projectionService->replayAllProjections(CatchUpOptions::create());
         $this->outputLine('Truncated events');
 
         $liveContentStreamId = ContentStreamId::create();
@@ -156,7 +157,7 @@ class CrCommandController extends CommandController
         $this->outputLine();
 
         $this->outputLine('Replaying projections');
-        $projectionService->replayAllProjections();
+        $projectionService->replayAllProjections(CatchUpOptions::create());
         $this->outputLine('<success>Done</success>');
     }
 

@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
-use Neos\EventStore\Model\Event;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
-use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\CatchUp\CheckpointStorageInterface;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * @implements ProjectionInterface<ContentGraphInterface>
@@ -35,7 +34,7 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         $this->projectionImplementation->reset();
     }
 
-    public function canHandle(Event $event): bool
+    public function canHandle(EventInterface $event): bool
     {
         return $this->projectionImplementation->canHandle($event);
     }
@@ -45,14 +44,14 @@ final class ContentGraphProjection implements ProjectionInterface, WithMarkStale
         return $this->projectionImplementation->getState();
     }
 
-    public function catchUp(EventStreamInterface $eventStream, ContentRepository $contentRepository): void
+    public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
-        $this->projectionImplementation->catchUp($eventStream, $contentRepository);
+        $this->projectionImplementation->apply($event, $eventEnvelope);
     }
 
-    public function getSequenceNumber(): SequenceNumber
+    public function getCheckpointStorage(): CheckpointStorageInterface
     {
-        return $this->projectionImplementation->getSequenceNumber();
+        return $this->projectionImplementation->getCheckpointStorage();
     }
 
     public function markStale(): void

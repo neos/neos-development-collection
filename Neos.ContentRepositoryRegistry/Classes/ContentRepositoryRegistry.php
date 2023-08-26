@@ -9,7 +9,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Factory\ProjectionsFactory;
+use Neos\ContentRepository\Core\Factory\ProjectionsAndCatchUpHooksFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
@@ -191,10 +191,10 @@ final class ContentRepositoryRegistry
         return new Serializer($normalizers);
     }
 
-    private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionsFactory
+    private function buildProjectionsFactory(ContentRepositoryId $contentRepositoryId, array $contentRepositorySettings): ProjectionsAndCatchUpHooksFactory
     {
         (isset($contentRepositorySettings['projections']) && is_array($contentRepositorySettings['projections'])) || throw InvalidConfigurationException::fromMessage('Content repository "%s" does not have projections configured, or the value is no array.', $contentRepositoryId->value);
-        $projectionsFactory = new ProjectionsFactory();
+        $projectionsFactory = new ProjectionsAndCatchUpHooksFactory();
         foreach ($contentRepositorySettings['projections'] as $projectionName => $projectionOptions) {
             $projectionFactory = $this->objectManager->get($projectionOptions['factoryObjectName']);
             if (!$projectionFactory instanceof ProjectionFactoryInterface) {
