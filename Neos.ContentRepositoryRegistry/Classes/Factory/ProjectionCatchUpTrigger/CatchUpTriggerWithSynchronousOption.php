@@ -37,7 +37,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
     /**
      * INTERNAL
      */
-    public static function enableSynchonityForSpeedingUpTesting(): void
+    public static function enableSynchronicityForSpeedingUpTesting(): void
     {
         self::$synchronousEnabled = true;
     }

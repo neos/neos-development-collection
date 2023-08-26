@@ -82,7 +82,7 @@ trait CRTestSuiteTrait
     protected function setupCRTestSuiteTrait(bool $alwaysRunCrSetup = false): void
     {
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
+            CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         }
     }
 
