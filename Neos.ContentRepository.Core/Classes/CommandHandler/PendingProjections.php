@@ -100,10 +100,10 @@ final class PendingProjections
         $pendingProjectionsArray = [];
         $sequenceNumberPerProjection = [];
         foreach ($events as $event) {
+            if ($event instanceof DecoratedEvent) {
+                $event = $event->innerEvent;
+            }
             foreach ($allProjections as $projection) {
-                if ($event instanceof DecoratedEvent) {
-                    $event = $event->innerEvent;
-                }
                 if ($projection->canHandle($event)) {
                     $sequenceNumberPerProjection[$projection::class] = $sequenceNumberInteger;
                     if (!in_array($projection, $pendingProjectionsArray, true)) {

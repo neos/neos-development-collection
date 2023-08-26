@@ -150,7 +150,7 @@ final class ContentRepository
                 return $projectionState;
             }
         }
-        throw new \InvalidArgumentException(sprintf('a projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
+        throw new \InvalidArgumentException(sprintf('A projection state of type "%s" is not registered in this content repository instance.', $projectionStateClassName), 1662033650);
     }
 
     /**
