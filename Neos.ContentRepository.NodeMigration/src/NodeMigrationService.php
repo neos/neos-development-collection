@@ -18,6 +18,10 @@ use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use Neos\Flow\Package\PackageManager;
+use Neos\Utility\Exception\FilesException;
+use Neos\Utility\Files;
 
 /**
  * Node Migrations are manually written adjustments to the Node tree;
@@ -53,7 +57,8 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly FiltersFactory $filterFactory,
-        private readonly TransformationsFactory $transformationFactory
+        private readonly TransformationsFactory $transformationFactory,
+        private readonly PackageManager $packageManager
     )
     {
     }
@@ -174,5 +179,33 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                 }
             }
         }
+    }
+
+    /**
+     * Creates a node migration for the given $packageKey
+     *
+     * @param string $packageKey the package key
+     * @return string
+     * @throws UnknownPackageException
+     * @throws FilesException
+     */
+    public function generateBoilerplateMigrationFileInPackage(string $packageKey): string
+    {
+        $templatePath = 'resource://Neos.ContentRepositoryRegistry/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
+        $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';
+
+        $timeStamp = (new \DateTimeImmutable())->format('YmdHis');
+        $nodeMigrationFileName = 'Version' . $timeStamp . '.yaml';
+
+        $targetPathAndFilename = $nodeMigrationPath . $nodeMigrationFileName;
+        $fileContent = file_get_contents($templatePath);
+
+        if (!is_dir(dirname($targetPathAndFilename))) {
+            Files::createDirectoryRecursively(dirname($targetPathAndFilename));
+        }
+
+        file_put_contents($targetPathAndFilename, $fileContent);
+
+        return $packageKey . '/Migrations/ContentRepository/' . $nodeMigrationFileName;
     }
 }

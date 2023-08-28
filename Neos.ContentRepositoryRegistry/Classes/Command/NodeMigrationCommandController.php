@@ -12,6 +12,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
+use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
@@ -22,7 +23,11 @@ use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Package\Exception\UnknownPackageException;
+use Neos\Flow\Package\PackageManager;
+use Neos\Utility\Exception\FilesException;
 
 /**
  * Command controller for tasks related to node migration.
@@ -34,7 +39,9 @@ class NodeMigrationCommandController extends CommandController
     public function __construct(
         private readonly MigrationFactory $migrationFactory,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly ObjectManagerInterface $container
+        private readonly ObjectManagerInterface $container,
+        private readonly PackageManager $packageManager,
+        private readonly NodeMigrationService $nodeMigrationService
     )
     {
         parent::__construct();
@@ -80,6 +87,36 @@ class NodeMigrationCommandController extends CommandController
             $this->outputLine('Error: ' . $e->getMessage());
             $this->quit(1);
         }
+    }
+
+    /**
+     * Creates a node migration for the given package Key.
+     *
+     * @param string $packageKey The packageKey for the given package
+     * @return void
+     * @throws UnknownPackageException
+     * @throws FilesException
+     * @throws StopCommandException
+     * @see neos.contentrepository.migration:node:migrationcreate
+     */
+    public function migrationCreateCommand(string $packageKey): void
+    {
+       if (!$this->packageManager->isPackageAvailable($packageKey)) {
+           $this->outputLine('Package "%s" is not available.', [$packageKey]);
+           $this->quit(1);
+        }
+
+        try {
+           // @TODO: implement logic for creating the node migration properly (without injecting the NodeMigrationService in the __construct() function).
+           // to prevent the error: "ould not autowire required constructor argument $nodeMigrationService for singleton class Neos\ContentRepositoryRegistry\Command\NodeMigrationCommandController."
+            $createdMigration = $this->nodeMigrationService->generateBoilerplateMigrationFileInPackage($packageKey);
+        } catch (MigrationException $e) {
+           $this->outputLine();
+           $this->outputLine('Error ' . $e->getMessage());
+           $this->quit(1);
+        }
+       $this->outputLine($createdMigration);
+       $this->outputLine('Your node migration has been created successfully.');
     }
 
     /**
