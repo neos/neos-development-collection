@@ -12,13 +12,13 @@ namespace Neos\ContentRepositoryRegistry\Command;
  * source code.
  */
 
-use Neos\ContentRepository\NodeMigration\NodeMigrationService;
 use Neos\ContentRepository\NodeMigration\NodeMigrationServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\NodeMigration\Command\ExecuteMigration;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Migration\Factory\MigrationFactory;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\Service\NodeMigrationGeneratorService;
 use Neos\Flow\Cli\CommandController;
 use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
@@ -41,7 +41,7 @@ class NodeMigrationCommandController extends CommandController
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly ObjectManagerInterface $container,
         private readonly PackageManager $packageManager,
-        private readonly NodeMigrationService $nodeMigrationService
+        private readonly NodeMigrationGeneratorService $nodeMigrationGeneratorService
     )
     {
         parent::__construct();
@@ -97,7 +97,7 @@ class NodeMigrationCommandController extends CommandController
      * @throws UnknownPackageException
      * @throws FilesException
      * @throws StopCommandException
-     * @see neos.contentrepository.migration:node:migrationcreate
+     * @see neos.contentrepositoryregistry:nodemigration:migrationcreate
      */
     public function migrationCreateCommand(string $packageKey): void
     {
@@ -107,9 +107,7 @@ class NodeMigrationCommandController extends CommandController
         }
 
         try {
-           // @TODO: implement logic for creating the node migration properly (without injecting the NodeMigrationService in the __construct() function).
-           // to prevent the error: "ould not autowire required constructor argument $nodeMigrationService for singleton class Neos\ContentRepositoryRegistry\Command\NodeMigrationCommandController."
-            $createdMigration = $this->nodeMigrationService->generateBoilerplateMigrationFileInPackage($packageKey);
+            $createdMigration = $this->nodeMigrationGeneratorService->generateBoilerplateMigrationFileInPackage($packageKey);
         } catch (MigrationException $e) {
            $this->outputLine();
            $this->outputLine('Error ' . $e->getMessage());
