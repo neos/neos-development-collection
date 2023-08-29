@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Tests\Behavior;
+namespace Neos\ContentRepositoryRegistry\TestSuite\Behavior;
 
 use Doctrine\DBAL\Connection;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
@@ -24,7 +24,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\EventStore\EventStoreInterface;
 
-require_once(__DIR__ . '/../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
+require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 
 /**
  * The node creation trait for behavioral tests

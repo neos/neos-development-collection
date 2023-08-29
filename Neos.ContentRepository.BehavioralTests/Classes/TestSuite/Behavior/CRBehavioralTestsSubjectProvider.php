@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\BehavioralTests\Tests\Behavior\Helpers;
+namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
