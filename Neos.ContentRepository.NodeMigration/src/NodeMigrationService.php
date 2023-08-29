@@ -53,7 +53,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
     public function __construct(
         private readonly ContentRepository $contentRepository,
         private readonly FiltersFactory $filterFactory,
-        private readonly TransformationsFactory $transformationFactory,
+        private readonly TransformationsFactory $transformationFactory
     )
     {
     }
