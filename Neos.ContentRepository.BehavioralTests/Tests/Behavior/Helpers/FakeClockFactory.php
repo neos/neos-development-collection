@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
+namespace Neos\ContentRepository\BehavioralTests\Tests\Behavior\Helpers;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Helpers\FakeClock;

@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
+namespace Neos\ContentRepository\BehavioralTests\Tests\Behavior\Helpers;
 
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;

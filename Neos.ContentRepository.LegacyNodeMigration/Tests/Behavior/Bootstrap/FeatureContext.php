@@ -26,7 +26,7 @@ use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
+use Neos\ContentRepositoryRegistry\Tests\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PHPUnit\Framework\Assert;
