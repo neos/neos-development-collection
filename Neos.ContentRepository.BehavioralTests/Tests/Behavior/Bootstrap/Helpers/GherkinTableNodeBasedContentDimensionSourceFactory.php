@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\BehavioralTests\Tests\Behavior\Helpers;
+namespace Neos\ContentRepository\BehavioralTests\Tests\Behavior\Bootstrap\Helpers;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
