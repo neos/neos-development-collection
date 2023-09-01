@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlr
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepository\Core\Service\WorkspaceMaintenanceServiceFactory;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -37,16 +38,12 @@ use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 /**
  * The Workspace Command Controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class WorkspaceCommandController extends CommandController
 {
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
+    #[Flow\Inject]
+    protected UserService $userService;
 
     #[Flow\Inject]
     protected PersistenceManagerInterface $persistenceManager;
@@ -332,6 +329,27 @@ class WorkspaceCommandController extends CommandController
 
         $this->outputLine('Set "%s" as the new base workspace for "%s".', [$baseWorkspaceName, $workspaceName]);
         */
+    }
+
+    /**
+     * Rebase all outdated content streams
+     */
+    public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $workspaceMaintenanceService = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            new WorkspaceMaintenanceServiceFactory()
+        );
+        $outdatedWorkspaces = $workspaceMaintenanceService->rebaseOutdatedWorkspaces();
+
+        if (!count($outdatedWorkspaces)) {
+            $this->outputLine('There are no outdated workspaces.');
+        } else {
+            foreach ($outdatedWorkspaces as $outdatedWorkspace) {
+                $this->outputFormatted('Rebased workspace %s', [$outdatedWorkspace->workspaceName->value]);
+            }
+        }
     }
 
     /**
