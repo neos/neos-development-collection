@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
+use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -37,6 +38,8 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class NodeHelperTest extends AbstractFusionObjectTest
 {
+    use CRRegistrySubjectProvider;
+
     /**
      * @var Node|MockObject
      */
@@ -121,11 +124,14 @@ class NodeHelperTest extends AbstractFusionObjectTest
     protected function setUp(): void
     {
         parent::setUp();
-
+        $this->setUpCRRegistry();
+        $contentRepositoryId = ContentRepositoryId::fromString('default');
+        $this->iInitializeContentRepository($contentRepositoryId->value);
         $nodeSubjectProvider = new NodeSubjectProvider();
 
+        $nodeTypeName = NodeTypeName::fromString('Neos.Neos:Content.Text');
         $textNodeType = new NodeType(
-            NodeTypeName::fromString('Neos.Neos:Content.Text'),
+            $nodeTypeName,
             [],
             [
                 'ui' => [
@@ -157,7 +163,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
         $this->textNode = new Node(
             ContentSubgraphIdentity::create(
-                ContentRepositoryId::fromString("cr"),
+                $contentRepositoryId,
                 ContentStreamId::fromString("cs"),
                 DimensionSpacePoint::fromArray([]),
                 VisibilityConstraints::withoutRestrictions()
@@ -165,7 +171,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
             NodeAggregateId::fromString("na"),
             OriginDimensionSpacePoint::fromArray([]),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
-            NodeTypeName::fromString("nt"),
+            $nodeTypeName,
             $textNodeType,
             $textNodeProperties,
             null,
