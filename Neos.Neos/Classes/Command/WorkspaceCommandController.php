@@ -287,51 +287,6 @@ class WorkspaceCommandController extends CommandController
     }
 
     /**
-     * Rebase a workspace
-     *
-     * This command sets a new base workspace for the specified workspace. Note that doing so will put the possible
-     * changes contained in the workspace to be rebased into a different context and thus might lead to unintended
-     * results when being published.
-     *
-     * @param string $workspace Name of the workspace to rebase, for example "user-john"
-     * @param string $baseWorkspace Name of the new base workspace
-     * @return void
-     */
-    public function rebaseCommand($workspace, $baseWorkspace, string $contentRepositoryIdentifier = 'default')
-    {
-        throw new \BadMethodCallException(
-            'Workspace rebasing is now a different concept ("real", git-like rebase <3),'
-            . ' changing the base workspace is not yet supported',
-            1651960852
-        );
-        /*
-        $workspaceName = $workspace;
-        $workspace = $this->workspaceFinder->findOneByName(WorkspaceName::fromString($workspaceName));
-        if (!$workspace instanceof Workspace) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspaceName]);
-            $this->quit(1);
-        }
-
-        if ($workspace->getName() === 'live') {
-            $this->outputLine('The workspace "live" cannot be rebased as it is the global base workspace.');
-            $this->quit(2);
-        }
-
-        $baseWorkspaceName = $baseWorkspace;
-        $baseWorkspace = $this->workspaceFinder->findOneByName($baseWorkspaceName);
-        if (!$baseWorkspace instanceof Workspace) {
-            $this->outputLine('The base workspace "%s" does not exist', [$baseWorkspaceName]);
-            $this->quit(2);
-        }
-
-        $workspace->setBaseWorkspace($baseWorkspace);
-        $this->workspaceFinder->update($workspace);
-
-        $this->outputLine('Set "%s" as the new base workspace for "%s".', [$baseWorkspaceName, $workspaceName]);
-        */
-    }
-
-    /**
      * Rebase all outdated content streams
      */
     public function rebaseOutdatedCommand(string $contentRepositoryIdentifier = 'default'): void
