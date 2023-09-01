@@ -325,7 +325,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         $tableRows = [];
-        $headerRow = ['Name', 'Base Workspace', 'Title', 'Owner', 'Description'];
+        $headerRow = ['Name', 'Base Workspace', 'Title', 'Owner', 'Description', 'Status', 'Content Stream'];
 
         foreach ($workspaces as $workspace) {
             /* @var Workspace $workspace */
@@ -335,6 +335,8 @@ class WorkspaceCommandController extends CommandController
                 $workspace->workspaceTitle?->value,
                 $workspace->workspaceOwner ?: '',
                 $workspace->workspaceDescription->value,
+                $workspace->status->value,
+                $workspace->currentContentStreamId->value,
             ];
         }
         $this->output->outputTable($tableRows, $headerRow);
