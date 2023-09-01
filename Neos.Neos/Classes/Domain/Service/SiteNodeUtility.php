@@ -26,15 +26,19 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 #[Flow\Scope('singleton')]
 final class SiteNodeUtility
 {
+    use NodeTypeWithFallbackProvider;
+
     public function __construct(
-        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
+        ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly DomainRepository $domainRepository,
         private readonly SiteRepository $siteRepository
     ) {
+        $this->contentRepositoryRegistry = $contentRepositoryRegistry;
     }
 
     public function findSiteNode(Node $node): Node
@@ -42,8 +46,8 @@ final class SiteNodeUtility
         $previousNode = null;
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
-            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
-                // the Site node is the one one level underneath the "Sites" node.
+            if ($this->getNodeType($node)->isOfType('Neos.Neos:Sites')) {
+                // the Site node is the one level underneath the "Sites" node.
                 if (is_null($previousNode)) {
                     break;
                 }

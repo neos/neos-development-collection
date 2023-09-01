@@ -21,10 +21,13 @@ use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 #[Flow\Scope('singleton')]
 class NodeSiteResolvingService
 {
+    use NodeTypeWithFallbackProvider;
+
     /**
      * @Flow\Inject
      * @var ContentRepositoryRegistry
@@ -51,8 +54,8 @@ class NodeSiteResolvingService
         }
         $previousNode = null;
         do {
-            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
-                // the Site node is the one one level underneath the "Sites" node.
+            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+                // the Site node is the one level underneath the "Sites" node.
                 return $previousNode;
             }
             $previousNode = $node;

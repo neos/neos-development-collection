@@ -34,13 +34,13 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  *
  * @api Note: The constructor is not part of the public API
  */
-final class Node
+final readonly class Node
 {
     /**
      * @internal
      */
     public function __construct(
-        public readonly ContentSubgraphIdentity $subgraphIdentity,
+        public ContentSubgraphIdentity $subgraphIdentity,
         /**
          * NodeAggregateId (identifier) of this node
          * This is part of the node's "Read Model" identity, whis is defined by:
@@ -50,15 +50,22 @@ final class Node
          * With the above information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraph()}.
          * or {@see \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::subgraphForNode()}
          */
-        public readonly NodeAggregateId $nodeAggregateId,
+        public NodeAggregateId $nodeAggregateId,
         /**
          * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
          * in order to update it.
          */
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateClassification $classification,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly NodeType $nodeType,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateClassification $classification,
+        /**
+         * The node's node type name; always set, even if unknown to the NodeTypeManager
+         */
+        public NodeTypeName $nodeTypeName,
+        /**
+         * The node's node type, null if unknown to the NodeTypeManager
+         * @deprecated Ask the NodeTypeManager instead
+         */
+        public ?NodeType $nodeType,
         /**
          * Returns all properties of this node. References are NOT part of this API;
          * there you need to check getReference() and getReferences().
@@ -67,9 +74,9 @@ final class Node
          *
          * @return PropertyCollectionInterface Property values, indexed by their name
          */
-        public readonly PropertyCollectionInterface $properties,
-        public readonly ?NodeName $nodeName,
-        public readonly Timestamps $timestamps,
+        public PropertyCollectionInterface $properties,
+        public ?NodeName $nodeName,
+        public Timestamps $timestamps,
     ) {
     }
 

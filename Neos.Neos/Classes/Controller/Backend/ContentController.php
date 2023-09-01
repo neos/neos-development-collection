@@ -45,6 +45,7 @@ use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos ContentModule controller; providing backend functionality for the Content Module.
@@ -54,6 +55,7 @@ use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
+    use NodeTypeWithFallbackProvider;
 
     /**
      * @Flow\Inject
@@ -413,12 +415,12 @@ class ContentController extends ActionController
 
     final protected function findClosestDocumentNode(Node $node): ?Node
     {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         while ($node instanceof Node) {
-            if ($node->nodeType->isOfType('Neos.Neos:Document')) {
+            if ($this->getNodeType($node)->isOfType('Neos.Neos:Document')) {
                 return $node;
             }
-            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateId);
+            $node = $subgraph->findParentNode($node->nodeAggregateId);
         }
 
         return null;

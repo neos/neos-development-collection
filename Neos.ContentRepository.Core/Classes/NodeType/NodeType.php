@@ -668,7 +668,7 @@ class NodeType
         string $constraintNodeTypeName,
         int $distance
     ): ?int {
-        if ($currentNodeType->getName() === $constraintNodeTypeName) {
+        if ($currentNodeType->name->value === $constraintNodeTypeName) {
             return $distance;
         }
 

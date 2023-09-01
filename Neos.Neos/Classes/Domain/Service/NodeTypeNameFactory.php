@@ -23,6 +23,7 @@ final class NodeTypeNameFactory
     public const NAME_DOCUMENT = 'Neos.Neos:Document';
     public const NAME_SITE = 'Neos.Neos:Site';
     public const NAME_SITES = 'Neos.Neos:Sites';
+    public const NAME_CONTENT_COLLECTION = 'Neos.Neos:ContentCollection';
     public const NAME_FALLBACK = 'Neos.Neos:FallbackNode';
 
     public static function forDocument(): NodeTypeName
@@ -38,6 +39,11 @@ final class NodeTypeNameFactory
     public static function forSites(): NodeTypeName
     {
         return NodeTypeName::fromString(self::NAME_SITES);
+    }
+
+    public static function forContentCollection(): NodeTypeName
+    {
+        return NodeTypeName::fromString(self::NAME_CONTENT_COLLECTION);
     }
 
     public static function forFallback(): NodeTypeName

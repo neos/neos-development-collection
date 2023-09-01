@@ -36,6 +36,7 @@ use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -125,6 +126,7 @@ use Neos\Neos\FrontendRouting\NodeUriBuilder;
 class NodeViewHelper extends AbstractTagBasedViewHelper
 {
     use FusionContextTrait;
+    use NodeTypeWithFallbackProvider;
 
     /**
      * @var string
@@ -298,7 +300,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444));
         }
-        if ($resolvedNode && $resolvedNode->nodeType->isOfType('Neos.Neos:Shortcut')) {
+        if ($resolvedNode && $this->getNodeType($resolvedNode)->isOfType('Neos.Neos:Shortcut')) {
             try {
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
                     $nodeAddress,

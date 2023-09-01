@@ -43,6 +43,7 @@ use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeShortcutResolver;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\View\FusionView;
 
 /**
@@ -50,6 +51,8 @@ use Neos\Neos\View\FusionView;
  */
 class NodeController extends ActionController
 {
+    use NodeTypeWithFallbackProvider;
+
     /**
      * @Flow\Inject
      * @var ContentRepositoryRegistry
@@ -157,7 +160,7 @@ class NodeController extends ActionController
             );
         }
 
-        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
+        if ($this->getNodeType($nodeInstance)->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -230,7 +233,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
-        if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut')) {
+        if ($this->getNodeType($nodeInstance)->isOfType('Neos.Neos:Shortcut')) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 

@@ -99,7 +99,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         );
         $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
 
-        if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+        if ($siteNodeType->name === NodeTypeNameFactory::forFallback()) {
             throw new NodeTypeNotFoundException(
                 'Cannot create a site using a non-existing node type.',
                 1412372375

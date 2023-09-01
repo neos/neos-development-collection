@@ -20,12 +20,15 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * An Eel context matching expression for the node privileges
  */
 class NodePrivilegeContext
 {
+    use NodeTypeWithFallbackProvider;
+
     /**
      * @Flow\Inject
      * @var SecurityContext
@@ -143,7 +146,7 @@ class NodePrivilegeContext
         }
 
         foreach ($nodeTypes as $nodeType) {
-            if ($this->node->nodeType->isOfType($nodeType)) {
+            if ($this->getNodeType($this->node)->isOfType($nodeType)) {
                 return true;
             }
         }

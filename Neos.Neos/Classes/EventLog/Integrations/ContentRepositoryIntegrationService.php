@@ -21,6 +21,7 @@ use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Monitors Neos.ContentRepository changes
@@ -30,6 +31,8 @@ use Neos\Flow\Persistence\PersistenceManagerInterface;
  */
 class ContentRepositoryIntegrationService extends AbstractIntegrationService
 {
+    use NodeTypeWithFallbackProvider;
+
     public const NODE_ADDED = 'Node.Added';
     public const NODE_UPDATED = 'Node.Updated';
     public const NODE_LABEL_CHANGED = 'Node.LabelChanged';
@@ -412,7 +415,7 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         $documentNode = $node;
-        while ($documentNode !== null && !$documentNode->nodeType->isAggregate()) {
+        while ($documentNode !== null && !$this->getNodeType($documentNode)->isAggregate()) {
             $documentNode = $subgraph->findParentNode($documentNode->nodeAggregateId);
         }
 

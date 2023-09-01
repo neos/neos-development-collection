@@ -54,7 +54,7 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
                     return new class implements NodeLabelGeneratorInterface {
                         public function getLabel(Node $node): string
                         {
-                            return $node->nodeType->getLabel();
+                            return $node->nodeTypeName->value;
                         }
                     };
                 }

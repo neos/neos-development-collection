@@ -62,6 +62,7 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos Workspaces module controller
@@ -71,6 +72,7 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 class WorkspacesController extends AbstractModuleController
 {
     use ModuleTranslationTrait;
+    use NodeTypeWithFallbackProvider;
 
     /**
      * @Flow\Inject
@@ -793,7 +795,7 @@ class WorkspacesController extends AbstractModuleController
                 foreach ($ancestors as $ancestor) {
                     $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
                     $nodePathSegments[] = $pathSegment;
-                    if ($ancestor->nodeType->isOfType('Neos.Neos:Document')) {
+                    if ($this->getNodeType($ancestor)->isOfType('Neos.Neos:Document')) {
                         $documentPathSegments[] = $pathSegment;
                         if (is_null($documentNode)) {
                             $documentNode = $ancestor;
@@ -836,8 +838,9 @@ class WorkspacesController extends AbstractModuleController
                             $contentRepository
                         )
                     ];
-                    if ($node->nodeType->isOfType('Neos.Neos:Node')) {
-                        $change['configuration'] = $node->nodeType->getFullConfiguration();
+                    $nodeType = $this->getNodeType($node);
+                    if ($nodeType->isOfType('Neos.Neos:Node')) {
+                        $change['configuration'] = $nodeType->getFullConfiguration();
                     }
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
@@ -907,7 +910,7 @@ class WorkspacesController extends AbstractModuleController
 
         $contentChanges = [];
 
-        $changeNodePropertiesDefaults = $changedNode->nodeType->getDefaultValuesForProperties();
+        $changeNodePropertiesDefaults = $this->getNodeType($changedNode)->getDefaultValuesForProperties();
 
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
@@ -1024,7 +1027,7 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getPropertyLabel($propertyName, Node $changedNode)
     {
-        $properties = $changedNode->nodeType->getProperties();
+        $properties = $this->getNodeType($changedNode)->getProperties();
         if (
             !isset($properties[$propertyName])
             || !isset($properties[$propertyName]['ui']['label'])
