@@ -19,7 +19,6 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
@@ -45,7 +44,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
@@ -104,12 +102,6 @@ class WorkspacesController extends AbstractModuleController
      * @Flow\Inject
      */
     protected $packageManager;
-
-    /**
-     * @var ContentRepositoryRegistry
-     * @Flow\Inject
-     */
-    protected $contentRepositoryRegistry;
 
     /**
      * Display a list of unpublished content

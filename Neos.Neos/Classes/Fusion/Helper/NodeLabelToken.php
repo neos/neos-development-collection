@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
@@ -41,12 +40,6 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      * @var StringHelper
      */
     protected $stringHelper;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
 
     /**
      * @var string

@@ -18,7 +18,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
@@ -53,9 +52,6 @@ class ContentRepositoryIntegrationService extends AbstractIntegrationService
      * @var PersistenceManagerInterface
      */
     protected $persistenceManager;
-
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @var array<mixed>

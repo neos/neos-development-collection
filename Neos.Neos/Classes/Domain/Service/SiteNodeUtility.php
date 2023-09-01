@@ -18,10 +18,8 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -34,11 +32,9 @@ final class SiteNodeUtility
     use NodeTypeWithFallbackProvider;
 
     public function __construct(
-        ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly DomainRepository $domainRepository,
         private readonly SiteRepository $siteRepository
     ) {
-        $this->contentRepositoryRegistry = $contentRepositoryRegistry;
     }
 
     public function findSiteNode(Node $node): Node

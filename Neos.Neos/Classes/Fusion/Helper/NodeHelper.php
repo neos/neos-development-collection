@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
@@ -34,12 +33,6 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 class NodeHelper implements ProtectedContextAwareInterface
 {
     use NodeTypeWithFallbackProvider;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
 
     /**
      * Check if the given node is already a collection, find collection by nodePath otherwise, throw exception
