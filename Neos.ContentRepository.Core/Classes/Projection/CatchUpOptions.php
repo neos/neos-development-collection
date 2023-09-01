@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection;
 
+use Closure;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\Model\Event\SequenceNumber;
+use Neos\EventStore\Model\EventEnvelope;
 
 /**
  * Options for {@see ContentRepository::catchUpProjection()}
@@ -16,9 +19,11 @@ final class CatchUpOptions
 {
     /**
      * @param SequenceNumber|null $maximumSequenceNumber If specified the catch-up will stop at the specified {@see SequenceNumber}
+     * @param Closure(EventInterface $event, EventEnvelope $eventEnvelope): void|null $progressCallback If specified the given closure will be invoked for every event with the current {@see EventInterface} and {@see EventEnvelope} passed as arguments
      */
     private function __construct(
         public readonly ?SequenceNumber $maximumSequenceNumber,
+        public readonly ?Closure $progressCallback,
     ) {
     }
 
@@ -30,11 +35,12 @@ final class CatchUpOptions
      */
     public static function create(
         SequenceNumber|int|null $maximumSequenceNumber = null,
+        Closure|null $progressCallback = null,
     ): self {
         if (is_int($maximumSequenceNumber)) {
             $maximumSequenceNumber = SequenceNumber::fromInteger($maximumSequenceNumber);
         }
-        return new self($maximumSequenceNumber);
+        return new self($maximumSequenceNumber, $progressCallback);
     }
 
 
@@ -46,9 +52,11 @@ final class CatchUpOptions
      */
     public function with(
         SequenceNumber|int|null $maximumSequenceNumber = null,
+        Closure|null $progressCallback = null,
     ): self {
         return self::create(
             $maximumSequenceNumber ?? $this->maximumSequenceNumber,
+            $progressCallback ?? $this->progressCallback,
         );
     }
 }
