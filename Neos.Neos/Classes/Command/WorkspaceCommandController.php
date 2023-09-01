@@ -55,33 +55,23 @@ class WorkspaceCommandController extends CommandController
      * Publish changes of a workspace
      *
      * This command publishes all modified, created or deleted nodes in the specified workspace to its base workspace.
-     * If a target workspace is specified, the content is published to that workspace instead.
      *
      * @param string $workspace Name of the workspace containing the changes to publish, for example "user-john"
      * @param string $contentRepositoryIdentifier
-     * @param boolean $verbose If enabled, some information about individual nodes will be displayed
-     * @param boolean $dryRun If set, only displays which nodes would be published, no real changes are committed
      */
-    public function publishCommand(
-        string $workspace,
-        string $contentRepositoryIdentifier = 'default',
-        bool $verbose = false,
-        bool $dryRun = false
-    ): void
+    public function publishCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        if (!$dryRun) {
-            $contentRepository->handle(new PublishWorkspace(
-                WorkspaceName::fromString($workspace),
-            ))->block();
+        $contentRepository->handle(new PublishWorkspace(
+            WorkspaceName::fromString($workspace),
+        ))->block();
 
-            $this->outputLine(
-                'Published all nodes in workspace %s to its base workspace',
-                [$workspace]
-            );
-        }
+        $this->outputLine(
+            'Published all nodes in workspace %s to its base workspace',
+            [$workspace]
+        );
     }
 
     /**
@@ -91,33 +81,24 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $workspace Name of the workspace, for example "user-john"
      * @param string $contentRepositoryIdentifier
-     * @param boolean $verbose If enabled, information about individual nodes will be displayed
-     * @param boolean $dryRun If set, only displays which nodes would be discarded, no real changes are committed
      * @throws StopCommandException
      */
-    public function discardCommand(
-        string $workspace,
-        string $contentRepositoryIdentifier = 'default',
-        bool $verbose = false,
-        bool $dryRun = false
-    ): void
+    public function discardCommand(string $workspace, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        if (!$dryRun) {
-            try {
-                $contentRepository->handle(
-                    DiscardWorkspace::create(
-                        WorkspaceName::fromString($workspace),
-                    )
-                )->block();
-            } catch (WorkspaceDoesNotExist $exception) {
-                $this->outputLine('Workspace "%s" does not exist', [$workspace]);
-                $this->quit(1);
-            }
-            $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
+        try {
+            $contentRepository->handle(
+                DiscardWorkspace::create(
+                    WorkspaceName::fromString($workspace),
+                )
+            )->block();
+        } catch (WorkspaceDoesNotExist $exception) {
+            $this->outputLine('Workspace "%s" does not exist', [$workspace]);
+            $this->quit(1);
         }
+        $this->outputLine('Discarded all nodes in workspace %s', [$workspace]);
     }
 
     /**
