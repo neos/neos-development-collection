@@ -165,9 +165,10 @@ class WorkspaceCommandController extends CommandController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if ($owner === '') {
-            $workspaceOwner = null;
+            $workspaceOwnerUserId = null;
         } else {
-            $workspaceOwner = $this->userService->getCurrentUserIdentifier();
+            $workspaceOwnerUserId = UserId::fromString($owner);
+            $workspaceOwner = $this->userService->findByUserIdentifier($workspaceOwnerUserId);
             if ($workspaceOwner === null) {
                 $this->outputLine('The user "%s" specified as owner does not exist', [$owner]);
                 $this->quit(3);
@@ -181,7 +182,7 @@ class WorkspaceCommandController extends CommandController
                 WorkspaceTitle::fromString($title ?: $workspace),
                 WorkspaceDescription::fromString($description ?: $workspace),
                 ContentStreamId::create(),
-                $workspaceOwner
+                $workspaceOwnerUserId
             ))->block();
         } catch (WorkspaceAlreadyExists $workspaceAlreadyExists) {
             $this->outputLine('Workspace "%s" already exists', [$workspace]);
@@ -191,7 +192,7 @@ class WorkspaceCommandController extends CommandController
             $this->quit(2);
         }
 
-        if ($workspaceOwner instanceof UserId) {
+        if ($workspaceOwnerUserId instanceof UserId) {
             $this->outputLine(
                 'Created a new workspace "%s", based on workspace "%s", owned by "%s".',
                 [$workspace, $baseWorkspace, $owner]
