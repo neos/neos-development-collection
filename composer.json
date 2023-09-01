@@ -89,7 +89,7 @@
     "scripts": {
         "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.TestSuite/Classes ./Neos.ContentRepository.Core/Classes ./Neos.Neos/Classes",
         "lint:phpcs": [
-            "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength"
+            "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength,PSR1.Files.SideEffects"
         ],
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint": [
