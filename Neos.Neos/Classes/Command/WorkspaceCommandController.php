@@ -32,9 +32,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
+use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\UserService;
-use Symfony\Component\Serializer\Exception\ExceptionInterface;
 
 /**
  * The Workspace Command Controller
@@ -61,15 +61,14 @@ class WorkspaceCommandController extends CommandController
      * @param string $contentRepositoryIdentifier
      * @param boolean $verbose If enabled, some information about individual nodes will be displayed
      * @param boolean $dryRun If set, only displays which nodes would be published, no real changes are committed
-     * @return void
-     * @throws ExceptionInterface
      */
     public function publishCommand(
-        $workspace,
+        string $workspace,
         string $contentRepositoryIdentifier = 'default',
-        $verbose = false,
-        $dryRun = false
-    ) {
+        bool $verbose = false,
+        bool $dryRun = false
+    ): void
+    {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
@@ -91,16 +90,18 @@ class WorkspaceCommandController extends CommandController
      * This command discards all modified, created or deleted nodes in the specified workspace.
      *
      * @param string $workspace Name of the workspace, for example "user-john"
+     * @param string $contentRepositoryIdentifier
      * @param boolean $verbose If enabled, information about individual nodes will be displayed
      * @param boolean $dryRun If set, only displays which nodes would be discarded, no real changes are committed
-     * @return void
+     * @throws StopCommandException
      */
     public function discardCommand(
-        $workspace,
+        string $workspace,
         string $contentRepositoryIdentifier = 'default',
-        $verbose = false,
-        $dryRun = false
-    ) {
+        bool $verbose = false,
+        bool $dryRun = false
+    ): void
+    {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
@@ -119,6 +120,12 @@ class WorkspaceCommandController extends CommandController
         }
     }
 
+    /**
+     * Create a new root workspace for a content repository.
+     *
+     * @param string $name
+     * @param string $contentRepositoryIdentifier
+     */
     public function createRootCommand(string $name, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
@@ -139,19 +146,21 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param string $baseWorkspace Name of the base workspace. If none is specified, "live" is assumed.
-     * @param string $title Human friendly title of the workspace, for example "Christmas Campaign"
-     * @param string $description A description explaining the purpose of the new workspace
+     * @param string|null $title Human friendly title of the workspace, for example "Christmas Campaign"
+     * @param string|null $description A description explaining the purpose of the new workspace
      * @param string $owner The identifier of a User to own the workspace
-     * @return void
+     * @param string $contentRepositoryIdentifier
+     * @throws StopCommandException
      */
     public function createCommand(
-        $workspace,
-        $baseWorkspace = 'live',
-        $title = null,
-        $description = null,
-        $owner = '',
+        string $workspace,
+        string $baseWorkspace = 'live',
+        string $title = null,
+        string $description = null,
+        string $owner = '',
         string $contentRepositoryIdentifier = 'default'
-    ) {
+    ): void
+    {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
@@ -203,10 +212,9 @@ class WorkspaceCommandController extends CommandController
      *
      * @param string $workspace Name of the workspace, for example "christmas-campaign"
      * @param boolean $force Delete the workspace and all of its contents
-     * @return void
      * @see neos.neos:workspace:discard
      */
-    public function deleteCommand($workspace, $force = false, string $contentRepositoryIdentifier = 'default')
+    public function deleteCommand(string $workspace, bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
         throw new \BadMethodCallException(
             'Workspace removal is not supported yet',
