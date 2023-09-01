@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
@@ -53,7 +54,7 @@ class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 
         $currentNode = $node;
         while ($currentNode instanceof Node) {
-            if ($this->getNodeType($currentNode)->isOfType('Neos.Neos:Document')) {
+            if ($this->getNodeType($currentNode)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                 $documentNodes[] = $currentNode;
             }
             $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);

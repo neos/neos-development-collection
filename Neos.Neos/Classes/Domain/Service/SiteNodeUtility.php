@@ -46,7 +46,7 @@ final class SiteNodeUtility
         $previousNode = null;
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
-            if ($this->getNodeType($node)->isOfType('Neos.Neos:Sites')) {
+            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
                 // the Site node is the one level underneath the "Sites" node.
                 if (is_null($previousNode)) {
                     break;
@@ -82,7 +82,7 @@ final class SiteNodeUtility
             $rootNodeAggregate = $contentRepository->getContentGraph()
                 ->findRootNodeAggregateByType(
                     $contentStreamId,
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 );
             $sitesNode = $subgraph->findNodeById($rootNodeAggregate->nodeAggregateId);
             if ($sitesNode) {

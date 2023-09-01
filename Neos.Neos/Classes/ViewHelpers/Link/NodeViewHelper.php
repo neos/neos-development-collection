@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -300,7 +301,7 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
                 json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
             ), 1601372444));
         }
-        if ($resolvedNode && $this->getNodeType($resolvedNode)->isOfType('Neos.Neos:Shortcut')) {
+        if ($resolvedNode && $this->getNodeType($resolvedNode)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             try {
                 $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
                     $nodeAddress,

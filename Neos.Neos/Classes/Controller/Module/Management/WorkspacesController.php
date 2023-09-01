@@ -25,6 +25,7 @@ use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -795,7 +796,7 @@ class WorkspacesController extends AbstractModuleController
                 foreach ($ancestors as $ancestor) {
                     $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
                     $nodePathSegments[] = $pathSegment;
-                    if ($this->getNodeType($ancestor)->isOfType('Neos.Neos:Document')) {
+                    if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                         $documentPathSegments[] = $pathSegment;
                         if (is_null($documentNode)) {
                             $documentNode = $ancestor;

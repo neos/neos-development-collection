@@ -23,6 +23,7 @@ use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\FusionService;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\Exception;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
@@ -179,7 +180,7 @@ class FusionView extends AbstractView
     protected function getClosestDocumentNode(Node $node): ?Node
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        while ($node !== null && !$this->getNodeType($node)->isOfType('Neos.Neos:Document')) {
+        while ($node !== null && !$this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
             $node = $subgraph->findParentNode($node->nodeAggregateId);
         }
 

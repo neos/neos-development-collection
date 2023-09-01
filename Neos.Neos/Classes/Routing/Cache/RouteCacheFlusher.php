@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
@@ -60,7 +61,7 @@ class RouteCacheFlusher
         if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
-        if (!$this->getNodeType($node)->isOfType('Neos.Neos:Document')) {
+        if (!$this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
             return;
         }
         $this->tagsToFlush[] = $identifier;

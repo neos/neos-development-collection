@@ -36,6 +36,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeAddress;
@@ -160,7 +161,7 @@ class NodeController extends ActionController
             );
         }
 
-        if ($this->getNodeType($nodeInstance)->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
+        if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT) && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -233,7 +234,7 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
-        if ($this->getNodeType($nodeInstance)->isOfType('Neos.Neos:Shortcut')) {
+        if ($this->getNodeType($nodeInstance)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
@@ -327,7 +328,7 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: '!Neos.Neos:Document', maximumLevels: 20)
+            FindSubtreeFilter::create(nodeTypeConstraints: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
         );
         if ($subtree === null) {
             return;

@@ -17,6 +17,7 @@ namespace Neos\Neos\Controller\Backend;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -417,7 +418,7 @@ class ContentController extends ActionController
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         while ($node instanceof Node) {
-            if ($this->getNodeType($node)->isOfType('Neos.Neos:Document')) {
+            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                 return $node;
             }
             $node = $subgraph->findParentNode($node->nodeAggregateId);

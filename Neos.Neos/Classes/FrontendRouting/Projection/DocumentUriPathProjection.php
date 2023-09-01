@@ -41,6 +41,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
@@ -704,7 +705,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType('Neos.Neos:Document');
+        return $nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT);
     }
 
     private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
@@ -712,7 +713,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType('Neos.Neos:Shortcut');
+        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SHORTCUT);
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo

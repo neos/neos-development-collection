@@ -69,7 +69,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         foreach ($this->contentRepository->getContentStreamFinder()->findAllIds() as $contentStreamId) {
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 $contentStreamId,
-                NodeTypeName::fromString('Neos.Neos:Sites')
+                NodeTypeNameFactory::forSites()
             );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
                 $contentStreamId,
