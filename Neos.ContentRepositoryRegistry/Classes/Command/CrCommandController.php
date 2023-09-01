@@ -53,15 +53,18 @@ final class CrCommandController extends CommandController
 
         if (!$quiet) {
             $this->outputLine('Replaying events for projection "%s" of Content Repository "%s" ...', [$projection, $contentRepositoryId->value]);
-            // TODO start progress bar
+            $this->output->progressStart();
         }
-        $options = CatchUpOptions::create();
+        $options = CatchUpOptions::create(
+            progressCallback: fn () => $this->output->progressAdvance(),
+        );
         if ($until > 0) {
             $options = $options->with(maximumSequenceNumber: SequenceNumber::fromInteger($until));
         }
         $projectionService->replayProjection($projection, $options);
         if (!$quiet) {
-            // TODO finish progress bar
+            $this->output->progressFinish();
+            $this->outputLine();
             $this->outputLine('<success>Done.</success>');
         }
     }
