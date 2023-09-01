@@ -97,14 +97,16 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             $liveContentStreamId,
             NodeTypeNameFactory::forSites()
         );
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        if ($siteNodeType->name === NodeTypeNameFactory::forFallback()) {
+        try {
+            $this->nodeTypeManager->getNodeType($nodeTypeName);
+        } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFoundException(
                 'Cannot create a site using a non-existing node type.',
-                1412372375
+                1412372375,
+                $exception
             );
         }
+
         $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
             $liveContentStreamId,
             $sitesNodeIdentifier,

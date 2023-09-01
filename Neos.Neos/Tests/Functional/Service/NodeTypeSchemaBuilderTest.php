@@ -42,8 +42,7 @@ class NodeTypeSchemaBuilderTest extends FunctionalTestCase
         $this->nodeTypeSchemaBuilder = NodeTypeSchemaBuilder::create(
             new NodeTypeManager(
                 fn() => $configurationManager->getConfiguration('NodeTypes'),
-                $nodeLabelGeneratorFactory,
-                null
+                $nodeLabelGeneratorFactory
             )
         );
         $this->schema = $this->nodeTypeSchemaBuilder->generateNodeTypeSchema();
