@@ -310,9 +310,9 @@ class WorkspaceCommandController extends CommandController
     /**
      * Display a list of existing workspaces
      *
-     * @return void
+     * @throws StopCommandException
      */
-    public function listCommand(string $contentRepositoryIdentifier = 'default')
+    public function listCommand(string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -330,11 +330,11 @@ class WorkspaceCommandController extends CommandController
         foreach ($workspaces as $workspace) {
             /* @var Workspace $workspace */
             $tableRows[] = [
-                $workspace->workspaceName,
-                $workspace->baseWorkspaceName ?: '',
-                $workspace->workspaceTitle,
+                $workspace->workspaceName->value,
+                $workspace->baseWorkspaceName?->value ?: '',
+                $workspace->workspaceTitle?->value,
                 $workspace->workspaceOwner ?: '',
-                $workspace->workspaceDescription
+                $workspace->workspaceDescription->value,
             ];
         }
         $this->output->outputTable($tableRows, $headerRow);
