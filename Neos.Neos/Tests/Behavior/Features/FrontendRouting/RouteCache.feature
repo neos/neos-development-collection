@@ -1,12 +1,10 @@
 @fixtures @contentrepository
-# Note: For the routing tests to work we rely on Configuration/Testing/Behat/NodeTypes.Test.Routing.yaml
 Feature: Route cache invalidation
 
   Background:
-    Given I have no content dimensions
-    And I am user identified by "initiating-user-identifier"
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
@@ -26,6 +24,9 @@ Feature: Route cache invalidation
         uriPathSegment:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value           |
       | workspaceName      | "live"          |

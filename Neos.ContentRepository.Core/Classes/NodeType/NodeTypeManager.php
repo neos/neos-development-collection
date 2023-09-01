@@ -49,7 +49,7 @@ class NodeTypeManager
      * Return all registered node types.
      *
      * @param boolean $includeAbstractNodeTypes Whether to include abstract node types, defaults to true
-     * @return array<NodeType> All node types registered in the system, indexed by node type name
+     * @return array<string,NodeType> All node types registered in the system, indexed by node type name
      * @api
      */
     public function getNodeTypes(bool $includeAbstractNodeTypes = true): array

@@ -2,12 +2,18 @@
 Feature: NoopResolver does nothing (boilerplate testcase)
 
   Background:
-    Given I have no content dimensions
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
+    'Neos.ContentRepository:Root': []
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Match homepage URL
     When I am on URL "/"
     And I invoke the Dimension Resolver from site configuration:
-    """
+    """yaml
     contentRepository: default
     contentDimensions:
       resolver:
@@ -18,7 +24,7 @@ Feature: NoopResolver does nothing (boilerplate testcase)
   Scenario: Match homepage URL
     When I am on URL "/foo"
     And I invoke the Dimension Resolver from site configuration:
-    """
+    """yaml
     contentRepository: default
     contentDimensions:
       resolver:

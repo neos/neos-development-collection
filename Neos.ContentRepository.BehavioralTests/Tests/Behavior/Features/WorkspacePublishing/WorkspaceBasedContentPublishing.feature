@@ -8,15 +8,17 @@ Feature: Workspace based content publishing
   - then, a nested workspace is created based on the "root" node
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value                        |
       | workspaceName      | "live"                       |

@@ -8,9 +8,9 @@ Feature: Create node aggregate with node
   and its soon-to-be child node aggregate Sir David Nodenborough
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Node':
       properties:
@@ -29,6 +29,8 @@ Feature: Create node aggregate with node
     'Neos.ContentRepository.Testing:AbstractNode':
       abstract: true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
@@ -177,17 +179,3 @@ Feature: Create node aggregate with node
       | nodeTypeName          | "Neos.ContentRepository.Testing:NodeWithInvalidDefaultValue" |
       | parentNodeAggregateId | "lady-eleonode-rootford"                                     |
     Then the last command should have thrown an exception of type "CallErrorException"
-
-  Scenario: Try to create a node aggregate in an origin dimension space point the parent node does not cover:
-    Given I have the following content dimensions:
-      | Identifier | Values       | Generalizations |
-      | language   | mul, de, gsw | gsw->de->mul    |
-    When the command CreateNodeAggregateWithNode is executed with payload and exceptions are caught:
-      | Key                       | Value                                 |
-      | nodeAggregateId           | "nody-mc-nodeface"                    |
-      | nodeTypeName              | "Neos.ContentRepository.Testing:Node" |
-      | originDimensionSpacePoint | {"language": "de"}                    |
-      | parentNodeAggregateId     | "lady-eleonode-rootford"              |
-      | nodeName                  | "child-node"                          |
-
-    Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

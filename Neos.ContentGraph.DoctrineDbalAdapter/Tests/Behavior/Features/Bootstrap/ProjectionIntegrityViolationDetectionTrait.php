@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap;
 
 /*
  * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
@@ -13,17 +10,20 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstra
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap;
+
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\TestingNodeAggregateId;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
@@ -35,16 +35,16 @@ use PHPUnit\Framework\Assert;
  */
 trait ProjectionIntegrityViolationDetectionTrait
 {
+    use CRTestSuiteRuntimeVariables;
+
     private DbalClient $dbalClient;
 
     protected Result $lastIntegrityViolationDetectionResult;
 
-    abstract protected function getContentRepositoryId(): ContentRepositoryId;
-
     protected function getTableNamePrefix(): string
     {
         return DoctrineDbalContentGraphProjectionFactory::graphProjectionTableNamePrefix(
-            $this->getContentRepositoryId()
+            $this->currentContentRepository->id
         );
     }
 
@@ -108,7 +108,6 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     /**
      * @When /^I add the following hierarchy relation:$/
-     * @param TableNode $payloadTable
      * @throws DBALException
      */
     public function iAddTheFollowingHierarchyRelation(TableNode $payloadTable): void
@@ -303,7 +302,7 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iRunIntegrityViolationDetection(): void
     {
-        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService($this->getContentRepositoryId(), new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
+        $projectionIntegrityViolationDetectionRunner = $this->getContentRepositoryService(new DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory($this->dbalClient));
         $this->lastIntegrityViolationDetectionResult = $projectionIntegrityViolationDetectionRunner->run();
     }
 
@@ -334,6 +333,4 @@ trait ProjectionIntegrityViolationDetectionTrait
             $error->getCode()
         );
     }
-
-    abstract protected function getDbalClient(): DbalClientInterface;
 }

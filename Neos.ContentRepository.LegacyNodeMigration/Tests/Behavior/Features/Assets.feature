@@ -2,9 +2,25 @@
 Feature: Export of used Assets, Image Variants and Persistent Resources
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
+    And using the following node types:
+    """yaml
+    'unstructured': {}
+    'Some.Package:SomeNodeType':
+      properties:
+        'string':
+          type: string
+        'image':
+          type: 'Neos\Media\Domain\Model\ImageInterface'
+        'asset':
+          type: 'Neos\Media\Domain\Model\Asset'
+        'assets':
+          type: 'array<Neos\Media\Domain\Model\Asset>'
+    """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the following PersistentResources exist
       | identifier | filename       | collectionName | mediaType       |
       | resource1  | Some-File1.jpg | persistent     | image/jpeg      |
@@ -21,20 +37,7 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
       | identifier | originalAssetIdentifier | name           | width | height | presetIdentifier  | presetVariantName      | imageAdjustments                                                                                                                                                                            |
       | variant1   | asset1                  | First variant  | 222   | 333    | SomePresetId      | SomePresetVariant      | [{"type": "RESIZE_IMAGE", "properties": {"width": 222, "height": 333}}]                                                                                                                     |
       | variant2   | asset1                  | Second variant | 300   | 300    | SomeOtherPresetId | SomeOtherPresetVariant | [{"type": "CROP_IMAGE", "properties": {"width": 300, "height": 300}}, {"type": "RESIZE_IMAGE", "properties": {"width": 444, "height": 234, "allowUpScaling": false, "ratioMode": "inset"}}] |
-    And I have the following NodeTypes configuration:
-    """
-    'unstructured': {}
-    'Some.Package:SomeNodeType':
-      properties:
-        'string':
-          type: string
-        'image':
-          type: 'Neos\Media\Domain\Model\ImageInterface'
-        'asset':
-          type: 'Neos\Media\Domain\Model\Asset'
-        'assets':
-          type: 'array<Neos\Media\Domain\Model\Asset>'
-    """
+
 
   Scenario: Exporting an Image Variant includes the original Image asset as well
     When I have the following node data rows:

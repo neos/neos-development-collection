@@ -15,9 +15,9 @@ Feature: Rebasing auto-created nodes works
   rebase as in the original content stream -- and this was not the case in Neos for some time.
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Content':
       childNodes:
@@ -28,6 +28,8 @@ Feature: Rebasing auto-created nodes works
         text:
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value           |
       | workspaceName              | "live"          |

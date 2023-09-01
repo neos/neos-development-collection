@@ -64,6 +64,16 @@ final class ContentRepositoryRegistry
         return $this->getFactory($contentRepositoryId)->getOrBuild();
     }
 
+    /**
+     * @internal for test cases only
+     */
+    public function resetFactoryInstance(ContentRepositoryId $contentRepositoryId): void
+    {
+        if (array_key_exists($contentRepositoryId->value, $this->factoryInstances)) {
+            unset($this->factoryInstances[$contentRepositoryId->value]);
+        }
+    }
+
     public function subgraphForNode(Node $node): ContentSubgraphInterface
     {
         $contentRepository = $this->get($node->subgraphIdentity->contentRepositoryId);
@@ -89,8 +99,9 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function getFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
-    {
+    private function getFactory(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepositoryFactory {
         // This cache is CRUCIAL, because it ensures that the same CR always deals with the same objects internally, even if multiple services
         // are called on the same CR.
         if (!array_key_exists($contentRepositoryId->value, $this->factoryInstances)) {
@@ -102,8 +113,7 @@ final class ContentRepositoryRegistry
     /**
      * @throws ContentRepositoryNotFoundException | InvalidConfigurationException
      */
-    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory
-    {
+    private function buildFactory(ContentRepositoryId $contentRepositoryId): ContentRepositoryFactory {
         if (!is_array($this->settings['contentRepositories'] ?? null)) {
             throw InvalidConfigurationException::fromMessage('No Content Repositories are configured');
         }

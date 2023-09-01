@@ -4,11 +4,11 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
   Background:
     Given the current date and time is "2023-03-16T12:00:00+01:00"
-    And I have the following content dimensions:
+    And using the following content dimensions:
       | Identifier | Values          | Generalizations      |
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
-    And I have the following NodeTypes configuration:
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
@@ -56,6 +56,8 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       superTypes:
         'Neos.ContentRepository.Testing:AbstractPage': true
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And I am user identified by "initiating-user-identifier"
     And the command CreateRootWorkspace is executed with payload:
       | Key                | Value     |

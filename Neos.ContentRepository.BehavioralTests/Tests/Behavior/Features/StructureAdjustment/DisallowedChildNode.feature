@@ -3,15 +3,13 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
   As a user of the CR I want to be able to detect and remove disallowed child nodes according to the constraints
 
-  Background:
-    Given I have no content dimensions
-
   Scenario: Direct constraints
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -24,6 +22,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:SubDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -67,8 +67,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # Actual Test
     ########################
-    When I have the following NodeTypes configuration:
-    """
+    When I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -93,8 +93,9 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # SETUP
     ########################
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       childNodes:
         document:
@@ -111,6 +112,8 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
 
     'Neos.ContentRepository.Testing:SubDocument': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -153,15 +156,23 @@ Feature: Remove disallowed Child Nodes and grandchild nodes
     ########################
     # Actual Test
     ########################
-    When I have the following additional NodeTypes configuration:
-    """
+
+    When I change the node types in content repository "default" to:
+    """yaml
     'Neos.ContentRepository:Root':
       childNodes:
         document:
+          type: 'Neos.ContentRepository.Testing:Document'
           constraints:
             nodeTypes:
               'Neos.ContentRepository.Testing:SubDocument': false
 
+    'Neos.ContentRepository.Testing:Document':
+      constraints:
+        nodeTypes:
+          '*': false
+
+    'Neos.ContentRepository.Testing:SubDocument': []
     """
 
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"

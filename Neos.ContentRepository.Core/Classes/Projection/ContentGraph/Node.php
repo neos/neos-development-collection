@@ -20,7 +20,6 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
  * Main read model of the {@see ContentSubgraphInterface}.
@@ -49,7 +48,7 @@ final class Node
          * - {@see getNodeAggregateId} (this method)
          *
          * With the above information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraph()}.
-         * or {@see ContentRepositoryRegistry::subgraphForNode()}
+         * or {@see \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::subgraphForNode()}
          */
         public readonly NodeAggregateId $nodeAggregateId,
         /**

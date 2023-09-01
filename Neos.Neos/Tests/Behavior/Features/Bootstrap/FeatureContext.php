@@ -11,28 +11,24 @@
  */
 
 use Behat\Behat\Definition\Call\Then;
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Mink\Element\ElementInterface;
 use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\ContentRepositoryInternalsFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeClockFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\Helpers\FakeUserIdProviderFactory;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Helper\ContentGraphs;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
@@ -50,24 +46,12 @@ use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/MigrationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/StructureAdjustmentsTrait.php');
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeTraversalTrait.php');
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 
 require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
@@ -82,37 +66,24 @@ class FeatureContext extends MinkContext
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;
-    use NodeOperationsTrait;
 
-    use EventSourcedTrait;
+    use CRTestSuiteTrait;
+    use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;
     use MigrationsTrait;
 
-
-    /**
-     * @var string
-     */
-    protected $behatTestHelperObjectName = BehatTestHelper::class;
-
-    /**
-     * @var ObjectManagerInterface
-     */
-    protected $objectManager;
+    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     /**
      * @var ElementInterface
      */
     protected $selectedContentElement;
 
-    /**
-     * @var string
-     */
-    protected $lastExportedSiteXmlPathAndFilename = '';
+    protected string $lastExportedSiteXmlPathAndFilename = '';
 
-    /**
-     * @var Environment
-     */
-    protected $environment;
+    protected Environment $environment;
+
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function __construct()
     {
@@ -121,81 +92,20 @@ class FeatureContext extends MinkContext
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
-
         $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+
         $this->setupSecurity();
-        $this->setupEventSourcedTrait(true);
-        if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
-            CatchUpTriggerWithSynchronousOption::enableSynchonityForSpeedingUpTesting();
-        }
+        $this->setupCRTestSuiteTrait(true);
     }
 
-    protected function initCleanContentRepository(array $adapterKeys): void
+    /**
+     * @BeforeScenario
+     */
+    public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
     {
-        $this->logToRaceConditionTracker(['msg' => 'initCleanContentRepository']);
-
-        $configurationManager = $this->getObjectManager()->get(ConfigurationManager::class);
-        $registrySettings = $configurationManager->getConfiguration(
-            ConfigurationManager::CONFIGURATION_TYPE_SETTINGS,
-            'Neos.ContentRepositoryRegistry'
-        );
-
-        unset($registrySettings['presets'][$this->contentRepositoryId->value]['projections']['Neos.ContentGraph.PostgreSQLAdapter:Hypergraph']);
-        $registrySettings['presets'][$this->contentRepositoryId->value]['userIdProvider']['factoryObjectName'] = FakeUserIdProviderFactory::class;
-        $registrySettings['presets'][$this->contentRepositoryId->value]['clock']['factoryObjectName'] = FakeClockFactory::class;
-
-        $this->contentRepositoryRegistry = new ContentRepositoryRegistry(
-            $registrySettings,
-            $this->getObjectManager()
-        );
-
-
-        $this->contentRepository = $this->contentRepositoryRegistry->get($this->contentRepositoryId);
-        // Big performance optimization: only run the setup once - DRAMATICALLY reduces test time
-        if ($this->alwaysRunContentRepositorySetup || !self::$wasContentRepositorySetupCalled) {
-            $this->contentRepository->setUp();
-            self::$wasContentRepositorySetupCalled = true;
-        }
-        $this->contentRepositoryInternals = $this->contentRepositoryRegistry->buildService(
-            $this->contentRepositoryId,
-            new ContentRepositoryInternalsFactory()
-        );
-
-        $availableContentGraphs = [];
-        $availableContentGraphs['DoctrineDBAL'] = $this->contentRepository->getContentGraph();
-
-        if (count($availableContentGraphs) === 0) {
-            throw new \RuntimeException('No content graph active during testing. Please set one in settings in activeContentGraphs');
-        }
-        $this->availableContentGraphs = new ContentGraphs($availableContentGraphs);
-    }
-
-    protected function getContentRepositoryService(
-        ContentRepositoryId $contentRepositoryId,
-        ContentRepositoryServiceFactoryInterface $factory
-    ): ContentRepositoryServiceInterface {
-        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->contentRepositoryRegistry
-            ?: $this->objectManager->get(ContentRepositoryRegistry::class);
-
-        return $contentRepositoryRegistry->buildService(
-            $contentRepositoryId,
-            $factory
-        );
-    }
-
-    protected function getDbalClient(): DbalClientInterface
-    {
-        return $this->dbalClient;
-    }
-
-
-    protected function getContentRepositoryRegistry(): \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry
-    {
-        /** @var ContentRepositoryRegistry $contentRepositoryRegistry */
-        $contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
-
-        return $contentRepositoryRegistry;
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
     }
 
     /**
@@ -613,5 +523,25 @@ class FeatureContext extends MinkContext
         /** @var SiteImportService $siteImportService */
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromFile($this->lastExportedSiteXmlPathAndFilename);
+    }
+
+    protected function getContentRepositoryService(
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            $factory
+        );
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepository {
+        $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+
+        return $contentRepository;
     }
 }

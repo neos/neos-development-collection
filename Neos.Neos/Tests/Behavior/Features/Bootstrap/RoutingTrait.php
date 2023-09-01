@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
@@ -63,6 +64,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 trait RoutingTrait
 {
+    use CRTestSuiteRuntimeVariables;
 
     /**
      * @var Uri
@@ -73,8 +75,6 @@ trait RoutingTrait
      * @return ObjectManagerInterface
      */
     abstract protected function getObjectManager();
-
-    abstract protected function getContentRepositoryId(): ContentRepositoryId;
 
     /**
      * @Given A site exists for node name :nodeName
@@ -160,8 +160,6 @@ trait RoutingTrait
         $persistenceManager->persistAll();
         $persistenceManager->clearState();
     }
-
-    abstract protected function getContentRepository(): ContentRepository;
 
     /**
      * @When The documenturipath projection is up to date
@@ -252,7 +250,7 @@ trait RoutingTrait
             return null;
         }
 
-        $nodeAddressFactory = NodeAddressFactory::create($this->getContentRepository());
+        $nodeAddressFactory = NodeAddressFactory::create($this->currentContentRepository);
         return $nodeAddressFactory->createFromUriString($routeValues['node']);
     }
 
@@ -291,7 +289,7 @@ trait RoutingTrait
         $dbal = $this->getObjectManager()->get(EntityManagerInterface::class)->getConnection();
         $columns = implode(', ', array_keys($expectedRows->getHash()[0]));
         $tablePrefix = DocumentUriPathProjectionFactory::projectionTableNamePrefix(
-            $this->getContentRepositoryId()
+            $this->currentContentRepository->id
         );
         $actualResult = $dbal->fetchAll('SELECT ' . $columns . ' FROM ' . $tablePrefix . '_uri ORDER BY nodeaggregateidpath');
         $expectedResult = array_map(static function (array $row) {

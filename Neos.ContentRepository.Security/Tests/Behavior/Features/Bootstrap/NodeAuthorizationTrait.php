@@ -14,6 +14,7 @@
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use PHPUnit\Framework\Assert;
 
@@ -24,10 +25,12 @@ use PHPUnit\Framework\Assert;
  * * $this->nodeAuthorizationService
  * * $this->nodeTypeManager
  *
- * Note: This trait expects the IsolatedBehatStepsTrait and the NodeOperationsTrait to be available!
+ * Note: This trait expects the IsolatedBehatStepsTrait to be available!
  */
 trait NodeAuthorizationTrait
 {
+    use CRTestSuiteRuntimeVariables;
+
     /**
      * @Flow\Inject
      * @var \Neos\ContentRepository\Security\Service\AuthorizationService
@@ -50,11 +53,11 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($expectedResult))));
         } else {
             if ($expectedResult === 'true') {
-                if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0]) !== true) {
+                if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNode) !== true) {
                     Assert::fail('The node authorization service did not return true!');
                 }
             } else {
-                if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNodes[0]) !== false) {
+                if ($this->nodeAuthorizationService->isGrantedToEditNode($this->currentNode) !== false) {
                     Assert::fail('The node authorization service did not return false!');
                 }
             }
@@ -81,13 +84,13 @@ trait NodeAuthorizationTrait
             );
         } elseif ($expectedResult === 'true') {
             if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
-                    $this->currentNodes[0],
+                    $this->currentNode,
                     $propertyName
                 ) !== true) {
                 Assert::fail('The node authorization service did not return true!');
             }
         } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
-                $this->currentNodes[0],
+                $this->currentNode,
                 $propertyName
             ) !== false) {
             Assert::fail('The node authorization service did not return false!');
@@ -112,7 +115,7 @@ trait NodeAuthorizationTrait
         } else {
             $rows = $table->getHash();
             $deniedPropertyNames = $this->nodeAuthorizationService->getDeniedNodePropertiesForEditing(
-                $this->currentNodes[0]
+                $this->currentNode
             );
 
             if (count($rows) !== count($deniedPropertyNames)) {
@@ -145,7 +148,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($not))));
         } else {
             try {
-                $this->currentNodes[0]->setName('some-new-name');
+                $this->currentNode->setName('some-new-name');
                 if ($not === 'not') {
                     Assert::fail('Name should not be settable on the current node!');
                 }
@@ -156,7 +159,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->removeProperty('title');
+                $this->currentNode->removeProperty('title');
                 if ($not === 'not') {
                     Assert::fail('Title should not be removable on the current node!');
                 }
@@ -167,7 +170,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setContentObject($this->currentNodes[0]->getNodeData());
+                $this->currentNode->setContentObject($this->currentNode->getNodeData());
                 if ($not === 'not') {
                     Assert::fail('Content object should not be settable on the current node!');
                 }
@@ -178,7 +181,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->unsetContentObject();
+                $this->currentNode->unsetContentObject();
                 if ($not === 'not') {
                     Assert::fail('Content object should not be unsettable on the current node!');
                 }
@@ -190,7 +193,7 @@ trait NodeAuthorizationTrait
 
             try {
                 $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
-                $this->currentNodes[0]->setNodeType($nodeTypeManager->getNodeType('Neos.Neos:Node'));
+                $this->currentNode->setNodeType($nodeTypeManager->getNodeType('Neos.Neos:Node'));
                 if ($not === 'not') {
                     Assert::fail('NodeType should not be settable on the current node!');
                 }
@@ -201,7 +204,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setHidden(true);
+                $this->currentNode->setHidden(true);
                 if ($not === 'not') {
                     Assert::fail('Hidden flag should not be settable on the current node!');
                 }
@@ -212,7 +215,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setHiddenBeforeDateTime(new \DateTime());
+                $this->currentNode->setHiddenBeforeDateTime(new \DateTime());
                 if ($not === 'not') {
                     Assert::fail('Hidden before should not be settable on the current node!');
                 }
@@ -223,7 +226,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setHiddenAfterDateTime(new \DateTime());
+                $this->currentNode->setHiddenAfterDateTime(new \DateTime());
                 if ($not === 'not') {
                     Assert::fail('Hidden after should not be settable on the current node!');
                 }
@@ -234,7 +237,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setHiddenInIndex(true);
+                $this->currentNode->setHiddenInIndex(true);
                 if ($not === 'not') {
                     Assert::fail('Hidden in index should not be settable on the current node!');
                 }
@@ -245,7 +248,7 @@ trait NodeAuthorizationTrait
             }
 
             try {
-                $this->currentNodes[0]->setAccessRoles([]);
+                $this->currentNode->setAccessRoles([]);
                 if ($not === 'not') {
                     Assert::fail('Access roles in index should not be settable on the current node!');
                 }
@@ -284,7 +287,7 @@ trait NodeAuthorizationTrait
             $nodeTypeManager = $this->getObjectManager()->get(NodeTypeManager::class);
 
             try {
-                $this->currentNodes[0]->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
+                $this->currentNode->createNode($nodeName, $nodeTypeManager->getNodeType($nodeType));
                 if ($not === 'not') {
                     Assert::fail('Should not be able to create a child node of type "' . $nodeType . '"!');
                 }
@@ -328,14 +331,14 @@ trait NodeAuthorizationTrait
 
             if ($expectedResult === 'true') {
                 if ($this->nodeAuthorizationService->isGrantedToCreateNode(
-                        $this->currentNodes[0],
+                        $this->currentNode,
                         $nodeType
                     ) !== true) {
                     Assert::fail('The node authorization service did not return true!');
                 }
             } else {
                 if ($this->nodeAuthorizationService->isGrantedToCreateNode(
-                        $this->currentNodes[0],
+                        $this->currentNode,
                         $nodeType
                     ) !== false) {
                     Assert::fail('The node authorization service did not return false!');
@@ -361,7 +364,7 @@ trait NodeAuthorizationTrait
         } else {
             $rows = $table->getHash();
             $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation(
-                $this->currentNodes[0]
+                $this->currentNode
             );
 
             if (count($rows) !== count($deniedNodeTypeNames)) {
@@ -394,7 +397,7 @@ trait NodeAuthorizationTrait
         } else {
             $availableNodeTypes = $this->nodeTypeManager->getNodeTypes();
             $deniedNodeTypeNames = $this->nodeAuthorizationService->getNodeTypeNamesDeniedForCreation(
-                $this->currentNodes[0]
+                $this->currentNode
             );
 
             if (count($availableNodeTypes) !== count($deniedNodeTypeNames)) {
@@ -427,7 +430,7 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($not))));
         } else {
             try {
-                $this->currentNodes[0]->remove();
+                $this->currentNode->remove();
                 if ($not === 'not') {
                     Assert::fail('Name should not be settable on the current node!');
                 }
@@ -449,11 +452,11 @@ trait NodeAuthorizationTrait
             $this->callStepInSubProcess(__METHOD__, sprintf(' %s %s', 'string', escapeshellarg(trim($expectedResult))));
         } else {
             if ($expectedResult === 'true') {
-                if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== true) {
+                if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNode) !== true) {
                     Assert::fail('The node authorization service did not return true!');
                 }
             } else {
-                if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNodes[0]) !== false) {
+                if ($this->nodeAuthorizationService->isGrantedToRemoveNode($this->currentNode) !== false) {
                     Assert::fail('The node authorization service did not return false!');
                 }
             }
@@ -472,7 +475,7 @@ trait NodeAuthorizationTrait
             );
         } else {
             /** @var Node $currentNode */
-            $currentNode = $this->currentNodes[0];
+            $currentNode = $this->currentNode;
             try {
                 switch ($propertyName) {
                     case 'name':
@@ -530,13 +533,13 @@ trait NodeAuthorizationTrait
             );
         } elseif ($expectedResult === 'true') {
             if ($this->nodeAuthorizationService->isGrantedToReadNodeProperty(
-                    $this->currentNodes[0],
+                    $this->currentNode,
                     $propertyName
                 ) !== true) {
                 Assert::fail('The node authorization service did not return true!');
             }
         } elseif ($this->nodeAuthorizationService->isGrantedToReadNodeProperty(
-                $this->currentNodes[0],
+                $this->currentNode,
                 $propertyName
             ) !== false) {
             Assert::fail('The node authorization service did not return false!');
@@ -563,7 +566,7 @@ trait NodeAuthorizationTrait
             );
         } else {
             /** @var Node $currentNode */
-            $currentNode = $this->currentNodes[0];
+            $currentNode = $this->currentNode;
             try {
                 switch ($propertyName) {
                     case 'name':
@@ -621,13 +624,13 @@ trait NodeAuthorizationTrait
             );
         } elseif ($expectedResult === 'true') {
             if ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
-                    $this->currentNodes[0],
+                    $this->currentNode,
                     $propertyName
                 ) !== true) {
                 Assert::fail('The node authorization service did not return true!');
             }
         } elseif ($this->nodeAuthorizationService->isGrantedToEditNodeProperty(
-                $this->currentNodes[0],
+                $this->currentNode,
                 $propertyName
             ) !== false) {
             Assert::fail('The node authorization service did not return false!');

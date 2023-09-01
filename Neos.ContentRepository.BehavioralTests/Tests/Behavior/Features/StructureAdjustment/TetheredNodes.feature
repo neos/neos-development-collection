@@ -4,12 +4,12 @@ Feature: Tethered Nodes integrity violations
   As a user of the CR I want to be able to detect and fix tethered nodes that are missing, not allowed or otherwise incorrect
 
   Background:
-    Given I have the following content dimensions:
+    Given using the following content dimensions:
       | Identifier | Values      | Generalizations |
       | market     | DE, CH      | CH->DE          |
       | language   | en, de, gsw | gsw->de->en     |
-    And I have the following NodeTypes configuration:
-    """
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
@@ -25,6 +25,8 @@ Feature: Tethered Nodes integrity violations
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
     'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
     And the command CreateRootWorkspace is executed with payload:
       | Key                        | Value                |
       | workspaceName              | "live"               |
@@ -77,12 +79,24 @@ Feature: Tethered Nodes integrity violations
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
-    Given I have the following additional NodeTypes configuration:
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
+        'tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
         'new-tethered-node':
           type: 'Neos.ContentRepository.Testing:Tethered'
+    'Neos.ContentRepository.Testing:Tethered':
+      properties:
+        foo:
+          type: "string"
+          defaultValue: "my default applied"
+      childNodes:
+        'tethered-leaf':
+          type: 'Neos.ContentRepository.Testing:TetheredLeaf'
+    'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                  | nodeAggregateId |
@@ -90,12 +104,24 @@ Feature: Tethered Nodes integrity violations
 
 
   Scenario: Adding missing tethered nodes resolves the corresponding integrity violations
-    Given I have the following additional NodeTypes configuration:
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
+        'tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
         'some-new-child':
           type: 'Neos.ContentRepository.Testing:Tethered'
+    'Neos.ContentRepository.Testing:Tethered':
+      properties:
+        foo:
+          type: "string"
+          defaultValue: "my default applied"
+      childNodes:
+        'tethered-leaf':
+          type: 'Neos.ContentRepository.Testing:TetheredLeaf'
+    'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
@@ -107,12 +133,24 @@ Feature: Tethered Nodes integrity violations
       | foo | "my default applied" |
 
   Scenario: Adding the same
-    Given I have the following additional NodeTypes configuration:
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
+        'tethered-node':
+          type: 'Neos.ContentRepository.Testing:Tethered'
         'some-new-child':
           type: 'Neos.ContentRepository.Testing:Tethered'
+    'Neos.ContentRepository.Testing:Tethered':
+      properties:
+        foo:
+          type: "string"
+          defaultValue: "my default applied"
+      childNodes:
+        'tethered-leaf':
+          type: 'Neos.ContentRepository.Testing:TetheredLeaf'
+    'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     When I adjust the node structure for node type "Neos.ContentRepository.Testing:Document"
     Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
@@ -120,11 +158,19 @@ Feature: Tethered Nodes integrity violations
     Then I expect exactly 6 events to be published on stream "ContentStream:cs-identifier"
 
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation (which can be fixed)
-    Given I have the following additional NodeTypes configuration:
-    """
-    'Neos.ContentRepository.Testing:Document':
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository:Root': []
+    'Neos.ContentRepository.Testing:Document': []
+    'Neos.ContentRepository.Testing:Tethered':
+      properties:
+        foo:
+          type: "string"
+          defaultValue: "my default applied"
       childNodes:
-        'tethered-node': ~
+        'tethered-leaf':
+          type: 'Neos.ContentRepository.Testing:TetheredLeaf'
+    'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                     | nodeAggregateId |
@@ -136,12 +182,22 @@ Feature: Tethered Nodes integrity violations
     Then I expect node aggregate identifier "nodimer-tetherton" to lead to no node
 
   Scenario: Adjusting the schema changing the type of a tethered node leads to a InvalidTetheredNodeType integrity violation
-    Given I have the following additional NodeTypes configuration:
-    """
+    Given I change the node types in content repository "default" to:
+    """yaml
+    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
           type: 'Neos.ContentRepository.Testing:TetheredLeaf'
+    'Neos.ContentRepository.Testing:Tethered':
+      properties:
+        foo:
+          type: "string"
+          defaultValue: "my default applied"
+      childNodes:
+        'tethered-leaf':
+          type: 'Neos.ContentRepository.Testing:TetheredLeaf'
+    'Neos.ContentRepository.Testing:TetheredLeaf': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type                     | nodeAggregateId |

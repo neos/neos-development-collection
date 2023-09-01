@@ -15,6 +15,7 @@ use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Http\Factories\ServerRequestFactory;
 use Neos\Http\Factories\UriFactory;
 use Neos\Neos\FrontendRouting\NodeAddress;
@@ -25,6 +26,7 @@ use PHPUnit\Framework\Assert;
  */
 trait BrowserTrait
 {
+    use CRTestSuiteRuntimeVariables;
 
     /**
      * @return \Neos\Flow\ObjectManagement\ObjectManagerInterface
@@ -103,17 +105,17 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForNodeAggregate(string $rawNodeAggregateId, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         $nodeAggregateId = NodeAggregateId::fromString($rawNodeAggregateId);
         $node = $subgraph->findNodeById($nodeAggregateId);
         Assert::assertNotNull($node, 'Did not find a node with aggregate id "' . $nodeAggregateId->value . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
             $nodeAggregateId,
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
+            $this->currentContentRepository->getWorkspaceFinder()
+                ->findOneByCurrentContentStreamId($this->currentContentStreamId)
                 ->workspaceName
         );
     }
@@ -126,7 +128,7 @@ trait BrowserTrait
      */
     public function iGetTheNodeAddressForTheNodeAtPath(string $serializedNodePath, $alias = 'DEFAULT')
     {
-        $subgraph = $this->contentGraph->getSubgraph($this->contentStreamId, $this->dimensionSpacePoint, $this->visibilityConstraints);
+        $subgraph = $this->currentContentRepository->getContentGraph()->getSubgraph($this->currentContentStreamId, $this->currentDimensionSpacePoint, $this->currentVisibilityConstraints);
         if (!$this->getRootNodeAggregateId()) {
             throw new \Exception('ERROR: rootNodeAggregateId needed for running this step. You need to use "the event RootNodeAggregateWithNodeWasCreated was published with payload" to create a root node..');
         }
@@ -134,11 +136,11 @@ trait BrowserTrait
         Assert::assertNotNull($node, 'Did not find a node at path "' . $serializedNodePath . '"');
 
         $this->currentNodeAddresses[$alias] = new NodeAddress(
-            $this->contentStreamId,
-            $this->dimensionSpacePoint,
+            $this->currentContentStreamId,
+            $this->currentDimensionSpacePoint,
             $node->nodeAggregateId,
-            $this->contentRepository->getWorkspaceFinder()
-                ->findOneByCurrentContentStreamId($this->contentStreamId)
+            $this->currentContentRepository->getWorkspaceFinder()
+                ->findOneByCurrentContentStreamId($this->currentContentStreamId)
                 ->workspaceName
         );
     }

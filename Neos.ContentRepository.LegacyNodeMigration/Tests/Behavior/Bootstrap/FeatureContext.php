@@ -2,14 +2,6 @@
 declare(strict_types=1);
 
 require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentSubgraphTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentUserTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/CurrentDateTimeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeAggregateTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/ProjectedNodeTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/GenericCommandExecutionAndEventPublication.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Core/Tests/Behavior/Features/Bootstrap/EventSourcedTrait.php');
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
@@ -18,11 +10,9 @@ use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
-use Neos\ContentRepository\Core\DimensionSpace\ContentDimensionZookeeper;
-use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\EventSourcedTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -32,13 +22,11 @@ use Neos\ContentRepository\Export\Asset\ValueObject\SerializedResource;
 use Neos\ContentRepository\Export\Event\ValueObject\ExportedEvents;
 use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
-use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
+use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
 use PHPUnit\Framework\Assert;
@@ -50,8 +38,8 @@ use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 class FeatureContext implements Context
 {
     use FlowContextTrait;
-    use NodeOperationsTrait;
-    use EventSourcedTrait;
+    use CRTestSuiteTrait;
+    use CRRegistrySubjectProvider;
 
     protected $isolated = false;
 
@@ -65,6 +53,8 @@ class FeatureContext implements Context
 
     private ProcessorResult|null $lastMigrationResult = null;
 
+    private ContentRepository $contentRepository;
+
     public function __construct()
     {
         if (self::$bootstrap === null) {
@@ -73,7 +63,7 @@ class FeatureContext implements Context
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
-        $this->setupEventSourcedTrait();
+        $this->setupCRTestSuiteTrait();
 
     }
 
@@ -112,13 +102,27 @@ class FeatureContext implements Context
      */
     public function iRunTheEventMigration(string $contentStream = null): void
     {
-        $nodeTypeManager = $this->contentRepository->getNodeTypeManager();
+        $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $propertyMapper = $this->getObjectManager()->get(PropertyMapper::class);
-        $propertyConverter = $this->getContentRepositoryInternals()->propertyConverter;
-        $interDimensionalVariationGraph = $this->getContentRepositoryInternals()->interDimensionalVariationGraph;
+        $contentGraph = $this->currentContentRepository->getContentGraph();
+        $nodeFactory = (new \ReflectionClass($contentGraph))
+            ->getProperty('nodeFactory')
+            ->getValue($contentGraph);
+        $propertyConverter = (new \ReflectionClass($nodeFactory))
+            ->getProperty('propertyConverter')
+            ->getValue($nodeFactory);
+        $interDimensionalVariationGraph = $this->currentContentRepository->getVariationGraph();
 
         $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
-        $migration = new NodeDataToEventsProcessor($nodeTypeManager, $propertyMapper, $propertyConverter, $interDimensionalVariationGraph, $eventNormalizer, $this->mockFilesystem, $this->nodeDataRows);
+        $migration = new NodeDataToEventsProcessor(
+            $nodeTypeManager,
+            $propertyMapper,
+            $propertyConverter,
+            $interDimensionalVariationGraph,
+            $eventNormalizer,
+            $this->mockFilesystem,
+            $this->nodeDataRows
+        );
         if ($contentStream !== null) {
             $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
@@ -237,7 +241,7 @@ class FeatureContext implements Context
      */
     public function iRunTheAssetMigration(): void
     {
-        $nodeTypeManager = $this->getContentRepositoryInternals()->nodeTypeManager;
+        $nodeTypeManager = $this->currentContentRepository->getNodeTypeManager();
         $mockResourceLoader = new class ($this->mockResources) implements ResourceLoaderInterface {
 
             /**

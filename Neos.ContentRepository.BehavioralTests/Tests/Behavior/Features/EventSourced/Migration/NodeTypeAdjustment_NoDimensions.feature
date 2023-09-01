@@ -2,14 +2,9 @@
 Feature: Adjust node types with a node migration
 
   Background:
-    Given I have no content dimensions
-
-  Scenario: Success case
-    ########################
-    # SETUP
-    ########################
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:
@@ -19,7 +14,14 @@ Feature: Adjust node types with a node migration
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:OtherDocument': []
     """
-    And the command CreateRootWorkspace is executed with payload:
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+
+  Scenario: Success case
+    ########################
+    # SETUP
+    ########################
+    When the command CreateRootWorkspace is executed with payload:
       | Key                  | Value                |
       | workspaceName        | "live"               |
       | workspaceTitle       | "Live"               |
@@ -46,10 +48,10 @@ Feature: Adjust node types with a node migration
     # Actual Test
     ########################
     # we remove the Document node type (which still exists in the CR)
-    And I have the following NodeTypes configuration:
-    """
+    And I change the node types in content repository "default" with fallback "Neos.ContentRepository:Fallback" to:
+    """yaml
     # !!fallback node is needed!! - TODO DISCUSS
-    'Neos.Neos:FallbackNode': []
+    'Neos.ContentRepository:Fallback': []
 
     'Neos.ContentRepository:Root':
       constraints:
@@ -60,7 +62,7 @@ Feature: Adjust node types with a node migration
     """
     # we should be able to rename the node type
     When I run the following node migration for workspace "live", creating content streams "migration-cs":
-    """
+    """yaml
     migration:
       -
         filters:

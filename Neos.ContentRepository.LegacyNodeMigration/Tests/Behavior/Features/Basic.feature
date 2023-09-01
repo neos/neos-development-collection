@@ -2,15 +2,17 @@
 Feature: Simple migrations without content dimensions
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Some.Package:SomeNodeType':
       properties:
         'text':
           type: string
           defaultValue: 'My default text'
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Single homepage node with one property
     When I have the following node data rows:

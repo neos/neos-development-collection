@@ -2,9 +2,9 @@
 Feature: Migrations that contain nodes with "reference" or "references properties
 
   Background:
-    Given I have no content dimensions
-    And I have the following NodeTypes configuration:
-    """
+    Given using no content dimensions
+    And using the following node types:
+    """yaml
     'Some.Package:Homepage': []
     'Some.Package:SomeNodeType':
       properties:
@@ -20,6 +20,8 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
         'text':
           type: string
     """
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
 
   Scenario: Two nodes with references
     When I have the following node data rows:
@@ -42,7 +44,7 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
 
 
   Scenario: Node with references in one dimension
-    Given I have the following content dimensions:
+    Given I change the content dimensions in content repository "default" to:
       | Identifier | Default | Values     | Generalizations |
       | language   | en      | en, de, ch | ch->de          |
     When I have the following node data rows:
