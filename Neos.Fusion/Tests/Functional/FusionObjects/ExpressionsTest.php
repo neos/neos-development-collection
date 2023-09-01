@@ -15,6 +15,7 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 
 /**
  * Testcase for Eel expressions in Fusion
@@ -56,7 +57,7 @@ class ExpressionsTest extends AbstractFusionObjectTest
         $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString('root = ${"foo"}'))->toArray();
 
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $runtime = new Runtime($fusionAst, $controllerContext);
+        $runtime = (new RuntimeFactory())->create($fusionAst, $controllerContext);
 
         $renderedFusion = $runtime->render('root');
 

@@ -14,8 +14,12 @@ namespace Neos\Fusion\Core;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
@@ -104,10 +108,9 @@ class Runtime
     protected $runtimeConfiguration;
 
     /**
-     * @var ControllerContext
      * @deprecated
      */
-    protected $controllerContext;
+    protected ControllerContext $controllerContext;
 
     /**
      * @var array
@@ -155,12 +158,30 @@ class Runtime
     /**
      * Returns the context which has been passed by the currently active MVC Controller
      *
+     * DEPRECATED CONCEPT. We only implement this as backwards-compatible layer.
+     *
      * @deprecated use `Runtime::getContextVariable('request')` instead {@see Runtime::getContextVariable}
      * @internal
      */
-    public function getControllerContext(): ?ControllerContext
+    public function getControllerContext(): ControllerContext
     {
-        return $this->controllerContext;
+        if (isset($this->controllerContext)) {
+            return $this->controllerContext;
+        }
+
+        if (!($request = $this->getContextVariable('request')) instanceof ActionRequest) {
+            throw new \RuntimeException(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
+        }
+
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($request);
+
+        return $this->controllerContext = new ControllerContext(
+            $request,
+            new ActionResponse(),
+            new Arguments([]),
+            $uriBuilder
+        );
     }
 
     /**
@@ -240,7 +261,7 @@ class Runtime
     }
 
     /**
-     * Get the current context array
+     * Get the current context array (without the eel helpers)
      *
      * @return array the array of current context objects
      */
@@ -253,7 +274,7 @@ class Runtime
      * @param string $name the key of the variable like `request` or `node`.
      * @return mixed null if not set
      */
-    private function getContextVariable(string $name): mixed
+    public function getContextVariable(string $name): mixed
     {
         return $this->currentContext[$name] ?? $this->defaultContextVariables->value[$name] ?? null;
     }

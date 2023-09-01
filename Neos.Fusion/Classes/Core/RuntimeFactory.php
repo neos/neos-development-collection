@@ -45,68 +45,39 @@ class RuntimeFactory
         if ($controllerContext === null) {
             $controllerContext = self::createControllerContextFromEnvironment();
         }
-
-        return $this->createFromConfigurationAndControllerContext(
-            FusionConfiguration::fromArray($fusionConfiguration),
-            $controllerContext
-        );
-    }
-
-    /**
-     * Runtime for standalone usage in Flow. Independent of the current request.
-     * Uri-building and other things requiring {@see Runtime::getControllerContext()} or the current request will not work.
-     */
-    public function createFromConfiguration(FusionConfiguration $fusionConfiguration, ControllerContext $controllerContext): Runtime
-    {
-        // TODO
-        throw new \BadMethodCallException('Todo');
-    }
-
-    /**
-     * Must be used in oder to allow plugins and "sub" request to function correctly.
-     *
-     * This instance of the runtime reflects in every case the legacy behaviour.
-     *
-     * @deprecated because the concept of {@see ControllerContext} is deprecated
-     */
-    public function createFromConfigurationAndControllerContext(
-        FusionConfiguration $fusionConfiguration,
-        ControllerContext $controllerContext
-    ): Runtime {
         $defaultContextVariables = EelUtility::getDefaultContextVariables(
             $this->defaultContextConfiguration ?? []
         );
         $runtime = new Runtime(
-            $fusionConfiguration,
-            FusionDefaultContextVariables::fromRequestAndVariables(
-                $controllerContext->getRequest(),
-                $defaultContextVariables
+            FusionConfiguration::fromArray($fusionConfiguration),
+            FusionDefaultContextVariables::fromArray(
+                ['request' => $controllerContext->getRequest(), ...$defaultContextVariables]
             )
         );
         $runtime->setControllerContext($controllerContext);
         return $runtime;
     }
 
-    public function createFromConfigurationAndDefaultContextVariables(
+    public function createFromConfiguration(
         FusionConfiguration $fusionConfiguration,
         FusionDefaultContextVariables $additionalDefaultContextVariables
     ): Runtime {
-        $defaultContextVariables = EelUtility::getDefaultContextVariables(
-            $this->defaultContextConfiguration ?? []
+        $defaultContextVariables = FusionDefaultContextVariables::fromArray(
+            EelUtility::getDefaultContextVariables(
+                $this->defaultContextConfiguration ?? []
+            )
         );
-        $runtime = new Runtime($fusionConfiguration, $additionalDefaultContextVariables->merge($defaultContextVariables));
-        $runtime->setControllerContext(
-            self::createControllerContextForActionRequest($additionalDefaultContextVariables->actionRequest)
-        );
-        return $runtime;
+        return new Runtime($fusionConfiguration, $defaultContextVariables->merge($additionalDefaultContextVariables));
     }
 
     public function createFromSourceCode(
         FusionSourceCodeCollection $sourceCode,
-        ActionRequest $actionRequest
+        FusionDefaultContextVariables $additionalDefaultContextVariables
     ): Runtime {
-        // TODO
-        throw new \BadMethodCallException('Todo');
+        return $this->createFromConfiguration(
+            $this->fusionParser->parseFromSource($sourceCode),
+            $additionalDefaultContextVariables
+        );
     }
 
     private static function createControllerContextFromEnvironment(): ControllerContext
@@ -120,19 +91,6 @@ class RuntimeFactory
 
         return new ControllerContext(
             $request,
-            new ActionResponse(),
-            new Arguments([]),
-            $uriBuilder
-        );
-    }
-
-    private static function createControllerContextForActionRequest(ActionRequest $actionRequest): ControllerContext
-    {
-        $uriBuilder = new UriBuilder();
-        $uriBuilder->setRequest($actionRequest);
-
-        return new ControllerContext(
-            $actionRequest,
             new ActionResponse(),
             new Arguments([]),
             $uriBuilder

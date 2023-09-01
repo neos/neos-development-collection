@@ -19,6 +19,7 @@ use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
 
 class RuntimeTest extends UnitTestCase
@@ -56,7 +57,7 @@ class RuntimeTest extends UnitTestCase
         $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
-        $runtime =  new Runtime([], $controllerContext);
+        $runtime = (new RuntimeFactory)->create([], $controllerContext);
         $this->inject($runtime, 'objectManager', $objectManager);
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => $exceptionHandlerSetting]]);
@@ -75,7 +76,7 @@ class RuntimeTest extends UnitTestCase
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
 
         $eelEvaluator = $this->createMock(EelEvaluatorInterface::class);
-        $runtime = $this->getAccessibleMock(Runtime::class, ['dummy'], [[], $controllerContext]);
+        $runtime = (new RuntimeFactory())->create([], $controllerContext);
 
         $this->inject($runtime, 'eelEvaluator', $eelEvaluator);
 
@@ -86,7 +87,10 @@ class RuntimeTest extends UnitTestCase
             'node' => 'Foo'
         ]);
 
-        $runtime->_call('evaluateEelExpression', 'q(node).property("title")');
+
+        $ref = (new \ReflectionClass($runtime))->getMethod('evaluateEelExpression');
+
+        $ref->invoke($runtime, 'q(node).property("title")');
     }
 
     /**
@@ -97,7 +101,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectException(\Neos\Fusion\Exception::class);
         $this->expectExceptionCode(1395922119);
         $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $runtime = new Runtime([
+        $runtime = (new RuntimeFactory)->create([
             'foo' => [
                 'bar' => [
                     '__meta' => [
@@ -132,7 +136,7 @@ class RuntimeTest extends UnitTestCase
     public function runtimeCurrentContextStackWorksSimplePushPop()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $runtime = new Runtime([], $controllerContext);
+        $runtime = (new RuntimeFactory)->create([], $controllerContext);
 
         self::assertSame([], $runtime->getCurrentContext(), 'context should be empty at start.');
 
@@ -151,7 +155,7 @@ class RuntimeTest extends UnitTestCase
     public function runtimeCurrentContextStack3PushesAndPops()
     {
         $controllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $runtime = new Runtime([], $controllerContext);
+        $runtime = (new RuntimeFactory)->create([], $controllerContext);
 
         self::assertSame([], $runtime->getCurrentContext(), 'empty at start');
 
