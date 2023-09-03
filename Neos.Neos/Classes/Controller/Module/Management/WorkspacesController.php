@@ -18,8 +18,8 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
@@ -538,8 +538,11 @@ class WorkspacesController extends AbstractModuleController
                 )
             ),
         );
-        $contentRepository->handle($command)
-            ->block();
+        // performance speedup
+        CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+            $contentRepository->handle($command)
+                ->block()
+        );
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenPublished',
@@ -576,8 +579,11 @@ class WorkspacesController extends AbstractModuleController
                 )
             ),
         );
-        $contentRepository->handle($command)
-            ->block();
+        // performance speedup
+        CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+            $contentRepository->handle($command)
+                ->block()
+        );
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.selectedChangeHasBeenDiscarded',
@@ -630,8 +636,11 @@ class WorkspacesController extends AbstractModuleController
                     $selectedWorkspace,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
-                $contentRepository->handle($command)
-                    ->block();
+                // performance speedup
+                CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+                    $contentRepository->handle($command)
+                        ->block()
+                );
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenPublished',
                     [],
@@ -646,8 +655,11 @@ class WorkspacesController extends AbstractModuleController
                     $selectedWorkspace,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
-                $contentRepository->handle($command)
-                    ->block();
+                // performance speedup
+                CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+                    $contentRepository->handle($command)
+                        ->block()
+                );
                 $this->addFlashMessage($this->translator->translateById(
                     'workspaces.selectedChangesHaveBeenDiscarded',
                     [],
@@ -672,11 +684,12 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            new PublishWorkspace(
+        // performance speedup
+        CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+            $contentRepository->handle(new PublishWorkspace(
                 $workspace
-            )
-        )->block();
+            ))->block()
+        );
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
         /** @var Workspace $workspace Otherwise the command handler would have thrown an exception */
         /** @var WorkspaceName $baseWorkspaceName Otherwise the command handler would have thrown an exception */
@@ -705,11 +718,14 @@ class WorkspacesController extends AbstractModuleController
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-        $contentRepository->handle(
-            DiscardWorkspace::create(
-                $workspace,
-            )
-        )->block();
+        // performance speedup
+        CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
+            $contentRepository->handle(
+                DiscardWorkspace::create(
+                    $workspace,
+                )
+            )->block()
+        );
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
