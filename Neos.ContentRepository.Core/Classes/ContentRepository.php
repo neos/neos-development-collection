@@ -208,6 +208,16 @@ final class ContentRepository
         return SetupResult::success('done');
     }
 
+    public function isSetUp(): bool
+    {
+        foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
+            if ($projection->isSetUp() === false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public function resetProjectionStates(): void
     {
         foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {

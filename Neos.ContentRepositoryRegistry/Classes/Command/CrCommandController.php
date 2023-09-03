@@ -38,6 +38,19 @@ final class CrCommandController extends CommandController
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
+    public function isSetUpCommand(string $contentRepository = 'default'): void
+    {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $isSetUp = $this->contentRepositoryRegistry->get($contentRepositoryId)->isSetUp();
+
+        if (!$isSetUp) {
+            $this->outputLine('<success>Content Repository "%s" is not set up</success>', [$contentRepositoryId->value]);
+            $this->quit(1);
+        }
+
+        $this->outputLine('<success>Content Repository "%s" is set up</success>', [$contentRepositoryId->value]);
+    }
+
     /**
      * Replays the specified projection of a Content Repository by resetting its state and performing a full catchup
      *

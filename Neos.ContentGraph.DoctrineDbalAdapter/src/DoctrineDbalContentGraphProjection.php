@@ -114,6 +114,29 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $this->checkpointStorage->setup();
     }
 
+    public function isSetUp(): bool
+    {
+        $connection = $this->dbalClient->getConnection();
+        $schemaManager = $connection->getSchemaManager();
+        if (!$schemaManager instanceof AbstractSchemaManager) {
+            throw new \RuntimeException('Failed to retrieve Schema Manager', 1693731027816);
+        }
+
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
+
+        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
+
+        return empty($schemaDiff->newNamespaces)
+            && empty($schemaDiff->removedNamespaces)
+            && empty($schemaDiff->newTables)
+            && empty($schemaDiff->changedTables)
+            && empty($schemaDiff->removedTables)
+            && empty($schemaDiff->newSequences)
+            && empty($schemaDiff->changedSequences)
+            && empty($schemaDiff->removedSequences)
+            && empty($schemaDiff->orphanedForeignKeys);
+    }
+
     private function setupTables(): SetupResult
     {
         $connection = $this->dbalClient->getConnection();
@@ -130,6 +153,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         }
         return SetupResult::success('');
     }
+
+
 
     public function reset(): void
     {

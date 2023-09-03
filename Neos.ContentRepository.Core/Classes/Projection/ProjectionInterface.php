@@ -26,6 +26,9 @@ interface ProjectionInterface
      */
     public function setUp(): void;
 
+    /** @see ProjectionInterface::setUp() */
+    public function isSetUp(): bool;
+
     public function canHandle(EventInterface $event): bool;
 
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void;
