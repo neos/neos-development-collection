@@ -159,11 +159,13 @@ trait ConstraintChecks
 
     /**
      * @param NodeType $nodeType
-     * @throws NodeTypeNotFoundException
+     * @throws NodeTypeNotFoundException the configured child nodeType doesnt exist
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeType) {
+        // this getter throws if any of the child nodeTypes doesnt exist!
+        $childNodeTypes = $nodeType->getAutoCreatedChildNodes();
+        foreach ($childNodeTypes as $childNodeType) {
             $this->requireTetheredDescendantNodeTypesToExist($childNodeType);
         }
     }
