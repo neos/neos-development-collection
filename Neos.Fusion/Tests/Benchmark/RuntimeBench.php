@@ -12,6 +12,9 @@ namespace Neos\Fusion\Tests\Benchmark;
  */
 
 use Neos\Eel\CompilingEvaluator;
+use Neos\Fusion\Core\FusionConfiguration;
+use Neos\Fusion\Core\FusionDefaultContextVariables;
+use Neos\Fusion\Core\RuntimeFactory;
 
 /**
  * A benchmark to test the Fusion runtime
@@ -92,8 +95,7 @@ class RuntimeBench
                 ]
             ]
         ];
-        $runtimeFactory = new \Neos\Fusion\Core\RuntimeFactory();
-        $this->runtime = $runtimeFactory->create($fusionConfiguration);
+        $this->runtime = (new RuntimeFactory())->createFromConfiguration(FusionConfiguration::fromArray($fusionConfiguration), FusionDefaultContextVariables::empty());
 
         // Build an EEL evaluator suitable for benchmarking
         $evaluator = $this->buildEelEvaluator();

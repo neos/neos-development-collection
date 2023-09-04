@@ -14,6 +14,8 @@ namespace Neos\Fusion\View;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Fusion\Core\FusionConfiguration;
+use Neos\Fusion\Core\FusionDefaultContextVariables;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
@@ -54,10 +56,8 @@ class FusionView extends AbstractView
 
     /**
      * The parsed Fusion array in its internal representation
-     *
-     * @var array
      */
-    protected $parsedFusion;
+    protected FusionConfiguration $parsedFusion;
 
     /**
      * Runtime cache of the Fusion path which should be rendered; derived from the controller
@@ -158,7 +158,15 @@ class FusionView extends AbstractView
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
-            $this->fusionRuntime = $this->runtimeFactory->create($this->parsedFusion, $this->controllerContext);
+            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+                $this->parsedFusion,
+                FusionDefaultContextVariables::fromArray(array_filter([
+                    'request' => $this->controllerContext?->getRequest()
+                ]))
+            );
+            if (isset($this->controllerContext)) {
+                $this->fusionRuntime->setControllerContext($this->controllerContext);
+            }
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);
@@ -179,11 +187,9 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Parse all the fusion files the are in the current fusionPathPatterns
-     *
-     * @return array
+     * Parse all the fusion files that are in the current fusionPathPatterns
      */
-    protected function getMergedFusionObjectTree(): array
+    protected function getMergedFusionObjectTree(): FusionConfiguration
     {
         $fusionCodeCollection = [];
         $fusionPathPatterns = $this->getFusionPathPatterns();
@@ -195,7 +201,7 @@ class FusionView extends AbstractView
                 $fusionCodeCollection[] = FusionSourceCode::fromFilePath($fusionPathPattern);
             }
         }
-        return $this->fusionParser->parseFromSource(new FusionSourceCodeCollection(...$fusionCodeCollection))->toArray();
+        return $this->fusionParser->parseFromSource(new FusionSourceCodeCollection(...$fusionCodeCollection));
     }
 
     /**
