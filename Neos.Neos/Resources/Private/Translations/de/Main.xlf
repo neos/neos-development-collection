@@ -723,6 +723,10 @@
 				<source>The given subject is not a valid UUID.</source>
         <target state="final">Der Wert ist keine gültige UUID.</target>
       </trans-unit>
+      <trans-unit id="content.inspector.validators.urlValidator.invalidFormat" xml:space="preserve" approved="yes">
+				<source>The given URL format is not valid.</source>
+        <target>Das angegebene URL-Format ist nicht gültig.</target>
+      </trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve" approved="yes">
 				<source>Toggle content dimensions selector</source>
         <target state="final">Content-Dimensions-Auswahl umschalten</target>
