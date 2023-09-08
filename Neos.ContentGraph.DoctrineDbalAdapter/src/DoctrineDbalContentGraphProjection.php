@@ -239,7 +239,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $event->nodeAggregateId,
             $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::fromArray([]),
+            SerializedPropertyValues::createEmpty(),
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
             null,

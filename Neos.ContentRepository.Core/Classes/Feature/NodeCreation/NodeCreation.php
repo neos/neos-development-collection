@@ -72,7 +72,7 @@ trait NodeCreation
         );
         $this->validateProperties($command->initialPropertyValues, $command->nodeTypeName);
 
-        $lowLevelCommand = new CreateNodeAggregateWithNodeAndSerializedProperties(
+        $lowLevelCommand = CreateNodeAggregateWithNodeAndSerializedProperties::create(
             $command->contentStreamId,
             $command->nodeAggregateId,
             $command->nodeTypeName,
@@ -83,9 +83,11 @@ trait NodeCreation
             $this->getPropertyConverter()->serializePropertyValues(
                 $command->initialPropertyValues,
                 $this->requireNodeType($command->nodeTypeName)
-            ),
-            $command->tetheredDescendantNodeAggregateIds
+            )
         );
+        if (!$command->tetheredDescendantNodeAggregateIds->isEmpty()) {
+            $command = $command->withTetheredDescendantNodeAggregateIds($command->tetheredDescendantNodeAggregateIds);
+        }
 
         return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $contentRepository);
     }

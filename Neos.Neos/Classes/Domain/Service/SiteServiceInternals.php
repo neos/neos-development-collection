@@ -125,7 +125,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         $arbitraryRootDimensionSpacePoint = array_shift($rootDimensionSpacePoints);
 
         $siteNodeAggregateId = NodeAggregateId::create();
-        $this->contentRepository->handle(new CreateNodeAggregateWithNode(
+        $this->contentRepository->handle(CreateNodeAggregateWithNode::create(
             $liveContentStreamId,
             $siteNodeAggregateId,
             NodeTypeName::fromString($nodeTypeName),

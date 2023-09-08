@@ -119,6 +119,11 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
         return $this->nodeAggregateIds;
     }
 
+    public function isEmpty(): bool
+    {
+        return $this->nodeAggregateIds === [];
+    }
+
     /**
      * @return array<string,NodeAggregateId>
      */

@@ -135,7 +135,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
                     $this->dimensionSpacePoints,
                     $parentNodeAggregateId,
                     null,
-                    SerializedPropertyValues::fromArray([]),
+                    SerializedPropertyValues::createEmpty(),
                     NodeAggregateClassification::CLASSIFICATION_REGULAR,
                 );
                 $sumSoFar++;

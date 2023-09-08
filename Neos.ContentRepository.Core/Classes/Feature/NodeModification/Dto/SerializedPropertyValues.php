@@ -43,6 +43,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
         $this->iterator = new \ArrayIterator($this->values);
     }
 
+    public static function createEmpty(): self
+    {
+        return new self([]);
+    }
+
     /**
      * @param array<string,mixed> $propertyValues
      */
