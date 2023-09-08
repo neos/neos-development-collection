@@ -63,7 +63,8 @@ final readonly class Node
         public NodeTypeName $nodeTypeName,
         /**
          * The node's node type, null if unknown to the NodeTypeManager
-         * @deprecated Ask the NodeTypeManager instead
+         * @deprecated Don't rely on this too much, as the capabilities of the NodeType here will probably change a lot;
+         * Ask the {@see NodeTypeManager} instead
          */
         public ?NodeType $nodeType,
         /**
