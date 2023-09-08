@@ -77,7 +77,7 @@ class WorkspaceCommandController extends CommandController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         if (!$dryRun) {
-            $contentRepository->handle(new PublishWorkspace(
+            $contentRepository->handle(PublishWorkspace::create(
                 WorkspaceName::fromString($workspace),
             ))->block();
 
@@ -127,7 +127,7 @@ class WorkspaceCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $contentRepository->handle(new CreateRootWorkspace(
+        $contentRepository->handle(CreateRootWorkspace::create(
             WorkspaceName::fromString($name),
             WorkspaceTitle::fromString($name),
             WorkspaceDescription::fromString($name),
@@ -169,7 +169,7 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $contentRepository->handle(new CreateWorkspace(
+            $contentRepository->handle(CreateWorkspace::create(
                 WorkspaceName::fromString($workspace),
                 WorkspaceName::fromString($baseWorkspace),
                 WorkspaceTitle::fromString($title ?: $workspace),

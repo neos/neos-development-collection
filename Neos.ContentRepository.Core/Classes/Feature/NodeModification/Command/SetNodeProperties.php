@@ -33,11 +33,28 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class SetNodeProperties implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
+     * @param PropertyValuesToWrite $propertyValues Names and (unserialized) values of properties to set
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly PropertyValuesToWrite $propertyValues,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
+     * @param PropertyValuesToWrite $propertyValues Names and (unserialized) values of properties to set
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, PropertyValuesToWrite $propertyValues): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues);
     }
 }

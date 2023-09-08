@@ -33,12 +33,29 @@ final class CreateRootNodeAggregateWithNode implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface
 {
-    public function __construct(
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
+     * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
+     * @param NodeTypeName $nodeTypeName Name of type of the new node to create
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $nodeTypeName,
     ) {
     }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
+     * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create
+     * @param NodeTypeName $nodeTypeName Name of type of the new node to create
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $nodeTypeName);
+    }
+
 
     /**
      * @param array<string,string> $array

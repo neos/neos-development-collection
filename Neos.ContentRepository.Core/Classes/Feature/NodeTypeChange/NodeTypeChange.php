@@ -207,7 +207,7 @@ trait NodeTypeChange
                 );
                 if ($tetheredNode === null) {
                     $tetheredNodeAggregateId = $command->tetheredDescendantNodeAggregateIds
-                        ?->getNodeAggregateId(NodePath::fromString($tetheredNodeName->value))
+                        ->getNodeAggregateId(NodePath::fromString($tetheredNodeName->value))
                         ?: NodeAggregateId::create();
                     array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
                         $nodeAggregate,

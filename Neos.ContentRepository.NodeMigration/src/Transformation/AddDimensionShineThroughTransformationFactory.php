@@ -53,7 +53,7 @@ class AddDimensionShineThroughTransformationFactory implements TransformationFac
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(
-                    new AddDimensionShineThrough(
+                    AddDimensionShineThrough::create(
                         $contentStreamForWriting,
                         $this->from,
                         $this->to

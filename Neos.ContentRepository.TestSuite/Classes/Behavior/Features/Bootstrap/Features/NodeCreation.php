@@ -59,7 +59,7 @@ trait NodeCreation
             : $this->currentContentStreamId;
         $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
 
-        $command = new CreateRootNodeAggregateWithNode(
+        $command = CreateRootNodeAggregateWithNode::create(
             $contentStreamId,
             $nodeAggregateId,
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
@@ -115,7 +115,7 @@ trait NodeCreation
             : $this->currentContentStreamId;
         $nodeAggregateId = NodeAggregateId::fromString($commandArguments['nodeAggregateId']);
 
-        $command = new UpdateRootNodeAggregateDimensions(
+        $command = UpdateRootNodeAggregateDimensions::create(
             $contentStreamId,
             $nodeAggregateId,
         );

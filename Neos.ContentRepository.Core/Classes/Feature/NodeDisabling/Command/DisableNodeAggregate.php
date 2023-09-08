@@ -34,14 +34,30 @@ final class DisableNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the disable operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to disable
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to disable it
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be disabled
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
-        /** One of the dimension space points covered by the node aggregate in which the user intends to disable it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
-        /** The strategy the user chose to determine which specialization variants will also be disabled */
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the disable operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to disable
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to disable it
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be disabled
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy);
     }
 
     /**

@@ -34,14 +34,30 @@ final class EnableNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the enable operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to enable
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to enable it
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be enabled
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
-        /** The covered dimension space point of the node aggregate in which the user intends to enable it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
-        /** The strategy the user chose to determine which specialization variants will also be disabled */
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the enable operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to enable
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to enable it
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be enabled
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy);
     }
 
     /**

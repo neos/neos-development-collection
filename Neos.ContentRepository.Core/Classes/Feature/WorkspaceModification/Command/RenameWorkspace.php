@@ -16,10 +16,25 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  */
 final class RenameWorkspace implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to rename
+     * @param WorkspaceTitle $workspaceTitle New title of the workspace
+     * @param WorkspaceDescription $workspaceDescription New description of the workspace
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Name of the workspace to rename
+     * @param WorkspaceTitle $workspaceTitle New title of the workspace
+     * @param WorkspaceDescription $workspaceDescription New description of the workspace
+     */
+    public static function create(WorkspaceName $workspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription): self
+    {
+        return new self($workspaceName, $workspaceTitle, $workspaceDescription);
     }
 }

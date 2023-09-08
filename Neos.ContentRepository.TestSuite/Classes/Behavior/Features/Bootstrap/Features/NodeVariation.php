@@ -46,7 +46,7 @@ trait NodeVariation
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->currentContentStreamId;
 
-        $command = new CreateNodeVariant(
+        $command = CreateNodeVariant::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             OriginDimensionSpacePoint::fromArray($commandArguments['sourceOrigin']),

@@ -32,6 +32,10 @@ final class RemoveNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
+
+    /**
+     * @param ContentStreamId $contentStreamId
+     */
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
@@ -51,8 +55,13 @@ final class RemoveNodeAggregate implements
          * That's why we need this field: For the Neos UI, it stores the document node of the removed node
          * (see Remove.php), as that is what the UI needs lateron for the change display.
          */
-        public readonly ?NodeAggregateId $removalAttachmentPoint = null
+        public readonly ?NodeAggregateId $removalAttachmentPoint
     ) {
+    }
+
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, null);
     }
 
     /**
@@ -69,6 +78,15 @@ final class RemoveNodeAggregate implements
                 ? NodeAggregateId::fromString($array['removalAttachmentPoint'])
                 : null
         );
+    }
+
+    /**
+     * @param NodeAggregateId $removalAttachmentPoint
+     * @internal
+     */
+    public function withRemovalAttachmentPoint(NodeAggregateId $removalAttachmentPoint): self
+    {
+        return new self($this->contentStreamId, $this->nodeAggregateId, $this->coveredDimensionSpacePoint, $this->nodeVariantSelectionStrategy, $removalAttachmentPoint);
     }
 
     /**

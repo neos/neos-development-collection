@@ -63,7 +63,7 @@ final class ContentCommandController extends CommandController
                 $rootNodeAggregate->nodeTypeName->value
             ]);
             $contentRepositoryInstance->handle(
-                new UpdateRootNodeAggregateDimensions(
+                UpdateRootNodeAggregateDimensions::create(
                     $workspaceInstance->currentContentStreamId,
                     $rootNodeAggregate->nodeAggregateId
                 )
@@ -89,7 +89,7 @@ final class ContentCommandController extends CommandController
         $this->outputLine('Resolved content stream <b>%s</b>', [$workspaceInstance->currentContentStreamId->value]);
 
         $contentRepositoryInstance->handle(
-            new MoveDimensionSpacePoint(
+            MoveDimensionSpacePoint::create(
                 $workspaceInstance->currentContentStreamId,
                 $sourceDimensionSpacePoint,
                 $targetDimensionSpacePoint
@@ -156,7 +156,7 @@ final class ContentCommandController extends CommandController
                 }
                 try {
                     // Tethered nodes' variants are automatically created when the parent is translated.
-                    $contentRepository->handle(new CreateNodeVariant(
+                    $contentRepository->handle(CreateNodeVariant::create(
                         $contentStreamId,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,

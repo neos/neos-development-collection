@@ -79,7 +79,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
             foreach ($siteNodeAggregates as $siteNodeAggregate) {
                 assert($siteNodeAggregate instanceof NodeAggregate);
-                $this->contentRepository->handle(new RemoveNodeAggregate(
+                $this->contentRepository->handle(RemoveNodeAggregate::create(
                     $contentStreamId,
                     $siteNodeAggregate->nodeAggregateId,
                     $arbitraryDimensionSpacePoint,
@@ -140,7 +140,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
 
         // Handle remaining root dimension space points by creating peer variants
         foreach ($rootDimensionSpacePoints as $rootDimensionSpacePoint) {
-            $this->contentRepository->handle(new CreateNodeVariant(
+            $this->contentRepository->handle(CreateNodeVariant::create(
                 $liveContentStreamId,
                 $siteNodeAggregateId,
                 OriginDimensionSpacePoint::fromDimensionSpacePoint($arbitraryRootDimensionSpacePoint),

@@ -69,7 +69,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                     }
                     $newValue = strip_tags($propertyValue);
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

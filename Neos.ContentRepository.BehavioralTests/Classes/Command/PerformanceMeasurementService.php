@@ -76,7 +76,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 
     public function createNodesForPerformanceTest(int $nodesPerLevel, int $levels): void
     {
-        $this->contentRepository->handle(new CreateRootWorkspace(
+        $this->contentRepository->handle(CreateRootWorkspace::create(
             WorkspaceName::forLive(),
             WorkspaceTitle::fromString('live'),
             WorkspaceDescription::fromString(''),
@@ -153,7 +153,7 @@ class PerformanceMeasurementService implements ContentRepositoryServiceInterface
 
     public function forkContentStream(): void
     {
-        $this->contentRepository->handle(new ForkContentStream(
+        $this->contentRepository->handle(ForkContentStream::create(
             ContentStreamId::create(),
             $this->contentStreamId,
         ));

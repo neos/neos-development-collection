@@ -126,7 +126,7 @@ final class EditorContentStreamZookeeper
                     }
 
                     $contentRepository->handle(
-                        new CreateWorkspace(
+                        CreateWorkspace::create(
                             $workspaceName->toContentRepositoryWorkspaceName(),
                             $baseWorkspace->workspaceName,
                             new WorkspaceTitle((string) $user->getName()),

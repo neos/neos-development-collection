@@ -42,49 +42,38 @@ final class CopyNodesRecursively implements
     MatchableWithNodeIdToPublishOrDiscardInterface,
     RebasableToOtherContentStreamsInterface
 {
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream this command is to be handled in
+     * @param NodeSubtreeSnapshot $nodeTreeToInsert The snapshot of nodes to copy {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
+     * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
+     * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
+     * @param NodeAggregateId|null $targetSucceedingSiblingNodeAggregateId Node aggregate id of the target node's succeeding sibling (optional)
+     * @param NodeName|null $targetNodeName the root node name of the root-inserted-node
+     * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
+     */
     private function __construct(
-        /**
-         * The id of the content stream this command is to be handled in
-         *
-         * @var ContentStreamId
-         */
         public readonly ContentStreamId $contentStreamId,
-        /**
-         * The to be copied node's node aggregate id
-         *
-         * @var NodeSubtreeSnapshot
-         */
         public readonly NodeSubtreeSnapshot $nodeTreeToInsert,
-        /**
-         * the dimension space point which is the target of the copy
-         *
-         * @var OriginDimensionSpacePoint
-         */
         public readonly OriginDimensionSpacePoint $targetDimensionSpacePoint,
-        /**
-         * Node aggregate id of the target node's parent (optional)
-         *
-         * If not given, the node will be added as a root node
-         *
-         * @var NodeAggregateId
-         */
         public readonly NodeAggregateId $targetParentNodeAggregateId,
-        /**
-         * Node aggregate id of the target node's succeeding sibling (optional)
-         *
-         * If not given, the node will be added as the parent's first child
-         *
-         * @var NodeAggregateId|null
-         */
         public readonly ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId,
-        /**
-         * the root node name of the root-inserted-node
-         *
-         * @var NodeName|null
-         */
         public readonly ?NodeName $targetNodeName,
         public readonly NodeAggregateIdMapping $nodeAggregateIdMapping
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream this command is to be handled in
+     * @param NodeSubtreeSnapshot $nodeTreeToInsert The snapshot of nodes to copy {@see CopyNodesRecursively::createFromSubgraphAndStartNode()}
+     * @param OriginDimensionSpacePoint $targetDimensionSpacePoint the dimension space point which is the target of the copy
+     * @param NodeAggregateId $targetParentNodeAggregateId Node aggregate id of the target node's parent. If not given, the node will be added as the parent's first child
+     * @param NodeAggregateId|null $targetSucceedingSiblingNodeAggregateId Node aggregate id of the target node's succeeding sibling (optional)
+     * @param NodeName|null $targetNodeName the root node name of the root-inserted-node
+     * @param NodeAggregateIdMapping $nodeAggregateIdMapping An assignment of "old" to "new" NodeAggregateIds ({@see NodeAggregateIdMapping})
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeSubtreeSnapshot $nodeTreeToInsert, OriginDimensionSpacePoint $targetDimensionSpacePoint, NodeAggregateId $targetParentNodeAggregateId, ?NodeAggregateId $targetSucceedingSiblingNodeAggregateId, ?NodeName $targetNodeName, NodeAggregateIdMapping $nodeAggregateIdMapping): self
+    {
+        return new self($contentStreamId, $nodeTreeToInsert, $targetDimensionSpacePoint, $targetParentNodeAggregateId, $targetSucceedingSiblingNodeAggregateId, $targetNodeName, $nodeAggregateIdMapping);
     }
 
     /**

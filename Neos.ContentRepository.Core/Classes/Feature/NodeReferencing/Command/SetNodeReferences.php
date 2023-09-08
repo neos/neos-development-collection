@@ -18,6 +18,14 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class SetNodeReferences implements CommandInterface
 {
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
+     * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
+     * @param ReferenceName $referenceName Name of the reference to set
+     * @param NodeReferencesToWrite $references Unserialized reference(s) to set
+     */
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $sourceNodeAggregateId,
@@ -25,5 +33,17 @@ final class SetNodeReferences implements CommandInterface
         public readonly ReferenceName $referenceName,
         public readonly NodeReferencesToWrite $references,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
+     * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
+     * @param ReferenceName $referenceName Name of the reference to set
+     * @param NodeReferencesToWrite $references Unserialized reference(s) to set
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, NodeReferencesToWrite $references): self
+    {
+        return new self($contentStreamId, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $referenceName, $references);
     }
 }

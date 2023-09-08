@@ -33,11 +33,27 @@ final class MoveDimensionSpacePoint implements
     CommandInterface,
     RebasableToOtherContentStreamsInterface
 {
-    public function __construct(
+
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
+     * @param DimensionSpacePoint $source source dimension space point
+     * @param DimensionSpacePoint $target target dimension space point
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly DimensionSpacePoint $source,
         public readonly DimensionSpacePoint $target
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
+     * @param DimensionSpacePoint $source source dimension space point
+     * @param DimensionSpacePoint $target target dimension space point
+     */
+    public static function create(ContentStreamId $contentStreamId, DimensionSpacePoint $source, DimensionSpacePoint $target): self
+    {
+        return new self($contentStreamId, $source, $target);
     }
 
     /**

@@ -26,6 +26,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class PublishIndividualNodesFromWorkspace implements CommandInterface
 {
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
+     * @param ContentStreamId $contentStreamIdForMatchingPart The id of the new content stream that will contain all events to be published
+     * @param ContentStreamId $contentStreamIdForRemainingPart The id of the new content stream that will contain all remaining events
+     */
     private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly NodeIdsToPublishOrDiscard $nodesToPublish,
@@ -50,10 +56,11 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
     ) {
     }
 
-    public static function create(
-        WorkspaceName $workspaceName,
-        NodeIdsToPublishOrDiscard $nodesToPublish,
-    ): self {
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
+     */
+    public static function create(WorkspaceName $workspaceName, NodeIdsToPublishOrDiscard $nodesToPublish): self {
         return new self(
             $workspaceName,
             $nodesToPublish,
@@ -62,20 +69,13 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
         );
     }
 
-    /**
-     * Call this method if you want to run this command fully deterministically, f.e. during test cases
-     */
-    public static function createFullyDeterministic(
-        WorkspaceName $workspaceName,
-        NodeIdsToPublishOrDiscard $nodesToPublish,
-        ContentStreamId $contentStreamIdForMatchingPart,
-        ContentStreamId $contentStreamIdForRemainingPart
-    ): self {
-        return new self(
-            $workspaceName,
-            $nodesToPublish,
-            $contentStreamIdForMatchingPart,
-            $contentStreamIdForRemainingPart
-        );
+    public function withContentStreamIdForMatchingPart(ContentStreamId $contentStreamIdForMatchingPart): self
+    {
+        return new self($this->workspaceName, $this->nodesToPublish, $contentStreamIdForMatchingPart, $this->contentStreamIdForRemainingPart);
+    }
+
+    public function withContentStreamIdForRemainingPart(ContentStreamId $contentStreamIdForRemainingPart): self
+    {
+        return new self($this->workspaceName, $this->nodesToPublish, $this->contentStreamIdForMatchingPart, $contentStreamIdForRemainingPart);
     }
 }

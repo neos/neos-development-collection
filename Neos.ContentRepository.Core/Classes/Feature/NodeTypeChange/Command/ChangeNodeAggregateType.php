@@ -37,21 +37,32 @@ final class ChangeNodeAggregateType implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to change
+     * @param NodeTypeName $newNodeTypeName Name of the new node type
+     * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
+     * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of any tethered child nodes for the new node type per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly NodeTypeName $newNodeTypeName,
         public readonly NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy,
-        /**
-         * NodeAggregateIds for tethered descendants (optional).
-         *
-         * If the given node type declares tethered child nodes, you may predefine their node aggregate ids
-         * using this assignment registry.
-         * Since tethered child nodes may have tethered child nodes themselves,
-         * this registry is indexed using relative node paths to the node to create in the first place.
-         */
-        public readonly ?NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds = null
+        public readonly NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to change
+     * @param NodeTypeName $newNodeTypeName Name of the new node type
+     * @param NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy Strategy for conflicts on affected child nodes ({@see NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy})
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeTypeName $newNodeTypeName, NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy $strategy): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $newNodeTypeName, $strategy, NodeAggregateIdsByNodePaths::createEmpty());
     }
 
     /**
@@ -66,7 +77,7 @@ final class ChangeNodeAggregateType implements
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($array['strategy']),
             isset($array['tetheredDescendantNodeAggregateIds'])
                 ? NodeAggregateIdsByNodePaths::fromArray($array['tetheredDescendantNodeAggregateIds'])
-                : null
+                : NodeAggregateIdsByNodePaths::createEmpty()
         );
     }
 
@@ -106,9 +117,8 @@ final class ChangeNodeAggregateType implements
      *
      * Is needed to make this command fully deterministic before storing it at the events.
      */
-    public function withTetheredDescendantNodeAggregateIds(
-        NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds
-    ): self {
+    public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
+    {
         return new self(
             $this->contentStreamId,
             $this->nodeAggregateId,

@@ -28,17 +28,34 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
  */
 final class CreateWorkspace implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param WorkspaceName $workspaceName Unique name of the workspace to create
+     * @param WorkspaceName $baseWorkspaceName Name of the base workspace
+     * @param WorkspaceTitle $workspaceTitle Human-readable title of the workspace to create (can be changed)
+     * @param WorkspaceDescription $workspaceDescription Description of the workspace to create (can be changed)
+     * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
+     * @param UserId|null $workspaceOwner Owner of the new workspace (optional)
+     */
+    private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly WorkspaceName $baseWorkspaceName,
         public readonly WorkspaceTitle $workspaceTitle,
         public readonly WorkspaceDescription $workspaceDescription,
-        /**
-         * the content stream identifier for the content stream which is created together with the to-be-created
-         * workspace
-         */
         public readonly ContentStreamId $newContentStreamId,
-        public readonly ?UserId $workspaceOwner = null
+        public readonly ?UserId $workspaceOwner,
     ) {
+    }
+
+    /**
+     * @param WorkspaceName $workspaceName Unique name of the workspace to create
+     * @param WorkspaceName $baseWorkspaceName Name of the base workspace
+     * @param WorkspaceTitle $workspaceTitle Human-readable title of the workspace to create (can be changed)
+     * @param WorkspaceDescription $workspaceDescription Description of the workspace to create (can be changed)
+     * @param ContentStreamId $newContentStreamId The id of the content stream the new workspace is assigned to initially
+     * @param UserId|null $workspaceOwner Owner of the new workspace (optional)
+     */
+    public static function create(WorkspaceName $workspaceName, WorkspaceName $baseWorkspaceName, WorkspaceTitle $workspaceTitle, WorkspaceDescription $workspaceDescription, ContentStreamId $newContentStreamId, ?UserId $workspaceOwner = null): self
+    {
+        return new self($workspaceName, $baseWorkspaceName, $workspaceTitle, $workspaceDescription, $newContentStreamId, $workspaceOwner);
     }
 }

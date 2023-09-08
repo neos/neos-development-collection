@@ -131,7 +131,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
                     );
 
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
