@@ -86,7 +86,7 @@ trait NodeCreation
             )
         );
         if (!$command->tetheredDescendantNodeAggregateIds->isEmpty()) {
-            $command = $command->withTetheredDescendantNodeAggregateIds($command->tetheredDescendantNodeAggregateIds);
+            $lowLevelCommand = $lowLevelCommand->withTetheredDescendantNodeAggregateIds($command->tetheredDescendantNodeAggregateIds);
         }
 
         return $this->handleCreateNodeAggregateWithNodeAndSerializedProperties($lowLevelCommand, $contentRepository);
