@@ -31,7 +31,6 @@ final class UpdateRootNodeAggregateDimensions implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The content stream which the dimensions should be updated in
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate that should be updated

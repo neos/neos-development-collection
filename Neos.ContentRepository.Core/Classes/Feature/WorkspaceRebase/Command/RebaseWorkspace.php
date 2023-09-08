@@ -32,8 +32,7 @@ final class RebaseWorkspace implements CommandInterface
     private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly ContentStreamId $rebasedContentStreamId
-    )
-    {
+    ) {
     }
 
     public static function create(WorkspaceName $workspaceName): self

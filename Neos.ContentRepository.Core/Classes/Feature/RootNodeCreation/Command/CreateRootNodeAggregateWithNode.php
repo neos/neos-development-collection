@@ -33,7 +33,6 @@ final class CreateRootNodeAggregateWithNode implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The content stream in which the root node should be created in
      * @param NodeAggregateId $nodeAggregateId The id of the root node aggregate to create

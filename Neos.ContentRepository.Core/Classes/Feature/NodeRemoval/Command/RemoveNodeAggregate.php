@@ -32,7 +32,6 @@ final class RemoveNodeAggregate implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId
      */

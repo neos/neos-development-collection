@@ -60,7 +60,8 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
      * @param WorkspaceName $workspaceName Name of the affected workspace
      * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
      */
-    public static function create(WorkspaceName $workspaceName, NodeIdsToPublishOrDiscard $nodesToPublish): self {
+    public static function create(WorkspaceName $workspaceName, NodeIdsToPublishOrDiscard $nodesToPublish): self
+    {
         return new self(
             $workspaceName,
             $nodesToPublish,

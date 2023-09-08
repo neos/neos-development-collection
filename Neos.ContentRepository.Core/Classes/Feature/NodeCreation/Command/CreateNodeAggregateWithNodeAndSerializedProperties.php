@@ -38,7 +38,6 @@ final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create

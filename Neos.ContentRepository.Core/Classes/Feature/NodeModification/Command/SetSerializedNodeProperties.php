@@ -36,7 +36,6 @@ final class SetSerializedNodeProperties implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for

@@ -37,7 +37,6 @@ final class AddDimensionShineThrough implements
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
      * @param DimensionSpacePoint $source source dimension space point

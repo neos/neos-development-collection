@@ -18,7 +18,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class SetNodeReferences implements CommandInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
      * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references

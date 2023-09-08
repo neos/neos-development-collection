@@ -35,7 +35,6 @@ final class ChangeNodeAggregateName implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-
     /**
      * @param ContentStreamId $contentStreamId The content stream in which the operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to rename
