@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\ContentRepository\Command;
+namespace Neos\ContentRepositoryRegistry\Command;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -12,7 +12,8 @@ namespace Neos\ContentRepository\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Symfony\Component\Yaml\Yaml;
@@ -20,18 +21,25 @@ use Symfony\Component\Yaml\Yaml;
 #[Flow\Scope("singleton")]
 class NodeTypesCommandController extends CommandController
 {
-    #[Flow\Inject]
-    protected NodeTypeManager $nodeTypeManager;
+    public function __construct(
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
+    ) {
+        parent::__construct();
+    }
 
     /**
      * Shows the merged configuration (including supertypes) of a NodeType
      *
      * @param string $nodeTypeName The name of the NodeType to show
      * @param ?string $path Path of the NodeType-configuration which will be shown
+     * @param string $contentRepository Identifier of the Content Repository to determine the set of NodeTypes
      */
-    public function showCommand(string $nodeTypeName, ?string $path = null): void
+    public function showCommand(string $nodeTypeName, ?string $path = null, string $contentRepository = 'default'): void
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
+
+        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
         if (!$nodeType) {
             $this->outputLine('<b>NodeType "%s" was not found!</b>', [$nodeTypeName]);
             $this->quit();
@@ -53,12 +61,16 @@ class NodeTypesCommandController extends CommandController
      *
      * @param string|null $filter Only NodeType-names containing this string will be listed
      * @param bool $includeAbstract List abstract NodeTypes
+     * @param string $contentRepository Identifier of the Content Repository to determine the set of NodeTypes
      */
-    public function listCommand(?string $filter = null, bool $includeAbstract = true): void
+    public function listCommand(?string $filter = null, bool $includeAbstract = true, string $contentRepository = 'default'): void
     {
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
+        $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
+
         $nodeTypesFound = 0;
         $nodeTypeNameSpacesWithNodeTypeNames = [];
-        foreach ($this->nodeTypeManager->getNodeTypes($includeAbstract) as $nodeType) {
+        foreach ($nodeTypeManager->getNodeTypes($includeAbstract) as $nodeType) {
             $nodeTypeName = $nodeType->getName();
             if (!$filter || str_contains($nodeTypeName, $filter)) {
                 [$nameSpace] = explode(":", $nodeTypeName, 2);
