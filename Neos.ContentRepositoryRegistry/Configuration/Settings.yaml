@@ -21,8 +21,6 @@ Neos:
 
         nodeTypeManager:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
-          options:
-            fallbackNodeTypeName: Neos.Neos:FallbackNode
 
         contentDimensionSource:
           factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
