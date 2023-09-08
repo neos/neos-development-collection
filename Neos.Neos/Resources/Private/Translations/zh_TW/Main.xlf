@@ -481,69 +481,6 @@
       <trans-unit id="content.inspector.groups.document" xml:space="preserve">
 				<source>Document options</source>
 			<target state="translated">文件選項</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.outOfBounds" xml:space="preserve">
-				<source>The length of this text must be between {minimum} and {maximum} characters.</source>
-			<target state="translated">此文字長度必須介於 {minimum} 和 {maximum} 個字元。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.smallerThanMinimum" xml:space="preserve">
-				<source>This field must contain at least {minimum} characters.</source>
-			<target state="translated">此欄位必須包含至少 {minimum} 個字元。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringLength.greaterThanMaximum" xml:space="preserve">
-				<source>This text may not exceed {maximum} characters.</source>
-			<target state="translated">此文字可能不超過 {maximum} 個字元。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.alphanumericValidator" xml:space="preserve">
-				<source>Only regular characters (a to z, umlauts, ...) and numbers are allowed.</source>
-			<target state="translated">只允許使用一般字元 (a 至 z, 變音, ...) 和數字。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.notCountable" xml:space="preserve">
-				<source>The given subject was not countable.</source>
-			<target state="translated">給予的主題不可數。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.countValidator.countBetween" xml:space="preserve">
-				<source>The count must be between {minimum} and {maximum}.</source>
-			<target state="translated">計數必須在 {minimum} 和 {maximum} 之間。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.invalidDate" xml:space="preserve">
-				<source>The given value was not a valid date.</source>
-			<target state="translated">給予的值不是有效日期。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBetween" xml:space="preserve">
-				<source>The given date must be between {formatEarliestDate} and {formatLatestDate}</source>
-			<target state="translated">有效日期必須在 {formatEarliestDate} 和 {formatLatestDate} 之間。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeAfter" xml:space="preserve">
-				<source>The given date must be after {formatEarliestDate}</source>
-			<target state="translated">有效日期必須在 {formatEarliestDate} 之後</target></trans-unit>
-      <trans-unit id="content.inspector.validators.dateTimeRangeValidator.mustBeBefore" xml:space="preserve">
-				<source>The given date must be before {formatLatestDate}</source>
-			<target state="translated">有效日期必須在 {formatLatestDate} 之前</target></trans-unit>
-      <trans-unit id="content.inspector.validators.emailAddressValidator.invalidEmail" xml:space="preserve">
-				<source>Please specify a valid email address.</source>
-			<target state="translated">請指定一個有效的電子郵件。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.floatValidator.validFloatExpected" xml:space="preserve">
-				<source>A valid float number is expected.</source>
-			<target state="translated">預期為有效的浮點數字。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.integerValidator.aValidIntegerNumberIsExpected" xml:space="preserve">
-				<source>A valid integer number is expected.</source>
-			<target state="translated">預期為有效的整數。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.labelValidator.invalidLabel" xml:space="preserve">
-				<source>Only letters, numbers, spaces and certain punctuation marks are expected.</source>
-			<target state="translated">預期只有文字、數字、空格和部份標點符號。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.notEmptyValidator.isEmpty" xml:space="preserve">
-				<source>This property is required.</source>
-			<target state="translated">此為必要屬性。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.validNumberExpected" xml:space="preserve">
-				<source>A valid number is expected.</source>
-			<target state="translated">預期為有效的數字。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.numberRangeValidator.numberShouldBeInRange" xml:space="preserve">
-				<source>Please enter a valid number between {minimum} and {maximum}</source>
-			<target state="translated">請輸入一個介於 {minimum} 和 {maximum} 之間的有效數字</target></trans-unit>
-      <trans-unit id="content.inspector.validators.regularExpressionValidator.patternDoesNotMatch" xml:space="preserve">
-				<source>The given subject did not match the pattern ({pattern})</source>
-			<target state="needs-translation">The given subject did not match the pattern ({pattern})</target></trans-unit>
-      <trans-unit id="content.inspector.validators.stringValidator.stringIsExpected" xml:space="preserve">
-				<source>A valid string is expected.</source>
-			<target state="translated">預期為有效的字串。</target></trans-unit>
-      <trans-unit id="content.inspector.validators.textValidator.validTextWithoutAnyXMLtagsIsExpected" xml:space="preserve">
-				<source>Valid text without any XML tags is expected.</source>
-			<target state="needs-translation">Valid text without any XML tags is expected.</target></trans-unit>
-      <trans-unit id="content.inspector.validators.uuidValidator.invalidUuid" xml:space="preserve">
-				<source>The given subject is not a valid UUID.</source>
-			<target state="needs-translation">The given subject is not a valid UUID.</target></trans-unit>
       <trans-unit id="content.dimension.panel.toggle" xml:space="preserve">
 				<source>Toggle content dimensions selector</source>
 			<target state="needs-translation">Toggle content dimensions selector</target></trans-unit>
