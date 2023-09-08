@@ -309,7 +309,14 @@ class NodeController extends ActionController
         } else {
             $resolvedUri = $resolvedTarget;
         }
-        $this->redirectToUri($resolvedUri);
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $nodeAddress->contentStreamId,
+            $nodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+        $redirectStatusCode = $subgraph->findNodeById($nodeAddress->nodeAggregateId)->getProperty('httpStatusCode');
+
+        $this->redirectToUri($resolvedUri, statusCode: $redirectStatusCode ?: 303);
     }
 
     private function fillCacheWithContentNodes(
