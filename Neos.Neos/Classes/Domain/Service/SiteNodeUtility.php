@@ -20,6 +20,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
@@ -29,6 +30,7 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 #[Flow\Scope('singleton')]
 final class SiteNodeUtility
 {
+    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
 
     public function __construct(
