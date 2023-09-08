@@ -63,11 +63,10 @@ final class NodeFactory
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
-        try {
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        } catch (NodeTypeNotFoundException $exception) {
-            $nodeType = null;
-        }
+        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
+            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
+            : null;
+
         return new Node(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
