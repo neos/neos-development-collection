@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neos\Neos\Utility;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
@@ -19,10 +20,8 @@ trait NodeTypeWithFallbackProvider
     {
         $nodeTypeManager = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId)->getNodeTypeManager();
 
-        try {
-            return $nodeTypeManager->getNodeType($node->nodeTypeName);
-        } catch (NodeTypeNotFoundException) {
-            return $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback());
-        }
+        return $nodeTypeManager->hasNodeType($node->nodeTypeName)
+            ? $nodeTypeManager->getNodeType($node->nodeTypeName)
+            : $nodeTypeManager->getNodeType(NodeTypeNameFactory::forFallback());
     }
 }
