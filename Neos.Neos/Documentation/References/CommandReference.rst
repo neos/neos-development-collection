@@ -217,9 +217,9 @@ Options
 Package *NEOS.CONTENTREPOSITORY.MIGRATION*
 -------------------
 
-.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrationcreate`:
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORYREGISTRY neos.contentrepositoryregistry:nodemigration:migrationcreate`:
 
-``neos.contentrepository.migration:node:migrationcreate``
+``neos.contentrepositoryregistry:nodemigration:migrationcreate``
 *************************
 
 **Create a node migration for the given package key**
