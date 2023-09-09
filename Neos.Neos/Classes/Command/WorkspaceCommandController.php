@@ -140,8 +140,7 @@ class WorkspaceCommandController extends CommandController
         string $description = null,
         string $owner = '',
         string $contentRepositoryIdentifier = 'default'
-    ): void
-    {
+    ): void {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
