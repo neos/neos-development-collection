@@ -24,7 +24,6 @@ use Neos\ContentRepository\NodeMigration\MigrationException;
 use Neos\ContentRepository\NodeMigration\Command\MigrationConfiguration;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\Exception\StopCommandException;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Exception\FilesException;
@@ -39,7 +38,6 @@ class NodeMigrationCommandController extends CommandController
     public function __construct(
         private readonly MigrationFactory $migrationFactory,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
-        private readonly ObjectManagerInterface $container,
         private readonly PackageManager $packageManager,
         private readonly NodeMigrationGeneratorService $nodeMigrationGeneratorService
     )
@@ -52,13 +50,12 @@ class NodeMigrationCommandController extends CommandController
      *
      * @param string $version The version of the migration configuration you want to use.
      * @param string $workspace The workspace where the migration should be applied; by default "live"
-     * @param boolean $force Confirm application of this migration,
-     *                       only needed if the given migration contains any warnings.
+     * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @return void
-     * @throws \Neos\Flow\Cli\Exception\StopCommandException
-     * @see neos.contentrepository.migration:node:migrationstatus
+     * @throws StopCommandException
+     * @see neos.contentrepositoryregistry:nodemigration:migrate
      */
-    public function migrateCommand(string $version, $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default')
+    public function migrateCommand(string $version, string $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
@@ -123,7 +120,7 @@ class NodeMigrationCommandController extends CommandController
      * @param MigrationConfiguration $migrationConfiguration
      * @return void
      */
-    protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration)
+    protected function outputCommentsAndWarnings(MigrationConfiguration $migrationConfiguration): void
     {
         if ($migrationConfiguration->hasComments()) {
             $this->outputLine();
