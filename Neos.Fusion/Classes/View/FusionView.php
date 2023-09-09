@@ -43,6 +43,7 @@ class FusionView extends AbstractView
     protected $supportedOptions = [
         'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files that will be loaded if directories are given the Root.fusion is used.', 'array'],
         'fusionPath' => [null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'],
+        'fusionGlobals' => [null, 'Additional global variables; merged together with the "request". Must only be specified at creation.', FusionGlobals::class],
         'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
         'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
         'enableContentCache' => [false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
@@ -158,11 +159,22 @@ class FusionView extends AbstractView
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
+
+            $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
+            if (!$fusionGlobals instanceof FusionGlobals) {
+                throw new \InvalidArgumentException('View option "fusionGlobals" must be of type FusionGlobals', 1694252923947);
+            }
+            $fusionGlobals = $fusionGlobals->merge(
+                FusionGlobals::fromArray(
+                    array_filter([
+                        'request' => $this->controllerContext?->getRequest()
+                    ])
+                )
+            );
+
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $this->parsedFusion,
-                FusionGlobals::fromArray(array_filter([
-                    'request' => $this->controllerContext?->getRequest()
-                ]))
+                $fusionGlobals
             );
             if (isset($this->controllerContext)) {
                 $this->fusionRuntime->setControllerContext($this->controllerContext);

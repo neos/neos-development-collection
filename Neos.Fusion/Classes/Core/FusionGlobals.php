@@ -50,10 +50,10 @@ final readonly class FusionGlobals
         return $this->value[$name] ?? null;
     }
 
-    public function merge(FusionGlobals $globals): self
+    public function merge(FusionGlobals $other): self
     {
         return new self(
-            Arrays::arrayMergeRecursiveOverrule($this->value, $globals->value)
+            Arrays::arrayMergeRecursiveOverrule($this->value, $other->value)
         );
     }
 
