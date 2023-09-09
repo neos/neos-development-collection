@@ -20,8 +20,11 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\Exception;
@@ -39,6 +42,12 @@ class FusionView extends AbstractView
      * @var SiteNodeUtility
      */
     protected $siteNodeUtility;
+
+    #[Flow\Inject]
+    protected RuntimeFactory $runtimeFactory;
+
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
 
     /**
      * @Flow\Inject
@@ -217,7 +226,17 @@ class FusionView extends AbstractView
     protected function getFusionRuntime(Node $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
-            $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
+            $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
+            $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
+
+            $fusionGlobals = FusionGlobals::fromArray([
+                'request' => $this->controllerContext->getRequest()
+            ]);
+            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+                $fusionConfiguration,
+                $fusionGlobals
+            );
+            $this->fusionRuntime->setControllerContext($this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);

@@ -23,17 +23,20 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\RequestHandler as HttpRequestHandler;
-use Neos\Flow\Mvc\ActionResponse;
-use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Fusion\Exception\RuntimeException;
-use Neos\Neos\Domain\Service\FusionService;
-use Neos\Fusion\Core\Runtime as FusionRuntime;
-use Neos\Flow\Security\Context as SecurityContext;
-use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Mvc\ActionRequest;
-use Neos\Flow\Mvc\Routing\UriBuilder;
-use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
+use Neos\Flow\Mvc\Controller\ControllerContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Mvc\View\AbstractView;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
+use Neos\Flow\Security\Context as SecurityContext;
+use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\Runtime as FusionRuntime;
+use Neos\Fusion\Core\RuntimeFactory;
+use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
@@ -71,6 +74,12 @@ class FusionExceptionView extends AbstractView
      * @var FusionRuntime
      */
     protected $fusionRuntime;
+
+    #[Flow\Inject]
+    protected RuntimeFactory $runtimeFactory;
+
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
 
     #[Flow\Inject]
     protected SiteNodeUtility $siteNodeUtility;
@@ -185,7 +194,18 @@ class FusionExceptionView extends AbstractView
         ControllerContext $controllerContext
     ): FusionRuntime {
         if ($this->fusionRuntime === null) {
-            $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $controllerContext);
+            $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
+
+            $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
+
+            $fusionGlobals = FusionGlobals::fromArray([
+                'request' => $this->controllerContext->getRequest()
+            ]);
+            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+                $fusionConfiguration,
+                $fusionGlobals
+            );
+            $this->fusionRuntime->setControllerContext($this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);

@@ -153,12 +153,12 @@ class FusionService
         Node $currentSiteNode,
         ControllerContext $controllerContext
     ) {
-        $defaultContextVariables = FusionGlobals::fromArray(
+        $fusionGlobals = FusionGlobals::fromArray(
             ['request' => $controllerContext->getRequest()]
         );
         $runtime = $this->runtimeFactory->createFromConfiguration(
             $this->createFusionConfigurationFromSite($this->findSiteBySiteNode($currentSiteNode)),
-            $defaultContextVariables
+            $fusionGlobals
         );
         $runtime->setControllerContext($controllerContext);
         return $runtime;
