@@ -228,20 +228,41 @@ class Runtime
      */
     public function pushContextArray(array $contextArray)
     {
+        foreach ($this->fusionGlobals->value as $disallowedFusionContextKey => $_) {
+            if (array_key_exists($disallowedFusionContextKey, $contextArray)) {
+                throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $disallowedFusionContextKey), 1694247627130);
+            }
+        }
         $this->contextStack[] = $contextArray;
         $this->currentContext = $contextArray;
     }
 
     /**
-     * Push a new context object to the rendering stack
-     *
-     * Warning: It is highly discouraged to replace global variables {@see FusionGlobals}!
+     * Push a new context object to the rendering stack.
+     * It is disallowed to replace global variables {@see FusionGlobals}.
      *
      * @param string $key the key inside the context
      * @param mixed $context
      * @return void
      */
     public function pushContext($key, $context)
+    {
+        if (array_key_exists($key, $this->fusionGlobals->value)) {
+            throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
+        }
+        $this->pushContextAndOverrideGlobals($key, $context);
+    }
+
+    /**
+     * Legacy compatible layer to possibly override fusion globals like "request".
+     * Warning relying on this behaviour is highly discouraged and will be removed at some point.
+     *
+     * @deprecated see above. This behaviour will be removed at some point without replacement.
+     * @param $key
+     * @param $context
+     * @return void
+     */
+    public function pushContextAndOverrideGlobals($key, $context)
     {
         $newContext = $this->currentContext;
         $newContext[$key] = $context;
@@ -614,7 +635,6 @@ class Runtime
         }
 
         if (isset($newContextArray)) {
-            $this->fusionGlobals->requireContextToNotInterfereWithGlobals($newContextArray);
             $this->pushContextArray($newContextArray);
             return true;
         }

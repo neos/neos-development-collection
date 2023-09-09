@@ -175,7 +175,7 @@ class RuntimeTest extends UnitTestCase
     /**
      * @test
      */
-    public function requireContextToNotInterfereWithGlobals()
+    public function fusionContextIsNotAllowedToOverrideFusionGlobals()
     {
         $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
         $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
@@ -192,5 +192,29 @@ class RuntimeTest extends UnitTestCase
         ]), FusionGlobals::fromArray(['request' => 'fixed']));
 
         $runtime->evaluate('foo');
+    }
+
+    /**
+     * @test
+     */
+    public function pushContextIsNotAllowedToOverrideFusionGlobals()
+    {
+        $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
+
+        $runtime->pushContext('request', 'anything');
+    }
+
+    /**
+     * @test
+     */
+    public function pushContextArrayIsNotAllowedToOverrideFusionGlobals()
+    {
+        $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
+
+        $runtime->pushContextArray(['bing' => 'beer', 'request' => 'anything']);
     }
 }

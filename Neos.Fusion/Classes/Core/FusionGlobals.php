@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
 
-use Neos\Fusion\Exception\RuntimeException as FusionRuntimeException;
 use Neos\Utility\Arrays;
 
 /**
@@ -22,7 +21,7 @@ use Neos\Utility\Arrays;
  * but we don't allow this currently and despite that, it would be absurd to cache a random request.
  * This is avoided by always exposing the current action request via the global variable.
  *
- * Overriding Fusion globals is disallowed via \@context and highly discouraged via {@see Runtime::pushContext()}.
+ * Overriding Fusion globals is disallowed via \@context and {@see Runtime::pushContext()}.
  */
 final readonly class FusionGlobals
 {
@@ -55,14 +54,5 @@ final readonly class FusionGlobals
         return new self(
             Arrays::arrayMergeRecursiveOverrule($this->value, $other->value)
         );
-    }
-
-    public function requireContextToNotInterfereWithGlobals(array $context): void
-    {
-        foreach ($this->value as $disallowedFusionContextKey => $_) {
-            if (array_key_exists($disallowedFusionContextKey, $context)) {
-                throw new FusionRuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $disallowedFusionContextKey), 1694247627130);
-            }
-        }
     }
 }
