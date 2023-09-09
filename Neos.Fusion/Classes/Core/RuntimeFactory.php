@@ -50,7 +50,7 @@ class RuntimeFactory
         );
         $runtime = new Runtime(
             FusionConfiguration::fromArray($fusionConfiguration),
-            FusionDefaultContextVariables::fromArray(
+            FusionGlobals::fromArray(
                 ['request' => $controllerContext->getRequest(), ...$defaultContextVariables]
             )
         );
@@ -60,23 +60,23 @@ class RuntimeFactory
 
     public function createFromConfiguration(
         FusionConfiguration $fusionConfiguration,
-        FusionDefaultContextVariables $additionalDefaultContextVariables
+        FusionGlobals $fusionGlobals
     ): Runtime {
-        $defaultContextVariables = FusionDefaultContextVariables::fromArray(
+        $fusionGlobalHelpers = FusionGlobals::fromArray(
             EelUtility::getDefaultContextVariables(
                 $this->defaultContextConfiguration ?? []
             )
         );
-        return new Runtime($fusionConfiguration, $defaultContextVariables->merge($additionalDefaultContextVariables));
+        return new Runtime($fusionConfiguration, $fusionGlobalHelpers->merge($fusionGlobals));
     }
 
     public function createFromSourceCode(
         FusionSourceCodeCollection $sourceCode,
-        FusionDefaultContextVariables $additionalDefaultContextVariables
+        FusionGlobals $fusionGlobals
     ): Runtime {
         return $this->createFromConfiguration(
             $this->fusionParser->parseFromSource($sourceCode),
-            $additionalDefaultContextVariables
+            $fusionGlobals
         );
     }
 

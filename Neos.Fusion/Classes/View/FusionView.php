@@ -15,7 +15,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Fusion\Core\FusionConfiguration;
-use Neos\Fusion\Core\FusionDefaultContextVariables;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
@@ -160,7 +160,7 @@ class FusionView extends AbstractView
             $this->loadFusion();
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $this->parsedFusion,
-                FusionDefaultContextVariables::fromArray(array_filter([
+                FusionGlobals::fromArray(array_filter([
                     'request' => $this->controllerContext?->getRequest()
                 ]))
             );

@@ -98,9 +98,9 @@ class Runtime
     protected $currentApplyValues = [];
 
     /**
-     * Default context with helper definitions
+     * Fusion global variables like EEL helper definitions {@see FusionGlobals}
      */
-    protected FusionDefaultContextVariables $defaultContextVariables;
+    public readonly FusionGlobals $fusionGlobals;
 
     /**
      * @var array
@@ -133,17 +133,17 @@ class Runtime
     protected $lastEvaluationStatus;
 
     /**
-     * Please use {@see RuntimeFactory} for instantiating.
+     * @internal use {@see RuntimeFactory} for instantiating.
      */
     public function __construct(
         FusionConfiguration $fusionConfiguration,
-        FusionDefaultContextVariables $defaultContextVariables
+        FusionGlobals $fusionGlobals
     ) {
         $this->runtimeConfiguration = new RuntimeConfiguration(
             $fusionConfiguration->toArray()
         );
         $this->runtimeContentCache = new RuntimeContentCache($this);
-        $this->defaultContextVariables = $defaultContextVariables;
+        $this->fusionGlobals = $fusionGlobals;
     }
 
     /**
@@ -160,7 +160,7 @@ class Runtime
      *
      * DEPRECATED CONCEPT. We only implement this as backwards-compatible layer.
      *
-     * @deprecated use `Runtime::getContextVariable('request')` instead {@see Runtime::getContextVariable}
+     * @deprecated use `Runtime::fusionGlobals->getGlobal('request')` instead to get the request. {@see FusionGlobals::getGlobal()}
      * @internal
      */
     public function getControllerContext(): ControllerContext
@@ -169,7 +169,7 @@ class Runtime
             return $this->controllerContext;
         }
 
-        if (!($request = $this->getContextVariable('request')) instanceof ActionRequest) {
+        if (!($request = $this->fusionGlobals->getGlobal('request')) instanceof ActionRequest) {
             throw new \RuntimeException(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
         }
 
@@ -222,8 +222,7 @@ class Runtime
     /**
      * Completely replace the context array with the new $contextArray.
      *
-     * Purely internal method, should not be called outside of Neos.Fusion.
-     *
+     * @internal purely internal method, should not be called outside Neos.Fusion.
      * @param array $contextArray
      * @return void
      */
@@ -235,6 +234,8 @@ class Runtime
 
     /**
      * Push a new context object to the rendering stack
+     *
+     * Warning: It is highly discouraged to replace global variables {@see FusionGlobals}!
      *
      * @param string $key the key inside the context
      * @param mixed $context
@@ -261,22 +262,15 @@ class Runtime
     }
 
     /**
-     * Get the current context array (without the eel helpers)
+     * Get the current context array.
+     * This PHP context api unlike Fusion, doesn't include the Fusion globals {@see FusionGlobals}.
+     * The globals can be accessed via {@see Runtime::$fusionGlobals}.
      *
      * @return array the array of current context objects
      */
     public function getCurrentContext()
     {
         return $this->currentContext;
-    }
-
-    /**
-     * @param string $name the key of the variable like `request` or `node`.
-     * @return mixed null if not set
-     */
-    public function getContextVariable(string $name): mixed
-    {
-        return $this->currentContext[$name] ?? $this->defaultContextVariables->value[$name] ?? null;
     }
 
     public function popApplyValues(array $paths): void
@@ -620,6 +614,7 @@ class Runtime
         }
 
         if (isset($newContextArray)) {
+            $this->fusionGlobals->requireContextToNotInterfereWithGlobals($newContextArray);
             $this->pushContextArray($newContextArray);
             return true;
         }
@@ -736,7 +731,7 @@ class Runtime
             $expression = '${' . $expression . '}';
         }
 
-        $contextVariables = array_merge($this->defaultContextVariables->value, $this->currentContext);
+        $contextVariables = array_merge($this->fusionGlobals->value, $this->currentContext);
 
         if (isset($contextVariables['this'])) {
             throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current Fusion object.', 1344325044);

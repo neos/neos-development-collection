@@ -11,7 +11,7 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * source code.
  */
 
-use Neos\Fusion\Core\FusionDefaultContextVariables;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
@@ -55,7 +55,7 @@ class ExpressionsTest extends AbstractFusionObjectTest
     {
         $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString('root = ${"foo"}'));
 
-        $runtime = (new RuntimeFactory())->createFromConfiguration($fusionAst, FusionDefaultContextVariables::empty());
+        $runtime = (new RuntimeFactory())->createFromConfiguration($fusionAst, FusionGlobals::empty());
 
         $renderedFusion = $runtime->render('root');
 

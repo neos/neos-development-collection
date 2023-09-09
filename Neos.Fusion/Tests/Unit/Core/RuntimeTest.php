@@ -18,9 +18,10 @@ use Neos\Flow\ObjectManagement\ObjectManager;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionConfiguration;
-use Neos\Fusion\Core\FusionDefaultContextVariables;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Fusion\FusionObjects\ValueImplementation;
 
 class RuntimeTest extends UnitTestCase
 {
@@ -54,7 +55,7 @@ class RuntimeTest extends UnitTestCase
         $this->expectException(Exception::class);
         $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
         $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionDefaultContextVariables::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
         $this->inject($runtime, 'objectManager', $objectManager);
         $exceptionHandlerSetting = 'settings';
         $runtime->injectSettings(['rendering' => ['exceptionHandler' => $exceptionHandlerSetting]]);
@@ -76,7 +77,7 @@ class RuntimeTest extends UnitTestCase
             self::callback(fn (ProtectedContext $actualContext) => $actualContext->get('foo') === '19')
         );
 
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionDefaultContextVariables::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
         $this->inject($runtime, 'eelEvaluator', $eelEvaluator);
 
         $runtime->pushContextArray(['foo' => '19']);
@@ -103,7 +104,7 @@ class RuntimeTest extends UnitTestCase
                     ]
                 ]
             ]
-        ]), FusionDefaultContextVariables::empty());
+        ]), FusionGlobals::empty());
 
         $runtime->evaluate('foo/bar');
     }
@@ -126,7 +127,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function runtimeCurrentContextStackWorksSimplePushPop()
     {
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionDefaultContextVariables::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
 
         self::assertSame([], $runtime->getCurrentContext(), 'context should be empty at start.');
 
@@ -144,7 +145,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function runtimeCurrentContextStack3PushesAndPops()
     {
-        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionDefaultContextVariables::empty());
+        $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
 
         self::assertSame([], $runtime->getCurrentContext(), 'empty at start');
 
@@ -169,5 +170,27 @@ class RuntimeTest extends UnitTestCase
         self::assertSame($context1, $runtime->popContext(), 'context1');
 
         self::assertSame([], $runtime->getCurrentContext(), 'empty at end');
+    }
+
+    /**
+     * @test
+     */
+    public function requireContextToNotInterfereWithGlobals()
+    {
+        $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
+        $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
+        $runtime = new Runtime(FusionConfiguration::fromArray([
+            'foo' => [
+                '__objectType' => 'Neos.Fusion:Value',
+                '__meta' => [
+                    'class' => ValueImplementation::class,
+                    'context' => [
+                        'request' => 'anything'
+                    ]
+                ]
+            ]
+        ]), FusionGlobals::fromArray(['request' => 'fixed']));
+
+        $runtime->evaluate('foo');
     }
 }
