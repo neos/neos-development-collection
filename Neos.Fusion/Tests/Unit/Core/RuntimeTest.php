@@ -207,14 +207,18 @@ class RuntimeTest extends UnitTestCase
     }
 
     /**
+     * Legacy compatible layer to possibly override fusion globals like "request".
+     * This functionality is only allowed for internal packages.
+     * Currently Neos.Fusion.Form overrides the request, and we need to keep this behaviour.
+     *
+     * {@link https://github.com/neos/fusion-form/blob/224a26afe11f182e6fc5d4bb27ce3f8d0f981ba2/Classes/Runtime/FusionObjects/RuntimeFormImplementation.php#L103}
+     *
      * @test
      */
-    public function pushContextArrayIsNotAllowedToOverrideFusionGlobals()
+    public function pushContextArrayIsAllowedToOverrideFusionGlobals()
     {
-        $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
-        $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
-
         $runtime->pushContextArray(['bing' => 'beer', 'request' => 'anything']);
+        self::assertTrue(true);
     }
 }

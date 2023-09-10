@@ -222,17 +222,16 @@ class Runtime
     /**
      * Completely replace the context array with the new $contextArray.
      *
+     * Warning unlike in Fusion's \@context or {@see Runtime::pushContext()},
+     * no checks are imposed to prevent overriding Fusion globals like "request".
+     * Relying on this behaviour is highly discouraged but leveraged by Neos.Fusion.Form {@see FusionGlobals}.
+     *
      * @internal purely internal method, should not be called outside Neos.Fusion.
      * @param array $contextArray
      * @return void
      */
     public function pushContextArray(array $contextArray)
     {
-        foreach ($this->fusionGlobals->value as $disallowedFusionContextKey => $_) {
-            if (array_key_exists($disallowedFusionContextKey, $contextArray)) {
-                throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $disallowedFusionContextKey), 1694247627130);
-            }
-        }
         $this->contextStack[] = $contextArray;
         $this->currentContext = $contextArray;
     }
@@ -250,20 +249,6 @@ class Runtime
         if (array_key_exists($key, $this->fusionGlobals->value)) {
             throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
         }
-        $this->pushContextAndOverrideGlobals($key, $context);
-    }
-
-    /**
-     * Legacy compatible layer to possibly override fusion globals like "request".
-     * Warning relying on this behaviour is highly discouraged and will be removed at some point.
-     *
-     * @deprecated see above. This behaviour will be removed at some point without replacement.
-     * @param $key
-     * @param $context
-     * @return void
-     */
-    public function pushContextAndOverrideGlobals($key, $context)
-    {
         $newContext = $this->currentContext;
         $newContext[$key] = $context;
         $this->contextStack[] = $newContext;
@@ -630,6 +615,9 @@ class Runtime
         if (isset($fusionConfiguration['__meta']['context'])) {
             $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
+                if (array_key_exists($contextKey, $this->fusionGlobals->value)) {
+                    throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
+                }
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }
         }
