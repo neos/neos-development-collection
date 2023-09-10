@@ -104,6 +104,16 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
         return null;
     }
 
+    public function last(): ?Node
+    {
+        if (count($this->nodes) > 0) {
+            $array = $this->nodes;
+            return end($array);
+        }
+
+        return null;
+    }
+
     public function merge(self $other): self
     {
         $nodes = array_merge($this->nodes, $other->getIterator()->getArrayCopy());

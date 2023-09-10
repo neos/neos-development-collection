@@ -20,13 +20,12 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
-use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
-use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Domain\Model\FusionRenderingStuff;
 use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Domain\Service\RenderingUtility;
 use Neos\Neos\Exception;
 use Psr\Http\Message\ResponseInterface;
 
@@ -35,57 +34,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FusionView extends AbstractView
 {
-    use FusionViewI18nTrait;
-
-    /**
-     * @Flow\Inject
-     * @var SiteNodeUtility
-     */
-    protected $siteNodeUtility;
-
-    #[Flow\Inject]
-    protected RuntimeFactory $runtimeFactory;
-
-    #[Flow\Inject]
-    protected SiteRepository $siteRepository;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
-
-    /**
-     * Renders the view
-     *
-     * @return string|ResponseInterface The rendered view
-     * @throws \Exception if no node is given
-     * @api
-     */
-    public function render(): string|ResponseInterface
-    {
-        $currentNode = $this->getCurrentNode();
-
-        $currentSiteNode = $this->siteNodeUtility->findSiteNode($currentNode);
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
-
-        $fusionRuntime->pushContextArray([
-            'node' => $currentNode,
-            'documentNode' => $this->getClosestDocumentNode($currentNode) ?: $currentNode,
-            'site' => $currentSiteNode,
-            'editPreviewMode' => $this->variables['editPreviewMode'] ?? null
-        ]);
-        try {
-            $output = $fusionRuntime->render($this->fusionPath);
-            $output = $this->parsePotentialRawHttpResponse($output);
-        } catch (RuntimeException $exception) {
-            throw $exception->getPrevious() ?: $exception;
-        }
-        $fusionRuntime->popContext();
-
-        return $output;
-    }
-
     /**
      * This contains the supported options, their default values, descriptions and types.
      *
@@ -99,161 +47,134 @@ class FusionView extends AbstractView
         ]
     ];
 
-    /**
-     * @Flow\Inject
-     * @var FusionService
-     */
-    protected $fusionService;
+    #[Flow\Inject]
+    protected RuntimeFactory $runtimeFactory;
 
-    /**
-     * The Fusion path to use for rendering the node given in "value", defaults to "page".
-     *
-     * @var string
-     */
-    protected $fusionPath = 'root';
+    #[Flow\Inject]
+    protected RenderingUtility $renderingUtility;
 
-    protected ?Runtime $fusionRuntime;
+    #[Flow\Inject]
+    protected FusionService $fusionService;
 
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
+    #[Flow\Inject]
+    protected Context $securityContext;
 
-    /**
-     * @param string $output
-     * @return string|ResponseInterface If output is a string with a HTTP preamble a ResponseInterface
-     *                                  otherwise the original output.
-     */
-    protected function parsePotentialRawHttpResponse($output)
-    {
-        if ($this->isRawHttpResponse($output)) {
-            return Message::parseResponse($output);
-        }
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-        return $output;
-    }
+    protected Runtime $fusionRuntime;
 
-    /**
-     * Checks if the mixed input looks like a raw HTTTP response.
-     *
-     * @param mixed $value
-     * @return bool
-     */
-    protected function isRawHttpResponse($value): bool
-    {
-        if (is_string($value) && strpos($value, 'HTTP/') === 0) {
-            return true;
-        }
+    /** The Fusion path to use for rendering the node given in "value", defaults to "root". */
+    protected string $fusionPath = 'root';
 
-        return false;
-    }
+    protected FusionRenderingStuff $fusionRenderingStuff;
 
-    /**
-     * Is it possible to render $node with $his->fusionPath?
-     *
-     * @return boolean true if $node can be rendered at fusionPath
-     *
-     * @throws Exception
-     */
-    public function canRenderWithNodeAndPath()
-    {
-        $currentSiteNode = $this->getCurrentSiteNode();
-        $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
-
-        return $fusionRuntime->canRender($this->fusionPath);
-    }
-
-    /**
-     * Set the Fusion path to use for rendering the node given in "value"
-     *
-     * @param string $fusionPath
-     * @return void
-     */
-    public function setFusionPath($fusionPath)
+    /** Set the Fusion path to use for rendering the node given in "value" */
+    public function setFusionPath(string $fusionPath): void
     {
         $this->fusionPath = $fusionPath;
     }
 
-    /**
-     * @return string
-     */
-    public function getFusionPath()
+    public function getFusionPath(): string
     {
         return $this->fusionPath;
     }
 
-    protected function getClosestDocumentNode(Node $node): ?Node
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        while ($node !== null && !$node->nodeType->isOfType('Neos.Neos:Document')) {
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-        }
-
-        return $node;
-    }
-
     /**
-     * @return Node
-     * @throws Exception
-     */
-    protected function getCurrentSiteNode(): Node
-    {
-        $currentNode = $this->variables['site'] ?? null;
-        if (!$currentNode instanceof Node) {
-            throw new Exception('FusionView needs a variable \'site\' set with a Node object.', 1538996432);
-        }
-        return $currentNode;
-    }
-
-    /**
-     * @return Node
-     * @throws Exception
-     */
-    protected function getCurrentNode(): Node
-    {
-        $currentNode = $this->variables['value'] ?? null;
-        if (!$currentNode instanceof Node) {
-            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
-        }
-        return $currentNode;
-    }
-
-    /**
-     * @param Node $currentSiteNode
-     * @return \Neos\Fusion\Core\Runtime
-     */
-    protected function getFusionRuntime(Node $currentSiteNode)
-    {
-        if ($this->fusionRuntime === null) {
-            $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
-            $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
-
-            $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest()
-            ]);
-            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
-                $fusionConfiguration,
-                $fusionGlobals
-            );
-            $this->fusionRuntime->setControllerContext($this->controllerContext);
-
-            if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
-                $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
-            }
-        }
-        return $this->fusionRuntime;
-    }
-
-    /**
-     * Clear the cached runtime instance on assignment of variables
+     * Assigns the Node to this view. The key must be "value".
+     * The documentNode and siteNode as well the site are derived from this entry Node.
      *
-     * @param string $key
-     * @param mixed $value
+     * @throws \Exception If 'value' is not a Node
      */
     public function assign($key, $value): AbstractView
     {
-        $this->fusionRuntime = null;
-        return parent::assign($key, $value);
+        if ($key !== 'value') {
+            // noop -> we only allow "value"
+            return $this;
+        }
+
+        // 'value' is expected to be a Node!
+        if (!$value instanceof Node) {
+            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1329736456);
+        }
+
+        // clear the cached runtime instance
+        unset($this->fusionRuntime);
+
+        $this->fusionRenderingStuff = $this->renderingUtility->createFusionRenderingStuff(
+            $value,
+            $this->controllerContext->getRequest()
+        );
+        return $this;
+    }
+
+    /**
+     * Renders the view
+     *
+     * @return string|ResponseInterface The rendered view
+     * @throws \Exception If no node is given
+     * @api
+     */
+    public function render(): string|ResponseInterface
+    {
+        $this->initializeFusionRuntime();
+
+        $this->fusionRuntime->pushContextArray(
+            $this->fusionRenderingStuff->fusionContext->toContextArray()
+        );
+
+        try {
+            $output = $this->fusionRuntime->render($this->fusionPath);
+
+            /**
+             * parse potential raw http response possibly rendered via "Neos.Fusion:Http.Message"
+             * {@see \Neos\Fusion\FusionObjects\HttpResponseImplementation}
+             */
+            $outputStringHasHttpPreamble = is_string($output) && str_starts_with($output, 'HTTP/');
+            if ($outputStringHasHttpPreamble) {
+                return Message::parseResponse($output);
+            }
+
+            return $output;
+        } catch (RuntimeException $exception) {
+            throw $exception->getPrevious() ?: $exception;
+        } finally {
+            $this->fusionRuntime->popContext();
+        }
+    }
+
+    /** Is it possible to render $this->fusionPath? */
+    public function canRenderWithNodeAndPath(): bool
+    {
+        if (!isset($this->fusionRenderingStuff)) {
+            return false;
+        }
+        $this->initializeFusionRuntime();
+        return $this->fusionRuntime->canRender($this->fusionPath);
+    }
+
+    protected function initializeFusionRuntime(): void
+    {
+        if (isset($this->fusionRuntime)) {
+            return;
+        }
+
+        if (!isset($this->fusionRenderingStuff)) {
+            throw new Exception('FusionView needs a variable \'value\' set with a Node object.', 1694347478247);
+        }
+
+        $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite(
+            $this->fusionRenderingStuff->site
+        );
+
+        $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+            $fusionConfiguration,
+            $this->fusionRenderingStuff->fusionGlobals
+        );
+        $this->fusionRuntime->setControllerContext($this->controllerContext);
+
+        if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
+            $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
+        }
     }
 }
