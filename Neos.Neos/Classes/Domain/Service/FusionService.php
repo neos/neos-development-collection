@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Fusion\Core\FusionConfiguration;
 use Neos\Flow\Annotations as Flow;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCode;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
@@ -152,10 +153,15 @@ class FusionService
         Node $currentSiteNode,
         ControllerContext $controllerContext
     ) {
-        return $this->runtimeFactory->createFromConfiguration(
-            $this->createFusionConfigurationFromSite($this->findSiteBySiteNode($currentSiteNode)),
-            $controllerContext
+        $fusionGlobals = FusionGlobals::fromArray(
+            ['request' => $controllerContext->getRequest()]
         );
+        $runtime = $this->runtimeFactory->createFromConfiguration(
+            $this->createFusionConfigurationFromSite($this->findSiteBySiteNode($currentSiteNode)),
+            $fusionGlobals
+        );
+        $runtime->setControllerContext($controllerContext);
+        return $runtime;
     }
 
     /**

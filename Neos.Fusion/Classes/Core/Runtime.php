@@ -11,23 +11,27 @@ namespace Neos\Fusion\Core;
  * source code.
  */
 
+use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\Exception\InvalidConfigurationException;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Utility\Arrays;
-use Neos\Utility\ObjectAccess;
-use Neos\Utility\PositionalArraySorter;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
-use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception;
-use Neos\Flow\Security\Exception as SecurityException;
+use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
-use Neos\Eel\Utility as EelUtility;
+use Neos\Utility\Arrays;
+use Neos\Utility\ObjectAccess;
+use Neos\Utility\PositionalArraySorter;
 
 /**
  * Fusion Runtime
@@ -94,11 +98,9 @@ class Runtime
     protected $currentApplyValues = [];
 
     /**
-     * Default context with helper definitions
-     *
-     * @var array
+     * Fusion global variables like EEL helper definitions {@see FusionGlobals}
      */
-    protected $defaultContextVariables;
+    public readonly FusionGlobals $fusionGlobals;
 
     /**
      * @var array
@@ -106,9 +108,9 @@ class Runtime
     protected $runtimeConfiguration;
 
     /**
-     * @var ControllerContext
+     * @deprecated
      */
-    protected $controllerContext;
+    protected ControllerContext $controllerContext;
 
     /**
      * @var array
@@ -130,15 +132,56 @@ class Runtime
      */
     protected $lastEvaluationStatus;
 
-    public function __construct(FusionConfiguration|array $fusionConfiguration, ControllerContext $controllerContext)
-    {
+    /**
+     * @internal use {@see RuntimeFactory} for instantiating.
+     */
+    public function __construct(
+        FusionConfiguration $fusionConfiguration,
+        FusionGlobals $fusionGlobals
+    ) {
         $this->runtimeConfiguration = new RuntimeConfiguration(
-            $fusionConfiguration instanceof FusionConfiguration
-                ? $fusionConfiguration->toArray()
-                : $fusionConfiguration
+            $fusionConfiguration->toArray()
         );
-        $this->controllerContext = $controllerContext;
         $this->runtimeContentCache = new RuntimeContentCache($this);
+        $this->fusionGlobals = $fusionGlobals;
+    }
+
+    /**
+     * @deprecated {@see self::getControllerContext()}
+     * @internal
+     */
+    public function setControllerContext(ControllerContext $controllerContext): void
+    {
+        $this->controllerContext = $controllerContext;
+    }
+
+    /**
+     * Returns the context which has been passed by the currently active MVC Controller
+     *
+     * DEPRECATED CONCEPT. We only implement this as backwards-compatible layer.
+     *
+     * @deprecated use `Runtime::fusionGlobals->get('request')` instead to get the request. {@see FusionGlobals::get()}
+     * @internal
+     */
+    public function getControllerContext(): ControllerContext
+    {
+        if (isset($this->controllerContext)) {
+            return $this->controllerContext;
+        }
+
+        if (!($request = $this->fusionGlobals->get('request')) instanceof ActionRequest) {
+            throw new \RuntimeException(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
+        }
+
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($request);
+
+        return $this->controllerContext = new ControllerContext(
+            $request,
+            new ActionResponse(),
+            new Arguments([]),
+            $uriBuilder
+        );
     }
 
     /**
@@ -179,8 +222,11 @@ class Runtime
     /**
      * Completely replace the context array with the new $contextArray.
      *
-     * Purely internal method, should not be called outside of Neos.Fusion.
+     * Warning unlike in Fusion's \@context or {@see Runtime::pushContext()},
+     * no checks are imposed to prevent overriding Fusion globals like "request".
+     * Relying on this behaviour is highly discouraged but leveraged by Neos.Fusion.Form {@see FusionGlobals}.
      *
+     * @internal purely internal method, should not be called outside Neos.Fusion.
      * @param array $contextArray
      * @return void
      */
@@ -191,7 +237,8 @@ class Runtime
     }
 
     /**
-     * Push a new context object to the rendering stack
+     * Push a new context object to the rendering stack.
+     * It is disallowed to replace global variables {@see FusionGlobals}.
      *
      * @param string $key the key inside the context
      * @param mixed $context
@@ -199,6 +246,9 @@ class Runtime
      */
     public function pushContext($key, $context)
     {
+        if ($this->fusionGlobals->has($key)) {
+            throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
+        }
         $newContext = $this->currentContext;
         $newContext[$key] = $context;
         $this->contextStack[] = $newContext;
@@ -218,7 +268,9 @@ class Runtime
     }
 
     /**
-     * Get the current context array
+     * Get the current context array.
+     * This PHP context api unlike Fusion, doesn't include the Fusion globals {@see FusionGlobals}.
+     * The globals can be accessed via {@see Runtime::$fusionGlobals}.
      *
      * @return array the array of current context objects
      */
@@ -563,6 +615,9 @@ class Runtime
         if (isset($fusionConfiguration['__meta']['context'])) {
             $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
+                if ($this->fusionGlobals->has($contextKey)) {
+                    throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
+                }
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }
         }
@@ -684,7 +739,7 @@ class Runtime
             $expression = '${' . $expression . '}';
         }
 
-        $contextVariables = array_merge($this->getDefaultContextVariables(), $this->currentContext);
+        $contextVariables = array_merge($this->fusionGlobals->value, $this->currentContext);
 
         if (isset($contextVariables['this'])) {
             throw new Exception('Context variable "this" not allowed, as it is already reserved for a pointer to the current Fusion object.', 1344325044);
@@ -829,34 +884,6 @@ class Runtime
         }
 
         return true;
-    }
-
-    /**
-     * Returns the context which has been passed by the currently active MVC Controller
-     *
-     * @return ControllerContext
-     */
-    public function getControllerContext()
-    {
-        return $this->controllerContext;
-    }
-
-    /**
-     * Get variables from configuration that should be set in the context by default.
-     * For example Eel helpers are made available by this.
-     *
-     * @return array Array with default context variable objects.
-     */
-    protected function getDefaultContextVariables()
-    {
-        if ($this->defaultContextVariables === null) {
-            $this->defaultContextVariables = [];
-            if (isset($this->settings['defaultContext']) && is_array($this->settings['defaultContext'])) {
-                $this->defaultContextVariables = EelUtility::getDefaultContextVariables($this->settings['defaultContext']);
-            }
-            $this->defaultContextVariables['request'] = $this->controllerContext->getRequest();
-        }
-        return $this->defaultContextVariables;
     }
 
     /**
