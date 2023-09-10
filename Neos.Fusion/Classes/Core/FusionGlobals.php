@@ -42,11 +42,16 @@ final readonly class FusionGlobals
 
     /**
      * You can access the current request like via this getter:
-     * `$runtime->fusionGlobals->getGlobal('request')`
+     * `$runtime->fusionGlobals->get('request')`
      */
-    public function getGlobal(string $name): mixed
+    public function get(string $name): mixed
     {
         return $this->value[$name] ?? null;
+    }
+
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $this->value);
     }
 
     public function merge(FusionGlobals $other): self
