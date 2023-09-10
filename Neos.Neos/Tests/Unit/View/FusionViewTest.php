@@ -143,6 +143,8 @@ class FusionViewTest extends TestCase
 
         self::assertTrue($this->fusionView->canRenderWithNodeAndPath());
 
+        self::assertEquals('root', $this->fusionView->getFusionPath());
+
         $output = $this->fusionView->render();
 
         self::assertEquals('Hello Welt', $output);
@@ -196,6 +198,60 @@ class FusionViewTest extends TestCase
             $output->getHeaders()
         );
         self::assertEquals('Message body', $output->getBody()->getContents());
+    }
+
+    /** @test */
+    public function consecutiveRender(): void
+    {
+        $renderingContext = new RenderingContext(
+            $entryNode = $this->createNodeMock(),
+            $this->createNodeMock(),
+            $this->createNodeMock(),
+        );
+
+        $fusionGlobals = FusionGlobals::fromArray(['request' => $this->actionRequestMock]);
+
+        $fusionRenderingStuff = new FusionRenderingStuff(
+            $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock(),
+            $renderingContext,
+            $fusionGlobals
+        );
+
+        $fusionConfiguration = FusionConfiguration::fromArray([]);
+
+        $this->renderingUtilityMock->expects(self::exactly(2))->method('createFusionRenderingStuff')->with($entryNode, $this->actionRequestMock)
+            ->willReturn($fusionRenderingStuff);
+
+        $this->fusionServiceMock->expects(self::exactly(2))->method('createFusionConfigurationFromSite')->with($fusionRenderingStuff->site)
+            ->willReturn($fusionConfiguration);
+
+        $firstRuntimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+
+        $secondRuntimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+
+        $this->runtimeFactoryMock->expects(self::exactly(2))->method('createFromConfiguration')
+            ->with($fusionConfiguration, $fusionGlobals)
+            ->willReturn($firstRuntimeMock, $secondRuntimeMock);
+
+        $this->fusionView->assign('value', $entryNode);
+
+        $firstRuntimeMock->expects(self::once())->method('render')->with('root')->willReturn('Hello Welt');
+
+        $firstOutput = $this->fusionView->render();
+
+        self::assertEquals('Hello Welt', $firstOutput);
+
+        $this->fusionView->setFusionPath('root2');
+
+        self::assertEquals('root2', $this->fusionView->getFusionPath());
+
+        $this->fusionView->assign('value', $entryNode);
+
+        $secondRuntimeMock->expects(self::once())->method('render')->with('root2')->willReturn('Hello Welt 2');
+
+        $secondOutput = $this->fusionView->render();
+
+        self::assertEquals('Hello Welt 2', $secondOutput);
     }
 
     private function createNodeMock(): Node
