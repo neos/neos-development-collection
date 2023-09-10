@@ -16,10 +16,7 @@ namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Flow\Security\Context;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
@@ -47,27 +44,21 @@ class FusionView extends AbstractView
         ]
     ];
 
-    #[Flow\Inject]
-    protected RuntimeFactory $runtimeFactory;
-
-    #[Flow\Inject]
-    protected RenderingUtility $renderingUtility;
-
-    #[Flow\Inject]
-    protected FusionService $fusionService;
-
-    #[Flow\Inject]
-    protected Context $securityContext;
-
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
     protected Runtime $fusionRuntime;
 
     /** The Fusion path to use for rendering the node given in "value", defaults to "root". */
     protected string $fusionPath = 'root';
 
     protected FusionRenderingStuff $fusionRenderingStuff;
+
+    public function __construct(
+        array $options,
+        private readonly RuntimeFactory $runtimeFactory,
+        private readonly RenderingUtility $renderingUtility,
+        private readonly FusionService $fusionService,
+    ) {
+        parent::__construct($options);
+    }
 
     /** Set the Fusion path to use for rendering the node given in "value" */
     public function setFusionPath(string $fusionPath): void

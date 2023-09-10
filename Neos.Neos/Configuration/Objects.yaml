@@ -79,3 +79,9 @@ Neos\Neos\AssetUsage\GlobalAssetUsageService:
   arguments:
     3:
       setting: Neos.Neos.assetUsage.contentRepositories
+
+Neos\Neos\View\FusionView:
+  arguments:
+    1:
+      # this way once can instantiate the view without arguments
+      value: []

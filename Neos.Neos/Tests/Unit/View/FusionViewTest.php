@@ -11,166 +11,210 @@ namespace Neos\Neos\Tests\Unit\View;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Projection\Content\TraversableNode;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Flow\Security\Context;
-use Neos\Flow\Tests\UnitTestCase;
-use Neos\Neos\Domain\Service\ContentContext;
+use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Fusion\Core\FusionConfiguration;
+use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
+use Neos\Neos\Domain\Model\FusionRenderingStuff;
+use Neos\Neos\Domain\Model\RenderingContext;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Service\FusionService;
+use Neos\Neos\Domain\Service\RenderingUtility;
 use Neos\Neos\Exception;
 use Neos\Neos\View\FusionView;
-use Neos\ContentRepository\Domain\Model\Node;
-use Neos\ContentRepository\Domain\Model\NodeData;
-use Neos\Fusion\Core\Runtime;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
-/**
- * Testcase for the Fusion View
- *
- */
-class FusionViewTest extends UnitTestCase
+class FusionViewTest extends TestCase
 {
-    /**
-     * @var ContentContext
-     */
-    protected $mockContext;
+    private FusionView $fusionView;
 
-    /**
-     * @var Context
-     */
-    protected $mockSecurityContext;
+    private RuntimeFactory $runtimeFactoryMock;
+    private RenderingUtility $renderingUtilityMock;
+    private FusionService $fusionServiceMock;
 
-    /**
-     * @var FusionView
-     */
-    protected $mockView;
+    private ControllerContext $controllerContextMock;
+    private ActionRequest $actionRequestMock;
 
-    /**
-     * @var Runtime
-     */
-    protected $mockRuntime;
-
-    /**
-     * @var Node
-     */
-    protected $mockContextualizedNode;
-
-    /**
-     * Sets up a view with context for testing
-     *
-     * @return void
-     */
-    public function setUpMockView()
+    public function setUp(): void
     {
-        $this->markTestSkipped('TODO - update with Neos 9.0');
-        $this->mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
+        $this->runtimeFactoryMock = $this->getMockBuilder(RuntimeFactory::class)->disableOriginalConstructor()->getMock();
+        $this->renderingUtilityMock = $this->getMockBuilder(RenderingUtility::class)->disableOriginalConstructor()->getMock();
+        $this->fusionServiceMock = $this->getMockBuilder(FusionService::class)->disableOriginalConstructor()->getMock();
 
-        $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $this->mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(['getContext'])->setConstructorArgs([$mockNode, $this->mockContext])->getMock();
-        $mockSiteNode = $this->createMock(TraversableNode::class);
+        $this->actionRequestMock = $this->getMockBuilder(ActionRequest::class)->disableOriginalConstructor()->getMock();
+        $this->controllerContextMock = new ControllerContext(
+            $this->actionRequestMock,
+            new ActionResponse(),
+            new Arguments(),
+            $this->getMockBuilder(UriBuilder::class)->disableOriginalConstructor()->getMock()
+        );
 
-        $this->mockContext->expects(self::any())->method('getCurrentSiteNode')->will(self::returnValue($mockSiteNode));
-        $this->mockContext->expects(self::any())->method('getDimensions')->will(self::returnValue([]));
-
-        $this->mockContextualizedNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContext));
-
-        $this->mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-
-        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-
-        $this->mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
-
-        $mockFusionService = $this->createMock(FusionService::class);
-        //  $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($this->mockRuntime));
-
-        $this->mockView = $this->getAccessibleMock(FusionView::class, ['getClosestDocumentNode']);
-        $this->mockView->expects(self::any())->method('getClosestDocumentNode')->will(self::returnValue($this->mockContextualizedNode));
-
-        $this->inject($this->mockView, 'controllerContext', $mockControllerContext);
-        $this->inject($this->mockView, 'securityContext', $this->mockSecurityContext);
-        $this->inject($this->mockView, 'fusionService', $mockFusionService);
-
-        $this->mockView->_set('variables', ['value' => $this->mockContextualizedNode]);
+        $this->fusionView = new FusionView(
+            [],
+            $this->runtimeFactoryMock,
+            $this->renderingUtilityMock,
+            $this->fusionServiceMock
+        );
+        $this->fusionView->setControllerContext($this->controllerContextMock);
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function attemptToRenderWithoutNodeInformationAtAllThrowsException()
     {
         $this->expectException(Exception::class);
-        $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
-        $view->render();
+        $this->expectExceptionMessage("FusionView needs a variable 'value' set with a Node object.");
+
+        $this->fusionView->render();
     }
 
-    /**
-     * @test
-     */
+    /** @test */
     public function attemptToRenderWithInvalidNodeInformationThrowsException()
     {
         $this->expectException(Exception::class);
-        $view = $this->getAccessibleMock(FusionView::class, ['dummy']);
-        $view->_set('variables', ['value' => 'foo']);
-        $view->render();
+        $this->expectExceptionMessage("FusionView needs a variable 'value' set with a Node object.");
+
+        $this->fusionView->assign('value', 'foo');
+        // validated before $this->fusionView->render(); is called!
     }
 
-    /**
-     * @test
-     */
-    public function renderPutsSiteNodeInFusionContext()
+    /** @test */
+    public function basicRender(): void
     {
-        $this->setUpMockView();
-        $this->mockRuntime->expects(self::once())->method('pushContextArray')->with($this->arrayHasKey('site'));
-        $this->mockView->render();
+        $renderingContext = new RenderingContext(
+            $entryNode = $this->createNodeMock(),
+            $this->createNodeMock(),
+            $this->createNodeMock(),
+        );
+
+        $fusionGlobals = FusionGlobals::fromArray(['request' => $this->actionRequestMock]);
+
+        $fusionRenderingStuff = new FusionRenderingStuff(
+            $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock(),
+            $renderingContext,
+            $fusionGlobals
+        );
+
+        $fusionConfiguration = FusionConfiguration::fromArray([]);
+
+        $this->renderingUtilityMock->expects(self::once())->method('createFusionRenderingStuff')->with($entryNode, $this->actionRequestMock)
+            ->willReturn($fusionRenderingStuff);
+
+        $this->fusionServiceMock->expects(self::once())->method('createFusionConfigurationFromSite')->with($fusionRenderingStuff->site)
+            ->willReturn($fusionConfiguration);
+
+        $runtimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
+
+        $this->runtimeFactoryMock->expects(self::once())->method('createFromConfiguration')
+            ->with($fusionConfiguration, $fusionGlobals)
+            ->willReturn($runtimeMock);
+
+        $this->fusionView->assign('value', $entryNode);
+
+        $runtimeMock->expects(self::once())->method('render')->with('root')->willReturn('Hello Welt');
+
+        $runtimeMock->expects(self::once())->method('canRender')->with('root')->willReturn(true);
+
+        // assert the correct context is made available in the runtime
+        $runtimeMock->expects(self::once())->method('pushContextArray')->with($renderingContext->toContextArray());
+
+        $runtimeMock->expects(self::once())->method('setControllerContext')->with($this->controllerContextMock);
+
+        $runtimeMock->expects(self::once())->method('popContext');
+
+        self::assertTrue($this->fusionView->canRenderWithNodeAndPath());
+
+        $output = $this->fusionView->render();
+
+        self::assertEquals('Hello Welt', $output);
     }
 
-    /**
-     * @test
-     */
-    public function renderMergesHttpResponseIfOutputIsHttpMessage()
+    /** @test */
+    public function renderMergesHttpResponseIfOutputIsHttpMessage(): void
     {
-        $this->markTestSkipped('TODO - update with Neos 9.0');
-        $mockContext = $this->getMockBuilder(ContentContext::class)->disableOriginalConstructor()->getMock();
+        $renderingContext = new RenderingContext(
+            $entryNode = $this->createNodeMock(),
+            $this->createNodeMock(),
+            $this->createNodeMock(),
+        );
 
-        $mockNode = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
-        $mockContextualizedNode = $this->getMockBuilder(Node::class)->setMethods(['getContext'])->setConstructorArgs([$mockNode, $mockContext])->getMock();
-        $mockSiteNode = $this->createMock(TraversableNode::class);
+        $fusionGlobals = FusionGlobals::fromArray(['request' => $this->actionRequestMock]);
 
-        $mockContext->expects(self::any())->method('getCurrentSiteNode')->will(self::returnValue($mockSiteNode));
-        $mockContext->expects(self::any())->method('getDimensions')->will(self::returnValue([]));
+        $fusionRenderingStuff = new FusionRenderingStuff(
+            $this->getMockBuilder(Site::class)->disableOriginalConstructor()->getMock(),
+            $renderingContext,
+            $fusionGlobals
+        );
 
-        $mockContextualizedNode->expects(self::any())->method('getContext')->will(self::returnValue($mockContext));
+        $fusionConfiguration = FusionConfiguration::fromArray([]);
 
-        $mockResponse = new ActionResponse();
+        $this->renderingUtilityMock->expects(self::once())->method('createFusionRenderingStuff')->with($entryNode, $this->actionRequestMock)
+            ->willReturn($fusionRenderingStuff);
 
-        $mockControllerContext = $this->getMockBuilder(ControllerContext::class)->disableOriginalConstructor()->getMock();
-        $mockControllerContext->expects(self::any())->method('getResponse')->will(self::returnValue($mockResponse));
+        $this->fusionServiceMock->expects(self::once())->method('createFusionConfigurationFromSite')->with($fusionRenderingStuff->site)
+            ->willReturn($fusionConfiguration);
 
-        $mockRuntime = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
-        $mockRuntime->expects(self::any())->method('render')->will(self::returnValue("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\nMessage body"));
-        $mockRuntime->expects(self::any())->method('getControllerContext')->will(self::returnValue($mockControllerContext));
+        $runtimeMock = $this->getMockBuilder(Runtime::class)->disableOriginalConstructor()->getMock();
 
-        $mockFusionService = $this->createMock(FusionService::class);
-        // $mockFusionService->expects(self::any())->method('createRuntime')->will(self::returnValue($mockRuntime));
+        $this->runtimeFactoryMock->expects(self::once())->method('createFromConfiguration')
+            ->with($fusionConfiguration, $fusionGlobals)
+            ->willReturn($runtimeMock);
 
-        $mockSecurityContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $this->fusionView->assign('value', $entryNode);
 
-        $view = $this->getAccessibleMock(FusionView::class, ['getClosestDocumentNode']);
-        $view->expects(self::any())->method('getClosestDocumentNode')->will(self::returnValue($mockContextualizedNode));
+        $runtimeMock->expects(self::any())->method('render')->will(self::returnValue(<<<EOF
+        HTTP/1.1 200 OK
+        Content-Type: application/json
 
-        $this->inject($view, 'securityContext', $mockSecurityContext);
+        Message body
+        EOF));
 
-        $this->inject($view, 'controllerContext', $mockControllerContext);
-        $this->inject($view, 'fusionService', $mockFusionService);
+        $output = $this->fusionView->render();
 
-        $view->_set('variables', ['value' => $mockContextualizedNode]);
-
-        /** @var ResponseInterface $output */
-        $output = $view->render();
-
-        // FIXME: Check for content type
         self::assertInstanceOf(ResponseInterface::class, $output);
+        self::assertEquals(
+            ['Content-Type' => ['application/json']],
+            $output->getHeaders()
+        );
         self::assertEquals('Message body', $output->getBody()->getContents());
+    }
+
+    private function createNodeMock(): Node
+    {
+        return new Node(
+            ContentSubgraphIdentity::create(
+                ContentRepositoryId::fromString("cr"),
+                ContentStreamId::fromString("cs"),
+                DimensionSpacePoint::fromArray([]),
+                VisibilityConstraints::withoutRestrictions()
+            ),
+            $nodeAggregateId ?? NodeAggregateId::fromString("na"),
+            OriginDimensionSpacePoint::fromArray([]),
+            NodeAggregateClassification::CLASSIFICATION_REGULAR,
+            NodeTypeName::fromString("nt"),
+            $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(PropertyCollectionInterface::class)->getMock(),
+            NodeName::fromString("nn"),
+            Timestamps::create($now = new \DateTimeImmutable(), $now, null, null)
+        );
     }
 }
