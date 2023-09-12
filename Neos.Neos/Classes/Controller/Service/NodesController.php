@@ -23,7 +23,6 @@ use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\View\Service\NodeJsonView;
 use Neos\Neos\Service\Mapping\NodePropertyConverterService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
 use Neos\ContentRepository\Domain\Service\NodeTypeManager;
 use Neos\ContentRepository\Domain\Utility\NodePaths;
 
@@ -93,22 +92,9 @@ class NodesController extends ActionController
      */
     public function indexAction($searchTerm = '', array $nodeIdentifiers = [], $workspaceName = 'live', array $dimensions = [], array $nodeTypes = ['Neos.Neos:Document'], NodeInterface $contextNode = null)
     {
-        $searchableNodeTypeNames = [];
-        foreach ($nodeTypes as $nodeTypeName) {
-            if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-                $this->throwStatus(400, sprintf('Unknown node type "%s"', $nodeTypeName));
-            }
-
-            $searchableNodeTypeNames[$nodeTypeName] = $nodeTypeName;
-            /** @var NodeType $subNodeType */
-            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeTypeName, false) as $subNodeTypeName => $subNodeType) {
-                $searchableNodeTypeNames[$subNodeTypeName] = $subNodeTypeName;
-            }
-        }
-
         $contentContext = $this->createContentContext($workspaceName, $dimensions);
         if ($nodeIdentifiers === []) {
-            $nodes = $this->nodeSearchService->findByProperties($searchTerm, $searchableNodeTypeNames, $contentContext, $contextNode);
+            $nodes = $this->nodeSearchService->findByProperties($searchTerm, $nodeTypes, $contentContext, $contextNode);
         } else {
             $nodes = array_filter(
                 array_map(function ($identifier) use ($contentContext) {
