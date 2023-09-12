@@ -27,6 +27,7 @@ use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
 use Psr\Http\Message\ResponseInterface;
 
@@ -48,6 +49,9 @@ class FusionView extends AbstractView
 
     #[Flow\Inject]
     protected SiteRepository $siteRepository;
+
+    #[Flow\Inject]
+    protected RenderingModeService $renderingModeService;
 
     /**
      * @Flow\Inject
@@ -96,6 +100,11 @@ class FusionView extends AbstractView
             null,
             'Flag to enable content caching inside Fusion (overriding the global setting).',
             'boolean'
+        ],
+        'renderingModeName' => [
+            'frontend',
+            'Name of the user interface mode to use',
+            'string'
         ]
     ];
 
@@ -229,8 +238,11 @@ class FusionView extends AbstractView
             $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
             $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
 
+            $renderingMode = $this->renderingModeService->findByName($this->getOption('renderingModeName'));
+
             $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest()
+                'request' => $this->controllerContext->getRequest(),
+                'renderingMode' => $renderingMode
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,

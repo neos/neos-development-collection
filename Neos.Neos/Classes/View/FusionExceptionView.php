@@ -38,6 +38,7 @@ use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 class FusionExceptionView extends AbstractView
@@ -86,6 +87,9 @@ class FusionExceptionView extends AbstractView
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    #[Flow\Inject]
+    protected RenderingModeService $userInterfaceModeService;
 
     /**
      * @return string
@@ -199,7 +203,8 @@ class FusionExceptionView extends AbstractView
             $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
 
             $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest()
+                'request' => $this->controllerContext->getRequest(),
+                'renderingModeName' => 'frontend'
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,

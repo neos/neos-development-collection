@@ -36,6 +36,7 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeAddress;
@@ -108,8 +109,12 @@ class NodeController extends ActionController
      */
     protected $nodeSiteResolvingService;
 
+    #[Flow\Inject]
+    protected RenderingModeService $renderingModeService;
+
     /**
      * @param string $node Legacy name for backwards compatibility of route components
+     * @param string $renderingModeName Name of the user interface mode to use
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
@@ -120,8 +125,14 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function previewAction(string $node): void
+    public function previewAction(string $node, string $renderingModeName = null): void
     {
+        if (is_null($renderingModeName)) {
+            $renderingMode = $this->renderingModeService->findByCurrentUser();
+        } else {
+            $renderingMode = $this->renderingModeService->findByName($renderingModeName);
+        }
+
         $visibilityConstraints = VisibilityConstraints::frontend();
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
@@ -160,6 +171,8 @@ class NodeController extends ActionController
         if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
+
+        $this->view->setOption('renderingModeName', $renderingMode->name);
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
@@ -233,6 +246,8 @@ class NodeController extends ActionController
         if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut')) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
+
+        $this->view->setOption('renderingModeName', 'frontend');
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
