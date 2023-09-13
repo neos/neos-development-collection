@@ -1002,14 +1002,20 @@ HELPTEXT;
             foreach ($allowedDimensionCombinations as $allowedDimensionConfiguration) {
                 ksort($allowedDimensionConfiguration);
                 ksort($nodeDataArray['dimensionValues']);
+
+                $matchedDimensionValues = 0;
                 foreach ($allowedDimensionConfiguration as $allowedDimensionKey => $allowedDimensionValuesArray) {
                     if (isset($nodeDataArray['dimensionValues'][$allowedDimensionKey]) && isset($nodeDataArray['dimensionValues'][$allowedDimensionKey][0])) {
                         $actualDimensionValue = $nodeDataArray['dimensionValues'][$allowedDimensionKey][0];
                         if (in_array($actualDimensionValue, $allowedDimensionValuesArray)) {
-                            $foundValidDimensionValues = true;
-                            break;
+                            $matchedDimensionValues++;
                         }
                     }
+                }
+
+                if ($matchedDimensionValues === count($allowedDimensionConfiguration)) {
+                    $foundValidDimensionValues = true;
+                    break;
                 }
             }
 
