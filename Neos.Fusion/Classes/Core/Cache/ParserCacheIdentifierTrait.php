@@ -26,6 +26,7 @@ trait ParserCacheIdentifierTrait
         return 'dsl_' . $identifier . '_' . md5($code);
     }
 
+
     /**
      * creates a comparable hash of the absolute, resolved $fusionFileName
      *
@@ -33,12 +34,27 @@ trait ParserCacheIdentifierTrait
      */
     private function getCacheIdentifierForFile(string $fusionFileName): string
     {
-        $realPath = realpath($fusionFileName);
-        if ($realPath === false) {
-            throw new \InvalidArgumentException("Couldn't resolve realpath for: '$fusionFileName'");
+        if (self::isRealPath($fusionFileName)) {
+            $realPath = $fusionFileName;
+        } else {
+            $realPath = realpath($fusionFileName);
+            if ($realPath === false) {
+                throw new \InvalidArgumentException("Couldn't resolve realpath for: '$fusionFileName'");
+            }
         }
-
         $realFusionFilePathWithoutRoot = str_replace(FLOW_PATH_ROOT, '', $realPath);
         return 'file_' . md5($realFusionFilePathWithoutRoot);
+    }
+
+    private static function isRealPath(string $path): bool
+    {
+        $isAbsoluteWindowsPath = PHP_OS_FAMILY === 'Windows' && preg_match('`^[a-zA-Z]:/[^/]`', $path) === 1;
+        $isAbsolutePath = $path[0] === '/' || $isAbsoluteWindowsPath;
+        if (!$isAbsolutePath) {
+            return false;
+        }
+        $hasWindowsDirectoryTraversal = PHP_OS_FAMILY === 'Windows' && (str_contains($path, '\\..\\') || str_contains($path, '\\.\\'));
+        $hasDirectoryTraversal = str_contains($path, '/../') || str_contains($path, '/./') || $hasWindowsDirectoryTraversal;
+        return !$hasDirectoryTraversal;
     }
 }
