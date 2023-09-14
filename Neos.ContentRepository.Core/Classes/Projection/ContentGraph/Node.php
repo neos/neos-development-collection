@@ -65,9 +65,9 @@ final class Node
          *
          * To read the serialized properties, call properties->serialized().
          *
-         * @return PropertyCollectionInterface Property values, indexed by their name
+         * @param PropertyCollection $properties Property values, indexed by their name
          */
-        public readonly PropertyCollectionInterface $properties,
+        public readonly PropertyCollection $properties,
         public readonly ?NodeName $nodeName,
         public readonly Timestamps $timestamps,
     ) {
