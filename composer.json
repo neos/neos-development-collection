@@ -92,9 +92,11 @@
             "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength"
         ],
         "lint:phpstan": "../../bin/phpstan analyse",
+        "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
         "lint": [
             "@lint:phpcs",
-            "@lint:phpstan"
+            "@lint:phpstan",
+            "@lint:distributionintegrity"
         ],
         "test:unit": [
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/UnitTests.xml Neos.ContentRepository.Core/Tests/Unit",

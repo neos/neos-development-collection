@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Repository;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
@@ -92,6 +93,15 @@ class SiteRepository extends Repository
             ->getFirst();
 
         return $site;
+    }
+
+    public function findSiteBySiteNode(Node $siteNode): Site
+    {
+        if ($siteNode->nodeName === null) {
+            throw new \Neos\Neos\Domain\Exception(sprintf('Site node "%s" is unnamed', $siteNode->nodeAggregateId->value), 1681286146);
+        }
+        return $this->findOneByNodeName(SiteNodeName::fromNodeName($siteNode->nodeName))
+            ?? throw new \Neos\Neos\Domain\Exception(sprintf('No site found for nodeNodeName "%s"', $siteNode->nodeName->value), 1677245517);
     }
 
     /**
