@@ -71,7 +71,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
             $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
             $this->contentRepository->handle(
-                new CreateWorkspace(
+                CreateWorkspace::create(
                     WorkspaceName::fromString($contentStreamForWriting->value),
                     $workspace->workspaceName,
                     WorkspaceTitle::fromString($contentStreamForWriting->value),

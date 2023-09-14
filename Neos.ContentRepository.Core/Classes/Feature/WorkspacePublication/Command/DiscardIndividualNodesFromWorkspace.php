@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -27,17 +26,22 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final class DiscardIndividualNodesFromWorkspace implements CommandInterface
 {
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param NodeIdsToPublishOrDiscard $nodesToDiscard Ids of the nodes to be discarded
+     * @param ContentStreamId $newContentStreamId The id of the new content stream, that will contain the remaining changes which were not discarded
+     */
     private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly NodeIdsToPublishOrDiscard $nodesToDiscard,
-        /**
-         * Content Stream Id of the newly created fork, which contains the remaining changes which were
-         * not removed
-         */
         public readonly ContentStreamId $newContentStreamId
     ) {
     }
 
+    /**
+     * @param WorkspaceName $workspaceName Name of the affected workspace
+     * @param NodeIdsToPublishOrDiscard $nodesToDiscard Ids of the nodes to be discarded
+     */
     public static function create(
         WorkspaceName $workspaceName,
         NodeIdsToPublishOrDiscard $nodesToDiscard,
@@ -52,11 +56,8 @@ final class DiscardIndividualNodesFromWorkspace implements CommandInterface
     /**
      * Call this method if you want to run this command fully deterministically, f.e. during test cases
      */
-    public static function createFullyDeterministic(
-        WorkspaceName $workspaceName,
-        NodeIdsToPublishOrDiscard $nodesToDiscard,
-        ContentStreamId $newContentStreamId
-    ): self {
-        return new self($workspaceName, $nodesToDiscard, $newContentStreamId);
+    public function withNewContentStreamId(ContentStreamId $newContentStreamId): self
+    {
+        return new self($this->workspaceName, $this->nodesToDiscard, $newContentStreamId);
     }
 }

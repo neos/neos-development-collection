@@ -50,15 +50,15 @@ trait NodeRemoval
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = new RemoveNodeAggregate(
+        $command = RemoveNodeAggregate::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
-            isset($commandArguments['removalAttachmentPoint'])
-                ? NodeAggregateId::fromString($commandArguments['removalAttachmentPoint'])
-                : null
         );
+        if (isset($commandArguments['removalAttachmentPoint'])) {
+            $command = $command->withRemovalAttachmentPoint(NodeAggregateId::fromString($commandArguments['removalAttachmentPoint']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }

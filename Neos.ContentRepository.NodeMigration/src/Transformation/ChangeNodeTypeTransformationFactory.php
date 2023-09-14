@@ -65,7 +65,7 @@ class ChangeNodeTypeTransformationFactory implements TransformationFactoryInterf
                 NodeAggregate $nodeAggregate,
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
-                return $this->contentRepository->handle(new ChangeNodeAggregateType(
+                return $this->contentRepository->handle(ChangeNodeAggregateType::create(
                     $contentStreamForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeTypeName::fromString($this->newType),

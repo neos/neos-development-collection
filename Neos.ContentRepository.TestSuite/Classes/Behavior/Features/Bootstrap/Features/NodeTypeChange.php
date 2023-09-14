@@ -43,17 +43,15 @@ trait NodeTypeChange
         $contentStreamId = isset($commandArguments['contentStreamId'])
             ? ContentStreamId::fromString($commandArguments['contentStreamId'])
             : $this->currentContentStreamId;
-        $tetheredDescendantNodeAggregateIds = isset($commandArguments['tetheredDescendantNodeAggregateIds'])
-            ? NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds'])
-            : null;
-
-        $command = new ChangeNodeAggregateType(
+        $command = ChangeNodeAggregateType::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['newNodeTypeName']),
             NodeAggregateTypeChangeChildConstraintConflictResolutionStrategy::from($commandArguments['strategy']),
-            $tetheredDescendantNodeAggregateIds
         );
+        if (isset($commandArguments['tetheredDescendantNodeAggregateIds'])) {
+            $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }

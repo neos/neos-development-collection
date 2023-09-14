@@ -24,8 +24,19 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  */
 final class RemoveContentStream implements CommandInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to remove
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The id of the content stream to remove
+     */
+    public static function create(ContentStreamId $contentStreamId): self
+    {
+        return new self($contentStreamId);
     }
 }

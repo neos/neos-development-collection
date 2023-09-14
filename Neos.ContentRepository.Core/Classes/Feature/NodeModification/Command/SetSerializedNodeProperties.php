@@ -36,12 +36,29 @@ final class SetSerializedNodeProperties implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
+     * @param SerializedPropertyValues $propertyValues Names and (serialized) values of properties to set
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
         public readonly SerializedPropertyValues $propertyValues,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the set properties operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate to set the properties for
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint The dimension space point the properties should be changed in
+     * @param SerializedPropertyValues $propertyValues Names and (serialized) values of properties to set
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValues $propertyValues): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $originDimensionSpacePoint, $propertyValues);
     }
 
     /**

@@ -36,7 +36,7 @@ class PropertyCollectionTest extends TestCase
     public function emptyPropertyCollectionReturnsEmptyArray(): void
     {
         $this->mockSerializer->expects($this->never())->method($this->anything());
-        $collection = new PropertyCollection(SerializedPropertyValues::fromArray([]), $this->mockPropertyConverter);
+        $collection = new PropertyCollection(SerializedPropertyValues::createEmpty(), $this->mockPropertyConverter);
         self::assertSame([], iterator_to_array($collection));
     }
 
@@ -85,7 +85,7 @@ class PropertyCollectionTest extends TestCase
      */
     public function offsetSetThrowsAnException(): void
     {
-        $collection = new PropertyCollection(SerializedPropertyValues::fromArray([]), $this->mockPropertyConverter);
+        $collection = new PropertyCollection(SerializedPropertyValues::createEmpty(), $this->mockPropertyConverter);
         $this->expectException(\RuntimeException::class);
         $collection->offsetSet('foo', 'bar');
     }
@@ -95,7 +95,7 @@ class PropertyCollectionTest extends TestCase
      */
     public function offsetUnsetThrowsAnException(): void
     {
-        $collection = new PropertyCollection(SerializedPropertyValues::fromArray([]), $this->mockPropertyConverter);
+        $collection = new PropertyCollection(SerializedPropertyValues::createEmpty(), $this->mockPropertyConverter);
         $this->expectException(\RuntimeException::class);
         $collection->offsetUnset('foo');
     }

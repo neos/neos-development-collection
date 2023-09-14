@@ -55,7 +55,7 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

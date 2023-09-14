@@ -50,7 +50,7 @@ class RenameNodeAggregateTransformationFactory implements TransformationFactoryI
                 NodeAggregate $nodeAggregate,
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
-                return $this->contentRepository->handle(new ChangeNodeAggregateName(
+                return $this->contentRepository->handle(ChangeNodeAggregateName::create(
                     $contentStreamForWriting,
                     $nodeAggregate->nodeAggregateId,
                     NodeName::fromString($this->newNodeName),

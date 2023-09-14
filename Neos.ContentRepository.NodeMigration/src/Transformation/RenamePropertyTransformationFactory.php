@@ -67,7 +67,7 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
                     /** @var PropertyCollectionInterface $properties */
                     $properties = $node->properties;
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

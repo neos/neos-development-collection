@@ -47,7 +47,7 @@ trait WorkspaceCreation
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $command = new CreateRootWorkspace(
+        $command = CreateRootWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
             new WorkspaceDescription($commandArguments['workspaceDescription'] ?? 'The workspace "' . $commandArguments['workspaceName'] . '"'),
@@ -78,7 +78,7 @@ trait WorkspaceCreation
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
 
-        $command = new CreateWorkspace(
+        $command = CreateWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             WorkspaceName::fromString($commandArguments['baseWorkspaceName']),
             new WorkspaceTitle($commandArguments['workspaceTitle'] ?? ucfirst($commandArguments['workspaceName'])),
@@ -99,15 +99,12 @@ trait WorkspaceCreation
     public function theCommandRebaseWorkspaceIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-
-        $rebasedContentStreamId = isset($commandArguments['rebasedContentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['rebasedContentStreamId'])
-            : ContentStreamId::create();
-
-        $command = RebaseWorkspace::createFullyDeterministic(
+        $command = RebaseWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $rebasedContentStreamId,
         );
+        if (isset($commandArguments['rebasedContentStreamId'])) {
+            $command = $command->withRebasedContentStreamId(ContentStreamId::fromString($commandArguments['rebasedContentStreamId']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }

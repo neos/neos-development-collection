@@ -51,7 +51,7 @@ class MoveDimensionSpacePointTransformationFactory implements TransformationFact
                 ContentStreamId $contentStreamForWriting
             ): CommandResult {
                 return $this->contentRepository->handle(
-                    new MoveDimensionSpacePoint(
+                    MoveDimensionSpacePoint::create(
                         $contentStreamForWriting,
                         $this->from,
                         $this->to
