@@ -8,7 +8,7 @@ const localizedTooltip = !isNil(window.Typo3Neos) ?
 const ImpersonateButton = (identifier, disabled) => {
     const attributesObject = {
         'data-neos-toggle': 'tooltip',
-        'data-original-title': localizedTooltip,
+        'title': localizedTooltip,
         'data-user-identifier': identifier,
         class: 'neos-button neos-button-primary impersonate-user',
     }
