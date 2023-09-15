@@ -3,7 +3,7 @@
 Media ViewHelper Reference
 ##########################
 
-This reference was automatically generated from code on 2023-08-24
+This reference was automatically generated from code on 2023-09-15
 
 
 .. _`Media ViewHelper Reference: neos.media:fileTypeIcon`:
