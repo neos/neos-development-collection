@@ -138,14 +138,6 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
-        if ($site === null) {
-            throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
-        }
-
         $this->fillCacheWithContentNodes($nodeAddress->nodeAggregateId, $subgraph);
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
@@ -161,10 +153,7 @@ class NodeController extends ActionController
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
-        $this->view->assignMultiple([
-            'value' => $nodeInstance,
-            'site' => $site,
-        ]);
+        $this->view->assign('value', $nodeInstance);
 
         if (!$nodeAddress->isInLiveWorkspace()) {
             $this->overrideViewVariablesFromInternalArguments();

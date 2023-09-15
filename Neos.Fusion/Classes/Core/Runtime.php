@@ -383,11 +383,9 @@ class Runtime
      * Determine if the given Fusion path is renderable, which means it exists
      * and has an implementation.
      *
-     * @param string $fusionPath
-     * @return boolean
-     * @throws Exception
+     * @throws Exception if the requested $fusionPath is not well-formed for example
      */
-    public function canRender($fusionPath)
+    public function canRender(string $fusionPath): bool
     {
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
 
