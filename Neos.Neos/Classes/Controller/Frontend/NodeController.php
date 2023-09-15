@@ -115,7 +115,6 @@ class NodeController extends ActionController
 
     /**
      * @param string $node Legacy name for backwards compatibility of route components
-     * @param string $renderingModeName Name of the user interface mode to use
      * @throws NodeNotFoundException
      * @throws \Neos\Flow\Mvc\Exception\StopActionException
      * @throws \Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException
@@ -126,13 +125,10 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function previewAction(string $node, string $renderingModeName = null): void
+    public function previewAction(string $node): void
     {
-        if (is_null($renderingModeName)) {
-            $renderingMode = $this->renderingModeService->findByCurrentUser();
-        } else {
-            $renderingMode = $this->renderingModeService->findByName($renderingModeName);
-        }
+        // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
+        $renderingMode = $this->renderingModeService->findByCurrentUser();
 
         $visibilityConstraints = VisibilityConstraints::frontend();
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
