@@ -1,0 +1,187 @@
+`8.0.11 (2023-07-18) <https://github.com/neos/neos-development-collection/releases/tag/8.0.11>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Disable content element wrapping and inline editable for references in content reference list <https://github.com/neos/neos-development-collection/pull/4399>`_
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The NeosUI tries to initialize the inline editor for rendered references in content reference list. But they are not accessable at this moment. As references shouldn't get edited anyways, we can simple disable the content element wrapping for these references.
+
+Fixes https://github.com/neos/neos-ui/issues/3574
+
+* Packages: ``Neos`` ``NodeTypes.ContentReferences``
+
+`BUGFIX: Disable publish checkmark for new pages in workspace <https://github.com/neos/neos-development-collection/pull/4277>`_
+-------------------------------------------------------------------------------------------------------------------------------
+
+closes `#3991 <https://github.com/neos/neos-development-collection/issues/3991>`_
+
+**Review instructions**
+If the document is new, I show a small disabled checkmark instead of the functioning checkmark. This will force the user to use the checkboxes on the left side to publish changes. 
+This does not solve the underlying problem but it will at least disable the function for Editors. 
+
+<img width="1240" alt="Bildschirmfoto 2023-05-12 um 11 12 21" src="https://github.com/neos/neos-development-collection/assets/91674611/bc7d0f47-a54b-474d-a74a-230eb3a92546">
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Fusion's FilePatternResolver windows compatible <https://github.com/neos/neos-development-collection/pull/4359>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+resolves `#4358 <https://github.com/neos/neos-development-collection/issues/4358>``_in combination with ``#4374 <https://github.com/neos/neos-development-collection/issues/4374>`_
+
+
+The FilePatternResolver is responsible to handle glob patterns in includes in fusion.
+For more in depth information see the test: https://github.com/neos/neos-development-collection/blob/`a461dbc8f976588b30f34a5ed34f1eeebf5a0cd2 <https://github.com/neos/neos-development-collection/commit/a461dbc8f976588b30f34a5ed34f1eeebf5a0cd2>`_/Neos.Fusion/Tests/Unit/Core/Parser/ParserIncludeTest.php#L156-L167
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Allow string position values in NodeType schema <https://github.com/neos/neos-development-collection/pull/4209>`_
+--------------------------------------------------------------------------------------------------------------------------
+
+The PositionalArraySorter implementation allows string values for the position of nodetypes, tabs, groups and views since a long time but the schema validation showed warnings.
+
+**Review instructions**
+
+Open the ``NodeTypes`` tab in the ``Configuration`` module with the Neos.Demo and the previous validation warnings shouldn't show up anymore.
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Undefined array key "ui" in nodeType creationDialog <https://github.com/neos/neos-development-collection/pull/4288>`_
+------------------------------------------------------------------------------------------------------------------------------
+
+Currently, its not possible to use the shorthand
+```yaml
+    creationDialog:
+      elements:
+        hasFoo:
+          type: boolean
+          # ui: {} # this must be set to an empty array
+```
+
+as there is an unsafe access on the ui property
+> Warning: Undefined array key "ui" in /Data/Temporary/Development/Cache/Code/Flow_Object_Classes/Neos_Neos_NodeTypePostprocessor_DefaultPropertyEditorPostprocessor.php line 110
+
+
+
+regression from `#3473 <https://github.com/neos/neos-development-collection/issues/3473>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: flow command typo in exception in nearestContentCollection method <https://github.com/neos/neos-development-collection/pull/4306>`_
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+_None_
+
+**Review instructions**
+
+Command in exception should be start with ``./flow command...`` and not ``flow command...``
+
+!`SCR-20230605-jytx <https://github.com/neos/neos-development-collection/assets/39345336/0d9bb60e-2335-4afa-80e3-1a0ed4942610>`_
+
+
+
+* Packages: ``Neos``
+
+`BUGFIX: CreationDialog hideable elements <https://github.com/neos/neos-development-collection/pull/4297>`_
+-----------------------------------------------------------------------------------------------------------
+
+closes cross repo issue: https://github.com/neos/neos-ui/issues/3483
+
+In the UI it will be once https://github.com/neos/neos-ui/pull/3507 is merged possible to use the ``hidden`` property in the node creation dialog
+
+```yaml
+ui:
+  creationDialog:
+    elements:
+      hiddenProperty:
+        type: string
+        ui:
+          hidden: true
+```
+
+This change adjusts neos creationDialogPostprocessor so that creationDialog items that are generated from properties via ``showInCreationDialog`` will have the hidden property copied
+
+```yaml
+properties:
+  hiddenProperty:
+    type: string
+    ui:
+      showInCreationDialog: true
+      inspector:
+        hidden: true
+```
+
+**Upgrade instructions**
+
+
+* Packages: ``ContentRepository`` ``Fusion.Afx`` ``Neos``
+
+`TASK: add default value for generatorName at kickstart command in SiteKickstarter <https://github.com/neos/neos-development-collection/pull/4214>`_
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+We tried to reproduce #4053.
+We can't reproduce this issue, but while reproducing we found a flow command prompt, without a default value.
+
+The command ``flow kickstart:site AnySite.Site`` asks for a site generator.
+We added a default value by adding: 
+```php
+array_key_first($selection)
+```
+
+**Review instructions**
+At https://github.com/neos/neos-development-collection/blob/`79dd4e1a26b7ffceb80cc628fdbe570ff6013b16 <https://github.com/neos/neos-development-collection/commit/79dd4e1a26b7ffceb80cc628fdbe570ff6013b16>``_/Neos.CliSetup/Classes/Command/SetupCommandController.php#L165 ``array_key_last`` is used. Should we use ``array_key_last`` too or is ``array_key_first` fine for it?
+
+
+* Packages: ``SiteKickstarter``
+
+`TASK: PHP 8.1 deprecations compatibility <https://github.com/neos/neos-development-collection/pull/4352>`_
+-----------------------------------------------------------------------------------------------------------
+
+This tweaks the code so that it runs without deprecations on PHP 8.1.
+
+**Upgrade instructions**
+
+None.
+
+**Review instructions**
+
+None.
+
+
+* Packages: ``Fusion`` ``Neos``
+
+`TASK: Change variablename in Neos Fusion documentation <https://github.com/neos/neos-development-collection/pull/4367>`_
+-------------------------------------------------------------------------------------------------------------------------
+
+Now use "myString" in documentation, because the return value is a string and not an array. This can lead to confusion under certain circumstances.
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`TASK: Apply fixes from StyleCI <https://github.com/neos/neos-development-collection/pull/4138>`_
+-------------------------------------------------------------------------------------------------
+
+This pull request applies code style fixes from an analysis carried out by `StyleCI <https://github.styleci.io>`_.
+
+---
+
+For more information, click `here <https://github.styleci.io/analyses/o72VmP>`_.
+
+* Packages: ``Neos`` ``ContentRepository`` ``Fusion.Afx`` ``Fusion`` ``Media`` ``SiteKickstarter``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.10...8.0.11>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
