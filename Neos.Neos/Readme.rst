@@ -26,14 +26,13 @@ Build frontend assets
 If you need to rebuild the frontend assets you need to run the following commands within the
 Neos.Neos package directory:
 
-For develpment
-```
-yarn
-yarn build
-```
+For develpment::
 
-For production
-```
-yarn
-yarn build:production
-```
+  yarn
+  yarn build
+
+For production::
+
+  yarn
+  yarn build:production
+
