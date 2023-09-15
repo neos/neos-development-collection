@@ -85,14 +85,14 @@ class RenderingModeService
      */
     public function findByName(string $modeName): RenderingMode
     {
-        if ($modeName === 'frontend') {
+        if ($modeName === RenderingMode::FRONTEND) {
             return RenderingMode::createFrontend();
         }
         if (isset($this->editPreviewModes[$modeName])) {
             return RenderingMode::createFromConfiguration($modeName, $this->editPreviewModes[$modeName]);
         }
         throw new Exception(
-            'The requested interface render mode "' . $modeName . '" is not configured.'
+            'The requested rendering mode "' . $modeName . '" is not configured.'
                 . ' Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".',
             1427715962
         );

@@ -35,6 +35,7 @@ use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
@@ -204,7 +205,7 @@ class FusionExceptionView extends AbstractView
 
             $fusionGlobals = FusionGlobals::fromArray([
                 'request' => $this->controllerContext->getRequest(),
-                'renderingModeName' => 'frontend'
+                'renderingModeName' => RenderingMode::FRONTEND
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,

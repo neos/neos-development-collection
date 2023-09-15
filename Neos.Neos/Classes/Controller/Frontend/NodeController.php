@@ -35,6 +35,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
@@ -247,7 +248,7 @@ class NodeController extends ActionController
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
 
-        $this->view->setOption('renderingModeName', 'frontend');
+        $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
