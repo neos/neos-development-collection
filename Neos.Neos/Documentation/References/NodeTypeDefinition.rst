@@ -152,7 +152,7 @@ The following options are allowed for defining a NodeType:
 
     Fontawesome icon:
     All free Fontawesome 5 icons can be used:
-    https://fontawesome.com/icons?d=gallery&m=free
+    https://fontawesome.com/v5/search?o=r&m=free
 
     Those can be referenced via "icon-[name]", as the UI includes a fallback to the "fas"
     prefix-classes. To be sure which icon will be used, they can also be referenced by their
