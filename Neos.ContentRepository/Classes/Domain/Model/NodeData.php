@@ -422,7 +422,7 @@ class NodeData extends AbstractNodeData
             return null;
         }
 
-        return $this->nodeDataRepository->findOneByPath($this->parentPath, $this->workspace);
+        return $this->nodeDataRepository->findOneByPath($this->parentPath, $this->workspace, $this->dimensionValues);
     }
 
     /**
