@@ -91,7 +91,6 @@ class NodeType
         NodeTypeName $name,
         array $declaredSuperTypes,
         array $configuration,
-        private readonly NodeTypeManager $nodeTypeManager,
         private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
         $this->name = $name;

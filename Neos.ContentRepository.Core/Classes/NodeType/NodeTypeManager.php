@@ -267,7 +267,7 @@ class NodeTypeManager
 
         // Constraints configured at the childNode configuration of the parent.
         try {
-            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $childNodeName->value . '.constraints.nodeTypes');
+            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $childNodeName->value . '.constraints.nodeTypes') ?? [];
         } catch (PropertyNotAccessibleException $exception) {
             // We ignore this because the configuration might just not have any constraints, if the childNode was not configured the exception above would have been thrown.
             $childNodeConstraintConfiguration = [];
@@ -334,7 +334,6 @@ class NodeTypeManager
             NodeTypeName::fromString($nodeTypeName),
             $superTypes,
             $nodeTypeConfiguration,
-            $this,
             $this->nodeLabelGeneratorFactory
         );
 
