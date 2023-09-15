@@ -86,8 +86,9 @@ class DisallowedChildNodeAdjustment
                 ) {
                     $grandparentNodeType = $this->loadNodeType($grandparentNode->nodeTypeName);
                     if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->nodeName->value,
+                        $allowedByGrandparent = $this->nodeTypeManager->allowsGrandchildNodeType(
+                            $grandparentNodeType,
+                            $parentNode->nodeName,
                             $nodeType
                         );
                     }

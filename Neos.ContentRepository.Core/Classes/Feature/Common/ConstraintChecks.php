@@ -163,7 +163,7 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToExist(NodeType $nodeType): void
     {
-        foreach ($nodeType->getAutoCreatedChildNodes() as $childNodeType) {
+        foreach ($this->getNodeTypeManager()->getAutoCreatedChildNodesFor($nodeType) as $childNodeType) {
             $this->requireTetheredDescendantNodeTypesToExist($childNodeType);
         }
     }
@@ -174,7 +174,7 @@ trait ConstraintChecks
      */
     protected function requireTetheredDescendantNodeTypesToNotBeOfTypeRoot(NodeType $nodeType): void
     {
-        foreach ($nodeType->getAutoCreatedChildNodes() as $tetheredChildNodeType) {
+        foreach ($this->getNodeTypeManager()->getAutoCreatedChildNodesFor($nodeType) as $tetheredChildNodeType) {
             if ($tetheredChildNodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
                 throw new NodeTypeIsOfTypeRoot(
                     'Node type "' . $nodeType->name->value . '" for tethered descendant is of type root.',
@@ -300,11 +300,11 @@ trait ConstraintChecks
         if (
             $nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
+            && !$this->getNodeTypeManager()->getTypeOfAutoCreatedChildNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
         ) {
             throw new NodeConstraintException(
                 'Node type "' . $nodeType->name->value . '" does not match configured "'
-                    . $parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->value
+                    . $this->getNodeTypeManager()->getTypeOfAutoCreatedChildNode($parentsNodeType, $nodeName)->name->value
                     . '" for auto created child nodes for parent type "' . $parentsNodeType->name->value
                     . '" with name "' . $nodeName->value . '"'
             );
@@ -323,7 +323,7 @@ trait ConstraintChecks
         if (
             $nodeName
             && $parentsNodeType->hasAutoCreatedChildNode($nodeName)
-            && !$parentsNodeType->getTypeOfAutoCreatedChildNode($nodeName)?->name->equals($nodeType->name)
+            && !$this->getNodeTypeManager()->getTypeOfAutoCreatedChildNode($parentsNodeType, $nodeName)->name->equals($nodeType->name)
         ) {
             return false;
         }
@@ -361,7 +361,7 @@ trait ConstraintChecks
         if (
             $parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
-            && !$grandParentsNodeType->allowsGrandchildNodeType($parentNodeName->value, $nodeType)
+            && !$this->getNodeTypeManager()->allowsGrandchildNodeType($grandParentsNodeType,$parentNodeName, $nodeType)
         ) {
             return false;
         }

@@ -17,6 +17,7 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands;
@@ -104,9 +105,9 @@ class NodeTypeSchemaBuilder
                 }
             }
 
-            foreach ($nodeType->getAutoCreatedChildNodes() as $key => $_x) {
+            foreach ($this->nodeTypeManager->getAutoCreatedChildNodesFor($nodeType) as $key => $_x) {
                 foreach ($nodeTypes as $innerNodeTypeName => $innerNodeType) {
-                    if ($nodeType->allowsGrandchildNodeType($key, $innerNodeType)) {
+                    if ($this->nodeTypeManager->allowsGrandchildNodeType($nodeType, NodeName::fromString($key), $innerNodeType)) {
                         $constraints[$nodeTypeName]['childNodes'][$key]['nodeTypes'][$innerNodeTypeName] = true;
                     }
                 }

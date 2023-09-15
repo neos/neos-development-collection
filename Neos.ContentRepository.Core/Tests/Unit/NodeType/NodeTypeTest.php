@@ -405,21 +405,4 @@ class NodeTypeTest extends TestCase
             new DefaultNodeLabelGeneratorFactory()
         );
     }
-
-    /**
-     * @test
-     */
-    public function getAutoCreatedChildNodesReturnsLowercasePaths()
-    {
-        $childNodeConfiguration = ['type' => 'Neos.ContentRepository:Base'];
-        $mockNodeTypeManager = $this->getMockBuilder(NodeTypeManager::class)->disableOriginalConstructor()->getMock();
-        $baseType = new NodeType(NodeTypeName::fromString('Neos.ContentRepository:Base'), [], [
-            'childNodes' => ['nodeName' => $childNodeConfiguration]
-        ], $mockNodeTypeManager, new DefaultNodeLabelGeneratorFactory());
-        $mockNodeTypeManager->expects(self::any())->method('getNodeType')->will(self::returnValue($baseType));
-
-        $autoCreatedChildNodes = $mockNodeTypeManager->getNodeType('Neos.ContentRepository:Base')->getAutoCreatedChildNodes();
-
-        self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
-    }
 }

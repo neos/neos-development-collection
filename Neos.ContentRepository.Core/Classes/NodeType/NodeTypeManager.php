@@ -14,9 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
+use Neos\ContentRepository\Core\NodeType\Exception\ChildNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\Utility\Arrays;
+use Neos\Utility\Exception\PropertyNotAccessibleException;
 
 /**
  * Manager for node types
@@ -196,6 +200,82 @@ class NodeTypeManager
             /** @var string $nodeTypeName */
             $this->loadNodeType($nodeTypeName, $completeNodeTypeConfiguration);
         }
+    }
+
+    /**
+     * @param NodeType $nodeType
+     * @param NodeName $childNodeName
+     * @return NodeType
+     */
+    public function getTypeOfAutoCreatedChildNode(NodeType $nodeType, NodeName $childNodeName): NodeType
+    {
+        $childNodeTypeName = $nodeType->getNodeTypeNameOfAutoCreatedChildNode($childNodeName);
+        return $this->getNodeType($childNodeTypeName);
+    }
+
+    /**
+     * Return an array with child nodes which should be automatically created
+     *
+     * @return array<string,NodeType> the key of this array is the name of the child, and the value its NodeType.
+     * @api
+     */
+    public function getAutoCreatedChildNodesFor(NodeType $nodeType): array
+    {
+        $childNodeConfiguration = $nodeType->getConfiguration('childNodes');
+        if (!isset($childNodeConfiguration)) {
+            return [];
+        }
+
+        $autoCreatedChildNodes = [];
+        foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
+            if (isset($configurationForChildNode['type'])) {
+                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value]
+                    = $this->getNodeType($configurationForChildNode['type']);
+            }
+        }
+
+        return $autoCreatedChildNodes;
+    }
+
+    /**
+     * Checks if the given $nodeType is allowed as a childNode of the given $childNodeName
+     * (which must be auto-created in $this NodeType).
+     *
+     * Only allowed to be called if $childNodeName is auto-created.
+     *
+     * @param NodeType $parentNodeType The NodeType to check constraints based on.
+     * @param NodeName $childNodeName The name of a configured childNode of this NodeType
+     * @param NodeType $nodeType The NodeType to check constraints for.
+     * @return bool true if the $nodeType is allowed as grandchild node, false otherwise.
+     * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
+     */
+    public function allowsGrandchildNodeType(NodeType $parentNodeType, NodeName $childNodeName, NodeType $nodeType): bool
+    {
+        try {
+            $childNodeType = $this->getTypeOfAutoCreatedChildNode($parentNodeType, $childNodeName);
+        } catch (ChildNodeNotConfigured $exception) {
+            throw new \InvalidArgumentException(
+                'The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, '
+                . 'given $childNodeName "' . $childNodeName->value . '" is not auto-created.',
+                1403858395,
+                $exception
+            );
+        }
+
+        // Constraints configured on the NodeType for the child node
+        $constraints = $childNodeType->getConfiguration('constraints.nodeTypes') ?: [];
+
+        // Constraints configured at the childNode configuration of the parent.
+        try {
+            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $childNodeName->value . '.constraints.nodeTypes');
+        } catch (PropertyNotAccessibleException $exception) {
+            // We ignore this because the configuration might just not have any constraints, if the childNode was not configured the exception above would have been thrown.
+            $childNodeConstraintConfiguration = [];
+        }
+
+        $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
+
+        return (new ConstraintCheck($constraints))->isNodeTypeAllowed($nodeType);
     }
 
     /**
