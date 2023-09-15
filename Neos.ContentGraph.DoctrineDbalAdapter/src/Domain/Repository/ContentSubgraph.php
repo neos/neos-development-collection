@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestAncestorNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
@@ -355,6 +356,27 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
+    public function findClosestAncestorNode(NodeAggregateId $entryNodeAggregateId, FindClosestAncestorNodeFilter $filter): ?Node
+    {
+        [
+            'queryBuilderInitial' => $queryBuilderInitial,
+            'queryBuilderRecursive' => $queryBuilderRecursive,
+            'queryBuilderCte' => $queryBuilderCte
+        ] = $this->buildAncestorNodesQueries($entryNodeAggregateId, $filter);
+        $nodeRows = $this->fetchCteResults(
+            $queryBuilderInitial,
+            $queryBuilderRecursive,
+            $queryBuilderCte->setMaxResults(1),
+            'ancestry'
+        );
+
+        return $this->nodeFactory->mapNodeRowsToNodes(
+            $nodeRows,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        )->first();
+    }
+
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes
     {
         ['queryBuilderInitial' => $queryBuilderInitial, 'queryBuilderRecursive' => $queryBuilderRecursive, 'queryBuilderCte' => $queryBuilderCte] = $this->buildDescendantNodesQueries($entryNodeAggregateId, $filter);
@@ -666,7 +688,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     /**
      * @return array{queryBuilderInitial: QueryBuilder, queryBuilderRecursive: QueryBuilder, queryBuilderCte: QueryBuilder}
      */
-    private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter $filter): array
+    private function buildAncestorNodesQueries(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter|CountAncestorNodesFilter|FindClosestAncestorNodeFilter $filter): array
     {
         $queryBuilderInitial = $this->createQueryBuilder()
             ->select('n.*, ph.name, ph.contentstreamid, ph.parentnodeanchor')

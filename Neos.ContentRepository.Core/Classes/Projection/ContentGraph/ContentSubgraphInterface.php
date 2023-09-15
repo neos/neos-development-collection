@@ -110,6 +110,13 @@ interface ContentSubgraphInterface extends \JsonSerializable
     public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int;
 
     /**
+     * Find the first matching node above the $entryNodeAggregateId that match the specified $filter and return it
+     *
+     * @return Node|null the closest ancestor node that matches the given $filter, or NULL if no matching ancestor node was found
+     */
+    public function findClosestAncestorNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestAncestorNodeFilter $filter): ?Node;
+
+    /**
      * Recursively find all nodes underneath the $entryNodeAggregateId that match the specified $filter and return them as a flat list
      *
      * Note: This is basically a set-based view of descendant nodes; so the ordering should not be relied upon

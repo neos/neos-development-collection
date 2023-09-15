@@ -26,6 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestAncestorNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
@@ -281,6 +282,19 @@ trait NodeTraversalTrait
         Assert::assertSame($expectedNodeIds, $actualNodeIds, 'findAncestorNodes returned an unexpected result');
         $actualCount = $subgraph->countAncestorNodes($entryNodeAggregateId, CountAncestorNodesFilter::fromFindAncestorNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countAncestorNodes returned an unexpected result');
+    }
+
+    /**
+     * @When /^I execute the findClosestAncestorNode query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the node "(?<expectedNodeId>[^"]*)"|no node) to be returned?$/
+     */
+    public function iExecuteTheFindClosestAncestorNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeId = null): void
+    {
+        $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
+        $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
+        $filter = FindClosestAncestorNodeFilter::create(...$filterValues);
+        $subgraph = $this->getCurrentSubgraph();
+        $actualNodeId = $subgraph->findClosestAncestorNode($entryNodeAggregateId, $filter)?->nodeAggregateId->value;
+        Assert::assertSame($expectedNodeId, $actualNodeId, 'findClosestAncestorNode returned an unexpected result');
     }
 
     /**

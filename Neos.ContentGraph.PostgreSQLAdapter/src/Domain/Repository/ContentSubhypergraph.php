@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestAncestorNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
@@ -455,6 +456,13 @@ final class ContentSubhypergraph implements ContentSubgraphInterface
         Filter\CountAncestorNodesFilter $filter
     ): int {
         return 0;
+    }
+
+    public function findClosestAncestorNode(
+        NodeAggregateId $entryNodeAggregateId,
+        FindClosestAncestorNodeFilter $filter
+    ): ?Node {
+        return null;
     }
 
     public function findDescendantNodes(
