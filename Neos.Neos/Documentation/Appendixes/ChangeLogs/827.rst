@@ -1,0 +1,66 @@
+`8.2.7 (2023-09-15) <https://github.com/neos/neos-development-collection/releases/tag/8.2.7>`_
+==============================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: show title on hover in ImpersonateButton <https://github.com/neos/neos-development-collection/pull/4438>`_
+-------------------------------------------------------------------------------------------------------------------
+
+**Review instructions**
+
+Currently if you hovered over the button, the title was not showing up.
+
+Since the Feature `#3648 <https://github.com/neos/neos-development-collection/issues/3648>`_was introduced in Neos 8.0 I'm open this against the 8.0 Branch.
+
+### Demo
+!`SCR-20230803-nhty <https://github.com/neos/neos-development-collection/assets/39345336/b3a75136-d493-49e1-a82a-e70f599e5cca>`_
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Make getParent work in NodeData <https://github.com/neos/neos-development-collection/pull/4295>`_
+----------------------------------------------------------------------------------------------------------
+
+resolved: `#4283 <https://github.com/neos/neos-development-collection/issues/4283>`_
+
+**Review instructions**
+I am unsure why the dimensions were not passed to findOneByPath, but without it it does not really work.
+Also, it is kind of strange that the dimensions in findOneByPath is optional but returns nothing if it is not set.
+This fixes it for now. 
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Use correct URL to FontAwesome icons <https://github.com/neos/neos-development-collection/pull/4453>`_
+---------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Assign original asset collections to variant <https://github.com/neos/neos-development-collection/pull/3562>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3560 <https://github.com/neos/neos-development-collection/issues/3560>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix editing of Electronic Address type in Backend module <https://github.com/neos/neos-development-collection/pull/4419>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4418 <https://github.com/neos/neos-development-collection/issues/4418>`_
+
+* Packages: ``Neos``
+
+`TASK: Avoid potential deprecation warnings <https://github.com/neos/neos-development-collection/pull/4409>`_
+-------------------------------------------------------------------------------------------------------------
+
+``trim()`` and ``preg_match()`` expect strings, but Eel with it's loose typing might pass in different types.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.2.6...8.2.7>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
