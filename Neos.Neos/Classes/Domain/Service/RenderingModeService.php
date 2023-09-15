@@ -52,6 +52,11 @@ class RenderingModeService
     protected $defaultEditPreviewMode;
 
     /**
+     * @var array<string, RenderingMode>
+     */
+    private array $instances = [];
+
+    /**
      * Get the current rendering mode.
      * Will return a live mode when not in backend.
      */
@@ -85,16 +90,14 @@ class RenderingModeService
      */
     public function findByName(string $modeName): RenderingMode
     {
-        if ($modeName === RenderingMode::FRONTEND) {
-            return RenderingMode::createFrontend();
-        }
-        if (isset($this->editPreviewModes[$modeName])) {
-            return RenderingMode::createFromConfiguration($modeName, $this->editPreviewModes[$modeName]);
-        }
-        throw new Exception(
-            'The requested rendering mode "' . $modeName . '" is not configured.'
+        return $this->instances[$modeName] ??= match (true) {
+            $modeName === RenderingMode::FRONTEND => RenderingMode::createFrontend(),
+            isset($this->editPreviewModes[$modeName]) => RenderingMode::createFromConfiguration($modeName, $this->editPreviewModes[$modeName]),
+            default => throw new Exception(
+                'The requested rendering mode "' . $modeName . '" is not configured.'
                 . ' Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".',
-            1427715962
-        );
+                1427715962
+            )
+        };
     }
 }
