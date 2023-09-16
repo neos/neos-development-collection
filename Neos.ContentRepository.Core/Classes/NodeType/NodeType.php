@@ -58,7 +58,7 @@ class NodeType
     /**
      * Is this node type marked abstract
      */
-    public bool $abstract = false;
+    protected bool $abstract = false;
 
     /**
      * Is this node type marked final
