@@ -92,6 +92,7 @@ trait NodeTypeChange
 
     abstract protected static function populateNodeAggregateIds(
         NodeType $nodeType,
+        NodeTypeManager $nodeTypeManager,
         NodeAggregateIdsByNodePaths $nodeAggregateIds,
         NodePath $childPath = null
     ): NodeAggregateIdsByNodePaths;
@@ -161,6 +162,7 @@ trait NodeTypeChange
          **************/
         $descendantNodeAggregateIds = static::populateNodeAggregateIds(
             $newNodeType,
+            $this->getNodeTypeManager(),
             $command->tetheredDescendantNodeAggregateIds
         );
         // Write the auto-created descendant node aggregate ids back to the command;

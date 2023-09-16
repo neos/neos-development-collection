@@ -206,6 +206,7 @@ trait NodeCreation
         }
         $descendantNodeAggregateIds = self::populateNodeAggregateIds(
             $nodeType,
+            $this->getNodeTypeManager(),
             $command->tetheredDescendantNodeAggregateIds
         );
         // Write the auto-created descendant node aggregate ids back to the command;
