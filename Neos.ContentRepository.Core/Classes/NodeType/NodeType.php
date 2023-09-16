@@ -28,11 +28,7 @@ use Neos\ContentRepository\Core\SharedModel\Exception\InvalidNodeTypePostprocess
  * not need to deal with creating or managing node types manually. New node types
  * should be defined in a NodeTypes.yaml file.
  *
- * TODO: REFACTOR TO immutable readonly; and value objects
- *
- * TODO: I'd love to make NodeType final; but this breaks quite some unit and functional tests.
- *
- * @api
+ * @api Note: The constructor is not part of the public API
  */
 class NodeType
 {
@@ -80,12 +76,12 @@ class NodeType
     protected bool $initialized = false;
 
     /**
-     * Constructs this node type
-     *
      * @param NodeTypeName $name Name of the node type
      * @param array<string,mixed> $declaredSuperTypes Parent types of this node type
      * @param array<string,mixed> $configuration the configuration for this node type which is defined in the schema
      * @throws \InvalidArgumentException
+     *
+     * @internal
      */
     public function __construct(
         NodeTypeName $name,
