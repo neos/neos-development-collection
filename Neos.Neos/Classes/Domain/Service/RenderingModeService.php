@@ -90,14 +90,20 @@ class RenderingModeService
      */
     public function findByName(string $modeName): RenderingMode
     {
-        return $this->instances[$modeName] ??= match (true) {
-            $modeName === RenderingMode::FRONTEND => RenderingMode::createFrontend(),
-            isset($this->editPreviewModes[$modeName]) => RenderingMode::createFromConfiguration($modeName, $this->editPreviewModes[$modeName]),
-            default => throw new Exception(
+        if ($instance = $this->instances[$modeName] ?? null) {
+            return $instance;
+        }
+        if ($modeName === RenderingMode::FRONTEND) {
+            $this->instances[$modeName] = RenderingMode::createFrontend();
+        } elseif (isset($this->editPreviewModes[$modeName])) {
+            $this->instances[$modeName] = RenderingMode::createFromConfiguration($modeName, $this->editPreviewModes[$modeName]);
+        } else {
+            throw new Exception(
                 'The requested rendering mode "' . $modeName . '" is not configured.'
                 . ' Please make sure it exists as key in the Settings path "Neos.Neos.Interface.editPreviewModes".',
                 1427715962
-            )
-        };
+            );
+        }
+        return $this->instances[$modeName];
     }
 }
