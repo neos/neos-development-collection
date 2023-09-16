@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Model;
 
-use Neos\Utility\ObjectAccess;
+use Neos\Neos\Domain\Exception;
 
 /**
  * Describes the mode in which the Neos interface is rendering currently,
@@ -22,6 +22,8 @@ use Neos\Utility\ObjectAccess;
  */
 class RenderingMode
 {
+    public const FRONTEND = 'frontend';
+
     /**
      * @param array<string,mixed> $options
      */
@@ -36,13 +38,20 @@ class RenderingMode
     }
 
     /**
-     * Creates an UserInterfaceMode object by configuration
+     * Creates a rendering mode from its configuration
      *
      * @param string $modeName
      * @param array<string,mixed> $configuration
      */
     public static function createFromConfiguration(string $modeName, array $configuration): RenderingMode
     {
+        if ($modeName === RenderingMode::FRONTEND) {
+            throw new Exception(
+                'Cannot instantiate system rendering mode "frontend" from configuration.'
+                . ' Please use RenderingMode::createFrontend().',
+                1694802951840
+            );
+        }
         $mode = new RenderingMode(
             $modeName,
             $configuration['isEditingMode'] ?? false,
@@ -55,12 +64,12 @@ class RenderingMode
     }
 
     /**
-     * Creates the live User interface mode
+     * Creates the system integrated rendering mode 'frontend'
      */
     public static function createFrontend(): RenderingMode
     {
         return new RenderingMode(
-            'frontend',
+            RenderingMode::FRONTEND,
             false,
             false,
             'Frontend',

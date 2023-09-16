@@ -24,6 +24,7 @@ use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
@@ -102,7 +103,7 @@ class FusionView extends AbstractView
             'boolean'
         ],
         'renderingModeName' => [
-            'frontend',
+            RenderingMode::FRONTEND,
             'Name of the user interface mode to use',
             'string'
         ]

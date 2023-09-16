@@ -271,7 +271,8 @@ Neos:
 
       defaultEditPreviewMode: inPlace
       editPreviewModes:
-        # the "frontend" renderingMode is hardcoded internally and cannot be modified
+        # the system integrated rendering mode "frontend" cannot be configured
+        # frontend: {}
         inPlace:
           isEditingMode: true
           isPreviewMode: false
