@@ -5,6 +5,7 @@
 #
 prototype(Neos.Neos:ContentElementWrapping) {
   @class = 'Neos\\Neos\\Fusion\\ContentElementWrappingImplementation'
+  @if.inEditMode = ${renderingMode.isEdit}
   node = ${node}
   value = ${value}
   # Additional attributes in the form '<attribute-name>': '<attribute-value>' that will be rendered in the ContentElementWrapping

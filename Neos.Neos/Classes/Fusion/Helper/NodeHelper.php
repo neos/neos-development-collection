@@ -95,6 +95,11 @@ class NodeHelper implements ProtectedContextAwareInterface
         return new NodeLabelToken($node);
     }
 
+    /**
+     * @param Node $node
+     * @return bool
+     * @deprecated Remove before Neos 9.0 !!! Use ${userInterfaceMode.isEdit || userInterfaceMode.isPreview} instead
+     */
     public function inBackend(Node $node): bool
     {
         $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
