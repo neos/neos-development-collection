@@ -174,7 +174,7 @@ class Runtime
         }
 
         if (!($request = $this->fusionGlobals->get('request')) instanceof ActionRequest) {
-            throw new \RuntimeException(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
+            throw new Exception(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
         }
 
         $uriBuilder = new UriBuilder();
@@ -251,7 +251,7 @@ class Runtime
     public function pushContext($key, $context)
     {
         if ($this->fusionGlobals->has($key)) {
-            throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
+            throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
         }
         $newContext = $this->currentContext;
         $newContext[$key] = $context;
@@ -625,7 +625,7 @@ class Runtime
             $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
                 if ($this->fusionGlobals->has($contextKey)) {
-                    throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
+                    throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
                 }
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }

@@ -33,7 +33,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function renderHandlesExceptionDuringRendering()
     {
-        $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
+        $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = $this->getMockBuilder(Runtime::class)->onlyMethods(['evaluate', 'handleRenderingException'])->disableOriginalConstructor()->getMock();
         $runtime->expects(self::any())->method('evaluate')->will(self::throwException($runtimeException));
         $runtime->expects(self::once())->method('handleRenderingException')->with('/foo/bar', $runtimeException)->will(self::returnValue('Exception Message'));
@@ -54,7 +54,7 @@ class RuntimeTest extends UnitTestCase
     {
         $this->expectException(Exception::class);
         $objectManager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->setMethods(['isRegistered', 'get'])->getMock();
-        $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'));
+        $runtimeException = new RuntimeException('I am a parent exception', 123, new Exception('I am a previous exception'), 'root');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::empty());
         $this->inject($runtime, 'objectManager', $objectManager);
         $exceptionHandlerSetting = 'settings';
@@ -177,7 +177,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function fusionContextIsNotAllowedToOverrideFusionGlobals()
     {
-        $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
+        $this->expectException(\Neos\Fusion\Exception::class);
         $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
         $runtime = new Runtime(FusionConfiguration::fromArray([
             'foo' => [
@@ -190,6 +190,7 @@ class RuntimeTest extends UnitTestCase
                 ]
             ]
         ]), FusionGlobals::fromArray(['request' => 'fixed']));
+        $runtime->overrideExceptionHandler(new ThrowingHandler());
 
         $runtime->evaluate('foo');
     }
@@ -199,7 +200,7 @@ class RuntimeTest extends UnitTestCase
      */
     public function pushContextIsNotAllowedToOverrideFusionGlobals()
     {
-        $this->expectException(\Neos\Fusion\Exception\RuntimeException::class);
+        $this->expectException(\Neos\Fusion\Exception::class);
         $this->expectExceptionMessage('Overriding Fusion global variable "request" via @context is not allowed.');
         $runtime = new Runtime(FusionConfiguration::fromArray([]), FusionGlobals::fromArray(['request' => 'fixed']));
 
