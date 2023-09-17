@@ -361,7 +361,7 @@ trait ConstraintChecks
         if (
             $parentNodeName
             && $grandParentsNodeType->hasAutoCreatedChildNode($parentNodeName)
-            && !$this->getNodeTypeManager()->allowsGrandchildNodeType($grandParentsNodeType,$parentNodeName, $nodeType)
+            && !$this->getNodeTypeManager()->allowsGrandchildNodeType($grandParentsNodeType, $parentNodeName, $nodeType)
         ) {
             return false;
         }

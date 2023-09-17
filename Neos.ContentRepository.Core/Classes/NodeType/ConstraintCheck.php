@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\NodeType;
 
 /**
@@ -12,8 +13,7 @@ class ConstraintCheck
      */
     public function __construct(
         private readonly array $constraints
-    )
-    {
+    ) {
     }
 
     public function isNodeTypeAllowed(NodeType $nodeType): bool
