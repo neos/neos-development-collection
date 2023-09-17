@@ -80,8 +80,10 @@ class ComponentImplementation extends JoinImplementation
     protected function render(array $context)
     {
         $this->runtime->pushContextArray($context);
-        $result = $this->runtime->render($this->path . '/renderer');
-        $this->runtime->popContext();
-        return $result;
+        try {
+            return $this->runtime->render($this->path . '/renderer');
+        } finally {
+            $this->runtime->popContext();
+        }
     }
 }
