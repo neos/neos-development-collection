@@ -16,11 +16,7 @@ namespace Neos\Fusion\Afx\Parser\Expression;
 use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
-/**
- * Class NodeList
- * @package Neos\Fusion\Afx\Parser\Expression
- */
-class NodeList
+class AfxNodeList
 {
     /**
      * @param Lexer $lexer
@@ -56,7 +52,7 @@ class NodeList
                     $lexer->rewind();
                     $contents[] = [
                         'type' => 'node',
-                        'payload' => Node::parse($lexer)
+                        'payload' => AfxNode::parse($lexer)
                     ];
                     $currentText = '';
                     continue;

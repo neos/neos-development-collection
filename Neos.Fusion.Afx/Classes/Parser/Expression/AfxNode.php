@@ -16,11 +16,7 @@ namespace Neos\Fusion\Afx\Parser\Expression;
 use Neos\Fusion\Afx\Parser\AfxParserException;
 use Neos\Fusion\Afx\Parser\Lexer;
 
-/**
- * Class Node
- * @package Neos\Fusion\Afx\Parser\Expression
- */
-class Node
+class AfxNode
 {
     /**
      * @param Lexer $lexer
@@ -85,7 +81,7 @@ class Node
                 throw new AfxParserException(sprintf('Tag "%s" did not end with closing bracket.', $identifier), 1557860573);
             }
 
-            $children = NodeList::parse($lexer);
+            $children = AfxNodeList::parse($lexer);
 
             if ($lexer->isOpeningBracket()) {
                 $lexer->consume();
