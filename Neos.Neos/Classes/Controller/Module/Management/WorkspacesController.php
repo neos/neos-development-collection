@@ -48,7 +48,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
-use Neos\Neos\Domain\Model\WorkspaceName as NeosWorkspaceName;
+use Neos\Neos\Domain\Model\NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Mvc\ActionRequest;

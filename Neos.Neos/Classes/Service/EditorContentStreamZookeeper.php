@@ -26,7 +26,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Neos\Domain\Model\WorkspaceName as AdjustmentsWorkspaceName;
+use Neos\Neos\Domain\Model\NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
@@ -106,7 +106,7 @@ final class EditorContentStreamZookeeper
         if ($isEditor) {
             $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
             if ($user instanceof User) {
-                $workspaceName = AdjustmentsWorkspaceName::fromAccountIdentifier(
+                $workspaceName = NeosWorkspaceName::fromAccountIdentifier(
                     $token->getAccount()->getAccountIdentifier()
                 );
                 $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(

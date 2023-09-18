@@ -17,10 +17,10 @@ namespace Neos\Neos\Domain\Model;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName as ContentRepositoryWorkspaceName;
 
 /**
- * The workspace name value for Neos contexts
+ * The workspace name with domain logic for Neos.Neos
  * Directly translatable to CR workspace names
  */
-final class WorkspaceName implements \JsonSerializable, \Stringable
+final class NeosWorkspaceName implements \JsonSerializable, \Stringable
 {
     public const PREFIX = 'user-';
     public const SUFFIX_DELIMITER = '_';
@@ -58,7 +58,7 @@ final class WorkspaceName implements \JsonSerializable, \Stringable
         }
 
         if ($i > 1) {
-            return new WorkspaceName($name);
+            return new self($name);
         } else {
             return $this;
         }
