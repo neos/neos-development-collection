@@ -409,22 +409,32 @@ class NodeType
     }
 
     /**
-     * Returns the configured type of the specified property
+     * Check if the property is configured in the schema.
+     */
+    public function hasProperty(string $propertyName): bool
+    {
+        $this->initialize();
+
+        return isset($this->fullConfiguration['properties'][$propertyName]);
+    }
+
+    /**
+     * Returns the configured type of the specified property, and falls back to 'string'.
      *
-     * @param string $propertyName Name of the property
+     * @throws \InvalidArgumentException if the property is not configured
      */
     public function getPropertyType(string $propertyName): string
     {
         $this->initialize();
 
-        if (
-            !isset($this->fullConfiguration['properties'])
-            || !isset($this->fullConfiguration['properties'][$propertyName])
-            || !isset($this->fullConfiguration['properties'][$propertyName]['type'])
-        ) {
-            return 'string';
+        if (!$this->hasProperty($propertyName)) {
+            throw new \InvalidArgumentException(
+                sprintf('NodeType schema has no property "%s" configured. Cannot read its type.', $propertyName),
+                1695062252040
+            );
         }
-        return $this->fullConfiguration['properties'][$propertyName]['type'];
+
+        return $this->fullConfiguration['properties'][$propertyName]['type'] ?? 'string';
     }
 
     /**
