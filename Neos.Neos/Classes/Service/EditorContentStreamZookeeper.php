@@ -17,8 +17,8 @@ namespace Neos\Neos\Service;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Command\RebaseWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -26,13 +26,12 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\CatchUpTriggerWithSynchronousOption;
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\Http\HttpRequestHandlerInterface;
-use Neos\Neos\Domain\Model\WorkspaceName as AdjustmentsWorkspaceName;
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Flow\Security\Authentication;
 use Neos\Flow\Security\Policy\PolicyService;
 use Neos\Flow\Security\Policy\Role;
 use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Party\Domain\Service\PartyService;
 
@@ -102,48 +101,39 @@ final class EditorContentStreamZookeeper
                 break;
             }
         }
-
-        if ($isEditor) {
-            $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
-            if ($user instanceof User) {
-                $workspaceName = AdjustmentsWorkspaceName::fromAccountIdentifier(
-                    $token->getAccount()->getAccountIdentifier()
-                );
-                $workspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-                    $workspaceName->toContentRepositoryWorkspaceName()
-                );
-
-                if (!$workspace) {
-                    // @todo: find base workspace for user
-                    /** @var Workspace $baseWorkspace */
-                    $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
-                    $editorsNewContentStreamId = ContentStreamId::create();
-                    $similarlyNamedWorkspaces = $contentRepository->getWorkspaceFinder()->findByPrefix(
-                        $workspaceName->toContentRepositoryWorkspaceName()
-                    );
-                    if (!empty($similarlyNamedWorkspaces)) {
-                        $workspaceName = $workspaceName->increment($similarlyNamedWorkspaces);
-                    }
-
-                    $contentRepository->handle(
-                        CreateWorkspace::create(
-                            $workspaceName->toContentRepositoryWorkspaceName(),
-                            $baseWorkspace->workspaceName,
-                            new WorkspaceTitle((string) $user->getName()),
-                            new WorkspaceDescription(''),
-                            $editorsNewContentStreamId,
-                            UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
-                        )
-                    )->block();
-                } else {
-                    CatchUpTriggerWithSynchronousOption::synchronously(fn() =>
-                        $contentRepository->handle(
-                            RebaseWorkspace::create(
-                                $workspace->workspaceName,
-                            )
-                        )->block());
-                }
-            }
+        if (!$isEditor) {
+            return;
         }
+        $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
+        if ($user === null) {
+            return;
+        }
+        $workspaceName = WorkspaceNameBuilder::fromAccountIdentifier(
+            $token->getAccount()->getAccountIdentifier()
+        );
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+        if ($workspace !== null) {
+            CatchUpTriggerWithSynchronousOption::synchronously(fn() => $contentRepository->handle(
+                RebaseWorkspace::create(
+                    $workspace->workspaceName,
+                )
+            )->block());
+            return;
+        }
+
+        // @todo: find base workspace for user
+        /** @var Workspace $baseWorkspace */
+        $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+        $editorsNewContentStreamId = ContentStreamId::create();
+        $contentRepository->handle(
+            CreateWorkspace::create(
+                $workspaceName,
+                $baseWorkspace->workspaceName,
+                new WorkspaceTitle((string) $user->getName()),
+                new WorkspaceDescription(''),
+                $editorsNewContentStreamId,
+                UserId::fromString($this->persistenceManager->getIdentifierByObject($user))
+            )
+        )->block();
     }
 }
