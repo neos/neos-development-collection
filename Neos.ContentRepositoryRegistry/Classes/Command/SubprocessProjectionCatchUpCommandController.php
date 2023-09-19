@@ -23,7 +23,7 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
 
     /**
      * @param string $contentRepositoryIdentifier
-     * @param string $projectionClassName
+     * @param string $projectionClassName fully qualified class name of the projection to catch up
      * @internal
      */
     public function catchupCommand(string $contentRepositoryIdentifier, string $projectionClassName): void
