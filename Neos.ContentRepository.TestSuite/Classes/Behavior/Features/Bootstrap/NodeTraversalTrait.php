@@ -26,7 +26,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountReferencesFi
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestAncestorNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
@@ -285,16 +285,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When /^I execute the findClosestAncestorNode query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the node "(?<expectedNodeId>[^"]*)"|no node) to be returned?$/
+     * @When /^I execute the findClosestNode query for entry node aggregate id "(?<entryNodeIdSerialized>[^"]*)"(?: and filter '(?<filterSerialized>[^']*)')? I expect (?:the node "(?<expectedNodeId>[^"]*)"|no node) to be returned?$/
      */
-    public function iExecuteTheFindClosestAncestorNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeId = null): void
+    public function iExecuteTheFindClosestNodeQueryIExpectTheFollowingNodes(string $entryNodeIdSerialized, string $filterSerialized = '', string $expectedNodeId = null): void
     {
         $entryNodeAggregateId = NodeAggregateId::fromString($entryNodeIdSerialized);
         $filterValues = !empty($filterSerialized) ? json_decode($filterSerialized, true, 512, JSON_THROW_ON_ERROR) : [];
-        $filter = FindClosestAncestorNodeFilter::create(...$filterValues);
+        $filter = FindClosestNodeFilter::create(...$filterValues);
         $subgraph = $this->getCurrentSubgraph();
-        $actualNodeId = $subgraph->findClosestAncestorNode($entryNodeAggregateId, $filter)?->nodeAggregateId->value;
-        Assert::assertSame($expectedNodeId, $actualNodeId, 'findClosestAncestorNode returned an unexpected result');
+        $actualNodeId = $subgraph->findClosestNode($entryNodeAggregateId, $filter)?->nodeAggregateId->value;
+        Assert::assertSame($expectedNodeId, $actualNodeId, 'findClosestNode returned an unexpected result');
     }
 
     /**

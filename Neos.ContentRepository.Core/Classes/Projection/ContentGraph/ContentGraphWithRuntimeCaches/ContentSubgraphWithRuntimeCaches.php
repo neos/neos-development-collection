@@ -227,10 +227,10 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $this->wrappedContentSubgraph->countAncestorNodes($entryNodeAggregateId, $filter);
     }
 
-    public function findClosestAncestorNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestAncestorNodeFilter $filter): ?Node
+    public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node
     {
-        // TODO: Implement findClosestAncestorNode() method.
-        return $this->wrappedContentSubgraph->findClosestAncestorNode($entryNodeAggregateId, $filter);
+        // TODO: Implement findClosestNode() method.
+        return $this->wrappedContentSubgraph->findClosestNode($entryNodeAggregateId, $filter);
     }
 
     public function findDescendantNodes(NodeAggregateId $entryNodeAggregateId, FindDescendantNodesFilter $filter): Nodes

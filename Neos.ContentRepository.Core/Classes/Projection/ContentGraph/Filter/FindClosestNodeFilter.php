@@ -7,7 +7,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 
 /**
- * Immutable filter DTO for {@see ContentSubgraphInterface::findClosestAncestorNode()}
+ * Immutable filter DTO for {@see ContentSubgraphInterface::findClosestNode()}
  *
  * Example:
  *
@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
  *
  * @api for the factory methods; NOT for the inner state.
  */
-final class FindClosestAncestorNodeFilter
+final class FindClosestNodeFilter
 {
     /**
      * @internal (the properties themselves are readonly; only the write-methods are API.
