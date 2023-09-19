@@ -35,12 +35,23 @@ final class RaceConditionTrackerCommandController extends CommandController
      */
     protected $configuration;
 
+    /**
+     * Reset the race condition tracker by clearing the stored traces in Redis.
+     * @internal
+     */
     public function resetCommand(): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
         RedisInterleavingLogger::reset();
     }
 
+
+    /**
+     * Analyze the stored trace and detect race conditions and double-processed events.
+     *
+     * @param string|null $storeTrace The path to store the full trace in NDJSON format (optional).
+     * @internal
+     */
     public function analyzeTraceCommand(string $storeTrace = null): void
     {
         RedisInterleavingLogger::connect($this->configuration['redis']['host'], $this->configuration['redis']['port']);
