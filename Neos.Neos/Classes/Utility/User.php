@@ -14,7 +14,7 @@ class User
     /**
      * Constructs a personal workspace name for the user with the given username.
      *
-     * @deprecated with Neos 9.0 please use {@see NeosWorkspaceName::fromAccountIdentifier} instead.
+     * @deprecated with Neos 9.0 please use {@see WorkspaceNameBuilder::fromAccountIdentifier} instead.
      * @param string $username
      * @return string
      */
