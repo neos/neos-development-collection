@@ -19,7 +19,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 final class WorkspaceNameBuilder
 {
-
     private const PREFIX = 'user-';
 
     public static function fromAccountIdentifier(string $accountIdentifier): WorkspaceName
@@ -33,5 +32,4 @@ final class WorkspaceNameBuilder
         }
         return WorkspaceName::fromString($name);
     }
-
 }

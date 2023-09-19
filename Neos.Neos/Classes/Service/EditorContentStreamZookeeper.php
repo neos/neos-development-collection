@@ -105,7 +105,7 @@ final class EditorContentStreamZookeeper
             return;
         }
         $user = $this->partyService->getAssignedPartyOfAccount($token->getAccount());
-        if ($user === null) {
+        if (!$user instanceof User) {
             return;
         }
         $workspaceName = WorkspaceNameBuilder::fromAccountIdentifier(
