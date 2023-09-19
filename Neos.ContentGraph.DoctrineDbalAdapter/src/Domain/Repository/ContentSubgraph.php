@@ -63,7 +63,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithS
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -303,7 +302,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
-        /** @var array<string, Subtree> $subtreesByParentNodeId */
+        /** @var array<string, Subtree[]> $subtreesByParentNodeId */
         $subtreesByParentNodeId = [];
         foreach (array_reverse($result) as $nodeData) {
             $nodeAggregateId = $nodeData['nodeaggregateid'];
@@ -314,7 +313,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
                 return $subtree;
             }
             if (!array_key_exists($parentNodeAggregateId, $subtreesByParentNodeId)) {
-                $subtreesByParentNodeId[] = [];
+                $subtreesByParentNodeId[$parentNodeAggregateId] = [];
             }
             $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
         }
