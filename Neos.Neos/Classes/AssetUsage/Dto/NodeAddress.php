@@ -10,30 +10,20 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Annotations as Flow;
 
 /**
- * Is used to address a node within the AssetUsage package
+ * Addresses a node within the AssetUsage package
+ *
+ * We don't use the official NodeAddress here {@see \Neos\Neos\FrontendRouting\NodeAddress},
+ * As we don't need the workspaceName information, and just a simple pointer to a node.
  *
  * @internal
  */
 #[Flow\Proxy(false)]
 final class NodeAddress
 {
-    /**
-     * @internal use NodeAddressFactory, if you want to create a NodeAddress
-     */
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly DimensionSpacePoint $dimensionSpacePoint,
         public readonly NodeAggregateId $nodeAggregateId,
     ) {
-    }
-
-    public function __toString(): string
-    {
-        return sprintf(
-            'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s]',
-            $this->contentStreamId->value,
-            $this->dimensionSpacePoint->toJson(),
-            $this->nodeAggregateId->value
-        );
     }
 }
