@@ -10,13 +10,8 @@
  * source code.
  */
 
-use Behat\Behat\Definition\Call\Then;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Mink\Element\ElementInterface;
-use Behat\Mink\Exception\ElementNotFoundException;
-use Behat\MinkExtension\Context\MinkContext;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
@@ -45,6 +40,8 @@ use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
+use Behat\Behat\Context\Context as BehatContext;
+
 
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
@@ -55,10 +52,7 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 
 require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
-/**
- * Features context
- */
-class FeatureContext extends MinkContext
+class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
     use BrowserTrait;
@@ -73,11 +67,6 @@ class FeatureContext extends MinkContext
     use MigrationsTrait;
 
     protected string $behatTestHelperObjectName = BehatTestHelper::class;
-
-    /**
-     * @var ElementInterface
-     */
-    protected $selectedContentElement;
 
     protected string $lastExportedSiteXmlPathAndFilename = '';
 
@@ -117,15 +106,6 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Then /^I should see a login form$/
-     */
-    public function iShouldSeeALoginForm()
-    {
-        $this->assertSession()->fieldExists('Username');
-        $this->assertSession()->fieldExists('Password');
-    }
-
-    /**
      * @Given /^the following users exist:$/
      */
     public function theFollowingUsersExist(TableNode $table)
@@ -147,105 +127,6 @@ class FeatureContext extends MinkContext
     }
 
     /**
-     * @Given /^I am authenticated with "([^"]*)" and "([^"]*)" for the backend$/
-     */
-    public function iAmAuthenticatedWithAndForTheBackend($username, $password)
-    {
-        $this->visit('/');
-        $this->fillField('Username', $username);
-        $this->fillField('Password', $password);
-        $this->pressButton('Login');
-    }
-
-    /**
-     * @Then /^I should be on the "([^"]*)" page$/
-     */
-    public function iShouldBeOnThePage($page)
-    {
-        switch ($page) {
-            case 'Login':
-                $this->assertSession()->addressEquals('/neos/login');
-                break;
-            default:
-                throw new PendingException();
-        }
-    }
-
-    /**
-     * @Then /^I should be in the "([^"]*)" module$/
-     */
-    public function iShouldBeInTheModule($moduleName)
-    {
-        switch ($moduleName) {
-            case 'Content':
-                $this->assertSession()->addressMatches('/^\/(?!neos).*@.+$/');
-                break;
-            default:
-                throw new PendingException();
-        }
-    }
-
-    /**
-     * @When /^I follow "([^"]*)" in the main menu$/
-     */
-    public function iFollowInTheMainMenu($link)
-    {
-        $this->assertElementOnPage('ul.nav');
-        $this->getSession()->getPage()->find('css', 'ul.nav')->findLink($link)->click();
-    }
-
-    /**
-     * @Given /^I should be logged in as "([^"]*)"$/
-     */
-    public function iShouldBeLoggedInAs($name)
-    {
-        $this->assertSession()->elementTextContains('css', '#neos-user-actions .neos-user-menu', $name);
-    }
-
-    /**
-     * @Then /^I should not be logged in$/
-     */
-    public function iShouldNotBeLoggedIn()
-    {
-        if ($this->getSession()->getPage()->findButton('logout')) {
-            Assert::fail('"Logout" Button not expected');
-        }
-    }
-
-    /**
-     * @Given /^I should see the page title "([^"]*)"$/
-     */
-    public function iShouldSeeThePageTitle($title)
-    {
-        $this->assertSession()->elementTextContains('css', 'title', $title);
-    }
-
-    /**
-     * @Then /^I should not see the top bar$/
-     */
-    public function iShouldNotSeeTheTopBar()
-    {
-        return [
-            new Then('I should not see "Navigate"'),
-            new Then('I should not see "Edit / Preview"'),
-        ];
-        //c1$this->assertElementOnPage('.neos-previewmode #neos-top-bar');
-    }
-
-    /**
-     * @Given /^the Previewbutton should be active$/
-     */
-    public function thePreviewButtonShouldBeActive()
-    {
-        $button = $this->getSession()->getPage()->find('css', '.neos-full-screen-close > .neos-pressed');
-        if ($button === null) {
-            throw new ElementNotFoundException($this->getSession(), 'button', 'id|name|label|value');
-        }
-
-        Assert::assertTrue($button->hasClass('neos-pressed'), 'Button should be pressed');
-    }
-
-    /**
      * @Given /^I imported the site "([^"]*)"$/
      */
     public function iImportedTheSite($packageKey)
@@ -261,23 +142,6 @@ class FeatureContext extends MinkContext
         $siteImportService = $this->objectManager->get(SiteImportService::class);
         $siteImportService->importFromPackage($packageKey);
         $this->persistAll();
-    }
-
-    /**
-     * @When /^I go to the "([^"]*)" module$/
-     */
-    public function iGoToTheModule($module)
-    {
-        switch ($module) {
-            case 'Administration / Site Management':
-                $this->visit('/neos/administration/sites');
-                break;
-            case 'Administration / User Management':
-                $this->visit('/neos/administration/users');
-                break;
-            default:
-                throw new PendingException();
-        }
     }
 
     /**
@@ -328,125 +192,6 @@ class FeatureContext extends MinkContext
         // Did I already mention I LOVE in memory caches? ;-) ;-) ;-)
         $userService = $this->getObjectManager()->get(\Neos\Neos\Domain\Service\UserService::class);
         \Neos\Utility\ObjectAccess::setProperty($userService, 'runtimeUserCache', [], true);
-    }
-    /**
-     * @Then /^I should see the following sites in a table:$/
-     */
-    public function iShouldSeeTheFollowingSitesInATable(TableNode $table)
-    {
-        $sites = $table->getHash();
-
-        $tableLocator = '.neos-module-wrap table.neos-table';
-        $sitesTable = $this->assertSession()->elementExists('css', $tableLocator);
-
-        $siteRows = $sitesTable->findAll('css', 'tbody tr');
-        $actualSites = array_map(function ($row) {
-            $firstColumn = $row->find('css', 'td:nth-of-type(1)');
-            if ($firstColumn !== null) {
-                return [
-                    'name' => $firstColumn->getText()
-                ];
-            }
-        }, $siteRows);
-
-        $sortByName = function ($a, $b) {
-            return strcmp($a['name'], $b['name']);
-        };
-        usort($sites, $sortByName);
-        usort($actualSites, $sortByName);
-
-        Assert::assertEquals($sites, $actualSites);
-    }
-
-    /**
-     * @Given /^I follow "([^"]*)" for site "([^"]*)"$/
-     */
-    public function iFollowForSite($link, $siteName)
-    {
-        $rowLocator = sprintf("//table[@class='neos-table']//tr[td/text()='%s']", $siteName);
-        $siteRow = $this->assertSession()->elementExists('xpath', $rowLocator);
-        $siteRow->findLink($link)->click();
-    }
-
-    /**
-     * @When /^I select the first content element$/
-     */
-    public function iSelectTheFirstContentElement()
-    {
-        $element = $this->assertSession()->elementExists('css', '.neos-contentelement');
-        $element->click();
-
-        $this->selectedContentElement = $element;
-    }
-
-    /**
-     * @When /^I select the first headline content element$/
-     */
-    public function iSelectTheFirstHeadlineContentElement()
-    {
-        $element = $this->assertSession()->elementExists('css', '.neos-nodetypes-headline');
-        $element->click();
-
-        $this->selectedContentElement = $element;
-    }
-
-    /**
-     * @Given /^I set the content to "([^"]*)"$/
-     */
-    public function iSetTheContentTo($content)
-    {
-        $editable = $this->assertSession()->elementExists('css', '[data-neos-editable-node-contextpath]', $this->selectedContentElement);
-
-        $this->spinWait(function () use ($editable) {
-            return $editable->hasAttribute('contenteditable');
-        }, 10000, 'editable has contenteditable attribute set');
-
-        $editable->setValue($content);
-    }
-
-    /**
-     * @Given /^I wait for the changes to be saved$/
-     */
-    public function iWaitForTheChangesToBeSaved()
-    {
-        $this->getSession()->wait(30000, '$(".neos-indicator-saved").length > 0');
-        $this->assertSession()->elementExists('css', '.neos-indicator-saved');
-    }
-
-    /**
-     * @param string $elementName
-     * @return string
-     */
-    protected function getNamedElementSelector($elementName)
-    {
-        switch ($elementName) {
-            case 'Open full screen':
-                return '.neos-full-screen-open';
-            case 'Close full screen':
-                return '.neos-full-screen-close';
-            default:
-                Assert::fail('No element definition found for named element "' . $elementName . '"');
-        }
-    }
-
-    /**
-     * @When /^I wait for the "([^"]*)"( button) to be visible$/
-     */
-    public function iWaitForElement($elementName)
-    {
-        $elementSelector = $this->getNamedElementSelector($elementName);
-
-        $this->getSession()->wait(30000, '$("' . $elementSelector . '").length > 0');
-        $this->assertSession()->elementExists('css', $elementSelector);
-    }
-
-    /**
-     * @param string $path
-     * @return string
-     */
-    public function locatePath($path)
-    {
-        return parent::locatePath($this->resolvePath($path));
     }
 
     /**
