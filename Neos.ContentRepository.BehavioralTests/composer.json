@@ -6,7 +6,9 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/contentrepository-core": "*"
+        "neos/contentrepository-core": "*",
+        "neos/contentrepository-security": "*",
+        "neos/contentrepository-testsuite": "*"
     },
     "autoload": {
         "psr-4": {
