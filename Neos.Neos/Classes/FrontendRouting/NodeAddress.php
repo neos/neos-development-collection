@@ -71,7 +71,7 @@ final class NodeAddress
         return $this->workspaceName->isLive();
     }
 
-    public function __toString(): string
+    public function toDebugString(): string
     {
         return sprintf(
             'NodeAddress[contentStream=%s, dimensionSpacePoint=%s, nodeAggregateId=%s, workspaceName=%s]',
