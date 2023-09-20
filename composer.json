@@ -139,9 +139,6 @@
             "Neos\\ContentRepository\\BehavioralTests\\": [
                 "Neos.ContentRepository.BehavioralTests/Classes"
             ],
-            "Neos\\ContentRepository\\TestSuite\\": [
-                "Neos.ContentRepository.TestSuite/Classes"
-            ],
             "Neos\\ContentRepository\\Core\\": [
                 "Neos.ContentRepository.Core/Classes"
             ],
@@ -162,6 +159,9 @@
             ],
             "Neos\\ContentRepository\\StructureAdjustment\\": [
                 "Neos.ContentRepository.StructureAdjustment/src"
+            ],
+            "Neos\\ContentRepository\\TestSuite\\": [
+                "Neos.ContentRepository.TestSuite/Classes"
             ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
@@ -227,6 +227,9 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Neos\\ContentGraph\\DoctrineDbalAdapter\\Tests\\": [
+                "Neos.ContentGraph.DoctrineDbalAdapter/Tests"
+            ],
             "Neos\\ContentGraph\\PostgreSQLAdapter\\Tests\\": [
                 "Neos.ContentGraph.PostgreSQLAdapter/Tests"
             ],
@@ -244,6 +247,9 @@
             ],
             "Neos\\ContentRepository\\NodeMigration\\Tests\\": [
                 "Neos.ContentRepository.NodeMigration/Tests"
+            ],
+            "Neos\\ContentRepository\\Security\\Tests\\": [
+                "Neos.ContentRepository.Security/Tests"
             ],
             "Neos\\ContentRepository\\StructureAdjustment\\Tests\\": [
                 "Neos.ContentRepository.StructureAdjustment/Tests"

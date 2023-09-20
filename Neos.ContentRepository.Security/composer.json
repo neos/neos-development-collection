@@ -14,6 +14,11 @@
             "Neos\\ContentRepository\\Security\\": "Classes"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentRepository\\Security\\Tests\\": "Tests"
+        }
+    },
     "extra": {
         "applied-flow-migrations": [
             "TYPO3.TYPO3CR-20150510103823",

@@ -11,5 +11,10 @@
     "psr-4": {
       "Neos\\ContentGraph\\DoctrineDbalAdapter\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Neos\\ContentGraph\\DoctrineDbalAdapter\\Tests\\": "Tests"
+    }
   }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Security package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -10,6 +10,7 @@
  * source code.
  */
 
+namespace Neos\ContentRepository\Security\Tests\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
