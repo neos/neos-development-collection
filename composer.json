@@ -58,7 +58,6 @@
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
         "neos/contentrepository-nodemigration": "self.version",
-        "neos/contentrepository-security": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
