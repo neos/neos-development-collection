@@ -31,7 +31,7 @@ use Neos\Media\Domain\Model\ResourceBasedInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\AssetUsage\Dto\AssetIdAndOriginalAssetId;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
-use Neos\Neos\AssetUsage\Dto\NodeAddress;
+use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\Utility\Exception\InvalidTypeException;
 use Neos\Utility\TypeHandling;
 
@@ -83,7 +83,7 @@ final class AssetUsageProjection implements ProjectionInterface
                 $e
             );
         }
-        $nodeAddress = new NodeAddress(
+        $nodeAddress = new AssetUsageNodeAddress(
             $event->getContentStreamId(),
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
             $event->getNodeAggregateId()
@@ -106,7 +106,7 @@ final class AssetUsageProjection implements ProjectionInterface
                 $e
             );
         }
-        $nodeAddress = new NodeAddress(
+        $nodeAddress = new AssetUsageNodeAddress(
             $event->getContentStreamId(),
             $event->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
             $event->getNodeAggregateId()
