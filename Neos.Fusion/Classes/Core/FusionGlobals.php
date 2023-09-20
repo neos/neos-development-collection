@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\Fusion\Core;
 
-use Neos\Utility\Arrays;
-
 /**
  * Fusion allows to add variable to the context either via
  * \@context.foo = "bar" or by leveraging the php api {@see Runtime::pushContext()}.
@@ -57,7 +55,7 @@ final readonly class FusionGlobals
     public function merge(FusionGlobals $other): self
     {
         return new self(
-            Arrays::arrayMergeRecursiveOverrule($this->value, $other->value)
+            [...$this->value, ...$other->value]
         );
     }
 }
