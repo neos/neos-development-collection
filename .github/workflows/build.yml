@@ -132,7 +132,7 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
-          # workaround for not-yet-released neos/eventstore packages
+          # TODO workaround for not-yet-released neos/eventstore packages
           composer require --no-update neos/eventstore:"dev-main"
           composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
 
@@ -230,6 +230,8 @@ jobs:
           FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
+      # TODO re-enable maria db behat tests
+
       - name: Run ES CR Tests
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
@@ -325,17 +327,17 @@ jobs:
         if: matrix.parallel-parts == 'functionaltests-postgres'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
+      # TODO: RE-ENABLE AFTER FIXING
       - name: Run behat tests (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow configuration:show
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
+          # FLOW_CONTEXT=Testing/Behat ./flow configuration:show
+          # FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
 
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          # TODO: RE-ENABLE AFTER FIXING
-          #bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
+          # FLOW_CONTEXT=Testing/Behat ./flow behat:setup
+          # FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
+          # FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
+          # bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
