@@ -52,6 +52,7 @@ class NodeAddressFactory
             );
         }
         return new NodeAddress(
+            $this->contentRepository->id,
             $contentStreamId,
             $dimensionSpacePoint,
             $nodeAggregateId,
@@ -79,6 +80,7 @@ class NodeAddressFactory
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
+        // hahah funny und nun?
         $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
             ?->currentContentStreamId;
         if (is_null($contentStreamId)) {

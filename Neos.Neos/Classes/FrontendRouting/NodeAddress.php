@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -40,6 +41,7 @@ final class NodeAddress
      * @internal use NodeAddressFactory, if you want to create a NodeAddress
      */
     public function __construct(
+        public readonly ContentRepositoryId $contentRepositoryId,
         public readonly ContentStreamId $contentStreamId,
         public readonly DimensionSpacePoint $dimensionSpacePoint,
         public readonly NodeAggregateId $nodeAggregateId,
@@ -50,6 +52,7 @@ final class NodeAddress
     public function withNodeAggregateId(NodeAggregateId $nodeAggregateId): self
     {
         return new self(
+            $this->contentRepositoryId,
             $this->contentStreamId,
             $this->dimensionSpacePoint,
             $nodeAggregateId,
@@ -61,6 +64,10 @@ final class NodeAddress
     {
         // the reverse method is {@link NodeAddressFactory::createFromUriString} - ensure to adjust it
         // when changing the serialization here
+
+        // TODO Refine comment! Ask seb
+        // we serialize the workspaceName into the uri instead of the contentStreamId as the contentStreamId changes frequently
+        // and this will cause "problems" in the Neos Ui
         return $this->workspaceName->value
             . '__' . base64_encode(json_encode($this->dimensionSpacePoint->coordinates, JSON_THROW_ON_ERROR))
             . '__' . $this->nodeAggregateId->value;
