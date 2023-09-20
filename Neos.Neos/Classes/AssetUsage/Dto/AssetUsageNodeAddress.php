@@ -18,7 +18,7 @@ use Neos\Flow\Annotations as Flow;
  * @internal
  */
 #[Flow\Proxy(false)]
-final class NodeAddress
+final class AssetUsageNodeAddress
 {
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
