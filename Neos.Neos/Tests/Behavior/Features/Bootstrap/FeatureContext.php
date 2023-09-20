@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Security\AccountRepository;
 use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
@@ -56,7 +55,6 @@ class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
     use BrowserTrait;
-    use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;
@@ -81,7 +79,6 @@ class FeatureContext implements BehatContext
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
-        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 
         $this->setupSecurity();
