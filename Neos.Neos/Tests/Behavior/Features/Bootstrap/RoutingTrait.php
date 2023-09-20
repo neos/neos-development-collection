@@ -59,6 +59,9 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Routing related Behat steps
  *
+ * Requires the {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()} to be a {@see FunctionalTestRequestHandler}.
+ * For this the {@see BrowserTrait} can be used.
+ *
  * @internal only for behat tests within the Neos.Neos package
  */
 trait RoutingTrait

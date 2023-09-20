@@ -2,6 +2,7 @@
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
@@ -15,12 +16,15 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * A trait with step definitions for the neos history
  *
- * @method \Neos\Flow\ObjectManagement\ObjectManagerInterface getObjectManager()
- *
  * @internal only for behat tests within the Neos.Neos package
  */
 trait HistoryDefinitionsTrait
 {
+    /**
+     * @return ObjectManagerInterface
+     */
+    abstract protected function getObjectManager();
+
     /**
      * @BeforeScenario @neosHistory
      * @return void
