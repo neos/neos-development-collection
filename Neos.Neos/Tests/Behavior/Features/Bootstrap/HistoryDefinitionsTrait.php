@@ -9,18 +9,20 @@ use Neos\Neos\EventLog\Domain\Repository\EventRepository;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
 use Neos\Utility\Arrays;
-use PHPUnit\Framework\Assert as Assert;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * A trait with shared step definitions for common use by other contexts
+ * A trait with step definitions for the neos history
  *
- * Note that this trait requires that the Flow Object Manager must be available via $this->getSubcontext('flow')->getObjectManager().
+ * @method \Neos\Flow\ObjectManagement\ObjectManagerInterface getObjectManager()
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait HistoryDefinitionsTrait
 {
     /**
-     * @BeforeScenario @fixtures
+     * @BeforeScenario @neosHistory
      * @return void
      */
     public function resetHistory()
