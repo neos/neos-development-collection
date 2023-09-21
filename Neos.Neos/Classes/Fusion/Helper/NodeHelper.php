@@ -97,18 +97,6 @@ class NodeHelper implements ProtectedContextAwareInterface
 
     /**
      * @param Node $node
-     * @return bool
-     * @deprecated Remove before Neos 9.0 !!! Use ${userInterfaceMode.isEdit || userInterfaceMode.isPreview} instead
-     */
-    public function inBackend(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
-    }
-
-    /**
-     * @param Node $node
      * @return int
      * @deprecated do not rely on this, as it is rather expensive to calculate
      */
@@ -130,13 +118,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         )->reverse();
 
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
-    }
-
-    public function isLive(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**
