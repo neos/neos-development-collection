@@ -230,9 +230,7 @@ jobs:
           FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
           bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
 
-      # TODO re-enable maria db behat tests
-
-      - name: Run ES CR Tests
+      - name: Run Behavioral Tests (ES CR && Neos.Neos)
         id: escrtests
         if: matrix.parallel-parts == 'escr-behavioral'
         # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
@@ -326,18 +324,6 @@ jobs:
       - name: Run functional tests (PGSQL)
         if: matrix.parallel-parts == 'functionaltests-postgres'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
-
-      # TODO: RE-ENABLE AFTER FIXING
-      - name: Run behat tests (PGSQL)
-        if: matrix.parallel-parts == 'functionaltests-postgres'
-        run: |
-          # FLOW_CONTEXT=Testing/Behat ./flow configuration:show
-          # FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationstatus
-
-          # FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          # FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          # FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          # bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
