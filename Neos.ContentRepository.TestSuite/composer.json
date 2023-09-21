@@ -10,8 +10,8 @@
         "neos/contentrepository-structureadjustment": "*",
         "neos/contentrepository-nodemigration": "*",
         "neos/utility-arrays": "*",
-        "behat/behat": "~3.0",
-        "phpunit/phpunit": "^10.0"
+        "behat/behat": "^3.0",
+        "phpunit/phpunit": "^9.0"
     },
     "autoload": {
         "psr-4": {
