@@ -65,25 +65,6 @@ class FeatureContext implements BehatContext
     }
 
     /**
-     * Clear the content cache. Since this could be needed for multiple Flow contexts, we have to do it on the
-     * filesystem for now. Using a different cache backend than the FileBackend will not be possible with this approach.
-     *
-     * @BeforeScenario @fixtures
-     */
-    public function clearContentCache()
-    {
-        $directories = array_merge(
-            glob(FLOW_PATH_DATA . 'Temporary/*/Cache/Data/Neos_Fusion_Content'),
-            glob(FLOW_PATH_DATA . 'Temporary/*/*/Cache/Data/Neos_Fusion_Content')
-        );
-        if (is_array($directories)) {
-            foreach ($directories as $directory) {
-                Files::removeDirectoryRecursively($directory);
-            }
-        }
-    }
-
-    /**
      * @BeforeScenario
      */
     public function resetPersistenceManagerAndFeedbackCollection()
