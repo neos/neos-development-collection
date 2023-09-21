@@ -14,7 +14,9 @@ use PHPUnit\Framework\Assert;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * A trait with step definitions for the neos history
+ * A trait with step definitions for the neos history.
+ *
+ * This trait is impure as it will reset the history: {@see self::resetHistory()}
  *
  * @internal only for behat tests within the Neos.Neos package
  */

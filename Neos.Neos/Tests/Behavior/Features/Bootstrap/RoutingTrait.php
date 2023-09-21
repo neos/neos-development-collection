@@ -57,7 +57,7 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Routing related Behat steps
+ * Routing related Behat steps. This trait is pure (no side effects).
  *
  * Requires the {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()} to be a {@see FunctionalTestRequestHandler}.
  * For this the {@see BrowserTrait} can be used.

@@ -22,7 +22,12 @@ use Neos\Neos\FrontendRouting\NodeAddress;
 use PHPUnit\Framework\Assert;
 
 /**
- * Features context
+ * Browser related Behat steps
+ *
+ * Note this trait is impure see {@see self::setupBrowserForEveryScenario()}!
+ *  It sets up a {@see FunctionalTestRequestHandler} as {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()}.
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait BrowserTrait
 {
