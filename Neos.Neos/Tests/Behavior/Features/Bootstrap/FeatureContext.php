@@ -23,32 +23,21 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 use Neos\Flow\Utility\Environment;
-use Neos\Neos\Tests\Functional\Command\BehatTestHelper;
 use Neos\Utility\Files;
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-
-require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
 
 class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
     use BrowserTrait;
-    use SecurityOperationsTrait;
-    use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;
 
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;
     use MigrationsTrait;
-
-    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected Environment $environment;
 
@@ -63,7 +52,6 @@ class FeatureContext implements BehatContext
         $this->environment = $this->objectManager->get(Environment::class);
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 
-        $this->setupSecurity();
         $this->setupCRTestSuiteTrait(true);
     }
 
@@ -74,14 +62,6 @@ class FeatureContext implements BehatContext
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
-    }
-
-    /**
-     * @Given /^I am not authenticated$/
-     */
-    public function iAmNotAuthenticated()
-    {
-        // Do nothing, every scenario has a new session
     }
 
     /**
