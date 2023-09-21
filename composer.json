@@ -23,7 +23,7 @@
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
         "neos/neos-ui": "*",
-        "behat/behat": "^3.0",
+        "behat/behat": "^3.5",
         "phpunit/phpunit": "^9.0",
         "symfony/property-access": "*",
         "neos/fluid-adaptor": "*",
@@ -108,14 +108,12 @@
             "../../bin/phpunit --colors --stop-on-failure -c ../../Build/BuildEssentials/PhpUnit/FunctionalTests.xml Neos.ContentRepository.Core/Tests/Functional"
         ],
         "test:behavioral": [
-            "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
             "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
             "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml"
         ],
         "test:behavioral:stop-on-failure": [
-            "mkdir -p ../../Build/Behat/; cp -R Neos.ContentRepository.BehavioralTests/DistributionBehatTemplate/* ../../Build/Behat/; cd ../../Build/Behat/; composer install; cd ../../Packages/Neos",
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",

@@ -1,8 +1,0 @@
-{
-	"require": {
-		"behat/behat": "^3.5.0"
-	},
-	"config": {
-		"bin-dir": "../../bin/"
-	}
-}
