@@ -90,7 +90,6 @@ class FeatureContext extends MinkContext
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
         $this->environment = $this->objectManager->get(Environment::class);
-        $this->nodeAuthorizationService = $this->objectManager->get(AuthorizationService::class);
         $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
 
         $this->setupSecurity();
