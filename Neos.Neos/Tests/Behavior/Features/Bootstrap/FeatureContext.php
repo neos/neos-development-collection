@@ -46,7 +46,6 @@ use Neos\Utility\Files;
 use Neos\Utility\ObjectAccess;
 use PHPUnit\Framework\Assert;
 
-require_once(__DIR__ . '/../../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
 
 require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
@@ -62,7 +61,6 @@ class FeatureContext extends MinkContext
 {
     use FlowContextTrait;
     use BrowserTrait;
-    use NodeAuthorizationTrait;
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;

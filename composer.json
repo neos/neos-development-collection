@@ -156,9 +156,6 @@
             "Neos\\ContentRepository\\NodeMigration\\": [
                 "Neos.ContentRepository.NodeMigration/src"
             ],
-            "Neos\\ContentRepository\\Security\\": [
-                "Neos.ContentRepository.Security/Classes"
-            ],
             "Neos\\ContentRepository\\StructureAdjustment\\": [
                 "Neos.ContentRepository.StructureAdjustment/src"
             ],

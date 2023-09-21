@@ -13,11 +13,6 @@ namespace Neos\Neos\Tests\Functional\Command;
 
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
 require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
-if (file_exists(__DIR__ . '/../../../../../Neos')) {
-    require_once(__DIR__ . '/../../../../../Neos/Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
-} else {
-    require_once(__DIR__ . '/../../../../../Application/Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
-}
 
 use Neos\Flow\Core\Bootstrap;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
