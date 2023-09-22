@@ -10,8 +10,15 @@ use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
+use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventNormalizer;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
@@ -26,9 +33,11 @@ use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
+use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 
@@ -38,8 +47,10 @@ use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 class FeatureContext implements Context
 {
     use FlowContextTrait;
+    #use IsolatedBehatStepsTrait;
+    #use ProjectionIntegrityViolationDetectionTrait;
     use CRTestSuiteTrait;
-    use CRRegistrySubjectProvider;
+    use CRBehavioralTestsSubjectProvider;
 
     protected $isolated = false;
 
@@ -55,16 +66,19 @@ class FeatureContext implements Context
 
     private ContentRepository $contentRepository;
 
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     public function __construct()
     {
         if (self::$bootstrap === null) {
             self::$bootstrap = $this->initializeFlow();
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
+        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+
         $this->mockFilesystemAdapter = new InMemoryFilesystemAdapter();
         $this->mockFilesystem = new Filesystem($this->mockFilesystemAdapter);
         $this->setupCRTestSuiteTrait();
-
     }
 
     /**
@@ -344,5 +358,25 @@ class FeatureContext implements Context
                 return json_decode($jsonValue, true, 512, JSON_THROW_ON_ERROR);
             }, $row);
         }, $table->getHash());
+    }
+
+    protected function getContentRepositoryService(
+        ContentRepositoryServiceFactoryInterface $factory
+    ): ContentRepositoryServiceInterface {
+        return $this->contentRepositoryRegistry->buildService(
+            $this->currentContentRepository->id,
+            $factory
+        );
+    }
+
+    protected function createContentRepository(
+        ContentRepositoryId $contentRepositoryId
+    ): ContentRepository {
+        $this->contentRepositoryRegistry->resetFactoryInstance($contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        GherkinTableNodeBasedContentDimensionSourceFactory::reset();
+        GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
+
+        return $contentRepository;
     }
 }
