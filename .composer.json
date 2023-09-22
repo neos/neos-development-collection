@@ -5,7 +5,8 @@
   "type": "neos-package-collection",
   "require": {
     "neos/flow-development-collection": "9.0.x-dev",
-    "neos/neos-setup": "^2.0"
+    "neos/neos-setup": "^2.0",
+    "league/flysystem-memory": "^3"
   },
   "replace": {
   },

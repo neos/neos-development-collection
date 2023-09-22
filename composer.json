@@ -39,7 +39,8 @@
         "neos/fusion-form": "^1.0 || ^2.0",
         "behat/transliterator": "~1.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.0.0"
+        "neos/kickstarter": "~9.0.0",
+        "league/flysystem-memory": "^3"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",
