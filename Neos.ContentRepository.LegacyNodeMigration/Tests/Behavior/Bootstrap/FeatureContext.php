@@ -10,7 +10,6 @@ use League\Flysystem\FileAttributes;
 use League\Flysystem\Filesystem;
 use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
-use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
@@ -19,7 +18,8 @@ use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Export\Asset\AssetExporter;
 use Neos\ContentRepository\Export\Asset\AssetLoaderInterface;
 use Neos\ContentRepository\Export\Asset\ResourceLoaderInterface;
@@ -31,13 +31,10 @@ use Neos\ContentRepository\Export\ProcessorResult;
 use Neos\ContentRepository\Export\Severity;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToAssetsProcessor;
 use Neos\ContentRepository\LegacyNodeMigration\NodeDataToEventsProcessor;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\ResourceManagement\PersistentResource;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 
@@ -47,8 +44,6 @@ use PHPUnit\Framework\MockObject\Generator as MockGenerator;
 class FeatureContext implements Context
 {
     use FlowContextTrait;
-    #use IsolatedBehatStepsTrait;
-    #use ProjectionIntegrityViolationDetectionTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
 
@@ -63,6 +58,11 @@ class FeatureContext implements Context
     private Filesystem $mockFilesystem;
 
     private ProcessorResult|null $lastMigrationResult = null;
+
+    /**
+     * @var array<string>
+     */
+    private array $loggedErrors = [];
 
     private ContentRepository $contentRepository;
 
@@ -87,7 +87,10 @@ class FeatureContext implements Context
     public function failIfLastMigrationHasErrors(): void
     {
         if ($this->lastMigrationResult !== null && $this->lastMigrationResult->severity === Severity::ERROR) {
-            Assert::fail(sprintf('The last migration run led to an error: %s', $this->lastMigrationResult->message));
+            throw new \RuntimeException(sprintf('The last migration run led to an error: %s', $this->lastMigrationResult->message));
+        }
+        if ($this->loggedErrors !== []) {
+            throw new \RuntimeException(sprintf('The last migration run logged %d error%s', count($this->loggedErrors), count($this->loggedErrors) === 1 ? '' : 's'));
         }
     }
 
@@ -140,6 +143,11 @@ class FeatureContext implements Context
         if ($contentStream !== null) {
             $migration->setContentStreamId(ContentStreamId::fromString($contentStream));
         }
+        $migration->onMessage(function (Severity $severity, string $message) {
+            if ($severity === Severity::ERROR) {
+                $this->loggedErrors[] = $message;
+            }
+        });
         $this->lastMigrationResult = $migration->run();
     }
 
@@ -178,6 +186,15 @@ class FeatureContext implements Context
             Assert::assertEquals($expectedEventPayload, $actualEventPayload, 'Actual event: ' . $exportedEvent->toJson());
         }
         Assert::assertCount(count($table->getHash()), $exportedEvents, 'Expected number of events does not match actual number');
+    }
+
+    /**
+     * @Then I expect the following errors to be logged
+     */
+    public function iExpectTheFollwingErrorsToBeLogged(TableNode $table): void
+    {
+        Assert::assertSame($this->loggedErrors, $table->getColumn(0), 'Expected logged errors do not match');
+        $this->loggedErrors = [];
     }
 
     /**
@@ -292,6 +309,11 @@ class FeatureContext implements Context
         $this->mockFilesystemAdapter->deleteEverything();
         $assetExporter = new AssetExporter($this->mockFilesystem, $mockAssetLoader, $mockResourceLoader);
         $migration = new NodeDataToAssetsProcessor($nodeTypeManager, $assetExporter, $this->nodeDataRows);
+        $migration->onMessage(function (Severity $severity, string $message) {
+            if ($severity === Severity::ERROR) {
+                $this->loggedErrors[] = $message;
+            }
+        });
         $this->lastMigrationResult = $migration->run();
     }
 
