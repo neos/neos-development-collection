@@ -148,7 +148,7 @@ Feature: Find and count references and their target nodes using the findReferenc
   Scenario:
     # findReferences queries without results
     When I execute the findReferences query for node aggregate id "non-existing" I expect no references to be returned
-    When I execute the findReferences query for node aggregate id "c" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect no references to be returned
+    When I execute the findReferences query for node aggregate id "c" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExisting"}' I expect no references to be returned
     When I execute the findReferences query for node aggregate id "a" and filter '{"nodeSearchTerm": "non-existing"}' I expect no references to be returned
     When I execute the findReferences query for node aggregate id "a" and filter '{"nodePropertyValue": "text = \"non-existing\""}' I expect no references to be returned
     When I execute the findReferences query for node aggregate id "a" and filter '{"referenceSearchTerm": "non-existing"}' I expect no references to be returned
@@ -163,7 +163,7 @@ Feature: Find and count references and their target nodes using the findReferenc
     When I execute the findReferences query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "b1", "name": "refs", "properties": null}, {"nodeAggregateId": "a2a2", "name": "refs", "properties": null}]' to be returned
     When I execute the findReferences query for node aggregate id "a" and filter '{"referenceName": "ref"}' I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
     When I execute the findReferences query for node aggregate id "c" I expect the references '[{"nodeAggregateId": "b", "name": "ref", "properties": null}, {"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
-    When I execute the findReferences query for node aggregate id "c" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the references '[{"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
+    When I execute the findReferences query for node aggregate id "c" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the references '[{"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
     When I execute the findReferences query for node aggregate id "c" and filter '{"pagination": {"limit": 1, "offset": 1}}' I expect the references '[{"nodeAggregateId": "b1", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned and the total count to be 2
     When I execute the findReferences query for node aggregate id "a" and filter '{"nodeSearchTerm": "b1"}' I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "b1", "name": "refs", "properties": null}]' to be returned
     When I execute the findReferences query for node aggregate id "a" and filter '{"nodePropertyValue": "text = \"b1\""}' I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "b1", "name": "refs", "properties": null}]' to be returned
@@ -173,7 +173,7 @@ Feature: Find and count references and their target nodes using the findReferenc
 
     # findBackReferences queries without results
     When I execute the findBackReferences query for node aggregate id "non-existing" I expect no references to be returned
-    When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect no references to be returned
+    When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExisting"}' I expect no references to be returned
     When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodeSearchTerm": "non-existing"}' I expect no references to be returned
     When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodePropertyValue": "text = \"non-existing\""}' I expect no references to be returned
     When I execute the findBackReferences query for node aggregate id "b1" and filter '{"referenceSearchTerm": "non-existing"}' I expect no references to be returned
@@ -189,7 +189,7 @@ Feature: Find and count references and their target nodes using the findReferenc
     When I execute the findBackReferences query for node aggregate id "a" I expect the references '[{"nodeAggregateId": "b1", "name": "ref", "properties": null}]' to be returned
     When I execute the findBackReferences query for node aggregate id "a3" and filter '{"referenceName": "refs"}' I expect the references '[{"nodeAggregateId": "b", "name": "refs", "properties": {"foo": {"value": "bar", "type": "string"}}}]' to be returned
     When I execute the findBackReferences query for node aggregate id "b1" I expect the references '[{"nodeAggregateId": "a", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "a", "name": "refs", "properties": null}, {"nodeAggregateId": "c", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
-    When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the references '[{"nodeAggregateId": "c", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
+    When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the references '[{"nodeAggregateId": "c", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
     When I execute the findBackReferences query for node aggregate id "b1" and filter '{"pagination": {"limit": 1, "offset": 1}}' I expect the references '[{"nodeAggregateId": "a", "name": "refs", "properties": null}]' to be returned and the total count to be 3
     When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodeSearchTerm": "c"}' I expect the references '[{"nodeAggregateId": "c", "name": "refs", "properties": {"foo": {"value": "foos", "type": "string"}}}]' to be returned
     When I execute the findBackReferences query for node aggregate id "b1" and filter '{"nodePropertyValue": "text = \"a\""}' I expect the references '[{"nodeAggregateId": "a", "name": "ref", "properties": {"foo": {"value": "bar", "type": "string"}}}, {"nodeAggregateId": "a", "name": "refs", "properties": null}]' to be returned

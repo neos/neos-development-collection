@@ -19,7 +19,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;

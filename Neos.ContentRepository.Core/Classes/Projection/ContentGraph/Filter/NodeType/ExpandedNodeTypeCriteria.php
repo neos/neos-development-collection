@@ -12,19 +12,20 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 
 /**
- * Implementation detail of {@see NodeTypeConstraints}, to be used inside implementations of ContentSubgraphInterface.
+ * Implementation detail of {@see NodeTypeCriteria}, to be used inside implementations of ContentSubgraphInterface.
  *
- * @internal you want to use {@see NodeTypeConstraints} in public APIs.
+ * @internal you want to use {@see NodeTypeCriteria} in public APIs.
  */
-final class NodeTypeConstraintsWithSubNodeTypes
+final class ExpandedNodeTypeCriteria
 {
     private function __construct(
         public readonly bool $isWildCardAllowed,
@@ -77,25 +78,25 @@ final class NodeTypeConstraintsWithSubNodeTypes
         );
     }
 
-    public static function create(NodeTypeConstraints $nodeTypeConstraints, NodeTypeManager $nodeTypeManager): self
+    public static function create(NodeTypeCriteria $nodeTypeCriteria, NodeTypeManager $nodeTypeManager): self
     {
         // in case there are no filters, we fall back to allowing every node type.
         // Furthermore, if there are only negated filters,
         // we also fall back to allowing every node type (when the excludelist does not match)
-        $nodeTypeConstraintsEmpty = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()
-            && $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty();
-        $onlyNegatedFilters = $nodeTypeConstraints->explicitlyAllowedNodeTypeNames->isEmpty()
-            && !$nodeTypeConstraints->explicitlyDisallowedNodeTypeNames->isEmpty();
-        $wildcardAllowed = $nodeTypeConstraintsEmpty || $onlyNegatedFilters;
+        $nodeTypeCriteriaEmpty = $nodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
+            && $nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty();
+        $onlyNegatedFilters = $nodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
+            && !$nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty();
+        $wildcardAllowed = $nodeTypeCriteriaEmpty || $onlyNegatedFilters;
 
         return new self(
             $wildcardAllowed,
             self::expandByIncludingSubNodeTypes(
-                $nodeTypeConstraints->explicitlyAllowedNodeTypeNames,
+                $nodeTypeCriteria->explicitlyAllowedNodeTypeNames,
                 $nodeTypeManager
             ),
             self::expandByIncludingSubNodeTypes(
-                $nodeTypeConstraints->explicitlyDisallowedNodeTypeNames,
+                $nodeTypeCriteria->explicitlyDisallowedNodeTypeNames,
                 $nodeTypeManager
             ),
         );

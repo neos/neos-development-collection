@@ -93,4 +93,4 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
 
     # findAncestorNodes queries with results
     When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" I expect the nodes "a2a2,a2a,a2,a,home,lady-eleonode-rootford" to be returned and the total count to be 6
-    When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3
+    When I execute the findAncestorNodes query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the nodes "a2a2,a2,a" to be returned and the total count to be 3

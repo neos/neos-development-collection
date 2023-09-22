@@ -18,8 +18,8 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\Fusion\Exception as FusionException;
 
@@ -57,7 +57,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Runtime cache for the node type constraints to be applied
      */
-    protected ?NodeTypeConstraints $nodeTypeConstraints = null;
+    protected ?NodeTypeCriteria $nodeTypeCriteria = null;
 
     /**
      * The last navigation level which should be rendered.
@@ -158,7 +158,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             foreach ($this->getItemCollection() as $node) {
                 $childSubtree = $subgraph->findSubtree(
                     $node->nodeAggregateId,
-                    FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
+                    FindSubtreeFilter::create(nodeTypes: $this->getNodeTypeCriteria(), maximumLevels: $this->getMaximumLevels())
                 );
                 if ($childSubtree === null) {
                     continue;
@@ -175,7 +175,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $childSubtree = $subgraph->findSubtree(
             $entryParentNode->nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
+            FindSubtreeFilter::create(nodeTypes: $this->getNodeTypeCriteria(), maximumLevels: $this->getMaximumLevels())
         );
         if ($childSubtree === null) {
             return [];
@@ -234,8 +234,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getEntryLevel() === 0) {
             $entryParentNode = $traversalStartingPoint;
         } elseif ($this->getEntryLevel() < 0) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $this->getNodeTypeConstraints(),
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $this->getNodeTypeCriteria(),
                 $contentRepository->getNodeTypeManager()
             );
             $remainingIterations = abs($this->getEntryLevel());
@@ -245,9 +245,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 function (Node $node) use (
                     &$remainingIterations,
                     &$entryParentNode,
-                    $nodeTypeConstraintsWithSubNodeTypes
+                    $expandedNodeTypeCriteria
                 ) {
-                    if (!$nodeTypeConstraintsWithSubNodeTypes->matches($node->nodeTypeName)) {
+                    if (!$expandedNodeTypeCriteria->matches($node->nodeTypeName)) {
                         return false;
                     }
 
@@ -264,16 +264,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             );
         } else {
             $traversedHierarchy = [];
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $this->getNodeTypeConstraints()->withAdditionalDisallowedNodeType(
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $this->getNodeTypeCriteria()->withAdditionalDisallowedNodeType(
                     NodeTypeName::fromString('Neos.Neos:Sites')
                 ),
                 $contentRepository->getNodeTypeManager()
             );
             $this->traverseUpUntilCondition(
                 $traversalStartingPoint,
-                function (Node $traversedNode) use (&$traversedHierarchy, $nodeTypeConstraintsWithSubNodeTypes) {
-                    if (!$nodeTypeConstraintsWithSubNodeTypes->matches($traversedNode->nodeTypeName)) {
+                function (Node $traversedNode) use (&$traversedHierarchy, $expandedNodeTypeCriteria) {
+                    if (!$expandedNodeTypeCriteria->matches($traversedNode->nodeTypeName)) {
                         return false;
                     }
                     $traversedHierarchy[] = $traversedNode;
@@ -288,13 +288,13 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return $entryParentNode;
     }
 
-    protected function getNodeTypeConstraints(): NodeTypeConstraints
+    protected function getNodeTypeCriteria(): NodeTypeCriteria
     {
-        if (!$this->nodeTypeConstraints) {
-            $this->nodeTypeConstraints = NodeTypeConstraints::fromFilterString($this->getFilter());
+        if (!$this->nodeTypeCriteria) {
+            $this->nodeTypeCriteria = NodeTypeCriteria::fromFilterString($this->getFilter());
         }
 
-        return $this->nodeTypeConstraints;
+        return $this->nodeTypeCriteria;
     }
 
     /**

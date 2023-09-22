@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
@@ -167,7 +167,7 @@ class ChildrenOperation extends AbstractOperation
                             ->findChildNodes(
                             $contextNode->nodeAggregateId,
                             FindChildNodesFilter::create(
-                                nodeTypeConstraints: NodeTypeConstraints::create(
+                                nodeTypes: NodeTypeCriteria::create(
                                     NodeTypeNames::fromStringArray($allowedNodeTypes),
                                     NodeTypeNames::createEmpty()
                                 )

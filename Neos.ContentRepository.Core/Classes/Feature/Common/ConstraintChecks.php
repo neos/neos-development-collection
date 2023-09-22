@@ -51,7 +51,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -217,7 +217,7 @@ trait ConstraintChecks
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
         if (isset($propertyDeclaration['constraints']['nodeTypes'])) {
-            $nodeTypeConstraints = NodeTypeConstraintsWithSubNodeTypes::createFromNodeTypeDeclaration(
+            $nodeTypeConstraints = ExpandedNodeTypeCriteria::createFromNodeTypeDeclaration(
                 $propertyDeclaration['constraints']['nodeTypes'],
                 $this->getNodeTypeManager()
             );
