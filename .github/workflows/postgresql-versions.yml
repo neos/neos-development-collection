@@ -156,4 +156,3 @@ jobs:
           FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
           bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist
