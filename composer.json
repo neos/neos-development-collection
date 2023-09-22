@@ -118,7 +118,7 @@
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
