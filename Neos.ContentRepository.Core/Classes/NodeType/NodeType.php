@@ -463,14 +463,14 @@ class NodeType
 
     /**
      * @param NodeName $nodeName
-     * @return string
+     * @return NodeTypeName
      */
-    public function getNodeTypeNameOfAutoCreatedChildNode(NodeName $nodeName): string
+    public function getNodeTypeNameOfAutoCreatedChildNode(NodeName $nodeName): NodeTypeName
     {
         if (!isset($this->fullConfiguration['childNodes'][$nodeName->value]['type'])) {
             throw new ChildNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
         }
-        return $this->fullConfiguration['childNodes'][$nodeName->value]['type'];
+        return NodeTypeName::fromString($this->fullConfiguration['childNodes'][$nodeName->value]['type']);
     }
 
     /**
