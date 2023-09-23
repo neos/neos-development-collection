@@ -27,7 +27,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
   attributes {
     class.@process.collectionClass = ${Array.push(value, 'neos-contentcollection')}
     data-__neos-insertion-anchor = true
-    data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${Neos.Node.inBackend(documentNode) && node.context.currentRenderingMode.edit}
+    data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${renderingMode.isEdit}
   }
 
   # Doesn't need to be set, if the node is a content collection.

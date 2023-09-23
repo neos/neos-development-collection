@@ -271,12 +271,8 @@ Neos:
 
       defaultEditPreviewMode: inPlace
       editPreviewModes:
-        # Live mode is only configured here for consistency. You shouldn't change it.
-        live:
-          isEditingMode: false
-          isPreviewMode: false
-          fusionRenderingPath: ''
-          title: Live
+        # the system integrated rendering mode "frontend" cannot be configured
+        # frontend: {}
         inPlace:
           isEditingMode: true
           isPreviewMode: false

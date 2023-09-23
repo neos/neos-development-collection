@@ -35,7 +35,9 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 use Neos\Neos\FrontendRouting\NodeAddress;
@@ -108,6 +110,9 @@ class NodeController extends ActionController
      */
     protected $nodeSiteResolvingService;
 
+    #[Flow\Inject]
+    protected RenderingModeService $renderingModeService;
+
     /**
      * @param string $node Legacy name for backwards compatibility of route components
      * @throws NodeNotFoundException
@@ -122,6 +127,9 @@ class NodeController extends ActionController
      */
     public function previewAction(string $node): void
     {
+        // @todo add $renderingModeName as parameter and append it for successive links again as get parameter to node uris
+        $renderingMode = $this->renderingModeService->findByCurrentUser();
+
         $visibilityConstraints = VisibilityConstraints::frontend();
         if ($this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
@@ -160,6 +168,8 @@ class NodeController extends ActionController
         if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut') && $nodeAddress->isInLiveWorkspace()) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
+
+        $this->view->setOption('renderingModeName', $renderingMode->name);
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,
@@ -233,6 +243,8 @@ class NodeController extends ActionController
         if ($nodeInstance->nodeType->isOfType('Neos.Neos:Shortcut')) {
             $this->handleShortcutNode($nodeAddress, $contentRepository);
         }
+
+        $this->view->setOption('renderingModeName', RenderingMode::FRONTEND);
 
         $this->view->assignMultiple([
             'value' => $nodeInstance,

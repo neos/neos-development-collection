@@ -105,7 +105,7 @@ class SiteCommandController extends CommandController
 
         $this->outputLine(
             'Successfully created site "%s" with siteNode "%s", type "%s", packageKey "%s" and state "%s"',
-            [$name, $nodeName, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
+            [$name, $nodeName ?: $name, $nodeType, $packageKey, $inactive ? 'offline' : 'online']
         );
     }
 

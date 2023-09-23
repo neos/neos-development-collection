@@ -95,13 +95,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         return new NodeLabelToken($node);
     }
 
-    public function inBackend(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
-    }
-
     /**
      * @param Node $node
      * @return int
@@ -125,13 +118,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         )->reverse();
 
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
-    }
-
-    public function isLive(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**
