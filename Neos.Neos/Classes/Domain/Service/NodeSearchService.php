@@ -14,29 +14,44 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Service;
 
+use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 
-/**
- * Implementation of the NodeSearchServiceInterface for greater backwards compatibility
- *
- * Note: This implementation is meant to ease the transition to an event sourced content repository
- * but since it uses legacy classes (like \Neos\ContentRepository\Domain\Service\Context) it is
- * advised to use ContentSubgraphInterface::findDescendantNodes() directly instead.
- *
- * @Flow\Scope("singleton")
- * @deprecated see above
- */
 class NodeSearchService implements NodeSearchServiceInterface
 {
-    /**
-     * @param array<int,string> $searchNodeTypes
-     */
-    public function findByProperties(
-        string $term,
-        array $searchNodeTypes,
-        ?Node $startingPoint = null
-    ): never {
-        throw new \InvalidArgumentException('Cannot find nodes with the current set of arguments', 1651923867);
+    private function __construct(
+        private readonly ContentSubgraphInterface $subgraph
+    ) {
+    }
+
+    public function create(ContentSubgraphInterface $subgraph): self
+    {
+        return new self($subgraph);
+    }
+
+    public function findNodes(
+        Node|AbsoluteNodePath $entry,
+        SearchTerm $searchTerm,
+        NodeTypeConstraints $nodeTypeConstraints
+    ): Nodes {
+        if ($entry instanceof AbsoluteNodePath) {
+            $entryNode = $this->subgraph->findNodeByAbsolutePath($entry);
+        } else {
+            $entryNode = $entry;
+        }
+
+        return $this->subgraph->findDescendantNodes(
+            $entryNode->nodeAggregateId,
+            FindDescendantNodesFilter::create(
+                nodeTypeConstraints: $nodeTypeConstraints,
+                searchTerm: $searchTerm,
+            )
+        );
     }
 }
+

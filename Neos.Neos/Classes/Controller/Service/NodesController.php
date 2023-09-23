@@ -166,6 +166,7 @@ class NodesController extends ActionController
                 $entryNode = $subgraph->findNodeByAbsolutePath($nodePath);
             }
 
+            // TODO use `NodeSearchService` again
             $nodes = !is_null($entryNode) ? $subgraph->findDescendantNodes(
                 $entryNode->nodeAggregateId,
                 FindDescendantNodesFilter::create(
