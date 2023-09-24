@@ -6,7 +6,8 @@ namespace Neos\Neos\Utility;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
@@ -14,11 +15,12 @@ use Neos\Neos\Domain\Service\NodeTypeNameFactory;
  */
 trait NodeTypeWithFallbackProvider
 {
-    use ContentRepositoryRegistryProvider;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $_contentRepositoryRegistry;
 
     protected function getNodeType(Node $node): NodeType
     {
-        $nodeTypeManager = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId)->getNodeTypeManager();
+        $nodeTypeManager = $this->_contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId)->getNodeTypeManager();
 
         return $nodeTypeManager->hasNodeType($node->nodeTypeName)
             ? $nodeTypeManager->getNodeType($node->nodeTypeName)

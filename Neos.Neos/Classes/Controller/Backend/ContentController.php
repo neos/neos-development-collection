@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\Controller\Backend;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -52,8 +51,10 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
-    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject

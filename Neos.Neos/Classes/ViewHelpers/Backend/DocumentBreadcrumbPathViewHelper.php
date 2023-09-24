@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
@@ -26,8 +25,10 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
-    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @var boolean

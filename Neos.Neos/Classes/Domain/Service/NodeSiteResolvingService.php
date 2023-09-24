@@ -16,7 +16,6 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
@@ -25,8 +24,10 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 #[Flow\Scope('singleton')]
 class NodeSiteResolvingService
 {
-    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,

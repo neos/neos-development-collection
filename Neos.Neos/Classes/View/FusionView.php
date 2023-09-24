@@ -16,7 +16,6 @@ namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
@@ -40,8 +39,10 @@ use Psr\Http\Message\ResponseInterface;
 class FusionView extends AbstractView
 {
     use FusionViewI18nTrait;
-    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
