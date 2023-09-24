@@ -45,8 +45,8 @@ final class ProjectionIntegrityViolationDetectionRunner implements ContentReposi
             ->nodeAggregatesAreConsistentlyClassifiedPerContentStream());
         $result->merge($this->projectionIntegrityViolationDetector->referenceIntegrityIsProvided());
         $result->merge($this->projectionIntegrityViolationDetector->referencesAreDistinctlySorted());
-        $result->merge($this->projectionIntegrityViolationDetector->restrictionIntegrityIsProvided());
-        $result->merge($this->projectionIntegrityViolationDetector->restrictionsArePropagatedRecursively());
+        $result->merge($this->projectionIntegrityViolationDetector->attributeIntegrityIsProvided());
+        $result->merge($this->projectionIntegrityViolationDetector->attributesArePropagatedRecursively());
         $result->merge($this->projectionIntegrityViolationDetector->siblingsAreDistinctlySorted());
 
         return $result;

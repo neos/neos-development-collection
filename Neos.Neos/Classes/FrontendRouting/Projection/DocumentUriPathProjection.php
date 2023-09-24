@@ -15,8 +15,8 @@ use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\ParentNodeMoveDestination;
@@ -121,8 +121,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             NodePeerVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodeSpecializationVariantWasCreated::class,
-            NodeAggregateWasDisabled::class,
-            NodeAggregateWasEnabled::class,
+            NodeAggregateAttributeWasAdded::class,
+            NodeAggregateAttributeWasRemoved::class,
             NodeAggregateWasRemoved::class,
             NodePropertiesWereSet::class,
             NodeAggregateWasMoved::class,
@@ -142,8 +142,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            NodeAggregateAttributeWasAdded::class => $this->whenNodeAggregateAttributeWasAdded($event),
+            NodeAggregateAttributeWasRemoved::class => $this->whenNodeAggregateAttributeWasRemoved($event),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
@@ -415,9 +415,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateAttributeWasAdded(NodeAggregateAttributeWasAdded $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->attribute->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -446,9 +446,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
-    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateAttributeWasRemoved(NodeAggregateAttributeWasRemoved $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->attribute->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {

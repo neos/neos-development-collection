@@ -22,8 +22,8 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasRemoved;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -102,8 +102,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
     public function canHandle(EventInterface $event): bool
     {
         return in_array($event::class, [
-            NodeAggregateWasDisabled::class,
-            NodeAggregateWasEnabled::class,
+            NodeAggregateAttributeWasAdded::class,
+            NodeAggregateAttributeWasRemoved::class,
             ContentStreamWasForked::class,
             DimensionSpacePointWasMoved::class
         ]);
@@ -112,8 +112,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            NodeAggregateAttributeWasAdded::class => $this->whenNodeAggregateAttributeWasAdded($event),
+            NodeAggregateAttributeWasRemoved::class => $this->whenNodeAggregateAttributeWasRemoved($event),
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
@@ -137,7 +137,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
     }
 
 
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateAttributeWasAdded(NodeAggregateAttributeWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
             foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -160,7 +160,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
         });
     }
 
-    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateAttributeWasRemoved(NodeAggregateAttributeWasRemoved $event): void
     {
         $this->getDatabaseConnection()->executeQuery(
             '

@@ -82,6 +82,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * - n -> node
  * - h -> hierarchy edge
  * - r -> reference
+ * - a -> attribute
  *
  * - if more than one node (parent-child)
  *   - pn -> parent node
@@ -163,7 +164,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('n.nodeaggregateid = :nodeAggregateId')->setParameter('nodeAggregateId', $nodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
-        $this->addRestrictionRelationConstraints($queryBuilder);
+        $this->addAttributeRelationConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
@@ -178,7 +179,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('n.classification = :nodeAggregateClassification')
                 ->setParameter('nodeAggregateClassification', NodeAggregateClassification::CLASSIFICATION_ROOT->value);
-        $this->addRestrictionRelationConstraints($queryBuilder);
+        $this->addAttributeRelationConstraints($queryBuilder);
         return $this->fetchNode($queryBuilder);
     }
 
@@ -195,7 +196,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ch.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('ch.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilder, 'cn', 'ch');
+        $this->addAttributeRelationConstraints($queryBuilder, 'cn', 'ch');
         return $this->fetchNode($queryBuilder);
     }
 
@@ -228,7 +229,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->andWhere('h.name = :edgeName')->setParameter('edgeName', $edgeName->value);
-        $this->addRestrictionRelationConstraints($queryBuilder, 'cn');
+        $this->addAttributeRelationConstraints($queryBuilder, 'cn');
         return $this->fetchNode($queryBuilder);
     }
 
@@ -277,7 +278,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial);
+        $this->addAttributeRelationConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('c.*, h.name, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
@@ -292,7 +293,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilderRecursive, $filter->nodeTypeConstraints, 'c');
         }
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'c');
+        $this->addAttributeRelationConstraints($queryBuilderRecursive, 'c');
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
@@ -366,7 +367,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('n.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'ph');
+        $this->addAttributeRelationConstraints($queryBuilderInitial, 'n', 'ph');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('p.*, h.name, h.contentstreamid, h.parentnodeanchor')
@@ -375,7 +376,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = p.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'p');
+        $this->addAttributeRelationConstraints($queryBuilderRecursive, 'p');
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
@@ -476,22 +477,23 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return 'param_' . (++$this->dynamicParameterCount);
     }
 
-    private function addRestrictionRelationConstraints(QueryBuilder $queryBuilder, string $nodeTableAlias = 'n', string $hierarchyRelationTableAlias = 'h'): void
+    private function addAttributeRelationConstraints(QueryBuilder $queryBuilder, string $nodeTableAlias = 'n', string $hierarchyRelationTableAlias = 'h'): void
     {
-        if ($this->visibilityConstraints->isDisabledContentShown()) {
+        if ($this->visibilityConstraints->restrictedAttributes()->isEmpty()) {
             return;
         }
         $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
         $hierarchyRelationTablePrefix = $hierarchyRelationTableAlias === '' ? '' : $hierarchyRelationTableAlias . '.';
         $subQueryBuilder = $this->createQueryBuilder()
             ->select('1')
-            ->from($this->tableNamePrefix . '_restrictionrelation', 'r')
-            ->where('r.contentstreamid = ' . $hierarchyRelationTablePrefix . 'contentstreamid')
-            ->andWhere('r.dimensionspacepointhash = ' . $hierarchyRelationTablePrefix . 'dimensionspacepointhash')
-            ->andWhere('r.affectednodeaggregateid = ' . $nodeTablePrefix . 'nodeaggregateid');
+            ->from($this->tableNamePrefix . '_attribute', 'a')
+            ->where('a.contentstreamid = ' . $hierarchyRelationTablePrefix . 'contentstreamid')
+            ->andWhere('a.dimensionspacepointhash = ' . $hierarchyRelationTablePrefix . 'dimensionspacepointhash')
+            ->andWhere('a.affectednodeaggregateid = ' . $nodeTablePrefix . 'nodeaggregateid')
+            ->andWhere('a.value IN ("disabled")');
         $queryBuilder->andWhere(
             'NOT EXISTS (' . $subQueryBuilder->getSQL() . ')'
-        );
+        )->setParameter('restrictedAttributes', $this->visibilityConstraints->restrictedAttributes()->toStringArray(), Connection::PARAM_STR_ARRAY);
     }
 
     private function addNodeTypeConstraints(QueryBuilder $queryBuilder, NodeTypeConstraints $nodeTypeConstraints, string $nodeTableAlias = 'n'): void
@@ -605,7 +607,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->propertyValue !== null) {
             $this->addPropertyValueConstraints($queryBuilder, $filter->propertyValue);
         }
-        $this->addRestrictionRelationConstraints($queryBuilder);
+        $this->addAttributeRelationConstraints($queryBuilder);
         return $queryBuilder;
     }
 
@@ -625,8 +627,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('sh.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('dh.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('sh.contentstreamid = :contentStreamId');
-        $this->addRestrictionRelationConstraints($queryBuilder, 'dn', 'dh');
-        $this->addRestrictionRelationConstraints($queryBuilder, 'sn', 'sh');
+        $this->addAttributeRelationConstraints($queryBuilder, 'dn', 'dh');
+        $this->addAttributeRelationConstraints($queryBuilder, 'sn', 'sh');
         if ($filter->nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints, "{$destinationTablePrefix}n");
         }
@@ -692,7 +694,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('h.position ' . ($preceding ? '<' : '>') . ' (' . $siblingPositionSubQuery->getSQL() . ')')
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
 
-        $this->addRestrictionRelationConstraints($queryBuilder);
+        $this->addAttributeRelationConstraints($queryBuilder);
         if ($filter->nodeTypeConstraints !== null) {
             $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints);
         }
@@ -725,8 +727,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('c.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'n', 'ph');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial, 'c', 'ch');
+        $this->addAttributeRelationConstraints($queryBuilderInitial, 'n', 'ph');
+        $this->addAttributeRelationConstraints($queryBuilderInitial, 'c', 'ch');
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('p.*, h.name, h.contentstreamid, h.parentnodeanchor')
@@ -735,7 +737,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.childnodeanchor = p.relationanchorpoint')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'p');
+        $this->addAttributeRelationConstraints($queryBuilderRecursive, 'p');
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')
@@ -767,7 +769,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('ph.contentstreamid = :contentStreamId')
             ->andWhere('ph.dimensionspacepointhash = :dimensionSpacePointHash')
             ->andWhere('p.nodeaggregateid = :entryNodeAggregateId');
-        $this->addRestrictionRelationConstraints($queryBuilderInitial);
+        $this->addAttributeRelationConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
             ->select('c.*, h.name, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
@@ -776,7 +778,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->innerJoin('p', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = h.childnodeanchor')
             ->where('h.contentstreamid = :contentStreamId')
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash');
-        $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'c');
+        $this->addAttributeRelationConstraints($queryBuilderRecursive, 'c');
 
         $queryBuilderCte = $this->createQueryBuilder()
             ->select('*')

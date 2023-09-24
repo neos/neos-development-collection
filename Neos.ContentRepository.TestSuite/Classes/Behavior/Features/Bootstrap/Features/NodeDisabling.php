@@ -75,11 +75,11 @@ trait NodeDisabling
     }
 
     /**
-     * @Given /^the event NodeAggregateWasDisabled was published with payload:$/
+     * @Given /^the event NodeAggregateAttributeWasAdded was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventNodeAggregateAttributeWasAddedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -88,16 +88,15 @@ trait NodeDisabling
                 : $this->currentContentStreamId
         );
 
-        $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeAggregateAttributeWasAdded', $streamName->getEventStreamName(), $eventPayload);
     }
 
-
     /**
-     * @Given /^the event NodeAggregateWasEnabled was published with payload:$/
+     * @Given /^the event NodeAggregateAttributeWasRemoved was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventNodeAggregateAttributeWasRemovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -106,7 +105,7 @@ trait NodeDisabling
                 : $this->currentContentStreamId
         );
 
-        $this->publishEvent('NodeAggregateWasEnabled', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('NodeAggregateAttributeWasRemoved', $streamName->getEventStreamName(), $eventPayload);
     }
 
 

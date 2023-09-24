@@ -32,10 +32,10 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
 
     # lady-eleonode-rootford
@@ -48,7 +48,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     #
     And I am in content stream "cs-identifier" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                                          | initialPropertyValues                    | nodeName |
+      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                   | initialPropertyValues                    | nodeName |
       | shernode-homes         | lady-eleonode-rootford | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "ignore-me"}          | node1    |
       | sir-david-nodenborough | shernode-homes         | Neos.Neos:Test.Routing.Page    | {"uriPathSegment": "david-nodenborough"} | node2    |
       | duke-of-contentshire   | sir-david-nodenborough | Neos.Neos:Test.Routing.Content | {"uriPathSegment": "ignore-me"}          | node3    |
@@ -166,11 +166,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
+    And the event NodeAggregateAttributeWasAdded was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
+      | attribute                    | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
@@ -197,11 +198,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
+    And the event NodeAggregateAttributeWasAdded was published with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | affectedDimensionSpacePoints | [{}]                    |
+      | attribute                    | "disabled"              |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
@@ -214,11 +216,12 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasEnabled was published with payload:
+    And the event NodeAggregateAttributeWasRemoved was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"

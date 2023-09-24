@@ -13,7 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 /**
  * @internal
  */
-trait RestrictionRelations
+trait Attributes
 {
     abstract protected function getProjectionContentGraph(): ProjectionContentGraph;
 
@@ -25,20 +25,20 @@ trait RestrictionRelations
      * @param DimensionSpacePointSet $affectedDimensionSpacePoints
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
+    private function removeOutgoingAttributeRelationsOfNodeAggregateInDimensionSpacePoints(
         ContentStreamId $contentStreamId,
         NodeAggregateId $originNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePoints
     ): void {
         $this->getDatabaseConnection()->executeUpdate(
             '
--- GraphProjector::removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints
+-- GraphProjector::removeOutgoingAttributeRelationsOfNodeAggregateInDimensionSpacePoints
 
-DELETE r.*
-FROM ' . $this->getTableNamePrefix() . '_restrictionrelation r
-WHERE r.contentstreamid = :contentStreamId
-AND r.originnodeaggregateid = :originNodeAggregateId
-AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
+DELETE a.*
+FROM ' . $this->getTableNamePrefix() . '_attribute a
+WHERE a.contentstreamid = :contentStreamId
+AND a.originnodeaggregateid = :originNodeAggregateId
+AND a.dimensionspacepointhash in (:dimensionSpacePointHashes)',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'originNodeAggregateId' => $originNodeAggregateId->value,
@@ -53,16 +53,16 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
     /**
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeAllRestrictionRelationsUnderneathNodeAggregate(
+    private function removeAllAttributeRelationsUnderneathNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId
     ): void {
         $this->getDatabaseConnection()->executeUpdate(
             '
-                -- GraphProjector::removeAllRestrictionRelationsUnderneathNodeAggregate
+                -- GraphProjector::removeAllAttributeRelationsUnderneathNodeAggregate
 
-                delete r.* from
-                    ' . $this->getTableNamePrefix() . '_restrictionrelation r
+                delete a.* from
+                    ' . $this->getTableNamePrefix() . '_attribute a
                     join
                      (
                         -- we build a recursive tree
@@ -106,9 +106,9 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
                 -- the "tree" CTE now contains a list of tuples (nodeAggregateId,dimensionSpacePointHash)
                 -- which are *descendants* of the starting NodeAggregateId in ALL DimensionSpacePointHashes
                 where
-                    r.contentstreamid = :contentStreamId
-                    and r.dimensionspacepointhash = tree.dimensionspacepointhash
-                    and r.affectednodeaggregateid = tree.nodeaggregateid
+                    a.contentstreamid = :contentStreamId
+                    and a.dimensionspacepointhash = tree.dimensionspacepointhash
+                    and a.affectednodeaggregateid = tree.nodeaggregateid
             ',
             [
                 'entryNodeAggregateId' => $nodeAggregateId->value,
@@ -120,7 +120,7 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
     /**
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function removeAllRestrictionRelationsInSubtreeImposedByAncestors(
+    private function removeAllAttributeRelationsInSubtreeImposedByAncestors(
         ContentStreamId $contentStreamId,
         NodeAggregateId $entryNodeAggregateId,
         DimensionSpacePointSet $affectedDimensionSpacePoints
@@ -134,14 +134,14 @@ AND r.dimensionspacepointhash in (:dimensionSpacePointHashes)',
 
         $this->getDatabaseConnection()->executeUpdate(
             '
-                -- GraphProjector::removeAllRestrictionRelationsInSubtreeImposedByAncestors
+                -- GraphProjector::removeAllAttributeRelationsInSubtreeImposedByAncestors
 
-                DELETE r.*
-                    FROM ' . $this->getTableNamePrefix() . '_restrictionrelation r
-                    WHERE r.contentstreamid = :contentStreamId
-                    AND r.originnodeaggregateid NOT IN (:descendantNodeAggregateIds)
-                    AND r.affectednodeaggregateid IN (:descendantNodeAggregateIds)
-                    AND r.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)',
+                DELETE a.*
+                    FROM ' . $this->getTableNamePrefix() . '_attribute a
+                    WHERE a.contentstreamid = :contentStreamId
+                    AND a.originnodeaggregateid NOT IN (:descendantNodeAggregateIds)
+                    AND a.affectednodeaggregateid IN (:descendantNodeAggregateIds)
+                    AND a.dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)',
             [
                 'contentStreamId' => $contentStreamId->value,
                 'descendantNodeAggregateIds' => array_keys($descendantNodeAggregateIds),

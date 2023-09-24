@@ -51,11 +51,12 @@ Feature: Disable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 8 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 7 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 7 is of type "NodeAggregateAttributeWasAdded" with payload:
       | Key                          | Expected                 |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [[]]                     |
+      | attribute                    | "disabled"               |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"

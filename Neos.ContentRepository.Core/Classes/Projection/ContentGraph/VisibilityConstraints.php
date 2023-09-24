@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Dto\Attribute;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Dto\Attributes;
+
 /**
  * The context parameters value object
  *
@@ -33,6 +36,11 @@ final class VisibilityConstraints
     public function isDisabledContentShown(): bool
     {
         return $this->disabledContentShown;
+    }
+
+    public function restrictedAttributes(): Attributes
+    {
+        return $this->disabledContentShown ? Attributes::createEmpty() : Attributes::fromStringArray(['disabled']);
     }
 
     public function getHash(): string

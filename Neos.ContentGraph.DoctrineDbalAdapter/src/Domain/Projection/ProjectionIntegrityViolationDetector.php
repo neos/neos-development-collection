@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
+ * This file is part of the Neos.ContentGraph.DoctrineDbalAdapaer package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -17,12 +17,12 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ProjectionIntegrityViolationDetectorInterface;
 
 /**
  * The Doctrine database backend implementation for projection invariant checks
@@ -175,7 +175,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     /**
      * @inheritDoc
      */
-    public function restrictionsArePropagatedRecursively(): Result
+    public function attributesArePropagatedRecursively(): Result
     {
         $result = new Result();
         $nodeRecordsWithMissingRestrictions = $this->client->getConnection()->executeQuery(
@@ -183,17 +183,17 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
             FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
             INNER JOIN ' . $this->tableNamePrefix . '_node p
                 ON p.relationanchorpoint = h.parentnodeanchor
-            INNER JOIN ' . $this->tableNamePrefix . '_restrictionrelation pr
-                ON pr.affectednodeaggregateid = p.nodeaggregateid
-                AND pr.contentstreamid = h.contentstreamid
-                AND pr.dimensionspacepointhash = h.dimensionspacepointhash
+            INNER JOIN ' . $this->tableNamePrefix . '_attribute pa
+                ON pa.affectednodeaggregateid = p.nodeaggregateid
+                AND pa.contentstreamid = h.contentstreamid
+                AND pa.dimensionspacepointhash = h.dimensionspacepointhash
             INNER JOIN ' . $this->tableNamePrefix . '_node c
                 ON c.relationanchorpoint = h.childnodeanchor
-            LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation cr
-                ON cr.affectednodeaggregateid = c.nodeaggregateid
-                AND cr.contentstreamid = h.contentstreamid
-                AND cr.dimensionspacepointhash = h.dimensionspacepointhash
-            WHERE cr.affectednodeaggregateid IS NULL'
+            LEFT JOIN ' . $this->tableNamePrefix . '_attribute ca
+                ON ca.affectednodeaggregateid = c.nodeaggregateid
+                AND ca.contentstreamid = h.contentstreamid
+                AND ca.dimensionspacepointhash = h.dimensionspacepointhash
+            WHERE ca.affectednodeaggregateid IS NULL'
         )->fetchAllAssociative();
 
         foreach ($nodeRecordsWithMissingRestrictions as $nodeRecord) {
@@ -201,7 +201,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 'Node aggregate ' . $nodeRecord['nodeaggregateid']
                 . ' misses a restriction relation in content stream ' . $nodeRecord['contentstreamid']
                 . ' and dimension space point ' . $nodeRecord['dimensionspacepoint'],
-                self::ERROR_CODE_NODE_HAS_MISSING_RESTRICTION
+                self::ERROR_CODE_NODE_HAS_MISSING_ATTRIBUTE
             ));
         }
 
@@ -211,27 +211,27 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
     /**
      * @inheritDoc
      */
-    public function restrictionIntegrityIsProvided(): Result
+    public function attributeIntegrityIsProvided(): Result
     {
         $result = new Result();
 
         $restrictionRelationRecordsWithoutOriginOrAffectedNode = $this->client->getConnection()->executeQuery(
             '
-            SELECT r.* FROM ' . $this->tableNamePrefix . '_restrictionrelation r
+            SELECT a.* FROM ' . $this->tableNamePrefix . '_attribute a
                 LEFT JOIN (
                     ' . $this->tableNamePrefix . '_node p
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
                         ON p.relationanchorpoint = ph.childnodeanchor
-                ) ON p.nodeaggregateid = r.originnodeaggregateid
-                AND ph.contentstreamid = r.contentstreamid
-                AND ph.dimensionspacepointhash = r.dimensionspacepointhash
+                ) ON p.nodeaggregateid = a.originnodeaggregateid
+                AND ph.contentstreamid = a.contentstreamid
+                AND ph.dimensionspacepointhash = a.dimensionspacepointhash
                 LEFT JOIN (
                     ' . $this->tableNamePrefix . '_node c
                     INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
                         ON c.relationanchorpoint = ch.childnodeanchor
-                ) ON c.nodeaggregateid = r.affectednodeaggregateid
-                AND ch.contentstreamid = r.contentstreamid
-                AND ch.dimensionspacepointhash = r.dimensionspacepointhash
+                ) ON c.nodeaggregateid = a.affectednodeaggregateid
+                AND ch.contentstreamid = a.contentstreamid
+                AND ch.dimensionspacepointhash = a.dimensionspacepointhash
             WHERE p.nodeaggregateid IS NULL
             OR c.nodeaggregateid IS NULL'
         )->fetchAllAssociative();
@@ -242,7 +242,7 @@ final class ProjectionIntegrityViolationDetector implements ProjectionIntegrityV
                 . ' -> ' . $relationRecord['affectednodeaggregateid']
                 . ' does not connect two nodes in content stream ' . $relationRecord['contentstreamid']
                 . ' and dimension space point ' . $relationRecord['dimensionspacepointhash'],
-                self::ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED
+                self::ERROR_CODE_ATTRIBUTE_INTEGRITY_IS_COMPROMISED
             ));
         }
 

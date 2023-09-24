@@ -12,21 +12,22 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Event;
+namespace Neos\ContentRepository\Core\Feature\NodeAttributes\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Dto\Attribute;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * A node aggregate was enabled
+ * An attribute was removed from a node aggregate (recursively!)
  *
- * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see NodeAggregateAttributeWasRemoved} event instead. This implementation is just kept for backwards-compatibility
+ * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateWasEnabled implements
+final class NodeAggregateAttributeWasRemoved implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
@@ -34,7 +35,9 @@ final class NodeAggregateWasEnabled implements
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
+        /** The dimension space points the node aggregate was disabled in */
         public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public readonly Attribute $attribute,
     ) {
     }
 
@@ -54,6 +57,7 @@ final class NodeAggregateWasEnabled implements
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->affectedDimensionSpacePoints,
+            $this->attribute,
         );
     }
 
@@ -63,6 +67,7 @@ final class NodeAggregateWasEnabled implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
+            Attribute::fromString($values['attribute']),
         );
     }
 

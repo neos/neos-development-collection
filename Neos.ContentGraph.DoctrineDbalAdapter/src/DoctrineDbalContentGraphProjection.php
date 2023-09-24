@@ -8,11 +8,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Attributes;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeDisabling;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\RestrictionRelations;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
@@ -28,8 +28,8 @@ use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -46,7 +46,6 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\CatchUpHookFactoryInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
@@ -68,7 +67,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 {
     use NodeVariation;
     use NodeDisabling;
-    use RestrictionRelations;
+    use Attributes;
     use NodeRemoval;
     use NodeMove;
 
@@ -149,7 +148,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_node');
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyrelation');
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
-        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionrelation');
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_attribute');
     }
 
     public function canHandle(EventInterface $event): bool
@@ -163,7 +162,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ContentStreamWasRemoved::class,
             NodePropertiesWereSet::class,
             NodeReferencesWereSet::class,
-            NodeAggregateWasEnabled::class,
+            NodeAggregateAttributeWasRemoved::class,
             NodeAggregateTypeWasChanged::class,
             DimensionSpacePointWasMoved::class,
             DimensionShineThroughWasAdded::class,
@@ -172,7 +171,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodePeerVariantWasCreated::class,
-            NodeAggregateWasDisabled::class
+            NodeAggregateAttributeWasAdded::class
         ]);
     }
 
@@ -187,7 +186,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            NodeAggregateAttributeWasRemoved::class => $this->whenNodeAggregateAttributeWasRemoved($event),
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
@@ -196,7 +195,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            NodeAggregateAttributeWasAdded::class => $this->whenNodeAggregateAttributeWasAdded($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -324,7 +323,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $eventEnvelope,
             );
 
-            $this->connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
+            $this->connectAttributeRelationsFromParentNodeToNewlyCreatedNode(
                 $event->contentStreamId,
                 $event->parentNodeAggregateId,
                 $event->nodeAggregateId,
@@ -365,11 +364,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * Copy the restriction edges from the parent Node to the newly created child node;
+     * Copy the attribute edges from the parent Node to the newly created child node;
      * so that newly created nodes inherit the visibility constraints of the parent.
      * @throws \Doctrine\DBAL\DBALException
      */
-    private function connectRestrictionRelationsFromParentNodeToNewlyCreatedNode(
+    private function connectAttributeRelationsFromParentNodeToNewlyCreatedNode(
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId,
         NodeAggregateId $newlyCreatedNodeAggregateId,
@@ -378,23 +377,25 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         // TODO: still unsure why we need an "INSERT IGNORE" here;
         // normal "INSERT" can trigger a duplicate key constraint exception
         $this->getDatabaseConnection()->executeUpdate('
-                INSERT IGNORE INTO ' . $this->tableNamePrefix . '_restrictionrelation (
+                INSERT IGNORE INTO ' . $this->tableNamePrefix . '_attribute (
                   contentstreamid,
                   dimensionspacepointhash,
                   originnodeaggregateid,
-                  affectednodeaggregateid
+                  affectednodeaggregateid,
+                  value
                 )
                 SELECT
-                  r.contentstreamid,
-                  r.dimensionspacepointhash,
-                  r.originnodeaggregateid,
-                  "' . $newlyCreatedNodeAggregateId->value . '" as affectednodeaggregateid
+                  a.contentstreamid,
+                  a.dimensionspacepointhash,
+                  a.originnodeaggregateid,
+                  "' . $newlyCreatedNodeAggregateId->value . '" as affectednodeaggregateid,
+                  a.value
                 FROM
-                    ' . $this->tableNamePrefix . '_restrictionrelation r
+                    ' . $this->tableNamePrefix . '_attribute a
                     WHERE
-                        r.contentstreamid = :sourceContentStreamId
-                        and r.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
-                        and r.affectednodeaggregateid = :parentNodeAggregateId
+                        a.contentstreamid = :sourceContentStreamId
+                        and a.dimensionspacepointhash IN (:visibleDimensionSpacePoints)
+                        and a.affectednodeaggregateid = :parentNodeAggregateId
             ', [
             'sourceContentStreamId' => $contentStreamId->value,
             'visibleDimensionSpacePoints' => $dimensionSpacePointsInWhichNewlyCreatedNodeAggregateIsVisible
@@ -641,23 +642,25 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ]);
 
             //
-            // 2) copy Hidden Node information to second content stream
+            // 2) copy Node attributes to second content stream
             //
             $this->getDatabaseConnection()->executeUpdate('
-                INSERT INTO ' . $this->tableNamePrefix . '_restrictionrelation (
+                INSERT INTO ' . $this->tableNamePrefix . '_attribute (
                   contentstreamid,
                   dimensionspacepointhash,
                   originnodeaggregateid,
-                  affectednodeaggregateid
+                  affectednodeaggregateid,
+                  value
                 )
                 SELECT
                   "' . $event->newContentStreamId->value . '" AS contentstreamid,
-                  r.dimensionspacepointhash,
-                  r.originnodeaggregateid,
-                  r.affectednodeaggregateid
+                  a.dimensionspacepointhash,
+                  a.originnodeaggregateid,
+                  a.affectednodeaggregateid,
+                  a.value
                 FROM
-                    ' . $this->tableNamePrefix . '_restrictionrelation r
-                    WHERE r.contentstreamid = :sourceContentStreamId
+                    ' . $this->tableNamePrefix . '_attribute a
+                    WHERE a.contentstreamid = :sourceContentStreamId
             ', [
                 'sourceContentStreamId' => $event->sourceContentStreamId->value
             ]);
@@ -702,9 +705,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     )
             ');
 
-            // Drop restriction relations
+            // Drop attribute relations
             $this->getDatabaseConnection()->executeUpdate('
-                DELETE FROM ' . $this->tableNamePrefix . '_restrictionrelation
+                DELETE FROM ' . $this->tableNamePrefix . '_attribute
                 WHERE
                     contentstreamid = :contentStreamId
             ', [
@@ -814,99 +817,13 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         });
     }
 
-    private function cascadeRestrictionRelations(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $parentNodeAggregateId,
-        NodeAggregateId $entryNodeAggregateId,
-        DimensionSpacePointSet $affectedDimensionSpacePoints
-    ): void {
-        $this->getDatabaseConnection()->executeUpdate(
-            '
-            -- GraphProjector::cascadeRestrictionRelations
-            INSERT INTO ' . $this->tableNamePrefix . '_restrictionrelation
-            (
-              contentstreamid,
-              dimensionspacepointhash,
-              originnodeaggregateid,
-              affectednodeaggregateid
-            )
-            -- we build a recursive tree
-            with recursive tree as (
-                 -- --------------------------------
-                 -- INITIAL query: select the nodes of the given entry node aggregate as roots of the tree
-                 -- --------------------------------
-                 select
-                    n.relationanchorpoint,
-                    n.nodeaggregateid,
-                    h.dimensionspacepointhash
-                 from
-                    ' . $this->tableNamePrefix . '_node n
-                 -- we need to join with the hierarchy relation, because we need the dimensionspacepointhash.
-                 inner join ' . $this->tableNamePrefix . '_hierarchyrelation h
-                    on h.childnodeanchor = n.relationanchorpoint
-                 where
-                    n.nodeaggregateid = :entryNodeAggregateId
-                    and h.contentstreamid = :contentStreamId
-                    and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-            union
-                 -- --------------------------------
-                 -- RECURSIVE query: do one "child" query step
-                 -- --------------------------------
-                 select
-                    c.relationanchorpoint,
-                    c.nodeaggregateid,
-                    h.dimensionspacepointhash
-                 from
-                    tree p
-                 inner join ' . $this->tableNamePrefix . '_hierarchyrelation h
-                    on h.parentnodeanchor = p.relationanchorpoint
-                 inner join ' . $this->tableNamePrefix . '_node c
-                    on h.childnodeanchor = c.relationanchorpoint
-                 where
-                    h.contentstreamid = :contentStreamId
-                    and h.dimensionspacepointhash in (:dimensionSpacePointHashes)
-            )
-
-                 -- --------------------------------
-                 -- create new restriction relations...
-                 -- --------------------------------
-            SELECT
-                "' . $contentStreamId->value . '" as contentstreamid,
-                tree.dimensionspacepointhash,
-                originnodeaggregateid,
-                tree.nodeaggregateid as affectednodeaggregateid
-            FROM tree
-                 -- --------------------------------
-                 -- ...by joining the tree with all restriction relations ingoing to the given parent
-                 -- --------------------------------
-                INNER JOIN (
-                    SELECT originnodeaggregateid FROM ' . $this->tableNamePrefix . '_restrictionrelation
-                        WHERE contentstreamid = :contentStreamId
-                        AND affectednodeaggregateid = :parentNodeAggregateId
-                        AND dimensionspacepointhash IN (:affectedDimensionSpacePointHashes)
-                ) AS joinedrestrictingancestors
-            ',
-            [
-                'contentStreamId' => $contentStreamId->value,
-                'parentNodeAggregateId' => $parentNodeAggregateId->value,
-                'entryNodeAggregateId' => $entryNodeAggregateId->value,
-                'dimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes(),
-                'affectedDimensionSpacePointHashes' => $affectedDimensionSpacePoints->getPointHashes()
-            ],
-            [
-                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
-                'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
-            ]
-        );
-    }
-
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenNodeAggregateAttributeWasRemoved(NodeAggregateAttributeWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
+            $this->removeOutgoingAttributeRelationsOfNodeAggregateInDimensionSpacePoints(
                 $event->contentStreamId,
                 $event->nodeAggregateId,
                 $event->affectedDimensionSpacePoints
@@ -1142,15 +1059,15 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 ]
             );
 
-            // 3) restriction relations
+            // 3) attribute relations
             $this->getDatabaseConnection()->executeStatement(
                 '
-                UPDATE ' . $this->tableNamePrefix . '_restrictionrelation r
+                UPDATE ' . $this->tableNamePrefix . '_attribute a
                     SET
-                        r.dimensionspacepointhash = :newDimensionSpacePointHash
+                        a.dimensionspacepointhash = :newDimensionSpacePointHash
                     WHERE
-                      r.dimensionspacepointhash = :originalDimensionSpacePointHash
-                      AND r.contentstreamid = :contentStreamId
+                      a.dimensionspacepointhash = :originalDimensionSpacePointHash
+                      AND a.contentstreamid = :contentStreamId
                       ',
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
@@ -1196,23 +1113,25 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 ]
             );
 
-            // 2) restriction relations
+            // 2) attribute relations
             $this->getDatabaseConnection()->executeUpdate('
-                INSERT INTO ' . $this->tableNamePrefix . '_restrictionrelation (
+                INSERT INTO ' . $this->tableNamePrefix . '_attribute (
                   contentstreamid,
                   dimensionspacepointhash,
                   originnodeaggregateid,
-                  affectednodeaggregateid
+                  affectednodeaggregateid,
+                  value
                 )
                 SELECT
-                  r.contentstreamid,
+                  a.contentstreamid,
                   :targetDimensionSpacePointHash,
-                  r.originnodeaggregateid,
-                  r.affectednodeaggregateid
+                  a.originnodeaggregateid,
+                  a.affectednodeaggregateid,
+                  a.value
                 FROM
-                    ' . $this->tableNamePrefix . '_restrictionrelation r
-                    WHERE r.contentstreamid = :contentStreamId
-                    AND r.dimensionspacepointhash = :sourceDimensionSpacePointHash
+                    ' . $this->tableNamePrefix . '_attribute a
+                    WHERE a.contentstreamid = :contentStreamId
+                    AND a.dimensionspacepointhash = :sourceDimensionSpacePointHash
 
             ', [
                 'contentStreamId' => $event->contentStreamId->value,

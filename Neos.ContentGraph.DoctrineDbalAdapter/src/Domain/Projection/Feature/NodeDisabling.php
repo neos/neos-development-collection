@@ -5,13 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventEnvelope;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
 
 /**
  * The NodeDisabling projection feature trait
@@ -25,7 +19,7 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenNodeAggregateAttributeWasAdded(NodeAggregateAttributeWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -34,9 +28,9 @@ trait NodeDisabling
             // normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeStatement(
                 '
--- GraphProjector::whenNodeAggregateWasDisabled
-insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
-    (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid)
+-- GraphProjector::whenNodeAggregateAttributeWasAdded
+insert ignore into ' . $this->getTableNamePrefix() . '_attribute
+    (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid, value)
 
     -- we build a recursive tree
     with recursive tree as (
@@ -76,16 +70,19 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     )
 
     select
-        "' . $event->contentStreamId->value . '" as contentstreamid,
+        :contentStreamId as contentstreamid,
         dimensionspacepointhash,
-        "' . $event->nodeAggregateId->value . '" as originnodeaggregateid,
-        nodeaggregateid as affectednodeaggregateid
+        :originNodeAggregateId as originnodeaggregateid,
+        nodeaggregateid as affectednodeaggregateid,
+        :attributeValue as value
     from tree
             ',
                 [
                     'entryNodeAggregateId' => $event->nodeAggregateId->value,
                     'contentStreamId' => $event->contentStreamId->value,
-                    'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes()
+                    'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes(),
+                    'originNodeAggregateId' => $event->nodeAggregateId->value,
+                    'attributeValue' => $event->attribute->value,
                 ],
                 [
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY

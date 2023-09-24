@@ -22,7 +22,7 @@ class DoctrineDbalContentGraphSchemaBuilder
         $this->createNodeTable($schema);
         $this->createHierarchyRelationTable($schema);
         $this->createReferenceRelationTable($schema);
-        $this->createRestrictionRelationTable($schema);
+        $this->createAttributeTable($schema);
 
         return $schema;
     }
@@ -118,9 +118,9 @@ class DoctrineDbalContentGraphSchemaBuilder
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
     }
 
-    private function createRestrictionRelationTable(Schema $schema): void
+    private function createAttributeTable(Schema $schema): void
     {
-        $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
+        $table = $schema->createTable($this->tableNamePrefix . '_attribute');
         $table->addColumn('contentstreamid', Types::STRING)
             ->setLength(40)
             ->setNotnull(true);
@@ -133,6 +133,9 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('affectednodeaggregateid', Types::STRING)
             ->setLength(64)
             ->setNotnull(true);
+        $table->addColumn('value', Types::STRING)
+            ->setLength(30)
+            ->setNotnull(true);
 
         $table
             ->setPrimaryKey([
@@ -141,5 +144,6 @@ class DoctrineDbalContentGraphSchemaBuilder
                 'originnodeaggregateid',
                 'affectednodeaggregateid'
             ]);
+        $table->addIndex(['value']);
     }
 }

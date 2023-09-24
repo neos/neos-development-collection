@@ -75,11 +75,12 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "NodeAggregateWasEnabled" with payload:
+    And event at index 11 is of type "NodeAggregateAttributeWasRemoved" with payload:
       | Key                          | Expected                                                  |
       | contentStreamId              | "cs-identifier"                                           |
       | nodeAggregateId              | "sir-david-nodenborough"                                  |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"ltz"},{"language":"gsw"}] |
+      | attribute                    | "disabled"                                                |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -370,11 +371,12 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "NodeAggregateWasEnabled" with payload:
+    And event at index 11 is of type "NodeAggregateAttributeWasRemoved" with payload:
       | Key                          | Expected                                                                                       |
       | contentStreamId              | "cs-identifier"                                                                                |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                       |
       | affectedDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"ltz"}] |
+      | attribute                    | "disabled"                                                                                     |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"

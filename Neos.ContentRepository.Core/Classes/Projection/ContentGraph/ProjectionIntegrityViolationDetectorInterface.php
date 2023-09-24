@@ -30,8 +30,8 @@ interface ProjectionIntegrityViolationDetectorInterface
     public const ERROR_CODE_NODE_AGGREGATE_IS_AMBIGUOUSLY_CLASSIFIED = 1597825384;
     public const ERROR_CODE_NODE_IS_DISCONNECTED_FROM_THE_ROOT = 1597754245;
     public const ERROR_CODE_NODE_DOES_NOT_COVER_ITS_ORIGIN = 1597828607;
-    public const ERROR_CODE_NODE_HAS_MISSING_RESTRICTION = 1597837797;
-    public const ERROR_CODE_RESTRICTION_INTEGRITY_IS_COMPROMISED = 1597846598;
+    public const ERROR_CODE_NODE_HAS_MISSING_ATTRIBUTE = 1597837797;
+    public const ERROR_CODE_ATTRIBUTE_INTEGRITY_IS_COMPROMISED = 1597846598;
     public const ERROR_CODE_HIERARCHY_INTEGRITY_IS_COMPROMISED = 1597909228;
     public const ERROR_CODE_SIBLINGS_ARE_AMBIGUOUSLY_SORTED = 1597910918;
     public const ERROR_CODE_REFERENCE_INTEGRITY_IS_COMPROMISED = 1597919585;
@@ -89,8 +89,8 @@ interface ProjectionIntegrityViolationDetectorInterface
     public function tetheredNodesAreNamed(): Result;
 
     /**
-     * A is marked as hidden, so B and C should have incoming restriction edges.
-     * This test should fail if e.g. in the example below, the restriction edge from A to C is missing.
+     * A gets tagged with an attribute, so B and C should have corresponding incoming attribute edges.
+     * This test should fail if e.g. in the example below, the attribute edge from A to C is missing.
      *
      * ┌─────┐
      * │  A  │━━┓
@@ -101,26 +101,26 @@ interface ProjectionIntegrityViolationDetectorInterface
      * │  B  │◀━┛
      * └─────┘  ┃
      *    │
-     *    │     ┃   <-- this Restriction Edge is missing.
+     *    │     ┃   <-- this Attribute Edge is missing.
      * ┌─────┐
      * │  C  │◀ ┛
      * └─────┘
      */
-    public function restrictionsArePropagatedRecursively(): Result;
+    public function attributesArePropagatedRecursively(): Result;
 
     /**
-     * Checks that the restriction edges are connected at source (e.g. to "A") and at destination (e.g. to "B")
+     * Checks that the attribute edges are connected at source (e.g. to "A") and at destination (e.g. to "B")
      *
      * ┌─────┐
-     * │  A  │━━┓ <-- checks that A exists (for each restriction edge)
+     * │  A  │━━┓ <-- checks that A exists (for each attribute edge)
      * └─────┘  ┃
      *    │     ┃
      *    │     ┃
      * ┌─────┐  ┃
-     * │  B  │◀━┛ <-- checks that B exists (for each restriction edge)
+     * │  B  │◀━┛ <-- checks that B exists (for each attribute edge)
      * └─────┘
      */
-    public function restrictionIntegrityIsProvided(): Result;
+    public function attributeIntegrityIsProvided(): Result;
 
     /**
      * Checks that the reference edges are connected at source (e.g. to "A") and at destination (e.g. to "B")

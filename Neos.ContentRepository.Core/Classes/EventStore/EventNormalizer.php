@@ -10,7 +10,10 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Dto\Attribute;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -26,19 +29,19 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregate
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyDiscarded;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPartiallyPublished;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRenamed;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceWasRemoved;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceOwnerWasChanged;
-use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event;
+use Neos\EventStore\Model\Event\EventData;
 use Neos\EventStore\Model\Event\EventType;
-use Neos\ContentRepository\Core\Feature\WorkspaceModification\Event\WorkspaceBaseWorkspaceWasChanged;
 
 /**
  * Central authority to convert Content Repository domain events to Event Store EventData and EventType, vice versa.
@@ -73,9 +76,11 @@ final class EventNormalizer
             DimensionShineThroughWasAdded::class,
             DimensionSpacePointWasMoved::class,
             NodeAggregateNameWasChanged::class,
-            NodeAggregateTypeWasChanged::class,
             NodeAggregateWasDisabled::class,
             NodeAggregateWasEnabled::class,
+            NodeAggregateAttributeWasAdded::class,
+            NodeAggregateAttributeWasRemoved::class,
+            NodeAggregateTypeWasChanged::class,
             NodeAggregateWasMoved::class,
             NodeAggregateWasRemoved::class,
             NodeAggregateWithNodeWasCreated::class,
@@ -147,6 +152,7 @@ final class EventNormalizer
 
     public function denormalize(Event $event): EventInterface
     {
+        /** @var class-string<EventInterface> $eventClassName */
         $eventClassName = $this->getEventClassName($event);
         try {
             $eventDataAsArray = json_decode($event->data->value, true, 512, JSON_THROW_ON_ERROR);
@@ -157,6 +163,12 @@ final class EventNormalizer
             );
         }
         assert(is_array($eventDataAsArray));
-        return $eventClassName::fromArray($eventDataAsArray);
+        $eventInstance = $eventClassName::fromArray($eventDataAsArray);
+        return match ($eventInstance::class) {
+            // upcast disabled / enabled events to the corresponding attribute events
+            NodeAggregateWasDisabled::class => new NodeAggregateAttributeWasAdded($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, Attribute::fromString('disabled')),
+            NodeAggregateWasEnabled::class => new NodeAggregateAttributeWasRemoved($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, Attribute::fromString('disabled')),
+            default => $eventInstance,
+        };
     }
 }

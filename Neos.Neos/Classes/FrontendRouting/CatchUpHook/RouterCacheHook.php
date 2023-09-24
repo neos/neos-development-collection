@@ -2,21 +2,21 @@
 
 namespace Neos\Neos\FrontendRouting\CatchUpHook;
 
-use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\EventStore\Model\EventEnvelope;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
-use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
-use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
-use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\ContentRepository\Core\Projection\CatchUpHookInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\EventStore\Model\EventEnvelope;
+use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\Projection\DocumentNodeInfo;
+use Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder;
 
 final class RouterCacheHook implements CatchUpHookInterface
 {
@@ -43,7 +43,7 @@ final class RouterCacheHook implements CatchUpHookInterface
             NodeAggregateWasRemoved::class => $this->onBeforeNodeAggregateWasRemoved($eventInstance),
             NodePropertiesWereSet::class => $this->onBeforeNodePropertiesWereSet($eventInstance),
             NodeAggregateWasMoved::class => $this->onBeforeNodeAggregateWasMoved($eventInstance),
-            NodeAggregateWasDisabled::class => $this->onBeforeNodeAggregateWasDisabled($eventInstance),
+            NodeAggregateAttributeWasAdded::class => $this->onBeforeNodeAggregateAttributeWasAdded($eventInstance),
             default => null
         };
     }
@@ -51,10 +51,8 @@ final class RouterCacheHook implements CatchUpHookInterface
     public function onAfterEvent(EventInterface $eventInstance, EventEnvelope $eventEnvelope): void
     {
         match ($eventInstance::class) {
-            NodeAggregateWasRemoved::class => $this->flushAllCollectedTags(),
-            NodePropertiesWereSet::class => $this->flushAllCollectedTags(),
-            NodeAggregateWasMoved::class => $this->flushAllCollectedTags(),
-            NodeAggregateWasDisabled::class => $this->flushAllCollectedTags(),
+            NodeAggregateWasRemoved::class, NodePropertiesWereSet::class, NodeAggregateWasMoved::class => $this->flushAllCollectedTags(),
+            NodeAggregateAttributeWasAdded::class => $eventInstance->attribute->value === 'disabled' ? $this->flushAllCollectedTags() : null,
             default => null
         };
     }
@@ -69,9 +67,9 @@ final class RouterCacheHook implements CatchUpHookInterface
         // Nothing to do here
     }
 
-    private function onBeforeNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function onBeforeNodeAggregateAttributeWasAdded(NodeAggregateAttributeWasAdded $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->attribute->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
 

@@ -24,7 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 /**
  * A node aggregate was disabled
  *
- * @api events are the persistence-API of the content repository
+ * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see NodeAggregateAttributeWasAdded} event instead. This implementation is just kept for backwards-compatibility
  */
 final class NodeAggregateWasDisabled implements
     EventInterface,

@@ -225,14 +225,14 @@ final class ContentGraph implements ContentGraphInterface
 
         $query = 'SELECT n.*,
                       h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
-                      r.dimensionspacepointhash AS disableddimensionspacepointhash
+                      a.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = h.childnodeanchor
-                      LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateid = n.nodeaggregateid
-                          AND r.contentstreamid = h.contentstreamid
-                          AND r.affectednodeaggregateid = n.nodeaggregateid
-                          AND r.dimensionspacepointhash = h.dimensionspacepointhash
+                      LEFT JOIN ' . $this->tableNamePrefix . '_attribute a
+                          ON a.originnodeaggregateid = n.nodeaggregateid
+                          AND a.contentstreamid = h.contentstreamid
+                          AND a.affectednodeaggregateid = n.nodeaggregateid
+                          AND a.dimensionspacepointhash = h.dimensionspacepointhash
                       WHERE n.nodeaggregateid = :nodeAggregateId
                       AND h.contentstreamid = :contentStreamId';
         $parameters = [
@@ -261,21 +261,22 @@ final class ContentGraph implements ContentGraphInterface
 
         $query = 'SELECT p.*,
                       ph.name, ph.contentstreamid, ph.dimensionspacepoint AS covereddimensionspacepoint,
-                      r.dimensionspacepointhash AS disableddimensionspacepointhash
+                      a.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
                         ON ph.childnodeanchor = p.relationanchorpoint
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
                         ON ch.parentnodeanchor = p.relationanchorpoint
                       JOIN ' . $this->tableNamePrefix . '_node c ON ch.childnodeanchor = c.relationanchorpoint
-                      LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateid = p.nodeaggregateid
-                          AND r.contentstreamid = ph.contentstreamid
-                          AND r.affectednodeaggregateid = p.nodeaggregateid
-                          AND r.dimensionspacepointhash = ph.dimensionspacepointhash
+                      LEFT JOIN ' . $this->tableNamePrefix . '_attribute a
+                          ON a.originnodeaggregateid = p.nodeaggregateid
+                          AND a.contentstreamid = ph.contentstreamid
+                          AND a.affectednodeaggregateid = p.nodeaggregateid
+                          AND a.dimensionspacepointhash = ph.dimensionspacepointhash
                       WHERE c.nodeaggregateid = :nodeAggregateId
                       AND ph.contentstreamid = :contentStreamId
-                      AND ch.contentstreamid = :contentStreamId';
+                      AND ch.contentstreamid = :contentStreamId
+                      AND a.value = "disabled"';
         $parameters = [
             'nodeAggregateId' => $childNodeAggregateId->value,
             'contentStreamId' => $contentStreamId->value
@@ -302,15 +303,15 @@ final class ContentGraph implements ContentGraphInterface
 
         $query = 'SELECT n.*,
                       h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
-                      r.dimensionspacepointhash AS disableddimensionspacepointhash
+                      a.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node n
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                           ON h.childnodeanchor = n.relationanchorpoint
-                      LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateid = n.nodeaggregateid
-                          AND r.contentstreamid = h.contentstreamid
-                          AND r.affectednodeaggregateid = n.nodeaggregateid
-                          AND r.dimensionspacepointhash = h.dimensionspacepointhash
+                      LEFT JOIN ' . $this->tableNamePrefix . '_attribute a
+                          ON a.originnodeaggregateid = n.nodeaggregateid
+                          AND a.contentstreamid = h.contentstreamid
+                          AND a.affectednodeaggregateid = n.nodeaggregateid
+                          AND a.dimensionspacepointhash = h.dimensionspacepointhash
                       WHERE n.nodeaggregateid = (
                           SELECT p.nodeaggregateid FROM ' . $this->tableNamePrefix . '_node p
                           INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ch
@@ -422,7 +423,7 @@ final class ContentGraph implements ContentGraphInterface
     {
         return 'SELECT c.*,
                       ch.name, ch.contentstreamid, ch.dimensionspacepoint AS covereddimensionspacepoint,
-                      r.dimensionspacepointhash AS disableddimensionspacepointhash
+                      a.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
                           ON ph.childnodeanchor = p.relationanchorpoint
@@ -430,11 +431,11 @@ final class ContentGraph implements ContentGraphInterface
                           ON ch.parentnodeanchor = p.relationanchorpoint
                       JOIN ' . $this->tableNamePrefix . '_node c
                           ON ch.childnodeanchor = c.relationanchorpoint
-                      LEFT JOIN ' . $this->tableNamePrefix . '_restrictionrelation r
-                          ON r.originnodeaggregateid = p.nodeaggregateid
-                          AND r.contentstreamid = ph.contentstreamid
-                          AND r.affectednodeaggregateid = p.nodeaggregateid
-                          AND r.dimensionspacepointhash = ph.dimensionspacepointhash
+                      LEFT JOIN ' . $this->tableNamePrefix . '_attribute a
+                          ON a.originnodeaggregateid = p.nodeaggregateid
+                          AND a.contentstreamid = ph.contentstreamid
+                          AND a.affectednodeaggregateid = p.nodeaggregateid
+                          AND a.dimensionspacepointhash = ph.dimensionspacepointhash
                       WHERE p.nodeaggregateid = :parentNodeAggregateId
                       AND ph.contentstreamid = :contentStreamId
                       AND ch.contentstreamid = :contentStreamId';

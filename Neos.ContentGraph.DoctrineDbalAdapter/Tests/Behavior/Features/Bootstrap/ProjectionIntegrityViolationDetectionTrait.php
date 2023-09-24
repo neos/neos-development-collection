@@ -65,7 +65,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
 
         $this->dbalClient->getConnection()->delete(
-            $this->getTableNamePrefix() . '_restrictionrelation',
+            $this->getTableNamePrefix() . '_attribute',
             $record
         );
     }
@@ -80,7 +80,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_restrictionrelation',
+            $this->getTableNamePrefix() . '_attribute',
             [
                 'originnodeaggregateid' => (string)TestingNodeAggregateId::nonExistent()
             ],
@@ -98,7 +98,7 @@ trait ProjectionIntegrityViolationDetectionTrait
         $dataset = $this->transformPayloadTableToDataset($payloadTable);
         $record = $this->transformDatasetToRestrictionRelationRecord($dataset);
         $this->dbalClient->getConnection()->update(
-            $this->getTableNamePrefix() . '_restrictionrelation',
+            $this->getTableNamePrefix() . '_attribute',
             [
                 'affectednodeaggregateid' => (string)TestingNodeAggregateId::nonExistent()
             ],

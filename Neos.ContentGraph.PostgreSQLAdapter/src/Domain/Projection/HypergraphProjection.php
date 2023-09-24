@@ -33,8 +33,8 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasAdded;
+use Neos\ContentRepository\Core\Feature\NodeAttributes\Event\NodeAggregateAttributeWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -156,9 +156,9 @@ final class HypergraphProjection implements ProjectionInterface
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class,
             NodeAggregateWithNodeWasCreated::class,
-            // NodeDisabling
-            NodeAggregateWasDisabled::class,
-            NodeAggregateWasEnabled::class,
+            // Node Tags
+            NodeAggregateAttributeWasAdded::class,
+            NodeAggregateAttributeWasRemoved::class,
             // NodeModification
             NodePropertiesWereSet::class,
             // NodeReferencing
@@ -189,9 +189,9 @@ final class HypergraphProjection implements ProjectionInterface
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
-            // NodeDisabling
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            // Node tags
+            NodeAggregateAttributeWasAdded::class => $this->whenNodeAggregateAttributeWasAdded($event),
+            NodeAggregateAttributeWasRemoved::class => $this->whenNodeAggregateAttributeWasRemoved($event),
             // NodeModification
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             // NodeReferencing
