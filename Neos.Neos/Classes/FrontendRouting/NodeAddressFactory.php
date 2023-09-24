@@ -14,34 +14,42 @@ declare(strict_types=1);
 
 namespace Neos\Neos\FrontendRouting;
 
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * @api
  */
+#[Flow\Scope("singleton")]
 class NodeAddressFactory
 {
-    private function __construct(
-        private readonly ContentRepository $contentRepository
+    public function __construct(
+        private readonly ContentRepositoryRegistry $contentRepositoryRegistry
     ) {
     }
 
-    public static function create(ContentRepository $contentRepository): self
+    /**
+     * @deprecated will be removed before Neos 9.0
+     */
+    public static function create(): self
     {
-        return new self($contentRepository);
+        return new static();
     }
 
-    public function createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+    public function createFromContentRepositoryIdAndContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+        ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamId,
         DimensionSpacePoint $dimensionSpacePoint,
         NodeAggregateId $nodeAggregateId
     ): NodeAddress {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
             $contentStreamId
         );
         if ($workspace === null) {
@@ -52,7 +60,7 @@ class NodeAddressFactory
             );
         }
         return new NodeAddress(
-            $this->contentRepository->id,
+            $contentRepositoryId,
             $contentStreamId,
             $dimensionSpacePoint,
             $nodeAggregateId,
@@ -62,7 +70,8 @@ class NodeAddressFactory
 
     public function createFromNode(Node $node): NodeAddress
     {
-        return $this->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+        return $this->createFromContentRepositoryIdAndContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+            $node->subgraphIdentity->contentRepositoryId,
             $node->subgraphIdentity->contentStreamId,
             $node->subgraphIdentity->dimensionSpacePoint,
             $node->nodeAggregateId,
@@ -74,14 +83,15 @@ class NodeAddressFactory
         // the reverse method is {@link NodeAddress::serializeForUri} - ensure to adjust it
         // when changing the serialization here
 
-        list($workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdSerialized)
+        list($contentRepositoryIdSerialized, $workspaceNameSerialized, $dimensionSpacePointSerialized, $nodeAggregateIdSerialized)
             = explode('__', $serializedNodeAddress);
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdSerialized);
         $workspaceName = WorkspaceName::fromString($workspaceNameSerialized);
         $dimensionSpacePoint = DimensionSpacePoint::fromUriRepresentation($dimensionSpacePointSerialized);
         $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateIdSerialized);
 
-        // hahah funny und nun?
-        $contentStreamId = $this->contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
             ?->currentContentStreamId;
         if (is_null($contentStreamId)) {
             throw new \InvalidArgumentException(
@@ -91,6 +101,7 @@ class NodeAddressFactory
         }
 
         return new NodeAddress(
+            $contentRepositoryId,
             $contentStreamId,
             $dimensionSpacePoint,
             $nodeAggregateId,

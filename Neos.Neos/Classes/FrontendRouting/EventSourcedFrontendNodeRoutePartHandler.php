@@ -236,7 +236,8 @@ final class EventSourcedFrontendNodeRoutePartHandler extends AbstractRoutePart i
             $uriPath,
             $dimensionSpacePoint->hash
         );
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromContentRepositoryIdAndContentStreamIdAndDimensionSpacePointAndNodeAggregateId(
+            $contentRepository->id,
             $documentUriPathFinder->getLiveContentStreamId(),
             $dimensionSpacePoint,
             $nodeInfo->getNodeAggregateId(),
