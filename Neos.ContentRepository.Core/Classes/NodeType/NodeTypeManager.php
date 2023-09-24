@@ -205,6 +205,7 @@ class NodeTypeManager
     /**
      * @param NodeType $nodeType
      * @param NodeName $childNodeName
+     * @throws ChildNodeNotConfigured if the requested childNode is not configured. Check via {@see NodeType::hasAutoCreatedChildNode()}.
      * @return NodeType
      */
     public function getTypeOfAutoCreatedChildNode(NodeType $nodeType, NodeName $childNodeName): NodeType
@@ -222,18 +223,13 @@ class NodeTypeManager
     public function getAutoCreatedChildNodesFor(NodeType $nodeType): array
     {
         $childNodeConfiguration = $nodeType->getConfiguration('childNodes');
-        if (!isset($childNodeConfiguration)) {
-            return [];
-        }
-
         $autoCreatedChildNodes = [];
-        foreach ($childNodeConfiguration as $childNodeName => $configurationForChildNode) {
+        foreach ($childNodeConfiguration ?? [] as $childNodeName => $configurationForChildNode) {
             if (isset($configurationForChildNode['type'])) {
                 $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value]
                     = $this->getNodeType($configurationForChildNode['type']);
             }
         }
-
         return $autoCreatedChildNodes;
     }
 
@@ -247,7 +243,7 @@ class NodeTypeManager
      * @param NodeName $childNodeName The name of a configured childNode of this NodeType
      * @param NodeType $nodeType The NodeType to check constraints for.
      * @return bool true if the $nodeType is allowed as grandchild node, false otherwise.
-     * @throws \InvalidArgumentException If the given $childNodeName is not configured to be auto-created in $this.
+     * @throws \InvalidArgumentException if the requested childNode is not configured in the parent NodeType. Check via {@see NodeType::hasAutoCreatedChildNode()}.
      */
     public function allowsGrandchildNodeType(NodeType $parentNodeType, NodeName $childNodeName, NodeType $nodeType): bool
     {
@@ -255,8 +251,11 @@ class NodeTypeManager
             $childNodeType = $this->getTypeOfAutoCreatedChildNode($parentNodeType, $childNodeName);
         } catch (ChildNodeNotConfigured $exception) {
             throw new \InvalidArgumentException(
-                'The method "allowsGrandchildNodeType" can only be used on auto-created childNodes, '
-                . 'given $childNodeName "' . $childNodeName->value . '" is not auto-created.',
+                sprintf(
+                    'Cannot determine if grandchild is allowed in %s. Because the given child node name "%s" is not auto-created.',
+                    $parentNodeType->name->value,
+                    $childNodeName->value
+                ),
                 1403858395,
                 $exception
             );

@@ -457,20 +457,30 @@ class NodeType
     public function hasAutoCreatedChildNode(NodeName $nodeName): bool
     {
         $this->initialize();
-
-        return isset($this->fullConfiguration['childNodes'][$nodeName->value]);
+        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
+            if (isset($configurationForChildNode['type'])) {
+                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
-     * @param NodeName $nodeName
-     * @return NodeTypeName
+     * @throws ChildNodeNotConfigured if the requested childNode is not configured. Check via {@see NodeType::hasAutoCreatedChildNode()}.
      */
     public function getNodeTypeNameOfAutoCreatedChildNode(NodeName $nodeName): NodeTypeName
     {
-        if (!isset($this->fullConfiguration['childNodes'][$nodeName->value]['type'])) {
-            throw new ChildNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
+        $this->initialize();
+        foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
+            if (isset($configurationForChildNode['type'])) {
+                if (NodeName::transliterateFromString($rawChildNodeName)->equals($nodeName)) {
+                    return NodeTypeName::fromString($configurationForChildNode['type']);
+                }
+            }
         }
-        return NodeTypeName::fromString($this->fullConfiguration['childNodes'][$nodeName->value]['type']);
+        throw new ChildNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
     }
 
     /**
