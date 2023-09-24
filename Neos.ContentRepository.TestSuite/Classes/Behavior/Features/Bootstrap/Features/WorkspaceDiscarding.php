@@ -39,14 +39,12 @@ trait WorkspaceDiscarding
     public function theCommandDiscardWorkspaceIsExecuted(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $newContentStreamId = isset($commandArguments['newContentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['newContentStreamId'])
-            : ContentStreamId::create();
-
-        $command = DiscardWorkspace::createFullyDeterministic(
+        $command = DiscardWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
-            $newContentStreamId
         );
+        if (isset($commandArguments['newContentStreamId'])) {
+            $command = $command->withNewContentStreamId(ContentStreamId::fromString($commandArguments['newContentStreamId']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
@@ -61,15 +59,13 @@ trait WorkspaceDiscarding
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $nodesToDiscard = NodeIdsToPublishOrDiscard::fromArray($commandArguments['nodesToDiscard']);
-        $newContentStreamId = isset($commandArguments['newContentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['newContentStreamId'])
-            : ContentStreamId::create();
-
-        $command = DiscardIndividualNodesFromWorkspace::createFullyDeterministic(
+        $command = DiscardIndividualNodesFromWorkspace::create(
             WorkspaceName::fromString($commandArguments['workspaceName']),
             $nodesToDiscard,
-            $newContentStreamId
         );
+        if (isset($commandArguments['newContentStreamId'])) {
+            $command = $command->withNewContentStreamId(ContentStreamId::fromString($commandArguments['newContentStreamId']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }

@@ -22,7 +22,6 @@ use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Presentation\VisualNodePath;
@@ -79,7 +78,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 throw new Exception(sprintf(
                     'No content collection of type %s could be found in the current node (%s) or at the path "%s".'
                     . ' You might want to adjust your node type configuration and create the missing child node'
-                    . ' through the "flow node:repair --node-type %s" command.',
+                    . ' through the "flow structureadjustments:fix --node-type %s" command.',
                     $contentCollectionType,
                     $nodePathOfNode->value,
                     $nodePath->serializeToString(),
@@ -95,13 +94,6 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function labelForNode(Node $node): NodeLabelToken
     {
         return new NodeLabelToken($node);
-    }
-
-    public function inBackend(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**
@@ -127,13 +119,6 @@ class NodeHelper implements ProtectedContextAwareInterface
         )->reverse();
 
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
-    }
-
-    public function isLive(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**

@@ -18,10 +18,13 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 
 /**
- * The property collection implementation
- * @internal
+ * The property collection that provides access to the serialized and deserialized properties of a node
+ *
+ * @implements \ArrayAccess<string,mixed>
+ * @implements \IteratorAggregate<string,mixed>
+ * @api This object should not be instantiated by 3rd parties, but it is part of the {@see Node} read model
  */
-final class PropertyCollection implements PropertyCollectionInterface
+final class PropertyCollection implements \ArrayAccess, \IteratorAggregate
 {
     /**
      * Properties from Nodes

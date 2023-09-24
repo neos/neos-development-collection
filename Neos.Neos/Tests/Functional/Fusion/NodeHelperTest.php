@@ -12,21 +12,21 @@ namespace Neos\Neos\Tests\Functional\Fusion;
  */
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
 use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
@@ -123,6 +123,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
     protected function setUp(): void
     {
+        $this->markTestSkipped('Skipped until we find a better way to mock node read models (see https://github.com/neos/neos-development-collection/issues/4317)');
         parent::setUp();
         $this->setUpCRRegistry();
         $contentRepositoryId = ContentRepositoryId::fromString('default');

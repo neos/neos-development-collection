@@ -17,13 +17,11 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Strip all tags on a given property
@@ -56,9 +54,8 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
-                    /** @var PropertyCollectionInterface $properties */
                     $properties = $node->properties;
-                    /** @var \Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue $serializedPropertyValue safe since Node::hasProperty */
+                    /** @var SerializedPropertyValue $serializedPropertyValue safe since Node::hasProperty */
                     $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
                     $propertyValue = $serializedPropertyValue->value;
                     if (!is_string($propertyValue)) {
@@ -69,7 +66,7 @@ class StripTagsOnPropertyTransformationFactory implements TransformationFactoryI
                     }
                     $newValue = strip_tags($propertyValue);
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

@@ -62,14 +62,14 @@ trait NodeMove
             $commandArguments['relationDistributionStrategy'] ?? null
         );
 
-        $command = new MoveNodeAggregate(
+        $command = MoveNodeAggregate::create(
             $contentStreamId,
             $dimensionSpacePoint,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
+            $relationDistributionStrategy,
             $newParentNodeAggregateId,
             $newPrecedingSiblingNodeAggregateId,
             $newSucceedingSiblingNodeAggregateId,
-            $relationDistributionStrategy,
         );
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);

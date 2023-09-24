@@ -60,7 +60,7 @@ class AddNewPropertyTransformationFactory implements TransformationFactoryInterf
             ): ?CommandResult {
                 if (!$node->hasProperty($this->newPropertyName)) {
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

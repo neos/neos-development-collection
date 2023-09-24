@@ -37,13 +37,32 @@ final class SetSerializedNodeReferences implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
+     * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
+     * @param ReferenceName $referenceName Name of the reference to set
+     * @param SerializedNodeReferences $references Serialized reference(s) to set
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $sourceNodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,
         public readonly ReferenceName $referenceName,
         public readonly SerializedNodeReferences $references,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param NodeAggregateId $sourceNodeAggregateId The identifier of the node aggregate to set references
+     * @param OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint The dimension space for which the references should be set
+     * @param ReferenceName $referenceName Name of the reference to set
+     * @param SerializedNodeReferences $references Serialized reference(s) to set
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $sourceNodeAggregateId, OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint, ReferenceName $referenceName, SerializedNodeReferences $references): self
+    {
+        return new self($contentStreamId, $sourceNodeAggregateId, $sourceOriginDimensionSpacePoint, $referenceName, $references);
     }
 
     /**

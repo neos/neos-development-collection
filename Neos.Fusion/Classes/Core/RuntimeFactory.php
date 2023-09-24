@@ -12,6 +12,7 @@ namespace Neos\Fusion\Core;
  */
 
 use GuzzleHttp\Psr7\ServerRequest;
+use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -32,6 +33,11 @@ class RuntimeFactory
     protected $fusionParser;
 
     /**
+     * @Flow\InjectConfiguration(path="defaultContext", package="Neos.Fusion")
+     */
+    protected ?array $defaultContextConfiguration;
+
+    /**
      * @deprecated with Neos 8.3 might be removed with Neos 9.0 use {@link createFromConfiguration} instead.
      */
     public function create(array $fusionConfiguration, ControllerContext $controllerContext = null): Runtime
@@ -39,24 +45,38 @@ class RuntimeFactory
         if ($controllerContext === null) {
             $controllerContext = self::createControllerContextFromEnvironment();
         }
-        return new Runtime(
-            FusionConfiguration::fromArray($fusionConfiguration),
-            $controllerContext
+        $defaultContextVariables = EelUtility::getDefaultContextVariables(
+            $this->defaultContextConfiguration ?? []
         );
+        $runtime = new Runtime(
+            FusionConfiguration::fromArray($fusionConfiguration),
+            FusionGlobals::fromArray(
+                ['request' => $controllerContext->getRequest(), ...$defaultContextVariables]
+            )
+        );
+        $runtime->setControllerContext($controllerContext);
+        return $runtime;
     }
 
-    public function createFromConfiguration(FusionConfiguration $fusionConfiguration, ControllerContext $controllerContext): Runtime
-    {
-        return new Runtime($fusionConfiguration, $controllerContext);
+    public function createFromConfiguration(
+        FusionConfiguration $fusionConfiguration,
+        FusionGlobals $fusionGlobals
+    ): Runtime {
+        $fusionGlobalHelpers = FusionGlobals::fromArray(
+            EelUtility::getDefaultContextVariables(
+                $this->defaultContextConfiguration ?? []
+            )
+        );
+        return new Runtime($fusionConfiguration, $fusionGlobalHelpers->merge($fusionGlobals));
     }
 
     public function createFromSourceCode(
         FusionSourceCodeCollection $sourceCode,
-        ControllerContext $controllerContext
+        FusionGlobals $fusionGlobals
     ): Runtime {
-        return new Runtime(
+        return $this->createFromConfiguration(
             $this->fusionParser->parseFromSource($sourceCode),
-            $controllerContext
+            $fusionGlobals
         );
     }
 

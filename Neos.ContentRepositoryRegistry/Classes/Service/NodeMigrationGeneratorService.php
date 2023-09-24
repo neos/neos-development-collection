@@ -1,8 +1,8 @@
 <?php
-namespace Neos\ContentRepository\Migration\Service;
+namespace Neos\ContentRepositoryRegistry\Service;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepositoryRegistry package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -11,22 +11,23 @@ namespace Neos\ContentRepository\Migration\Service;
  * source code.
  */
 
-use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\Package\PackageManager;
 use Neos\Utility\Exception\FilesException;
 use Neos\Utility\Files;
 
 /**
- * Service for the Migration generator
+ * Service for the Node Migration generator
  *
  */
-class MigrationGeneratorService
+class NodeMigrationGeneratorService
 {
-    /**
-     * @Flow\Inject
-     */
-    protected PackageManager $packageManager;
+
+    public function __construct(
+        private readonly PackageManager $packageManager
+    )
+    {
+    }
 
     /**
      * Creates a node migration for the given $packageKey
@@ -38,7 +39,7 @@ class MigrationGeneratorService
      */
     public function generateBoilerplateMigrationFileInPackage(string $packageKey): string
     {
-        $templatePath = 'resource://Neos.ContentRepository/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
+        $templatePath = 'resource://Neos.ContentRepositoryRegistry/Private/Generator/Migrations/ContentRepository/NodeMigrationTemplate.yaml.tmpl';
         $nodeMigrationPath = Files::concatenatePaths([$this->packageManager->getPackage($packageKey)->getPackagePath(), 'Migrations/ContentRepository']) . '/';
 
         $timeStamp = (new \DateTimeImmutable())->format('YmdHis');

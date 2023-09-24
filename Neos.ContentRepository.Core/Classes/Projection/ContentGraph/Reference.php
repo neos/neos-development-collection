@@ -28,7 +28,7 @@ final class Reference
     public function __construct(
         public readonly Node $node,
         public readonly ReferenceName $name,
-        public readonly ?PropertyCollectionInterface $properties
+        public readonly ?PropertyCollection $properties
     ) {
     }
 }

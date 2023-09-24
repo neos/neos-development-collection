@@ -214,7 +214,7 @@ class SitesController extends AbstractModuleController
                 );
 
                 foreach ($siteNodeAggregates as $siteNodeAggregate) {
-                    $contentRepository->handle(new ChangeNodeAggregateName(
+                    $contentRepository->handle(ChangeNodeAggregateName::create(
                         $workspace->currentContentStreamId,
                         $siteNodeAggregate->nodeAggregateId,
                         NodeName::fromString($newSiteNodeName),

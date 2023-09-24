@@ -17,13 +17,10 @@ namespace Neos\ContentRepository\NodeMigration\Transformation;
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Feature\NodeAggregateCommandHandler;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * Remove the property
@@ -64,10 +61,9 @@ class RenamePropertyTransformationFactory implements TransformationFactoryInterf
             ): ?CommandResult
             {
                 if ($node->hasProperty($this->from)) {
-                    /** @var PropertyCollectionInterface $properties */
                     $properties = $node->properties;
                     return $this->contentRepository->handle(
-                        new SetSerializedNodeProperties(
+                        SetSerializedNodeProperties::create(
                             $contentStreamForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,

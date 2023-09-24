@@ -237,7 +237,7 @@ class WorkspacesController extends AbstractModuleController
 
         try {
             $contentRepository->handle(
-                new CreateWorkspace(
+                CreateWorkspace::create(
                     $workspaceName,
                     $baseWorkspace,
                     $title,
@@ -320,7 +320,7 @@ class WorkspacesController extends AbstractModuleController
 
         if (!$workspace->workspaceTitle?->equals($title) || !$workspace->workspaceDescription->equals($description)) {
             $contentRepository->handle(
-                new RenameWorkspace(
+                RenameWorkspace::create(
                     $workspaceName,
                     $title,
                     $description
@@ -330,7 +330,7 @@ class WorkspacesController extends AbstractModuleController
 
         if ($workspace->workspaceOwner !== $workspaceOwner) {
             $contentRepository->handle(
-                new ChangeWorkspaceOwner(
+                ChangeWorkspaceOwner::create(
                     $workspaceName,
                     $workspaceOwner ?: null,
                 )
@@ -430,7 +430,7 @@ class WorkspacesController extends AbstractModuleController
         }
 
         $contentRepository->handle(
-            new DeleteWorkspace(
+            DeleteWorkspace::create(
                 $workspaceName,
             )
         )->block();
@@ -668,7 +668,7 @@ class WorkspacesController extends AbstractModuleController
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepository->handle(
-            new PublishWorkspace(
+            PublishWorkspace::create(
                 $workspace
             )
         )->block();

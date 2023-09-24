@@ -35,12 +35,29 @@ final class CreateNodeVariant implements
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
-    public function __construct(
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the affected node aggregate
+     * @param OriginDimensionSpacePoint $sourceOrigin Dimension Space Point from which the node is to be copied from
+     * @param OriginDimensionSpacePoint $targetOrigin Dimension Space Point to which the node is to be copied to
+     */
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOrigin,
         public readonly OriginDimensionSpacePoint $targetOrigin,
     ) {
+    }
+
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the affected node aggregate
+     * @param OriginDimensionSpacePoint $sourceOrigin Dimension Space Point from which the node is to be copied from
+     * @param OriginDimensionSpacePoint $targetOrigin Dimension Space Point to which the node is to be copied to
+     */
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $sourceOrigin, OriginDimensionSpacePoint $targetOrigin): self
+    {
+        return new self($contentStreamId, $nodeAggregateId, $sourceOrigin, $targetOrigin);
     }
 
     /**

@@ -427,7 +427,7 @@ class NodesController extends ActionController
                     . ' not found. This should never happen.', 1660905374);
             }
             $contentRepository->handle(
-                new CreateNodeVariant(
+                CreateNodeVariant::create(
                     $contentStreamId,
                     $identifier,
                     $sourceNode->originDimensionSpacePoint,
@@ -469,7 +469,7 @@ class NodesController extends ActionController
                 // Tethered nodes' variants are automatically created when the parent is translated.
                 // TODO: DOES THIS MAKE SENSE?
                 $contentRepository->handle(
-                    new CreateNodeVariant(
+                    CreateNodeVariant::create(
                         $contentStreamId,
                         $childNode->nodeAggregateId,
                         $childNode->originDimensionSpacePoint,

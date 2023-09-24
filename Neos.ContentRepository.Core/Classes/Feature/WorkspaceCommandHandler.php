@@ -139,7 +139,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // When the workspace is created, we first have to fork the content stream
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -205,7 +205,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $newContentStreamId = $command->newContentStreamId;
         $contentRepository->handle(
-            new CreateContentStream(
+            CreateContentStream::create(
                 $newContentStreamId,
             )
         )->block();
@@ -250,7 +250,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // After publishing a workspace, we need to again fork from Base.
         $newContentStream = ContentStreamId::create();
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -367,7 +367,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // - extract the commands from the to-be-rebased content stream; and applies them on the new content stream
         $rebasedContentStream = $command->rebasedContentStreamId;
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $rebasedContentStream,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -529,7 +529,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
         $matchingContentStream = $command->contentStreamIdForMatchingPart;
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $matchingContentStream,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -549,7 +549,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
         $remainingContentStream = $command->contentStreamIdForRemainingPart;
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $remainingContentStream,
                 $matchingContentStream,
             )
@@ -590,7 +590,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         // to avoid dangling content streams, we need to remove our temporary content stream (whose events
         // have already been published)
-        $contentRepository->handle(new RemoveContentStream(
+        $contentRepository->handle(RemoveContentStream::create(
             $matchingContentStream
         ));
 
@@ -645,7 +645,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         // 2) fork a new contentStream, based on the base WS, and apply the commands to keep
         $newContentStream = $command->newContentStreamId;
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -711,7 +711,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
 
         $newContentStream = $command->newContentStreamId;
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $newContentStream,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -757,7 +757,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $this->requireNonCircularRelationBetweenWorkspaces($workspace, $baseWorkspace, $contentRepository);
 
         $contentRepository->handle(
-            new ForkContentStream(
+            ForkContentStream::create(
                 $command->newContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
@@ -789,7 +789,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
 
         $contentRepository->handle(
-            new RemoveContentStream(
+            RemoveContentStream::create(
                 $workspace->currentContentStreamId
             )
         )->block();

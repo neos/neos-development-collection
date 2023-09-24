@@ -51,7 +51,7 @@ trait NodeCreation
             $event->nodeAggregateId,
             $originDimensionSpacePoint,
             $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::fromArray([]),
+            SerializedPropertyValues::createEmpty(),
             $event->nodeTypeName,
             $event->nodeAggregateClassification,
             null

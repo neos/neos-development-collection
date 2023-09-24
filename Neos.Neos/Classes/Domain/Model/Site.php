@@ -276,6 +276,7 @@ class Site
      */
     public function getActiveDomains()
     {
+        /** @var Collection<int, Domain> $activeDomains */
         $activeDomains = $this->domains->filter(function (Domain $domain) {
             return $domain->getActive();
         });

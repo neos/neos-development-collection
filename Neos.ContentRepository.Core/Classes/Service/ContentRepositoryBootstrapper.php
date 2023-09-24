@@ -46,7 +46,7 @@ final class ContentRepositoryBootstrapper
         }
         $liveContentStreamId = ContentStreamId::create();
         $this->contentRepository->handle(
-            new CreateRootWorkspace(
+            CreateRootWorkspace::create(
                 WorkspaceName::forLive(),
                 WorkspaceTitle::fromString('Live'),
                 WorkspaceDescription::fromString('Public live workspace'),
@@ -73,7 +73,7 @@ final class ContentRepositoryBootstrapper
             // TODO make this case more explicit
         } catch (\Exception $exception) {
             $rootNodeAggregateId = NodeAggregateId::create();
-            $this->contentRepository->handle(new CreateRootNodeAggregateWithNode(
+            $this->contentRepository->handle(CreateRootNodeAggregateWithNode::create(
                 $contentStreamId,
                 $rootNodeAggregateId,
                 $rootNodeTypeName,

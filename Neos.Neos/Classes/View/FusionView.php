@@ -20,11 +20,16 @@ use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\View\AbstractView;
 use Neos\Flow\Security\Context;
+use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\Runtime;
+use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Psr\Http\Message\ResponseInterface;
@@ -43,6 +48,15 @@ class FusionView extends AbstractView
      * @var SiteNodeUtility
      */
     protected $siteNodeUtility;
+
+    #[Flow\Inject]
+    protected RuntimeFactory $runtimeFactory;
+
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
+
+    #[Flow\Inject]
+    protected RenderingModeService $renderingModeService;
 
     /**
      * Renders the view
@@ -85,6 +99,11 @@ class FusionView extends AbstractView
             null,
             'Flag to enable content caching inside Fusion (overriding the global setting).',
             'boolean'
+        ],
+        'renderingModeName' => [
+            RenderingMode::FRONTEND,
+            'Name of the user interface mode to use',
+            'string'
         ]
     ];
 
@@ -215,7 +234,20 @@ class FusionView extends AbstractView
     protected function getFusionRuntime(Node $currentSiteNode)
     {
         if ($this->fusionRuntime === null) {
-            $this->fusionRuntime = $this->fusionService->createRuntime($currentSiteNode, $this->controllerContext);
+            $site = $this->siteRepository->findSiteBySiteNode($currentSiteNode);
+            $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
+
+            $renderingMode = $this->renderingModeService->findByName($this->getOption('renderingModeName'));
+
+            $fusionGlobals = FusionGlobals::fromArray([
+                'request' => $this->controllerContext->getRequest(),
+                'renderingMode' => $renderingMode
+            ]);
+            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+                $fusionConfiguration,
+                $fusionGlobals
+            );
+            $this->fusionRuntime->setControllerContext($this->controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);

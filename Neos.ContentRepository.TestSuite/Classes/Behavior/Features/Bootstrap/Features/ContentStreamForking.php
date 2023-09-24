@@ -40,7 +40,7 @@ trait ContentStreamForking
             ? ContentStreamId::fromString($commandArguments['sourceContentStreamId'])
             : $this->currentContentStreamId;
 
-        $command = new ForkContentStream(
+        $command = ForkContentStream::create(
             ContentStreamId::fromString($commandArguments['contentStreamId']),
             $sourceContentStreamId,
         );
