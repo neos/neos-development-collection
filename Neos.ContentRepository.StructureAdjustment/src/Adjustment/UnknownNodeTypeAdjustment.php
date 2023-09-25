@@ -10,7 +10,6 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 class UnknownNodeTypeAdjustment
 {
     use RemoveNodeAggregateTrait;
-    use LoadNodeTypeTrait;
 
     public function __construct(
         private readonly ProjectedNodeIterator $projectedNodeIterator,
@@ -23,8 +22,7 @@ class UnknownNodeTypeAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        $nodeType = $this->loadNodeType($nodeTypeName);
-        if ($nodeType === null) {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
             // node type is not existing right now.
             yield from $this->removeAllNodesOfType($nodeTypeName);
         }
@@ -46,10 +44,5 @@ class UnknownNodeTypeAdjustment
                 }
             );
         }
-    }
-
-    protected function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
     }
 }
