@@ -16,7 +16,7 @@ namespace Neos\Neos\Routing\Cache;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
@@ -29,8 +29,10 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  */
 class RouteCacheFlusher
 {
-    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject

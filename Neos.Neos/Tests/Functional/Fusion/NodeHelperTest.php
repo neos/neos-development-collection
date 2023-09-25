@@ -13,12 +13,11 @@ namespace Neos\Neos\Tests\Functional\Fusion;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -29,7 +28,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
-use Neos\ContentRepositoryRegistry\TestSuite\Behavior\CRRegistrySubjectProvider;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
 
@@ -38,8 +36,6 @@ use PHPUnit\Framework\MockObject\MockObject;
  */
 class NodeHelperTest extends AbstractFusionObjectTest
 {
-    use CRRegistrySubjectProvider;
-
     /**
      * @var Node|MockObject
      */
@@ -125,12 +121,10 @@ class NodeHelperTest extends AbstractFusionObjectTest
     {
         $this->markTestSkipped('Skipped until we find a better way to mock node read models (see https://github.com/neos/neos-development-collection/issues/4317)');
         parent::setUp();
-        $this->setUpCRRegistry();
-        $contentRepositoryId = ContentRepositoryId::fromString('default');
-        $this->iInitializeContentRepository($contentRepositoryId->value);
         $nodeSubjectProvider = new NodeSubjectProvider();
 
         $nodeTypeName = NodeTypeName::fromString('Neos.Neos:Content.Text');
+        // todo injecting the mocked nodeType in the node doesnt matter, as the nodeType is fetched from the nodeTypeManager in the NodeHelper
         $textNodeType = new NodeType(
             $nodeTypeName,
             [],

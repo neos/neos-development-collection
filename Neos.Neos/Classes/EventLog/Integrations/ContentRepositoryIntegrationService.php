@@ -17,7 +17,7 @@ namespace Neos\Neos\EventLog\Integrations;
 use Doctrine\ORM\EntityManagerInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
-use Neos\ContentRepositoryRegistry\Utility\ContentRepositoryRegistryProvider;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
@@ -31,8 +31,10 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  */
 class ContentRepositoryIntegrationService extends AbstractIntegrationService
 {
-    use ContentRepositoryRegistryProvider;
     use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public const NODE_ADDED = 'Node.Added';
     public const NODE_UPDATED = 'Node.Updated';
