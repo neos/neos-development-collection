@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
@@ -33,7 +34,9 @@ use Neos\Flow\Annotations as Flow;
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
-    use NodeTypeWithFallbackProvider;
+    use NodeTypeWithFallbackProvider {
+        getNodeType as getNodeTypeInternal;
+    }
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -130,7 +133,12 @@ class NodeHelper implements ProtectedContextAwareInterface
      */
     public function isOfType(Node $node, string $nodeType): bool
     {
-        return $this->getNodeType($node)->isOfType($nodeType);
+        return $this->getNodeTypeInternal($node)->isOfType($nodeType);
+    }
+
+    public function getNodeType(Node $node): NodeType
+    {
+        return $this->getNodeTypeInternal($node);
     }
 
     public function serializedNodeAddress(Node $node): string
