@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\LegacyNodeMigration;
 
 use Doctrine\DBAL\Platforms\PostgreSQL100Platform;
+use Doctrine\DBAL\Types\ConversionException;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
@@ -272,7 +273,11 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $references = [];
 
         // Note: We use a PostgreSQL platform because the implementation is forward-compatible, @see JsonArrayType::convertToPHPValue()
-        $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
+        try {
+            $decodedProperties = (new JsonArrayType())->convertToPHPValue($nodeDataRow['properties'], new PostgreSQL100Platform());
+        } catch (ConversionException $exception) {
+            throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s"): %s', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value, $exception->getMessage()), 1695391558, $exception);
+        }
         if (!is_array($decodedProperties)) {
             throw new MigrationException(sprintf('Failed to decode properties %s of node "%s" (type: "%s")', json_encode($nodeDataRow['properties']), $nodeDataRow['identifier'], $nodeType->name->value), 1656057035);
         }

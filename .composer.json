@@ -5,7 +5,8 @@
   "type": "neos-package-collection",
   "require": {
     "neos/flow-development-collection": "9.0.x-dev",
-    "neos/neos-setup": "^2.0"
+    "neos/neos-setup": "^2.0",
+    "league/flysystem-memory": "^3"
   },
   "replace": {
   },
@@ -40,7 +41,8 @@
       "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
       "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
       "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser"
+      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser",
+      "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
     ],
     "test": [
       "@test:unit",
