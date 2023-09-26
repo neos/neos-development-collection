@@ -12,7 +12,6 @@ namespace Neos\Neos\Service;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeType;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands; additionally pre-calculating node constraints
@@ -54,19 +53,24 @@ class NodeTypeSchemaBuilder
             'constraints' => $this->generateConstraints()
         ];
 
+        // We need to include abstract nodetypes as the UI required some basic types like Neos.Neos:Document and Neos.Neos:Content
         $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
-        /** @var NodeType $nodeType */
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
+
+                // Remove the postprocessors, as they are not needed in the UI
+                unset($schema['nodeTypes'][$nodeTypeName]['postprocessors']);
             }
 
-            $schema['inheritanceMap']['subTypes'][$nodeTypeName] = [];
-            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), true) as $subNodeType) {
-                /** @var NodeType $subNodeType */
-                $schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->getName();
+            $subTypes = [];
+            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false) as $subNodeType) {
+                $subTypes[] = $subNodeType->getName();
+            }
+            if ($subTypes) {
+                $schema['inheritanceMap']['subTypes'][$nodeTypeName] = $subTypes;
             }
         }
 
@@ -81,28 +85,30 @@ class NodeTypeSchemaBuilder
     protected function generateConstraints()
     {
         $constraints = [];
-        $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
-        /** @var NodeType $nodeType */
+        $nodeTypes = $this->nodeTypeManager->getNodeTypes(false);
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
-            if ($nodeType->isAbstract()) {
-                continue;
-            }
-            $constraints[$nodeTypeName] = [
-                'nodeTypes' => [],
-                'childNodes' => []
-            ];
+            $nodeTypeConstraints = [];
+            $childNodeConstraints = [];
+
             foreach ($nodeTypes as $innerNodeTypeName => $innerNodeType) {
                 if ($nodeType->allowsChildNodeType($innerNodeType)) {
-                    $constraints[$nodeTypeName]['nodeTypes'][$innerNodeTypeName] = true;
+                    $nodeTypeConstraints[$innerNodeTypeName] = true;
                 }
             }
 
-            foreach ($nodeType->getAutoCreatedChildNodes() as $key => $_x) {
+            foreach (array_keys($nodeType->getAutoCreatedChildNodes()) as $key) {
                 foreach ($nodeTypes as $innerNodeTypeName => $innerNodeType) {
                     if ($nodeType->allowsGrandchildNodeType($key, $innerNodeType)) {
-                        $constraints[$nodeTypeName]['childNodes'][$key]['nodeTypes'][$innerNodeTypeName] = true;
+                        $childNodeConstraints[$key]['nodeTypes'][$innerNodeTypeName] = true;
                     }
                 }
+            }
+
+            if ($nodeTypeConstraints || $childNodeConstraints) {
+                $constraints[$nodeTypeName] = [
+                    'nodeTypes' => $nodeTypeConstraints,
+                    'childNodes' => $childNodeConstraints,
+                ];
             }
         }
 
