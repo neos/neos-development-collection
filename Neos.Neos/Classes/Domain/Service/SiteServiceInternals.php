@@ -95,6 +95,11 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
                 1412372375
             );
         }
+
+        if (!$siteNodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+            throw SiteNodeTypeIsInvalid::becauseItIsNotOfTypeSite(NodeTypeName::fromString($nodeTypeName));
+        }
+
         $siteNodeAggregate = $this->contentRepository->getContentGraph()->findChildNodeAggregatesByName(
             $liveContentStreamId,
             $sitesNodeIdentifier,
