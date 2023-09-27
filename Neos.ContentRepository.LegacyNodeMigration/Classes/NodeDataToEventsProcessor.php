@@ -86,7 +86,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         private readonly Filesystem $files,
         private readonly iterable $nodeDataRows,
     ) {
-        $this->sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
+        $this->sitesNodeTypeName = NodeTypeName::fromString(NodeTypeNameFactory::NAME_SITES);
         $this->contentStreamId = ContentStreamId::create();
         $this->visitedNodes = new VisitedNodeAggregates();
     }
@@ -98,6 +98,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     public function setSitesNodeType(NodeTypeName $nodeTypeName): void
     {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+            throw new \InvalidArgumentException(
+                sprintf('Sites NodeType "%s" must be of type "%s".', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
+                1695802415
+            );
+        }
         $this->sitesNodeTypeName = $nodeTypeName;
     }
 
@@ -245,7 +252,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $isSiteNode = $nodeDataRow['parentpath'] === '/sites';
         if ($isSiteNode && !$nodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new MigrationException(sprintf(
-                'The site node "%s" (type: "%s") must be of type "Neos.Neos:Site".', $nodeDataRow['identifier'], $nodeTypeName->value,
+                'The site node "%s" (type: "%s") must be of type "%s".', $nodeDataRow['identifier'], $nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
             ), 1695801620);
         }
 
