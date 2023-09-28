@@ -45,7 +45,7 @@ root {
 
   rawContent {
     @position = 'end 10000'
-    condition = ${Neos.Node.inBackend(documentNode) && documentNode.context.currentRenderingMode.edit}
+    condition = ${renderingMode.isEdit}
     renderPath = '/rawContent'
   }
 

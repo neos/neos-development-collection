@@ -41,7 +41,8 @@
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.0.0"
+        "neos/kickstarter": "~9.0.0",
+        "league/flysystem-memory": "^3"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",
@@ -117,7 +118,8 @@
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml"
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
+            "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test": [
             "@test:unit",
