@@ -13,7 +13,7 @@ build:
 
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
-  configuration: conf.py
+  configuration: Neos.Media/Documentation/conf.py
 
 # If using Sphinx, optionally build your docs in additional formats such as PDF
 formats:
@@ -23,4 +23,4 @@ formats:
 # Optionally declare the Python requirements required to build your docs
 python:
   install:
-    - requirements: requirements.txt
+    - requirements: Neos.Media/Documentation/requirements.txt
