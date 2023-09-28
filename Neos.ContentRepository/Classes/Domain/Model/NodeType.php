@@ -435,10 +435,8 @@ class NodeType
      */
     public function getPropertyType($propertyName)
     {
-        if (!isset($this->fullConfiguration['properties']) || !isset($this->fullConfiguration['properties'][$propertyName]) || !isset($this->fullConfiguration['properties'][$propertyName]['type'])) {
-            return 'string';
-        }
-        return $this->fullConfiguration['properties'][$propertyName]['type'];
+        $this->initialize();
+        return $this->fullConfiguration['properties'][$propertyName]['type'] ?? 'string';
     }
 
     /**
@@ -502,7 +500,7 @@ class NodeType
      */
     public function hasAutoCreatedChildNode(NodeName $nodeName): bool
     {
-        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]);
+        return isset($this->getAutoCreatedChildNodes()[(string)$nodeName]);
     }
 
     /**
@@ -512,9 +510,7 @@ class NodeType
      */
     public function getTypeOfAutoCreatedChildNode(NodeName $nodeName): ?NodeType
     {
-        return isset($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
-            ? $this->nodeTypeManager->getNodeType($this->fullConfiguration['childNodes'][(string)$nodeName]['type'])
-            : null;
+        return $this->getAutoCreatedChildNodes()[(string)$nodeName] ?? null;
     }
 
 
