@@ -183,3 +183,5 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
     Then I expect no Assets to be exported
     And I expect no ImageVariants to be exported
     And I expect no PersistentResources to be exported
+    And I expect the following errors to be logged
+      | Failed to extract assets of property "string" of node "site-node-id" (type: "Some.Package:SomeNodeType"): Failed to find mock asset with id "non-existing-asset" |

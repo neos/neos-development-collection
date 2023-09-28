@@ -17,16 +17,11 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GuzzleHttp\Psr7\Uri;
-use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
-use Neos\Neos\Domain\Model\SiteConfiguration;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\Flow\Http\ServerRequestAttributes;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -42,13 +37,15 @@ use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\FrontendRouting\DimensionResolution\DimensionResolverFactoryInterface;
 use Neos\Neos\FrontendRouting\DimensionResolution\RequestToDimensionSpacePointContext;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\NodeUriBuilder;
-use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjection;
 use Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
@@ -60,7 +57,12 @@ use Psr\Http\Message\UriInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Routing related Behat steps
+ * Routing related Behat steps. This trait is pure (no side effects).
+ *
+ * Requires the {@see \Neos\Flow\Core\Bootstrap::getActiveRequestHandler()} to be a {@see FunctionalTestRequestHandler}.
+ * For this the {@see BrowserTrait} can be used.
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait RoutingTrait
 {

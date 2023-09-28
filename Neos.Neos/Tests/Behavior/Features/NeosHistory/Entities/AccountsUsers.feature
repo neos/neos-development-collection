@@ -5,7 +5,7 @@ Feature: Accounts / User Entity Monitoring
   Background:
     Given I have an empty history
     Given I have the following "monitorEntities" configuration:
-    """
+    """yaml
     'Neos\Flow\Security\Account':
       events:
         created: ACCOUNT_CREATED
@@ -22,8 +22,7 @@ Feature: Accounts / User Entity Monitoring
         primaryElectronicAddress: '${entity.primaryElectronicAddress}'
     """
 
-    # TODO: subclasses in monitorEntities
-  @fixtures
+  @neosHistory
   Scenario: Creating an account is monitored
     When I create the following accounts:
       | User  | Password | First Name | Last Name | Roles                    |
