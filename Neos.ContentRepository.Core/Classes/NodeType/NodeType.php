@@ -224,15 +224,6 @@ class NodeType
     }
 
     /**
-     * Returns the name of this node type
-     * @deprecated use "name" property directly
-     */
-    public function getName(): string
-    {
-        return $this->name->value;
-    }
-
-    /**
      * Return boolean true if marked abstract
      */
     public function isAbstract(): bool
