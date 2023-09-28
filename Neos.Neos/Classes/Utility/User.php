@@ -2,7 +2,7 @@
 
 namespace Neos\Neos\Utility;
 
-use Neos\Neos\Domain\Model\WorkspaceName;
+use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 
 /**
  * Utility functions for dealing with users in the Content Repository.
@@ -17,7 +17,7 @@ class User
      */
     public static function getPersonalWorkspaceNameForUsername($username): string
     {
-        return (string)WorkspaceName::fromAccountIdentifier($username);
+        return WorkspaceNameBuilder::fromAccountIdentifier($username)->value;
     }
 
     /**
