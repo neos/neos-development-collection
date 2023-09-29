@@ -86,7 +86,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         private readonly Filesystem $files,
         private readonly iterable $nodeDataRows,
     ) {
-        $this->sitesNodeTypeName = NodeTypeName::fromString(NodeTypeNameFactory::NAME_SITES);
+        $this->sitesNodeTypeName = NodeTypeName::forSites();
         $this->contentStreamId = ContentStreamId::create();
         $this->visitedNodes = new VisitedNodeAggregates();
     }
