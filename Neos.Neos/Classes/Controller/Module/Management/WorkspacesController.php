@@ -48,7 +48,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
-use Neos\Neos\Domain\Model\WorkspaceName as NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Mvc\ActionRequest;
@@ -63,6 +62,7 @@ use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
 
 /**
  * The Neos Workspaces module controller
@@ -120,8 +120,7 @@ class WorkspacesController extends AbstractModuleController
 
         $currentAccount = $this->securityContext->getAccount();
         $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-                ->toContentRepositoryWorkspaceName()
+            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
         );
         if (is_null($userWorkspace)) {
             throw new \RuntimeException('Current user has no workspace', 1645485990);
@@ -461,8 +460,7 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-            ->toContentRepositoryWorkspaceName();
+        $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
         $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
         /** @var Workspace $personalWorkspace */
 

@@ -2,6 +2,7 @@
 
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\EventLog\Domain\Model\Event;
 use Neos\Neos\EventLog\Domain\Model\NodeEvent;
@@ -9,18 +10,25 @@ use Neos\Neos\EventLog\Domain\Repository\EventRepository;
 use Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService;
 use Neos\Neos\EventLog\Integrations\EntityIntegrationService;
 use Neos\Utility\Arrays;
-use PHPUnit\Framework\Assert as Assert;
+use PHPUnit\Framework\Assert;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * A trait with shared step definitions for common use by other contexts
+ * A trait with step definitions for the neos history.
  *
- * Note that this trait requires that the Flow Object Manager must be available via $this->getSubcontext('flow')->getObjectManager().
+ * This trait is impure as it will reset the history: {@see self::resetHistory()}
+ *
+ * @internal only for behat tests within the Neos.Neos package
  */
 trait HistoryDefinitionsTrait
 {
     /**
-     * @BeforeScenario @fixtures
+     * @return ObjectManagerInterface
+     */
+    abstract protected function getObjectManager();
+
+    /**
+     * @BeforeScenario @neosHistory
      * @return void
      */
     public function resetHistory()
