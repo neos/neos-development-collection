@@ -290,16 +290,19 @@ class NodeType
      * @return boolean true if this node type is of the given kind, otherwise false
      * @api
      */
-    public function isOfType(string $nodeType): bool
+    public function isOfType(string|NodeTypeName $nodeTypeName): bool
     {
-        if ($nodeType === $this->name->value) {
+        if (!is_string($nodeTypeName)) {
+            $nodeTypeName = $nodeTypeName->value;
+        }
+        if ($nodeTypeName === $this->name->value) {
             return true;
         }
-        if (array_key_exists($nodeType, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeType] === null) {
+        if (array_key_exists($nodeTypeName, $this->declaredSuperTypes) && $this->declaredSuperTypes[$nodeTypeName] === null) {
             return false;
         }
         foreach ($this->declaredSuperTypes as $superType) {
-            if ($superType !== null && $superType->isOfType($nodeType) === true) {
+            if ($superType !== null && $superType->isOfType($nodeTypeName) === true) {
                 return true;
             }
         }
