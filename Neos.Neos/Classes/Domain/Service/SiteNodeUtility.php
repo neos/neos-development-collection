@@ -17,6 +17,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -39,23 +40,17 @@ final class SiteNodeUtility
 
     public function findSiteNode(Node $node): Node
     {
-        $previousNode = null;
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        do {
-            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
-                // the Site node is the one one level underneath the "Sites" node.
-                if (is_null($previousNode)) {
-                    break;
-                }
-                return $previousNode;
-            }
-            $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->nodeAggregateId));
+        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(NodeTypeNameFactory::NAME_SITE));
 
-        // no Site node found at rootline
-        throw new \RuntimeException('No site node found!');
+        if (!$siteNode) {
+            throw new \RuntimeException('No site node found!');
+        }
+
+        return $siteNode;
     }
 
+    /** @internal */
     public function findCurrentSiteNode(
         ContentRepositoryId $contentRepositoryId,
         ContentStreamId $contentStreamId,
