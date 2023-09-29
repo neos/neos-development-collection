@@ -12,23 +12,17 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
-use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContextFactory;
-use Neos\Neos\Domain\Service\SiteService;
-use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
-use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
-use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
-use Neos\Neos\Security\Authorization\Privilege\NodeTreePrivilege;
-use Neos\Neos\Service\IconNameMappingService;
-use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
+use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
+use Neos\Neos\Service\IconNameMappingService;
+use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
 /**

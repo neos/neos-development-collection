@@ -60,7 +60,6 @@
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
         "neos/contentrepository-nodemigration": "self.version",
-        "neos/contentrepository-security": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-testsuite": "self.version",
         "neos/contentrepositoryregistry": "self.version",
@@ -155,9 +154,6 @@
             ],
             "Neos\\ContentRepository\\NodeMigration\\": [
                 "Neos.ContentRepository.NodeMigration/src"
-            ],
-            "Neos\\ContentRepository\\Security\\": [
-                "Neos.ContentRepository.Security/Classes"
             ],
             "Neos\\ContentRepository\\StructureAdjustment\\": [
                 "Neos.ContentRepository.StructureAdjustment/src"

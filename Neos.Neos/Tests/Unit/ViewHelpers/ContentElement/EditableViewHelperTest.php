@@ -16,9 +16,7 @@ use Neos\FluidAdaptor\Core\ViewHelper\Exception;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\ViewHelpers\ContentElement\EditableViewHelper;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\FusionObjects\Helpers\FluidView;
@@ -39,11 +37,6 @@ class EditableViewHelperTest extends ViewHelperBaseTestcase
      * @var PrivilegeManagerInterface
      */
     protected $mockPrivilegeManager;
-
-    /**
-     * @var AuthorizationService
-     */
-    protected $mockNodeAuthorizationService;
 
     /**
      * @var TemplateImplementation
