@@ -138,3 +138,14 @@ Feature: Exceptional cases during migrations
     """
     Node "site-node-id" for dimension {"language":"de"} was already created previously
     """
+
+  Scenario: Homepage node is not of type "Neos.Neos:Site"
+    When I have the following node data rows:
+      | Identifier    | Path             | Node Type    |
+      | sites-node-id | /sites           | unstructured |
+      | site-node-id  | /sites/test-site | unstructured |
+    And I run the event migration
+    Then I expect a MigrationError with the message
+    """
+    The site node "site-node-id" (type: "unstructured") must be of type "Neos.Neos:Site"
+    """

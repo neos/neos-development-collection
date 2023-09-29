@@ -102,7 +102,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         if (!$nodeType->isOfType(NodeTypeNameFactory::NAME_SITES)) {
             throw new \InvalidArgumentException(
-                sprintf('Sites NodeType "%s" must be of type "%s".', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
+                sprintf('Sites NodeType "%s" must be of type "%s"', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
                 1695802415
             );
         }
@@ -253,7 +253,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $isSiteNode = $nodeDataRow['parentpath'] === '/sites';
         if ($isSiteNode && !$nodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new MigrationException(sprintf(
-                'The site node "%s" (type: "%s") must be of type "%s".', $nodeDataRow['identifier'], $nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
+                'The site node "%s" (type: "%s") must be of type "%s"', $nodeDataRow['identifier'], $nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
             ), 1695801620);
         }
 
