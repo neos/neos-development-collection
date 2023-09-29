@@ -102,9 +102,12 @@ class FusionExceptionView extends AbstractView
     public function render()
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler instanceof HttpRequestHandler
-            ? $requestHandler->getHttpRequest()
-            : ServerRequest::fromGlobals();
+
+        if (!$requestHandler instanceof HttpRequestHandler) {
+            throw new \RuntimeException('The FusionExceptionView only works in web requests.', 1695975353);
+        }
+
+        $httpRequest = $requestHandler->getHttpRequest();
 
         $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
@@ -204,14 +207,14 @@ class FusionExceptionView extends AbstractView
             $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
 
             $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest(),
+                'request' => $controllerContext->getRequest(),
                 'renderingModeName' => RenderingMode::FRONTEND
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,
                 $fusionGlobals
             );
-            $this->fusionRuntime->setControllerContext($this->controllerContext);
+            $this->fusionRuntime->setControllerContext($controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
