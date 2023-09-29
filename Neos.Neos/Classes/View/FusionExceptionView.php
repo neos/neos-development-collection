@@ -204,14 +204,14 @@ class FusionExceptionView extends AbstractView
             $fusionConfiguration = $this->fusionService->createFusionConfigurationFromSite($site);
 
             $fusionGlobals = FusionGlobals::fromArray([
-                'request' => $this->controllerContext->getRequest(),
+                'request' => $controllerContext->getRequest(),
                 'renderingModeName' => RenderingMode::FRONTEND
             ]);
             $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
                 $fusionConfiguration,
                 $fusionGlobals
             );
-            $this->fusionRuntime->setControllerContext($this->controllerContext);
+            $this->fusionRuntime->setControllerContext($controllerContext);
 
             if (isset($this->options['enableContentCache']) && $this->options['enableContentCache'] !== null) {
                 $this->fusionRuntime->setEnableContentCache($this->options['enableContentCache']);
