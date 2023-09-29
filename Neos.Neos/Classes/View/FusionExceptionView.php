@@ -102,9 +102,12 @@ class FusionExceptionView extends AbstractView
     public function render()
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        $httpRequest = $requestHandler instanceof HttpRequestHandler
-            ? $requestHandler->getHttpRequest()
-            : ServerRequest::fromGlobals();
+
+        if (!$requestHandler instanceof HttpRequestHandler) {
+            throw new \RuntimeException('The FusionExceptionView only works in web requests.', 1695975353);
+        }
+
+        $httpRequest = $requestHandler->getHttpRequest();
 
         $siteDetectionResult = SiteDetectionResult::fromRequest($httpRequest);
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
