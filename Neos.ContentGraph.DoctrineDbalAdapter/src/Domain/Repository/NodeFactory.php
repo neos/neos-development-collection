@@ -57,13 +57,16 @@ final class NodeFactory
 
     /**
      * @param array<string,string> $nodeRow Node Row from projection (<prefix>_node table)
-     * @throws NodeTypeNotFoundException
      */
     public function mapNodeRowToNode(
         array $nodeRow,
         DimensionSpacePoint $dimensionSpacePoint,
         VisibilityConstraints $visibilityConstraints
     ): Node {
+        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
+            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
+            : null;
+
         return new Node(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
@@ -75,7 +78,7 @@ final class NodeFactory
             OriginDimensionSpacePoint::fromJsonString($nodeRow['origindimensionspacepoint']),
             NodeAggregateClassification::from($nodeRow['classification']),
             NodeTypeName::fromString($nodeRow['nodetypename']),
-            $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']),
+            $nodeType,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
             Timestamps::create(

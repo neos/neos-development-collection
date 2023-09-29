@@ -27,7 +27,7 @@
                         </f:alias>
                         <label class="node-label">{node.label}</label>
                         (<span class="node-identifier">{node.nodeAggregateId.value}</span>)
-                        [<span class="node-type">{node.nodeType.name}</span>]
+                        [<span class="node-type">{node.nodeTypeName.value}</span>]
                         <f:link.action rel="node-show" controller="Service\Nodes" action="show" arguments="{identifier: node.nodeAggregateId.value}" format="html">{neos:backend.translate(id: 'service.nodes.show', value: 'Show')}</f:link.action>
                     </li>
                 </f:for>

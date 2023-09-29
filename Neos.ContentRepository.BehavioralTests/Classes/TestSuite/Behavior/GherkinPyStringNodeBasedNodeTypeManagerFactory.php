@@ -31,8 +31,6 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
 {
     public static ?NodeTypeManager $nodeTypesToUse = null;
 
-    public static ?string $fallbackNodeTypeName = null;
-
     /**
      * @param array<string,mixed> $options
      */
@@ -44,7 +42,7 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
         return self::$nodeTypesToUse;
     }
 
-    public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse, ?string $fallbackNodeTypeName = null): void
+    public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse): void
     {
         self::$nodeTypesToUse = new NodeTypeManager(
             fn (): array => Yaml::parse($nodeTypesToUse->getRaw()),
@@ -54,12 +52,11 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
                     return new class implements NodeLabelGeneratorInterface {
                         public function getLabel(Node $node): string
                         {
-                            return $node->nodeType->getLabel();
+                            return $node->nodeTypeName->value;
                         }
                     };
                 }
-            },
-            $fallbackNodeTypeName
+            }
         );
     }
 

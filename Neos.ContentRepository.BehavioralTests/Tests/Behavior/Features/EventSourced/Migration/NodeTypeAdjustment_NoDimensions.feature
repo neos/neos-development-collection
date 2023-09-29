@@ -48,11 +48,8 @@ Feature: Adjust node types with a node migration
     # Actual Test
     ########################
     # we remove the Document node type (which still exists in the CR)
-    And I change the node types in content repository "default" with fallback "Neos.ContentRepository:Fallback" to:
+    And I change the node types in content repository "default" to:
     """yaml
-    # !!fallback node is needed!! - TODO DISCUSS
-    'Neos.ContentRepository:Fallback': []
-
     'Neos.ContentRepository:Root':
       constraints:
         nodeTypes:

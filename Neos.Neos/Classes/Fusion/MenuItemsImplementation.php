@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\Fusion\Exception as FusionException;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * A Fusion Menu object
@@ -86,7 +87,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $filter = $this->fusionValue('filter');
         if ($filter === null) {
-            $filter = 'Neos.Neos:Document';
+            $filter = NodeTypeNameFactory::NAME_DOCUMENT;
         }
 
         return $filter;
@@ -266,7 +267,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $traversedHierarchy = [];
             $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
                 $this->getNodeTypeConstraints()->withAdditionalDisallowedNodeType(
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 ),
                 $contentRepository->getNodeTypeManager()
             );

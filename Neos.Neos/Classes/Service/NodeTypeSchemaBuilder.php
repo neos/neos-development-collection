@@ -71,9 +71,9 @@ class NodeTypeSchemaBuilder
             }
 
             $schema['inheritanceMap']['subTypes'][$nodeTypeName] = [];
-            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), true) as $subNodeType) {
+            foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->name, true) as $subNodeType) {
                 /** @var NodeType $subNodeType */
-                $schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->getName();
+                $schema['inheritanceMap']['subTypes'][$nodeTypeName][] = $subNodeType->name->value;
             }
         }
 

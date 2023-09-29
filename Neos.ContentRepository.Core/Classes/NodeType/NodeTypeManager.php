@@ -40,8 +40,7 @@ class NodeTypeManager
 
     public function __construct(
         private readonly \Closure $nodeTypeConfigLoader,
-        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory,
-        private readonly ?string $fallbackNodeTypeName
+        private readonly NodeLabelGeneratorFactoryInterface $nodeLabelGeneratorFactory
     ) {
     }
 
@@ -120,28 +119,13 @@ class NodeTypeManager
             return $this->cachedNodeTypes[$nodeTypeName];
         }
 
-        if ($this->fallbackNodeTypeName === null) {
-            throw new NodeTypeNotFoundException(
-                sprintf(
-                    'The node type "%s" is not available and no fallback NodeType is configured.',
-                    $nodeTypeName
-                ),
-                1316598370
-            );
-        }
-
-        if (!$this->hasNodeType($this->fallbackNodeTypeName)) {
-            throw new NodeTypeNotFoundException(
-                sprintf(
-                    'The node type "%s" is not available and the configured fallback NodeType "%s" is not available.',
-                    $nodeTypeName,
-                    $this->fallbackNodeTypeName
-                ),
-                1438166322
-            );
-        }
-
-        return $this->getNodeType($this->fallbackNodeTypeName);
+        throw new NodeTypeNotFoundException(
+            sprintf(
+                'The node type "%s" is not available',
+                $nodeTypeName
+            ),
+            1316598370
+        );
     }
 
     /**

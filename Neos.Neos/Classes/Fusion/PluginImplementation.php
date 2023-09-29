@@ -198,7 +198,7 @@ class PluginImplementation extends AbstractArrayFusionObject
                 return $nodeArgumentNamespace;
             }
 
-            $nodeArgumentNamespace = $this->node->nodeType->getName();
+            $nodeArgumentNamespace = $this->node->nodeTypeName->value;
             $nodeArgumentNamespace = str_replace(':', '-', $nodeArgumentNamespace);
             $nodeArgumentNamespace = str_replace('.', '_', $nodeArgumentNamespace);
             $nodeArgumentNamespace = strtolower($nodeArgumentNamespace);

@@ -7,12 +7,12 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepositoryRegistry\Configuration\NodeTypeEnrichmentService;
 use Neos\Flow\Configuration\ConfigurationManager;
 
-class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
+readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
 {
     public function __construct(
-        private readonly ConfigurationManager $configurationManager,
-        private readonly ObjectManagerBasedNodeLabelGeneratorFactory $nodeLabelGeneratorFactory,
-        private readonly NodeTypeEnrichmentService $nodeTypeEnrichmentService,
+        private ConfigurationManager $configurationManager,
+        private ObjectManagerBasedNodeLabelGeneratorFactory $nodeLabelGeneratorFactory,
+        private NodeTypeEnrichmentService $nodeTypeEnrichmentService,
     )
     {
     }
@@ -24,8 +24,7 @@ class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
                 $configuration = $this->configurationManager->getConfiguration('NodeTypes');
                 return $this->nodeTypeEnrichmentService->enrichNodeTypeLabelsConfiguration($configuration);
             },
-            $this->nodeLabelGeneratorFactory,
-            $options['fallbackNodeTypeName'] ?? null,
+            $this->nodeLabelGeneratorFactory
         );
     }
 }

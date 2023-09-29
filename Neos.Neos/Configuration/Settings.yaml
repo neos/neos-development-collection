@@ -512,11 +512,6 @@ Neos:
         neos-plugin: Plugins
 
   ContentRepository:
-    # This instructs neos to fallback to the given type if a node type can't be found (because it was removed or has
-    # been renamed for example). The default "Neos.Neos:FallbackNode" renders a warning in backend and is ignored
-    # in frontend rendering
-    fallbackNodeType: 'Neos.Neos:FallbackNode'
-
     # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
     # or via global settings.
     #

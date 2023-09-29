@@ -18,8 +18,6 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class PropertyAdjustment
 {
-    use LoadNodeTypeTrait;
-
     public function __construct(
         private readonly ProjectedNodeIterator $projectedNodeIterator,
         private readonly NodeTypeManager $nodeTypeManager
@@ -31,11 +29,12 @@ class PropertyAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        $nodeType = $this->loadNodeType($nodeTypeName);
-        if ($nodeType === null) {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+
         $expectedPropertiesFromNodeType = array_filter($nodeType->getProperties(), fn ($value) => $value !== null);
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
@@ -131,10 +130,5 @@ class PropertyAdjustment
             $events,
             ExpectedVersion::ANY()
         );
-    }
-
-    protected function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
     }
 }

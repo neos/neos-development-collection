@@ -74,16 +74,6 @@ trait CRBehavioralTestsSubjectProvider
     public function usingTheFollowingNodeTypes(PyStringNode $serializedNodeTypesConfiguration): void
     {
         GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::$fallbackNodeTypeName = null;
-    }
-
-    /**
-     * @Given /^using the following node types with fallback to "([^"]*)":$/
-     */
-    public function usingTheFollowingNodeTypesWithFallback(string $fallbackNodeTypeName, PyStringNode $serializedNodeTypesConfiguration): void
-    {
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
-        GherkinPyStringNodeBasedNodeTypeManagerFactory::$fallbackNodeTypeName = $fallbackNodeTypeName;
     }
 
     /**
@@ -128,30 +118,6 @@ trait CRBehavioralTestsSubjectProvider
         } else {
             $contentRepository = $this->contentRepositories[$contentRepositoryId];
             GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode($serializedNodeTypesConfiguration);
-            GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = $contentRepository->getContentDimensionSource();
-            $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
-            if ($this->currentContentRepository->id->value === $contentRepositoryId) {
-                $this->currentContentRepository = $this->contentRepositories[$contentRepositoryId];
-            }
-        }
-    }
-
-    /**
-     * @Given /^I change the node types in content repository "([^"]*)" with fallback "([^"]*)" to:$/
-     */
-    public function iChangeTheNodeTypesInContentRepositoryWithFallbackTo(
-        string $contentRepositoryId,
-        string $fallbackNodeTypeName,
-        PyStringNode $serializedNodeTypesConfiguration
-    ): void {
-        if (!array_key_exists($contentRepositoryId, $this->contentRepositories)) {
-            throw new \DomainException('undeclared content repository ' . $contentRepositoryId);
-        } else {
-            $contentRepository = $this->contentRepositories[$contentRepositoryId];
-            GherkinPyStringNodeBasedNodeTypeManagerFactory::initializeWithPyStringNode(
-                $serializedNodeTypesConfiguration,
-                $fallbackNodeTypeName
-            );
             GherkinTableNodeBasedContentDimensionSourceFactory::$contentDimensionsToUse = $contentRepository->getContentDimensionSource();
             $this->contentRepositories[$contentRepositoryId] = $this->createContentRepository(ContentRepositoryId::fromString($contentRepositoryId));
             if ($this->currentContentRepository->id->value === $contentRepositoryId) {
