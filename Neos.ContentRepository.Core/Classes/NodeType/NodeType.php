@@ -416,15 +416,7 @@ class NodeType
     public function getPropertyType(string $propertyName): string
     {
         $this->initialize();
-
-        if (
-            !isset($this->fullConfiguration['properties'])
-            || !isset($this->fullConfiguration['properties'][$propertyName])
-            || !isset($this->fullConfiguration['properties'][$propertyName]['type'])
-        ) {
-            return 'string';
-        }
-        return $this->fullConfiguration['properties'][$propertyName]['type'];
+        return $this->fullConfiguration['properties'][$propertyName]['type'] ?? 'string';
     }
 
     /**

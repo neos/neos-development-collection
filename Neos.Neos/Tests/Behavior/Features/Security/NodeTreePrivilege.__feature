@@ -1,3 +1,5 @@
+# TODO rewrite test after https://github.com/neos/neos-development-collection/issues/3732
+
 Feature: Privilege to restrict nodes shown in the node tree
 
   Background:
