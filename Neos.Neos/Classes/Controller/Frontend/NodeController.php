@@ -314,9 +314,9 @@ class NodeController extends ActionController
             $nodeAddress->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $redirectStatusCode = $subgraph->findNodeById($nodeAddress->nodeAggregateId)->getProperty('httpStatusCode');
+        $redirectStatusCode = $subgraph->findNodeById($nodeAddress->nodeAggregateId)?->getProperty('httpStatusCode') ?? 303;
 
-        $this->redirectToUri($resolvedUri, statusCode: $redirectStatusCode ?: 303);
+        $this->redirectToUri($resolvedUri, statusCode: $redirectStatusCode);
     }
 
     private function fillCacheWithContentNodes(
