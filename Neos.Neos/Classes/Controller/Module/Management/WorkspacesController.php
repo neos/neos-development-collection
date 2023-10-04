@@ -63,6 +63,7 @@ use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
  * The Neos Workspaces module controller
@@ -785,6 +786,8 @@ class WorkspacesController extends AbstractModuleController
                     $node->nodeAggregateId,
                     FindAncestorNodesFilter::create()
                 );
+                $ancestors = Nodes::fromArray([$node])->merge($ancestors);
+
                 $nodePathSegments = [];
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
