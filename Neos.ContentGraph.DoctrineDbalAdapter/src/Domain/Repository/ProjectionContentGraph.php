@@ -262,7 +262,15 @@ class ProjectionContentGraph
                 ]
             )->fetchAssociative();
 
+            if(!$succeedingSiblingRelation){
+                throw new \Exception(
+                    'Could not fetch succeeding Sibiling relation',
+                    1696405259
+                );
+            }
+            
             $succeedingSiblingPosition = (int)$succeedingSiblingRelation['position'];
+
             $parentAnchorPoint = NodeRelationAnchorPoint::fromString($succeedingSiblingRelation['parentnodeanchor']);
 
             $precedingSiblingData = $this->getDatabaseConnection()->executeQuery(
