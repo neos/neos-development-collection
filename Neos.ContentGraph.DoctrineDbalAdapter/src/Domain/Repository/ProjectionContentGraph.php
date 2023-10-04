@@ -264,7 +264,7 @@ class ProjectionContentGraph
 
             if (!$succeedingSiblingRelation) {
                 throw new \Exception(
-                    'Could not fetch succeeding sibling relation',
+                    sprintf('Could not fetch succeeding sibling relation for anchor point: %s with dimensionSpacePointHash : %s', $succeedingSiblingAnchorPoint->value, $dimensionSpacePoint->hash),
                     1696405259
                 );
             }
