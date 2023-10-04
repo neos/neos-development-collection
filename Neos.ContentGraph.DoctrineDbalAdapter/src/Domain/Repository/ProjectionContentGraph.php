@@ -262,7 +262,7 @@ class ProjectionContentGraph
                 ]
             )->fetchAssociative();
 
-            if(!$succeedingSiblingRelation){
+            if (!$succeedingSiblingRelation) {
                 throw new \Exception(
                     'Could not fetch succeeding sibling relation',
                     1696405259
