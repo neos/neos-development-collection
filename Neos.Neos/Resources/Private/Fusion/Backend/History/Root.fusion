@@ -28,12 +28,12 @@ prototype(Neos.Neos:History.EventRenderer) < prototype(Neos.Fusion:Case) {
 # Node events
 #
 
-prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Neos.Fusion:Array) {
+prototype(Neos.Neos:History.NodeEventRenderer) < prototype(Neos.Fusion:Join) {
   @context.documentEventsByType = ${Neos.Array.groupBy(Neos.Array.filter(event.childEvents, 'documentEvent'), 'eventType')}
   @context.contentEventsByType = ${Neos.Array.groupBy(Neos.Array.filterNegated(event.childEvents, 'documentEvent'), 'eventType')}
 
-  documentEvents = Neos.Fusion:Collection {
-    collection = ${documentEventsByType}
+  documentEvents = Neos.Fusion:Loop {
+    items = ${documentEventsByType}
     itemName = 'eventsOfMatchedType'
 
     itemRenderer = Neos.Fusion:Case {

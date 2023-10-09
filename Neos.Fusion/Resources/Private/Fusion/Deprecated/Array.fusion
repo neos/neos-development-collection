@@ -1,5 +1,0 @@
-# deprecated since Neos 4.2 in favor of Neos.Fusion:Join
-prototype(Neos.Fusion:Array) {
-  @class = 'Neos\\Fusion\\FusionObjects\\ArrayImplementation'
-  @sortProperties = true
-}
