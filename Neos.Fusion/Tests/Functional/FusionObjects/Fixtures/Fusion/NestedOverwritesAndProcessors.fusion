@@ -1,7 +1,6 @@
 prototype(Neos.Fusion:TestRenderer).@class = 'Neos\\Fusion\\Tests\\Functional\\View\\Fixtures\\TestRenderer'
 prototype(Neos.Fusion:Value).@class = 'Neos\\Fusion\\FusionObjects\\ValueImplementation'
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
-prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:Tag) {
 	# dummy declaration, will be overriden someplace - due to merged import of fixtures.
 	@class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'

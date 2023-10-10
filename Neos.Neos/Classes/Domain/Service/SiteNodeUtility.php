@@ -19,7 +19,6 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -73,7 +72,7 @@ final class SiteNodeUtility
             $rootNodeAggregate = $contentRepository->getContentGraph()
                 ->findRootNodeAggregateByType(
                     $contentStreamId,
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 );
             $sitesNode = $subgraph->findNodeById($rootNodeAggregate->nodeAggregateId);
             if ($sitesNode) {

@@ -59,7 +59,7 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
         foreach ($this->contentRepository->getContentStreamFinder()->findAllIds() as $contentStreamId) {
             $sitesNodeAggregate = $contentGraph->findRootNodeAggregateByType(
                 $contentStreamId,
-                NodeTypeName::fromString('Neos.Neos:Sites')
+                NodeTypeNameFactory::forSites()
             );
             $siteNodeAggregates = $contentGraph->findChildNodeAggregatesByName(
                 $contentStreamId,
@@ -87,12 +87,13 @@ class SiteServiceInternals implements ContentRepositoryServiceInterface
             $liveContentStreamId,
             NodeTypeNameFactory::forSites()
         );
-        $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        if ($siteNodeType->getName() === 'Neos.Neos:FallbackNode') {
+        try {
+            $siteNodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        } catch (NodeTypeNotFoundException $exception) {
             throw new NodeTypeNotFoundException(
                 'Cannot create a site using a non-existing node type.',
-                1412372375
+                1412372375,
+                $exception
             );
         }
 

@@ -3,7 +3,7 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
   templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/DimensionsMenu.html'
 
   # the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
-  absent.attributes = Neos.Fusion:Attributes {
+  absent.attributes = Neos.Fusion:DataStructure {
     class = 'normal'
   }
 

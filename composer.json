@@ -60,7 +60,6 @@
         "neos/contentrepository-legacynodemigration": "self.version",
         "neos/contentrepository-nodeaccess": "self.version",
         "neos/contentrepository-nodemigration": "self.version",
-        "neos/contentrepository-security": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-testsuite": "self.version",
         "neos/contentrepositoryregistry": "self.version",
@@ -92,7 +91,7 @@
     "scripts": {
         "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.TestSuite/Classes ./Neos.ContentRepository.Core/Classes ./Neos.Neos/Classes",
         "lint:phpcs": [
-            "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength"
+            "@lint:phpcs-psr12 --exclude=Generic.Files.LineLength,PSR1.Files.SideEffects"
         ],
         "lint:phpstan": "../../bin/phpstan analyse",
         "lint:distributionintegrity": "[ -d 'Neos.ContentRepository' ] && { echo 'Package Neos.ContentRepository should not exist.' 1>&2; exit 1; } || exit 0;",
@@ -155,9 +154,6 @@
             ],
             "Neos\\ContentRepository\\NodeMigration\\": [
                 "Neos.ContentRepository.NodeMigration/src"
-            ],
-            "Neos\\ContentRepository\\Security\\": [
-                "Neos.ContentRepository.Security/Classes"
             ],
             "Neos\\ContentRepository\\StructureAdjustment\\": [
                 "Neos.ContentRepository.StructureAdjustment/src"

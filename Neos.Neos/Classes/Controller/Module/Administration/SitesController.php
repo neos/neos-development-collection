@@ -186,7 +186,7 @@ class SitesController extends AbstractModuleController
             try {
                 $sitesNode = $contentRepository->getContentGraph()->findRootNodeAggregateByType(
                     $liveWorkspace->currentContentStreamId,
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 );
             } catch (\Exception $exception) {
                 throw new \InvalidArgumentException(
@@ -253,7 +253,7 @@ class SitesController extends AbstractModuleController
 
 
         $sitePackages = $this->packageManager->getFilteredPackages('available', 'neos-site');
-        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes('Neos.Neos:Document', false);
+        $documentNodeTypes = $contentRepository->getNodeTypeManager()->getSubNodeTypes(NodeTypeNameFactory::forDocument(), false);
 
         $generatorServiceIsAvailable = $this->packageManager->isPackageAvailable('Neos.SiteKickstarter');
         $generatorServices = [];

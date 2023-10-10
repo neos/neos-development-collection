@@ -15,7 +15,7 @@ prototype(Neos.NodeTypes.ColumnLayouts:MultiColumn) < prototype(Neos.Neos:Conten
 # Abstract render definition for a single content column in a multi column element
 prototype(Neos.NodeTypes.ColumnLayouts:MultiColumnItem) < prototype(Neos.Neos:ContentCollection) {
     nodePath = '.'
-    attributes = Neos.Fusion:Attributes {
+    attributes = Neos.Fusion:DataStructure {
         class = 'column'
     }
 }

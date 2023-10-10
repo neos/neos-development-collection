@@ -30,9 +30,9 @@ root {
   documentType {
     @position = 'end 9998'
     condition = Neos.Fusion:CanRender {
-      type = ${documentNode.nodeType.name}
+      type = ${documentNode.nodeTypeName.value}
     }
-    type = ${documentNode.nodeType.name}
+    type = ${documentNode.nodeTypeName.value}
   }
 
   default {
@@ -53,7 +53,7 @@ root {
   error {
     @position = 'end 10001'
     condition = true
-    type = ${documentNode.nodeType.name}
+    type = ${documentNode.nodeTypeName.value}
   }
 
   @cache {
