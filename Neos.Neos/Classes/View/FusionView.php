@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -28,7 +29,6 @@ use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
@@ -44,12 +44,6 @@ class FusionView extends AbstractView
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    /**
-     * @Flow\Inject
-     * @var SiteNodeUtility
-     */
-    protected $siteNodeUtility;
 
     #[Flow\Inject]
     protected RuntimeFactory $runtimeFactory;
@@ -71,7 +65,13 @@ class FusionView extends AbstractView
     {
         $currentNode = $this->getCurrentNode();
 
-        $currentSiteNode = $this->siteNodeUtility->findSiteNode($currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
+        $currentSiteNode = $subgraph->findClosestNode($currentNode->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+
+        if (!$currentSiteNode) {
+            throw new \RuntimeException('No site node found!', 1697053346);
+        }
+
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         $fusionRuntime->pushContextArray([

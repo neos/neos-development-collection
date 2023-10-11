@@ -17,7 +17,6 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -27,6 +26,7 @@ use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 
+/** @internal */
 #[Flow\Scope('singleton')]
 final class SiteNodeUtility
 {
@@ -35,18 +35,6 @@ final class SiteNodeUtility
         private readonly DomainRepository $domainRepository,
         private readonly SiteRepository $siteRepository
     ) {
-    }
-
-    public function findSiteNode(Node $node): Node
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(NodeTypeNameFactory::NAME_SITE));
-
-        if (!$siteNode) {
-            throw new \RuntimeException('No site node found!');
-        }
-
-        return $siteNode;
     }
 
     /** @internal */
