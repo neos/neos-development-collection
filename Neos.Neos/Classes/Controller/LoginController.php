@@ -64,16 +64,19 @@ class LoginController extends AbstractAuthenticationController
     protected SiteRepository $siteRepository;
 
     #[Flow\Inject]
-    protected StringFrontend $loginTokenCache;
+    protected FlashMessageService $flashMessageService;
+
+    /**
+     * @Flow\Inject
+     * @var StringFrontend
+     */
+    protected $loginTokenCache;
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="session.name")
      * @var string
      */
     protected $sessionName;
-
-    #[Flow\Inject]
-    protected FlashMessageService $flashMessageService;
 
     /**
      * @var array<string,class-string>

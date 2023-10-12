@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\Neos\Controller\Module;
+namespace Neos\Neos\Controller;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Translator;
