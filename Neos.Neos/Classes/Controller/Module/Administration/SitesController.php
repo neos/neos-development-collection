@@ -234,7 +234,7 @@ class SitesController extends AbstractModuleController
             [],
             1412371798
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirectToAction('index');
     }
 
     /**
@@ -430,7 +430,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372266
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirectToAction('index');
     }
 
     /**
@@ -450,7 +450,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372689
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirectToAction('index');
     }
 
     /**
@@ -470,7 +470,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372881
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirectToAction('index');
     }
 
     /**
@@ -490,7 +490,7 @@ class SitesController extends AbstractModuleController
             [],
             1412372975
         );
-        $this->unsetLastVisitedNodeAndRedirect('index');
+        $this->redirectToAction('index');
     }
 
     /**
@@ -525,7 +525,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373069
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirectToAction('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -562,7 +562,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373192
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirectToAction('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -587,7 +587,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373310
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $site]);
+        $this->redirectToAction('edit', null, null, ['site' => $site]);
     }
 
     /**
@@ -608,7 +608,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373539
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirectToAction('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -629,7 +629,7 @@ class SitesController extends AbstractModuleController
             [],
             1412373425
         );
-        $this->unsetLastVisitedNodeAndRedirect('edit', null, null, ['site' => $domain->getSite()]);
+        $this->redirectToAction('edit', null, null, ['site' => $domain->getSite()]);
     }
 
     /**
@@ -644,7 +644,7 @@ class SitesController extends AbstractModuleController
      * @param string $format The format to use for the redirect URI
      * @return void
      */
-    protected function unsetLastVisitedNodeAndRedirect(
+    protected function redirectToAction(
         $actionName,
         $controllerName = null,
         $packageKey = null,
@@ -653,7 +653,6 @@ class SitesController extends AbstractModuleController
         $statusCode = 303,
         $format = null
     ) {
-        $this->session->putData('lastVisitedNode', null);
         parent::redirect($actionName, $controllerName, $packageKey, $arguments, $delay, $statusCode, $format);
     }
 }
