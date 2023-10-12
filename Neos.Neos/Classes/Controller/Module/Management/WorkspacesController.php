@@ -800,19 +800,18 @@ class WorkspacesController extends AbstractModuleController
                 // We should probably throw an exception though
                 if ($documentNode !== null && $siteNode !== null && $siteNode->nodeName) {
                     $siteNodeName = $siteNode->nodeName->value;
-                    //
+                    // Reverse `$documentPathSegments` to start with the site node.
+                    // The paths are used for grouping the nodes and for selecting a tree of nodes.
                     $documentPath = implode('/', array_reverse(array_map(
                         fn (NodeName $nodeName): string => $nodeName->value,
                         $documentPathSegments
                     )));
-                    $relativePath = str_replace(
-                        sprintf('//%s/%s', $siteNodeName, $documentPath),
-                        '',
-                        implode('/', array_reverse(array_map(
-                            fn (NodeName $nodeName): string => $nodeName->value,
-                            $nodePathSegments
-                        )))
-                    );
+                    // Reverse `$nodePathSegments` to start with the site node.
+                    // The paths are used for grouping the nodes and for selecting a tree of nodes.
+                    $relativePath = implode('/', array_reverse(array_map(
+                        fn (NodeName $nodeName): string => $nodeName->value,
+                        $nodePathSegments
+                    )));
                     if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                         $siteChanges[$siteNodeName]['siteNode']
                             = $this->siteRepository->findOneByNodeName(SiteNodeName::fromString($siteNodeName));
