@@ -20,10 +20,11 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
-use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\SiteNodeUtility;
 use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
@@ -104,6 +105,18 @@ class SiteRepository extends Repository
     }
 
     /**
+     * Finds a given site by site node.
+     *
+     * To find the correct site node by its descended child node leverage `findClosestNode`:
+     * ```php
+     * $siteNode = $subgraph->findClosestNode(
+     *     $node->nodeAggregateId,
+     *     FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE)
+     * );
+     * ```
+     *
+     * To resolve the SiteNode by a Site use {@see SiteNodeUtility::findSiteNodeBySite()}
+     *
      * @throws \Neos\Neos\Domain\Exception in case the passed $siteNode is not a real site node or no site matches this site node.
      */
     public function findSiteBySiteNode(Node $siteNode): Site
