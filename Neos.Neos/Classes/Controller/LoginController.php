@@ -190,7 +190,7 @@ class LoginController extends AbstractAuthenticationController
      * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
      * @return void
      */
-    protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
+    protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null): void
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => false]);
@@ -216,7 +216,7 @@ class LoginController extends AbstractAuthenticationController
      * @throws StopActionException
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
-    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null)
+    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null): void
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign(
@@ -251,7 +251,7 @@ class LoginController extends AbstractAuthenticationController
      *
      * @return void
      */
-    public function logoutAction()
+    public function logoutAction(): void
     {
         $possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri($this->request);
         parent::logoutAction();
@@ -281,7 +281,7 @@ class LoginController extends AbstractAuthenticationController
      * @phpstan-ignore-next-line Flow does not properly declare its types here
      * @return false
      */
-    protected function getErrorFlashMessage()
+    protected function getErrorFlashMessage(): bool
     {
         return false;
     }
