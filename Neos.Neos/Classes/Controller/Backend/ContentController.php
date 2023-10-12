@@ -410,19 +410,6 @@ class ContentController extends ActionController
         return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
     }
 
-    final protected function findClosestDocumentNode(Node $node): ?Node
-    {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        while ($node instanceof Node) {
-            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
-                return $node;
-            }
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-        }
-
-        return null;
-    }
-
     /**
      * Signals that a new asset has been uploaded through the Neos Backend
      *

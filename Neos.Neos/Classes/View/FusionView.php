@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -195,12 +196,8 @@ class FusionView extends AbstractView
 
     protected function getClosestDocumentNode(Node $node): ?Node
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        while ($node !== null && !$this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-        }
-
-        return $node;
+        return $this->contentRepositoryRegistry->subgraphForNode($node)
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 
     /**
