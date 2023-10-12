@@ -118,9 +118,8 @@ class FusionExceptionView extends AbstractView
         $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
 
         $currentSiteNode = null;
-        if ($liveWorkspace) {
-            $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
-
+        $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
+        if ($liveWorkspace && $site) {
             $currentSiteNode = $this->siteNodeUtility->findSiteNodeBySite(
                 $site,
                 $liveWorkspace->currentContentStreamId,

@@ -81,14 +81,15 @@ final class SiteNodeUtility
         );
 
         if (!$siteNode) {
-            throw new \RuntimeException(sprintf(
-                'No site node found for site "%s"', $site->getNodeName()
-            ), 1697140379);
+            throw new \RuntimeException(sprintf('No site node found for site "%s"', $site->getNodeName()), 1697140379);
         }
 
         if (!$this->getNodeType($siteNode)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new \RuntimeException(sprintf(
-                'The site node "%s" (type: "%s") must be of type "%s"', $siteNode->nodeAggregateId->value, $siteNode->nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
+                'The site node "%s" (type: "%s") must be of type "%s"',
+                $siteNode->nodeAggregateId->value,
+                $siteNode->nodeTypeName->value,
+                NodeTypeNameFactory::NAME_SITE
             ), 1697140367);
         }
 
