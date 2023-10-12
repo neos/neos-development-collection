@@ -951,10 +951,6 @@
         <target state="translated">ノードツリーに負荷エラーになります。</target>
       </trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
-				<source>The entered username or password was wrong</source>
-        <target state="translated">入力したユーザー名やパスワードが間違っていたの</target>
-      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
