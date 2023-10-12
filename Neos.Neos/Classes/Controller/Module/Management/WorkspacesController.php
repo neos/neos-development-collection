@@ -742,8 +742,6 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-
         $siteChanges = [];
         $changes = $contentRepository->projectionState(ChangeFinder::class)
             ->findByContentStreamId(
@@ -782,6 +780,8 @@ class WorkspacesController extends AbstractModuleController
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
                     $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
+                    // Don't include `sites` path as they are not needed
+                    // by the HTML/JS magic and won't be included as `$documentPathSegments`
                     if (!$this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
                         $nodePathSegments[] = $pathSegment;
                     }
@@ -800,6 +800,7 @@ class WorkspacesController extends AbstractModuleController
                 // We should probably throw an exception though
                 if ($documentNode !== null && $siteNode !== null && $siteNode->nodeName) {
                     $siteNodeName = $siteNode->nodeName->value;
+                    //
                     $documentPath = implode('/', array_reverse(array_map(
                         fn (NodeName $nodeName): string => $nodeName->value,
                         $documentPathSegments
@@ -818,11 +819,15 @@ class WorkspacesController extends AbstractModuleController
                     }
 
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $documentNode;
+                    // We need to set `isNew` and `isMoved` on document level to make our JS behave as before.
                     if ($documentNode->equals($node)) {
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['isNew'] = $change->created;
                         $siteChanges[$siteNodeName]['documents'][$documentPath]['isMoved'] = $change->moved;
                     }
 
+                    // As for changes of type `delete` we are using nodes from the live content stream
+                    // we can't create `serializedNodeAddress` from the node.
+                    // Instead, we use the original stored values.
                     $nodeAddress = new NodeAddress(
                         $change->contentStreamId,
                         $change->originDimensionSpacePoint->toDimensionSpacePoint(),
