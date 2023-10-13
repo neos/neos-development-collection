@@ -18,7 +18,6 @@ namespace Neos\Neos\Domain\Service;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -26,12 +25,17 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 #[Flow\Scope('singleton')]
 final class SiteNodeUtility
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     public function __construct(
-        private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly DomainRepository $domainRepository,
         private readonly SiteRepository $siteRepository
     ) {
@@ -42,8 +46,8 @@ final class SiteNodeUtility
         $previousNode = null;
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
         do {
-            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
-                // the Site node is the one one level underneath the "Sites" node.
+            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+                // the Site node is the one level underneath the "Sites" node.
                 if (is_null($previousNode)) {
                     break;
                 }
@@ -78,7 +82,7 @@ final class SiteNodeUtility
             $rootNodeAggregate = $contentRepository->getContentGraph()
                 ->findRootNodeAggregateByType(
                     $contentStreamId,
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 );
             $sitesNode = $subgraph->findNodeById($rootNodeAggregate->nodeAggregateId);
             if ($sitesNode) {

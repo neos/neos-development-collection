@@ -40,12 +40,11 @@ class NodeTypeManagerTest extends TestCase
      *
      * @param array $nodeTypesFixtureData
      */
-    protected function prepareNodeTypeManager(array $nodeTypesFixtureData, string $fallbackNodeTypeName = '')
+    protected function prepareNodeTypeManager(array $nodeTypesFixtureData)
     {
         $this->nodeTypeManager = new NodeTypeManager(
             fn() => $nodeTypesFixtureData,
-            new DefaultNodeLabelGeneratorFactory(),
-            $fallbackNodeTypeName
+            new DefaultNodeLabelGeneratorFactory()
         );
     }
 
@@ -140,8 +139,7 @@ class NodeTypeManagerTest extends TestCase
                 'Neos.ContentRepository.Testing:Page2' => false,
                 'Neos.ContentRepository.Testing:Page3' => null
             ]
-        ],
-        'Neos.ContentRepository:FallbackNode' => []
+        ]
     ];
 
     /**
@@ -183,37 +181,6 @@ class NodeTypeManagerTest extends TestCase
     /**
      * @test
      */
-    public function getNodeTypeThrowsExceptionIfNoFallbackNodeTypeIsConfigured()
-    {
-        $this->expectException(NodeTypeNotFoundException::class);
-        $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
-    }
-
-    /**
-     * @test
-     */
-    public function getNodeTypeThrowsExceptionIfConfiguredFallbackNodeTypeCantBeFound()
-    {
-        $this->expectException(NodeTypeNotFoundException::class);
-        $this->prepareNodeTypeManager($this->nodeTypesFixture, 'Neos.ContentRepository:NonExistingFallbackNode');
-        $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
-    }
-
-    /**
-     * @test
-     */
-    public function getNodeTypeReturnsFallbackNodeTypeIfConfigured()
-    {
-        $this->prepareNodeTypeManager($this->nodeTypesFixture, 'Neos.ContentRepository:FallbackNode');
-
-        $expectedNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository:FallbackNode');
-        $fallbackNodeType = $this->nodeTypeManager->getNodeType('Neos.ContentRepository.Testing:TextFooBarNotHere');
-        self::assertSame($expectedNodeType, $fallbackNodeType);
-    }
-
-    /**
-     * @test
-     */
     public function hasNodeTypeReturnsTrueIfTheGivenNodeTypeIsFound()
     {
         self::assertTrue($this->nodeTypeManager->hasNodeType('Neos.ContentRepository.Testing:TextWithImage'));
@@ -250,8 +217,7 @@ class NodeTypeManagerTest extends TestCase
             'Neos.ContentRepository.Testing:Page',
             'Neos.ContentRepository.Testing:Page2',
             'Neos.ContentRepository.Testing:Page3',
-            'Neos.ContentRepository.Testing:DocumentWithSupertypes',
-            'Neos.ContentRepository:FallbackNode'
+            'Neos.ContentRepository.Testing:DocumentWithSupertypes'
         ];
         self::assertEquals($expectedNodeTypes, array_keys($this->nodeTypeManager->getNodeTypes()));
     }

@@ -32,7 +32,6 @@ class TetheredNodeAdjustments
 {
     use NodeVariationInternals;
     use RemoveNodeAggregateTrait;
-    use LoadNodeTypeTrait;
     use TetheredNodeInternals;
 
     public function __construct(
@@ -48,12 +47,13 @@ class TetheredNodeAdjustments
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        $nodeType = $this->loadNodeType($nodeTypeName);
-        if ($nodeType === null) {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
         $expectedTetheredNodes = $this->nodeTypeManager->getAutoCreatedChildNodesFor($nodeType);
+
+        $expectedTetheredNodes = $nodeType->getAutoCreatedChildNodes();
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             // find missing tethered nodes
@@ -202,11 +202,6 @@ class TetheredNodeAdjustments
     protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph
     {
         return $this->interDimensionalVariationGraph;
-    }
-
-    protected function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
     }
 
     /**

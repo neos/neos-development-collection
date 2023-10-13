@@ -6,7 +6,6 @@ parameters:
         - Neos.ContentRepository.BehavioralTests/Classes
         - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepository.Core/Classes
-        - Neos.ContentRepository.Security/Classes
         - Neos.Neos/Classes
     excludePaths:
         analyse:

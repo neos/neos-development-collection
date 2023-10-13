@@ -19,12 +19,13 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -44,11 +45,9 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Diff\Diff;
 use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
-use Neos\Neos\Domain\Model\WorkspaceName as NeosWorkspaceName;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
 use Neos\Flow\Mvc\ActionRequest;
@@ -62,6 +61,9 @@ use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Neos\Domain\Service\WorkspaceNameBuilder;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
  * The Neos Workspaces module controller
@@ -71,6 +73,10 @@ use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 class WorkspacesController extends AbstractModuleController
 {
     use ModuleTranslationTrait;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -103,12 +109,6 @@ class WorkspacesController extends AbstractModuleController
     protected $packageManager;
 
     /**
-     * @var ContentRepositoryRegistry
-     * @Flow\Inject
-     */
-    protected $contentRepositoryRegistry;
-
-    /**
      * Display a list of unpublished content
      *
      * @return void
@@ -121,8 +121,7 @@ class WorkspacesController extends AbstractModuleController
 
         $currentAccount = $this->securityContext->getAccount();
         $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-                ->toContentRepositoryWorkspaceName()
+            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
         );
         if (is_null($userWorkspace)) {
             throw new \RuntimeException('Current user has no workspace', 1645485990);
@@ -462,8 +461,7 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
         $currentAccount = $this->securityContext->getAccount();
-        $personalWorkspaceName = NeosWorkspaceName::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-            ->toContentRepositoryWorkspaceName();
+        $personalWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
         $personalWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($personalWorkspaceName);
         /** @var Workspace $personalWorkspace */
 
@@ -788,12 +786,14 @@ class WorkspacesController extends AbstractModuleController
                     $node->nodeAggregateId,
                     FindAncestorNodesFilter::create()
                 );
+                $ancestors = Nodes::fromArray([$node])->merge($ancestors);
+
                 $nodePathSegments = [];
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
                     $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
                     $nodePathSegments[] = $pathSegment;
-                    if ($ancestor->nodeType->isOfType('Neos.Neos:Document')) {
+                    if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                         $documentPathSegments[] = $pathSegment;
                         if (is_null($documentNode)) {
                             $documentNode = $ancestor;
@@ -836,8 +836,9 @@ class WorkspacesController extends AbstractModuleController
                             $contentRepository
                         )
                     ];
-                    if ($node->nodeType->isOfType('Neos.Neos:Node')) {
-                        $change['configuration'] = $node->nodeType->getFullConfiguration();
+                    $nodeType = $this->getNodeType($node);
+                    if ($nodeType->isOfType('Neos.Neos:Node')) {
+                        $change['configuration'] = $nodeType->getFullConfiguration();
                     }
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['changes'][$relativePath] = $change;
                 }
@@ -907,7 +908,7 @@ class WorkspacesController extends AbstractModuleController
 
         $contentChanges = [];
 
-        $changeNodePropertiesDefaults = $changedNode->nodeType->getDefaultValuesForProperties();
+        $changeNodePropertiesDefaults = $this->getNodeType($changedNode)->getDefaultValuesForProperties();
 
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
@@ -1024,7 +1025,7 @@ class WorkspacesController extends AbstractModuleController
      */
     protected function getPropertyLabel($propertyName, Node $changedNode)
     {
-        $properties = $changedNode->nodeType->getProperties();
+        $properties = $this->getNodeType($changedNode)->getProperties();
         if (
             !isset($properties[$propertyName])
             || !isset($properties[$propertyName]['ui']['label'])

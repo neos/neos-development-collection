@@ -15,21 +15,20 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
-use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 #[Flow\Scope('singleton')]
 class NodeSiteResolvingService
 {
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,
@@ -51,8 +50,8 @@ class NodeSiteResolvingService
         }
         $previousNode = null;
         do {
-            if ($node->nodeType->isOfType('Neos.Neos:Sites')) {
-                // the Site node is the one one level underneath the "Sites" node.
+            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+                // the Site node is the one level underneath the "Sites" node.
                 return $previousNode;
             }
             $previousNode = $node;

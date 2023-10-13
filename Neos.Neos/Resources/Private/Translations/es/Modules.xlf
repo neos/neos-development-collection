@@ -259,70 +259,6 @@
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">Todos los cambios del espacio de trabajo "{0}" han sido descartados.</target>
       </trans-unit>
-      <trans-unit id="history.label" xml:space="preserve" approved="yes">
-				<source>History</source>
-        <target state="final">Historial</target>
-      </trans-unit>
-      <trans-unit id="history.description" xml:space="preserve">
-				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-        <target state="translated">Este módulo proporciona una visión general de todos los eventos relevantes que afectan a esta instalación de Neos.</target>
-      </trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve" approved="no">
-				<source>Here's what happened recently in Neos</source>
-        <target state="translated">Esto es lo que ocurrió recientemente en Neos</target>
-      </trans-unit>
-      <trans-unit id="history.messages.emptyHistory" xml:space="preserve" approved="yes">
-				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-        <target state="final">Aún no se ha registrado ningún evento que podamos mostrar en esta historia.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve" approved="yes">
-				<source>{0} created the {1} "{2}".</source>
-        <target state="final">{0} Creado el {1} "{2}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve" approved="yes">
-				<source>{0} removed the {1} "{2}".</source>
-        <target state="final">{0} eliminó el {1}"{2}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve" approved="yes">
-				<source>{0} created the variant {1} of the {2} "{3}".</source>
-        <target state="final">{0} creó la variante {1} del {2} "{3}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve" approved="yes">
-				<source>{0} modified the {1} "{2}".</source>
-        <target state="final">{0} modificado el {1} "{2}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve" approved="yes">
-				<source>{0} moved the {1} "{2}".</source>
-        <target state="final">{0} movió el {1} "{2}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve" approved="yes">
-				<source>{0} copied the {1} "{2}".</source>
-        <target state="final">{0} ha copiado el {1} "{2}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve" approved="yes">
-				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-        <target state="final">{0} renombró el {1} "{2}" a "{3}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve" approved="yes">
-				<source>{0} modified content on the {1} "{2}".</source>
-        <target state="final">{0} modificó contenido el {1} "{2}".</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
-				<source>{0} created a new user "{1}" for {2}.</source>
-        <target state="translated">{0} creó un nuevo usuario "{1}" para {2}.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
-				<source>{0} deleted the account "{1}" of {2}.</source>
-        <target state="translated">{0} borró la cuenta "{1}" de {2}.</target>
-      </trans-unit>
-      <trans-unit id="history.loadMore.label" xml:space="preserve">
-				<source>Load More</source>
-        <target state="translated">Cargar más</target>
-      </trans-unit>
-      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
-				<source>This node has been removed in the meantime</source>
-        <target state="translated">Mientras tanto, este nodo ha sido eliminado</target>
-      </trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
 				<source>Administration</source>
@@ -868,8 +804,8 @@
 				<source>The inter dimensional fallback graph displays all possible fallbacks (displayed as edges) between subgraphs (content dimension value combinations, displayed as nodes).
 Primary fallbacks are marked blue and always visible, while lower priority fallbacks are shown on mouseover. The higher the priority the higher the opacity.
 Click on one of the nodes to only see its fallbacks and variants. Click again to remove the filter.</source>
-        <target state="translated">El gráfico de respaldo interdimensional muestra todos los posibles respaldos (mostrados como bordes) entre subgráficos (combinaciones de valores de dimensión de contenido, mostrados como nodos). 
-Los recursos alternativos primarios están marcados en azul y siempre visibles, mientras que los recursos alternativos de menor prioridad se muestran al pasar el mouse. Cuanto mayor sea la prioridad, mayor será la opacidad. 
+        <target state="translated">El gráfico de respaldo interdimensional muestra todos los posibles respaldos (mostrados como bordes) entre subgráficos (combinaciones de valores de dimensión de contenido, mostrados como nodos).
+Los recursos alternativos primarios están marcados en azul y siempre visibles, mientras que los recursos alternativos de menor prioridad se muestran al pasar el mouse. Cuanto mayor sea la prioridad, mayor será la opacidad.
 Haga clic en uno de los nodos para ver solo sus alternativas y variantes. Haga clic de nuevo para eliminar el filtro.</target>
       </trans-unit>
       <trans-unit id="dimensions.intraDimension.legend" xml:space="preserve" approved="yes">

@@ -93,32 +93,6 @@ final class WorkspaceFinder implements ProjectionStateInterface
 
     /**
      * @return array<string,Workspace>
-     */
-    public function findByPrefix(WorkspaceName $prefix): array
-    {
-        $result = [];
-
-        $connection = $this->client->getConnection();
-        $workspaceRows = $connection->executeQuery(
-            '
-                SELECT * FROM ' . $this->tableName . '
-                WHERE workspaceName LIKE :workspaceNameLike
-            ',
-            [
-                'workspaceNameLike' => $prefix->value . '%'
-            ]
-        )->fetchAllAssociative();
-
-        foreach ($workspaceRows as $workspaceRow) {
-            $similarlyNamedWorkspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
-            $result[$similarlyNamedWorkspace->workspaceName->value] = $similarlyNamedWorkspace;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array<string,Workspace>
      * @throws \Doctrine\DBAL\DBALException
      */
     public function findByBaseWorkspace(WorkspaceName $baseWorkspace): array

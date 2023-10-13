@@ -15,8 +15,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Fusion\Service\HtmlAugmenter;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Runtime;
 use Neos\Neos\Service\ContentElementEditableService;
@@ -35,11 +33,6 @@ class ContentElementEditableServiceTest extends UnitTestCase
      * @var PrivilegeManagerInterface
      */
     protected $mockPrivilegeManager;
-
-    /**
-     * @var AuthorizationService
-     */
-    protected $mockNodeAuthorizationService;
 
     /**
      * @var HtmlAugmenter
