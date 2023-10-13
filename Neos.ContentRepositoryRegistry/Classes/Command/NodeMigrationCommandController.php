@@ -115,6 +115,40 @@ class NodeMigrationCommandController extends CommandController
     }
 
     /**
+     * List available migrations
+     *
+     * @return void
+     * @see neos.contentrepositoryregistry:nodemigration:list
+     */
+    public function listCommand(): void
+    {
+        $this->outputLine();
+
+        $availableMigrations = $this->migrationFactory->getAvailableVersions();
+        if (count($availableMigrations) === 0) {
+            $this->outputLine('No migrations available.');
+            $this->quit();
+        }
+
+        $tableRows = [];
+        foreach ($availableMigrations as $version => $migration) {
+            $migrationUpConfigurationComments = $this->migrationFactory->getMigrationForVersion($version)->getComments();
+
+            $tableRows[] = [
+                $version,
+                $migration['formattedVersionNumber'],
+                $migration['package']->getPackageKey(),
+
+                wordwrap($migrationUpConfigurationComments, 60)
+            ];
+        }
+
+        $this->outputLine('<b>Available migrations</b>');
+        $this->outputLine();
+        $this->output->outputTable($tableRows, ['Version', 'Date', 'Package', 'Comments']);
+    }
+
+    /**
      * Helper to output comments and warnings for the given configuration.
      *
      * @param MigrationConfiguration $migrationConfiguration
