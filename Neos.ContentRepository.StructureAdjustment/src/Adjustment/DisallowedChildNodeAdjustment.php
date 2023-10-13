@@ -62,7 +62,6 @@ class DisallowedChildNodeAdjustment
                     ? $subgraph->findParentNode($parentNode->nodeAggregateId)
                     : null;
 
-
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
@@ -81,44 +80,45 @@ class DisallowedChildNodeAdjustment
                     && !is_null($parentNode->nodeName)
                 ) {
                     if ($this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName)) {
-                    if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
-                            $grandparentNodeType,
-                            $parentNode->nodeName,
-                            $nodeType
-                        );
-                    }
-                }
-
-                if (!$allowedByParent && !$allowedByGrandparent) {
-                    $node = $subgraph->findNodeById($nodeAggregate->nodeAggregateId);
-                    if (is_null($node)) {
-                        continue;
+                        if ($grandparentNodeType !== null) {
+                            $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                                $grandparentNodeType,
+                                $parentNode->nodeName,
+                                $nodeType
+                            );
+                        }
                     }
 
-                    $message = sprintf(
-                        '
+                    if (!$allowedByParent && !$allowedByGrandparent) {
+                        $node = $subgraph->findNodeById($nodeAggregate->nodeAggregateId);
+                        if (is_null($node)) {
+                            continue;
+                        }
+
+                        $message = sprintf(
+                            '
                         The parent node type "%s" is not allowing children of type "%s",
                         and the grandparent node type "%s" is not allowing grandchildren of type "%s".
                         Thus, the node is invalid at this location and should be removed.
                     ',
-                        $parentNodeType !== null ? $parentNodeType->name->value : '',
-                        $node->nodeTypeName->value,
-                        $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
-                        $node->nodeTypeName->value,
-                    );
+                            $parentNodeType !== null ? $parentNodeType->name->value : '',
+                            $node->nodeTypeName->value,
+                            $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
+                            $node->nodeTypeName->value,
+                        );
 
-                    yield StructureAdjustment::createForNode(
-                        $node,
-                        StructureAdjustment::DISALLOWED_CHILD_NODE,
-                        $message,
-                        function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
-                            return $this->removeNodeInSingleDimensionSpacePoint(
-                                $nodeAggregate,
-                                $coveredDimensionSpacePoint
-                            );
-                        }
-                    );
+                        yield StructureAdjustment::createForNode(
+                            $node,
+                            StructureAdjustment::DISALLOWED_CHILD_NODE,
+                            $message,
+                            function () use ($nodeAggregate, $coveredDimensionSpacePoint) {
+                                return $this->removeNodeInSingleDimensionSpacePoint(
+                                    $nodeAggregate,
+                                    $coveredDimensionSpacePoint
+                                );
+                            }
+                        );
+                    }
                 }
             }
         }
