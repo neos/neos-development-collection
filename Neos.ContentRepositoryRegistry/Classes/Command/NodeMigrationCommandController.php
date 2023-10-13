@@ -117,13 +117,10 @@ class NodeMigrationCommandController extends CommandController
     /**
      * List available migrations
      *
-     * @return void
      * @see neos.contentrepositoryregistry:nodemigration:list
      */
     public function listCommand(): void
     {
-        $this->outputLine();
-
         $availableMigrations = $this->migrationFactory->getAvailableVersions();
         if (count($availableMigrations) === 0) {
             $this->outputLine('No migrations available.');
