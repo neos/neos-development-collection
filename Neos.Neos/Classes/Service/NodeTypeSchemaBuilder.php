@@ -27,6 +27,16 @@ class NodeTypeSchemaBuilder
     protected $nodeTypeManager;
 
     /**
+     * The Neos UI package needs a few additional abstract nodetypes to be present in the schema.
+     * This will be properly cleaned up when this service is moved into the Neos.UI package as we only
+     * need the schema there.
+     *
+     * @Flow\InjectConfiguration(path="nodeTypeRoles", package="Neos.Neos.Ui")
+     * @var array
+     */
+    protected $nodeTypeRoles;
+
+    /**
      * The preprocessed node type schema contains everything we need for the UI:
      *
      * - "nodeTypes" contains the original (merged) node type schema
@@ -53,8 +63,17 @@ class NodeTypeSchemaBuilder
             'constraints' => $this->generateConstraints()
         ];
 
-        // We need to include abstract nodetypes as the UI required some basic types like Neos.Neos:Document and Neos.Neos:Content
-        $nodeTypes = $this->nodeTypeManager->getNodeTypes(true);
+        // We need skip abstract nodetypes as they are not instantiated by the UI
+        $nodeTypes = $this->nodeTypeManager->getNodeTypes(false);
+
+        // Get special abstract nodetypes required by the Neos.UI
+        if ($this->nodeTypeRoles) {
+            $additionalNodeTypeNames = array_values($this->nodeTypeRoles);
+            foreach ($additionalNodeTypeNames as $additionalNodeTypeName) {
+                $nodeTypes[$additionalNodeTypeName] = $this->nodeTypeManager->getNodeType($additionalNodeTypeName);
+            }
+        }
+
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
