@@ -310,7 +310,9 @@ trait RoutingTrait
         $nodeAddress = new NodeAddress(
             ContentStreamId::fromString($contentStreamId),
             DimensionSpacePoint::fromJsonString($dimensionSpacePoint),
-            NodeAggregateId::fromString($nodeAggregateId),
+            \str_starts_with($nodeAggregateId, '$')
+                ? $this->rememberedNodeAggregateIds[\mb_substr($nodeAggregateId, 1)]
+                : NodeAggregateId::fromString($nodeAggregateId),
             WorkspaceName::forLive()
         );
         $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $this->requestUrl);

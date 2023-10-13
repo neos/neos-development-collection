@@ -549,11 +549,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 continue;
             }
             $oldUriPath = $node->getUriPath();
-            // homepage -> TODO hacky?
-            if ($oldUriPath === '') {
-                continue;
-            }
-            /** @var string[] $uriPathSegments */
             $uriPathSegments = explode('/', $oldUriPath);
             $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
             $newUriPath = implode('/', $uriPathSegments);
