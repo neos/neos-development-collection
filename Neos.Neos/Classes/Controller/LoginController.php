@@ -31,7 +31,7 @@ use Neos\Flow\Session\Exception\SessionNotStartedException;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Session\SessionManagerInterface;
 use Neos\Fusion\View\FusionView;
-use Neos\Neos\Controller\Module\ModuleTranslationTrait;
+use Neos\Neos\Controller\TranslationTrait;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Service\BackendRedirectionService;
@@ -41,42 +41,30 @@ use Neos\Neos\Service\BackendRedirectionService;
  */
 class LoginController extends AbstractAuthenticationController
 {
-    use ModuleTranslationTrait;
+    use TranslationTrait;
 
     /**
      * @var string
      */
     protected $defaultViewObjectName = FusionView::class;
 
-    /**
-     * @Flow\Inject
-     * @var SessionInterface
-     */
-    protected $session;
+    #[Flow\Inject]
+    protected SessionInterface $session;
 
-    /**
-     * @Flow\Inject
-     * @var SessionManagerInterface
-     */
-    protected $sessionManager;
+    #[Flow\Inject]
+    protected SessionManagerInterface $sessionManager;
 
-    /**
-     * @Flow\Inject
-     * @var BackendRedirectionService
-     */
-    protected $backendRedirectionService;
+    #[Flow\Inject]
+    protected BackendRedirectionService $backendRedirectionService;
 
-    /**
-     * @Flow\Inject
-     * @var DomainRepository
-     */
-    protected $domainRepository;
+    #[Flow\Inject]
+    protected DomainRepository $domainRepository;
 
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
+
+    #[Flow\Inject]
+    protected FlashMessageService $flashMessageService;
 
     /**
      * @Flow\Inject
@@ -89,12 +77,6 @@ class LoginController extends AbstractAuthenticationController
      * @var string
      */
     protected $sessionName;
-
-    /**
-     * @Flow\Inject
-     * @var FlashMessageService
-     */
-    protected $flashMessageService;
 
     /**
      * @var array<string,class-string>
@@ -211,14 +193,14 @@ class LoginController extends AbstractAuthenticationController
      * @param AuthenticationRequiredException $exception The exception thrown while the authentication process
      * @return void
      */
-    protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null)
+    protected function onAuthenticationFailure(AuthenticationRequiredException $exception = null): void
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign('value', ['success' => false]);
         } else {
             $this->addFlashMessage(
-                $this->getModuleLabel('login.wrongCredentials.body'),
-                $this->getModuleLabel('login.wrongCredentials.title'),
+                $this->getLabel('login.wrongCredentials.body'),
+                $this->getLabel('login.wrongCredentials.title'),
                 Message::SEVERITY_ERROR,
                 [],
                 $exception === null ? 1347016771 : $exception->getCode()
@@ -237,7 +219,7 @@ class LoginController extends AbstractAuthenticationController
      * @throws StopActionException
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
-    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null)
+    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null): void
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign(
@@ -272,7 +254,7 @@ class LoginController extends AbstractAuthenticationController
      *
      * @return void
      */
-    public function logoutAction()
+    public function logoutAction(): void
     {
         $possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri($this->request);
         parent::logoutAction();
@@ -285,8 +267,8 @@ class LoginController extends AbstractAuthenticationController
                     $this->redirectToUri($possibleRedirectionUri);
                 }
                 $this->addFlashMessage(
-                    $this->getModuleLabel('login.loggedOut.body'),
-                    $this->getModuleLabel('login.loggedOut.title'),
+                    $this->getLabel('login.loggedOut.body'),
+                    $this->getLabel('login.loggedOut.title'),
                     Message::SEVERITY_NOTICE,
                     [],
                     1318421560
@@ -302,7 +284,7 @@ class LoginController extends AbstractAuthenticationController
      * @phpstan-ignore-next-line Flow does not properly declare its types here
      * @return false
      */
-    protected function getErrorFlashMessage()
+    protected function getErrorFlashMessage(): bool
     {
         return false;
     }

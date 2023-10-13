@@ -9,17 +9,6 @@ Neos.Fusion
 
 This package contains general-purpose Fusion objects, which are usable both within Neos and standalone.
 
-.. _Neos_Fusion__Array:
-
-Neos.Fusion:Array
------------------
-
-:[key]: (string) A nested definition (simple value, expression or object) that evaluates to a string
-:[key].@ignoreProperties: (array) A list of properties to ignore from being "rendered" during evaluation
-:[key].@position: (string/integer) Define the ordering of the nested definition
-
-.. note:: The Neos.Fusion:Array object has been renamed to Neos.Fusion:Join the old name is DEPRECATED;
-
 .. _Neos_Fusion__Join:
 
 Neos.Fusion:Join
@@ -104,57 +93,6 @@ Example of numeric keys (discouraged)::
 		20 = Neos.NodeTypes:Text
 	}
 
-
-.. _Neos_Fusion__Collection:
-
-Neos.Fusion:Collection
-----------------------
-
-Render each item in ``collection`` using ``itemRenderer``.
-
-:collection: (array/Iterable, **required**) The array or iterable to iterate over
-:itemName: (string, defaults to ``item``) Context variable name for each item
-:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (string, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element, and its results will be concatenated (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
-
-.. note:: The Neos.Fusion:Collection object is DEPRECATED use Neos.Fusion:Loop instead.
-
-Example using an object ``itemRenderer``::
-
-	myCollection = Neos.Fusion:Collection {
-		collection = ${[1, 2, 3]}
-		itemName = 'element'
-		itemRenderer = Neos.Fusion:Template {
-			templatePath = 'resource://...'
-			element = ${element}
-		}
-	}
-
-
-Example using an expression ``itemRenderer``::
-
-	myCollection = Neos.Fusion:Collection {
-		collection = ${[1, 2, 3]}
-		itemName = 'element'
-		itemRenderer = ${element * 2}
-	}
-
-.. _Neos_Fusion__RawCollection:
-
-Neos.Fusion:RawCollection
--------------------------
-
-Render each item in ``collection`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
-
-:collection: (array/Iterable, **required**) The array or iterable to iterate over
-:itemName: (string, defaults to ``item``) Context variable name for each item
-:itemKey: (string, defaults to ``itemKey``) Context variable name for each item key, when working with array
-:iterationName: (string, defaults to ``iterator``) A context variable with iteration information will be available under the given name: ``index`` (zero-based), ``cycle`` (1-based), ``isFirst``, ``isLast``
-:itemRenderer: (mixed, **required**) The renderer definition (simple value, expression or object) will be called once for every collection element (if ``itemRenderer`` cannot be rendered the path ``content`` is used as fallback for convenience in afx)
-
-.. note:: The Neos.Fusion:RawCollection object is DEPRECATED use Neos.Fusion:Map instead.**
-
 .. _Neos_Fusion__Loop:
 
 Neos.Fusion:Loop
@@ -194,7 +132,7 @@ Example using an expression ``itemRenderer``::
 Neos.Fusion:Map
 ---------------
 
-Render each item in ``items`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Collection`)
+Render each item in ``items`` using ``itemRenderer`` and return the result as an array (opposed to *string* for :ref:`Neos_Fusion__Join`)
 
 :items: (array/Iterable, **required**) The array or iterable to iterate over (to calculate ``iterator.isLast`` items have to be ``countable``)
 :itemName: (string, defaults to ``item``) Context variable name for each item
@@ -256,7 +194,7 @@ Simple Example::
 		}
 	}
 
-The ordering of matcher definitions can be specified with the ``@position`` property (see :ref:`Neos_Fusion__Array`).
+The ordering of matcher definitions can be specified with the ``@position`` property (see :ref:`Neos_Fusion__Join`).
 Thus, the priority of existing matchers (e.g. the default Neos document rendering) can be changed by setting or
 overriding the ``@position`` property.
 
@@ -536,27 +474,13 @@ Example::
     value = ${1+2}
   }
 
-.. _Neos_Fusion__RawArray:
-
-Neos.Fusion:RawArray
---------------------
-
-Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Array`)
-
-:[key]: (mixed) A nested definition (simple value, expression or object), ``[key]`` will be used for the resulting array key
-:[key].@position: (string/integer) Define the ordering of the nested definition
-
-.. tip:: For simple cases an expression with an array literal ``${[1, 2, 3]}`` might be easier to read
-
-.. note:: The Neos.Fusion:RawArray object has been renamed to Neos.Fusion:DataStructure the old name is DEPRECATED;
-
 .. _Neos_Fusion__Tag:
 
 
 Neos.Fusion:DataStructure
 --------------------
 
-Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Array`)
+Evaluate nested definitions as an array (opposed to *string* for :ref:`Neos_Fusion__Join`)
 
 :[key]: (mixed) A nested definition (simple value, expression or object), ``[key]`` will be used for the resulting array key
 :[key].@position: (string/integer) Define the ordering of the nested definition
@@ -596,54 +520,16 @@ Evaluates to::
 
 	<html version="HTML+RDFa 1.1" xmlns="http://www.w3.org/1999/xhtml">
 
-.. _Neos_Fusion__Attributes:
-
-Neos.Fusion:Attributes
-----------------------
-
-A Fusion object to render HTML tag attributes. This object is used by the :ref:`Neos_Fusion__Tag` object to
-render the attributes of a tag. But it's also useful standalone to render extensible attributes in a Fluid template.
-
-:[key]: (string) A single attribute, array values are joined with whitespace. Boolean values will be rendered as an empty or absent attribute.
-:@allowEmpty: (boolean) Whether empty attributes (HTML5 syntax) should be used for empty, false or null attribute values
-
-.. note:: The ``Neos.Fusion:Attributes`` object is DEPRECATED in favor of a solution inside Neos.Fusion:Tag which takes attributes
-   as ``Neos.Fusion:DataStructure`` now. If you have to render attributes as string without a tag you can use
-   ``Neos.Fusion:Join`` with ``@glue` but you will have to concatenate array attributes yourself.
-
-Example:
-^^^^^^^^
-
-::
-
-	attributes = Neos.Fusion:Attributes {
-		foo = 'bar'
-		class = Neos.Fusion:DataStructure {
-			class1 = 'class1'
-			class2 = 'class2'
-		}
-	}
-
-Evaluates to::
-
-	foo="bar" class="class1 class2"
-
-Unsetting an attribute:
-^^^^^^^^^^^^^^^^^^^^^^^
-
-It's possible to unset an attribute by assigning ``false`` or ``${null}`` as a value. No attribute will be rendered for
-this case.
-
 .. _Neos_Fusion__Http_Message:
 
 Neos.Fusion:Http.Message
 ------------------------
 
-A prototype based on :ref:`Neos_Fusion__Array` for rendering an HTTP message (response). It should be used to
+A prototype based on :ref:`Neos_Fusion__Join` for rendering an HTTP message (response). It should be used to
 render documents since it generates a full HTTP response and allows to override the HTTP status code and headers.
 
-:httpResponseHead: (:ref:`Neos_Fusion__Http_ResponseHead`) An HTTP response head with properties to adjust the status and headers, the position in the ``Array`` defaults to the very beginning
-:[key]: (string) A nested definition (see :ref:`Neos_Fusion__Array`)
+:httpResponseHead: (:ref:`Neos_Fusion__Http_ResponseHead`) An HTTP response head with properties to adjust the status and headers, the position in the ``Join`` defaults to the very beginning
+:[key]: (string) A nested definition (see :ref:`Neos_Fusion__Join`)
 
 Example:
 ^^^^^^^^
@@ -723,35 +609,6 @@ Link to backend modules (other than `content`)::
 				site = ${site}
 			}
 		}
-	}
-
-.. _Neos_Fusion__UriBuilder:
-
-Neos.Fusion:UriBuilder
-----------------------
-
-Built a URI to a controller action
-
-:package: (string) The package key (e.g. ``'My.Package'``)
-:subpackage: (string) The subpackage, empty by default
-:controller: (string) The controller name (e.g. ``'Registration'``)
-:action: (string) The action name (e.g. ``'new'``)
-:arguments: (array) Arguments to the action by named key
-:format: (string) An optional request format (e.g. ``'html'``)
-:section: (string) An optional fragment (hash) for the URI
-:additionalParams: (array) Additional URI query parameters by named key
-:addQueryString: (boolean) Whether to keep the query parameters of the current URI
-:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
-:absolute: (boolean) Whether to create an absolute URI
-
-.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`_Neos_Fusion__ActionUri` instead.
-
-Example::
-
-	uri = Neos.Fusion:UriBuilder {
-		package = 'My.Package'
-		controller = 'Registration'
-		action = 'new'
 	}
 
 .. _Neos_Fusion__ResourceUri:
@@ -873,22 +730,22 @@ which do not need a particular node type to work on.
 
 Neos.Neos:Page
 --------------
-Subclass of :ref:`Neos_Fusion__Http_Message`, which is based on :ref:`Neos_Fusion__Array`. Main entry point
+Subclass of :ref:`Neos_Fusion__Http_Message`, which is based on :ref:`Neos_Fusion__Join`. Main entry point
 into rendering a page; responsible for rendering the ``<html>`` tag and everything inside.
 
 :doctype: (string) Defaults to ``<!DOCTYPE html>``
 :htmlTag: (:ref:`Neos_Fusion__Tag`) The opening ``<html>`` tag
-:htmlTag.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for the ``<html>`` tag
+:htmlTag.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for the ``<html>`` tag
 :headTag: (:ref:`Neos_Fusion__Tag`) The opening ``<head>`` tag
-:head: (:ref:`Neos_Fusion__Array`) HTML markup for the ``<head>`` tag
+:head: (:ref:`Neos_Fusion__Join`) HTML markup for the ``<head>`` tag
 :head.titleTag: (:ref:`Neos_Fusion__Tag`) The ``<title>`` tag
-:head.javascripts: (:ref:`Neos_Fusion__Array`) Script includes in the head should go here
-:head.stylesheets: (:ref:`Neos_Fusion__Array`) Link tags for stylesheets in the head should go here
+:head.javascripts: (:ref:`Neos_Fusion__Join`) Script includes in the head should go here
+:head.stylesheets: (:ref:`Neos_Fusion__Join`) Link tags for stylesheets in the head should go here
 :body.templatePath: (string) Path to a fluid template for the page body
 :bodyTag: (:ref:`Neos_Fusion__Tag`) The opening ``<body>`` tag
-:bodyTag.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for the ``<body>`` tag
+:bodyTag.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for the ``<body>`` tag
 :body: (:ref:`Neos_Fusion__Template`) HTML markup for the ``<body>`` tag
-:body.javascripts: (:ref:`Neos_Fusion__Array`) Body footer JavaScript includes
+:body.javascripts: (:ref:`Neos_Fusion__Join`) Body footer JavaScript includes
 :body.[key]: (mixed) Body template variables
 
 Examples:
@@ -958,7 +815,7 @@ Render nested content from a ``ContentCollection`` node. Individual nodes are re
 :nodePath: (string, **required**) The relative node path of the ``ContentCollection`` (e.g. ``'main'``)
 :@context.node: (Node) The content collection node, resolved from ``nodePath`` by default
 :tagName: (string) Tag name for the wrapper element
-:attributes: (:ref:`Neos_Fusion__Attributes`) Tag attributes for the wrapper element
+:attributes: (:ref:`Neos_Fusion__DataStructure`) Tag attributes for the wrapper element
 
 Example::
 
@@ -1025,7 +882,7 @@ auto-generated Fusion to define prototypes for each node type extending ``Neos.N
 
 :templatePath: (string) The template path and filename, defaults to ``'resource://[packageKey]/Private/Templates/NodeTypes/[nodeType].html'`` (for auto-generated prototypes)
 :[key]: (mixed) Template variables, all node type properties are available by default (for auto-generated prototypes)
-:attributes: (:ref:`Neos_Fusion__Attributes`) Extensible attributes, used in the default templates
+:attributes: (:ref:`Neos_Fusion__DataStructure`) Extensible attributes, used in the default templates
 
 Example::
 
@@ -1119,10 +976,10 @@ Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
 :filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
-:attributes: (:ref:`Neos_Fusion__Attributes`) Extensible attributes for the whole menu
-:normal.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for normal state
-:active.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for active state
-:current.attributes: (:ref:`Neos_Fusion__Attributes`) Attributes for current state
+:attributes: (:ref:`Neos_Fusion__DataStructure`) Extensible attributes for the whole menu
+:normal.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for normal state
+:active.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for active state
+:current.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for current state
 
 .. note:: The ``items`` of the ``Menu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
@@ -1456,7 +1313,7 @@ Renders an anchor tag pointing to the node given via the argument. Based on :ref
 The link text is the node label, unless overridden.
 
 :\*: All :ref:`Neos_Neos__NodeUri` properties
-:attributes: (:ref:`Neos_Fusion__Attributes`) Link tag attributes
+:attributes: (:ref:`Neos_Fusion__DataStructure`) Link tag attributes
 :content: (string) The label of the link, defaults to ``node.label``.
 
 Example::
@@ -1505,7 +1362,7 @@ Neos.Neos:ImageTag
 Render an image tag for an asset.
 
 :\*: All :ref:`Neos_Neos__ImageUri` properties
-:attributes: (:ref:`Neos_Fusion__Attributes`) Image tag attributes
+:attributes: (:ref:`Neos_Fusion__DataStructure`) Image tag attributes
 
 Per default, the attribute loading is set to ``'lazy'``. To fetch a resource immediately, you can set ``attributes.loading``
 to ``null``, ``false`` or ``'eager'``.
@@ -1587,3 +1444,57 @@ Example::
 			property = 'title'
 		}
 	}
+
+
+Deprecated Fusion Prototypes
+----------------------------
+
+The following prototypes are deprecated and will be removed in future versions of Neos!
+
+.. _Neos_Fusion__UriBuilder:
+
+Neos.Fusion:UriBuilder
+~~~~~~~~~~~~~~~~~~~~~~
+
+Built a URI to a controller action
+
+:package: (string) The package key (e.g. ``'My.Package'``)
+:subpackage: (string) The subpackage, empty by default
+:controller: (string) The controller name (e.g. ``'Registration'``)
+:action: (string) The action name (e.g. ``'new'``)
+:arguments: (array) Arguments to the action by named key
+:format: (string) An optional request format (e.g. ``'html'``)
+:section: (string) An optional fragment (hash) for the URI
+:additionalParams: (array) Additional URI query parameters by named key
+:addQueryString: (boolean) Whether to keep the query parameters of the current URI
+:argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
+:absolute: (boolean) Whether to create an absolute URI
+
+.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`_Neos_Fusion__ActionUri` instead.
+
+Example::
+
+	uri = Neos.Fusion:UriBuilder {
+		package = 'My.Package'
+		controller = 'Registration'
+		action = 'new'
+	}
+
+Removed Fusion Prototypes
+-------------------------
+
+The following Fusion Prototypes have been removed:
+
+.. _Neos_Fusion__Array:
+* `Neos.Fusion:Array` replaced with :ref:`_Neos_Fusion__Join`
+.. _Neos_Fusion__RawArray:
+* `Neos.Fusion:RawArray` replaced with :ref:`_Neos_Fusion__DataStructure`
+.. _Neos_Fusion__Collection:
+* `Neos.Fusion:Collection` replaced with :ref:`_Neos_Fusion__Loop`
+.. _Neos_Fusion__RawCollection:
+* `Neos.Fusion:RawCollection` replaced with :ref:`_Neos_Fusion__Map`
+.. _Neos_Fusion__Attributes:
+* `Neos.Fusion:Attributes` use property `attributes` in :ref:`_Neos_Fusion__Tag`
+
+
+

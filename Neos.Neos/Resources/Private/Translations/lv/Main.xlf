@@ -951,10 +951,6 @@
         <target state="translated">Mezglu struktūras ielādes kļūda.</target>
       </trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
-				<source>The entered username or password was wrong</source>
-        <target state="translated">Ievadītais lietotājvārds vai parole ir nepareiza</target>
-      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve" approved="yes">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

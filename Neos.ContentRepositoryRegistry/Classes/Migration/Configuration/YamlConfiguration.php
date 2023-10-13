@@ -45,7 +45,6 @@ class YamlConfiguration extends Configuration
     {
         $this->availableVersions = [];
         foreach ($this->packageManager->getAvailablePackages() as $package) {
-            $this->registerVersionInDirectory($package, 'TYPO3CR');
             $this->registerVersionInDirectory($package, 'ContentRepository');
         }
         ksort($this->availableVersions);

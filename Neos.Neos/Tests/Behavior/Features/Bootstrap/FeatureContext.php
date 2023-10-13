@@ -32,7 +32,6 @@ class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
     use BrowserTrait;
-    use HistoryDefinitionsTrait;
 
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
