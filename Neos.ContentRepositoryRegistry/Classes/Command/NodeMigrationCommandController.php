@@ -53,9 +53,9 @@ class NodeMigrationCommandController extends CommandController
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @return void
      * @throws StopCommandException
-     * @see neos.contentrepositoryregistry:nodemigration:migrate
+     * @see neos.contentrepositoryregistry:nodemigration:execute
      */
-    public function migrateCommand(string $version, string $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
+    public function executeCommand(string $version, string $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
@@ -66,7 +66,7 @@ class NodeMigrationCommandController extends CommandController
             if ($migrationConfiguration->hasWarnings() && $force === false) {
                 $this->outputLine();
                 $this->outputLine('Migration has warnings.'
-                    . ' You need to confirm execution by adding the "--confirmation true" option to the command.');
+                    . ' You need to confirm execution by adding the "--force true" option to the command.');
                 $this->quit(1);
             }
 
@@ -94,9 +94,9 @@ class NodeMigrationCommandController extends CommandController
      * @throws UnknownPackageException
      * @throws FilesException
      * @throws StopCommandException
-     * @see neos.contentrepositoryregistry:nodemigration:migrationcreate
+     * @see neos.contentrepositoryregistry:nodemigration:kickstart
      */
-    public function migrationCreateCommand(string $packageKey): void
+    public function kickstartCommand(string $packageKey): void
     {
        if (!$this->packageManager->isPackageAvailable($packageKey)) {
            $this->outputLine('Package "%s" is not available.', [$packageKey]);
