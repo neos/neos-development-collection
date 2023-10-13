@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
@@ -36,7 +35,6 @@ use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFound;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
@@ -86,12 +84,6 @@ trait NodeTypeChange
         ?NodeName $parentNodeName,
         NodeType $nodeType
     ): bool;
-
-    abstract protected static function populateNodeAggregateIds(
-        NodeType $nodeType,
-        NodeAggregateIdsByNodePaths $nodeAggregateIds,
-        NodePath $childPath = null
-    ): NodeAggregateIdsByNodePaths;
 
     abstract protected function createEventsForMissingTetheredNode(
         NodeAggregate $parentNodeAggregate,
@@ -156,9 +148,9 @@ trait NodeTypeChange
         /**************
          * Preparation - make the command fully deterministic in case of rebase
          **************/
-        $descendantNodeAggregateIds = static::populateNodeAggregateIds(
-            $newNodeType,
-            $command->tetheredDescendantNodeAggregateIds
+        $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
+            $newNodeType->name,
+            $this->nodeTypeManager
         );
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
