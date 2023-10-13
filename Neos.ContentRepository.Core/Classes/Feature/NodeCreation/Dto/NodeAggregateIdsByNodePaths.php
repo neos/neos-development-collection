@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
@@ -95,7 +97,31 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
 
     public function merge(self $other): self
     {
-        return new self(array_merge($this->nodeAggregateIds, $other->getNodeAggregateIds()));
+        return new self(array_merge($this->nodeAggregateIds, $other->nodeAggregateIds));
+    }
+
+    public function completeForNodeOfType(NodeTypeName $nodeTypeName, NodeTypeManager $nodeTypeManager): self
+    {
+        return self::fromArray($this->createNodeAggregateIdsForNodeType($nodeTypeName, $nodeTypeManager))
+            ->merge($this);
+    }
+
+    private function createNodeAggregateIdsForNodeType(
+        NodeTypeName $nodeTypeName,
+        NodeTypeManager $nodeTypeManager,
+        ?string $pathPrefix = null
+    ): array {
+        $nodeAggregateIds = [];
+        foreach ($nodeTypeManager->getNodeType($nodeTypeName)->getAutoCreatedChildNodes() as $nodeName => $childNodeType) {
+            $path = $pathPrefix ? $pathPrefix . '/' . $nodeName : $nodeName;
+            $nodeAggregateIds[$path] = NodeAggregateId::create();
+            $nodeAggregateIds = array_merge(
+                $nodeAggregateIds,
+                $this->createNodeAggregateIdsForNodeType($childNodeType->name, $nodeTypeManager, $path)
+            );
+        }
+
+        return $nodeAggregateIds;
     }
 
     public function getNodeAggregateId(NodePath $nodePath): ?NodeAggregateId
