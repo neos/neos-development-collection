@@ -106,6 +106,9 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
             ->merge($this);
     }
 
+    /**
+     * @return array<string,NodeAggregateId>
+     */
     private function createNodeAggregateIdsForNodeType(
         NodeTypeName $nodeTypeName,
         NodeTypeManager $nodeTypeManager,
