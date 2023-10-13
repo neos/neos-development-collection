@@ -232,6 +232,8 @@ RenameNodeAggregate
 
 Rename a node aggregate.
 
+Hint: Why node aggregate, not node? The node aggregate contains all information, that are equal for a node over all dimensions. So the name of a node is stored in the node aggregate and not in each node anymore.
+
 Options Reference:
 
 ``newNodeName`` (string)
