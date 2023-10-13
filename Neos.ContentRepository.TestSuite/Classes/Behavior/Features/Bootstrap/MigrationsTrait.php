@@ -35,12 +35,9 @@ trait MigrationsTrait
      */
     public function iRunTheFollowingNodeMigration(string $workspaceName, string $contentStreams, PyStringNode $string): void
     {
+        // TODO: Replace ContentStream with Workspace
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
-        $contentStreamIds = array_map(
-            fn (string $cs) => ContentStreamId::fromString($cs),
-            explode(',', $contentStreams)
-        );
-        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), $contentStreamIds);
+        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), null);
 
         /** @var NodeMigrationService $nodeMigrationService */
         $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());

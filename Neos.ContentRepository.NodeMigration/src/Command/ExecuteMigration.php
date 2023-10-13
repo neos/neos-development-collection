@@ -23,16 +23,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final class ExecuteMigration
 {
     /**
-     * @var MigrationConfiguration
-     */
-    private $migrationConfiguration;
-
-    /**
-     * @var WorkspaceName
-     */
-    private $workspaceName;
-
-    /**
      * This property exists mostly for testing, to make the command handler fully deterministic.
      *
      * A migration file is structured like this:
@@ -55,42 +45,29 @@ final class ExecuteMigration
 
     /**
      * ExecuteMigration constructor.
-     * @param MigrationConfiguration $migrationConfiguration
-     * @param WorkspaceName $workspaceName
      * @param ContentStreamId[] $contentStreamIdsForWriting
      */
     public function __construct(
-        MigrationConfiguration $migrationConfiguration,
-        WorkspaceName $workspaceName,
+        private readonly MigrationConfiguration $migrationConfiguration,
+        private readonly WorkspaceName $workspaceName,
+        private readonly ?WorkspaceName $targetWorkspaceName,
         array $contentStreamIdsForWriting = []
     ) {
-        $this->migrationConfiguration = $migrationConfiguration;
-        $this->workspaceName = $workspaceName;
         $this->contentStreamIdsForWriting = array_values($contentStreamIdsForWriting);
     }
 
-    /**
-     * @return MigrationConfiguration
-     */
     public function getMigrationConfiguration(): MigrationConfiguration
     {
         return $this->migrationConfiguration;
     }
 
-    /**
-     * @return WorkspaceName
-     */
     public function getWorkspaceName(): WorkspaceName
     {
         return $this->workspaceName;
     }
 
-    public function getOrCreateContentStreamIdForWriting(int $index): ContentStreamId
+    public function getTargetWorkspaceName(): ?WorkspaceName
     {
-        if (isset($this->contentStreamIdsForWriting[$index])) {
-            return $this->contentStreamIdsForWriting[$index];
-        }
-
-        return ContentStreamId::create();
+        return $this->targetWorkspaceName;
     }
 }

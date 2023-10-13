@@ -34,7 +34,6 @@ use Neos\Utility\Exception\FilesException;
 #[Flow\Scope('singleton')]
 class NodeMigrationCommandController extends CommandController
 {
-
     public function __construct(
         private readonly MigrationFactory $migrationFactory,
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
@@ -49,13 +48,16 @@ class NodeMigrationCommandController extends CommandController
      *
      * @param string $version The version of the migration configuration you want to use.
      * @param string $workspace The workspace where the migration should be applied; by default "live"
+     * @param ?string $targetWorkspace The workspace where the migration result should end; by default "live". If set to null, each migration creates a new workspace for selectiv publishing.
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
      * @return void
      * @throws StopCommandException
      * @see neos.contentrepositoryregistry:nodemigration:execute
      */
-    public function executeCommand(string $version, string $workspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
+    public function executeCommand(string $version, string $workspace = 'live', ?string $targetWorkspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
+        $workspace = WorkspaceName::fromString($workspace);
+        $targetWorkspace = $targetWorkspace === null ?: WorkspaceName::fromString($targetWorkspace);
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
         try {
@@ -73,9 +75,13 @@ class NodeMigrationCommandController extends CommandController
             $nodeMigrationService->executeMigration(
                 new ExecuteMigration(
                     $migrationConfiguration,
-                    WorkspaceName::fromString($workspace)
+                    $workspace,
+                    $targetWorkspace,
                 )
             );
+
+            // Rebase depending workspaces?
+
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');
         } catch (MigrationException $e) {

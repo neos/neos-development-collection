@@ -66,22 +66,30 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
             ), 1611688225);
         }
 
-        foreach ($command->getMigrationConfiguration()->getMigration() as $step => $migrationDescription) {
-            $contentStreamForWriting = $command->getOrCreateContentStreamIdForWriting($step);
+        if ($command->getTargetWorkspaceName() !== null) {
+            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName());
+        }
+
+        if ($targetWorkspace) {
+            $targetContentStreamId = $targetWorkspace->currentContentStreamId;
+        } else {
+            $targetContentStreamId = ContentStreamId::create();
             $this->contentRepository->handle(
                 CreateWorkspace::create(
-                    WorkspaceName::fromString($contentStreamForWriting->value),
+                    $command->getTargetWorkspaceName() ?? WorkspaceName::fromString($targetContentStreamId->value),
                     $workspace->workspaceName,
-                    WorkspaceTitle::fromString($contentStreamForWriting->value),
+                    WorkspaceTitle::fromString($command->getTargetWorkspaceName()?->value ?? $targetContentStreamId->value),
                     WorkspaceDescription::fromString(''),
-                    $contentStreamForWriting,
+                    $targetContentStreamId,
                 )
             )->block();
+        }
+        foreach ($command->getMigrationConfiguration()->getMigration() as $migrationDescription) {
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
                 $workspace->currentContentStreamId,
-                $contentStreamForWriting
+                $targetContentStreamId
             );
         }
     }
