@@ -22,7 +22,6 @@ use PHPUnit\Framework\TestCase;
  * Testcase for the "NodeType" domain model
  */
 class NodeTypeTest extends TestCase
-
 {
     /**
      * example node types
