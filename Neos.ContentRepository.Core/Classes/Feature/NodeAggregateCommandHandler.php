@@ -211,8 +211,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             }
             if (
                 $nodeAggregate->nodeName
-                && $parentsNodeType->hasAutoCreatedChildNode($nodeAggregate->nodeName)
-                && $this->nodeTypeManager->getTypeOfAutoCreatedChildNode($parentsNodeType, $nodeAggregate->nodeName)->name
+                && $parentsNodeType->hasTetheredNode($nodeAggregate->nodeName)
+                && $this->nodeTypeManager->getTypeOfTetheredNode($parentsNodeType, $nodeAggregate->nodeName)->name
                     !== $command->newNodeTypeName->value
             ) {
                 throw new NodeConstraintException(
@@ -232,8 +232,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 );
                 if (
                     $parentAggregate->nodeName
-                    && $grandParentsNodeType->hasAutoCreatedChildNode($parentAggregate->nodeName)
-                    && !$this->nodeTypeManager->allowsGrandchildNodeType(
+                    && $grandParentsNodeType->hasTetheredNode($parentAggregate->nodeName)
+                    && !$this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
                         $grandParentsNodeType,
                         $parentAggregate->nodeName,
                         $newNodeType

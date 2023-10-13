@@ -82,7 +82,7 @@ class DisallowedChildNodeAdjustment
                 ) {
                     if ($this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName)) {
                     if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $this->nodeTypeManager->allowsGrandchildNodeType(
+                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
                             $grandparentNodeType,
                             $parentNode->nodeName,
                             $nodeType

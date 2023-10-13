@@ -393,7 +393,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             return false;
         }
         $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
-        return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
+        return $nodeTypeOfParent->hasTetheredNode($nodeName);
     }
 
     private function dispatch(Severity $severity, string $message, mixed ...$args): void

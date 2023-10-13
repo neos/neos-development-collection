@@ -286,7 +286,7 @@ trait NodeCreation
         ContentRepository $contentRepository,
     ): Events {
         $events = [];
-        foreach ($this->getNodeTypeManager()->getAutoCreatedChildNodesFor($nodeType) as $rawNodeName => $childNodeType) {
+        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
             assert($childNodeType instanceof NodeType);
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath
@@ -355,7 +355,7 @@ trait NodeCreation
             $nodeAggregateIds = NodeAggregateIdsByNodePaths::createEmpty();
         }
         // TODO: handle Multiple levels of autocreated child nodes
-        foreach ($nodeTypeManager->getAutoCreatedChildNodesFor($nodeType) as $rawChildName => $childNodeType) {
+        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType) as $rawChildName => $childNodeType) {
             $childName = NodeName::fromString($rawChildName);
             $childPath = $childPath
                 ? $childPath->appendPathSegment($childName)

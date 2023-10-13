@@ -14,7 +14,7 @@ namespace Neos\ContentRepository\Core\NodeType;
  * source code.
  */
 
-use Neos\ContentRepository\Core\NodeType\Exception\ChildNodeNotConfigured;
+use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\Utility\ObjectAccess;
 use Neos\Utility\Arrays;
@@ -438,7 +438,7 @@ class NodeType
     /**
      * @return bool true if $nodeName is an autocreated child node, false otherwise
      */
-    public function hasAutoCreatedChildNode(NodeName $nodeName): bool
+    public function hasTetheredNode(NodeName $nodeName): bool
     {
         $this->initialize();
         foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
@@ -452,9 +452,9 @@ class NodeType
     }
 
     /**
-     * @throws ChildNodeNotConfigured if the requested childNode is not configured. Check via {@see NodeType::hasAutoCreatedChildNode()}.
+     * @throws TetheredNodeNotConfigured if the requested tethred node is not configured. Check via {@see NodeType::hasTetheredNode()}.
      */
-    public function getNodeTypeNameOfAutoCreatedChildNode(NodeName $nodeName): NodeTypeName
+    public function getNodeTypeNameOfTetheredNode(NodeName $nodeName): NodeTypeName
     {
         $this->initialize();
         foreach ($this->fullConfiguration['childNodes'] ?? [] as $rawChildNodeName => $configurationForChildNode) {
@@ -464,7 +464,7 @@ class NodeType
                 }
             }
         }
-        throw new ChildNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
+        throw new TetheredNodeNotConfigured(sprintf('The child node "%s" is not configured for node type "%s"', $nodeName->value, $this->name->value), 1694786811);
     }
 
     /**
@@ -472,7 +472,7 @@ class NodeType
      * not taking constraints of auto-created nodes into account. Thus, this method only returns
      * the correct result if called on NON-AUTO-CREATED nodes!
      *
-     * Otherwise, allowsGrandchildNodeType() needs to be called on the *parent node type*.
+     * Otherwise, isNodeTypeAllowedAsChildToTetheredNode() needs to be called on the *parent node type*.
      *
      * @return boolean true if the $nodeType is allowed as child node, false otherwise.
      */

@@ -195,7 +195,7 @@ trait NodeTypeChange
         }
 
         // new tethered child nodes
-        $expectedTetheredNodes = $this->getNodeTypeManager()->getAutoCreatedChildNodesFor($newNodeType);
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
         foreach ($nodeAggregate->getNodes() as $node) {
             assert($node instanceof Node);
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
@@ -376,7 +376,7 @@ trait NodeTypeChange
         NodeType $newNodeType,
         ContentRepository $contentRepository
     ): Events {
-        $expectedTetheredNodes = $this->getNodeTypeManager()->getAutoCreatedChildNodesFor($newNodeType);
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
 
         $events = [];
         // find disallowed tethered nodes

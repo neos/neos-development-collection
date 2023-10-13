@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\NodeType;
 
-use Neos\ContentRepository\Core\NodeType\Exception\ChildNodeNotConfigured;
+use Neos\ContentRepository\Core\NodeType\Exception\TetheredNodeNotConfigured;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
@@ -188,14 +188,14 @@ class NodeTypeManager
 
     /**
      * @param NodeType $nodeType
-     * @param NodeName $childNodeName
-     * @throws ChildNodeNotConfigured if the requested childNode is not configured. Check via {@see NodeType::hasAutoCreatedChildNode()}.
+     * @param NodeName $tetheredNodeName
      * @return NodeType
+     *@throws TetheredNodeNotConfigured if the requested tethered node is not configured. Check via {@see NodeType::hasTetheredNode()}.
      */
-    public function getTypeOfAutoCreatedChildNode(NodeType $nodeType, NodeName $childNodeName): NodeType
+    public function getTypeOfTetheredNode(NodeType $nodeType, NodeName $tetheredNodeName): NodeType
     {
-        $childNodeTypeName = $nodeType->getNodeTypeNameOfAutoCreatedChildNode($childNodeName);
-        return $this->getNodeType($childNodeTypeName);
+        $nameOfTetheredNode = $nodeType->getNodeTypeNameOfTetheredNode($tetheredNodeName);
+        return $this->getNodeType($nameOfTetheredNode);
     }
 
     /**
@@ -204,41 +204,40 @@ class NodeTypeManager
      * @return array<string,NodeType> the key of this array is the name of the child, and the value its NodeType.
      * @api
      */
-    public function getAutoCreatedChildNodesFor(NodeType $nodeType): array
+    public function getTetheredNodesConfigurationForNodeType(NodeType $nodeType): array
     {
         $childNodeConfiguration = $nodeType->getConfiguration('childNodes');
         $autoCreatedChildNodes = [];
         foreach ($childNodeConfiguration ?? [] as $childNodeName => $configurationForChildNode) {
             if (isset($configurationForChildNode['type'])) {
-                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value]
-                    = $this->getNodeType($configurationForChildNode['type']);
+                $autoCreatedChildNodes[NodeName::transliterateFromString($childNodeName)->value] = $this->getNodeType($configurationForChildNode['type']);
             }
         }
         return $autoCreatedChildNodes;
     }
 
     /**
-     * Checks if the given $nodeType is allowed as a childNode of the given $childNodeName
-     * (which must be auto-created in $this NodeType).
+     * Checks if the given $nodeType is allowed as a childNode of the given $tetheredNodeName
+     * (which must be tethered in $parentNodeType).
      *
-     * Only allowed to be called if $childNodeName is auto-created.
+     * Only allowed to be called if $tetheredNodeName is actually tethered.
      *
      * @param NodeType $parentNodeType The NodeType to check constraints based on.
-     * @param NodeName $childNodeName The name of a configured childNode of this NodeType
+     * @param NodeName $tetheredNodeName The name of a configured tethered node of this NodeType
      * @param NodeType $nodeType The NodeType to check constraints for.
      * @return bool true if the $nodeType is allowed as grandchild node, false otherwise.
-     * @throws \InvalidArgumentException if the requested childNode is not configured in the parent NodeType. Check via {@see NodeType::hasAutoCreatedChildNode()}.
+     * @throws \InvalidArgumentException if the requested tethered node is not configured in the parent NodeType. Check via {@see NodeType::hasTetheredNode()}.
      */
-    public function allowsGrandchildNodeType(NodeType $parentNodeType, NodeName $childNodeName, NodeType $nodeType): bool
+    public function isNodeTypeAllowedAsChildToTetheredNode(NodeType $parentNodeType, NodeName $tetheredNodeName, NodeType $nodeType): bool
     {
         try {
-            $childNodeType = $this->getTypeOfAutoCreatedChildNode($parentNodeType, $childNodeName);
-        } catch (ChildNodeNotConfigured $exception) {
+            $typeOfTetheredNode = $this->getTypeOfTetheredNode($parentNodeType, $tetheredNodeName);
+        } catch (TetheredNodeNotConfigured $exception) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Cannot determine if grandchild is allowed in %s. Because the given child node name "%s" is not auto-created.',
                     $parentNodeType->name->value,
-                    $childNodeName->value
+                    $tetheredNodeName->value
                 ),
                 1403858395,
                 $exception
@@ -246,11 +245,11 @@ class NodeTypeManager
         }
 
         // Constraints configured on the NodeType for the child node
-        $constraints = $childNodeType->getConfiguration('constraints.nodeTypes') ?: [];
+        $constraints = $typeOfTetheredNode->getConfiguration('constraints.nodeTypes') ?: [];
 
         // Constraints configured at the childNode configuration of the parent.
         try {
-            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $childNodeName->value . '.constraints.nodeTypes') ?? [];
+            $childNodeConstraintConfiguration = $parentNodeType->getConfiguration('childNodes.' . $tetheredNodeName->value . '.constraints.nodeTypes') ?? [];
         } catch (PropertyNotAccessibleException $exception) {
             // We ignore this because the configuration might just not have any constraints, if the childNode was not configured the exception above would have been thrown.
             $childNodeConstraintConfiguration = [];
