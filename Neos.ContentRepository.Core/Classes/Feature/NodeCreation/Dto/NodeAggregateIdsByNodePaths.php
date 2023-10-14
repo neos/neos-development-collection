@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -11,6 +9,10 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -58,6 +60,11 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
         return new self([]);
     }
 
+    public static function createForNodeType(NodeTypeName $nodeTypeName, NodeTypeManager $nodeTypeManager): self
+    {
+        return self::fromArray(self::createNodeAggregateIdsForNodeType($nodeTypeName, $nodeTypeManager));
+    }
+
     /**
      * @param array<string,string|NodeAggregateId> $array
      */
@@ -102,14 +109,14 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
 
     public function completeForNodeOfType(NodeTypeName $nodeTypeName, NodeTypeManager $nodeTypeManager): self
     {
-        return self::fromArray($this->createNodeAggregateIdsForNodeType($nodeTypeName, $nodeTypeManager))
+        return self::createForNodeType($nodeTypeName, $nodeTypeManager)
             ->merge($this);
     }
 
     /**
      * @return array<string,NodeAggregateId>
      */
-    private function createNodeAggregateIdsForNodeType(
+    private static function createNodeAggregateIdsForNodeType(
         NodeTypeName $nodeTypeName,
         NodeTypeManager $nodeTypeManager,
         ?string $pathPrefix = null
@@ -120,7 +127,7 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
             $nodeAggregateIds[$path] = NodeAggregateId::create();
             $nodeAggregateIds = array_merge(
                 $nodeAggregateIds,
-                $this->createNodeAggregateIdsForNodeType($childNodeType->name, $nodeTypeManager, $path)
+                self::createNodeAggregateIdsForNodeType($childNodeType->name, $nodeTypeManager, $path)
             );
         }
 
