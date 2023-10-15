@@ -152,6 +152,11 @@ class NodeType
         }
         $this->fullConfiguration = Arrays::arrayMergeRecursiveOverrule($mergedConfiguration, $this->localConfiguration);
 
+        // Remove unset properties
+        $this->fullConfiguration['properties'] = array_filter($this->fullConfiguration['properties'] ?? [], function ($propertyConfiguration) {
+            return $propertyConfiguration !== null;
+        });
+
         if (
             isset($this->fullConfiguration['childNodes'])
             && is_array($this->fullConfiguration['childNodes'])

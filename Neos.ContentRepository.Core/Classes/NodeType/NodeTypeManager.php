@@ -220,20 +220,6 @@ class NodeTypeManager
             );
         }
 
-        // Remove unset properties
-        $properties = [];
-        if (isset($nodeTypeConfiguration['properties']) && is_array($nodeTypeConfiguration['properties'])) {
-            $properties = $nodeTypeConfiguration['properties'];
-        }
-
-        $nodeTypeConfiguration['properties'] = array_filter($properties, function ($propertyConfiguration) {
-            return $propertyConfiguration !== null;
-        });
-
-        if ($nodeTypeConfiguration['properties'] === []) {
-            unset($nodeTypeConfiguration['properties']);
-        }
-
         $nodeType = new NodeType(
             NodeTypeName::fromString($nodeTypeName),
             $superTypes,
