@@ -31,9 +31,15 @@ class NodeTypesCommandController extends CommandController
      */
     public function showCommand(string $nodeTypeName, ?string $path = null): void
     {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            $this->outputLine('<error>NodeType "%s" was not found!</error>', [$nodeTypeName]);
+            $this->quit();
+        }
+
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        if (!$nodeType) {
-            $this->outputLine('<b>NodeType "%s" was not found!</b>', [$nodeTypeName]);
+
+        if ($path && !$nodeType->hasConfiguration($path)) {
+            $this->outputLine('<b>NodeType "%s" does not have configuration "%s".</b>', [$nodeTypeName, $path]);
             $this->quit();
         }
         $yaml = Yaml::dump(
