@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -89,6 +90,31 @@ final class CreateNodeAggregateWithNode implements CommandInterface
         );
     }
 
+    /**
+     * In case you want to create a batch of commands where one creates the node and another does *something* with
+     * a tethered node of the created node, you need to specify the child node aggregate id in advance.
+     * _Alternatively you would need to fetch the created tethered node first from the subgraph.
+     * {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}_
+     *
+     * The helper method {@see NodeAggregateIdsByNodePaths::createForNodeType()} will generate recursively
+     * node aggregate ids for every tethered child node:
+     *
+     * ```php
+     * $tetheredDescendantNodeAggregateIds = NodeAggregateIdsByNodePaths::createForNodeType(
+     *     $this->nodeTypeName,
+     *     $nodeTypeManager
+     * );
+     * $command = $command->withTetheredDescendantNodeAggregateIds($tetheredDescendantNodeAggregateIds):
+     * ```
+     *
+     * The node aggregate id for the tethered node "main" could that way be known in advance:
+     *
+     * ```php
+     * $mainNodeAggregateId = $command->tetheredDescendantNodeAggregateIds->getNodeAggregateId(NodePath::fromString('main'));
+     * ```
+     *
+     * Generating the node aggregate ids in advance - before the command is handled - is totally optional.
+     */
     public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
     {
         return new self(

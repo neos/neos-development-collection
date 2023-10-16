@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
 
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -60,6 +61,11 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
         return new self([]);
     }
 
+    /**
+     * Generate the tethered node aggregate ids in advance
+     *
+     * {@see CreateNodeAggregateWithNode::withTetheredDescendantNodeAggregateIds}
+     */
     public static function createForNodeType(NodeTypeName $nodeTypeName, NodeTypeManager $nodeTypeManager): self
     {
         return self::fromArray(self::createNodeAggregateIdsForNodeType($nodeTypeName, $nodeTypeManager));
