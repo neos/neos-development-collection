@@ -22,7 +22,6 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 
 class AddNewPropertyTransformationFactory implements TransformationFactoryInterface
 {

@@ -40,8 +40,7 @@ class NodeMigrationCommandController extends CommandController
         private readonly ContentRepositoryRegistry $contentRepositoryRegistry,
         private readonly PackageManager $packageManager,
         private readonly NodeMigrationGeneratorService $nodeMigrationGeneratorService
-    )
-    {
+    ) {
         parent::__construct();
     }
 
@@ -98,20 +97,20 @@ class NodeMigrationCommandController extends CommandController
      */
     public function kickstartCommand(string $packageKey): void
     {
-       if (!$this->packageManager->isPackageAvailable($packageKey)) {
-           $this->outputLine('Package "%s" is not available.', [$packageKey]);
-           $this->quit(1);
+        if (!$this->packageManager->isPackageAvailable($packageKey)) {
+            $this->outputLine('Package "%s" is not available.', [$packageKey]);
+            $this->quit(1);
         }
 
         try {
             $createdMigration = $this->nodeMigrationGeneratorService->generateBoilerplateMigrationFileInPackage($packageKey);
         } catch (MigrationException $e) {
-           $this->outputLine();
-           $this->outputLine('Error ' . $e->getMessage());
-           $this->quit(1);
+            $this->outputLine();
+            $this->outputLine('Error ' . $e->getMessage());
+            $this->quit(1);
         }
-       $this->outputLine($createdMigration);
-       $this->outputLine('Your node migration has been created successfully.');
+        $this->outputLine($createdMigration);
+        $this->outputLine('Your node migration has been created successfully.');
     }
 
     /**

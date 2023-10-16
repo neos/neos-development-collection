@@ -14,7 +14,6 @@ use Neos\ContentRepository\NodeMigration\Filter\FiltersFactory;
 use Neos\ContentRepository\NodeMigration\Transformation\TransformationsFactory;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
@@ -54,8 +53,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         private readonly ContentRepository $contentRepository,
         private readonly FiltersFactory $filterFactory,
         private readonly TransformationsFactory $transformationFactory
-    )
-    {
+    ) {
     }
 
     public function executeMigration(ExecuteMigration $command): void
@@ -98,8 +96,7 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
         array $migrationDescription,
         ContentStreamId $contentStreamForReading,
         ContentStreamId $contentStreamForWriting
-    ): void
-    {
+    ): void {
         $filters = $this->filterFactory->buildFilterConjunction($migrationDescription['filters'] ?? []);
         $transformations = $this->transformationFactory->buildTransformation(
             $migrationDescription['transformations'] ?? []
