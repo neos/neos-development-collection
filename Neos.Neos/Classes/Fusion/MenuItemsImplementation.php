@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -54,6 +55,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * @var integer
      */
     protected $maximumLevels;
+
+    /**
+     * Internal cache for the ancestors of the currentNode.
+     */
+    protected ?Nodes $currentNodeAncestors = null;
 
     /**
      * Runtime cache for the node type constraints to be applied
@@ -200,7 +206,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         return new MenuItem(
             $node,
-            MenuItemState::normal(),
+            $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
             $node->getLabel(),
             $subtree->level,
             $children,
@@ -232,6 +238,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 1369596980
             );
         }
+
         if ($this->getEntryLevel() === 0) {
             $entryParentNode = $traversalStartingPoint;
         } elseif ($this->getEntryLevel() < 0) {
@@ -285,7 +292,6 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
         }
-
         return $entryParentNode;
     }
 
@@ -312,14 +318,32 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 
-    protected function buildUri(Node $node): string
+    public function getCurrentNodeAncestors(): Nodes
     {
-        $this->runtime->pushContextArray([
-            'itemNode' => $node,
-            'documentNode' => $node,
-        ]);
-        $uri = $this->runtime->render($this->path . '/itemUriRenderer');
-        $this->runtime->popContext();
-        return $uri;
+        if ($this->currentNodeAncestors instanceof Nodes) {
+            return $this->currentNodeAncestors;
+        }
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
+        $this->currentNodeAncestors = $subgraph->findAncestorNodes(
+            $this->currentNode->nodeAggregateId,
+            FindAncestorNodesFilter::create(
+                $this->getNodeTypeConstraints()
+            )
+        );
+        return $this->currentNodeAncestors;
+    }
+
+    protected function calculateItemState(Node $node): MenuItemState
+    {
+        if ($node->nodeAggregateId->equals($this->currentNode->nodeAggregateId)) {
+            return MenuItemState::current();
+        }
+        $ancestors = $this->getCurrentNodeAncestors();
+        foreach ($ancestors as $ancestor) {
+            if ($node->nodeAggregateId->equals($ancestor->nodeAggregateId)) {
+                return MenuItemState::active();
+            }
+        }
+        return MenuItemState::normal();
     }
 }

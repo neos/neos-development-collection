@@ -41,9 +41,22 @@ final class MenuItemState
     }
 
 
-    /**
-     * @return MenuItemState
-     */
+
+    public static function active(): MenuItemState
+    {
+        return new MenuItemState(self::STATE_ACTIVE);
+    }
+
+    public static function current(): MenuItemState
+    {
+        return new MenuItemState(self::STATE_CURRENT);
+    }
+
+    public static function absent(): MenuItemState
+    {
+        return new MenuItemState(self::STATE_ABSENT);
+    }
+
     public static function normal(): MenuItemState
     {
         return new MenuItemState(self::STATE_NORMAL);

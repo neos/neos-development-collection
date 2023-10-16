@@ -61,6 +61,13 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $renderHiddenInIndex;
 
     /**
+     * Internal cache for the calculateItemStates property.
+     *
+     * @var boolean
+     */
+    protected $calculateItemStates;
+
+    /**
      * Rootline of all nodes from the current node to the site root node, keys are depth of nodes.
      *
      * @var array<Node>
@@ -69,6 +76,20 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    /**
+     * Should nodes that have "hiddenInIndex" set still be visible in this menu.
+     *
+     * @return boolean
+     */
+    public function isCalculateItemStatesEnabled(): bool
+    {
+        if ($this->calculateItemStates === null) {
+            $this->calculateItemStates = (bool)$this->fusionValue('calculateItemStates');
+        }
+
+        return $this->calculateItemStates;
+    }
 
     /**
      * Should nodes that have "hiddenInIndex" set still be visible in this menu.
@@ -168,5 +189,16 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
         }
 
         return $this->currentNodeRootline;
+    }
+
+    protected function buildUri(Node $node): string
+    {
+        $this->runtime->pushContextArray([
+            'itemNode' => $node,
+            'documentNode' => $node,
+        ]);
+        $uri = $this->runtime->render($this->path . '/itemUriRenderer');
+        $this->runtime->popContext();
+        return $uri;
     }
 }

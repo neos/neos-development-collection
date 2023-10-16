@@ -11,58 +11,17 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
  */
 final class MenuItem
 {
-    protected Node $node;
-
-    protected ?MenuItemState $state;
-
-    protected ?string $label;
-
-    protected int $menuLevel;
-
-    /**
-     * @var array<int,MenuItem>
-     */
-    protected array $children;
-
-    protected ?string $uri;
-
     /**
      * @param array<int,MenuItem> $children
      */
     public function __construct(
-        Node $node,
-        ?MenuItemState $state = null,
-        ?string $label = null,
-        int $menuLevel = 1,
-        array $children = [],
-        string $uri = null
+        public readonly Node $node,
+        public readonly ?MenuItemState $state = null,
+        public readonly ?string $label = null,
+        public readonly int $menuLevel = 1,
+        public readonly array $children = [],
+        public readonly ?string $uri = null
     ) {
-        $this->node = $node;
-        $this->state = $state;
-        $this->label = $label;
-        $this->menuLevel = $menuLevel;
-        $this->children = $children;
-        $this->uri = $uri;
-    }
-
-    public function getNode(): Node
-    {
-        return $this->node;
-    }
-
-    public function getState(): ?MenuItemState
-    {
-        return $this->state;
-    }
-
-    public function getLabel(): ?string
-    {
-        return $this->label;
-    }
-
-    public function getMenuLevel(): int
-    {
-        return $this->menuLevel;
     }
 
     /**
@@ -75,7 +34,7 @@ final class MenuItem
 
     /**
      * @return array<int,MenuItem>
-     * @deprecated Use getChildren instead
+     * @deprecated Use children instead
      */
     public function getSubItems(): array
     {
