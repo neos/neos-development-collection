@@ -14,10 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\View;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -36,10 +34,10 @@ use Neos\Fusion\Core\Runtime as FusionRuntime;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Model\RenderingMode;
+use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
-use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 class FusionExceptionView extends AbstractView
@@ -90,7 +88,7 @@ class FusionExceptionView extends AbstractView
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
-    protected RenderingModeService $userInterfaceModeService;
+    protected DomainRepository $domainRepository;
 
     /**
      * @return string
@@ -117,14 +115,14 @@ class FusionExceptionView extends AbstractView
         );
         $dimensionSpacePoint = $fusionExceptionViewInternals->getArbitraryDimensionSpacePoint();
 
-        $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive())
-            ?->currentContentStreamId;
+        $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
 
         $currentSiteNode = null;
-        if ($contentStreamId instanceof ContentStreamId) {
-            $currentSiteNode = $this->siteNodeUtility->findCurrentSiteNode(
-                $siteDetectionResult->contentRepositoryId,
-                $contentStreamId,
+        $site = $this->siteRepository->findOneByNodeName($siteDetectionResult->siteNodeName);
+        if ($liveWorkspace && $site) {
+            $currentSiteNode = $this->siteNodeUtility->findSiteNodeBySite(
+                $site,
+                $liveWorkspace->currentContentStreamId,
                 $dimensionSpacePoint,
                 VisibilityConstraints::frontend()
             );
@@ -163,13 +161,12 @@ class FusionExceptionView extends AbstractView
 
             try {
                 $output = $fusionRuntime->render('error');
-                $output = $this->extractBodyFromOutput($output);
+                return $this->extractBodyFromOutput($output);
             } catch (RuntimeException $exception) {
                 throw $exception->getPrevious() ?: $exception;
+            } finally {
+                $fusionRuntime->popContext();
             }
-            $fusionRuntime->popContext();
-
-            return $output;
         }
 
         return '';

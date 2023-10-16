@@ -5,7 +5,11 @@ Feature: Migrations that contain nodes with "reference" or "references propertie
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Some.Package:Homepage': []
+    'unstructured': {}
+    'Neos.Neos:Site': {}
+    'Some.Package:Homepage':
+      superTypes:
+        'Neos.Neos:Site': true
     'Some.Package:SomeNodeType':
       properties:
         'text':

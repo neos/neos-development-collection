@@ -398,7 +398,7 @@ class SitesController extends AbstractModuleController
             $this->addFlashMessage(
                 $this->getModuleLabel(
                     'sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.body',
-                    [$nodeType, NodeTypeNameFactory::forSite()]
+                    [$nodeType, NodeTypeNameFactory::NAME_SITE]
                 ),
                 $this->getModuleLabel('sites.siteCreationError.givenNodeTypeNotBasedOnSuperType.title'),
                 Message::SEVERITY_ERROR,

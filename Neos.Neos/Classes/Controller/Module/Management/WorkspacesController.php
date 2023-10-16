@@ -798,7 +798,8 @@ class WorkspacesController extends AbstractModuleController
                         if (is_null($documentNode)) {
                             $documentNode = $ancestor;
                         }
-                        // the site node is the last ancestor of type Document
+                    }
+                    if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
                         $siteNode = $documentNode;
                     }
                 }
