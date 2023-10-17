@@ -81,24 +81,18 @@ trait ProjectedNodeTrait
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
-            $subgraph = $contentGraph->getSubgraph(
+            $currentNodeAggregate = $contentGraph->findNodeAggregateById(
                 $nodeDiscriminator->contentStreamId,
-                $nodeDiscriminator->originDimensionSpacePoint->toDimensionSpacePoint(),
-                VisibilityConstraints::withoutRestrictions()
+                $nodeDiscriminator->nodeAggregateId
             );
-            $currentNode = $subgraph->findNodeById(
-                $nodeDiscriminator->nodeAggregateId,
-            );
-            $nodeOriginatesFromExpectedDimension = $currentNode !== null
-                && $currentNode->originDimensionSpacePoint->equals($nodeDiscriminator->originDimensionSpacePoint);
             Assert::assertTrue(
-                $nodeOriginatesFromExpectedDimension,
+                $currentNodeAggregate?->occupiesDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint),
                 'Node with aggregate id "' . $nodeDiscriminator->nodeAggregateId->value
                 . '" and originating in dimension space point "' . $nodeDiscriminator->originDimensionSpacePoint->toJson()
                 . '" was not found in content stream "' . $nodeDiscriminator->contentStreamId->value . '"'
             );
 
-            return $currentNode;
+            return $currentNodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint);
         });
     }
 
