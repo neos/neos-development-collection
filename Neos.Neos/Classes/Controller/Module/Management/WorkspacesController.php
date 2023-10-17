@@ -14,6 +14,8 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Module\Management;
 
+use Doctrine\DBAL\DBALException;
+use JsonException;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
@@ -78,35 +80,20 @@ class WorkspacesController extends AbstractModuleController
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
-    /**
-     * @Flow\Inject
-     * @var SiteRepository
-     */
-    protected $siteRepository;
+    #[Flow\Inject]
+    protected SiteRepository $siteRepository;
 
-    /**
-     * @Flow\Inject
-     * @var PropertyMapper
-     */
-    protected $propertyMapper;
+    #[Flow\Inject]
+    protected PropertyMapper $propertyMapper;
 
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
+    #[Flow\Inject]
+    protected Context $securityContext;
 
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $domainUserService;
+    #[Flow\Inject]
+    protected UserService $domainUserService;
 
-    /**
-     * @var PackageManager
-     * @Flow\Inject
-     */
-    protected $packageManager;
+    #[Flow\Inject]
+    protected PackageManager $packageManager;
 
     /**
      * Display a list of unpublished content
@@ -190,10 +177,7 @@ class WorkspacesController extends AbstractModuleController
         ]);
     }
 
-    /**
-     * @return void
-     */
-    public function newAction()
+    public function newAction(): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
@@ -218,7 +202,7 @@ class WorkspacesController extends AbstractModuleController
         WorkspaceName $baseWorkspace,
         string $visibility,
         WorkspaceDescription $description,
-    ) {
+    ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -264,11 +248,8 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * Edit a workspace
-     *
-     * @param WorkspaceName $workspaceName
-     * @return void
      */
-    public function editAction(WorkspaceName $workspaceName)
+    public function editAction(WorkspaceName $workspaceName): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
@@ -301,8 +282,12 @@ class WorkspacesController extends AbstractModuleController
      * @param string $workspaceOwner Id of the owner of the workspace
      * @return void
      */
-    public function updateAction(WorkspaceName $workspaceName, WorkspaceTitle $title, WorkspaceDescription $description, ?string $workspaceOwner)
-    {
+    public function updateAction(
+        WorkspaceName $workspaceName,
+        WorkspaceTitle $title,
+        WorkspaceDescription $description,
+        ?string $workspaceOwner
+    ): void {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -356,9 +341,12 @@ class WorkspacesController extends AbstractModuleController
      * Delete a workspace
      *
      * @param WorkspaceName $workspaceName A workspace to delete
-     * @return void
+     * @throws IndexOutOfBoundsException
+     * @throws InvalidFormatPlaceholderException
+     * @throws StopActionException
+     * @throws DBALException
      */
-    public function deleteAction(WorkspaceName $workspaceName)
+    public function deleteAction(WorkspaceName $workspaceName): void
     {
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
@@ -724,6 +712,7 @@ class WorkspacesController extends AbstractModuleController
      * Computes the number of added, changed and removed nodes for the given workspace
      *
      * @return array<string,int>
+     * @throws JsonException
      */
     protected function computeChangesCount(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
@@ -749,11 +738,10 @@ class WorkspacesController extends AbstractModuleController
     /**
      * Builds an array of changes for sites in the given workspace
      * @return array<string,mixed>
+     * @throws JsonException
      */
     protected function computeSiteChanges(Workspace $selectedWorkspace, ContentRepository $contentRepository): array
     {
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-
         $siteChanges = [];
         $changes = $contentRepository->projectionState(ChangeFinder::class)
             ->findByContentStreamId(
@@ -792,7 +780,11 @@ class WorkspacesController extends AbstractModuleController
                 $documentPathSegments = [];
                 foreach ($ancestors as $ancestor) {
                     $pathSegment = $ancestor->nodeName ?: NodeName::fromString($ancestor->nodeAggregateId->value);
-                    $nodePathSegments[] = $pathSegment;
+                    // Don't include `sites` path as they are not needed
+                    // by the HTML/JS magic and won't be included as `$documentPathSegments`
+                    if (!$this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+                        $nodePathSegments[] = $pathSegment;
+                    }
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
                         $documentPathSegments[] = $pathSegment;
                         if (is_null($documentNode)) {
@@ -808,29 +800,46 @@ class WorkspacesController extends AbstractModuleController
                 // We should probably throw an exception though
                 if ($documentNode !== null && $siteNode !== null && $siteNode->nodeName) {
                     $siteNodeName = $siteNode->nodeName->value;
-                    $documentPath = implode('/', array_slice(array_map(
+                    // Reverse `$documentPathSegments` to start with the site node.
+                    // The paths are used for grouping the nodes and for selecting a tree of nodes.
+                    $documentPath = implode('/', array_reverse(array_map(
                         fn (NodeName $nodeName): string => $nodeName->value,
                         $documentPathSegments
-                    ), 2));
-                    $relativePath = str_replace(
-                        sprintf('//%s/%s', $siteNodeName, $documentPath),
-                        '',
-                        implode('/', array_map(
-                            fn (NodeName $nodeName): string => $nodeName->value,
-                            $nodePathSegments
-                        ))
-                    );
+                    )));
+                    // Reverse `$nodePathSegments` to start with the site node.
+                    // The paths are used for grouping the nodes and for selecting a tree of nodes.
+                    $relativePath = implode('/', array_reverse(array_map(
+                        fn (NodeName $nodeName): string => $nodeName->value,
+                        $nodePathSegments
+                    )));
                     if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                         $siteChanges[$siteNodeName]['siteNode']
                             = $this->siteRepository->findOneByNodeName(SiteNodeName::fromString($siteNodeName));
                     }
+
                     $siteChanges[$siteNodeName]['documents'][$documentPath]['documentNode'] = $documentNode;
+                    // We need to set `isNew` and `isMoved` on document level to make our JS behave as before.
+                    if ($documentNode->equals($node)) {
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['isNew'] = $change->created;
+                        $siteChanges[$siteNodeName]['documents'][$documentPath]['isMoved'] = $change->moved;
+                    }
+
+                    // As for changes of type `delete` we are using nodes from the live content stream
+                    // we can't create `serializedNodeAddress` from the node.
+                    // Instead, we use the original stored values.
+                    $nodeAddress = new NodeAddress(
+                        $change->contentStreamId,
+                        $change->originDimensionSpacePoint->toDimensionSpacePoint(),
+                        $change->nodeAggregateId,
+                        $selectedWorkspace->workspaceName
+                    );
 
                     $change = [
                         'node' => $node,
-                        'serializedNodeAddress' => $nodeAddressFactory->createFromNode($node)->serializeForUri(),
+                        'serializedNodeAddress' => $nodeAddress->serializeForUri(),
                         'isRemoved' => $change->deleted,
-                        'isNew' => false,
+                        'isNew' => $change->created,
+                        'isMoved' => $change->moved,
                         'contentChanges' => $this->renderContentChanges(
                             $node,
                             $change->contentStreamId,
@@ -848,19 +857,9 @@ class WorkspacesController extends AbstractModuleController
 
         ksort($siteChanges);
         foreach ($siteChanges as $siteKey => $site) {
-            /*foreach ($site['documents'] as $documentKey => $document) {
-                $liveDocumentNode = $liveContext->getNodeByIdentifier($document['documentNode']->getIdentifier());
-                $siteChanges[$siteKey]['documents'][$documentKey]['isMoved']
-                    = $liveDocumentNode && $document['documentNode']->getPath() !== $liveDocumentNode->getPath();
-                $siteChanges[$siteKey]['documents'][$documentKey]['isNew'] = $liveDocumentNode === null;
-                foreach ($document['changes'] as $changeKey => $change) {
-                    $liveNode = $liveContext->getNodeByIdentifier($change['node']->getIdentifier());
-                    $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isNew']
-                        = is_null($liveNode);
-                    $siteChanges[$siteKey]['documents'][$documentKey]['changes'][$changeKey]['isMoved']
-                        = $liveNode && $change['node']->getPath() !== $liveNode->getPath();
-                }
-            }*/
+            foreach ($site['documents'] as $documentKey => $document) {
+                ksort($siteChanges[$siteKey]['documents'][$documentKey]['changes']);
+            }
             ksort($siteChanges[$siteKey]['documents']);
         }
         return $siteChanges;
