@@ -89,8 +89,10 @@ trait ProjectedNodeTrait
             $currentNode = $subgraph->findNodeById(
                 $nodeDiscriminator->nodeAggregateId,
             );
-            Assert::assertNotNull(
-                $currentNode,
+            $nodeOriginatesFromExpectedDimension = $currentNode !== null
+                && $currentNode->originDimensionSpacePoint->equals($nodeDiscriminator->originDimensionSpacePoint);
+            Assert::assertTrue(
+                $nodeOriginatesFromExpectedDimension,
                 'Node with aggregate id "' . $nodeDiscriminator->nodeAggregateId->value
                 . '" and originating in dimension space point "' . $nodeDiscriminator->originDimensionSpacePoint->toJson()
                 . '" was not found in content stream "' . $nodeDiscriminator->contentStreamId->value . '"'
