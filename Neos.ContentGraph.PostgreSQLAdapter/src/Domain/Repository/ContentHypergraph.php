@@ -87,24 +87,6 @@ final class ContentHypergraph implements ContentGraphInterface
         return $this->subhypergraphs[$index];
     }
 
-    public function findNodeByIdAndOriginDimensionSpacePoint(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?Node {
-        $query = HypergraphQuery::create($contentStreamId, $this->tableNamePrefix);
-        $query = $query->withOriginDimensionSpacePoint($originDimensionSpacePoint);
-        $query = $query->withNodeAggregateId($nodeAggregateId);
-
-        $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
-            $nodeRow,
-            VisibilityConstraints::withoutRestrictions(),
-            $originDimensionSpacePoint->toDimensionSpacePoint()
-        ) : null;
-    }
-
     public function findRootNodeAggregateByType(
         ContentStreamId $contentStreamId,
         NodeTypeName $nodeTypeName

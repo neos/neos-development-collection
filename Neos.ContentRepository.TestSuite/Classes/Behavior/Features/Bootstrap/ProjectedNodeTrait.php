@@ -23,6 +23,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReference
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -80,10 +81,13 @@ trait ProjectedNodeTrait
     {
         $nodeDiscriminator = NodeDiscriminator::fromShorthand($serializedNodeDiscriminator);
         $this->initializeCurrentNodeFromContentGraph(function (ContentGraphInterface $contentGraph) use ($nodeDiscriminator) {
-            $currentNode = $contentGraph->findNodeByIdAndOriginDimensionSpacePoint(
+            $subgraph = $contentGraph->getSubgraph(
                 $nodeDiscriminator->contentStreamId,
+                $nodeDiscriminator->originDimensionSpacePoint->toDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+            $currentNode = $subgraph->findNodeById(
                 $nodeDiscriminator->nodeAggregateId,
-                $nodeDiscriminator->originDimensionSpacePoint
             );
             Assert::assertNotNull(
                 $currentNode,
