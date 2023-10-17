@@ -12,6 +12,8 @@ namespace Neos\ContentRepository\Core\Tests\Unit\NodeType;
  */
 
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeConfigurationException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeIsFinalException;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
@@ -121,6 +123,11 @@ class NodeTypeManagerTest extends TestCase
         ],
         'Neos.ContentRepository.Testing:Page2' => [
             'superTypes' => ['Neos.ContentRepository.Testing:Document' => true],
+            'childNodes' => [
+                'nodeName' => [
+                    'type' => 'Neos.ContentRepository.Testing:Document'
+                ]
+            ]
         ],
         'Neos.ContentRepository.Testing:Page3' => [
             'superTypes' => ['Neos.ContentRepository.Testing:Document' => true],
@@ -334,5 +341,16 @@ class NodeTypeManagerTest extends TestCase
 
         $subNodeTypes = $this->nodeTypeManager->getSubNodeTypes('Neos.ContentRepository.Testing:ContentObject', false);
         self::assertArrayNotHasKey('Neos.ContentRepository.Testing:AbstractType', $subNodeTypes);
+    }
+
+    /**
+     * @test
+     */
+    public function getAutoCreatedChildNodesReturnsLowercaseNames()
+    {
+        $parentNodeType = $this->nodeTypeManager->getNodeType(NodeTypeName::fromString('Neos.ContentRepository.Testing:Page2'));
+        $autoCreatedChildNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($parentNodeType);
+        // This is configured as "nodeName" above, but should be normalized to "nodename"
+        self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
     }
 }

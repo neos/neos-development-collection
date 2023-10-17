@@ -62,7 +62,6 @@ class DisallowedChildNodeAdjustment
                     ? $subgraph->findParentNode($parentNode->nodeAggregateId)
                     : null;
 
-
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
@@ -76,14 +75,15 @@ class DisallowedChildNodeAdjustment
                 $grandparentNodeType = null;
                 if (
                     $parentNode !== null
-                    && $grandparentNode != null
+                    && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
                     && !is_null($parentNode->nodeName)
                 ) {
-                    if ($this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName)) {
-                        $grandparentNodeType = $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName);
-                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->nodeName->value,
+                    $grandparentNodeType = $this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName) ? $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName) : null;
+                    if ($grandparentNodeType !== null) {
+                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                            $grandparentNodeType,
+                            $parentNode->nodeName,
                             $nodeType
                         );
                     }
@@ -97,10 +97,10 @@ class DisallowedChildNodeAdjustment
 
                     $message = sprintf(
                         '
-                        The parent node type "%s" is not allowing children of type "%s",
-                        and the grandparent node type "%s" is not allowing grandchildren of type "%s".
-                        Thus, the node is invalid at this location and should be removed.
-                    ',
+                    The parent node type "%s" is not allowing children of type "%s",
+                    and the grandparent node type "%s" is not allowing grandchildren of type "%s".
+                    Thus, the node is invalid at this location and should be removed.
+                ',
                         $parentNodeType !== null ? $parentNodeType->name->value : '',
                         $node->nodeTypeName->value,
                         $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
@@ -122,6 +122,7 @@ class DisallowedChildNodeAdjustment
             }
         }
     }
+
 
     private function removeNodeInSingleDimensionSpacePoint(
         NodeAggregate $nodeAggregate,
