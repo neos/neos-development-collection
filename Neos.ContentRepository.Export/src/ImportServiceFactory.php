@@ -25,8 +25,7 @@ class ImportServiceFactory implements ContentRepositoryServiceFactoryInterface
         private readonly ResourceRepository $resourceRepository,
         private readonly ResourceManager $resourceManager,
         private readonly PersistenceManagerInterface $persistenceManager,
-    )
-    {
+    ) {
     }
 
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): ImportService

@@ -1,0 +1,10 @@
+#
+# Abstract NodeType for a Neos.Neos site.
+# Each homepage must extend this NodeType.
+# Nodes of this type must be direct children of the Neos.Neos:Site Root
+# and must not be created at any other place in the tree.
+#
+'Neos.Neos:Site':
+  abstract: true
+  superTypes:
+    'Neos.Neos:Document': true

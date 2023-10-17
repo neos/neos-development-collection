@@ -46,14 +46,13 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
-use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Flow\Persistence\Doctrine\DataTypes\JsonArrayType;
 use Neos\Flow\Property\PropertyMapper;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Ramsey\Uuid\Uuid;
 use Webmozart\Assert\Assert;
 
@@ -88,7 +87,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         private readonly Filesystem $files,
         private readonly iterable $nodeDataRows,
     ) {
-        $this->sitesNodeTypeName = NodeTypeName::fromString('Neos.Neos:Sites');
+        $this->sitesNodeTypeName = NodeTypeNameFactory::forSites();
         $this->contentStreamId = ContentStreamId::create();
         $this->visitedNodes = new VisitedNodeAggregates();
     }
@@ -100,6 +99,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
     public function setSitesNodeType(NodeTypeName $nodeTypeName): void
     {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if (!$nodeType->isOfType(NodeTypeNameFactory::NAME_SITES)) {
+            throw new \InvalidArgumentException(
+                sprintf('Sites NodeType "%s" must be of type "%s"', $nodeTypeName->value, NodeTypeNameFactory::NAME_SITES),
+                1695802415
+            );
+        }
         $this->sitesNodeTypeName = $nodeTypeName;
     }
 
@@ -243,6 +249,13 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
+
+        $isSiteNode = $nodeDataRow['parentpath'] === '/sites';
+        if ($isSiteNode && !$nodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+            throw new MigrationException(sprintf(
+                'The site node "%s" (type: "%s") must be of type "%s"', $nodeDataRow['identifier'], $nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
+            ), 1695801620);
+        }
 
         if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
             // Create tethered node if the node was not found before.
@@ -393,7 +406,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             return false;
         }
         $nodeTypeOfParent = $this->nodeTypeManager->getNodeType($parentNodeTypeName);
-        return $nodeTypeOfParent->hasAutoCreatedChildNode($nodeName);
+        return $nodeTypeOfParent->hasTetheredNode($nodeName);
     }
 
     private function dispatch(Severity $severity, string $message, mixed ...$args): void

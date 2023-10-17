@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Command\ChangeNodeAggregateType;
 use Neos\ContentRepository\Core\Feature\NodeTypeChange\Event\NodeAggregateTypeWasChanged;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -47,6 +48,8 @@ use Neos\ContentRepository\Core\Feature\NodeTypeChange\Dto\NodeAggregateTypeChan
  */
 trait NodeTypeChange
 {
+    abstract protected function getNodeTypeManager(): NodeTypeManager;
+
     abstract protected function requireProjectedNodeAggregate(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId,
@@ -182,7 +185,7 @@ trait NodeTypeChange
         }
 
         // new tethered child nodes
-        $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
         foreach ($nodeAggregate->getNodes() as $node) {
             assert($node instanceof Node);
             foreach ($expectedTetheredNodes as $serializedTetheredNodeName => $expectedTetheredNodeType) {
@@ -363,7 +366,7 @@ trait NodeTypeChange
         NodeType $newNodeType,
         ContentRepository $contentRepository
     ): Events {
-        $expectedTetheredNodes = $newNodeType->getAutoCreatedChildNodes();
+        $expectedTetheredNodes = $this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($newNodeType);
 
         $events = [];
         // find disallowed tethered nodes

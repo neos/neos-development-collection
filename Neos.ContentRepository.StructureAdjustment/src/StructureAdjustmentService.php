@@ -32,8 +32,7 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         private readonly EventPersister $eventPersister,
         NodeTypeManager $nodeTypeManager,
         InterDimensionalVariationGraph $interDimensionalVariationGraph,
-    )
-    {
+    ) {
         $projectedNodeIterator = new ProjectedNodeIterator(
             $contentRepository->getWorkspaceFinder(),
             $contentRepository->getContentGraph(),

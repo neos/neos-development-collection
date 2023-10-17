@@ -51,9 +51,7 @@ class TetheredNodeAdjustments
             // In case we cannot find the expected tethered nodes, this fix cannot do anything.
             return;
         }
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        $expectedTetheredNodes = $nodeType->getAutoCreatedChildNodes();
+        $expectedTetheredNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($this->nodeTypeManager->getNodeType($nodeTypeName));
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             // find missing tethered nodes
