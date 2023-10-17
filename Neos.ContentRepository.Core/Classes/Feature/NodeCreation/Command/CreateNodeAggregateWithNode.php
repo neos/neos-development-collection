@@ -91,8 +91,11 @@ final class CreateNodeAggregateWithNode implements CommandInterface
     }
 
     /**
-     * In case you want to create a batch of commands where one creates the node and another does *something* with
-     * a tethered node of the created node, you need to specify the child node aggregate id in advance.
+     * Specify explicitly the node aggregate ids for the tethered children {@see tetheredDescendantNodeAggregateIds}.
+     *
+     * In case you want to create a batch of commands where one creates the node and a succeeding command needs
+     * a tethered node aggregate id, you need to generate the child node aggregate ids in advance.
+     *
      * _Alternatively you would need to fetch the created tethered node first from the subgraph.
      * {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}_
      *
@@ -101,19 +104,19 @@ final class CreateNodeAggregateWithNode implements CommandInterface
      *
      * ```php
      * $tetheredDescendantNodeAggregateIds = NodeAggregateIdsByNodePaths::createForNodeType(
-     *     $this->nodeTypeName,
+     *     $command->nodeTypeName,
      *     $nodeTypeManager
      * );
      * $command = $command->withTetheredDescendantNodeAggregateIds($tetheredDescendantNodeAggregateIds):
      * ```
      *
-     * The node aggregate id for the tethered node "main" could that way be known in advance:
+     * The generated node aggregate id for the tethered node "main" is this way known before the command is issued:
      *
      * ```php
      * $mainNodeAggregateId = $command->tetheredDescendantNodeAggregateIds->getNodeAggregateId(NodePath::fromString('main'));
      * ```
      *
-     * Generating the node aggregate ids in advance - before the command is handled - is totally optional.
+     * Generating the node aggregate ids from user land is totally optional.
      */
     public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
     {
