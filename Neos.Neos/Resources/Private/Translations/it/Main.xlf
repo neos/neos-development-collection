@@ -951,10 +951,6 @@
         <target state="translated">Errore di Caricamento dell'albero del Nodo.</target>
       </trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
-				<source>The entered username or password was wrong</source>
-        <target state="translated">Il nome utente o la password inseriti erano sbagliati</target>
-      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

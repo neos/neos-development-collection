@@ -12,7 +12,7 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\Neos\AssetUsage\Dto\NodeAddress;
+use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\Neos\AssetUsage\Dto\AssetIdsByProperty;
 use Neos\Neos\AssetUsage\Dto\AssetUsage;
@@ -152,7 +152,7 @@ final class AssetUsageRepository
         });
     }
 
-    public function addUsagesForNode(NodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
+    public function addUsagesForNode(AssetUsageNodeAddress $nodeAddress, AssetIdsByProperty $assetIdsByProperty): void
     {
         // Delete all asset usage entries for newly set properties to ensure that removed or replaced assets are reflected
         $this->dbal->executeStatement('DELETE FROM ' . $this->tableNamePrefix

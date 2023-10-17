@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollectionInterface;
 
 /**
  * Filter nodes having the given property and its value not empty.
@@ -45,7 +44,6 @@ class PropertyValueFilterFactory implements FilterFactoryInterface
                 if (is_null($this->propertyName) || !$node->hasProperty($this->propertyName)) {
                     return false;
                 }
-                /** @var PropertyCollectionInterface $properties */
                 $properties = $node->properties;
                 $serializedPropertyValue = $properties->serialized()->getProperty($this->propertyName);
                 if (!$serializedPropertyValue) {

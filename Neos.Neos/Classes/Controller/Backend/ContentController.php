@@ -14,15 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Controller\Backend;
 
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -45,6 +42,7 @@ use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos ContentModule controller; providing backend functionality for the Content Module.
@@ -54,6 +52,10 @@ use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -102,9 +104,6 @@ class ContentController extends ActionController
      * @var PropertyMapper
      */
     protected $propertyMapper;
-
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
@@ -409,19 +408,6 @@ class ContentController extends ActionController
         $masterPlugins = [];
 
         return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
-    }
-
-    final protected function findClosestDocumentNode(Node $node): ?Node
-    {
-        while ($node instanceof Node) {
-            if ($node->nodeType->isOfType('Neos.Neos:Document')) {
-                return $node;
-            }
-            $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                ->findParentNode($node->nodeAggregateId);
-        }
-
-        return null;
     }
 
     /**

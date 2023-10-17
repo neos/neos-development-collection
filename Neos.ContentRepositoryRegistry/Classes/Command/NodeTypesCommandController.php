@@ -39,11 +39,12 @@ class NodeTypesCommandController extends CommandController
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
         $nodeTypeManager = $this->contentRepositoryRegistry->get($contentRepositoryId)->getNodeTypeManager();
 
-        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
-        if (!$nodeType) {
+        if (!$nodeTypeManager->hasNodeType($nodeTypeName)) {
             $this->outputLine('<b>NodeType "%s" was not found!</b>', [$nodeTypeName]);
             $this->quit();
         }
+
+        $nodeType = $nodeTypeManager->getNodeType($nodeTypeName);
         $yaml = Yaml::dump(
             $path
                 ? $nodeType->getConfiguration($path)
@@ -71,7 +72,7 @@ class NodeTypesCommandController extends CommandController
         $nodeTypesFound = 0;
         $nodeTypeNameSpacesWithNodeTypeNames = [];
         foreach ($nodeTypeManager->getNodeTypes($includeAbstract) as $nodeType) {
-            $nodeTypeName = $nodeType->getName();
+            $nodeTypeName = $nodeType->name->value;
             if (!$filter || str_contains($nodeTypeName, $filter)) {
                 [$nameSpace] = explode(":", $nodeTypeName, 2);
                 $nodeTypeNameSpacesWithNodeTypeNames[$nameSpace][] = $nodeTypeName;

@@ -77,7 +77,7 @@ New (Event Sourced) Content Repository (ES CR)
 Prerequisites
 =============
 
-- You need PHP 8.1 installed.
+- You need PHP 8.2 installed.
 - Please be sure to run off the Neos-Development-Distribution in Branch 9.0, to avoid dependency issues (as described above).
 
 Setup

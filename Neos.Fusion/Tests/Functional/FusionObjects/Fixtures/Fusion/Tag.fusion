@@ -1,5 +1,4 @@
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
-prototype(Neos.Fusion:Attributes).@class = 'Neos\\Fusion\\FusionObjects\\AttributesImplementation'
 prototype(Neos.Fusion:DataStructure).@class = 'Neos\\Fusion\\FusionObjects\\DataStructureImplementation'
 prototype(Neos.Fusion:Tag) {
   @class = 'Neos\\Fusion\\FusionObjects\\TagImplementation'
@@ -34,7 +33,7 @@ tag.arrayAttributes = Neos.Fusion:Tag {
 }
 
 tag.fusionAttributes = Neos.Fusion:Tag {
-  attributes = Neos.Fusion:Attributes {
+  attributes = Neos.Fusion:DataStructure {
     key = 'value'
     list = ${['foo', 'bar']}
   }

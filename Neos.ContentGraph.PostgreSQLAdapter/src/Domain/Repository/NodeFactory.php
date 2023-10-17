@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -70,8 +71,11 @@ final class NodeFactory
         ?DimensionSpacePoint $dimensionSpacePoint = null,
         ?ContentStreamId $contentStreamId = null
     ): Node {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeRow['nodetypename']);
-        $result = new Node(
+        $nodeType = $this->nodeTypeManager->hasNodeType($nodeRow['nodetypename'])
+            ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
+            : null;
+
+        return new Node(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
                 $contentStreamId ?: ContentStreamId::fromString($nodeRow['contentstreamid']),
@@ -96,8 +100,6 @@ final class NodeFactory
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
         );
-
-        return $result;
     }
 
     /**

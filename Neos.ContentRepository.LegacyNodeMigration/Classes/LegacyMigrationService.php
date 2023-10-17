@@ -58,8 +58,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
         private readonly ContentStreamId $contentStreamId,
-    )
-    {
+    ) {
     }
 
     public function runAllProcessors(\Closure $outputLineFn, bool $verbose = false): void

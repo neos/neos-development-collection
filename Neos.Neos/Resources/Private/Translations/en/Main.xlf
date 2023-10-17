@@ -729,11 +729,6 @@
 				<source>Node Tree loading error.</source>
 			</trans-unit>
 
-			<!-- FlashMessages -->
-			<trans-unit id="flashMessage.1222204027" xml:space="preserve">
-				<source>The entered username or password was wrong</source>
-			</trans-unit>
-
 			<!-- Miscellaneous -->
 			<trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

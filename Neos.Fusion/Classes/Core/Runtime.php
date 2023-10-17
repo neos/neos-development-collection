@@ -24,6 +24,7 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Fusion\Core\Cache\RuntimeContentCache;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
+use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Exception;
 use Neos\Fusion\Exception as Exceptions;
 use Neos\Fusion\Exception\RuntimeException;
@@ -132,6 +133,9 @@ class Runtime
      */
     protected $lastEvaluationStatus;
 
+    /** {@see Runtime::overrideExceptionHandler} */
+    protected ?AbstractRenderingExceptionHandler $overriddenExceptionHandler = null;
+
     /**
      * @internal use {@see RuntimeFactory} for instantiating.
      */
@@ -170,7 +174,7 @@ class Runtime
         }
 
         if (!($request = $this->fusionGlobals->get('request')) instanceof ActionRequest) {
-            throw new \RuntimeException(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
+            throw new Exception(sprintf('Expected Fusion variable "request" to be of type ActionRequest, got value of type "%s".', get_debug_type($request)), 1693558026485);
         }
 
         $uriBuilder = new UriBuilder();
@@ -247,7 +251,7 @@ class Runtime
     public function pushContext($key, $context)
     {
         if ($this->fusionGlobals->has($key)) {
-            throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
+            throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $key), 1694284229044);
         }
         $newContext = $this->currentContext;
         $newContext[$key] = $context;
@@ -341,6 +345,11 @@ class Runtime
      */
     public function handleRenderingException(string $fusionPath, \Exception $exception, bool $useInnerExceptionHandler = false)
     {
+        if ($this->overriddenExceptionHandler) {
+            $this->overriddenExceptionHandler->setRuntime($this);
+            return $this->overriddenExceptionHandler->handleRenderingException($fusionPath, $exception);
+        }
+
         $fusionConfiguration = $this->runtimeConfiguration->forPath($fusionPath);
 
         $useLocalExceptionHandler = isset($fusionConfiguration['__meta']['exceptionHandler']);
@@ -616,7 +625,7 @@ class Runtime
             $newContextArray ??= $this->currentContext;
             foreach ($fusionConfiguration['__meta']['context'] as $contextKey => $contextValue) {
                 if ($this->fusionGlobals->has($contextKey)) {
-                    throw new RuntimeException(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
+                    throw new Exception(sprintf('Overriding Fusion global variable "%s" via @context is not allowed.', $contextKey), 1694247627130);
                 }
                 $newContextArray[$contextKey] = $this->evaluate($fusionPath . '/__meta/context/' . $contextKey, $fusionObject, self::BEHAVIOR_EXCEPTION);
             }
@@ -916,6 +925,18 @@ class Runtime
                 Please make sure to define one in your Fusion configuration.
                 MESSAGE, 1332493990);
         }
+    }
+
+    /**
+     * Configures this runtime to override the default exception handler configured in the settings
+     * or via Fusion's \@exceptionHandler {@see AbstractRenderingExceptionHandler}.
+     *
+     * In combination with the throwing handler {@see ThrowingHandler} this can be used to rethrow all exceptions.
+     * This is helpfully for renderings in CLI context or testing.
+     */
+    public function overrideExceptionHandler(AbstractRenderingExceptionHandler $exceptionHandler): void
+    {
+        $this->overriddenExceptionHandler = $exceptionHandler;
     }
 
     /**
