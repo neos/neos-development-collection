@@ -22,8 +22,7 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
 
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId
-    )
-    {
+    ) {
     }
 
     public function triggerCatchUp(Projections $projections): void

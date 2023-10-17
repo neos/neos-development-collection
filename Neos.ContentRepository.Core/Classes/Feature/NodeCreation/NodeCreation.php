@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -60,6 +61,8 @@ trait NodeCreation
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
     abstract protected function getPropertyConverter(): PropertyConverter;
+
+    abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     private function handleCreateNodeAggregateWithNode(
         CreateNodeAggregateWithNode $command,
@@ -203,6 +206,7 @@ trait NodeCreation
         }
         $descendantNodeAggregateIds = self::populateNodeAggregateIds(
             $nodeType,
+            $this->getNodeTypeManager(),
             $command->tetheredDescendantNodeAggregateIds
         );
         // Write the auto-created descendant node aggregate ids back to the command;
@@ -282,7 +286,7 @@ trait NodeCreation
         ContentRepository $contentRepository,
     ): Events {
         $events = [];
-        foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
+        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
             assert($childNodeType instanceof NodeType);
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath
@@ -343,6 +347,7 @@ trait NodeCreation
 
     protected static function populateNodeAggregateIds(
         NodeType $nodeType,
+        NodeTypeManager $nodeTypeManager,
         ?NodeAggregateIdsByNodePaths $nodeAggregateIds,
         NodePath $childPath = null
     ): NodeAggregateIdsByNodePaths {
@@ -350,7 +355,7 @@ trait NodeCreation
             $nodeAggregateIds = NodeAggregateIdsByNodePaths::createEmpty();
         }
         // TODO: handle Multiple levels of autocreated child nodes
-        foreach ($nodeType->getAutoCreatedChildNodes() as $rawChildName => $childNodeType) {
+        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType) as $rawChildName => $childNodeType) {
             $childName = NodeName::fromString($rawChildName);
             $childPath = $childPath
                 ? $childPath->appendPathSegment($childName)

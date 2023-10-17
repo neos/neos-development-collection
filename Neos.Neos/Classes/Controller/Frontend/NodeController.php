@@ -181,10 +181,6 @@ class NodeController extends ActionController
             if (!$this->view->canRenderWithNodeAndPath()) {
                 $this->view->setFusionPath('rawContent');
             }
-
-            if ($this->session->isStarted()) {
-                $this->session->putData('lastVisitedNode', $nodeAddress);
-            }
         }
     }
 

@@ -109,7 +109,7 @@ class LoginController extends AbstractAuthenticationController
                 $this->request->setArgument(
                     'username',
                     $authenticationArgument['Neos']['Flow']['Security']['Authentication']
-                        ['Token']['UsernamePassword']['username']
+                    ['Token']['UsernamePassword']['username']
                 );
             }
         }
@@ -173,9 +173,7 @@ class LoginController extends AbstractAuthenticationController
         if ($newSession->canBeResumed()) {
             $newSession->resume();
         }
-        if ($newSession->isStarted()) {
-            $newSession->putData('lastVisitedNode', null);
-        } else {
+        if (!$newSession->isStarted()) {
             $this->logger->error(sprintf(
                 'Failed resuming or starting session %s which was referred to in the login token %s.',
                 $newSessionId,
@@ -230,12 +228,6 @@ class LoginController extends AbstractAuthenticationController
                 ]
             );
         } else {
-            if (
-                $this->request->hasArgument('lastVisitedNode')
-                && $this->request->getArgument('lastVisitedNode') !== ''
-            ) {
-                $this->session->putData('lastVisitedNode', $this->request->getArgument('lastVisitedNode'));
-            }
             if ($originalRequest !== null) {
                 // Redirect to the location that redirected to the login form because the user was nog logged in
                 $this->redirectToRequest($originalRequest);
@@ -256,16 +248,12 @@ class LoginController extends AbstractAuthenticationController
      */
     public function logoutAction(): void
     {
-        $possibleRedirectionUri = $this->backendRedirectionService->getAfterLogoutRedirectionUri($this->request);
         parent::logoutAction();
         switch ($this->request->getFormat()) {
             case 'json':
                 $this->view->assign('value', ['success' => true]);
                 break;
             default:
-                if ($possibleRedirectionUri !== null) {
-                    $this->redirectToUri($possibleRedirectionUri);
-                }
                 $this->addFlashMessage(
                     $this->getLabel('login.loggedOut.body'),
                     $this->getLabel('login.loggedOut.title'),
