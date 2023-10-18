@@ -204,10 +204,9 @@ trait NodeCreation
                 $contentRepository
             );
         }
-        $descendantNodeAggregateIds = self::populateNodeAggregateIds(
-            $nodeType,
-            $this->getNodeTypeManager(),
-            $command->tetheredDescendantNodeAggregateIds
+        $descendantNodeAggregateIds = $command->tetheredDescendantNodeAggregateIds->completeForNodeOfType(
+            $command->nodeTypeName,
+            $this->nodeTypeManager
         );
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
@@ -343,31 +342,5 @@ trait NodeCreation
             NodeAggregateClassification::CLASSIFICATION_TETHERED,
             $precedingNodeAggregateId
         );
-    }
-
-    protected static function populateNodeAggregateIds(
-        NodeType $nodeType,
-        NodeTypeManager $nodeTypeManager,
-        ?NodeAggregateIdsByNodePaths $nodeAggregateIds,
-        NodePath $childPath = null
-    ): NodeAggregateIdsByNodePaths {
-        if ($nodeAggregateIds === null) {
-            $nodeAggregateIds = NodeAggregateIdsByNodePaths::createEmpty();
-        }
-        // TODO: handle Multiple levels of autocreated child nodes
-        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeType) as $rawChildName => $childNodeType) {
-            $childName = NodeName::fromString($rawChildName);
-            $childPath = $childPath
-                ? $childPath->appendPathSegment($childName)
-                : NodePath::fromString($childName->value);
-            if (!$nodeAggregateIds->getNodeAggregateId($childPath)) {
-                $nodeAggregateIds = $nodeAggregateIds->add(
-                    $childPath,
-                    NodeAggregateId::create()
-                );
-            }
-        }
-
-        return $nodeAggregateIds;
     }
 }
