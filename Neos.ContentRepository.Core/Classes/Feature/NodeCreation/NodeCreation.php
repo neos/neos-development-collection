@@ -31,6 +31,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyV
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyType;
 use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
@@ -60,6 +61,8 @@ trait NodeCreation
     abstract protected function requireNodeTypeToBeOfTypeRoot(NodeType $nodeType): void;
 
     abstract protected function getPropertyConverter(): PropertyConverter;
+
+    abstract protected function getNodeTypeManager(): NodeTypeManager;
 
     private function handleCreateNodeAggregateWithNode(
         CreateNodeAggregateWithNode $command,
@@ -205,7 +208,6 @@ trait NodeCreation
             $command->nodeTypeName,
             $this->nodeTypeManager
         );
-
         // Write the auto-created descendant node aggregate ids back to the command;
         // so that when rebasing the command, it stays fully deterministic.
         $command = $command->withTetheredDescendantNodeAggregateIds($descendantNodeAggregateIds);
@@ -283,7 +285,7 @@ trait NodeCreation
         ContentRepository $contentRepository,
     ): Events {
         $events = [];
-        foreach ($nodeType->getAutoCreatedChildNodes() as $rawNodeName => $childNodeType) {
+        foreach ($this->getNodeTypeManager()->getTetheredNodesConfigurationForNodeType($nodeType) as $rawNodeName => $childNodeType) {
             assert($childNodeType instanceof NodeType);
             $nodeName = NodeName::fromString($rawNodeName);
             $childNodePath = $nodePath

@@ -95,7 +95,7 @@ class SiteCommandController extends CommandController
         } catch (SiteNodeTypeIsInvalid $exception) {
             $this->outputLine(
                 '<error>The given node type "%s" is not based on the superType "%s"</error>',
-                [$nodeType, NodeTypeNameFactory::forSite()]
+                [$nodeType, NodeTypeNameFactory::NAME_SITE]
             );
             $this->quit(1);
         } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {

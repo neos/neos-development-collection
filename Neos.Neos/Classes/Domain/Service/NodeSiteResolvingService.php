@@ -15,21 +15,20 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Neos\FrontendRouting\NodeAddress;
 
 #[Flow\Scope('singleton')]
 class NodeSiteResolvingService
 {
-    use NodeTypeWithFallbackProvider;
-
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
+    /** @internal */
     public function findSiteNodeForNodeAddress(
         NodeAddress $nodeAddress,
         ContentRepositoryId $contentRepositoryId
@@ -44,20 +43,13 @@ class NodeSiteResolvingService
                 ? VisibilityConstraints::frontend()
                 : VisibilityConstraints::withoutRestrictions()
         );
+
         $node = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
-        if (is_null($node)) {
+        if (!$node) {
             return null;
         }
-        $previousNode = null;
-        do {
-            if ($this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_SITES)) {
-                // the Site node is the one level underneath the "Sites" node.
-                return $previousNode;
-            }
-            $previousNode = $node;
-        } while ($node = $subgraph->findParentNode($node->nodeAggregateId));
+        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
 
-        // no Site node found at rootline
-        return null;
+        return $siteNode;
     }
 }

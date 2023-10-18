@@ -13,8 +13,7 @@ readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryIn
         private ConfigurationManager $configurationManager,
         private ObjectManagerBasedNodeLabelGeneratorFactory $nodeLabelGeneratorFactory,
         private NodeTypeEnrichmentService $nodeTypeEnrichmentService,
-    )
-    {
+    ) {
     }
 
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager

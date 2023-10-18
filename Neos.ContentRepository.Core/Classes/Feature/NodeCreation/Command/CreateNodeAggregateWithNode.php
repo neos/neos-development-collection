@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -89,6 +90,34 @@ final class CreateNodeAggregateWithNode implements CommandInterface
         );
     }
 
+    /**
+     * Specify explicitly the node aggregate ids for the tethered children {@see tetheredDescendantNodeAggregateIds}.
+     *
+     * In case you want to create a batch of commands where one creates the node and a succeeding command needs
+     * a tethered node aggregate id, you need to generate the child node aggregate ids in advance.
+     *
+     * _Alternatively you would need to fetch the created tethered node first from the subgraph.
+     * {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}_
+     *
+     * The helper method {@see NodeAggregateIdsByNodePaths::createForNodeType()} will generate recursively
+     * node aggregate ids for every tethered child node:
+     *
+     * ```php
+     * $tetheredDescendantNodeAggregateIds = NodeAggregateIdsByNodePaths::createForNodeType(
+     *     $command->nodeTypeName,
+     *     $nodeTypeManager
+     * );
+     * $command = $command->withTetheredDescendantNodeAggregateIds($tetheredDescendantNodeAggregateIds):
+     * ```
+     *
+     * The generated node aggregate id for the tethered node "main" is this way known before the command is issued:
+     *
+     * ```php
+     * $mainNodeAggregateId = $command->tetheredDescendantNodeAggregateIds->getNodeAggregateId(NodePath::fromString('main'));
+     * ```
+     *
+     * Generating the node aggregate ids from user land is totally optional.
+     */
     public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
     {
         return new self(
