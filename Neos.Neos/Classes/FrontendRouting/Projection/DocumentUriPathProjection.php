@@ -528,7 +528,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 $affectedDimensionSpacePoint->hash
             ));
 
-            if ($node === null) {
+            if (
+                $node === null
+                || $this->nodeTypeManager->getNodeType($node->getNodeTypeName())
+                    ->isOfType(NodeTypeNameFactory::forSite())
+            ) {
                 // probably not a document node
                 continue;
             }
