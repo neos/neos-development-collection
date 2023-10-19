@@ -45,7 +45,7 @@ final class SegmentMapping implements \IteratorAggregate, \Countable
 
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->elements);
+        yield from $this->elements;
     }
 
     public function count(): int

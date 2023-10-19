@@ -17,24 +17,23 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 /**
  * The node relation anchor points value object collection
  *
- * @implements \IteratorAggregate<int,NodeRelationAnchorPoint>
+ * @implements \IteratorAggregate<NodeRelationAnchorPoint>
  * @internal
  */
-final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
+final readonly class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
 {
     /**
-     * @var array<int,NodeRelationAnchorPoint>
+     * @var array<NodeRelationAnchorPoint>
      */
-    public readonly array $nodeRelationAnchorPoints;
+    public array $nodeRelationAnchorPoints;
 
     public function __construct(NodeRelationAnchorPoint ...$nodeRelationAnchorPoints)
     {
-        /** @var array<int,NodeRelationAnchorPoint> $nodeRelationAnchorPoints */
         $this->nodeRelationAnchorPoints = $nodeRelationAnchorPoints;
     }
 
     /**
-     * @param array<int|string,string|NodeRelationAnchorPoint> $array
+     * @param array<string|NodeRelationAnchorPoint> $array
      */
     public static function fromArray(array $array): self
     {
@@ -46,8 +45,6 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
                 $values[] = $item;
             }
         }
-        /** @var array<int,NodeRelationAnchorPoint $values */
-
         return new self(...$values);
     }
 
@@ -103,11 +100,11 @@ final class NodeRelationAnchorPoints implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,NodeRelationAnchorPoint>
+     * @return \Traversable<NodeRelationAnchorPoint>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->nodeRelationAnchorPoints);
+        yield from $this->nodeRelationAnchorPoints;
     }
 
     public function count(): int

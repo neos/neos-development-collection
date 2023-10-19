@@ -84,6 +84,6 @@ final class Projections implements \IteratorAggregate
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->projections);
+        yield from $this->projections;
     }
 }

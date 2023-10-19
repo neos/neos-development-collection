@@ -81,7 +81,7 @@ final class OriginByCoverage implements \IteratorAggregate, \JsonSerializable
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->origins);
+        yield from $this->origins;
     }
 
     /**

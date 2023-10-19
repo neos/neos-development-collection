@@ -20,24 +20,23 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 /**
  * A collection of SerializedNodeReference objects, to be used when creating reference relations.
  *
- * @implements \IteratorAggregate<int,SerializedNodeReference>
+ * @implements \IteratorAggregate<SerializedNodeReference>
  * @api used as part of commands/events
  */
-final class SerializedNodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class SerializedNodeReferences implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var array<int,SerializedNodeReference>
+     * @var array<SerializedNodeReference>
      */
-    public readonly array $references;
+    public array $references;
 
     private function __construct(SerializedNodeReference ...$references)
     {
-        /** @var array<int,SerializedNodeReference> $references */
         $this->references = $references;
     }
 
     /**
-     * @param array<int,SerializedNodeReference> $references
+     * @param array<SerializedNodeReference> $references
      */
     public static function fromReferences(array $references): self
     {
@@ -45,7 +44,7 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @param array<int,array<string,mixed>> $referenceData
+     * @param array<array<string,mixed>> $referenceData
      */
     public static function fromArray(array $referenceData): self
     {
@@ -75,11 +74,11 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return \ArrayIterator<int,SerializedNodeReference>
+     * @return \Traversable<SerializedNodeReference>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->references);
+        yield from $this->references;
     }
 
     public function count(): int
@@ -88,7 +87,7 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return array<int,SerializedNodeReference>
+     * @return array<SerializedNodeReference>
      */
     public function jsonSerialize(): array
     {

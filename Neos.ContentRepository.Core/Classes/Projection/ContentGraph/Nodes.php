@@ -67,11 +67,11 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,Node>|Node[]
+     * @return \Traversable<Node>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->nodes);
+        yield from $this->nodes;
     }
 
     public function offsetExists(mixed $offset): bool

@@ -70,7 +70,7 @@ final class CoverageNodeMoveMappings implements \IteratorAggregate, \Countable, 
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->mappings);
+        yield from $this->mappings;
     }
 
     public function count(): int

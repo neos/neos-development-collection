@@ -133,7 +133,7 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->points);
+        yield from $this->points;
     }
 
     /**

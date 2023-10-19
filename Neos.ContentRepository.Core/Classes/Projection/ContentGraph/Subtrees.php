@@ -60,11 +60,11 @@ final class Subtrees implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,Subtree>|Subtree[]
+     * @return \Traversable<int,Subtree>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->subtrees);
+        return yield from $this->subtrees;
     }
 
     public function count(): int

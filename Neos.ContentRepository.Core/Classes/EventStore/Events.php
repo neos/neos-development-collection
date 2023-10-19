@@ -36,9 +36,12 @@ final class Events implements \IteratorAggregate, \Countable
         return new self(...$events);
     }
 
+    /**
+     * @return \Traversable<EventInterface|DecoratedEvent>
+     */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->events);
+        yield from $this->events;
     }
 
     /**

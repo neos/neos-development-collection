@@ -111,6 +111,6 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->nodeAggregateIds);
+        yield from $this->nodeAggregateIds;
     }
 }

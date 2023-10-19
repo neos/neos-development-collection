@@ -71,7 +71,7 @@ final class OriginNodeMoveMappings implements \IteratorAggregate, \Countable, \J
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->mappings);
+        yield from $this->mappings;
     }
 
     public function count(): int
