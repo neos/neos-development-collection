@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 
 /**
  * @implements \IteratorAggregate<string,NodeReferenceSnapshot>
- * @internal not yet finished
+ * @internal todo not yet finished
  */
 final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \JsonSerializable
 {
@@ -74,6 +74,7 @@ final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \J
 
     /**
      * @todo what is this supposed to do?
+     * Good question.
      */
     public static function fromReferences(References $nodeReferences): self
     {
