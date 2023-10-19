@@ -64,9 +64,7 @@ final class NodeAggregateIds implements \IteratorAggregate
     public static function fromCollection(
         NodeAggregateIdCollection $collection
     ): self {
-        return new self(
-            $collection->getIterator()->getArrayCopy()
-        );
+        return new self(iterator_to_array($collection));
     }
 
     public function add(

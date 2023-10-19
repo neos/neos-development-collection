@@ -65,7 +65,7 @@ final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializab
         return new self(...array_map(
             fn (NodeAggregateId $nodeAggregateId): NodeReferenceToWrite
                 => new NodeReferenceToWrite($nodeAggregateId, null),
-            $nodeAggregateIds->getIterator()->getArrayCopy()
+            iterator_to_array($nodeAggregateIds)
         ));
     }
 

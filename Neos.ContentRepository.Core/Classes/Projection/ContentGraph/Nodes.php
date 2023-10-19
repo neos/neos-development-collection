@@ -106,7 +106,7 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
 
     public function merge(self $other): self
     {
-        $nodes = array_merge($this->nodes, $other->getIterator()->getArrayCopy());
+        $nodes = array_merge($this->nodes, $other->nodes);
 
         return self::fromArray($nodes);
     }

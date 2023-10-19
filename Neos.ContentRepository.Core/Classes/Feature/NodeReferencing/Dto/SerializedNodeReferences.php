@@ -59,8 +59,8 @@ final class SerializedNodeReferences implements \IteratorAggregate, \Countable, 
     {
         return new self(...array_map(
             static fn (NodeAggregateId $nodeAggregateId): SerializedNodeReference
-            => new SerializedNodeReference($nodeAggregateId, null),
-            $nodeAggregateIds->getIterator()->getArrayCopy()
+                => new SerializedNodeReference($nodeAggregateId, null),
+            iterator_to_array($nodeAggregateIds)
         ));
     }
 
