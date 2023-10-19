@@ -28,17 +28,11 @@ final class OriginNodeMoveMappings implements \IteratorAggregate, \Countable, \J
     private array $mappings;
 
     /**
-     * @var \ArrayIterator<int,OriginNodeMoveMapping>
-     */
-    private \ArrayIterator $iterator;
-
-    /**
      * @param array<int,OriginNodeMoveMapping> $values
      */
     private function __construct(array $values)
     {
         $this->mappings = $values;
-        $this->iterator = new \ArrayIterator($values);
     }
 
     /**
@@ -73,11 +67,11 @@ final class OriginNodeMoveMappings implements \IteratorAggregate, \Countable, \J
     }
 
     /**
-     * @return \ArrayIterator<int,OriginNodeMoveMapping>
+     * @return \Traversable<int,OriginNodeMoveMapping>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->mappings);
     }
 
     public function count(): int

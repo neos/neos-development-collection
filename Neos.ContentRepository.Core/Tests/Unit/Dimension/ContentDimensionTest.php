@@ -61,7 +61,7 @@ class ContentDimensionTest extends TestCase
         $this->subject = new Dimension\ContentDimension(
             $dimensionIdentifier,
             $this->values,
-            new Dimension\ContentDimensionValueVariationEdges([$euEdge, $deEdge, $usEdge])
+            new Dimension\ContentDimensionValueVariationEdges($euEdge, $deEdge, $usEdge)
         );
     }
 

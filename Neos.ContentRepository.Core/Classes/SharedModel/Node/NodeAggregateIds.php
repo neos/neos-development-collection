@@ -29,16 +29,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
      */
     private array $nodeAggregateIds;
 
-    /**
-     * @var \ArrayIterator<string,NodeAggregateId>
-     */
-    private \ArrayIterator $iterator;
-
     private function __construct(NodeAggregateId ...$nodeAggregateIds)
     {
         /** @var array<string,NodeAggregateId> $nodeAggregateIds */
         $this->nodeAggregateIds = $nodeAggregateIds;
-        $this->iterator = new \ArrayIterator($nodeAggregateIds);
     }
 
     public static function createEmpty(): self
@@ -46,12 +40,11 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
         return new self(...[]);
     }
 
-
-
     public static function create(NodeAggregateId ...$nodeAggregateIds): self
     {
         return self::fromArray($nodeAggregateIds);
     }
+
     /**
      * @param array<string|int,string|NodeAggregateId> $array
      */
@@ -88,7 +81,7 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     {
         return new self(...array_merge(
             $this->nodeAggregateIds,
-            $other->getIterator()->getArrayCopy()
+            $other->nodeAggregateIds
         ));
     }
 
@@ -114,10 +107,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
     }
 
     /**
-     * @return \ArrayIterator<string,NodeAggregateId>
+     * @return \Traversable<string,NodeAggregateId>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->nodeAggregateIds);
     }
 }

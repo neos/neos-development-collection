@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -26,17 +26,11 @@ final class CoverageNodeMoveMappings implements \IteratorAggregate, \Countable, 
     private array $mappings;
 
     /**
-     * @var \ArrayIterator<int,CoverageNodeMoveMapping>
-     */
-    private \ArrayIterator $iterator;
-
-    /**
      * @param array<int,CoverageNodeMoveMapping> $values
      */
     private function __construct(array $values)
     {
         $this->mappings = $values;
-        $this->iterator = new \ArrayIterator($values);
     }
 
     /**
@@ -72,11 +66,11 @@ final class CoverageNodeMoveMappings implements \IteratorAggregate, \Countable, 
 
 
     /**
-     * @return \ArrayIterator<int,CoverageNodeMoveMapping>
+     * @return \Traversable<int,CoverageNodeMoveMapping>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->mappings);
     }
 
     public function count(): int
