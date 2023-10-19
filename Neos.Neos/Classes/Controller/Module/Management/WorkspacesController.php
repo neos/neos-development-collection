@@ -167,7 +167,7 @@ class WorkspacesController extends AbstractModuleController
         }
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
-            'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle ?: $workspaceObj->workspaceName,
+            'selectedWorkspaceLabel' => $workspaceObj->workspaceTitle,
             'baseWorkspaceName' => $workspaceObj->baseWorkspaceName,
             'baseWorkspaceLabel' => $workspaceObj->baseWorkspaceName, // TODO fallback to title
             // TODO $this->domainUserService->currentUserCanPublishToWorkspace($workspace->getBaseWorkspace()),
@@ -307,7 +307,7 @@ class WorkspacesController extends AbstractModuleController
             return;
         }
 
-        if (!$workspace->workspaceTitle?->equals($title) || !$workspace->workspaceDescription->equals($description)) {
+        if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals($description)) {
             $contentRepository->handle(
                 RenameWorkspace::create(
                     $workspaceName,
@@ -374,12 +374,12 @@ class WorkspacesController extends AbstractModuleController
             $dependentWorkspaceTitles = [];
             /** @var Workspace $dependentWorkspace */
             foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle?->value;
+                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
             }
 
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [$workspace->workspaceTitle?->value, implode(', ', $dependentWorkspaceTitles)],
+                [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
                 null,
                 null,
                 'Modules',
@@ -399,7 +399,7 @@ class WorkspacesController extends AbstractModuleController
         } catch (\Exception $exception) {
             $message = $this->translator->translateById(
                 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
-                [$workspace->workspaceTitle?->value],
+                [$workspace->workspaceTitle->value],
                 null,
                 null,
                 'Modules',
@@ -411,7 +411,7 @@ class WorkspacesController extends AbstractModuleController
         if ($nodesCount > 0) {
             $message = $this->translator->translateById(
                 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
-                [$workspace->workspaceTitle?->value, $nodesCount],
+                [$workspace->workspaceTitle->value, $nodesCount],
                 $nodesCount,
                 null,
                 'Modules',
@@ -429,7 +429,7 @@ class WorkspacesController extends AbstractModuleController
 
         $this->addFlashMessage($this->translator->translateById(
             'workspaces.workspaceHasBeenRemoved',
-            [$workspace->workspaceTitle?->value],
+            [$workspace->workspaceTitle->value],
             null,
             null,
             'Modules',
@@ -792,7 +792,7 @@ class WorkspacesController extends AbstractModuleController
                         }
                     }
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
-                        $siteNode = $documentNode;
+                        $siteNode = $ancestor;
                     }
                 }
 
@@ -1091,7 +1091,7 @@ class WorkspacesController extends AbstractModuleController
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
                 && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get($excludedWorkspace->workspaceName) === null)
             ) {
-                $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle?->value;
+                $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
             }
         }
 
