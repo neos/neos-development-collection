@@ -34,11 +34,6 @@ final class DimensionSpacePointSet implements
     public readonly array $points;
 
     /**
-     * @var \ArrayIterator<string,DimensionSpacePoint>
-     */
-    public readonly \ArrayIterator $iterator;
-
-    /**
      * @param array<string|int,DimensionSpacePoint|array<string,string>> $pointCandidates
      *        An array of DimensionSpacePoints or coordinates
      */
@@ -56,7 +51,6 @@ final class DimensionSpacePointSet implements
             $points[$pointCandidate->hash] = $pointCandidate;
         }
         $this->points = $points;
-        $this->iterator = new \ArrayIterator($this->points);
     }
 
     /**
@@ -150,11 +144,11 @@ final class DimensionSpacePointSet implements
     }
 
     /**
-     * @return \ArrayIterator<string,DimensionSpacePoint>|DimensionSpacePoint[]
+     * @return \Traversable<string,DimensionSpacePoint>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->points);
     }
 
     /**

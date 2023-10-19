@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering;
 
-use ArrayIterator;
 use IteratorAggregate;
 use JsonSerializable;
 use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
@@ -61,9 +60,12 @@ final class Ordering implements IteratorAggregate, JsonSerializable
         return new self(...[...$this->fields, OrderingField::byTimestampField($timestampField, $direction)]);
     }
 
-    public function getIterator(): Traversable
+    /**
+     * @return Traversable<OrderingField>
+     */
+    public function getIterator(): \Traversable
     {
-        return new ArrayIterator($this->fields);
+        return new \ArrayIterator($this->fields);
     }
 
     /**

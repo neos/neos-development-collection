@@ -30,17 +30,11 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
     /**
-     * @var \ArrayIterator<string,?SerializedPropertyValue>
-     */
-    protected \ArrayIterator $iterator;
-
-    /**
      * @param array<string,?SerializedPropertyValue> $values
      */
     private function __construct(
         public readonly array $values
     ) {
-        $this->iterator = new \ArrayIterator($this->values);
     }
 
     public static function createEmpty(): self
@@ -146,11 +140,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return \ArrayIterator<string,?SerializedPropertyValue>
+     * @return \Traversable<string,?SerializedPropertyValue>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->values);
     }
 
     public function count(): int

@@ -18,7 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 
 /**
  * @implements \IteratorAggregate<string,NodeReferenceSnapshot>
- * @internal not yet finished
+ * @internal todo not yet finished
  */
 final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \JsonSerializable
 {
@@ -28,17 +28,11 @@ final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \J
     private array $references;
 
     /**
-     * @var \ArrayIterator<string,NodeReferenceSnapshot>
-     */
-    protected \ArrayIterator $iterator;
-
-    /**
      * @param array<string,NodeReferenceSnapshot> $references
      */
     private function __construct(array $references)
     {
         $this->references = $references;
-        $this->iterator = new \ArrayIterator($references);
     }
 
     public function merge(self $other): self
@@ -80,6 +74,7 @@ final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \J
 
     /**
      * @todo what is this supposed to do?
+     * Good question.
      */
     public static function fromReferences(References $nodeReferences): self
     {
@@ -89,11 +84,11 @@ final class NodeReferencesSnapshot implements \IteratorAggregate, \Countable, \J
     }
 
     /**
-     * @return \ArrayIterator<string,NodeReferenceSnapshot>
+     * @return \Traversable<string,NodeReferenceSnapshot>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        return new \ArrayIterator($this->references);
     }
 
     public function count(): int
