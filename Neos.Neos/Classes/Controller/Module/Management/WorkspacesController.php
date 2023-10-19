@@ -792,7 +792,7 @@ class WorkspacesController extends AbstractModuleController
                         }
                     }
                     if ($this->getNodeType($ancestor)->isOfType(NodeTypeNameFactory::NAME_SITE)) {
-                        $siteNode = $documentNode;
+                        $siteNode = $ancestor;
                     }
                 }
 
