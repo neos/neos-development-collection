@@ -1,5 +1,5 @@
 @fixtures @contentrepository
-Feature: Basic routing functionality (match & resolve document nodes in one dimension)
+Feature: Tests for site node child documents. These are special in that they have the first non-dimension uri path segment.
 
   Background:
     Given using no content dimensions
@@ -16,8 +16,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     'Neos.Neos:Site':
       superTypes:
         'Neos.Neos:Document': true
-      properties:
-        uriPathSegment: ~
     'Acme.Site:Document.Homepage':
       superTypes:
         'Neos.Neos:Site': true
@@ -34,15 +32,16 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the command CreateRootNodeAggregateWithNode is executed with payload:
-      | Key                         | Value                    |
-      | contentStreamId             | "cs-identifier"          |
-      | nodeAggregateId             | "lady-eleonode-rootford" |
-      | nodeTypeName                | "Neos.Neos:Sites"        |
+      | Key             | Value                    |
+      | contentStreamId | "cs-identifier"          |
+      | nodeAggregateId | "lady-eleonode-rootford" |
+      | nodeTypeName    | "Neos.Neos:Sites"        |
     And the graph projection is fully up to date
     And I am in content stream "cs-identifier" and dimension space point {}
+    # We explicitly create a site node with a tethered child document without uriPathSegment, so its uriPath is empty, exactly as the site node's
     And the following CreateNodeAggregateWithNode commands are executed:
-      | nodeAggregateId        | parentNodeAggregateId  | nodeTypeName                   | initialPropertyValues                    | nodeName |
-      | shernode-homes         | lady-eleonode-rootford | Acme.Site:Document.Homepage    | {}          | site    |
+      | nodeAggregateId | parentNodeAggregateId  | nodeTypeName                | initialPropertyValues | nodeName |
+      | shernode-homes  | lady-eleonode-rootford | Acme.Site:Document.Homepage | {}                    | site     |
     And A site exists for node name "site"
     And the sites configuration is:
     """yaml
@@ -60,9 +59,9 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
   Scenario: Set tethered child uriPathSegment
     When I remember NodeAggregateId of node "shernode-homes"s child "notFound" as "notFoundId"
     And the command SetNodeProperties is executed with payload:
-      | Key                       | Value                        |
-      | nodeAggregateId           | "$notFoundId"           |
-      | propertyValues            | {"uriPathSegment": "not-found"}    |
+      | Key             | Value                           |
+      | nodeAggregateId | "$notFoundId"                   |
+      | propertyValues  | {"uriPathSegment": "not-found"} |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     And I am on URL "/"
