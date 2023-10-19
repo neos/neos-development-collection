@@ -10,20 +10,12 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 final class Subtree
 {
     /**
-     * @param Subtree[] $children
+     * @param array<int,Subtree> $children
      */
     public function __construct(
         public readonly int $level,
         public readonly Node $node,
-        public array $children = []
+        public readonly array $children
     ) {
-    }
-
-    /**
-     * @internal
-     */
-    public function add(Subtree $subtree): void
-    {
-        $this->children[] = $subtree;
     }
 }
