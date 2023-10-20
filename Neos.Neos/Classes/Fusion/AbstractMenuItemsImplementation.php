@@ -78,9 +78,8 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * Should nodes that have "hiddenInIndex" set still be visible in this menu.
-     *
-     * @return boolean
+     * Whether the active/current state of menu items is calculated on the server side.
+     * This has an effect on performance and caching
      */
     public function isCalculateItemStatesEnabled(): bool
     {
