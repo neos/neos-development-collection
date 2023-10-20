@@ -28,7 +28,6 @@ final class NodeTypeNames implements \IteratorAggregate
 
     private function __construct(NodeTypeName ...$nodeTypeNames)
     {
-        /** @var array<int,NodeTypeName> $nodeTypeNames */
         $this->nodeTypeNames = $nodeTypeNames;
     }
 
@@ -73,11 +72,11 @@ final class NodeTypeNames implements \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator<int|string,NodeTypeName>
+     * @return \Traversable<NodeTypeName>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->nodeTypeNames);
+        yield from $this->nodeTypeNames;
     }
 
     /**

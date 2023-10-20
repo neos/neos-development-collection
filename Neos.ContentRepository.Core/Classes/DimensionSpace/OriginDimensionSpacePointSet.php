@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\DimensionSpace;
 
 /*
- * This file is part of the Neos.ContentRepository package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -32,11 +32,6 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     private array $points;
 
     /**
-     * @var \ArrayIterator<string,OriginDimensionSpacePoint>
-     */
-    private \ArrayIterator $iterator;
-
-    /**
      * @param array<int|string,OriginDimensionSpacePoint|array<string,string>> $points
      */
     public function __construct(array $points)
@@ -55,7 +50,6 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
             }
             $this->points[$point->hash] = $point;
         }
-        $this->iterator = new \ArrayIterator($this->points);
     }
 
     public static function fromDimensionSpacePointSet(DimensionSpacePointSet $dimensionSpacePointSet): self
@@ -135,11 +129,11 @@ final class OriginDimensionSpacePointSet implements \JsonSerializable, \Iterator
     }
 
     /**
-     * @return \ArrayIterator<string,OriginDimensionSpacePoint>
+     * @return \Traversable<string,OriginDimensionSpacePoint>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        yield from $this->points;
     }
 
     /**

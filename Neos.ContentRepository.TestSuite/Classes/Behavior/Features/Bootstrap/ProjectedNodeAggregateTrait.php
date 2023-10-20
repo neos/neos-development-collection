@@ -175,7 +175,7 @@ trait ProjectedNodeAggregateTrait
         $this->assertOnCurrentNodeAggregate(function (NodeAggregate $nodeAggregate) use ($expectedNodeAggregateIds) {
             $expectedDiscriminators = array_values(array_map(function (NodeAggregateId $nodeAggregateId) {
                 return $this->currentContentStreamId->value . ';' . $nodeAggregateId->value;
-            }, $expectedNodeAggregateIds->getIterator()->getArrayCopy()));
+            }, iterator_to_array($expectedNodeAggregateIds)));
             $actualDiscriminators = array_values(array_map(
                 fn (NodeAggregate $parentNodeAggregate): string
                     => $parentNodeAggregate->contentStreamId->value . ';' . $parentNodeAggregate->nodeAggregateId->value,

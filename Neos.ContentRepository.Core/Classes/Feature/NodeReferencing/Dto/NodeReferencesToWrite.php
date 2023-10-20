@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Dto;
 
-use JetBrains\PhpStorm\Internal\TentativeType;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 
@@ -24,24 +23,23 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
  *
  * We expect the value types to match the NodeType's property types (this is validated in the command handler).
  *
- * @implements \IteratorAggregate<int,NodeReferenceToWrite>
+ * @implements \IteratorAggregate<NodeReferenceToWrite>
  * @api used as part of commands
  */
-final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializable
+final readonly class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializable
 {
     /**
-     * @var array<int,NodeReferenceToWrite>
+     * @var array<NodeReferenceToWrite>
      */
-    public readonly array $references;
+    public array $references;
 
     private function __construct(NodeReferenceToWrite ...$references)
     {
-        /** @var array<int,NodeReferenceToWrite> $references */
         $this->references = $references;
     }
 
     /**
-     * @param array<int,NodeReferenceToWrite> $references
+     * @param array<NodeReferenceToWrite> $references
      */
     public static function fromReferences(array $references): self
     {
@@ -65,7 +63,7 @@ final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializab
         return new self(...array_map(
             fn (NodeAggregateId $nodeAggregateId): NodeReferenceToWrite
                 => new NodeReferenceToWrite($nodeAggregateId, null),
-            $nodeAggregateIds->getIterator()->getArrayCopy()
+            iterator_to_array($nodeAggregateIds)
         ));
     }
 
@@ -78,15 +76,15 @@ final class NodeReferencesToWrite implements \IteratorAggregate, \JsonSerializab
     }
 
     /**
-     * @return \ArrayIterator<int,NodeReferenceToWrite>
+     * @return \Traversable<NodeReferenceToWrite>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->references);
+        yield from $this->references;
     }
 
     /**
-     * @return array<int,NodeReferenceToWrite>
+     * @return array<NodeReferenceToWrite>
      */
     public function jsonSerialize(): array
     {

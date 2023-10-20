@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.ContentRepository.DimensionSpace package.
+ * This file is part of the Neos.ContentRepository.Core package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -22,7 +22,7 @@ namespace Neos\ContentRepository\Core\DimensionSpace;
  * @implements \ArrayAccess<string,DimensionSpacePoint>
  * @api
  */
-final class DimensionSpacePointSet implements
+final readonly class DimensionSpacePointSet implements
     \JsonSerializable,
     \IteratorAggregate,
     \ArrayAccess,
@@ -31,12 +31,7 @@ final class DimensionSpacePointSet implements
     /**
      * @var array<string,DimensionSpacePoint>
      */
-    public readonly array $points;
-
-    /**
-     * @var \ArrayIterator<string,DimensionSpacePoint>
-     */
-    public readonly \ArrayIterator $iterator;
+    public array $points;
 
     /**
      * @param array<string|int,DimensionSpacePoint|array<string,string>> $pointCandidates
@@ -56,7 +51,6 @@ final class DimensionSpacePointSet implements
             $points[$pointCandidate->hash] = $pointCandidate;
         }
         $this->points = $points;
-        $this->iterator = new \ArrayIterator($this->points);
     }
 
     /**
@@ -150,11 +144,11 @@ final class DimensionSpacePointSet implements
     }
 
     /**
-     * @return \ArrayIterator<string,DimensionSpacePoint>|DimensionSpacePoint[]
+     * @return \Traversable<string,DimensionSpacePoint>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        yield from $this->points;
     }
 
     /**

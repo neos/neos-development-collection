@@ -209,9 +209,15 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
 
         // Just to figure out current NodeTypeName. This is the same for the aggregate in all dimensionSpacePoints.
+        $pointHashes = $event->coveredDimensionSpacePoints->getPointHashes();
+        $anyPointHash = reset($pointHashes);
+        // There is always at least one dimension space point covered, even in a zero-dimensional cr.
+        // Zero-dimensional means DimensionSpacePoint::fromArray([])->hash
+        assert(is_string($anyPointHash));
+
         $nodeInSomeDimension = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateId,
-            $event->coveredDimensionSpacePoints->getIterator()->current()->hash
+            $anyPointHash
         ));
 
         if ($nodeInSomeDimension === null) {
