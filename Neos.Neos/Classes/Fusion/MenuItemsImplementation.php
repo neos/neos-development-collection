@@ -22,6 +22,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\Fusion\Exception as FusionException;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
@@ -57,9 +59,9 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected $maximumLevels;
 
     /**
-     * Internal cache for the ancestors of the currentNode.
+     * Internal cache for the ancestors aggregate ids of the currentNode.
      */
-    protected ?Nodes $currentNodeAncestors = null;
+    protected ?NodeAggregateIds $currentNodeAncestorAggregateIds = null;
 
     /**
      * Runtime cache for the node type constraints to be applied
@@ -318,19 +320,20 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 
-    public function getCurrentNodeAncestors(): Nodes
+    public function getCurrentNodeAncestorAggregateIds(): NodeAggregateIds
     {
-        if ($this->currentNodeAncestors instanceof Nodes) {
-            return $this->currentNodeAncestors;
+        if ($this->currentNodeAncestorAggregateIds instanceof NodeAggregateIds) {
+            return $this->currentNodeAncestorAggregateIds;
         }
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
-        $this->currentNodeAncestors = $subgraph->findAncestorNodes(
+        $currentNodeAncestors = $subgraph->findAncestorNodes(
             $this->currentNode->nodeAggregateId,
             FindAncestorNodesFilter::create(
                 $this->getNodeTypeConstraints()
             )
         );
-        return $this->currentNodeAncestors;
+        $this->currentNodeAncestorAggregateIds = NodeAggregateIds::fromNodes($currentNodeAncestors);
+        return $this->currentNodeAncestorAggregateIds;
     }
 
     protected function calculateItemState(Node $node): MenuItemState
@@ -338,11 +341,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($node->nodeAggregateId->equals($this->currentNode->nodeAggregateId)) {
             return MenuItemState::current();
         }
-        $ancestors = $this->getCurrentNodeAncestors();
-        foreach ($ancestors as $ancestor) {
-            if ($node->nodeAggregateId->equals($ancestor->nodeAggregateId)) {
-                return MenuItemState::active();
-            }
+        if ($this->getCurrentNodeAncestorAggregateIds()->contain($node->nodeAggregateId)) {
+            return MenuItemState::active();
         }
         return MenuItemState::normal();
     }
