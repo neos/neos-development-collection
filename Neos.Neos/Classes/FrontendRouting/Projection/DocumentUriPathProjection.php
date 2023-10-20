@@ -9,7 +9,6 @@ use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -209,15 +208,16 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return;
         }
 
-        $oneCoveredDimensionSpacePoint = current(iterator_to_array($event->coveredDimensionSpacePoints));
-        if (!$oneCoveredDimensionSpacePoint instanceof DimensionSpacePoint) {
-            return;
-        }
-
         // Just to figure out current NodeTypeName. This is the same for the aggregate in all dimensionSpacePoints.
+        $pointHashes = $event->coveredDimensionSpacePoints->getPointHashes();
+        $anyPointHash = reset($pointHashes);
+        // There is always at least one dimension space point covered, even in a zero-dimensional cr.
+        // Zero-dimensional means DimensionSpacePoint::fromArray([])->hash
+        assert(is_string($anyPointHash));
+
         $nodeInSomeDimension = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateId,
-            $oneCoveredDimensionSpacePoint->hash
+            $anyPointHash
         ));
 
         if ($nodeInSomeDimension === null) {
