@@ -37,7 +37,7 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * A Fusion view for Neos
  */
-class FusionView extends AbstractView
+class FusionView extends AbstractView implements RenderingEntryPointAware
 {
     use FusionViewI18nTrait;
     use NodeTypeWithFallbackProvider;
@@ -172,6 +172,14 @@ class FusionView extends AbstractView
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         return $fusionRuntime->canRender($this->fusionPath);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setRenderingEntryPoint(string $renderingEntryPoint): void
+    {
+        $this->setFusionPath($renderingEntryPoint);
     }
 
     /**
