@@ -7,19 +7,20 @@ namespace Neos\Neos\Fusion;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 
 /**
- * A menu item
+ * A menu item for dimension menus
+ * Compared to the default {@see MenuItem} it has no `menuLevel` property, but one for the `targetDimensions`
  */
-final class DimensionMenuItem
+final readonly class DimensionMenuItem
 {
     /**
      * @param array<string,mixed>|null $targetDimensions
      */
     public function __construct(
-        public readonly ?Node $node,
-        public readonly ?MenuItemState $state = null,
-        public readonly ?string $label = null,
-        public readonly ?array $targetDimensions = null,
-        public readonly ?string $uri = null
+        public ?Node $node,
+        public ?MenuItemState $state = null,
+        public ?string $label = null,
+        public ?array $targetDimensions = null,
+        public ?string $uri = null
     ) {
     }
 }
