@@ -62,6 +62,14 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
     }
 
     /**
+     * Creates a dimension space point for a simple zero-dimensional content repository.
+     */
+    public static function zeroDimensional(): self
+    {
+        return self::instance([]);
+    }
+
+    /**
      * Creates a dimension space point from a legacy dimension array in format
      * ['language' => ['es'], 'country' => ['ar']]
      *

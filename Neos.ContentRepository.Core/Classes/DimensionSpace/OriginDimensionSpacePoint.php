@@ -14,9 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\DimensionSpace;
 
-use Neos\ContentRepository\Core\DimensionSpace\AbstractDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-
 /**
  * A node's origin dimension space point. Defines in which point in the dimension space the node originates
  * (= is "at home"). Every node has exactly ONE OriginDimensionSpacePoint, but one or more {@see DimensionSpacePoint}s
@@ -55,6 +52,14 @@ final class OriginDimensionSpacePoint extends AbstractDimensionSpacePoint
     public static function fromArray(array $data): self
     {
         return self::instance($data);
+    }
+
+    /**
+     * Creates an origin dimension space point for a simple zero-dimensional content repository.
+     */
+    public static function zeroDimensional(): self
+    {
+        return self::instance([]);
     }
 
     /**
