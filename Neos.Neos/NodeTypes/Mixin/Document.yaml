@@ -17,12 +17,6 @@
     'CreationDialogPostprocessor':
       position: 'after NodeTypePresetPostprocessor'
       postprocessor: 'Neos\Neos\NodeTypePostprocessor\CreationDialogPostprocessor'
-  options:
-    nodeCreationHandlers:
-      documentTitle:
-        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\DocumentTitleNodeCreationHandler'
-      creationDialogProperties:
-        nodeCreationHandler: 'Neos\Neos\Ui\NodeCreationHandler\CreationDialogPropertiesCreationHandler'
   ui:
     label: 'Document'
     group: 'general'
