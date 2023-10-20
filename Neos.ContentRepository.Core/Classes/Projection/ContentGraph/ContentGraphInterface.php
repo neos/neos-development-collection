@@ -95,15 +95,6 @@ interface ContentGraphInterface extends ProjectionStateInterface
     public function findUsedNodeTypeNames(): iterable;
 
     /**
-     * @internal
-     */
-    public function findNodeByIdAndOriginDimensionSpacePoint(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?Node;
-
-    /**
      * @internal only for consumption inside the Command Handler
      */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(

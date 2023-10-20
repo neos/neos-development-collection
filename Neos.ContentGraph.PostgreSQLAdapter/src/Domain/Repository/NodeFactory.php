@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -161,21 +160,22 @@ final class NodeFactory
         array $nodeRows,
         VisibilityConstraints $visibilityConstraints
     ): ?Subtree {
-        $subtreesByParentNodeAggregateId = [];
-        foreach ($nodeRows as $nodeRow) {
-            $node = $this->mapNodeRowToNode(
-                $nodeRow,
-                $visibilityConstraints
-            );
-
-            $subtreesByParentNodeAggregateId[$nodeRow['parentnodeaggregateid']][] = new Subtree(
-                (int)$nodeRow['level'],
-                $node,
-                $subtreesByParentNodeAggregateId[$nodeRow['nodeaggregateid']] ?? []
-            );
+        /** @var array<string, Subtree[]> $subtreesByParentNodeId */
+        $subtreesByParentNodeId = [];
+        foreach (array_reverse($nodeRows) as $nodeRow) {
+            $nodeAggregateId = $nodeRow['nodeaggregateid'];
+            $parentNodeAggregateId = $nodeRow['parentnodeaggregateid'];
+            $node = $this->mapNodeRowToNode($nodeRow, $visibilityConstraints);
+            $subtree = new Subtree((int)$nodeRow['level'], $node, array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? array_reverse($subtreesByParentNodeId[$nodeAggregateId]) : []);
+            if ($subtree->level === 0) {
+                return $subtree;
+            }
+            if (!array_key_exists($parentNodeAggregateId, $subtreesByParentNodeId)) {
+                $subtreesByParentNodeId[$parentNodeAggregateId] = [];
+            }
+            $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
         }
-
-        return Subtrees::fromArray($subtreesByParentNodeAggregateId['ROOT'])->first();
+        return null;
     }
 
     /**
