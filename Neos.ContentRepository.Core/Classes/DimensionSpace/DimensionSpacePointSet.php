@@ -97,12 +97,12 @@ final class DimensionSpacePointSet implements
 
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        // not going to happen
+        throw new \BadMethodCallException('Cannot modify immutable DimensionSpacePointSet', 1697802335);
     }
 
     public function offsetUnset(mixed $offset): void
     {
-        // not going to happen
+        throw new \BadMethodCallException('Cannot modify immutable DimensionSpacePointSet', 1697802337);
     }
 
     public function getUnion(DimensionSpacePointSet $other): DimensionSpacePointSet
