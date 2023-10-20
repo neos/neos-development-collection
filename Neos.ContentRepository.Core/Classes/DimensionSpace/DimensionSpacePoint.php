@@ -65,6 +65,7 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
      * Creates a dimension space point from a legacy dimension array in format
      * ['language' => ['es'], 'country' => ['ar']]
      *
+     * @deprecated should be only used for conversion from Neos <= 8.x to 9.x upwards. never use this in "modern" code.
      * @param array<string,array<int,string>> $legacyDimensionValues
      */
     final public static function fromLegacyDimensionArray(array $legacyDimensionValues): self
