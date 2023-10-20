@@ -9,18 +9,18 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 /**
  * A menu item
  */
-final class MenuItem
+final readonly class MenuItem
 {
     /**
      * @param array<int,MenuItem> $children
      */
     public function __construct(
-        public readonly Node $node,
-        public readonly ?MenuItemState $state = null,
-        public readonly ?string $label = null,
-        public readonly int $menuLevel = 1,
-        public readonly array $children = [],
-        public readonly ?string $uri = null
+        public Node $node,
+        public ?MenuItemState $state = null,
+        public ?string $label = null,
+        public int $menuLevel = 1,
+        public array $children = [],
+        public ?string $uri = null
     ) {
     }
 

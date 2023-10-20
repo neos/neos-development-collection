@@ -222,13 +222,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function calculateItemState(?Node $variant = null): MenuItemState
     {
         if (is_null($variant)) {
-            return MenuItemState::absent();
+            return MenuItemState::ABSENT;
         }
 
         if ($variant === $this->currentNode) {
-            return MenuItemState::current();
+            return MenuItemState::CURRENT;
         }
-        return MenuItemState::normal();
+        return MenuItemState::NORMAL;
     }
 
 

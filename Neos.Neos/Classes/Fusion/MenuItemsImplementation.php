@@ -339,11 +339,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function calculateItemState(Node $node): MenuItemState
     {
         if ($node->nodeAggregateId->equals($this->currentNode->nodeAggregateId)) {
-            return MenuItemState::current();
+            return MenuItemState::CURRENT;
         }
         if ($this->getCurrentNodeAncestorAggregateIds()->contain($node->nodeAggregateId)) {
-            return MenuItemState::active();
+            return MenuItemState::ACTIVE;
         }
-        return MenuItemState::normal();
+        return MenuItemState::NORMAL;
     }
 }
