@@ -534,7 +534,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 $affectedDimensionSpacePoint->hash
             ));
 
-            if ($node === null) {
+            if (
+                $node === null
+                || $this->nodeTypeManager->getNodeType($node->getNodeTypeName())
+                    ->isOfType(NodeTypeNameFactory::forSite())
+            ) {
                 // probably not a document node
                 continue;
             }
@@ -555,11 +559,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 continue;
             }
             $oldUriPath = $node->getUriPath();
-            // homepage -> TODO hacky?
-            if ($oldUriPath === '') {
-                continue;
-            }
-            /** @var string[] $uriPathSegments */
             $uriPathSegments = explode('/', $oldUriPath);
             $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
             $newUriPath = implode('/', $uriPathSegments);
