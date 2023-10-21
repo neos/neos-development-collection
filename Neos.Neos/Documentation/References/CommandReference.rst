@@ -19,65 +19,13 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2017-05-11
+The following reference was automatically generated from code on 2023-10-21
 
 
 .. _`Neos Command Reference: NEOS.CONTENTREPOSITORY`:
 
 Package *NEOS.CONTENTREPOSITORY*
 --------------------------------
-
-
-.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:show`:
-
-``neos.contentrepository:nodetypes:show``
-**************************************
-
-**Show NodeType Configuration**
-
-Shows the merged configuration (including supertypes) of a NodeType
-
-**Examples:**
-
-``./flow nodeTypes:show Vendor.Site:Content``
-
-``./flow nodeTypes:show Vendor.Site:Content --path="properties.bar"``
-
-
-Options
-^^^^^^^
-
-``--node-type-name``
-  The name of the NodeType to show
-``--path``
-  Optional path of the NodeType-configuration which will be shown
-
-
-
-.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:list`:
-
-``neos.contentrepository:nodetypes:list``
-**************************************
-
-**List NodeTypes**
-
-Lists all declared NodeTypes grouped by namespace
-
-**Examples:**
-
-``./flow nodeTypes:list --filter Vendor.Site:``
-
-``./flow nodeTypes:list --filter Vendor.Site:Document  --include-abstract``
-
-
-
-Options
-^^^^^^^
-
-``--filter``
-  Only NodeType-names containing this string will be listed
-``--include-abstract``
-  List abstract NodeTypes
 
 
 .. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:node:repair`:
@@ -115,13 +63,13 @@ configuration and constraints.
 *Remove undefined node properties*
 removeUndefinedProperties
 
-Will remove all undefined properties according to the node type configuration.
-
 *Remove broken object references*
 removeBrokenEntityReferences
 
 Detects and removes references from nodes to entities which don't exist anymore (for
 example Image nodes referencing ImageVariant objects which are gone for some reason).
+
+Will remove all undefined properties according to the node type configuration.
 
 *Remove nodes with invalid dimensions*
 removeNodesWithInvalidDimensions
@@ -154,6 +102,7 @@ reorderChildNodes
 For all nodes (or only those which match the --node-type filter specified with this
 command) which have configured child nodes, those child nodes are reordered according to the
 position from the parents NodeType configuration.
+
 *Missing default properties*
 addMissingDefaultValues
 
@@ -171,6 +120,12 @@ It searches for nodes which have a corresponding node in one of the base workspa
 have different node paths, but don't have a corresponding shadow node with a "movedto"
 value.
 
+*Create missing sites node*
+createMissingSitesNode
+
+If needed, creates a missing "/sites" node, which is essential for Neos to work
+properly.
+
 *Generate missing URI path segments*
 generateUriPathSegments
 
@@ -185,13 +140,13 @@ Removes content dimensions from the root and sites nodes
 
 **Examples:**
 
-``./flow node:repair``
+./flow node:repair
 
-``./flow node:repair --node-type Neos.NodeTypes:Page``
+./flow node:repair --node-type Acme.Com:Page
 
-``./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions``
+./flow node:repair --workspace user-robert --only removeOrphanNodes,removeNodesWithInvalidDimensions
 
-``./flow node:repair --skip removeUndefinedProperties``
+./flow node:repair --skip removeUndefinedProperties
 
 
 
@@ -205,44 +160,95 @@ Options
 ``--dry-run``
   Don't do anything, but report actions
 ``--cleanup``
-  If FALSE, cleanup tasks are skipped
+  If false, cleanup tasks are skipped
 ``--skip``
   Skip the given check or checks (comma separated)
 ``--only``
   Only execute the given check or checks (comma separated)
 
 
-.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION`:
 
-Package *NEOS.CONTENTREPOSITORY.MIGRATION*
--------------------
 
-.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION neos.contentrepository.migration:node:migrationcreate`:
 
-``neos.contentrepository.migration:node:migrationcreate``
-*************************
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:list`:
 
-**Create a node migration for the given package key**
+``neos.contentrepository:nodetypes:list``
+*****************************************
 
-You can specify the ``packageKey`` of your desired package. A node migration will be created in the specified package under ``/Migrations/ContentRepository/``.
-The newly created node migration contains a small template to help you to get started, and also a link to the Neos documentation about how node migrations work in Neos.
+**Lists all declared NodeTypes grouped by namespace**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--filter``
+  Only NodeType-names containing this string will be listed
+``--include-abstract``
+  List abstract NodeTypes
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:show`:
+
+``neos.contentrepository:nodetypes:show``
+*****************************************
+
+**Shows the merged configuration (including supertypes) of a NodeType**
+
+
 
 Arguments
 ^^^^^^^^^
 
-``--package-key``
-  The key for your package (for example ``Neos.Demo``)
+``--node-type-name``
+  The name of the NodeType to show
 
-Example
+
+
+Options
 ^^^^^^^
 
-.. code-block:: bash
-  ./flow node:migrationcreate --package-key Neos.Demo
+``--path``
+  Path of the NodeType-configuration which will be shown
+
+
+
+
 
 .. _`Neos Command Reference: NEOS.FLOW`:
 
 Package *NEOS.FLOW*
 -------------------
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:cache:collectgarbage`:
+
+``neos.flow:cache:collectgarbage``
+**********************************
+
+**Cache Garbage Collection**
+
+Runs the Garbage Collection (collectGarbage) method on all registered caches.
+
+Though the method is defined in the BackendInterface, the implementation
+can differ and might not remove any data, depending on possibilities of
+the backend.
+
+
+
+Options
+^^^^^^^
+
+``--cache-identifier``
+  If set, this command only applies to the given cache
+
+
+
 
 
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:cache:flush`:
@@ -253,7 +259,8 @@ Package *NEOS.FLOW*
 **Flush all caches**
 
 The flush command flushes all caches (including code caches) which have been
-registered with Flow's Cache Manager. It also removes any session data.
+registered with Flow's Cache Manager. It will NOT remove any session data, unless
+you specifically configure the session caches to not be persistent.
 
 If fatal errors caused by a package prevent the compile time bootstrap
 from running, the removal of any temporary data can be forced by specifying
@@ -316,6 +323,122 @@ Related commands
   Flush all caches
 ``neos.flow:configuration:show``
   Show the active configuration settings
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:cache:list`:
+
+``neos.flow:cache:list``
+************************
+
+**List all configured caches and their status if available**
+
+This command will exit with a code 1 if at least one cache status contains errors or warnings
+This allows the command to be easily integrated in CI setups (the --quiet flag can be used to reduce verbosity)
+
+
+
+Options
+^^^^^^^
+
+``--quiet``
+  If set, this command only outputs errors & warnings
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:show``
+  Display details of a cache including a detailed status if available
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:cache:setup`:
+
+``neos.flow:cache:setup``
+*************************
+
+**Setup the given Cache if possible**
+
+Invokes the setup() method on the configured CacheBackend (if it implements the WithSetupInterface)
+which should setup and validate the backend (i.e. create required database tables, directories, ...)
+
+Arguments
+^^^^^^^^^
+
+``--cache-identifier``
+  
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:list``
+  List all configured caches and their status if available
+``neos.flow:cache:setupall``
+  Setup all Caches
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:cache:setupall`:
+
+``neos.flow:cache:setupall``
+****************************
+
+**Setup all Caches**
+
+Invokes the setup() method on all configured CacheBackend that implement the WithSetupInterface interface
+which should setup and validate the backend (i.e. create required database tables, directories, ...)
+
+This command will exit with a code 1 if at least one cache setup failed
+This allows the command to be easily integrated in CI setups (the --quiet flag can be used to reduce verbosity)
+
+
+
+Options
+^^^^^^^
+
+``--quiet``
+  If set, this command only outputs errors & warnings
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:setup``
+  Setup the given Cache if possible
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:cache:show`:
+
+``neos.flow:cache:show``
+************************
+
+**Display details of a cache including a detailed status if available**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--cache-identifier``
+  identifier of the cache (for example "Flow_Core")
+
+
+
+
+
+Related commands
+^^^^^^^^^^^^^^^^
+
+``neos.flow:cache:list``
+  List all configured caches and their status if available
 
 
 
@@ -396,7 +519,14 @@ Options
 The command shows the configuration of the current context as it is used by Flow itself.
 You can specify the configuration type and path if you want to show parts of the configuration.
 
-./flow configuration:show --type Settings --path Neos.Flow.persistence
+Display all settings:
+./flow configuration:show
+
+Display Flow persistence settings:
+./flow configuration:show --path Neos.Flow.persistence
+
+Display Flow Object Cache configuration
+./flow configuration:show --type Caches --path Flow_Object_Classes
 
 
 
@@ -404,7 +534,7 @@ Options
 ^^^^^^^
 
 ``--type``
-  Configuration type to show
+  Configuration type to show, defaults to Settings
 ``--path``
   path to subconfiguration separated by "." like "Neos.Flow
 
@@ -438,7 +568,7 @@ Options
 ``--path``
   path to the subconfiguration separated by "." like "Neos.Flow
 ``--verbose``
-  if TRUE, output more verbose information on the schema files which were used
+  if true, output more verbose information on the schema files which were used
 
 
 
@@ -520,23 +650,6 @@ Arguments
 
 
 
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:core:shell`:
-
-``neos.flow:core:shell``
-************************
-
-**Run the interactive Shell**
-
-The shell command runs Flow's interactive shell. This shell allows for
-entering commands like through the regular command line interface but
-additionally supports autocompletion and a user-based command history.
-
-
-
-
-
-
-
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:database:setcharset`:
 
 ``neos.flow:database:setcharset``
@@ -556,20 +669,19 @@ For background information on this, see:
 
 - http://stackoverflow.com/questions/766809/
 - http://dev.mysql.com/doc/refman/5.5/en/alter-table.html
-
-The main purpose of this is to fix setups that were created with Flow 2.3.x or earlier and whose
-database server did not have a default collation of utf8mb4_unicode_ci. In those cases, the tables will
-have a collation that does not match the default collation of later Flow versions, potentially leading
-to problems when creating foreign key constraints (among others, potentially).
-
-If you have special needs regarding the charset and collation, you *can* override the defaults with
-different ones. One thing this might be useful for is when switching to the utf8mb4mb4 character set, see:
-
+- https://medium.com/@adamhooper/in-mysql-never-use-utf8-use-utf8mb4-11761243e434
 - https://mathiasbynens.be/notes/mysql-utf8mb4
 - https://florian.ec/articles/mysql-doctrine-utf8/
 
+The main purpose of this is to fix setups that were created with Flow before version 5.0. In those cases,
+the tables will have a collation that does not match the default collation of later Flow versions, potentially
+leading to problems when creating foreign key constraints (among others, potentially).
+
+If you have special needs regarding the charset and collation, you *can* override the defaults with
+different ones.
+
 Note: This command **is not a general purpose conversion tool**. It will specifically not fix cases
-of actual utf8mb4 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
+of actual utf8 stored in latin1 columns. For this a conversion to BLOB followed by a conversion to the
 proper type, charset and collation is needed instead.
 
 
@@ -773,7 +885,7 @@ Related commands
 
 **Generate a new migration**
 
-If $diffAgainstCurrent is TRUE (the default), it generates a migration file
+If $diffAgainstCurrent is true (the default), it generates a migration file
 with the diff between current DB structure and the found mapping metadata.
 
 Otherwise an empty migration skeleton is generated.
@@ -798,6 +910,8 @@ Options
   Whether to base the migration on the current schema structure
 ``--filter-expression``
   Only include tables/sequences matching the filter expression regexp
+``--force``
+  Generate migrations even if there are migrations left to execute
 
 
 
@@ -832,8 +946,6 @@ Options
 
 ``--show-migrations``
   Output a list of all migrations and their status
-``--show-descriptions``
-  Show descriptions for the migrations (enables versions display)
 
 
 
@@ -974,30 +1086,18 @@ Options
 
 
 
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:package:activate`:
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:middleware:list`:
 
-``neos.flow:package:activate``
-******************************
+``neos.flow:middleware:list``
+*****************************
 
-**Activate an available package**
-
-This command activates an existing, but currently inactive package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
+**Lists all configured middleware components in the order they will be executed**
 
 
 
 
 
-Related commands
-^^^^^^^^^^^^^^^^
 
-``neos.flow:package:deactivate``
-  Deactivate a package
 
 
 
@@ -1032,54 +1132,6 @@ Related commands
 
 ``neos.kickstarter:kickstart:package``
   Kickstart a new package
-
-
-
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:package:deactivate`:
-
-``neos.flow:package:deactivate``
-********************************
-
-**Deactivate a package**
-
-This command deactivates a currently active package.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:activate``
-  Activate an available package
-
-
-
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:package:delete`:
-
-``neos.flow:package:delete``
-****************************
-
-**Delete an existing package**
-
-This command deletes an existing package identified by the package key.
-
-Arguments
-^^^^^^^^^
-
-``--package-key``
-  The package key of the package to create
-
-
-
-
 
 
 
@@ -1131,7 +1183,7 @@ Related commands
 **List available packages**
 
 Lists all locally available packages. Displays the package key, version and
-package title and its state – active or inactive.
+package title.
 
 
 
@@ -1142,14 +1194,6 @@ Options
   The returned packages are ordered by their loading order.
 
 
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.flow:package:activate``
-  Activate an available package
-``neos.flow:package:deactivate``
-  Deactivate a package
 
 
 
@@ -1316,40 +1360,6 @@ Options
 
 
 
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:routing:getpath`:
-
-``neos.flow:routing:getpath``
-*****************************
-
-**Generate a route path**
-
-This command takes package, controller and action and displays the
-generated route path and the selected route:
-
-./flow routing:getPath --format json Acme.Demo\\Sub\\Package
-
-Arguments
-^^^^^^^^^
-
-``--package``
-  Package key and subpackage, subpackage parts are separated with backslashes
-
-
-
-Options
-^^^^^^^
-
-``--controller``
-  Controller name, default is 'Standard'
-``--action``
-  Action name, default is 'index'
-``--format``
-  Requested Format name default is 'html'
-
-
-
-
-
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:routing:list`:
 
 ``neos.flow:routing:list``
@@ -1365,21 +1375,23 @@ This command displays a list of all currently registered routes.
 
 
 
-.. _`Neos Command Reference: NEOS.FLOW neos.flow:routing:routepath`:
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:routing:match`:
 
-``neos.flow:routing:routepath``
-*******************************
+``neos.flow:routing:match``
+***************************
 
-**Route the given route path**
+**Match the given URI to a corresponding route**
 
-This command takes a given path and displays the detected route and
-the selected package, controller and action.
+This command takes an incoming URI and displays the
+matched Route and the mapped routing values (if any):
+
+./flow routing:match "/de" --parameters="{\"requestUriHost\": \"localhost\"}"
 
 Arguments
 ^^^^^^^^^
 
-``--path``
-  The route path to resolve
+``--uri``
+  The incoming route, absolute or relative
 
 
 
@@ -1387,7 +1399,53 @@ Options
 ^^^^^^^
 
 ``--method``
-  The request method (GET, POST, PUT, DELETE, ...) to simulate
+  The HTTP method to simulate (default is 'GET')
+``--parameters``
+  Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:routing:resolve`:
+
+``neos.flow:routing:resolve``
+*****************************
+
+**Build an URI for the given parameters**
+
+This command takes package, controller and action and displays the
+resolved URI and which route matched (if any):
+
+./flow routing:resolve Some.Package --controller SomeController --additional-arguments="{\"some-argument\": \"some-value\"}"
+
+Arguments
+^^^^^^^^^
+
+``--package``
+  Package key (according to "@package" route value)
+
+
+
+Options
+^^^^^^^
+
+``--controller``
+  Controller name (according to "@controller" route value), default is 'Standard'
+``--action``
+  Action name (according to "@action" route value), default is 'index'
+``--format``
+  Requested Format name (according to "@format" route value), default is 'html'
+``--subpackage``
+  SubPackage name (according to "@subpackage" route value)
+``--additional-arguments``
+  Additional route values as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+``--parameters``
+  Route parameters as JSON string. Make sure to specify this option as described in the description in order to prevent parsing issues
+``--base-uri``
+  Base URI of the simulated request, default ist 'http://localhost'
+``--force-absolute-uri``
+  Whether or not to force the creation of an absolute URI
 
 
 
@@ -1407,6 +1465,52 @@ Arguments
 
 ``--index``
   The index of the route as given by routing:list
+
+
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:schema:validate`:
+
+``neos.flow:schema:validate``
+*****************************
+
+**Validate the given configurationfile againt a schema file**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--configuration-file``
+  path to the validated configuration file
+``--schema-file``
+  path to the schema file
+``--verbose``
+  if true, output more verbose information on the schema files which were used
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:security:describerole`:
+
+``neos.flow:security:describerole``
+***********************************
+
+**Show details of a specified role**
+
+
+
+Arguments
+^^^^^^^^^
+
+``--role``
+  identifier of the role to describe (for example "Neos.Flow:Everybody")
 
 
 
@@ -1508,6 +1612,27 @@ Related commands
 
 
 
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:security:listroles`:
+
+``neos.flow:security:listroles``
+********************************
+
+**List all configured roles**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--include-abstract``
+  Set this flag to include abstract roles
+
+
+
+
+
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:security:showeffectivepolicy`:
 
 ``neos.flow:security:showeffectivepolicy``
@@ -1600,6 +1725,69 @@ Options
 
 
 
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:session:collectgarbage`:
+
+``neos.flow:session:collectgarbage``
+************************************
+
+**Run garbage collection for sesions.**
+
+This command will remove session-data and -metadate of outdated sessions
+identified by lastActivityTimestamp being older than inactivityTimeout
+
+!!! This is usually done automatically after shutdown for the percentage
+of requests specified in the setting `Neos.Flow.session.garbageCollection.probability`
+
+Use this command if you need more direct control over the cleanup intervals.
+
+
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:session:destroyall`:
+
+``neos.flow:session:destroyall``
+********************************
+
+**Destroys all sessions.**
+
+This special command is needed, because sessions are kept in persistent storage and are not flushed
+with other caches by default.
+
+This is functionally equivalent to
+`./flow flow:cache:flushOne Flow_Session_Storage && ./flow flow:cache:flushOne Flow_Session_MetaData`
+
+
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.FLOW neos.flow:signal:listconnected`:
+
+``neos.flow:signal:listconnected``
+**********************************
+
+**Lists all connected signals with their slots.**
+
+
+
+
+
+Options
+^^^^^^^
+
+``--class-name``
+  if specified, only signals matching the given fully qualified class name will be shown. Note: escape namespace separators or wrap the value in quotes, e.g. "--class-name Neos\\Flow\\Core\\Bootstrap".
+``--method-name``
+  if specified, only signals matching the given method name will be shown. This is only useful in conjunction with the "--class-name" option.
+
+
+
+
+
 .. _`Neos Command Reference: NEOS.FLOW neos.flow:typeconverter:list`:
 
 ``neos.flow:typeconverter:list``
@@ -1641,7 +1829,7 @@ Generates Schema documentation (XSD) for your ViewHelpers, preparing the
 file to be placed online and used by any XSD-aware editor.
 After creating the XSD file, reference it in your IDE and import the namespace
 in your Fluid template by adding the xmlns:* attribute(s):
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://typo3.org/ns/TYPO3/Fluid/ViewHelpers" ...>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:f="https://neos.io/ns/Neos/Neos/ViewHelpers" ...>
 
 Arguments
 ^^^^^^^^^
@@ -1655,9 +1843,11 @@ Options
 ^^^^^^^
 
 ``--xsd-namespace``
-  Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "http://typo3.org/ns/<php namespace>".
+  Unique target namespace used in the XSD schema (for example "http://yourdomain.org/ns/viewhelpers"). Defaults to "https://neos.io/ns/<php namespace>".
 ``--target-file``
   File path and name of the generated XSD schema. If not specified the schema will be output to standard output.
+``--xsd-domain``
+  Domain used in the XSD schema (for example "http://yourdomain.org"). Defaults to "https://neos.io".
 
 
 
@@ -1690,8 +1880,9 @@ exist. By using the --generate-related flag, a missing package, model or
 repository can be created alongside, avoiding such an error.
 
 By specifying the --generate-templates flag, this command will also create
-matching Fluid templates for the actions created. This option can only be
-used in combination with --generate-actions.
+matching Fluid templates for the actions created.
+Alternatively, by specifying the --generate-fusion flag, this command will
+create matching Fusion files for the actions.
 
 The default behavior is to not overwrite any existing code. This can be
 overridden by specifying the --force flag.
@@ -1713,8 +1904,10 @@ Options
   Also generate index, show, new, create, edit, update and delete actions.
 ``--generate-templates``
   Also generate the templates for each action.
+``--generate-fusion``
+  If Fusion templates should be generated instead of Fluid.
 ``--generate-related``
-  Also create the mentioned package, related model and repository if neccessary.
+  Also create the mentioned package, related model and repository if necessary.
 ``--force``
   Overwrite any existing controller or template code. Regardless of this flag, the package, model and repository will never be overwritten.
 
@@ -1842,13 +2035,19 @@ Arguments
 
 
 
+Options
+^^^^^^^
+
+``--package-type``
+  Optional package type, e.g. "neos-plugin
+
 
 
 Related commands
 ^^^^^^^^^^^^^^^^
 
-``typo3.flow:package:create``
-  *Command not available*
+``neos.flow:package:create``
+  Create a new package
 
 
 
@@ -1887,6 +2086,35 @@ Related commands
 
 
 
+.. _`Neos Command Reference: NEOS.KICKSTARTER neos.kickstarter:kickstart:translation`:
+
+``neos.kickstarter:kickstart:translation``
+******************************************
+
+**Kickstart translation**
+
+Generates the translation files for the given package.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The package key of the package for the translation
+``--source-language-key``
+  The language key of the default language
+
+
+
+Options
+^^^^^^^
+
+``--target-language-keys``
+  Comma separated language keys for the target translations
+
+
+
+
+
 .. _`Neos Command Reference: NEOS.MEDIA`:
 
 Package *NEOS.MEDIA*
@@ -1910,6 +2138,8 @@ Options
 
 ``--preset``
   Preset name, if provided only thumbnails matching that preset are cleared
+``--quiet``
+  If set, only errors will be displayed.
 
 
 
@@ -1925,7 +2155,7 @@ Options
 Creates thumbnail images based on the configured thumbnail presets. Optional ``preset`` parameter to only create
 thumbnails for a specific thumbnail preset configuration.
 
-Additionally accepts a ``async`` parameter determining if the created thumbnails are generated when created.
+Additionally, accepts a ``async`` parameter determining if the created thumbnails are generated when created.
 
 
 
@@ -1936,6 +2166,8 @@ Options
   Preset name, if not provided thumbnails are created for all presets
 ``--async``
   Asynchronous generation, if not provided the setting ``Neos.Media.asyncThumbnails`` is used
+``--quiet``
+  If set, only errors will be displayed.
 
 
 
@@ -1959,6 +2191,92 @@ Options
 
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
+``--quiet``
+  
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.MEDIA neos.media:media:listvariantpresets`:
+
+``neos.media:media:listvariantpresets``
+***************************************
+
+**List all configurations for your imageVariants.**
+
+Doesn't matter if configured under 'Neos.Media.variantPresets' or already deleted from this configuration.
+This command will find every single one for you.
+
+
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.MEDIA neos.media:media:removeunused`:
+
+``neos.media:media:removeunused``
+*********************************
+
+**Remove unused assets**
+
+This command iterates over all existing assets, checks their usage count and lists the assets which are not
+reported as used by any AssetUsageStrategies. The unused assets can than be removed.
+
+
+
+Options
+^^^^^^^
+
+``--asset-source``
+  If specified, only assets of this asset source are considered. For example "neos" or "my-asset-management-system
+``--quiet``
+  If set, only errors will be displayed.
+``--assume-yes``
+  If set, "yes" is assumed for the "shall I remove ..." dialogs
+``--only-tags``
+  Comma-separated list of asset tag labels, that should be taken into account
+``--limit``
+  Limit the result of unused assets displayed and removed for this run.
+``--only-collections``
+  Comma-separated list of asset collection titles, that should be taken into account
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.MEDIA neos.media:media:removevariants`:
+
+``neos.media:media:removevariants``
+***********************************
+
+**Cleanup imageVariants with provided identifier and variant name.**
+
+Image variants that are still configured are removed without usage check and
+can be regenerated afterwards with `media:renderVariants`.
+
+This command will not remove any custom cropped image variants.
+
+Arguments
+^^^^^^^^^
+
+``--identifier``
+  Identifier of variants to remove.
+``--variant-name``
+  Variants with this name will be removed (if exist).
+
+
+
+Options
+^^^^^^^
+
+``--quiet``
+  If set, only errors and questions will be displayed.
+``--assume-yes``
+  If set, "yes" is assumed for the "shall I remove ..." dialog.
+``--limit``
+  Limit the result of unused assets displayed and removed for this run.
 
 
 
@@ -1981,6 +2299,36 @@ Options
 
 ``--limit``
   Limit the amount of thumbnails to be rendered to avoid memory exhaustion
+``--quiet``
+  If set, only errors will be displayed.
+
+
+
+
+
+.. _`Neos Command Reference: NEOS.MEDIA neos.media:media:rendervariants`:
+
+``neos.media:media:rendervariants``
+***********************************
+
+**Render asset variants**
+
+Loops over missing configured asset variants and renders them. Optional ``limit`` parameter to
+limit the amount of variants to be rendered to avoid memory exhaustion.
+
+If the re-render parameter is given, any existing variants will be rendered again, too.
+
+
+
+Options
+^^^^^^^
+
+``--limit``
+  Limit the amount of variants to be rendered to avoid memory exhaustion
+``--quiet``
+  If set, only errors will be displayed.
+``--recreate``
+  If set, existing asset variants will be re-generated and replaced
 
 
 
@@ -1997,7 +2345,7 @@ Package *NEOS.NEOS*
 ``neos.neos:domain:activate``
 *****************************
 
-**Activate a domain record by hostname**
+**Activate a domain record by hostname (with globbing)**
 
 
 
@@ -2005,7 +2353,7 @@ Arguments
 ^^^^^^^^^
 
 ``--hostname``
-  The hostname to activate
+  The hostname to activate (globbing is supported)
 
 
 
@@ -2026,7 +2374,7 @@ Arguments
 ^^^^^^^^^
 
 ``--site-node-name``
-  The nodeName of the site rootNode, e.g. "neostypo3org
+  The nodeName of the site rootNode, e.g. "flowneosio
 ``--hostname``
   The hostname to match on, e.g. "flow.neos.io
 
@@ -2049,7 +2397,7 @@ Options
 ``neos.neos:domain:deactivate``
 *******************************
 
-**Deactivate a domain record by hostname**
+**Deactivate a domain record by hostname (with globbing)**
 
 
 
@@ -2057,7 +2405,7 @@ Arguments
 ^^^^^^^^^
 
 ``--hostname``
-  The hostname to deactivate
+  The hostname to deactivate (globbing is supported)
 
 
 
@@ -2070,7 +2418,7 @@ Arguments
 ``neos.neos:domain:delete``
 ***************************
 
-**Delete a domain record by hostname**
+**Delete a domain record by hostname (with globbing)**
 
 
 
@@ -2078,7 +2426,7 @@ Arguments
 ^^^^^^^^^
 
 ``--hostname``
-  The hostname to remove
+  The hostname to remove (globbing is supported)
 
 
 
@@ -2112,7 +2460,7 @@ Options
 ``neos.neos:site:activate``
 ***************************
 
-**Activate a site**
+**Activate a site (with globbing)**
 
 This command activates the specified site.
 
@@ -2120,7 +2468,7 @@ Arguments
 ^^^^^^^^^
 
 ``--site-node``
-  The node name of the site to activate
+  The node name of the sites to activate (globbing is supported)
 
 
 
@@ -2138,13 +2486,12 @@ Arguments
 This command allows to create a blank site with just a single empty document in the default dimension.
 The name of the site, the packageKey must be specified.
 
-If no ``nodeType`` option is specified the command will use `Neos.NodeTypes:Page` as fallback. The node type
-must already exists and have the superType ``Neos.Neos:Document``.
+The node type given with the ``nodeType`` option must already exists and have the superType ``Neos.Neos:Document``.
 
-If no ``nodeName` option is specified the command will create a unique node-name from the name of the site.
+If no ``nodeName`` option is specified the command will create a unique node-name from the name of the site.
 If a node name is given it has to be unique for the setup.
 
-If the flag ``activate` is set to false new site will not be activated.
+If the flag ``activate`` is set to false new site will not be activated.
 
 Arguments
 ^^^^^^^^^
@@ -2153,18 +2500,18 @@ Arguments
   The name of the site
 ``--package-key``
   The site package
+``--node-type``
+  The node type to use for the site node, e.g. Amce.Com:Page
 
 
 
 Options
 ^^^^^^^
 
-``--node-type``
-  The node type to use for the site node. (Default = Neos.NodeTypes:Page)
 ``--node-name``
   The name of the site node. If no nodeName is given it will be determined from the siteName.
 ``--inactive``
-  The new site is not activated immediately (default = false).
+  The new site is not activated immediately (default = false)
 
 
 
@@ -2175,7 +2522,7 @@ Options
 ``neos.neos:site:deactivate``
 *****************************
 
-**Deactivate a site**
+**Deactivate a site (with globbing)**
 
 This command deactivates the specified site.
 
@@ -2183,7 +2530,7 @@ Arguments
 ^^^^^^^^^
 
 ``--site-node``
-  The node name of the site to deactivate
+  The node name of the sites to deactivate (globbing is supported)
 
 
 
@@ -2279,17 +2626,17 @@ Options
 ``neos.neos:site:prune``
 ************************
 
-**Remove all content and related data - for now. In the future we need some more sophisticated cleanup.**
+**Remove site with content and related data (with globbing)**
 
+In the future we need some more sophisticated cleanup.
 
-
-
-
-Options
-^^^^^^^
+Arguments
+^^^^^^^^^
 
 ``--site-node``
-  Name of a site root node to clear only content of this site.
+  Name for site root nodes to clear only content of this sites (globbing is supported)
+
+
 
 
 
@@ -2300,7 +2647,7 @@ Options
 ``neos.neos:user:activate``
 ***************************
 
-**Activate a user**
+**Activate a user (with globbing)**
 
 This command reactivates possibly expired accounts for the given user.
 
@@ -2312,7 +2659,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  The username of the user to be activated.
+  The username of the user to be activated (globbing is supported)
 
 
 
@@ -2346,7 +2693,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  The username of the user
+  The username of the user (globbing is supported)
 ``--role``
   Role to be added to the user, for example "Neos.Neos:Administrator" or just "Administrator
 
@@ -2411,7 +2758,7 @@ Options
 ``neos.neos:user:deactivate``
 *****************************
 
-**Deactivate a user**
+**Deactivate a user (with globbing)**
 
 This command deactivates a user by flagging all of its accounts as expired.
 
@@ -2423,7 +2770,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  The username of the user to be deactivated.
+  The username of the user to be deactivated (globbing is supported)
 
 
 
@@ -2442,7 +2789,7 @@ Options
 ``neos.neos:user:delete``
 *************************
 
-**Delete a user**
+**Delete a user (with globbing)**
 
 This command deletes an existing Neos user. All content and data directly related to this user, including but
 not limited to draft workspace contents, will be removed as well.
@@ -2458,7 +2805,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  The username of the user to be removed
+  The username of the user to be removed (globbing is supported)
 
 
 
@@ -2506,7 +2853,7 @@ Arguments
 ^^^^^^^^^
 
 ``--username``
-  The username of the user
+  The username of the user (globbing is supported)
 ``--role``
   Role to be removed from the user, for example "Neos.Neos:Administrator" or just "Administrator
 
@@ -2683,39 +3030,6 @@ Options
 
 
 
-.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:discardall`:
-
-``neos.neos:workspace:discardall``
-**********************************
-
-**Discard changes in workspace &lt;b&gt;(DEPRECATED)&lt;/b&gt;**
-
-This command discards all modified, created or deleted nodes in the specified workspace.
-
-Arguments
-^^^^^^^^^
-
-``--workspace-name``
-  Name of the workspace, for example "user-john
-
-
-
-Options
-^^^^^^^
-
-``--verbose``
-  If enabled, information about individual nodes will be displayed
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.neos:workspace:discard``
-  Discard changes in workspace
-
-
-
 .. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:list`:
 
 ``neos.neos:workspace:list``
@@ -2760,39 +3074,6 @@ Options
   If set, only displays which nodes would be published, no real changes are committed
 
 
-
-
-
-.. _`Neos Command Reference: NEOS.NEOS neos.neos:workspace:publishall`:
-
-``neos.neos:workspace:publishall``
-**********************************
-
-**Publish changes of a workspace &lt;b&gt;(DEPRECATED)&lt;/b&gt;**
-
-This command publishes all modified, created or deleted nodes in the specified workspace to the live workspace.
-
-Arguments
-^^^^^^^^^
-
-``--workspace-name``
-  Name of the workspace, for example "user-john
-
-
-
-Options
-^^^^^^^
-
-``--verbose``
-  If enabled, information about individual nodes will be displayed
-
-
-
-Related commands
-^^^^^^^^^^^^^^^^
-
-``neos.neos:workspace:publish``
-  Publish changes of a workspace
 
 
 
