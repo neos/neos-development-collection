@@ -79,3 +79,6 @@ Neos\Neos\AssetUsage\GlobalAssetUsageService:
   arguments:
     3:
       setting: Neos.Neos.assetUsage.contentRepositories
+
+Neos\Neos\Cache\ContentCacheFlusherInterface:
+  className: Neos\Neos\Fusion\Cache\ContentCacheFlusher

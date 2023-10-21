@@ -25,6 +25,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\Fusion\Core\Cache\ContentCache;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
+use Neos\Neos\Cache\ContentCacheFlusherInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -37,7 +38,7 @@ use Psr\Log\LoggerInterface;
  *
  * @Flow\Scope("singleton")
  */
-class ContentCacheFlusher
+class ContentCacheFlusher implements ContentCacheFlusherInterface
 {
     /**
      * @Flow\Inject

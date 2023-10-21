@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\Model\EventEnvelope;
+use Neos\Neos\Cache\ContentCacheFlusherInterface;
 
 /**
  * Also contains a pragmatic performance booster for some "batch" operations, where the cache flushing
@@ -116,7 +117,7 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
-        private readonly ContentCacheFlusher $contentCacheFlusher
+        private readonly ContentCacheFlusherInterface $contentCacheFlusher
     ) {
     }
 
