@@ -146,6 +146,11 @@ class GraphProjectorCatchUpHookForCacheFlushing implements CatchUpHookInterface
                 $eventInstance->getNodeAggregateId()
             );
             if ($nodeAggregate) {
+                $this->scheduleCacheFlushJobForNodeAggregate(
+                    $this->contentRepository,
+                    $nodeAggregate->contentStreamId,
+                    $nodeAggregate->nodeAggregateId
+                );
                 $parentNodeAggregates = $this->contentRepository->getContentGraph()->findParentNodeAggregates(
                     $nodeAggregate->contentStreamId,
                     $nodeAggregate->nodeAggregateId
