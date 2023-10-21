@@ -60,7 +60,6 @@ final class AssetExtractor
         if ($propertyValue instanceof Asset) {
             /** @var string|null $assetId */
             $assetId = $propertyValue->getIdentifier();
-            \Neos\Flow\var_dump($assetId, '$assetId');
             if ($assetId === null) {
                 // TODO exception/error
                 return;
@@ -83,7 +82,6 @@ final class AssetExtractor
         foreach ($matches as $match) {
             $assetId = $match['assetId'];
             $asset = ($this->findAssetByIdentifier)($assetId);
-            \Neos\Flow\var_dump($asset, '$asset ' . $assetId);
             if ($asset === null) {
                 // TODO exception/error
                 continue;
