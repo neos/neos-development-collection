@@ -224,4 +224,9 @@ class Thumbnail implements ImageInterface
     {
         $this->generatorStrategy->refresh($this);
     }
+
+    public function getConfigurationHash(): string
+    {
+        return $this->configurationHash;
+    }
 }
