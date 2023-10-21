@@ -3,7 +3,7 @@
 Eel Helpers Reference
 =====================
 
-This reference was automatically generated from code on 2023-09-28
+This reference was automatically generated from code on 2023-10-21
 
 
 .. _`Eel Helpers Reference: Api`:
@@ -2036,14 +2036,15 @@ Replace occurrences of a search string inside the string
 Example::
 
     String.replace("canal", "ana", "oo") == "cool"
+    String.replace("cool gridge", ["oo", "gri"], ["ana", "bri"]) == "canal bridge"
 
 Note: this method does not perform regular expression matching, @see pregReplace().
 
-* ``string`` (string) The input string
-* ``search`` (string) A search string
-* ``replace`` (string) A replacement string
+* ``string`` (array|string|null) The input string
+* ``search`` (array|string|null) A search string
+* ``replace`` (array|string|null) A replacement string
 
-**Return** (string) The string with all occurrences replaced
+**Return** (array|string|string[]) The string with all occurrences replaced
 
 String.sha1(string)
 ^^^^^^^^^^^^^^^^^^^
