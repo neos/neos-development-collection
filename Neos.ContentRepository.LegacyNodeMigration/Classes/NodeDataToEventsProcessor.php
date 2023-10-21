@@ -58,7 +58,9 @@ use Webmozart\Assert\Assert;
 
 final class NodeDataToEventsProcessor implements ProcessorInterface
 {
-
+    /**
+     * @var array<\Closure>
+     */
     private array $callbacks = [];
     private NodeTypeName $sitesNodeTypeName;
     private ContentStreamId $contentStreamId;
@@ -78,6 +80,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      */
     private $eventFileResource;
 
+    /**
+     * @param iterable<int, array<string, mixed>> $nodeDataRows
+     */
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyMapper $propertyMapper,
@@ -156,7 +161,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->nodeReferencesWereSetEvents = [];
         $this->numberOfExportedEvents = 0;
         $this->metaDataExported = false;
-        $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+');
+        $this->eventFileResource = fopen('php://temp/maxmemory:5242880', 'rb+') ?: null;
         Assert::resource($this->eventFileResource, null, 'Failed to create temporary event file resource');
     }
 
@@ -168,10 +173,14 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             json_decode($this->eventNormalizer->getEventData($event)->value, true),
             []
         );
+        assert($this->eventFileResource !== null);
         fwrite($this->eventFileResource, $exportedEvent->toJson() . chr(10));
         $this->numberOfExportedEvents ++;
     }
 
+    /**
+     * @param array<string, mixed> $nodeDataRow
+     */
     private function exportMetaData(array $nodeDataRow): void
     {
         if ($this->files->fileExists('meta.json')) {
@@ -187,7 +196,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
     }
 
     /**
-     * @param array $nodeDataRow
+     * @param array<string, mixed> $nodeDataRow
      */
     private function processNodeData(array $nodeDataRow): void
     {
@@ -229,10 +238,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
 
 
     /**
-     * @param NodePath $nodePath
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint
      * @param NodeAggregateId $nodeAggregateId
-     * @param array $nodeDataRow
+     * @param array<string, mixed> $nodeDataRow
      * @return NodeName[]|void
      * @throws \JsonException
      */
@@ -246,6 +254,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
         $pathParts = $nodePath->getParts();
         $nodeName = end($pathParts);
+        assert($nodeName !== false);
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
@@ -280,6 +289,9 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $this->visitedNodes->add($nodeAggregateId, new DimensionSpacePointSet([$originDimensionSpacePoint->toDimensionSpacePoint()]), $nodeTypeName, $nodePath, $parentNodeAggregate->nodeAggregateId);
     }
 
+    /**
+     * @param array<string, mixed> $nodeDataRow
+     */
     public function extractPropertyValuesAndReferences(array $nodeDataRow, NodeType $nodeType): SerializedPropertyValuesAndReferences
     {
         $properties = [];
@@ -375,7 +387,10 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
         // If the parent node aggregate id differs, we need to move the just created variant to the new location
         $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);
-        if (!$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)) {
+        if (
+            $variantSourceOriginDimensionSpacePoint &&
+            !$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)
+        ) {
             $this->exportEvent(new NodeAggregateWasMoved(
                 $this->contentStreamId,
                 $nodeAggregateId,

@@ -87,7 +87,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             });
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($label . ': ' . $result->message ?? '');
+                throw new \RuntimeException($label . ': ' . $result->message);
             }
             $outputLineFn('  ' . $result->message);
             $outputLineFn();
