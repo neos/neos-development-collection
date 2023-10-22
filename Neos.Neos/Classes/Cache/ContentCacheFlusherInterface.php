@@ -26,6 +26,7 @@ use Neos\Media\Domain\Model\AssetInterface;
  * {@see GraphProjectorCatchUpHookForCacheFlushing} which calls this method..
  *   This is the relevant case if publishing a workspace
  *   - where we f.e. need to flush the cache for Live.
+ * @internal this extension point is experimental 
  */
 interface ContentCacheFlusherInterface
 {
