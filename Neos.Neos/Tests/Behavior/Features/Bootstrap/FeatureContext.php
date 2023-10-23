@@ -34,6 +34,7 @@ use Neos\Neos\Domain\Service\SiteImportService;
 use Neos\Neos\Domain\Service\SiteService;
 use Neos\Neos\Domain\Service\UserService;
 use Neos\Neos\Service\PublishingService;
+use Neos\Neos\Tests\Behavior\Features\Bootstrap\FusionTrait;
 use Neos\Neos\Tests\Functional\Command\BehatTestHelper;
 use Neos\Party\Domain\Repository\PartyRepository;
 use Neos\Utility\Arrays;
@@ -47,6 +48,7 @@ require_once(__DIR__ . '/../../../../../../Framework/Neos.Flow/Tests/Behavior/Fe
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeOperationsTrait.php');
 require_once(__DIR__ . '/../../../../../Neos.ContentRepository/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/HistoryDefinitionsTrait.php');
+require_once(__DIR__ . '/FusionTrait.php');
 
 /**
  * Features context
@@ -59,6 +61,7 @@ class FeatureContext extends MinkContext
     use SecurityOperationsTrait;
     use IsolatedBehatStepsTrait;
     use HistoryDefinitionsTrait;
+    use FusionTrait;
 
     /**
      * @var string
@@ -472,6 +475,7 @@ class FeatureContext extends MinkContext
     {
         $site = new Site($siteName);
         $site->setSiteResourcesPackageKey('Neos.Demo');
+        $site->setState(Site::STATE_ONLINE);
         /** @var SiteRepository $siteRepository */
         $siteRepository = $this->objectManager->get(SiteRepository::class);
         $siteRepository->add($site);
