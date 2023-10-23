@@ -75,14 +75,15 @@ class NodeTypeSchemaBuilder
         }
 
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
+            // Skip abstract nodetypes which might have been added by the Neos.UI `nodeTypeRoles` configuration
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
-
-                // Remove the postprocessors, as they are not needed in the UI
-                unset($schema['nodeTypes'][$nodeTypeName]['postprocessors']);
             }
+
+            // Remove the postprocessors, as they are not needed in the UI
+            unset($schema['nodeTypes'][$nodeTypeName]['postprocessors']);
 
             $subTypes = [];
             foreach ($this->nodeTypeManager->getSubNodeTypes($nodeType->getName(), false) as $subNodeType) {
