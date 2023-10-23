@@ -329,6 +329,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
                 'nodeTypeName' => $event->nodeTypeName->value,
+                'disabled' => $parentNode->getDisableLevel(),
             ]);
         }
     }
