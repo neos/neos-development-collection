@@ -11,7 +11,6 @@ Feature: Enable a node aggregate
       | language   | de, gsw, en | gsw->de, en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository

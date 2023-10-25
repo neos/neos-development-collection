@@ -9,7 +9,6 @@ Feature: Set node properties with different scopes
       | language   | mul, de, gsw | gsw->de->mul    |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         unscopedProperty:

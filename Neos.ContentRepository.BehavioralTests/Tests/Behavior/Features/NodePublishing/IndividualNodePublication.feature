@@ -7,7 +7,6 @@ Feature: Individual node publication
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Content': {}
     'Neos.ContentRepository.Testing:Document':
       childNodes:

@@ -10,7 +10,6 @@ Feature: Create node generalization
       | language   | en, de, gsw | gsw->de->en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         tethered-node:
