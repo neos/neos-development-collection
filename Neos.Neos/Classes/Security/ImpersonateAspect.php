@@ -34,10 +34,9 @@ class ImpersonateAspect
     protected bool $alreadyLoggedAuthenticateCall = false;
 
     /**
-     * @var ImpersonateService
      * @Flow\Inject
      */
-    protected $impersonateService;
+    protected ImpersonateService $impersonateService;
 
     /**
      * @Flow\After("within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
@@ -61,8 +60,7 @@ class ImpersonateAspect
             return;
         }
 
-        /** @phpstan-ignore-next-line might still be null in strange Flow DI cases */
-        if ($this->impersonateService && $this->impersonateService->isActive()) {
+        if ($this->impersonateService->isActive()) {
             $impersonation = $this->impersonateService->getImpersonation();
             foreach ($proxy->getSecurityContext()->getAuthenticationTokens() as $token) {
                 $token->setAccount($impersonation);
