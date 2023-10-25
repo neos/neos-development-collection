@@ -4,14 +4,10 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection;
 
-use Neos\ContentRepository\Core\CommandHandler\PendingProjections;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\Model\EventEnvelope;
-use Neos\EventStore\Model\EventStream\EventStreamInterface;
-use Neos\EventStore\Model\Event\SequenceNumber;
-use Neos\EventStore\Model\Event;
 
 /**
  * Common interface for a Content Repository projection. This API is NOT exposed to the outside world, but is
@@ -20,7 +16,7 @@ use Neos\EventStore\Model\Event;
  * If the Projection needs to be notified that a catchup is about to happen, you can additionally
  * implement {@see WithMarkStaleInterface}. This is useful f.e. to disable runtime caches in the ProjectionState.
  *
- * @template TState of ProjectionStateInterface
+ * @template-covariant TState of ProjectionStateInterface
  * @api you can write custom projections
  */
 interface ProjectionInterface
