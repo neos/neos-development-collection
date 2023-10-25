@@ -157,6 +157,9 @@ class NodeTypeManager
     {
         $completeNodeTypeConfiguration = ($this->nodeTypeConfigLoader)();
 
+        // the root node type must always exist
+        $completeNodeTypeConfiguration[NodeTypeName::ROOT_NODE_TYPE_NAME] ??= [];
+
         foreach (array_keys($completeNodeTypeConfiguration) as $nodeTypeName) {
             if (!is_string($nodeTypeName)) {
                 continue;
