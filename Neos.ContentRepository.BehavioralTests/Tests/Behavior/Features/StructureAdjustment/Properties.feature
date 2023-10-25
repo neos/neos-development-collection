@@ -10,7 +10,6 @@ Feature: Properties
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         myProp:
@@ -52,7 +51,6 @@ Feature: Properties
   Scenario: The property is removed
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
@@ -68,7 +66,6 @@ Feature: Properties
   Scenario: a new property default value is set
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         myProp:
@@ -94,7 +91,6 @@ Feature: Properties
   Scenario: a new property default value is not set if the value already contains the empty string
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         myProp:
@@ -116,7 +112,6 @@ Feature: Properties
   Scenario: a broken property (which cannot be deserialized) is detected and removed
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         myProp:

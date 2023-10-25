@@ -19,7 +19,6 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | language   | de, gsw, fr | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:Content':
       constraints:

@@ -13,7 +13,6 @@ Feature: Create node aggregate with node
       | language   | mul, de, gsw | gsw->de->mul    |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Node':
       properties:
         postalAddress:

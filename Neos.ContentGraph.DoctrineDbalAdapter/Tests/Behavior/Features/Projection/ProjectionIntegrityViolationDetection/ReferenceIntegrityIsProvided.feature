@@ -9,7 +9,6 @@ Feature: Run integrity violation detection regarding reference relations
       | language   | de, gsw, fr | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       properties:
         referenceProperty:

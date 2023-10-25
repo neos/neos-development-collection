@@ -5,7 +5,6 @@ Feature: Basic routing functionality (match & resolve document nodes in one dime
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true

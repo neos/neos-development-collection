@@ -7,7 +7,6 @@ Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedi
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:

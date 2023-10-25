@@ -7,7 +7,6 @@ Feature: Unknown node types
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository
@@ -41,7 +40,6 @@ Feature: Unknown node types
   Scenario: When removing "Neos.ContentRepository.Testing:Document", we find a missing node type.
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type              | nodeAggregateId |

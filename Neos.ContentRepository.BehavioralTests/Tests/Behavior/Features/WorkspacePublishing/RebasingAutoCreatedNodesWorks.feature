@@ -18,7 +18,6 @@ Feature: Rebasing auto-created nodes works
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Content':
       childNodes:
         foo:

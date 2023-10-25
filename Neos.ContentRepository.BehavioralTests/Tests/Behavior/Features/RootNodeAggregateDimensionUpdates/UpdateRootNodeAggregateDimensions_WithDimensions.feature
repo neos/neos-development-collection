@@ -9,7 +9,6 @@ Feature: Update Root Node aggregate dimensions
       | language   | mul, de |                 |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"

@@ -45,7 +45,7 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
     public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse): void
     {
         self::$nodeTypesToUse = new NodeTypeManager(
-            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()),
+            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? [],
             new class implements NodeLabelGeneratorFactoryInterface {
                 public function create(NodeType $nodeType): NodeLabelGeneratorInterface
                 {

@@ -10,7 +10,6 @@ Feature: Create node aggregate with node
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithoutTetheredChildNodes':
       properties:
         defaultText:

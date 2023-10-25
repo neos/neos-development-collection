@@ -11,7 +11,6 @@ Feature: Workspace based content publishing
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:

@@ -5,7 +5,6 @@ Feature: Tests for site node child documents. These are special in that they hav
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.Neos:Sites':
       superTypes:
         'Neos.ContentRepository:Root': true
