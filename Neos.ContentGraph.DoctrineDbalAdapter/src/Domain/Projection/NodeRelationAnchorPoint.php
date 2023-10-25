@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
-use Neos\Flow\Utility\Algorithms;
+use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 
 /**
  * The node relation anchor value object
@@ -30,7 +30,7 @@ class NodeRelationAnchorPoint implements \JsonSerializable
 
     public static function create(): self
     {
-        return new self(Algorithms::generateUUID());
+        return new self(UuidFactory::create());
     }
 
     public static function forRootEdge(): self

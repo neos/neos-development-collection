@@ -15,7 +15,8 @@
         "doctrine/dbal": "^2.6",
         "symfony/serializer": "*",
         "psr/clock": "^1",
-        "behat/transliterator": "~1.0"
+        "behat/transliterator": "~1.0",
+        "ramsey/uuid": "^3.0 || ^4.0"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
