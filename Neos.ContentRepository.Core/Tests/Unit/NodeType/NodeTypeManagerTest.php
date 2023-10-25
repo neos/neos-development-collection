@@ -217,7 +217,8 @@ class NodeTypeManagerTest extends TestCase
             'Neos.ContentRepository.Testing:Page',
             'Neos.ContentRepository.Testing:Page2',
             'Neos.ContentRepository.Testing:Page3',
-            'Neos.ContentRepository.Testing:DocumentWithSupertypes'
+            'Neos.ContentRepository.Testing:DocumentWithSupertypes',
+            'Neos.ContentRepository:Root' // is always present
         ];
         self::assertEquals($expectedNodeTypes, array_keys($this->nodeTypeManager->getNodeTypes()));
     }
@@ -352,5 +353,18 @@ class NodeTypeManagerTest extends TestCase
         $autoCreatedChildNodes = $this->nodeTypeManager->getTetheredNodesConfigurationForNodeType($parentNodeType);
         // This is configured as "nodeName" above, but should be normalized to "nodename"
         self::assertArrayHasKey('nodename', $autoCreatedChildNodes);
+    }
+
+    /**
+     * @test
+     */
+    public function rootNodeTypeIsAlwaysPresent()
+    {
+        $nodeTypeManager = new NodeTypeManager(
+            fn() => [],
+            new DefaultNodeLabelGeneratorFactory()
+        );
+        self::assertTrue($nodeTypeManager->hasNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
+        self::assertInstanceOf(NodeType::class, $nodeTypeManager->getNodeType(NodeTypeName::ROOT_NODE_TYPE_NAME));
     }
 }
