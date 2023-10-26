@@ -205,7 +205,7 @@ Feature:
     a1b (1)
     a1b1 (2)
     a1b2 (2)
-    a1b3 (3)
+    a1b3 (2)
 
     entryLevel_positive_out_of_range:
 
