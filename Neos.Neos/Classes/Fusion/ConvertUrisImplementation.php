@@ -26,6 +26,10 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
@@ -61,7 +65,7 @@ use Neos\Neos\Domain\Exception as NeosException;
 class ConvertUrisImplementation extends AbstractFusionObject
 {
     public const PATTERN_SUPPORTED_URIS
-        = '/(node|asset):\/\/([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
+        = '/(node|asset):\/\/(([a-z]*)\/)?([a-z0-9\-]+|([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12})/';
 
     /**
      * @Flow\Inject
@@ -114,28 +118,43 @@ class ConvertUrisImplementation extends AbstractFusionObject
             ), 1382624087);
         }
 
-        $contentRepository = $this->contentRepositoryRegistry->get(
-            $node->subgraphIdentity->contentRepositoryId
-        );
-
-        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
-
-        if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
-            return $text;
-        }
 
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
         $processedContent = preg_replace_callback(
             self::PATTERN_SUPPORTED_URIS,
-            function (array $matches) use (&$unresolvedUris, $absolute, $nodeAddress) {
+            function (array $matches) use (&$unresolvedUris, $absolute, $node, $text) {
                 $resolvedUri = null;
                 switch ($matches[1]) {
                     case 'node':
+
+                        if ($matches[3]) {
+                            $contentRepository = $this->contentRepositoryRegistry->get(
+                                ContentRepositoryId::fromString($matches[3])
+                            );
+                            $nodeAddress = new NodeAddress(
+                                $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive())->currentContentStreamId,
+                                DimensionSpacePoint::fromArray([]),
+                                NodeAggregateId::fromString($matches[4]),
+                                WorkspaceName::forLive()
+                            );
+                        } else {
+
+                            $contentRepository = $this->contentRepositoryRegistry->get(
+                                $node->subgraphIdentity->contentRepositoryId
+                            );
+                            $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
+                        }
+
+                        if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
+                            return $text;
+                        }
+
                         $nodeAddress = $nodeAddress->withNodeAggregateId(
-                            NodeAggregateId::fromString($matches[2])
+                            NodeAggregateId::fromString($matches[4])
                         );
+
                         $uriBuilder = new UriBuilder();
                         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                         $uriBuilder->setCreateAbsoluteUri($absolute);
@@ -143,15 +162,15 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         // TODO: multi-site ....
                         // -> different object than NodeAddress which also contains the CR Identifier.
                         $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
-                        $this->runtime->addCacheTag('node', $matches[2]);
+                        $this->runtime->addCacheTag('node', $matches[4]);
                         break;
                     case 'asset':
-                        $asset = $this->assetRepository->findByIdentifier($matches[2]);
+                        $asset = $this->assetRepository->findByIdentifier($matches[4]);
                         if ($asset instanceof AssetInterface) {
                             $resolvedUri = $this->resourceManager->getPublicPersistentResourceUri(
                                 $asset->getResource()
                             );
-                            $this->runtime->addCacheTag('asset', $matches[2]);
+                            $this->runtime->addCacheTag('asset', $matches[4]);
                         }
                         break;
                 }
@@ -198,7 +217,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $processedContent = preg_replace_callback(
             '~<a.*?href="(.*?)".*?>~i',
             function ($matches) use ($externalLinkTarget, $resourceLinkTarget, $host, $noOpenerString) {
-                list($linkText, $linkHref) = $matches;
+                [$linkText, $linkHref] = $matches;
                 $uriHost = parse_url($linkHref, PHP_URL_HOST);
                 $target = null;
                 if ($externalLinkTarget !== '' && is_string($uriHost) && $uriHost !== $host) {
