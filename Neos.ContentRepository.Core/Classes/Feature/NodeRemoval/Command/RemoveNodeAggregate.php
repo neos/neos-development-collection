@@ -33,31 +33,27 @@ final class RemoveNodeAggregate implements
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId
+     * @param ContentStreamId $contentStreamId The content stream in which the remove operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to remove
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint One of the dimension space points covered by the node aggregate in which the user intends to remove it
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be removed
+     * @param NodeAggregateId|null $removalAttachmentPoint Internal. It stores the document node id of the removed node, as that is what the UI needs later on for the change display. {@see self::withRemovalAttachmentPoint()}
      */
-    public function __construct(
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
-        /** One of the dimension space points covered by the node aggregate in which the user intends to remove it */
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
-        /**
-         * This is usually the NodeAggregateId of the parent node of the deleted node. It is needed for instance
-         * in the Neos UI for the following scenario:
-         * - when removing a node, you still need to be able to publish the removal.
-         * - For this to work, the Neos UI needs to know the id of the removed Node, **on the page
-         *   where the removal happened** (so that the user can decide to publish a single page INCLUDING the removal
-         *   on the page)
-         * - Because this command will *remove* the edge,
-         *   we cannot know the position in the tree after doing the removal anymore.
-         *
-         * That's why we need this field: For the Neos UI, it stores the document node of the removed node
-         * (see Remove.php), as that is what the UI needs lateron for the change display.
-         */
         public readonly ?NodeAggregateId $removalAttachmentPoint
     ) {
     }
 
+    /**
+     * @param ContentStreamId $contentStreamId The content stream in which the remove operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to remove
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint One of the dimension space points covered by the node aggregate in which the user intends to remove it
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be removed
+     */
     public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
     {
         return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, null);
@@ -80,6 +76,14 @@ final class RemoveNodeAggregate implements
     }
 
     /**
+     * This adds usually the NodeAggregateId of the parent document node of the deleted node.
+     * It is needed for instance in the Neos UI for the following scenario:
+     * - when removing a node, you still need to be able to publish the removal.
+     * - For this to work, the Neos UI needs to know the id of the removed Node, **on the page where the removal happened**
+     *   (so that the user can decide to publish a single page INCLUDING the removal on the page)
+     * - Because this command will *remove* the edge,
+     *   we cannot know the position in the tree after doing the removal anymore.
+     *
      * @param NodeAggregateId $removalAttachmentPoint
      * @internal
      */
