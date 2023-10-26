@@ -76,6 +76,10 @@ const setInitialized = (initialised) => {
     "NeosCMS.I18n.initialized",
     Boolean(initialised)
   );
+
+  if (Boolean(initialised)) {
+    document.dispatchEvent(new CustomEvent('Neos.I18n.initialized'));
+  }
 };
 
 /**
