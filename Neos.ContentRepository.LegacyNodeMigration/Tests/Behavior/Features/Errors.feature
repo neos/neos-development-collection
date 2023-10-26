@@ -5,7 +5,6 @@ Feature: Exceptional cases during migrations
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'unstructured': {}
     'Neos.Neos:Site': {}
     'Some.Package:Homepage':
       superTypes:

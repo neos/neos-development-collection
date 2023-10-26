@@ -7,7 +7,6 @@ Feature: Migrating nodes with content dimensions
       | language   | en      | en, de, ch | ch->de          |
     And using the following node types:
     """yaml
-    'unstructured': {}
     'Neos.Neos:Site': {}
     'Some.Package:Homepage':
       superTypes:

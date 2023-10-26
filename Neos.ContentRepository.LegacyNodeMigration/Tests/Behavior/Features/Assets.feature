@@ -7,7 +7,6 @@ Feature: Export of used Assets, Image Variants and Persistent Resources
       | language   | en      | en, de, ch | ch->de          |
     And using the following node types:
     """yaml
-    'unstructured': {}
     'Neos.Neos:Site': {}
     'Some.Package:Homepage':
       superTypes:
