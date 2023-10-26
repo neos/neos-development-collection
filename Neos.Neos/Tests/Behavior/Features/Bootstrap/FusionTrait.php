@@ -16,11 +16,14 @@ namespace Neos\Neos\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Flow\Cli\CommandRequestHandler;
+use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\UriBuilder;
+use Neos\Flow\Tests\FunctionalTestRequestHandler;
 use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
@@ -42,6 +45,8 @@ trait FusionTrait
     private array $fusionContext = [];
 
     private ?string $renderingResult = null;
+
+    private ?\Throwable $lastRenderingException = null;
 
     /**
      * @BeforeScenario
@@ -103,6 +108,11 @@ trait FusionTrait
         if ($this->fusionRequest === null) {
             $this->theFusionContextRequestIs('http://localhost');
         }
+        $requestHandler = new FunctionalTestRequestHandler(self::$bootstrap);
+        $requestHandler->setHttpRequest($this->fusionRequest->getHttpRequest());
+        self::$bootstrap->setActiveRequestHandler($requestHandler);
+        $this->throwExceptionIfLastRenderingLedToAnError();
+        $this->renderingResult = null;
         $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString($fusionCode->getRaw()));
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->fusionRequest);
@@ -110,7 +120,11 @@ trait FusionTrait
 
         $fusionRuntime = (new RuntimeFactory())->createFromConfiguration($fusionAst, $controllerContext);
         $fusionRuntime->pushContextArray($this->fusionContext);
-        $this->renderingResult = $fusionRuntime->render($path);
+        try {
+            $this->renderingResult = $fusionRuntime->render($path);
+        } catch (\Throwable $exception) {
+            $this->lastRenderingException = $exception;
+        }
         $fusionRuntime->popContext();
     }
 
@@ -123,10 +137,32 @@ trait FusionTrait
     }
 
     /**
+     * @Then I expect the following Fusion rendering error:
+     */
+    public function iExpectTheFollowingFusionRenderingError(PyStringNode $expectedError): void
+    {
+        Assert::assertNotNull($this->lastRenderingException, 'The previous rendering did not lead to an error');
+        Assert::assertSame($expectedError->getRaw(), $this->lastRenderingException->getMessage());
+        $this->lastRenderingException = null;
+    }
+
+
+    /**
      * @Then I expect the following Fusion rendering result as HTML:
      */
     public function iExpectTheFollowingFusionRenderingResultAsHtml(PyStringNode $expectedResult): void
     {
-        Assert::assertXmlStringEqualsXmlString($expectedResult->getRaw(), $this->renderingResult);
+        $stripWhitespace = static fn (string $input): string => preg_replace(['/>[^\S ]+/s', '/[^\S ]+</s', '/(\s)+/s', '/> </s'], ['>', '<', '\\1', '><'], $input);
+        Assert::assertXmlStringEqualsXmlString($stripWhitespace($expectedResult->getRaw()), $stripWhitespace($this->renderingResult));
+    }
+
+    /**
+     * @AfterScenario
+     */
+    public function throwExceptionIfLastRenderingLedToAnError(): void
+    {
+        if ($this->lastRenderingException !== null) {
+            throw new \RuntimeException(sprintf('The last rendering led to an error: %s', $this->lastRenderingException->getMessage()), 1698319254, $this->lastRenderingException);
+        }
     }
 }
