@@ -3,9 +3,35 @@
 # the name of the current nodes' node type
 #
 prototype(Neos.Neos:ContentCase) < prototype(Neos.Fusion:Case) {
+
   default {
-    @position = 'end'
-    condition = true
+    @position = 'end 9999'
+    condition = Neos.Fusion:CanRender {
+      type = ${node.nodeType.name}
+    }
     type = ${node.nodeType.name}
+  }
+
+  rawContent {
+    @position = 'end 10000'
+    condition = ${documentNode.context.inBackend && documentNode.context.currentRenderingMode.edit}
+    renderer = afx`
+      <script src={StaticResource.uri('Neos.Neos', 'Public/JavaScript/RawContent.js')}></script>
+      <template id={'raw_' + node.identifier}>
+        <Neos.Neos:RawContent.Node />
+      </template>
+      <neos-raw-content
+        styles={StaticResource.uri('Neos.Neos', 'Public/Styles/Minimal.css') + ',' + StaticResource.uri('Neos.Neos', 'Public/Styles/RawContentMode.css') + ',' + StaticResource.uri(Neos.Ui.StaticResources.compiledResourcePackage(), 'Public/Build/Host.css')}
+        target={'raw_' + node.identifier}
+      ></neos-raw-content>
+
+    `
+  }
+
+  # Fail but create a helpful error message
+  error {
+    @position = 'end 10001'
+    condition = true
+    type = ${documentNode.nodeType.name}
   }
 }
