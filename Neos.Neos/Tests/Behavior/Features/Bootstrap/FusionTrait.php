@@ -36,7 +36,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 trait FusionTrait
 {
-
     use NodeOperationsTrait;
 
     private ?ActionRequest $fusionRequest = null;
@@ -130,5 +129,4 @@ trait FusionTrait
     {
         Assert::assertXmlStringEqualsXmlString($expectedResult->getRaw(), $this->renderingResult);
     }
-
 }
