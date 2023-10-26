@@ -966,73 +966,33 @@ Get argument in controller action::
 Neos.Neos:Menu
 --------------
 
-Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
+Render a menu with items for nodes.
 
-:templatePath: (string) Override the template path
-:entryLevel: (integer) Start the menu at the given depth
-:maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
-:startingPoint: (Node) The parent node of the first menu level (defaults to ``node`` context variable)
-:lastLevel: (integer) Restrict the menu depth by node depth (relative to site node)
-:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
-:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
-:itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
-:attributes: (:ref:`Neos_Fusion__DataStructure`) Extensible attributes for the whole menu
-:normal.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for normal state
-:active.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for active state
-:current.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for current state
+:attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
+:[key]: (mixed) all other fusion properties are passed over to :ref:`Neos_Neos__MenuItems` internally to calculate the `items`
+
+Example::
+
+	menu = Neos.Neos:Menu {
+	  attributes.class = 'menu'
+	  maximumLevels = 3
+	}
 
 .. note:: The ``items`` of the ``Menu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
 
-Menu item properties:
-^^^^^^^^^^^^^^^^^^^^^
-
-:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
-:originalNode: (Node) Original node for the item
-:state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
-:label: (string) Full label of the node
-:menuLevel: (integer) Menu level the item is rendered on
-
-Examples:
-^^^^^^^^^
-
-Custom menu template:
-"""""""""""""""""""""
-
-::
-
-	menu = Neos.Neos:Menu {
-		entryLevel = 1
-		maximumLevels = 3
-		templatePath = 'resource://My.Site/Private/Templates/FusionObjects/MyMenu.html'
-	}
-
-Menu including site node:
-"""""""""""""""""""""""""
-
-::
-
-	menu = Neos.Neos:Menu {
-		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
-	}
-
-Menu with custom starting point:
-""""""""""""""""""""""""""""""""
-
-::
-
-	menu = Neos.Neos:Menu {
-		entryLevel = 2
-		maximumLevels = 1
-		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
-	}
+.. note:: The ``rendering`` of the ``Menu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
+   If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
 
 .. _Neos_Neos__BreadcrumbMenu:
 
 Neos.Neos:BreadcrumbMenu
 ------------------------
 
-Render a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__Menu`.
+Render a breadcrumb (ancestor documents).
+
+:attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
+:[key]: (mixed) all other fusion properties are passed over to :ref:`Neos_Neos__BreadcrumbMenuItems` internally
 
 Example::
 
@@ -1041,91 +1001,36 @@ Example::
 .. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
 
+.. note:: The ``rendering`` of the ``BreadcrumbMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
+   If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
+
 .. _Neos_Neos__DimensionMenu:
 .. _Neos_Neos__DimensionsMenu:
 
 Neos.Neos:DimensionsMenu
 ------------------------
 
-Create links to other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
+Create links to other node variants (e.g. variants of the current node in other dimensions).
 
-If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
-dimension being set to the value(s) of the current node. Without any ``dimension`` being configured, all possible
-variants will be included.
+:attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
+:[key]: (mixed) all other fusion properties are passed over to :ref:`Neos_Neos__DimensionsMenuItems` internally
 
-If no node variant exists for the preset combination, a ``NULL`` node will be included in the item with a state ``absent``.
-
-:dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
-:presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
-:includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
-:renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
-
-In the template for the menu, each ``item`` has the following properties:
-
-:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
-:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
-:label: (string) Label of the item (the dimension preset label)
-:menuLevel: (integer) Menu level the item is rendered on
-:dimensions: (array) Dimension values of the node, indexed by dimension name
-:targetDimensions: (array) The target dimensions, indexed by dimension name and values being arrays with ``value``, ``label`` and ``isPinnedDimension``
-
-.. note:: The ``DimensionMenu`` is an alias to ``DimensionsMenu``, available for compatibility reasons only.
-
-.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
+.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuMenuItems` which
    you can use directly aswell.
 
-Examples
-^^^^^^^^
+.. note:: The ``rendering`` of the ``DimensionsMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
+   If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
 
-Minimal Example, outputting a menu with all configured dimension combinations::
+.. _Neos_Neos__MenuItemListRenderer:
 
-	variantMenu = Neos.Neos:DimensionsMenu
+Neos.Neos:MenuItemListRenderer
+-------------------------------
 
-This example will create two menus, one for the 'language' and one for the 'country' dimension::
+A very basic renderer that takes a list of MenuItems and renders the result as unordered list. If item states were calculated
+they are applied as classnames to the list items.
 
-	languageMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'language'
-	}
-	countryMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'country'
-	}
-
-If you only want to render a subset of the available presets or manually define a specific order for a menu,
-you can override the "presets"::
-
-	languageMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'language'
-		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
-	}
-
-In some cases, it can be good to ignore the availability of variants when rendering a dimensions menu. Consider a
-situation with two independent menus for country and language, where the following variants of a node exist
-(language / country):
-
-- english / Germany
-- german / Germany
-- english / UK
-
-If the user selects UK, only english will be linked in the language selector. German is only available again, if the
-user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
-
-	languageMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'language'
-		includeAllPresets = true
-	}
-
-Now the language menu will try to find nodes for all languages, if needed the menu items will point to a different
-country than currently selected. The menu tries to find a node to link to by using the current preset for the language
-(in this example) and the default presets for any other dimensions. So if fallback rules are in place and a node can be
-found, it is used.
-
-.. note:: The ``item.targetDimensions`` will contain the "intended" dimensions, so that information can be used to
-   inform the user about the potentially unexpected change of dimensions when following  such a link.
-
-Only if the current node is not available at all (even after considering default presets with their fallback rules),
-no node be assigned (so no link will be created and the items will have the ``absent`` state.)
-
-.. _Neos_Neos__MenuItems:
+:items: (array): The MenuItems as generated by :ref:`Neos_Neos__MenuItems`, :ref:`Neos_Neos__DimensionsMenuItems`, :ref:`Neos_Neos__BreadcrumbMenuItems`
+:attributes: (optional, array): The attributes to apply on the outer list
 
 Neos.Neos:MenuItems
 -------------------
@@ -1140,6 +1045,7 @@ Create a list of menu-items items for nodes.
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
 :itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
 :itemUriRenderer: (:ref:`Neos_Neos__NodeUri`) prototype to use for rendering the URI of each item
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 MenuItems item properties:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1220,6 +1126,8 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
 :renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:itemUriRenderer: (:ref:`Neos_Neos__NodeUri`) prototype to use for rendering the URI of each item
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:
 

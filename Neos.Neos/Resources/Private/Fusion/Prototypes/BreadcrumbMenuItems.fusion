@@ -1,10 +1,14 @@
 prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Neos:MenuItems) {
     itemCollection = ${q(documentNode).parents('[instanceof Neos.Neos:Document]').get()}
+    maximumLevels = 0
+
     @process {
         // Show always the current node, event when it is hidden in index
         addCurrent = Neos.Fusion:Value {
             currentItem = Neos.Neos:MenuItems {
+                calculateItemStates = ${props.calculateItemStates}
                 renderHiddenInIndex = true
+                maximumLevels = 0
                 itemCollection = ${[documentNode]}
             }
             value = ${Array.concat(this.currentItem, value)}
