@@ -476,6 +476,10 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                         $commandToRebaseClass
                     ), 1547815341);
                 }
+                /**
+                 * The "fromArray" might be declared via {@see RebasableToOtherContentStreamsInterface::fromArray()}
+                 * or any other command can just implement it.
+                 */
                 $commands[] = $commandToRebaseClass::fromArray($commandToRebasePayload);
             }
         }
