@@ -229,6 +229,14 @@ final class NeosAssetProxyRepository implements AssetProxyRepositoryInterface, S
         return $query->count();
     }
 
+    public function countByAssetCollection(AssetCollection $assetCollection): int
+    {
+        $queryResult = $this->assetRepository->findByAssetCollection($assetCollection);
+        $query = $this->filterOutImportedAssetsFromOtherAssetSources($queryResult->getQuery());
+        $query = $this->filterOutImageVariants($query);
+        return $query->count();
+    }
+
     /**
      * @param QueryInterface $query
      * @return QueryInterface
