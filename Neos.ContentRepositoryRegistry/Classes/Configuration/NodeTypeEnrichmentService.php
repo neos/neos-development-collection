@@ -178,8 +178,7 @@ class NodeTypeEnrichmentService
         $editorName,
         array &$editorOptions,
         $translationIdGenerator
-    )
-    {
+    ) {
         switch ($editorName) {
             case 'Neos.Neos/Inspector/Editors/SelectBoxEditor':
                 if ($this->shouldFetchTranslation($editorOptions, 'placeholder')) {

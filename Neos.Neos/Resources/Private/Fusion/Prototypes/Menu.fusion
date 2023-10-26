@@ -13,15 +13,15 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Template) {
 
   node = ${node}
 
-  attributes = Neos.Fusion:Attributes
+  attributes = Neos.Fusion:DataStructure
 
-  active.attributes = Neos.Fusion:Attributes {
+  active.attributes = Neos.Fusion:DataStructure {
     class = 'active'
   }
-  current.attributes = Neos.Fusion:Attributes {
+  current.attributes = Neos.Fusion:DataStructure {
     class = 'current'
   }
-  normal.attributes = Neos.Fusion:Attributes {
+  normal.attributes = Neos.Fusion:DataStructure {
     class = 'normal'
   }
 

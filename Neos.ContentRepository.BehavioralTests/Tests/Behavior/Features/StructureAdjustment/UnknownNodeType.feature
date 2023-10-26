@@ -5,11 +5,9 @@ Feature: Unknown node types
 
   Background:
     Given using no content dimensions
-    And using the following node types with fallback to "Neos.ContentRepository:Fallback":
+    And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
-    'Neos.ContentRepository:Fallback': []
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -40,10 +38,8 @@ Feature: Unknown node types
     Then I expect no needed structure adjustments for type "Neos.ContentRepository.Testing:Document"
 
   Scenario: When removing "Neos.ContentRepository.Testing:Document", we find a missing node type.
-    Given I change the node types in content repository "default" with fallback "Neos.ContentRepository:Fallback" to:
+    Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
-    'Neos.ContentRepository:Fallback': []
     """
     Then I expect the following structure adjustments for type "Neos.ContentRepository.Testing:Document":
       | Type              | nodeAggregateId |

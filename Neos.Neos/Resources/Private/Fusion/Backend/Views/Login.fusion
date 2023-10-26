@@ -88,9 +88,6 @@ prototype(Neos.Neos:View.Login) < prototype(Neos.Fusion:Component) {
                         document.querySelector('.neos-login-btn').classList.toggle('neos-hidden');
                         document.querySelector('.neos-login-btn.neos-disabled').classList.toggle('neos-hidden');
                     });
-                    try {
-                        document.querySelector('form[name=\"login\"] input[name=\"lastVisitedNode\"]').value = sessionStorage.getItem('Neos.Neos.lastVisitedNode');
-                    } catch(e) {}
                 "}</script>
             </body>
         </html>
@@ -111,7 +108,6 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
 
   renderer = afx`
     <Neos.Fusion.Form:Form form.target.action="authenticate" attributes.name="login">
-        <Neos.Fusion.Form:Hidden field.name="lastVisitedNode" />
         <fieldset>
             <div class="neos-controls">
                 <Neos.Fusion.Form:Input
@@ -152,7 +148,7 @@ prototype(Neos.Neos:Component.Login.Form) < prototype(Neos.Fusion:Component) {
                         </script>
                         <div class="neos-tooltip-arrow"></div>
                         <div class="neos-tooltip-inner" role="alert">
-                            {I18n.id('flashMessage.' + flashMessage.code).value(flashMessage).package('Neos.Neos').source('Main')}
+                            {flashMessage.message}
                         </div>
                     </div>
                 </Neos.Fusion:Loop>

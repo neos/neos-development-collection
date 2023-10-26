@@ -8,7 +8,6 @@ Feature: Find nodes using the findClosestNode query
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
     'Neos.ContentRepository.Testing:SomeMixin':

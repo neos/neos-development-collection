@@ -57,8 +57,7 @@ class CatchUpTriggerWithSynchronousOption implements ProjectionCatchUpTriggerInt
     public function __construct(
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly SubprocessProjectionCatchUpTrigger $inner
-    )
-    {
+    ) {
     }
 
     public function triggerCatchUp(Projections $projections): void

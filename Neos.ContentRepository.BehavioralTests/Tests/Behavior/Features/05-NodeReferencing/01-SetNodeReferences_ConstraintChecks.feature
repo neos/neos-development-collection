@@ -9,7 +9,6 @@ Feature: Constraint checks on SetNodeReferences
       | language   | de, gsw, en | gsw->de, en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
         referenceProperty:

@@ -64,7 +64,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\Expanded
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Subtrees;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -304,19 +303,22 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
 
         $result = $this->fetchCteResults($queryBuilderInitial, $queryBuilderRecursive, $queryBuilderCte, 'tree');
-        $subtreesByNodeId = [];
-        $rootSubtrees = $subtreesByNodeId['ROOT'] = Subtrees::createEmpty();
-        foreach ($result as $nodeData) {
-            $node = $this->nodeFactory->mapNodeRowToNode(
-                $nodeData,
-                $this->dimensionSpacePoint,
-                $this->visibilityConstraints
-            );
-            $subtree = new Subtree((int)$nodeData['level'], $node);
-            $subtreesByNodeId[$nodeData['parentNodeAggregateId']]->add($subtree);
-            $subtreesByNodeId[$nodeData['nodeaggregateid']] = $subtree;
+        /** @var array<string, Subtree[]> $subtreesByParentNodeId */
+        $subtreesByParentNodeId = [];
+        foreach (array_reverse($result) as $nodeData) {
+            $nodeAggregateId = $nodeData['nodeaggregateid'];
+            $parentNodeAggregateId = $nodeData['parentNodeAggregateId'];
+            $node = $this->nodeFactory->mapNodeRowToNode($nodeData, $this->dimensionSpacePoint, $this->visibilityConstraints);
+            $subtree = new Subtree((int)$nodeData['level'], $node, array_key_exists($nodeAggregateId, $subtreesByParentNodeId) ? array_reverse($subtreesByParentNodeId[$nodeAggregateId]) : []);
+            if ($subtree->level === 0) {
+                return $subtree;
+            }
+            if (!array_key_exists($parentNodeAggregateId, $subtreesByParentNodeId)) {
+                $subtreesByParentNodeId[$parentNodeAggregateId] = [];
+            }
+            $subtreesByParentNodeId[$parentNodeAggregateId][] = $subtree;
         }
-        return $rootSubtrees->first();
+        return null;
     }
 
     public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, FindAncestorNodesFilter $filter): Nodes

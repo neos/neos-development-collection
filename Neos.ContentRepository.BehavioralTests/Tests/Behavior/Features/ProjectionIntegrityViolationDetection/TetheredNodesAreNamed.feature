@@ -9,7 +9,6 @@ Feature: Run projection integrity violation detection regarding naming of tether
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository

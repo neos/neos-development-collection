@@ -9,7 +9,6 @@ Feature: Change node aggregate type - basic error cases
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AutoCreated': []
     'Neos.ContentRepository.Testing:ParentNodeType':
       childNodes:

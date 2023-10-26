@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\View;
 
 use GuzzleHttp\Psr7\Message;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -27,9 +28,10 @@ use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\FusionService;
-use Neos\Neos\Domain\Service\SiteNodeUtility;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\Exception;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -38,12 +40,10 @@ use Psr\Http\Message\ResponseInterface;
 class FusionView extends AbstractView
 {
     use FusionViewI18nTrait;
+    use NodeTypeWithFallbackProvider;
 
-    /**
-     * @Flow\Inject
-     * @var SiteNodeUtility
-     */
-    protected $siteNodeUtility;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     #[Flow\Inject]
     protected RuntimeFactory $runtimeFactory;
@@ -53,12 +53,6 @@ class FusionView extends AbstractView
 
     #[Flow\Inject]
     protected RenderingModeService $renderingModeService;
-
-    /**
-     * @Flow\Inject
-     * @var ContentRepositoryRegistry
-     */
-    protected $contentRepositoryRegistry;
 
     /**
      * Renders the view
@@ -71,7 +65,13 @@ class FusionView extends AbstractView
     {
         $currentNode = $this->getCurrentNode();
 
-        $currentSiteNode = $this->siteNodeUtility->findSiteNode($currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
+        $currentSiteNode = $subgraph->findClosestNode($currentNode->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
+
+        if (!$currentSiteNode) {
+            throw new \RuntimeException('No site node found!', 1697053346);
+        }
+
         $fusionRuntime = $this->getFusionRuntime($currentSiteNode);
 
         $fusionRuntime->pushContextArray([
@@ -195,12 +195,8 @@ class FusionView extends AbstractView
 
     protected function getClosestDocumentNode(Node $node): ?Node
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        while ($node !== null && !$node->nodeType->isOfType('Neos.Neos:Document')) {
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-        }
-
-        return $node;
+        return $this->contentRepositoryRegistry->subgraphForNode($node)
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 
     /**

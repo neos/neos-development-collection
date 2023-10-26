@@ -20,6 +20,7 @@ use Doctrine\DBAL\Exception\InvalidArgumentException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalProjectionIntegrityViolationDetectionRunnerFactory;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
@@ -27,7 +28,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
-use Neos\Flow\Utility\Algorithms;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -236,14 +236,14 @@ trait ProjectionIntegrityViolationDetectionTrait
             'dimensionspacepoint' => $dimensionSpacePoint->toJson(),
             'dimensionspacepointhash' => $dimensionSpacePoint->hash,
             'parentnodeanchor' => $parentNodeAggregateId->isNonExistent()
-                ? Algorithms::generateUUID()
+                ? UuidFactory::create()
                 : $this->findRelationAnchorPointByIds(
                     ContentStreamId::fromString($dataset['contentStreamId']),
                     $dimensionSpacePoint,
                     NodeAggregateId::fromString($dataset['parentNodeAggregateId'])
                 ),
             'childnodeanchor' => $childAggregateId->isNonExistent()
-                ? Algorithms::generateUUID()
+                ? UuidFactory::create()
                 : $this->findRelationAnchorPointByIds(
                     ContentStreamId::fromString($dataset['contentStreamId']),
                     $dimensionSpacePoint,

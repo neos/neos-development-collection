@@ -16,7 +16,6 @@ namespace Neos\Neos\Service;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -24,7 +23,6 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
-use Neos\Neos\Domain\Model\NodeCacheEntryIdentifier;
 use Neos\Neos\Ui\Domain\Service\UserLocaleService;
 use Neos\Neos\Ui\Fusion\Helper\NodeInfoHelper;
 
@@ -42,12 +40,6 @@ class ContentElementWrappingService
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
-     * @var AuthorizationService
-     */
-    protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject
@@ -187,7 +179,7 @@ class ContentElementWrappingService
             $contentRepository
         )
              && ($renderCurrentDocumentMetadata === true
-                || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true);
+                /* TODO: permissions || $this->nodeAuthorizationService->isGrantedToEditNode($node) === true */);
     }
 
     private function isContentStreamOfLiveWorkspace(

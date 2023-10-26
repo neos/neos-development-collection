@@ -37,6 +37,7 @@ use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\FluidAdaptor\View\TemplateView;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Ui\Domain\Service\NodePropertyConverterService;
@@ -108,7 +109,7 @@ class NodesController extends ActionController
         array|string $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
-        array $nodeTypes = ['Neos.Neos:Document'],
+        array $nodeTypes = [NodeTypeNameFactory::NAME_DOCUMENT],
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
@@ -429,7 +430,7 @@ class NodesController extends ActionController
             )->block();
 
             if ($copyContent === true) {
-                $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!Neos.Neos:Document');
+                $contentNodeConstraint = NodeTypeCriteria::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
                     $contentStreamId,
                     $identifier,

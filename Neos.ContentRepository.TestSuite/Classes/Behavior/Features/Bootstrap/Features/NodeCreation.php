@@ -185,12 +185,15 @@ trait NodeCreation
             $originDimensionSpacePoint = isset($row['originDimensionSpacePoint'])
                 ? OriginDimensionSpacePoint::fromJsonString($row['originDimensionSpacePoint'])
                 : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
+            $rawParentNodeAggregateId = $row['parentNodeAggregateId'];
             $command = CreateNodeAggregateWithNode::create(
                 $contentStreamId,
                 NodeAggregateId::fromString($row['nodeAggregateId']),
                 NodeTypeName::fromString($row['nodeTypeName']),
                 $originDimensionSpacePoint,
-                NodeAggregateId::fromString($row['parentNodeAggregateId']),
+                \str_starts_with($rawParentNodeAggregateId, '$')
+                    ? $this->rememberedNodeAggregateIds[\mb_substr($rawParentNodeAggregateId, 1)]
+                    : NodeAggregateId::fromString($rawParentNodeAggregateId),
                 isset($row['succeedingSiblingNodeAggregateId'])
                     ? NodeAggregateId::fromString($row['succeedingSiblingNodeAggregateId'])
                     : null,

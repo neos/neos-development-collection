@@ -1,7 +1,5 @@
 <?php
 
-namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
-
 /*
  * This file is part of the Neos.ContentRepository package.
  *
@@ -12,6 +10,13 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\Feature\NodeCreation\Dto;
+
+use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 
@@ -57,6 +62,16 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
     }
 
     /**
+     * Generate the tethered node aggregate ids in advance
+     *
+     * {@see CreateNodeAggregateWithNode::withTetheredDescendantNodeAggregateIds}
+     */
+    public static function createForNodeType(NodeTypeName $nodeTypeName, NodeTypeManager $nodeTypeManager): self
+    {
+        return self::fromArray(self::createNodeAggregateIdsForNodeType($nodeTypeName, $nodeTypeManager));
+    }
+
+    /**
      * @param array<string,string|NodeAggregateId> $array
      */
     public static function fromArray(array $array): self
@@ -95,7 +110,34 @@ final class NodeAggregateIdsByNodePaths implements \JsonSerializable
 
     public function merge(self $other): self
     {
-        return new self(array_merge($this->nodeAggregateIds, $other->getNodeAggregateIds()));
+        return new self(array_merge($this->nodeAggregateIds, $other->nodeAggregateIds));
+    }
+
+    public function completeForNodeOfType(NodeTypeName $nodeTypeName, NodeTypeManager $nodeTypeManager): self
+    {
+        return self::createForNodeType($nodeTypeName, $nodeTypeManager)
+            ->merge($this);
+    }
+
+    /**
+     * @return array<string,NodeAggregateId>
+     */
+    private static function createNodeAggregateIdsForNodeType(
+        NodeTypeName $nodeTypeName,
+        NodeTypeManager $nodeTypeManager,
+        ?string $pathPrefix = null
+    ): array {
+        $nodeAggregateIds = [];
+        foreach ($nodeTypeManager->getTetheredNodesConfigurationForNodeType($nodeTypeManager->getNodeType($nodeTypeName)) as $nodeName => $childNodeType) {
+            $path = $pathPrefix ? $pathPrefix . '/' . $nodeName : $nodeName;
+            $nodeAggregateIds[$path] = NodeAggregateId::create();
+            $nodeAggregateIds = array_merge(
+                $nodeAggregateIds,
+                self::createNodeAggregateIdsForNodeType($childNodeType->name, $nodeTypeManager, $path)
+            );
+        }
+
+        return $nodeAggregateIds;
     }
 
     public function getNodeAggregateId(NodePath $nodePath): ?NodeAggregateId

@@ -59,10 +59,12 @@ final class FusionSourceCodeCollection implements \IteratorAggregate, \Countable
         return new static(...$this->fusionCodeCollection, ...$other->fusionCodeCollection);
     }
 
-    /** @return \ArrayIterator<int,FusionSourceCode>|FusionSourceCode[] */
-    public function getIterator(): \ArrayIterator
+    /**
+     * @return \Traversable<int,FusionSourceCode>
+     */
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->fusionCodeCollection);
+        yield from $this->fusionCodeCollection;
     }
 
     public function count(): int

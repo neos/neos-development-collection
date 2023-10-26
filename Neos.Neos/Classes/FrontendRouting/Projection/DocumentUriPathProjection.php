@@ -41,6 +41,7 @@ use Neos\EventStore\Model\Event\SequenceNumber;
 use Neos\EventStore\Model\EventEnvelope;
 use Neos\EventStore\Model\EventStore\SetupResult;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
 
 /**
@@ -208,9 +209,15 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
 
         // Just to figure out current NodeTypeName. This is the same for the aggregate in all dimensionSpacePoints.
+        $pointHashes = $event->coveredDimensionSpacePoints->getPointHashes();
+        $anyPointHash = reset($pointHashes);
+        // There is always at least one dimension space point covered, even in a zero-dimensional cr.
+        // Zero-dimensional means DimensionSpacePoint::fromArray([])->hash
+        assert(is_string($anyPointHash));
+
         $nodeInSomeDimension = $this->tryGetNode(fn () => $this->getState()->getByIdAndDimensionSpacePointHash(
             $event->nodeAggregateId,
-            $event->coveredDimensionSpacePoints->getIterator()->current()->hash
+            $anyPointHash
         ));
 
         if ($nodeInSomeDimension === null) {
@@ -322,6 +329,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 'succeedingNodeAggregateId' => $event->succeedingNodeAggregateId?->value,
                 'shortcutTarget' => $shortcutTarget,
                 'nodeTypeName' => $event->nodeTypeName->value,
+                'disabled' => $parentNode->getDisableLevel(),
             ]);
         }
     }
@@ -527,7 +535,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 $affectedDimensionSpacePoint->hash
             ));
 
-            if ($node === null) {
+            if (
+                $node === null
+                || $this->nodeTypeManager->getNodeType($node->getNodeTypeName())
+                    ->isOfType(NodeTypeNameFactory::forSite())
+            ) {
                 // probably not a document node
                 continue;
             }
@@ -548,11 +560,6 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
                 continue;
             }
             $oldUriPath = $node->getUriPath();
-            // homepage -> TODO hacky?
-            if ($oldUriPath === '') {
-                continue;
-            }
-            /** @var string[] $uriPathSegments */
             $uriPathSegments = explode('/', $oldUriPath);
             $uriPathSegments[array_key_last($uriPathSegments)] = $newPropertyValues['uriPathSegment'];
             $newUriPath = implode('/', $uriPathSegments);
@@ -704,7 +711,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType('Neos.Neos:Document');
+        return $nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT);
     }
 
     private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
@@ -712,7 +719,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType('Neos.Neos:Shortcut');
+        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SHORTCUT);
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo

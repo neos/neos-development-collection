@@ -11,19 +11,19 @@ use Neos\Flow\Annotations as Flow;
  * @api
  */
 #[Flow\Proxy(false)]
-final class AssetUsagesByContentRepository implements \IteratorAggregate, \Countable
+final readonly class AssetUsagesByContentRepository implements \IteratorAggregate, \Countable
 {
     /**
      * @param array<AssetUsages> $assetUsages
      */
     public function __construct(
-        private readonly array $assetUsages,
+        private array $assetUsages,
     ) {
     }
 
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->assetUsages);
+        yield from $this->assetUsages;
     }
 
     /**

@@ -7,7 +7,6 @@ Feature: Find and count references and their target nodes using the findReferenc
       | language   | mul, de, en, ch | ch->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:AbstractPage':
       abstract: true
       properties:

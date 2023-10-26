@@ -27,20 +27,14 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
  * @implements \IteratorAggregate<string,?SerializedPropertyValue>
  * @api used as part of commands/events
  */
-final class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class SerializedPropertyValues implements \IteratorAggregate, \Countable, \JsonSerializable
 {
-    /**
-     * @var \ArrayIterator<string,?SerializedPropertyValue>
-     */
-    protected \ArrayIterator $iterator;
-
     /**
      * @param array<string,?SerializedPropertyValue> $values
      */
     private function __construct(
-        public readonly array $values
+        public array $values
     ) {
-        $this->iterator = new \ArrayIterator($this->values);
     }
 
     public static function createEmpty(): self
@@ -146,11 +140,11 @@ final class SerializedPropertyValues implements \IteratorAggregate, \Countable, 
     }
 
     /**
-     * @return \ArrayIterator<string,?SerializedPropertyValue>
+     * @return \Traversable<string,?SerializedPropertyValue>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return $this->iterator;
+        yield from $this->values;
     }
 
     public function count(): int

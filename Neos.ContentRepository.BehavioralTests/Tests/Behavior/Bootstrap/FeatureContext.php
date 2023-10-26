@@ -12,18 +12,15 @@ declare(strict_types=1);
  */
 
 require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-require_once(__DIR__ . '/../../../../Neos.ContentRepository.Security/Tests/Behavior/Features/Bootstrap/NodeAuthorizationTrait.php');
 require_once(__DIR__ . '/../../../../Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/Features/Bootstrap/ProjectionIntegrityViolationDetectionTrait.php');
-require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/IsolatedBehatStepsTrait.php');
-require_once(__DIR__ . '/../../../../../Framework/Neos.Flow/Tests/Behavior/Features/Bootstrap/SecurityOperationsTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use GuzzleHttp\Psr7\Uri;
 use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\Dto\TraceEntryType;
 use Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RedisInterleavingLogger;
-use Neos\ContentRepository\BehavioralTests\Tests\Functional\BehatTestHelper;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
@@ -33,19 +30,15 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
-use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\DayOfWeek;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PostalAddress;
 use Neos\ContentRepository\Core\Tests\Behavior\Fixtures\PriceSpecification;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\StructureAdjustmentsTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\ObjectManagement\ObjectManagerInterface;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\IsolatedBehatStepsTrait;
-use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 
 /**
  * Features context
@@ -53,16 +46,11 @@ use Neos\Flow\Tests\Behavior\Features\Bootstrap\SecurityOperationsTrait;
 class FeatureContext implements BehatContext
 {
     use FlowContextTrait;
-    use NodeAuthorizationTrait;
-    use SecurityOperationsTrait;
-    use IsolatedBehatStepsTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
     use ProjectionIntegrityViolationDetectionTrait;
     use StructureAdjustmentsTrait;
     use MigrationsTrait;
-
-    protected string $behatTestHelperObjectName = BehatTestHelper::class;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -75,8 +63,6 @@ class FeatureContext implements BehatContext
         }
         $this->objectManager = self::$bootstrap->getObjectManager();
 
-        $this->setupSecurity();
-        $this->nodeAuthorizationService = $this->getObjectManager()->get(AuthorizationService::class);
         $this->dbalClient = $this->getObjectManager()->get(DbalClientInterface::class);
         $this->setupCRTestSuiteTrait();
         $this->setUpInterleavingLogger();

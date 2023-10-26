@@ -9,7 +9,6 @@ Feature: Remove NodeAggregate
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     """
     And using identifier "default", I define a content repository

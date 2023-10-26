@@ -7,7 +7,6 @@ Feature: Single Node operations on live workspace
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Content':
       properties:
         text:

@@ -59,7 +59,7 @@ class NodeTypeStringConverter extends AbstractTypeConverter
         PropertyMappingConfigurationInterface $configuration = null
     ) {
         if ($source instanceof NodeType) {
-            return $source->getName();
+            return $source->name->value;
         }
 
         return '';

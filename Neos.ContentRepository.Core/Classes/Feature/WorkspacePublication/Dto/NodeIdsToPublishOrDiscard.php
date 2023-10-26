@@ -17,22 +17,17 @@ namespace Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto;
 /**
  * A collection of NodeIdToPublish objects, to be used when publishing or discarding a set of nodes
  *
- * @implements \IteratorAggregate<int,NodeIdToPublishOrDiscard>
+ * @implements \IteratorAggregate<NodeIdToPublishOrDiscard>
  * @api used as part of commands
  */
-final class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \Countable, \JsonSerializable
+final readonly class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \Countable, \JsonSerializable
 {
-    /**
-     * @var array<NodeIdToPublishOrDiscard>
-     */
-    public readonly array $nodeIds;
-
     /**
      * @param array<NodeIdToPublishOrDiscard> $nodeIds
      */
-    private function __construct(array $nodeIds)
-    {
-        $this->nodeIds = $nodeIds;
+    private function __construct(
+        public array $nodeIds
+    ) {
     }
 
     public static function create(NodeIdToPublishOrDiscard ...$nodeIds): self
@@ -41,7 +36,7 @@ final class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \Countable,
     }
 
     /**
-     * @param array<int,array<string,mixed>> $nodeIdData
+     * @param array<array<string,mixed>> $nodeIdData
      */
     public static function fromArray(array $nodeIdData): self
     {
@@ -57,11 +52,11 @@ final class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \Countable,
     }
 
     /**
-     * @return \ArrayIterator<int,NodeIdToPublishOrDiscard>
+     * @return \Traversable<NodeIdToPublishOrDiscard>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->nodeIds);
+        yield from $this->nodeIds;
     }
 
     public function count(): int
@@ -70,7 +65,7 @@ final class NodeIdsToPublishOrDiscard implements \IteratorAggregate, \Countable,
     }
 
     /**
-     * @return array<int,NodeIdToPublishOrDiscard>
+     * @return array<NodeIdToPublishOrDiscard>
      */
     public function jsonSerialize(): array
     {
