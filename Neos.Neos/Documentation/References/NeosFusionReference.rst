@@ -1470,7 +1470,7 @@ Built a URI to a controller action
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
 
-.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`_Neos_Fusion__ActionUri` instead.
+.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`Neos_Fusion__ActionUri` instead.
 
 Example::
 
@@ -1486,15 +1486,15 @@ Removed Fusion Prototypes
 The following Fusion Prototypes have been removed:
 
 .. _Neos_Fusion__Array:
-* `Neos.Fusion:Array` replaced with :ref:`_Neos_Fusion__Join`
+* `Neos.Fusion:Array` replaced with :ref:`Neos_Fusion__Join`
 .. _Neos_Fusion__RawArray:
-* `Neos.Fusion:RawArray` replaced with :ref:`_Neos_Fusion__DataStructure`
+* `Neos.Fusion:RawArray` replaced with :ref:`Neos_Fusion__DataStructure`
 .. _Neos_Fusion__Collection:
-* `Neos.Fusion:Collection` replaced with :ref:`_Neos_Fusion__Loop`
+* `Neos.Fusion:Collection` replaced with :ref:`Neos_Fusion__Loop`
 .. _Neos_Fusion__RawCollection:
-* `Neos.Fusion:RawCollection` replaced with :ref:`_Neos_Fusion__Map`
+* `Neos.Fusion:RawCollection` replaced with :ref:`Neos_Fusion__Map`
 .. _Neos_Fusion__Attributes:
-* `Neos.Fusion:Attributes` use property `attributes` in :ref:`_Neos_Fusion__Tag`
+* `Neos.Fusion:Attributes` use property `attributes` in :ref:`Neos_Fusion__Tag`
 
 
 
