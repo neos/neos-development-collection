@@ -16,8 +16,6 @@ namespace Neos\Neos\Tests\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\PyStringNode;
 use Neos\ContentRepository\Tests\Behavior\Features\Bootstrap\NodeOperationsTrait;
 use Neos\Eel\FlowQuery\FlowQuery;
-use Neos\Flow\Cli\CommandRequestHandler;
-use Neos\Flow\Http\RequestHandler;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\Arguments;
