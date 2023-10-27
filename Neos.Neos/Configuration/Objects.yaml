@@ -31,10 +31,6 @@ Neos\Neos\FrontendRouting\Projection\DocumentUriPathFinder:
         factoryObjectName: 'Doctrine\ORM\EntityManagerInterface'
         factoryMethodName: 'getConnection'
 
-
-Neos\Neos\Domain\Service\NodeSearchServiceInterface:
-  className: Neos\Neos\Domain\Service\NodeSearchService
-
 Neos\Neos\Service\XliffService:
   properties:
     xliffToJsonTranslationsCache:
