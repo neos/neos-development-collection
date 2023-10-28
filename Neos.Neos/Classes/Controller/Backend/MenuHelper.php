@@ -11,6 +11,8 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Domain\Utility\NodePaths;
 use Neos\ContentRepository\Security\Authorization\Privilege\Node\NodePrivilegeSubject;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Http\Exception;
@@ -97,8 +99,8 @@ class MenuHelper
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
-            $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
-            if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            $node = $context->getNode(NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+            if ($node instanceof NodeInterface && $this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
                 $uri = null;
                 $active = false;
                 /** @var $site Site */
