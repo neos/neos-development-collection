@@ -577,17 +577,7 @@ class WorkspacesController extends AbstractModuleController
     }
 
     /**
-     * Publishes or discards the given nodes
-     *
-     * @param array $nodes
-     * @throws \Exception
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
-     */
-    /** @phpstan-ignore-next-line
-     * @param array $nodes
-     * @param string $action
-     * @param string $selectedWorkspace
+     * @psalm-param list<string> $nodes
      * @throws IndexOutOfBoundsException
      * @throws InvalidFormatPlaceholderException
      * @throws StopActionException

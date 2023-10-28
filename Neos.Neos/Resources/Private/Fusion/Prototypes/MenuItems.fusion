@@ -9,6 +9,7 @@ prototype(Neos.Neos:MenuItems) {
   filter = 'Neos.Neos:Document'
   renderHiddenInIndex = false
   itemCollection = null
+  calculateItemStates = false
 
   // This property is used internally by `MenuItemsImplementation` to render each items uri.
   // It can be modified to change behaviour for all rendered uris.

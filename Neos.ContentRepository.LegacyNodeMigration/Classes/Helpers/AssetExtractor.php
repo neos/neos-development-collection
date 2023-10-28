@@ -12,6 +12,9 @@ use Neos\Utility\ObjectAccess;
 
 final class AssetExtractor
 {
+    /**
+     * @var array<string, true>
+     */
     private array $processedAssetIds = [];
 
     public function __construct(
@@ -19,7 +22,8 @@ final class AssetExtractor
     ) {}
 
     /**
-     * @param iterable<array> $nodeDataRows
+     * @param iterable<int, array<string, mixed>> $nodeDataRows
+     * @return iterable<int, Asset>
      */
     public function run(iterable $nodeDataRows): iterable
     {
@@ -48,11 +52,14 @@ final class AssetExtractor
 
     /** ----------------------------- */
 
+    /**
+     * @return iterable<int, Asset>
+     */
     private function extractAssets(mixed $propertyValue): iterable
     {
         if ($propertyValue instanceof Asset) {
+            /** @var string|null $assetId */
             $assetId = $propertyValue->getIdentifier();
-            \Neos\Flow\var_dump($assetId, '$assetId');
             if ($assetId === null) {
                 // TODO exception/error
                 return;
@@ -75,7 +82,6 @@ final class AssetExtractor
         foreach ($matches as $match) {
             $assetId = $match['assetId'];
             $asset = ($this->findAssetByIdentifier)($assetId);
-            \Neos\Flow\var_dump($asset, '$asset ' . $assetId);
             if ($asset === null) {
                 // TODO exception/error
                 continue;

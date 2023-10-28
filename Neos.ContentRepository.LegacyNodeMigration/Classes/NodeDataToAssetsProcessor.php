@@ -17,9 +17,18 @@ use Neos\Utility\TypeHandling;
 
 final class NodeDataToAssetsProcessor implements ProcessorInterface
 {
+    /**
+     * @var array<string, true>
+     */
     private array $processedAssetIds = [];
+    /**
+     * @var array<\Closure>
+     */
     private array $callbacks = [];
 
+    /**
+     * @param iterable<int, array<string, mixed>> $nodeDataRows
+     */
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly AssetExporter $assetExporter,
@@ -84,12 +93,10 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
     private function extractAssetIdentifiers(string $type, mixed $value): array
     {
         if (($type === 'string' || is_subclass_of($type, \Stringable::class, true)) && is_string($value)) {
-            // @phpstan-ignore-next-line
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
-            // @phpstan-ignore-next-line
             return isset($value['__identifier']) ? [$value['__identifier']] : [];
         }
 

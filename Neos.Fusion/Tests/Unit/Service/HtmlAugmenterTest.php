@@ -47,9 +47,14 @@ class HtmlAugmenterTest extends UnitTestCase
                     return "casted value";
                 }
             }
+            enum BackedStringEnum: string {
+                case Example = "enum value";
+            }
         ');
+
         /** @noinspection PhpUndefinedClassInspection */
         $mockObject = new \ClassWithToStringMethod();
+        $mockEnum = \BackedStringEnum::Example;
 
         return [
             // object values with __toString method
@@ -61,7 +66,15 @@ class HtmlAugmenterTest extends UnitTestCase
                 'allowEmpty' => true,
                 'expectedResult' => '<div object="casted value"></div>'
             ],
-
+            // object values with BackendEnum value
+            [
+                'html' => '',
+                'attributes' => ['enum' => $mockEnum],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<div enum="enum value"></div>'
+            ],
             // empty source
             [
                 'html' => '',
@@ -343,6 +356,23 @@ class HtmlAugmenterTest extends UnitTestCase
                 'exclusiveAttributes' => null,
                 'allowEmpty' => false,
                 'expectedResult' => '<p data-stringable="casted value">Stringable attribute</p>',
+            ],
+            // Adding of Enum attributes
+            [
+                'html' => '<p>Enum attribute</p>',
+                'attributes' => ['data-enum' => $mockEnum],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => true,
+                'expectedResult' => '<p data-enum="enum value">Enum attribute</p>',
+            ],
+            [
+                'html' => '<p>Enum attribute</p>',
+                'attributes' => ['data-enum' => $mockEnum],
+                'fallbackTagName' => null,
+                'exclusiveAttributes' => null,
+                'allowEmpty' => false,
+                'expectedResult' => '<p data-enum="enum value">Enum attribute</p>',
             ],
             // Adding of array attributes
             [
