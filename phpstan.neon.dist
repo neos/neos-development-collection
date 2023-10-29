@@ -8,6 +8,7 @@ parameters:
         - Neos.ContentRepository.Export/src
         - Neos.ContentRepository.LegacyNodeMigration/Classes
         - Neos.ContentRepository.NodeAccess/Classes
+        - Neos.ContentRepository.StructureAdjustment/src
         - Neos.ContentRepository.TestSuite/Classes
         - Neos.Neos/Classes
     excludePaths:
