@@ -1,0 +1,22 @@
+{
+    "name": "neos/fusion-fluidadapter",
+    "type": "neos-package",
+    "description": "Adapter to use Fluid in Fusion",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/fusion": "*",
+        "neos/fluid-adaptor": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\Fusion\\FluidAdapter": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\Fusion\\FluidAdapter\\Tests\\": "Tests"
+        }
+    }
+}

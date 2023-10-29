@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\ViewHelpers;
+namespace Neos\Fusion\FluidAdapter\ViewHelpers;
 
 /*
  * This file is part of the Neos.Fusion package.

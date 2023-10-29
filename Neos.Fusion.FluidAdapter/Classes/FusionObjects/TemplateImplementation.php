@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\FusionObjects;
+namespace Neos\Fusion\FluidAdapter\FusionObjects;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -13,6 +13,7 @@ namespace Neos\Fusion\FusionObjects;
 
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\Core\Parser\Interceptor\ResourceInterceptor;
+use Neos\Fusion\FusionObjects\AbstractArrayFusionObject;
 use TYPO3Fluid\Fluid\Core\Parser\InterceptorInterface;
 
 /**

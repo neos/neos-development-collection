@@ -112,9 +112,9 @@ Example using an object ``itemRenderer``::
 	myLoop = Neos.Fusion:Loop {
 		items = ${[1, 2, 3]}
 		itemName = 'element'
-		itemRenderer = Neos.Fusion:Template {
-			templatePath = 'resource://...'
-			element = ${element}
+		itemRenderer = Neos.Fusion:Tag {
+			tagName = 'li'
+			content = ${element}
 		}
 	}
 
@@ -394,29 +394,7 @@ Example as a processor augmenter::
 		}
 	}
 
-.. _Neos_Fusion__Template:
 
-Neos.Fusion:Template
---------------------
-
-Render a *Fluid template* specified by ``templatePath``.
-
-:templatePath: (string, **required**) Path and filename for the template to be rendered, often a ``resource://`` URI
-:partialRootPath: (string) Path where partials are found on the file system
-:layoutRootPath: (string) Path where layouts are found on the file system
-:sectionName: (string) The Fluid ``<f:section>`` to be rendered, if given
-:[key]: (mixed) All remaining properties are directly passed into the Fluid template as template variables
-
-Example::
-
-	myTemplate = Neos.Fusion:Template {
-		templatePath = 'resource://My.Package/Private/Templates/FusionObjects/MyTemplate.html'
-		someDataAvailableInsideFluid = 'my data'
-	}
-
-	<div class="hero">
-		{someDataAvailableInsideFluid}
-	</div>
 
 .. _Neos_Fusion__Value:
 
@@ -1353,11 +1331,67 @@ Example::
 		}
 	}
 
+Neos.Fusion.FuidAdapter
+=======================
+
+This package contains the prototypes and ViewHelpers to use Fluid templates with Fusion.
+
+.. _Neos_Fusion_FluidAdapter__Template:
+
+Neos.Fusion.FuidAdapter:Template
+--------------------------------
+
+Render a *Fluid template* specified by ``templatePath``.
+
+:templatePath: (string, **required**) Path and filename for the template to be rendered, often a ``resource://`` URI
+:partialRootPath: (string) Path where partials are found on the file system
+:layoutRootPath: (string) Path where layouts are found on the file system
+:sectionName: (string) The Fluid ``<f:section>`` to be rendered, if given
+:[key]: (mixed) All remaining properties are directly passed into the Fluid template as template variables
+
+Example::
+
+	myTemplate = Neos.Fusion:Template {
+		templatePath = 'resource://My.Package/Private/Templates/FusionObjects/MyTemplate.html'
+		someDataAvailableInsideFluid = 'my data'
+	}
+
+	<div class="hero">
+		{someDataAvailableInsideFluid}
+	</div>
+
 
 Deprecated Fusion Prototypes
-----------------------------
+============================
 
 The following prototypes are deprecated and will be removed in future versions of Neos!
+
+.. _Neos_Fusion__Template:
+
+Neos.Fusion:Template
+--------------------
+
+Render a *Fluid template* specified by ``templatePath``.
+
+:templatePath: (string, **required**) Path and filename for the template to be rendered, often a ``resource://`` URI
+:partialRootPath: (string) Path where partials are found on the file system
+:layoutRootPath: (string) Path where layouts are found on the file system
+:sectionName: (string) The Fluid ``<f:section>`` to be rendered, if given
+:[key]: (mixed) All remaining properties are directly passed into the Fluid template as template variables
+
+.. note:: The use of ``Neos.Fusion:Template`` is deprecated. Use :ref:`_Neos_Fusion_FluidAdapter__Template` instead.
+
+Example::
+
+	myTemplate = Neos.Fusion:Template {
+		templatePath = 'resource://My.Package/Private/Templates/FusionObjects/MyTemplate.html'
+		someDataAvailableInsideFluid = 'my data'
+	}
+
+	<div class="hero">
+		{someDataAvailableInsideFluid}
+	</div>
+
 
 .. _Neos_Fusion__UriBuilder:
 

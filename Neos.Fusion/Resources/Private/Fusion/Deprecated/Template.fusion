@@ -1,0 +1,6 @@
+prototype(Neos.Fusion:Template) < prototype(Neos.Fusion.FluidAdapter:Template) {
+  templatePath = null
+  partialRootPath = null
+  layoutRootPath = null
+  sectionName = null
+}

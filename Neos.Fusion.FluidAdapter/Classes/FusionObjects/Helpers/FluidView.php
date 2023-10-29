@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\FusionObjects\Helpers;
+namespace Neos\Fusion\FluidAdapter\FusionObjects\Helpers;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -14,6 +14,7 @@ namespace Neos\Fusion\FusionObjects\Helpers;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
 
 /**
  * Extended Fluid Template View for use in Fusion.

@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Rendering;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Fusion\FluidAdapter\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Domain\Model\RenderingMode;
 
 /**

@@ -8,7 +8,7 @@
     "require": {
         "php": "^8.2",
         "neos/flow": "*",
-        "neos/fluid-adaptor": "*",
+        "neos/fusion-fluidadapter": "*",
         "neos/cache": "*",
         "neos/eel": "*",
         "neos/utility-arrays": "*",

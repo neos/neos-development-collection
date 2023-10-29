@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\FusionObjects\Helpers;
+namespace Neos\Fusion\FluidAdapter\FusionObjects\Helpers;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -13,7 +13,7 @@ namespace Neos\Fusion\FusionObjects\Helpers;
 
 use Neos\FluidAdaptor\Core\Parser\SyntaxTree\TemplateObjectAccessInterface;
 use Neos\Fusion\Exception\UnsupportedProxyMethodException;
-use Neos\Fusion\FusionObjects\TemplateImplementation;
+use Neos\Fusion\FluidAdapter\FusionObjects\TemplateImplementation;
 use Neos\Fusion\Exception as FusionException;
 
 /**

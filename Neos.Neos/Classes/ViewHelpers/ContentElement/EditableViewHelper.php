@@ -19,7 +19,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Fusion\FluidAdapter\ViewHelpers\FusionContextTrait;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**

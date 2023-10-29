@@ -10,8 +10,8 @@ basicRendering.reuseFusionVariables = Neos.Fusion:TestRenderer {
   test = ${'Hello W' + this.test2}
 }
 
-basicRendering.crashing = Neos.Fusion:Template {
-  templatePath = 'no.such.file.here.so.crash.please'
+basicRendering.crashing = Neos.Fusion:Renderer {
+  renderPath = '/no/such/path/here/so/crash/please'
 }
 
 basicRendering.reuseFusionVariablesWithEel = Neos.Fusion:TestRenderer {

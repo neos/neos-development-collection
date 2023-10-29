@@ -1,5 +1,5 @@
 <?php
-namespace Neos\Fusion\Tests\Functional\FusionObjects;
+namespace Neos\Fusion\FluidAdapter\Tests\Functional\FusionObjects;
 
 /*
  * This file is part of the Neos.Fusion package.
@@ -15,8 +15,16 @@ namespace Neos\Fusion\Tests\Functional\FusionObjects;
  * Testcase for the Fusion Template Object
  *
  */
-class TemplateTest extends AbstractFusionObjectTest
+class TemplateTest extends \Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest
 {
+    protected function buildView() {
+        $view = parent::buildView();
+        $view->setPackageKey('Neos.Fusion.FluidAdapter');
+        $view->setFusionPathPattern(__DIR__ . '/Fixtures/Fusion');
+        $view->assign('fixtureDirectory', __DIR__ . '/Fixtures/');
+        return $view;
+    }
+
     /**
      * @test
      */

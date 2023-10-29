@@ -1,0 +1,7 @@
+prototype(Neos.Fusion.FluidAdapter:Template) {
+  @class = 'Neos\\Fusion\\FluidAdapter\\FusionObjects\\TemplateImplementation'
+  templatePath = null
+  partialRootPath = null
+  layoutRootPath = null
+  sectionName = null
+}

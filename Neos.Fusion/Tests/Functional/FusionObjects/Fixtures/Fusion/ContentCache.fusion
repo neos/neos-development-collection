@@ -301,8 +301,8 @@ contentCache.nestedCacheSegmentsWithInnerException = Neos.Fusion:Join {
   15 = Neos.Fusion:Loop {
     items = ${['Foo', 'Bar']}
     itemName = 'item'
-    itemRenderer = Neos.Fusion:Template {
-      templatePath = 'no.such.file.here.so.crash.please'
+    itemRenderer = Neos.Fusion:Renderer {
+      renderPath = '/no/such/path/here/so/crash/please'
 
       @cache {
         mode = 'cached'

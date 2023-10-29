@@ -65,6 +65,7 @@
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
+        "neos/fusion-fluidadapter": "self.version",
         "neos/fusion": "self.version",
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
@@ -169,6 +170,9 @@
             ],
             "Neos\\Fusion\\Afx\\": [
                 "Neos.Fusion.Afx/Classes"
+            ],
+            "Neos\\Fusion\\FluidAdapter\\": [
+                "Neos.Fusion.FluidAdapter/Classes"
             ],
             "Neos\\Fusion\\": [
                 "Neos.Fusion/Classes"

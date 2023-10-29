@@ -1,29 +1,30 @@
-prototype(Neos.Fusion:Template).@class = 'Neos\\Fusion\\FusionObjects\\TemplateImplementation'
+prototype(Neos.Fusion:Loop).@class = 'Neos\\Fusion\\FusionObjects\\LoopImplementation'
+prototype(Neos.Fusion.FluidAdapter:Template).@class = 'Neos\\Fusion\\FluidAdapter\\FusionObjects\\TemplateImplementation'
 
-template.basicTemplate = Neos.Fusion:Template {
+template.basicTemplate = Neos.Fusion.FluidAdapter:Template {
   templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
   myVariable = 'foo'
 }
 
-template.basicTemplateWithEelVariable = Neos.Fusion:Template {
+template.basicTemplateWithEelVariable = Neos.Fusion.FluidAdapter:Template {
   templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
   bar = ${'b' + 'a' + 'r'}
   myVariable = ${'foo' + this.bar}
 }
 
-template.partial = Neos.Fusion:Template {
+template.partial = Neos.Fusion.FluidAdapter:Template {
   templatePath = ${fixtureDirectory + 'Templates/PartialTemplate.html'}
   partialRootPath = ${fixtureDirectory + 'Partials/'}
 }
 
-template.layout = Neos.Fusion:Template {
+template.layout = Neos.Fusion.FluidAdapter:Template {
   templatePath = ${fixtureDirectory + 'Templates/LayoutTemplate.html'}
   layoutRootPath = ${fixtureDirectory + 'Layouts'}
 }
 
 # This fixture sets up a Fusion object that will throw an exception during rendering
 # (a Loop needs an itemName property to be set)
-template.offsetAccessException = Neos.Fusion:Template {
+template.offsetAccessException = Neos.Fusion.FluidAdapter:Template {
   templatePath = ${fixtureDirectory + 'Templates/BasicTemplate.html'}
 
   myVariable = Neos.Fusion:Loop {
@@ -32,7 +33,7 @@ template.offsetAccessException = Neos.Fusion:Template {
   }
 }
 
-template.overrideWithSimpleValueInTemplate = Neos.Fusion:Template {
+template.overrideWithSimpleValueInTemplate = Neos.Fusion.FluidAdapter:Template {
   templatePath = ${fixtureDirectory + 'Templates/JsonEncodedValueTemplate.html'}
   value = ${1 + 1}
 }
