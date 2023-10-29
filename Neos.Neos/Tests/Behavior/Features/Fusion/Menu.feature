@@ -434,25 +434,6 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-#
-#
-#    entryLevel_negative:
-#    a1a* (1)
-#    a1b (1)
-#    a1b1 (2)
-#    a1b2 (2)
-#    a1b3 (2)
-#
-#    entryLevel_negative_out_of_range:
-#    a1. (1)
-#    a1a* (2)
-#    a1b (2)
-#
-#    entryLevel_0:
-#
-
-#    """
-
   Scenario: Menu
     When I execute the following Fusion code:
     """fusion
