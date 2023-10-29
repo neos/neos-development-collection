@@ -44,6 +44,8 @@ trait FusionTrait
 
     private ?string $renderingResult = null;
 
+    private ?string $fusionCode = null;
+
     private ?\Throwable $lastRenderingException = null;
 
     /**
@@ -53,6 +55,7 @@ trait FusionTrait
     {
         $this->fusionRequest = null;
         $this->fusionContext = [];
+        $this->fusionCode = null;
         $this->renderingResult = null;
     }
 
@@ -96,6 +99,13 @@ trait FusionTrait
         return $spyMiddleware->getHandledRequest();
     }
 
+    /**
+     * @When I have the following Fusion setup:
+     */
+    public function iHaveTheFollowingFusionSetup(PyStringNode $fusionCode): void
+    {
+        $this->fusionCode = $fusionCode->getRaw();
+    }
 
     /**
      * @When I execute the following Fusion code:
@@ -111,7 +121,7 @@ trait FusionTrait
         self::$bootstrap->setActiveRequestHandler($requestHandler);
         $this->throwExceptionIfLastRenderingLedToAnError();
         $this->renderingResult = null;
-        $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString($fusionCode->getRaw()));
+        $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString($this->fusionCode . chr(10) . $fusionCode->getRaw()));
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->fusionRequest);
         $controllerContext = new ControllerContext($this->fusionRequest, new ActionResponse(), new Arguments(), $uriBuilder);
@@ -135,6 +145,24 @@ trait FusionTrait
     }
 
     /**
+     * @Then I expect the following Fusion rendering result as HTML:
+     */
+    public function iExpectTheFollowingFusionRenderingResultAsHtml(PyStringNode $expectedResult): void
+    {
+        Assert::assertIsString($this->renderingResult, 'Previous Fusion rendering did not produce a string');
+        $stripWhitespace = static fn (string $input): string => preg_replace(['/>[^\S ]+/s', '/[^\S ]+</s', '/(\s)+/s', '/> </s'], ['>', '<', '\\1', '><'], $input);
+
+        $expectedDom = new \DomDocument();
+        $expectedDom->preserveWhiteSpace = false;
+        $expectedDom->loadHTML($stripWhitespace($expectedResult->getRaw()));
+
+        $actualDom = new \DomDocument();
+        $actualDom->preserveWhiteSpace = false;
+        $actualDom->loadHTML($stripWhitespace($this->renderingResult));
+
+        Assert::assertSame($expectedDom->saveHTML(), $actualDom->saveHTML());
+    }
+    /**
      * @Then I expect the following Fusion rendering error:
      */
     public function iExpectTheFollowingFusionRenderingError(PyStringNode $expectedError): void
@@ -142,16 +170,6 @@ trait FusionTrait
         Assert::assertNotNull($this->lastRenderingException, 'The previous rendering did not lead to an error');
         Assert::assertSame($expectedError->getRaw(), $this->lastRenderingException->getMessage());
         $this->lastRenderingException = null;
-    }
-
-
-    /**
-     * @Then I expect the following Fusion rendering result as HTML:
-     */
-    public function iExpectTheFollowingFusionRenderingResultAsHtml(PyStringNode $expectedResult): void
-    {
-        $stripWhitespace = static fn (string $input): string => preg_replace(['/>[^\S ]+/s', '/[^\S ]+</s', '/(\s)+/s', '/> </s'], ['>', '<', '\\1', '><'], $input);
-        Assert::assertXmlStringEqualsXmlString($stripWhitespace($expectedResult->getRaw()), $stripWhitespace($this->renderingResult));
     }
 
     /**

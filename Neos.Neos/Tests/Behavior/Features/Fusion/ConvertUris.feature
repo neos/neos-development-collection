@@ -9,16 +9,9 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     'Neos.Neos:FallbackNode': {}
     'Neos.Neos:Document': {}
     'Neos.Neos:ContentCollection': {}
-    'Neos.Neos:Content': {}
     'Neos.Neos:Test.DocumentType':
       superTypes:
         'Neos.Neos:Document': true
-      childNodes:
-        main:
-          type: 'Neos.Neos:ContentCollection'
-    'Neos.Neos:Test.ContentType':
-      superTypes:
-        'Neos.Neos:Content': true
     """
     And I have the following nodes:
       | Identifier | Path        | Node Type                   | Properties                                   |

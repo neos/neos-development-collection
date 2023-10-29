@@ -46,9 +46,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       | a1c1       | /sites/a/a1/a1c/a1c1       | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}   | false           |
     And the Fusion context node is "a1a"
     And the Fusion context request URI is "http://localhost"
-
-  Scenario: MenuItems
-    When I execute the following Fusion code:
+    And I have the following Fusion setup:
     """fusion
     include: resource://Neos.Fusion/Private/Fusion/Root.fusion
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
@@ -75,131 +73,34 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
         `
       }
     }
+    """
 
-   test = Neos.Fusion:DataStructure {
-      default = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems
-      }
-      maximumLevels_3 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          maximumLevels = 3
-        }
-      }
-      entryLevel_negative = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          entryLevel = -1
-        }
-      }
-      entryLevel_negative_out_of_range = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          entryLevel = -5
-        }
-      }
-      entryLevel_0 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          entryLevel = 0
-        }
-      }
-      entryLevel_2 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          entryLevel = 2
-        }
-      }
-      entryLevel_positive_out_of_range = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          entryLevel = 5
-        }
-      }
-      lastLevel_negative = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          lastLevel = -1
-        }
-      }
-      lastLevel_negative_out_of_range = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          lastLevel = -5
-        }
-      }
-      lastLevel_0 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          lastLevel = 0
-        }
-      }
-      lastLevel_1 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          lastLevel = 1
-        }
-      }
-      filter_nonExisting = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          filter = 'Non.Existing:NodeType'
-        }
-      }
-      filter_DocumentType1 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          filter = 'Neos.Neos:Test.DocumentType1'
-        }
-      }
-      filter_DocumentType2 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          filter = 'Neos.Neos:Test.DocumentType2'
-        }
-      }
-      renderHiddenInIndex = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          renderHiddenInIndex = true
-        }
-      }
-      itemCollection_empty = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          itemCollection = ${[]}
-        }
-      }
-      itemCollection_documentNodes = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          itemCollection = ${q(site).filter('[instanceof Neos.Neos:Document]').get()}
-        }
-      }
-      startingPoint_a1b1 = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').children('[instanceof Neos.Neos:Document]').get(0)}
-        }
-      }
-      startingPoint_a1b1_entryLevel_negative = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').children('[instanceof Neos.Neos:Document]').get(0)}
-          entryLevel = -1
-        }
-      }
-      startingPoint_a1b1_lastLevel_negative = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').children('[instanceof Neos.Neos:Document]').get(0)}
-          lastLevel = -1
-        }
-      }
-      startingPoint_a1b_filter_DocumentType2a = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').get(0)}
-          filter = 'Neos.Neos:Test.DocumentType2a'
-        }
-      }
-      startingPoint_a1c_renderHiddenInIndex = Neos.Neos:Test.Menu {
-        items = Neos.Neos:MenuItems {
-          startingPoint = ${q(node).find('#a1c').get(0)}
-          renderHiddenInIndex = true
-        }
-      }
+  Scenario: MenuItems (default)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems
     }
-    test.@process.join = ${Array.join(Array.map(Array.keys(value), k => k + ':' + String.chr(10) + String.trim(value[k])), String.chr(10) + String.chr(10))}
     """
     Then I expect the following Fusion rendering result:
     """
-    default:
     a1. (1)
     a1a* (2)
     a1b (2)
 
-    maximumLevels_3:
+    """
+
+  Scenario: MenuItems (maximumLevels = 3)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        maximumLevels = 3
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1a* (2)
     a1b (2)
@@ -207,93 +108,350 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     a1b2 (3)
     a1b3 (3)
 
-    entryLevel_negative:
+    """
+
+  Scenario: MenuItems (entryLevel = -5)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        entryLevel = -5
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a1. (1)
+    a1a* (2)
+    a1b (2)
+
+    """
+
+
+  Scenario: MenuItems (entryLevel = -1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        entryLevel = -1
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1a* (1)
     a1b (1)
     a1b1 (2)
     a1b2 (2)
     a1b3 (2)
 
-    entryLevel_negative_out_of_range:
-    a1. (1)
-    a1a* (2)
-    a1b (2)
+    """
 
-    entryLevel_0:
+  Scenario: MenuItems (entryLevel = 0)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        entryLevel = 0
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
 
+    """
 
-    entryLevel_2:
+  Scenario: MenuItems (entryLevel = 2)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        entryLevel = 2
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1a* (1)
     a1b (1)
     a1b1 (2)
     a1b2 (2)
     a1b3 (2)
 
-    entryLevel_positive_out_of_range:
+    """
 
+  Scenario: MenuItems (entryLevel = 5)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        entryLevel = 5
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
 
-    lastLevel_negative:
+    """
+
+  Scenario: MenuItems (lastLevel = -5)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        lastLevel = -5
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a1. (1)
+
+    """
+
+  Scenario: MenuItems (lastLevel = -1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        lastLevel = -1
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1a* (2)
     a1b (2)
 
-    lastLevel_negative_out_of_range:
-    a1. (1)
+    """
 
-    lastLevel_0:
+  Scenario: MenuItems (lastLevel = 0)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        lastLevel = 0
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1a* (2)
     a1b (2)
 
-    lastLevel_1:
+    """
+
+  Scenario: MenuItems (lastLevel = 1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        lastLevel = 1
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
 
-    filter_nonExisting:
+    """
 
+  Scenario: MenuItems (filter non existing node type)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        filter = 'Non.Existing:NodeType'
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    """
 
-    filter_DocumentType1:
+  Scenario: MenuItems (filter = DocumentType1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        filter = 'Neos.Neos:Test.DocumentType1'
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1b (2)
 
-    filter_DocumentType2:
+    """
 
+  Scenario: MenuItems (filter = DocumentType2)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        filter = 'Neos.Neos:Test.DocumentType2'
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
 
-    renderHiddenInIndex:
+    """
+
+  Scenario: MenuItems (renderHiddenInIndex)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        renderHiddenInIndex = true
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1a* (2)
     a1b (2)
     a1c (2)
 
-    itemCollection_empty:
+    """
 
+  Scenario: MenuItems (empty itemCollection)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        itemCollection = ${[]}
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    """
 
-    itemCollection_documentNodes:
+  Scenario: MenuItems (itemCollection document nodes)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        itemCollection = ${q(site).filter('[instanceof Neos.Neos:Document]').get()}
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a (1)
     a1. (2)
 
-    startingPoint_a1b1:
+    """
+
+  Scenario: MenuItems (startingPoint a1b1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').children('[instanceof Neos.Neos:Document]').get(0)}
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1a* (2)
     a1b (2)
 
-    startingPoint_a1b1_entryLevel_negative:
+    """
+
+  Scenario: MenuItems (startingPoint a1b1, negative entryLevel)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').children('[instanceof Neos.Neos:Document]').get(0)}
+        entryLevel = -1
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1a* (1)
     a1b (1)
     a1b1 (2)
     a1b2 (2)
     a1b3 (2)
 
-    startingPoint_a1b1_lastLevel_negative:
+    """
+
+  Scenario: MenuItems (startingPoint a1b1, negative lastLevel)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').children('[instanceof Neos.Neos:Document]').get(0)}
+        lastLevel = -1
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
     a1. (1)
     a1a* (2)
     a1b (2)
 
-    startingPoint_a1b_filter_DocumentType2a:
-
-
-    startingPoint_a1c_renderHiddenInIndex:
-    a1c1 (1)
     """
+
+  Scenario: MenuItems (startingPoint a1b, filter DocumentType2a)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        startingPoint = ${q(node).children('[instanceof Neos.Neos:Document]').get(0)}
+        filter = 'Neos.Neos:Test.DocumentType2a'
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+
+    """
+
+  Scenario: MenuItems (startingPoint a1c, renderHiddenInIndex)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        startingPoint = ${q(node).find('#a1c').get(0)}
+        renderHiddenInIndex = true
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a1c1 (1)
+
+    """
+
+#
+#
+#    entryLevel_negative:
+#    a1a* (1)
+#    a1b (1)
+#    a1b1 (2)
+#    a1b2 (2)
+#    a1b3 (2)
+#
+#    entryLevel_negative_out_of_range:
+#    a1. (1)
+#    a1a* (2)
+#    a1b (2)
+#
+#    entryLevel_0:
+#
+
+#    """
 
   Scenario: Menu
     When I execute the following Fusion code:
