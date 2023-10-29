@@ -4,9 +4,10 @@ parameters:
         - Neos.ContentGraph.DoctrineDbalAdapter/src
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
-        - Neos.ContentRepository.TestSuite/Classes
+        - Neos.ContentRepository.Export/src
         - Neos.ContentRepository.Core/Classes
         - Neos.ContentRepository.LegacyNodeMigration/Classes
+        - Neos.ContentRepository.TestSuite/Classes
         - Neos.Neos/Classes
     excludePaths:
         analyse:

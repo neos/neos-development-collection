@@ -7,6 +7,7 @@ use Neos\ContentRepository\Export\Asset\ValueObject\SerializedImageVariant;
 
 final class AssetExporter
 {
+    /** @var array<string, true> */
     private array $exportedAssetIds = [];
 
     public function __construct(

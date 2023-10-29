@@ -30,11 +30,12 @@ final class SerializedAsset implements \JsonSerializable
         if ($resource === null) {
             throw new \InvalidArgumentException(sprintf('Failed to load resource for asset "%s"', $asset->getIdentifier()), 1645871592);
         }
-        $type = match (TypeHandling::getTypeForValue($asset)) {
+        $type = match ($typeForValue = TypeHandling::getTypeForValue($asset)) {
             Image::class => AssetType::IMAGE,
             Audio::class => AssetType::AUDIO,
             Document::class => AssetType::DOCUMENT,
             Video::class => AssetType::VIDEO,
+            default => throw new \InvalidArgumentException(sprintf('Invalid asset type "%s" for asset "%s"', $typeForValue, $asset->getIdentifier()), 1698584356)
         };
         return new self(
             $asset->getIdentifier(),
