@@ -44,7 +44,7 @@ trait NodeCreation
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
 
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,

@@ -160,11 +160,11 @@ class NodeHelperTest extends AbstractFusionObjectTest
             ContentSubgraphIdentity::create(
                 $contentRepositoryId,
                 ContentStreamId::fromString("cs"),
-                DimensionSpacePoint::fromArray([]),
+                DimensionSpacePoint::createWithoutDimensions(),
                 VisibilityConstraints::withoutRestrictions()
             ),
             NodeAggregateId::fromString("na"),
-            OriginDimensionSpacePoint::fromArray([]),
+            OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeTypeName,
             $textNodeType,
