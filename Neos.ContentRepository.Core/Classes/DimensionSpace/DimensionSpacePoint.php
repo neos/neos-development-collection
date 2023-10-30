@@ -62,11 +62,13 @@ final class DimensionSpacePoint extends AbstractDimensionSpacePoint
     }
 
     /**
-     * Creates a dimension space point for a simple zero-dimensional content repository.
+     * Creates a dimension space point for a zero-dimensional content repository.
+     *
+     * This applies to content repositories without any dimensions configured.
      */
-    public static function zeroDimensional(): self
+    public static function createWithoutDimensions(): self
     {
-        return self::instance([]);
+        return self::fromArray([]);
     }
 
     /**
