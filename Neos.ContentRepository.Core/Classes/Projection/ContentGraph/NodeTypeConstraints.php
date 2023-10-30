@@ -63,6 +63,14 @@ final class NodeTypeConstraints
         return new self($explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
     }
 
+    public static function createWithAllowedNodeTypeNames(NodeTypeNames $nodeTypeNames): self {
+        return new self($nodeTypeNames, NodeTypeNames::createEmpty());
+    }
+
+    public static function createWithDisallowedNodeTypeNames(NodeTypeNames $nodeTypeNames): self {
+        return new self(NodeTypeNames::createEmpty(), $nodeTypeNames);
+    }
+
     public static function fromFilterString(string $serializedFilters): self
     {
         $explicitlyAllowedNodeTypeNames = [];
