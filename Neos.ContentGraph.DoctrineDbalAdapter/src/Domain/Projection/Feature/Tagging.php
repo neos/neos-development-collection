@@ -5,27 +5,22 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
-use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\EventStore\Model\EventEnvelope;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
 
 /**
- * The NodeDisabling projection feature trait
+ * The Tagging projection feature trait
  *
  * @internal
  */
-trait NodeDisabling
+trait Tagging
 {
     abstract protected function getTableNamePrefix(): string;
 
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenSubtreeTagWasAdded(SubtreeTagWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -34,7 +29,7 @@ trait NodeDisabling
             // normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeStatement(
                 '
--- GraphProjector::whenNodeAggregateWasDisabled
+-- GraphProjector::whenSubtreeTagWasAdded
 insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid)
 
@@ -90,6 +85,20 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
                 [
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
                 ]
+            );
+        });
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    private function whenSubtreeTagWasRemoved(SubtreeTagWasRemoved $event): void
+    {
+        $this->transactional(function () use ($event) {
+            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
+                $event->contentStreamId,
+                $event->nodeAggregateId,
+                $event->affectedDimensionSpacePoints
             );
         });
     }

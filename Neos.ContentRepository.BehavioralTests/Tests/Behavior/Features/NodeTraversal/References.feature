@@ -138,10 +138,11 @@ Feature: Find and count references and their target nodes using the findReferenc
       | sourceNodeAggregateId | "c"              |
       | referenceName         | "ref"            |
       | references            | [{"target":"b"}] |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "disabled"    |
     And the graph projection is fully up to date
 
   Scenario:

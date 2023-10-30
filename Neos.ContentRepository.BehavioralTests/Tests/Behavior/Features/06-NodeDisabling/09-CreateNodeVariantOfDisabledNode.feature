@@ -35,17 +35,19 @@ Feature: Variation of hidden nodes
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"                     |
     And the graph projection is fully up to date
-    And the command EnableNodeAggregate is executed with payload:
+    And the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -65,11 +67,12 @@ Feature: Variation of hidden nodes
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -85,11 +88,12 @@ Feature: Variation of hidden nodes
     When I am in dimension space point {"language":"gsw"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
-    When the command EnableNodeAggregate is executed with payload:
+    When the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"gsw"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"gsw"}
@@ -100,11 +104,12 @@ Feature: Variation of hidden nodes
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -132,11 +137,12 @@ Feature: Variation of hidden nodes
       | sourceOrigin            | {"language":"ltz"} |
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -152,11 +158,12 @@ Feature: Variation of hidden nodes
     When I am in dimension space point {"language":"de"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
-    When the command EnableNodeAggregate is executed with payload:
+    When the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"      |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
@@ -167,11 +174,12 @@ Feature: Variation of hidden nodes
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName       |
       | the-great-nodini        | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | court-magician |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"de"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -198,11 +206,12 @@ Feature: Variation of hidden nodes
       | sourceOrigin            | {"language":"de"}  |
       | targetOrigin            | {"language":"mul"} |
     And the graph projection is fully up to date
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"mul"}   |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When the command CreateNodeVariant is executed with payload:
@@ -218,11 +227,12 @@ Feature: Variation of hidden nodes
     When I am in dimension space point {"language":"en"}
     Then I expect node aggregate identifier "the-great-nodini" and node path "court-magician" to lead to no node
 
-    When the command EnableNodeAggregate is executed with payload:
+    When the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value                |
       | nodeAggregateId      | "the-great-nodini"   |
       | coveredDimensionSpacePoint   | {"language":"en"}    |
       | nodeVariantSelectionStrategy | "allSpecializations" |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"en"}

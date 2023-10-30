@@ -65,6 +65,7 @@ final class NodeAggregate
         private readonly array $nodesByCoveredDimensionSpacePoint,
         private readonly OriginByCoverage $occupationByCovered,
         /**
+         * TODO Adjust to SubtreeTags
          * The dimension space point set this node aggregate disables.
          * This is *not* necessarily the set it is disabled in, since that is determined by its ancestors
          */
@@ -144,6 +145,9 @@ final class NodeAggregate
         return $occupation;
     }
 
+    /**
+     * TODO adjust to SubtreeTags
+     */
     public function disablesDimensionSpacePoint(DimensionSpacePoint $dimensionSpacePoint): bool
     {
         return $this->disabledDimensionSpacePoints->contains($dimensionSpacePoint);

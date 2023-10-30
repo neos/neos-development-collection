@@ -35,7 +35,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\ContentStreamForking;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCopying;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeCreation;
-use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeDisabling;
+use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\Tagging;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeModification;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeMove;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features\NodeReferencing;
@@ -67,7 +67,7 @@ trait CRTestSuiteTrait
 
     use NodeCreation;
     use NodeCopying;
-    use NodeDisabling;
+    use Tagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;

@@ -52,33 +52,37 @@ Feature: Enable a node aggregate
       | targetOrigin    | {"language":"ltz"}       |
     And the graph projection is fully up to date
     # Disable our reference node aggregate in all variants
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     # Explicitly disable a child node aggregate in all variants
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId              | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"         |
     And the graph projection is fully up to date
     # Set the DSP to the "central" variant having variants of all kind
     And I am in dimension space point {"language":"de"}
 
   Scenario: Enable node aggregate with strategy allSpecializations
     When I am in dimension space point {"language":"de"}
-    And the command EnableNodeAggregate is executed with payload:
+    And the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "disabled"               |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "NodeAggregateWasEnabled" with payload:
+    And event at index 11 is of type "SubtreeTagWasRemoved" with payload:
       | Key                          | Expected                                                  |
       | contentStreamId              | "cs-identifier"                                           |
       | nodeAggregateId              | "sir-david-nodenborough"                                  |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"ltz"},{"language":"gsw"}] |
+      | tag                          | "disabled"                                                |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -363,17 +367,19 @@ Feature: Enable a node aggregate
 
   Scenario: Enable node aggregate with strategy allVariants
     When I am in dimension space point {"language":"de"}
-    And the command EnableNodeAggregate is executed with payload:
+    And the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "NodeAggregateWasEnabled" with payload:
+    And event at index 11 is of type "SubtreeTagWasRemoved" with payload:
       | Key                          | Expected                                                                                       |
       | contentStreamId              | "cs-identifier"                                                                                |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                       |
       | affectedDimensionSpacePoints | [{"language":"mul"},{"language":"de"},{"language":"en"},{"language":"gsw"},{"language":"ltz"}] |
+      | tag                          | "disabled"                          |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -698,10 +704,11 @@ Feature: Enable a node aggregate
 
   Scenario: Enable node aggregate with hidden ancestors
     When I am in dimension space point {"language":"de"}
-    And the command EnableNodeAggregate is executed with payload:
+    And the command RemoveSubtreeTag is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId              | "the-great-nodini" |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"         |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"

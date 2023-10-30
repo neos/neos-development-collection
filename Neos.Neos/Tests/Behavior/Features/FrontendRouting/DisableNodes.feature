@@ -70,23 +70,25 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The documenturipath projection is up to date
 
   Scenario: Disable leaf node
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value           |
       | contentStreamId              | "cs-identifier" |
       | nodeAggregateId              | "leaf-mc-node"  |
       | coveredDimensionSpacePoint   | {}              |
       | nodeVariantSelectionStrategy | "allVariants"   |
+      | tag                          | "disabled"      |
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough/earl-document/leaf"
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document/leaf"
 
   Scenario: Disable node with child nodes
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
@@ -94,30 +96,33 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Disable two nodes, re-enable the higher one
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the command "DisableNodeAggregate" is executed with payload:
+      | tag                          | "disabled"               |
+    And the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
+      | tag                          | "disabled"              |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command "EnableNodeAggregate" is executed with payload:
+    When the command "RemoveSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
@@ -127,30 +132,33 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Disable two nodes, re-enable the lower one
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the command "DisableNodeAggregate" is executed with payload:
+      | tag                          | "disabled"               |
+    And the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
+      | tag                          | "disabled"              |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command "EnableNodeAggregate" is executed with payload:
+    When the command "RemoveSubtreeTag" is executed with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
+      | tag                          | "disabled"              |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
@@ -159,29 +167,32 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Disable the same node twice
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
+      | tag                          | "disabled"               |
+    And the event SubtreeTagWasAdded was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     Then No node should match URL "/david-nodenborough"
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command "EnableNodeAggregate" is executed with payload:
+    When the command "RemoveSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
@@ -190,13 +201,14 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Re-enable the same node twice
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
+      | tag                          | "disabled"               |
+    And the event SubtreeTagWasAdded was published with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
@@ -207,17 +219,19 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And No node should match URL "/david-nodenborough/earl-document"
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command "EnableNodeAggregate" is executed with payload:
+    When the command "RemoveSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasEnabled was published with payload:
+      | tag                          | "disabled"               |
+    And the event SubtreeTagWasAdded was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     And The documenturipath projection is up to date
     When I am on URL "/david-nodenborough"
@@ -226,12 +240,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
   Scenario: Move implicit disabled node
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
@@ -245,12 +260,13 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     Then the matched node should be "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
 
   Scenario: Move explicit disabled node
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
       | coveredDimensionSpacePoint   | {}                      |
       | nodeVariantSelectionStrategy | "allVariants"           |
+      | tag                          | "disabled"              |
     And the graph projection is fully up to date
     When the command MoveNodeAggregate is executed with payload:
       | Key                                 | Value                   |
@@ -264,22 +280,24 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "leaf-mc-node" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/nody/earl-document/leaf"
 
   Scenario: Add child node underneath disabled node and re-enable parent (see https://github.com/neos/neos-development-collection/issues/4639)
-    When the command "DisableNodeAggregate" is executed with payload:
+    When the command "AddSubtreeTag" is executed with payload:
       | Key                          | Value              |
       | contentStreamId              | "cs-identifier"    |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"         |
     And the graph projection is fully up to date
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | parentNodeAggregateId | nodeTypeName                | initialPropertyValues            |
       | nody-mc-nodeface-child | nody-mc-nodeface      | Neos.Neos:Test.Routing.Page | {"uriPathSegment": "nody-child"} |
     And The documenturipath projection is up to date
-    When the command "EnableNodeAggregate" is executed with payload:
+    When the command "RemoveSubtreeTag" is executed with payload:
       | Key                          | Value              |
       | contentStreamId              | "cs-identifier"    |
       | nodeAggregateId              | "nody-mc-nodeface" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"         |
     When I am on URL "/nody/nody-child"
     Then the matched node should be "nody-mc-nodeface-child" in content stream "cs-identifier" and dimension "{}"

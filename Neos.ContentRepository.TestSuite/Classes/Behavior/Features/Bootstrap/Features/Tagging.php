@@ -16,19 +16,20 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
+use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
+use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
 /**
- * The node disabling trait for behavioral tests
+ * The tagging trait for behavioral tests
  */
-trait NodeDisabling
+trait Tagging
 {
     use CRTestSuiteRuntimeVariables;
 
@@ -37,11 +38,11 @@ trait NodeDisabling
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
-     * @Given /^the command DisableNodeAggregate is executed with payload:$/
+     * @Given /^the command AddSubtreeTag is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theCommandDisableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    public function theCommandAddSubtreeTagIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
@@ -51,35 +52,36 @@ trait NodeDisabling
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = DisableNodeAggregate::create(
+        $command = AddSubtreeTag::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
+            SubtreeTag::fromString($commandArguments['tag']),
         );
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**
-     * @Given /^the command DisableNodeAggregate is executed with payload and exceptions are caught:$/
+     * @Given /^the command AddSubtreeTag is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
-    public function theCommandDisableNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    public function theCommandAddSubtreeTagIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
     {
         try {
-            $this->theCommandDisableNodeAggregateIsExecutedWithPayload($payloadTable);
+            $this->theCommandAddSubtreeTagIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
     }
 
     /**
-     * @Given /^the event NodeAggregateWasDisabled was published with payload:$/
+     * @Given /^the event SubtreeTagWasAdded was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventNodeAggregateWasDisabledWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventSubtreeTagWasAddedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -88,16 +90,16 @@ trait NodeDisabling
                 : $this->currentContentStreamId
         );
 
-        $this->publishEvent('NodeAggregateWasDisabled', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('SubtreeTagWasAdded', $streamName->getEventStreamName(), $eventPayload);
     }
 
 
     /**
-     * @Given /^the event NodeAggregateWasEnabled was published with payload:$/
+     * @Given /^the event SubtreeTagWasRemoved was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventNodeAggregateWasEnabledWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventSubtreeTagWasRemovedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -106,16 +108,16 @@ trait NodeDisabling
                 : $this->currentContentStreamId
         );
 
-        $this->publishEvent('NodeAggregateWasEnabled', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('SubtreeTagWasRemoved', $streamName->getEventStreamName(), $eventPayload);
     }
 
 
     /**
-     * @Given /^the command EnableNodeAggregate is executed with payload:$/
+     * @Given /^the command RemoveSubtreeTag is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theCommandEnableNodeAggregateIsExecutedWithPayload(TableNode $payloadTable): void
+    public function theCommandRemoveSubtreeTagIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
@@ -125,24 +127,25 @@ trait NodeDisabling
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = EnableNodeAggregate::create(
+        $command = RemoveSubtreeTag::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
             NodeVariantSelectionStrategy::from($commandArguments['nodeVariantSelectionStrategy']),
+            SubtreeTag::fromString($commandArguments['tag']),
         );
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
     }
 
     /**
-     * @Given /^the command EnableNodeAggregate is executed with payload and exceptions are caught:$/
+     * @Given /^the command RemoveSubtreeTag is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
-    public function theCommandEnableNodeAggregateIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    public function theCommandRemoveSubtreeTagIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
     {
         try {
-            $this->theCommandEnableNodeAggregateIsExecutedWithPayload($payloadTable);
+            $this->theCommandRemoveSubtreeTagIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }

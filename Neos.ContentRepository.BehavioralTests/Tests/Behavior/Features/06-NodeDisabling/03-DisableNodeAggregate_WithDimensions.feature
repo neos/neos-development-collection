@@ -54,17 +54,19 @@ Feature: Disable a node aggregate
     And I am in dimension space point {"language":"de"}
 
   Scenario: Disable node aggregate with strategy allSpecializations
-    When the command DisableNodeAggregate is executed with payload:
+    When the command AddSubtreeTag is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allSpecializations"     |
+      | tag                          | "disabled"               |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 8 is of type "SubtreeTagWasAdded" with payload:
       | Key                          | Expected                                                    |
       | contentStreamId              | "cs-identifier"                                             |
       | nodeAggregateId              | "sir-david-nodenborough"                                    |
       | affectedDimensionSpacePoints | [{"language":"de"}, {"language":"ltz"}, {"language":"gsw"}] |
+      | tag                          | "disabled"                                                  |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
@@ -305,17 +307,19 @@ Feature: Disable a node aggregate
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{"language":"mul"}
 
   Scenario: Disable node aggregate with strategy allVariants
-    When the command DisableNodeAggregate is executed with payload:
+    When the command AddSubtreeTag is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
+      | tag                          | "disabled"               |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 8 is of type "NodeAggregateWasDisabled" with payload:
+    And event at index 8 is of type "SubtreeTagWasAdded" with payload:
       | Key                          | Expected                                                                                           |
       | contentStreamId              | "cs-identifier"                                                                                    |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                           |
       | affectedDimensionSpacePoints | [{"language":"ltz"}, {"language":"mul"}, {"language":"de"}, {"language":"en"}, {"language":"gsw"}] |
+      | tag                          | "disabled"                                                                                         |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"

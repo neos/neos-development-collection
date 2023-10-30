@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\NodeDisabling;
+namespace Neos\ContentRepository\Core\Feature\Tagging;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -15,56 +15,42 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling;
  */
 
 use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregatesTypeIsAmbiguous;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateCurrentlyDoesNotExist;
+use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
+use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
+use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
+use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
  * @internal implementation detail of Command Handlers
  */
-trait NodeDisabling
+trait NodeTagging
 {
+    use ConstraintChecks;
+
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    /**
-     * @param DisableNodeAggregate $command
-     * @return EventsToPublish
-     * @throws ContentStreamDoesNotExistYet
-     * @throws DimensionSpacePointNotFound
-     * @throws NodeAggregateCurrentlyDoesNotExist
-     * @throws NodeAggregatesTypeIsAmbiguous
-     */
-    private function handleDisableNodeAggregate(
-        DisableNodeAggregate $command,
-        ContentRepository $contentRepository
-    ): EventsToPublish {
+    private function handleAddSubtreeTag(AddSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
+    {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
-        $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
-            $command->nodeAggregateId,
-            $contentRepository
-        );
+        $nodeAggregate = $this->requireProjectedNodeAggregate($command->contentStreamId, $command->nodeAggregateId, $contentRepository);
         $this->requireNodeAggregateToCoverDimensionSpacePoint(
             $nodeAggregate,
             $command->coveredDimensionSpacePoint
         );
 
-        if ($nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
-            // already disabled, so we can return a no-operation.
-            return EventsToPublish::empty();
-        }
+// TODO Adjust to SubtreeTags (is already tagged with same tag => throw exception)
+//        if ($nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
+//            // already disabled, so we can return a no-operation.
+//            return EventsToPublish::empty();
+//        }
 
         $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
             ->resolveAffectedDimensionSpacePoints(
@@ -74,10 +60,11 @@ trait NodeDisabling
             );
 
         $events = Events::with(
-            new NodeAggregateWasDisabled(
+            new SubtreeTagWasAdded(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
+                $command->tag,
             ),
         );
 
@@ -92,17 +79,8 @@ trait NodeDisabling
         );
     }
 
-    /**
-     * @param EnableNodeAggregate $command
-     * @return EventsToPublish
-     * @throws ContentStreamDoesNotExistYet
-     * @throws DimensionSpacePointNotFound
-     * @throws NodeAggregatesTypeIsAmbiguous
-     */
-    public function handleEnableNodeAggregate(
-        EnableNodeAggregate $command,
-        ContentRepository $contentRepository
-    ): EventsToPublish {
+    public function handleRemoveSubtreeTag(RemoveSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
+    {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
@@ -115,10 +93,11 @@ trait NodeDisabling
             $command->coveredDimensionSpacePoint
         );
 
-        if (!$nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
-            // already enabled, so we can return a no-operation.
-            return EventsToPublish::empty();
-        }
+// TODO Adjust to SubtreeTags (is not tagged with same tag => throw exception)
+//        if ($nodeAggregate->disablesDimensionSpacePoint($command->coveredDimensionSpacePoint)) {
+//            // already disabled, so we can return a no-operation.
+//            return EventsToPublish::empty();
+//        }
 
         $affectedDimensionSpacePoints = $command->nodeVariantSelectionStrategy
             ->resolveAffectedDimensionSpacePoints(
@@ -128,10 +107,11 @@ trait NodeDisabling
             );
 
         $events = Events::with(
-            new NodeAggregateWasEnabled(
+            new SubtreeTagWasRemoved(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
+                $command->tag,
             )
         );
 

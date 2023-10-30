@@ -73,10 +73,11 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
 
   Scenario: Disable a node aggregate, remove it, recreate it and expect it to be enabled
-    When the command DisableNodeAggregate is executed with payload:
+    When the command AddSubtreeTag is executed with payload:
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
+      | tag                          | "disabled"      |
     And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |

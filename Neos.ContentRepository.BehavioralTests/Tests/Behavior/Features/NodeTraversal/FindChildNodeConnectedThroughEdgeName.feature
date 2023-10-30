@@ -81,10 +81,11 @@ Feature: Find nodes using the findChildNodeConnectedThroughEdgeName query
       | a2a2a           | a2a2a    | Neos.ContentRepository.Testing:Page        | a2a2                   | {"text": "a2a2a"}     | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2"        |
       | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
   Scenario:

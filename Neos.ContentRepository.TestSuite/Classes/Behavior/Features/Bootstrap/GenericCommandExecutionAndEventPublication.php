@@ -21,11 +21,11 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
+use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
+use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -104,8 +104,8 @@ trait GenericCommandExecutionAndEventPublication
             'ForkContentStream' => ForkContentStream::class,
             'ChangeNodeAggregateName' => ChangeNodeAggregateName::class,
             'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
-            'DisableNodeAggregate' => DisableNodeAggregate::class,
-            'EnableNodeAggregate' => EnableNodeAggregate::class,
+            'AddSubtreeTag' => AddSubtreeTag::class,
+            'RemoveSubtreeTag' => RemoveSubtreeTag::class,
             'MoveNodeAggregate' => MoveNodeAggregate::class,
             'SetNodeReferences' => SetNodeReferences::class,
             default => throw new \Exception(

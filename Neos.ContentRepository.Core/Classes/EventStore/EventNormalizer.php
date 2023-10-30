@@ -24,6 +24,9 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\WorkspaceWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasDiscarded;
@@ -87,6 +90,8 @@ final class EventNormalizer
             RootNodeAggregateWithNodeWasCreated::class,
             RootWorkspaceWasCreated::class,
             RootNodeAggregateDimensionsWereUpdated::class,
+            SubtreeTagWasAdded::class,
+            SubtreeTagWasRemoved::class,
             WorkspaceRebaseFailed::class,
             WorkspaceWasCreated::class,
             WorkspaceWasRenamed::class,
@@ -157,6 +162,12 @@ final class EventNormalizer
             );
         }
         assert(is_array($eventDataAsArray));
-        return $eventClassName::fromArray($eventDataAsArray);
+        $eventInstance = $eventClassName::fromArray($eventDataAsArray);
+        return match ($eventInstance::class) {
+            // upcast disabled / enabled events to the corresponding SubtreeTag events
+            NodeAggregateWasDisabled::class => new SubtreeTagWasAdded($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::fromString('disabled')),
+            NodeAggregateWasEnabled::class => new SubtreeTagWasRemoved($eventInstance->contentStreamId, $eventInstance->nodeAggregateId, $eventInstance->affectedDimensionSpacePoints, SubtreeTag::fromString('disabled')),
+            default => $eventInstance,
+        };
     }
 }

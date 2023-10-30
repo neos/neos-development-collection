@@ -17,20 +17,19 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature;
 use Doctrine\DBAL\Connection;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\ProjectionHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\RestrictionHyperrelationRecord;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
 
 /**
  * The node disabling feature set for the hypergraph projector
  *
  * @internal
  */
-trait NodeDisabling
+trait Tagging
 {
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
+    private function whenSubtreeTagWasAdded(SubtreeTagWasAdded $event): void
     {
         $this->transactional(function () use ($event) {
             $descendantNodeAggregateIdsByAffectedDimensionSpacePoint
@@ -58,7 +57,7 @@ trait NodeDisabling
     /**
      * @throws \Throwable
      */
-    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
+    private function whenSubtreeTagWasRemoved(SubtreeTagWasRemoved $event): void
     {
         $this->transactional(function () use ($event) {
             $restrictionRelations = $this->getProjectionHypergraph()->findOutgoingRestrictionRelations(

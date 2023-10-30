@@ -12,31 +12,38 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Event;
+namespace Neos\ContentRepository\Core\Feature\Tagging\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * A node aggregate was enabled
+ * A {@see SubtreeTag} was removed from a node aggregate and effectively from its descendants
+ * Note: This event means that a tag and all inherited instances were removed. If the same tag was added for another Subtree below this aggregate, this will still be set!
  *
- * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeTagWasRemoved} event instead in the {@see EventNormalizer}. This implementation is just kept for backwards-compatibility
+ * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateWasEnabled implements
+final class SubtreeTagWasRemoved implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
+    /**
+     * @param ContentStreamId $contentStreamId The content stream id the tag was removed in
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate the tag was explicitly removed on
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints The dimension space points the tag was removed for
+     * @param SubtreeTag $tag The tag that was removed
+     */
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public readonly SubtreeTag $tag,
     ) {
     }
 
@@ -56,6 +63,7 @@ final class NodeAggregateWasEnabled implements
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->affectedDimensionSpacePoints,
+            $this->tag,
         );
     }
 
@@ -65,6 +73,7 @@ final class NodeAggregateWasEnabled implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
+            SubtreeTag::fromString($values['tag']),
         );
     }
 

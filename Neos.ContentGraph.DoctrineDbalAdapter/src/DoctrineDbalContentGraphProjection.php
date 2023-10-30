@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeDisabling;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Tagging;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -28,8 +28,6 @@ use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -43,6 +41,8 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -67,7 +67,7 @@ use Neos\EventStore\Model\EventStore\SetupResult;
 final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     use NodeVariation;
-    use NodeDisabling;
+    use Tagging;
     use RestrictionRelations;
     use NodeRemoval;
     use NodeMove;
@@ -163,7 +163,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ContentStreamWasRemoved::class,
             NodePropertiesWereSet::class,
             NodeReferencesWereSet::class,
-            NodeAggregateWasEnabled::class,
             NodeAggregateTypeWasChanged::class,
             DimensionSpacePointWasMoved::class,
             DimensionShineThroughWasAdded::class,
@@ -172,7 +171,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodePeerVariantWasCreated::class,
-            NodeAggregateWasDisabled::class
+            SubtreeTagWasAdded::class,
+            SubtreeTagWasRemoved::class,
         ]);
     }
 
@@ -187,7 +187,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ContentStreamWasRemoved::class => $this->whenContentStreamWasRemoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event, $eventEnvelope),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
             NodeAggregateTypeWasChanged::class => $this->whenNodeAggregateTypeWasChanged($event, $eventEnvelope),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             DimensionShineThroughWasAdded::class => $this->whenDimensionShineThroughWasAdded($event),
@@ -196,7 +195,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
+            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
+            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }
@@ -898,20 +898,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 'affectedDimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY
             ]
         );
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    private function whenNodeAggregateWasEnabled(NodeAggregateWasEnabled $event): void
-    {
-        $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->affectedDimensionSpacePoints
-            );
-        });
     }
 
     /**

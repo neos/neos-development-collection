@@ -12,51 +12,56 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Command;
+namespace Neos\ContentRepository\Core\Feature\Tagging\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * Disable the given node aggregate in the given content stream in a dimension space point using a given strategy
+ * Remove a {@see SubtreeTag} from a node aggregate and its descendants.
+ * Note: This will remove the tag from the node aggregate and all inherited instances. If the same tag is added for another Subtree below this aggregate, this will still be set!
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class DisableNodeAggregate implements
+final class RemoveSubtreeTag implements
     CommandInterface,
     \JsonSerializable,
     RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the disable operation is to be performed
-     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to disable
-     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to disable it
-     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be disabled
+     * @param ContentStreamId $contentStreamId The content stream in which the remove tag operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to remove the tag from
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to remove the tag
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be untagged
+     * @param SubtreeTag $tag The tag to remove from the node aggregate
      */
     private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
         public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
+        public readonly SubtreeTag $tag,
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the disable operation is to be performed
-     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to disable
-     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to disable it
-     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be disabled
+     * @param ContentStreamId $contentStreamId The content stream in which the remove tag operation is to be performed
+     * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to remove the tag from
+     * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to remove the tag
+     * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be untagged
+     * @param SubtreeTag $tag The tag to remove from the node aggregate
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
+    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy, SubtreeTag $tag): self
     {
-        return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy);
+        return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy, $tag);
     }
 
     /**
@@ -69,6 +74,7 @@ final class DisableNodeAggregate implements
             NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
+            SubtreeTag::fromString($array['tag']),
         );
     }
 
@@ -87,6 +93,7 @@ final class DisableNodeAggregate implements
             $this->nodeAggregateId,
             $this->coveredDimensionSpacePoint,
             $this->nodeVariantSelectionStrategy,
+            $this->tag,
         );
     }
 

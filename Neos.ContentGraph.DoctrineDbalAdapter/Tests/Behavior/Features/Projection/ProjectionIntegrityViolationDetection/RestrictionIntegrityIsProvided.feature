@@ -45,11 +45,12 @@ Feature: Run integrity violation detection regarding restriction relations
       | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
-    And the event NodeAggregateWasDisabled was published with payload:
+    And the event SubtreeTagWasAdded was published with payload:
       | Key                          | Value                                                    |
       | contentStreamId              | "cs-identifier"                                          |
       | nodeAggregateId              | "sir-david-nodenborough"                                 |
       | affectedDimensionSpacePoints | [{"language":"de"},{"language":"gsw"},{"language":"fr"}] |
+      | tag                          | "disabled"                                               |
     And the graph projection is fully up to date
 
   Scenario: Detach a restriction relation from its origin

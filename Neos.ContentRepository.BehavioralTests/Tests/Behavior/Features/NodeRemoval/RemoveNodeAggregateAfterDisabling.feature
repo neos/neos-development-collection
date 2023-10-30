@@ -44,10 +44,11 @@ Feature: Disable a node aggregate
     And the graph projection is fully up to date
 
   Scenario: Restore a hidden node by removing and recreating it
-    Given the command DisableNodeAggregate is executed with payload:
+    Given the command AddSubtreeTag is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"               |
     And the event NodeAggregateWasRemoved was published with payload:
       | Key                                  | Value              |
       | contentStreamId              | "cs-identifier"    |

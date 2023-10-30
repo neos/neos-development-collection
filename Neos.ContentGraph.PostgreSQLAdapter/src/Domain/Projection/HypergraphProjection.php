@@ -19,7 +19,7 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeDisabling;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\Tagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRemoval;
@@ -33,8 +33,6 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
-use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Event\NodeReferencesWereSet;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
@@ -44,6 +42,8 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
+use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -62,7 +62,7 @@ final class HypergraphProjection implements ProjectionInterface
 {
     use ContentStreamForking;
     use NodeCreation;
-    use NodeDisabling;
+    use Tagging;
     use NodeModification;
     use NodeReferencing;
     use NodeRemoval;
@@ -156,9 +156,9 @@ final class HypergraphProjection implements ProjectionInterface
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class,
             NodeAggregateWithNodeWasCreated::class,
-            // NodeDisabling
-            NodeAggregateWasDisabled::class,
-            NodeAggregateWasEnabled::class,
+            // Tagging
+            SubtreeTagWasAdded::class,
+            SubtreeTagWasRemoved::class,
             // NodeModification
             NodePropertiesWereSet::class,
             // NodeReferencing
@@ -189,9 +189,9 @@ final class HypergraphProjection implements ProjectionInterface
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
-            // NodeDisabling
-            NodeAggregateWasDisabled::class => $this->whenNodeAggregateWasDisabled($event),
-            NodeAggregateWasEnabled::class => $this->whenNodeAggregateWasEnabled($event),
+            // Tagging
+            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
+            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
             // NodeModification
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             // NodeReferencing

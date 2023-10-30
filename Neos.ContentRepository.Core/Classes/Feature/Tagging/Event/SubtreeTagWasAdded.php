@@ -12,31 +12,37 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Event;
+namespace Neos\ContentRepository\Core\Feature\Tagging\Event;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
-use Neos\ContentRepository\Core\EventStore\EventNormalizer;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * A node aggregate was enabled
+ * A {@see SubtreeTag} was added to a node aggregate and effectively to its descendants
  *
- * @deprecated This event will never be emitted, it is up-casted to a corresponding {@see SubtreeTagWasRemoved} event instead in the {@see EventNormalizer}. This implementation is just kept for backwards-compatibility
+ * @api events are the persistence-API of the content repository
  */
-final class NodeAggregateWasEnabled implements
+final class SubtreeTagWasAdded implements
     EventInterface,
     PublishableToOtherContentStreamsInterface,
     EmbedsContentStreamAndNodeAggregateId
 {
+    /**
+     * @param ContentStreamId $contentStreamId The content stream id the tag was added in
+     * @param NodeAggregateId $nodeAggregateId The id of the node aggregate the tag was explicitly added on
+     * @param DimensionSpacePointSet $affectedDimensionSpacePoints The dimension space points the tag was added for
+     * @param SubtreeTag $tag The tag that was added
+     */
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
         public readonly DimensionSpacePointSet $affectedDimensionSpacePoints,
+        public readonly SubtreeTag $tag,
     ) {
     }
 
@@ -56,6 +62,7 @@ final class NodeAggregateWasEnabled implements
             $targetContentStreamId,
             $this->nodeAggregateId,
             $this->affectedDimensionSpacePoints,
+            $this->tag,
         );
     }
 
@@ -65,6 +72,7 @@ final class NodeAggregateWasEnabled implements
             ContentStreamId::fromString($values['contentStreamId']),
             NodeAggregateId::fromString($values['nodeAggregateId']),
             DimensionSpacePointSet::fromArray($values['affectedDimensionSpacePoints']),
+            SubtreeTag::fromString($values['tag']),
         );
     }
 

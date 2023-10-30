@@ -81,10 +81,11 @@ Feature: Find nodes using the retrieveNodePath query
       | unnamed         | Neos.ContentRepository.Testing:Homepage | lady-eleonode-rootford |
     And the following CreateNodeAggregateWithNode commands are executed:
       | child-of-unnamed | child | Neos.ContentRepository.Testing:Page | unnamed |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "b1"          |
       | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "disabled"    |
     And the graph projection is fully up to date
 
   Scenario:

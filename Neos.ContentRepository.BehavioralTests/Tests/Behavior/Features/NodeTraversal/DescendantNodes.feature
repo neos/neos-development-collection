@@ -91,10 +91,11 @@ Feature: Find and count nodes using the findDescendantNodes and countDescendantN
       | contentStreamId | "cs-identifier"         |
       | nodeAggregateId | "a2a2b"                 |
       | propertyValues  | {"integerProperty": 20} |
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
   Scenario:

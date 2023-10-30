@@ -49,12 +49,13 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | nodeName                    | "pet"                                    |
       | nodeAggregateClassification | "regular"                                |
     And the graph projection is fully up to date
-    And the command DisableNodeAggregate is executed with payload:
+    And the command AddSubtreeTag is executed with payload:
       | Key                          | Value              |
       | contentStreamId              | "cs-identifier"    |
       | nodeAggregateId              | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
+      | tag                          | "disabled"         |
     And the graph projection is fully up to date
 
   Scenario: on ForkContentStream, the disabled nodes in the target content stream should still be invisible.
