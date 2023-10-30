@@ -124,6 +124,7 @@ abstract class AbstractDimensionSpacePoint implements \JsonSerializable
 
     /**
      * @return array<string,array<int,string>>
+     * @deprecated should be only used for conversion from Neos <= 8.x to 9.x upwards. never use this in "modern" code.
      */
     final public function toLegacyDimensionArray(): array
     {

@@ -83,7 +83,7 @@ final class UriPathResolver implements DimensionResolverInterface
             [],
             [],
             Segments::create(),
-            DimensionSpacePoint::fromArray([])
+            DimensionSpacePoint::createWithoutDimensions()
         );
     }
 
