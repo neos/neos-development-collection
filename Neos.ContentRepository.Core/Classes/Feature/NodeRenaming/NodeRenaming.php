@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeRenaming;
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
@@ -33,7 +34,6 @@ trait NodeRenaming
 
     private function handleChangeNodeAggregateName(ChangeNodeAggregateName $command, ContentRepository $contentRepository): EventsToPublish
     {
-
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamId,
@@ -41,6 +41,19 @@ trait NodeRenaming
             $contentRepository
         );
         $this->requireNodeAggregateToNotBeRoot($nodeAggregate, 'and Root Node Aggregates cannot be renamed');
+        $this->requireNodeAggregateToBeUntethered($nodeAggregate);
+        foreach ($contentRepository->getContentGraph()->findParentNodeAggregates($command->contentStreamId, $command->nodeAggregateId) as $parentNodeAggregate) {
+            foreach ($parentNodeAggregate->occupiedDimensionSpacePoints as $occupiedParentDimensionSpacePoint) {
+                $this->requireNodeNameToBeUnoccupied(
+                    $command->contentStreamId,
+                    $command->newNodeName,
+                    $parentNodeAggregate->nodeAggregateId,
+                    $occupiedParentDimensionSpacePoint,
+                    $parentNodeAggregate->coveredDimensionSpacePoints,
+                    $contentRepository
+                );
+            }
+        }
 
         $events = Events::with(
             new NodeAggregateNameWasChanged(
