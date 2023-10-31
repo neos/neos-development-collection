@@ -27,33 +27,33 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     And the Fusion context node is "a"
     And the Fusion context request URI is "http://localhost"
 
-#  Scenario: missing Neos.Neos.ContentCollection node
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ContentCollection
-#    """
-#    Then I expect the following Fusion rendering error:
-#    """
-#    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/sites/a) or at the path "to-be-set-by-user". You might want to adjust your node type configuration and create the missing child node through the "./flow node:repair --node-type Neos.Neos:Test.DocumentType" command.
-#    """
-#
-#  Scenario: invalid nodePath
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ContentCollection {
-#      nodePath = 'invalid'
-#    }
-#    """
-#    Then I expect the following Fusion rendering error:
-#    """
-#    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/sites/a) or at the path "invalid". You might want to adjust your node type configuration and create the missing child node through the "./flow node:repair --node-type Neos.Neos:Test.DocumentType" command.
-#    """
+  Scenario: missing Neos.Neos.ContentCollection node
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ContentCollection
+    """
+    Then I expect the following Fusion rendering error:
+    """
+    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/sites/a) or at the path "to-be-set-by-user". You might want to adjust your node type configuration and create the missing child node through the "./flow node:repair --node-type Neos.Neos:Test.DocumentType" command.
+    """
+
+  Scenario: invalid nodePath
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ContentCollection {
+      nodePath = 'invalid'
+    }
+    """
+    Then I expect the following Fusion rendering error:
+    """
+    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/sites/a) or at the path "invalid". You might want to adjust your node type configuration and create the missing child node through the "./flow node:repair --node-type Neos.Neos:Test.DocumentType" command.
+    """
 
   Scenario: empty ContentCollection
     When I execute the following Fusion code:
