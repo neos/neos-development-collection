@@ -60,7 +60,8 @@ class StructureAdjustmentService implements ContentRepositoryServiceInterface
         );
         $this->dimensionAdjustment = new DimensionAdjustment(
             $projectedNodeIterator,
-            $interDimensionalVariationGraph
+            $interDimensionalVariationGraph,
+            $nodeTypeManager
         );
     }
 
