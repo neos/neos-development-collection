@@ -38,6 +38,9 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
         return new self();
     }
 
+    /**
+     * @param array<string> $array
+     */
     public static function fromStringArray(array $array): self
     {
         return new self(...array_map(SubtreeTag::fromString(...), $array));
@@ -56,6 +59,9 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
         return array_map(static fn (SubtreeTag $tag) => $tag->value, $this->tags);
     }
 
+    /**
+     * @return array<SubtreeTag>
+     */
     public function jsonSerialize(): array
     {
         return $this->tags;
