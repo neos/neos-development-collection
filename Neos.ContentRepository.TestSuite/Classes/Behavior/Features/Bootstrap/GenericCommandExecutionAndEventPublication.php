@@ -17,6 +17,8 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeMove\Command\MoveNodeAggregate;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Command\ForkContentStream;
 use Neos\ContentRepository\Core\Feature\NodeRenaming\Command\ChangeNodeAggregateName;
@@ -104,6 +106,8 @@ trait GenericCommandExecutionAndEventPublication
             'ForkContentStream' => ForkContentStream::class,
             'ChangeNodeAggregateName' => ChangeNodeAggregateName::class,
             'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
+            'DisableNodeAggregate' => DisableNodeAggregate::class,
+            'EnableNodeAggregate' => EnableNodeAggregate::class,
             'AddSubtreeTag' => TagSubtree::class,
             'RemoveSubtreeTag' => UntagSubtreeTag::class,
             'MoveNodeAggregate' => MoveNodeAggregate::class,

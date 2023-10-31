@@ -425,7 +425,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->tag->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -456,7 +456,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
-        if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
+        if ($event->tag->value !== 'disabled' || !$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
         }
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {

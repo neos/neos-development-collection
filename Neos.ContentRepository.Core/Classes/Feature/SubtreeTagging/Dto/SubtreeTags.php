@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
 
-use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
-
 /**
  * A type-safe collection of {@see SubtreeTag} instances
  *
