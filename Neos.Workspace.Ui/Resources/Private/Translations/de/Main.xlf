@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file original="" product="Shel.Neos.WorkspaceModule" source-language="en" target-language="de" datatype="plaintext">
+        <body>
+            <trans-unit id="module.loadingText">
+                <source>Loading workspace module…</source>
+                <target>Lade Arbeitsbereiche…</target>
+            </trans-unit>
+
+            <trans-unit id="table.column.access.private">
+                <source>This workspace is owned by {owner}</source>
+                <target>Dieser Arbeitsbereich gehört {owner}</target>
+            </trans-unit>
+            <trans-unit id="table.column.access.internal">
+                <source>This is a shared workspace</source>
+                <target>Dies ist ein gemeinsamer Arbeitsbereich</target>
+            </trans-unit>
+            <trans-unit id="table.column.access.acl">
+                <source>This workspace is owned by {owner} but allows access to additional users</source>
+                <target>Dieser Arbeitsbereich gehört {owner}, erlaubt aber den Zugriff weiterer Benutzer</target>
+            </trans-unit>
+            <trans-unit id="table.header.title">
+                <source>Title</source>
+                <target>Titel</target>
+            </trans-unit>
+            <trans-unit id="table.header.lastModified">
+                <source>Last modified</source>
+                <target>Letzte Änderung</target>
+            </trans-unit>
+            <trans-unit id="table.header.changes">
+                <source>Changes</source>
+                <target>Änderungen</target>
+            </trans-unit>
+            <trans-unit id="table.header.actions">
+                <source>Actions</source>
+                <target>Aktionen</target>
+            </trans-unit>
+            <trans-unit id="table.header.creator">
+                <source>Creator</source>
+                <target>Erstellt von</target>
+            </trans-unit>
+            <trans-unit id="table.header.description">
+                <source>Description</source>
+                <target>Beschreibung</target>
+            </trans-unit>
+
+            <trans-unit id="table.column.changes.empty">
+                <source>None</source>
+                <target>Keine</target>
+            </trans-unit>
+            <trans-unit id="table.column.action.show">
+                <source>Review</source>
+                <target>Überprüfen</target>
+            </trans-unit>
+            <trans-unit id="table.column.action.show.title">
+                <source>Show changes in workspace {workspace}</source>
+                <target>Änderungen im Arbeitsbereich {workspace} anzeigen</target>
+            </trans-unit>
+            <trans-unit id="table.column.action.show.disabled.title">
+                <source>No changes to review</source>
+                <target>Keine Änderungen zur Überprüfung</target>
+            </trans-unit>
+            <trans-unit id="table.column.action.edit">
+                <source>Edit workspace {workspace}</source>
+                <target>Arbeitsbereich {workspace} bearbeiten</target>
+            </trans-unit>
+            <trans-unit id="table.column.action.delete">
+                <source>Delete workspace {workspace}</source>
+                <target>Arbeitsbereich {workspace} löschen</target>
+            </trans-unit>
+
+            <trans-unit id="footer.action.create">
+                <source>Create new workspace</source>
+                <target>Neuen Arbeitsbereich erstellen</target>
+            </trans-unit>
+            <trans-unit id="footer.workspaceCount">
+                <source>{total} workspaces ({internal} public, {private} private)</source>
+                <target>{total} Arbeitsbereiche ({internal} öffentliche, {private} private)</target>
+            </trans-unit>
+
+            <trans-unit id="badge.isStale">
+                <source>Workspace is stale!</source>
+                <target>Arbeitsbereich wurde lange nicht verwendet!</target>
+            </trans-unit>
+            <trans-unit id="badge.isUserWorkspace">
+                <source>(This is your workspace)</source>
+                <target>(Das ist dein Arbeitsbereich)</target>
+            </trans-unit>
+            <trans-unit id="badge.changes.new">
+                <source>{count} new nodes were added</source>
+                <target>{count} neue Elemente wurden hinzugefügt</target>
+            </trans-unit>
+            <trans-unit id="badge.changes.changed">
+                <source>{count} nodes were changed</source>
+                <target>{count} Elemente wurden geändert</target>
+            </trans-unit>
+            <trans-unit id="badge.changes.removed">
+                <source>{count} nodes were removed</source>
+                <target>{count} Elemente wurden entfernt</target>
+            </trans-unit>
+            <trans-unit id="badge.changes.unknown">
+                <source>{count} nodes were changed but might be orphaned</source>
+                <target>{count} wurden geändert, aber sind vermutlich nicht mehr erreichbar</target>
+            </trans-unit>
+
+            <trans-unit id="dialog.action.cancel">
+                <source>Cancel</source>
+                <target>Abbrechen</target>
+            </trans-unit>
+            <trans-unit id="dialog.action.create">
+                <source>Create workspace</source>
+                <target>Arbeitsbereich anlegen</target>
+            </trans-unit>
+            <trans-unit id="dialog.action.delete">
+                <source>Delete this workspace</source>
+                <target>Diesen Arbeitsbereich löschen</target>
+            </trans-unit>
+            <trans-unit id="dialog.action.update">
+                <source>Save changes</source>
+                <target>Änderungen speichern</target>
+            </trans-unit>
+
+            <trans-unit id="dialog.create.header">
+                <source>Create new workspace</source>
+                <target>Neuen Arbeitsbereich erstellen</target>
+            </trans-unit>
+
+            <trans-unit id="dialog.edit.header">
+                <source>Edit workspace "{workspace}"</source>
+                <target>Arbeitsbereich "{workspace}" bearbeiten</target>
+            </trans-unit>
+
+            <trans-unit id="dialog.delete.header">
+                <source>Delete workspace "{workspace}"?</source>
+                <target>Arbeitsbereich "{workspace}" löschen?</target>
+            </trans-unit>
+            <trans-unit id="dialog.delete.pointOfNoReturn">
+                <source>This action cannot be undone.</source>
+                <target>Diese Aktion kann nicht rückgängig gemacht werden.</target>
+            </trans-unit>
+            <trans-unit id="dialog.delete.rebasedWorkspaces" >
+                <source><![CDATA[The following workspaces will be rebased onto the <strong>live</strong> workspace:]]></source>
+                <target><![CDATA[Die folgenden Arbeitsbereiche werden den <strong>Live</strong>-Arbeitsbereich verschoben:]]></target>
+            </trans-unit>
+            <trans-unit id="dialog.delete.privateWorkspaces">
+                <source><![CDATA[<strong>{count}</strong> private workspace(s)]]></source>
+                <target><![CDATA[<strong>{count}</strong> private(r) Arbeitsbereich(e)]]></target>
+            </trans-unit>
+            <trans-unit id="dialog.delete.unpublishedChanges">
+                <source><![CDATA[Deleting this workspace will also discard <strong>{count}</strong> unpublished changes.]]></source>
+                <target><![CDATA[Wenn Sie diesen Arbeitsbereich löschen, werden auch <strong>{count}</strong> unveröffentlichte Änderungen verworfen.]]></target>
+            </trans-unit>
+
+            <trans-unit id="workspace.title.label">
+                <source>Title</source>
+                <target>Titel</target>
+            </trans-unit>
+            <trans-unit id="workspace.title.validation">
+                <source><![CDATA[
+                    <b>Allowed title pattern: </b>
+                    <ul>
+                        <li>Numbers</li>
+                        <li>Letters (upper &amp; lowercase)</li>
+                        <li>Special characters: - _ [ ] . ( )</li>
+                        <li>First character needs to be an uppercase letter</li>
+                        <li>No trailing whitespace</li>
+                    </ul>]]>
+                </source>
+            </trans-unit>
+            <trans-unit id="workspace.description.label">
+                <source>Description</source>
+                <target>Beschreibung</target>
+            </trans-unit>
+            <trans-unit id="workspace.baseWorkspace.label">
+                <source>Base workspace</source>
+                <target>Basis-Arbeitsbereich</target>
+            </trans-unit>
+            <trans-unit id="workspace.owner.label">
+                <source>Owner</source>
+                <target>Eigentümer</target>
+            </trans-unit>
+            <trans-unit id="workspace.acl.label">
+                <source>Allow access for additional users:</source>
+                <target>Den Zugriff für weitere Benutzer erlauben:</target>
+            </trans-unit>
+            <trans-unit id="workspace.acl.filter.placeholder">
+                <source>Filter by name</source>
+                <target>Nach Namen filtern</target>
+            </trans-unit>
+            <trans-unit id="workspace.acl.filter.empty">
+                <source>No users found</source>
+                <target>Keine Benutzer gefunden</target>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.label">
+                <source>Visibility</source>
+                <target>Sichtbarkeit</target>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.internal">
+                <source>Public – Any logged in editor can see and modify this workspace.</source>
+                <target>Öffentlich - eingeloggte Redakteur*innen können diesen Arbeitsbereich sehen und ändern.</target>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.internal.info">
+                <source>Any logged in editor can see and modify this workspace.</source>
+                <target>Eingeloggte Redakteur*innen können diesen Arbeitsbereich sehen und ändern.</target>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.private">
+                <source>Private – Only reviewers and administrators can access and modify this workspace.</source>
+                <target>Privat - nur Prüfer*innen und Administrator*innen können auf diesen Arbeitsbereich zugreifen und ihn ändern.</target>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.private.info">
+                <source>Only reviewers and administrators can access and modify this workspace.</source>
+                <target>Nur Prüfer*innen und Administrator*innen können auf diesen Arbeitsbereich zugreifen und ihn ändern.</target>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.isPersonal">
+                <source>This is a personal workspace and only the owner can access and modify this workspace.</source>
+                <target>Dies ist ein persönlicher Arbeitsbereich, den Eigentümer*innen einsehen und ändern können.</target>
+            </trans-unit>
+
+            <trans-unit id="message.workspaceUpdated">
+                <source>The workspace "{workspaceName}" has been updated</source>
+                <target>Der Arbeitsbereich "{workspaceName}" wurde aktualisiert</target>
+            </trans-unit>
+            <trans-unit id="message.workspaceCreated">
+                <source>The workspace "{workspaceName}" has been created</source>
+                <target>Der Arbeitsbereich "{workspaceName}" wurde erstellt</target>
+            </trans-unit>
+            <trans-unit id="message.workspaceRemoved">
+                <source>The workspace "{workspaceName}" has been removed, {unpublishedNodes} changes have been discarded and {dependentWorkspaces} dependent workspaces have been rebased</source>
+                <target>Der Arbeitsbereich "{workspaceName}" wurde entfernt, {unpublishedNodes} Änderungen wurden verworfen und {dependentWorkspaces} abhängige Arbeitsbereiche wurden neu zugeordnet</target>
+            </trans-unit>
+            <trans-unit id="message.workspaceIsPersonal">
+                <source>The workspace "{workspaceName}" is personal and cannot be deleted</source>
+                <target>Der Arbeitsbereich "{workspaceName}" ist personengebunden und kann nicht gelöscht werden</target>
+            </trans-unit>
+            <trans-unit id="message.workspaceRebased">
+                <source>Workspace "{dependentWorkspaceName}" has been rebased to "live" as it depends on workspace "{workspaceName}"</source>
+                <target>Arbeitsbereich "{dependentWorkspaceName}" wurde auf "live" umgestellt, da er vom Arbeitsbereich "{workspaceName}" abhängt.</target>
+            </trans-unit>
+
+            <trans-unit id="error.invalidWorkspaceChain">
+                <source>The base workspaces of "{workspaceName}" cannot be resolved</source>
+                <target>Die Basisarbeitsbereiche von "{workspaceName}" können nicht aufgelöst werden</target>
+            </trans-unit>
+            <trans-unit id="error.workspaceInaccessible">
+                <source>You are not permitted to access the workspace "{workspaceName}"</source>
+                <target>Sie sind nicht berechtigt, auf den Arbeitsbereich "{workspaceName}" zuzugreifen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 
 /**
  * Workspace Runtime Cache
@@ -34,6 +35,11 @@ final class WorkspaceRuntimeCache
     /**
      * @var array<string,Workspace>
      */
+    private array $cachedWorkspacesByTitle = [];
+
+    /**
+     * @var array<string,Workspace>
+     */
     private array $cachedWorkspacesByContentStreamId = [];
 
     /**
@@ -43,6 +49,7 @@ final class WorkspaceRuntimeCache
     {
         $this->cacheEnabled = false;
         $this->cachedWorkspacesByName = [];
+        $this->cachedWorkspacesByTitle = [];
         $this->cachedWorkspacesByContentStreamId = [];
     }
 
@@ -50,6 +57,14 @@ final class WorkspaceRuntimeCache
     {
         if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByName[$name->value])) {
             return $this->cachedWorkspacesByName[$name->value];
+        }
+        return null;
+    }
+
+    public function getWorkspaceByTitle(WorkspaceTitle $title): ?Workspace
+    {
+        if ($this->cacheEnabled === true && isset($this->cachedWorkspacesByTitle[$title->value])) {
+            return $this->cachedWorkspacesByTitle[$title->value];
         }
         return null;
     }

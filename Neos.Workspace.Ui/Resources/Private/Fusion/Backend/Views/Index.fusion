@@ -1,0 +1,63 @@
+Neos.Workspace.Ui.WorkspacesController {
+    index = Neos.Fusion:Component {
+        userWorkspace = ${userWorkspace}
+        baseWorkspaceOptions = ${baseWorkspaceOptions}
+        userList = ${userList}
+        workspaces = ${workspaces}
+        csrfToken = ${csrfToken}
+        userCanManageInternalWorkspaces = ${userCanManageInternalWorkspaces}
+        validation = ${validation}
+        flashMessages = ${flashMessages}
+
+        endpoints = Neos.Fusion:DataStructure {
+            deleteWorkspace = Neos.Fusion:UriBuilder {
+                action = 'delete'
+                arguments.workspaceName = '---workspace---'
+                format = 'json'
+            }
+            updateWorkspace = Neos.Fusion:UriBuilder {
+                action = 'update'
+                format = 'json'
+            }
+            createWorkspace = Neos.Fusion:UriBuilder {
+                action = 'create'
+                format = 'json'
+            }
+            showWorkspace = Neos.Fusion:UriBuilder {
+                action = 'show'
+                arguments.workspace = '---workspace---'
+            }
+            getChanges = Neos.Fusion:UriBuilder {
+                action = 'getChanges'
+                format = 'json'
+            }
+        }
+
+        renderer = afx`
+            <div class="neos-content neos-container-fluid">
+                <div class="neos-row-fluid">
+                    <div
+                        id="workspace-module-app"
+                        data-endpoints={Json.stringify(props.endpoints)}
+                        data-user-workspace={Json.stringify(props.userWorkspace)}
+                        data-csrf-token={Json.stringify(props.csrfToken)}
+                        data-user-can-manage-internal-workspaces={props.userCanManageInternalWorkspaces ? 'true' : 'false'}
+                        data-validation={Json.stringify(props.validation)}
+                    >
+                        <script type="application/json" id="workspaces">
+                            {Json.stringify(props.workspaces)}
+                        </script>
+                        <script type="application/json" id="baseWorkspaceOptions">
+                            {Json.stringify(props.baseWorkspaceOptions)}
+                        </script>
+                        <script type="application/json" id="userList">
+                            {Json.stringify(props.userList)}
+                        </script>
+                        {I18n.translate('module.loadingText', 'Loading workspace module…', {}, 'Main', 'Neos.Workspace.Ui')}
+                    </div>
+                    <Neos.Workspace.Ui:Component.FlashMessages flashMessages={props.flashMessages} />
+                </div>
+            </div>
+        `
+    }
+}

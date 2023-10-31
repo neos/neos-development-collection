@@ -9,3 +9,6 @@ Neos:
             description: 'Neos.Neos:Modules:workspaces.description'
             icon: fas fa-th-large
             mainStylesheet: 'Lite'
+            additionalResources:
+              javaScripts:
+                Shel.Neos.WorkspaceModule: 'resource://Neos.Workspace.Ui/Public/Assets/main.js'

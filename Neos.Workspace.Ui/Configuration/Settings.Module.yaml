@@ -1,0 +1,6 @@
+Neos:
+  Workspace:
+    Ui:
+      staleTime: 2419200 # 4 weeks in seconds
+      validation:
+        titlePattern: '^[A-Z][\s\w\d\-\.\[\]\(\)_]+\b(?!\s)$'

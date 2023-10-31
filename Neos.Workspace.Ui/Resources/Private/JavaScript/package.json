@@ -1,0 +1,30 @@
+{
+  "name": "@workspace-module/app",
+  "version": "1.0.0",
+  "license": "GNU GPLv3",
+  "private": true,
+  "source": "index.tsx",
+  "app": "../../Public/Assets/main.js",
+  "targets": {
+    "app": {}
+  },
+  "scripts": {
+    "postinstall": "patch-package",
+    "watch": "parcel watch",
+    "build": "parcel build"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
+    "styled-components": "^5.3.6"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.5",
+    "@parcel/transformer-react-refresh-wrap": "^2.8.2",
+    "@types/react": "^18.0.26",
+    "patch-package": "^6.5.0",
+    "react-hot-loader": "^4.13.1",
+    "typescript": "^4.9.4"
+  }
+}

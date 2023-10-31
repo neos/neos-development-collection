@@ -1,0 +1,54 @@
+{
+  "name": "neos-workspace-ui",
+  "version": "1.0.0",
+  "license": "GNU GPLv3",
+  "private": true,
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {
+    "build": "yarn workspace @workspace-module/app build",
+    "watch": "yarn workspace @workspace-module/app watch",
+    "lint": "yarn eslint Resources/Private/JavaScript",
+    "dev": "yarn workspace @workspace-module/dev-server dev",
+    "test:integration": "yarn cypress run"
+  },
+  "workspaces": [
+    "Resources/Private/JavaScript",
+    "Tests/dev-server"
+  ],
+  "dependencies": {
+    "@workspace-module/app": "*"
+  },
+  "devDependencies": {
+    "@neos-project/eslint-config-neos": "^2.6.1",
+    "@parcel/transformer-typescript-tsc": "^2.8.2",
+    "@parcel/transformer-typescript-types": "2.8.2",
+    "@types/node": "^18.11.15",
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "@workspace-module/dev-server": "*",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-testcafe": "^0.2.1",
+    "parcel": "^2.8.2",
+    "prettier": "^2.8.1",
+    "typescript": "^4.9.4"
+  },
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "prettier": {
+    "printWidth": 120,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "arrowParens": "always",
+    "tabWidth": 4
+  },
+  "packageManager": "yarn@3.2.0"
+}

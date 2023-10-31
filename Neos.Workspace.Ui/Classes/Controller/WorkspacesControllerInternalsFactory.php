@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Workspace.Ui package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file original="" product="Shel.Neos.WorkspaceModule" source-language="en" datatype="plaintext">
+        <body>
+            <trans-unit id="module.loadingText">
+                <source>Loading workspace module…</source>
+            </trans-unit>
+
+            <trans-unit id="table.column.access.private">
+                <source>This workspace is owned by {owner}</source>
+            </trans-unit>
+            <trans-unit id="table.column.access.internal">
+                <source>This is a shared workspace</source>
+            </trans-unit>
+            <trans-unit id="table.column.access.acl">
+                <source>This workspace is owned by {owner} but allows access to additional users</source>
+            </trans-unit>
+            <trans-unit id="table.header.title">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="table.header.lastModified">
+                <source>Last modified</source>
+            </trans-unit>
+            <trans-unit id="table.header.changes">
+                <source>Changes</source>
+            </trans-unit>
+            <trans-unit id="table.header.actions">
+                <source>Actions</source>
+            </trans-unit>
+            <trans-unit id="table.header.creator">
+                <source>Creator</source>
+            </trans-unit>
+            <trans-unit id="table.header.description">
+                <source>Description</source>
+            </trans-unit>
+
+            <trans-unit id="table.column.changes.empty">
+                <source>None</source>
+            </trans-unit>
+            <trans-unit id="table.column.action.show">
+                <source>Review</source>
+            </trans-unit>
+            <trans-unit id="table.column.action.show.title">
+                <source>Show changes in workspace {workspace}</source>
+            </trans-unit>
+            <trans-unit id="table.column.action.show.disabled.title">
+                <source>No changes to review</source>
+            </trans-unit>
+            <trans-unit id="table.column.action.edit">
+                <source>Edit workspace {workspace}</source>
+            </trans-unit>
+            <trans-unit id="table.column.action.delete">
+                <source>Delete workspace {workspace}</source>
+            </trans-unit>
+
+            <trans-unit id="footer.action.create">
+                <source>Create new workspace</source>
+            </trans-unit>
+            <trans-unit id="footer.workspaceCount">
+                <source>{total} workspaces ({internal} public, {private} private)</source>
+            </trans-unit>
+
+            <trans-unit id="badge.isStale">
+                <source>Workspace is stale!</source>
+            </trans-unit>
+            <trans-unit id="badge.isUserWorkspace">
+                <source>(This is your workspace)</source>
+            </trans-unit>
+            <trans-unit id="badge.changes.new">
+                <source>{count} new nodes were added</source>
+            </trans-unit>
+            <trans-unit id="badge.changes.changed">
+                <source>{count} nodes were changed</source>
+            </trans-unit>
+            <trans-unit id="badge.changes.removed">
+                <source>{count} nodes were removed</source>
+            </trans-unit>
+            <trans-unit id="badge.changes.unknown">
+                <source>{count} nodes were changed but might be orphaned</source>
+            </trans-unit>
+
+            <trans-unit id="dialog.action.cancel">
+                <source>Cancel</source>
+            </trans-unit>
+            <trans-unit id="dialog.action.create">
+                <source>Create workspace</source>
+            </trans-unit>
+            <trans-unit id="dialog.action.delete">
+                <source>Delete this workspace</source>
+            </trans-unit>
+            <trans-unit id="dialog.action.update">
+                <source>Save changes</source>
+            </trans-unit>
+
+            <trans-unit id="dialog.create.header">
+                <source>Create new workspace</source>
+            </trans-unit>
+
+            <trans-unit id="dialog.edit.header">
+                <source>Edit workspace "{workspace}"</source>
+            </trans-unit>
+
+            <trans-unit id="dialog.delete.header">
+                <source>Delete workspace "{workspace}"?</source>
+            </trans-unit>
+            <trans-unit id="dialog.delete.pointOfNoReturn">
+                <source>This action cannot be undone.</source>
+            </trans-unit>
+            <trans-unit id="dialog.delete.rebasedWorkspaces">
+                <source><![CDATA[The following workspaces will be rebased onto the <strong>live</strong> workspace:]]></source>
+            </trans-unit>
+            <trans-unit id="dialog.delete.privateWorkspaces">
+                <source><![CDATA[<strong>{count}</strong> private workspace(s)]]></source>
+            </trans-unit>
+            <trans-unit id="dialog.delete.unpublishedChanges">
+                <source><![CDATA[Deleting this workspace will also discard <strong>{count}</strong> unpublished changes.]]></source>
+            </trans-unit>
+
+            <trans-unit id="workspace.title.label">
+                <source>Title</source>
+            </trans-unit>
+            <trans-unit id="workspace.title.validation">
+                <source><![CDATA[
+                    <b>Allowed title pattern: </b>
+                    <ul>
+                        <li>Numbers</li>
+                        <li>Letters (upper &amp; lowercase)</li>
+                        <li>Special characters: - _ [ ] . ( )</li>
+                        <li>First character needs to be an uppercase letter</li>
+                        <li>No trailing whitespace</li>
+                    </ul>]]>
+                </source>
+            </trans-unit>
+            <trans-unit id="workspace.description.label">
+                <source>Description</source>
+            </trans-unit>
+            <trans-unit id="workspace.baseWorkspace.label">
+                <source>Base workspace</source>
+            </trans-unit>
+            <trans-unit id="workspace.owner.label">
+                <source>Owner</source>
+            </trans-unit>
+            <trans-unit id="workspace.acl.label">
+                <source>Allow access for additional users:</source>
+            </trans-unit>
+            <trans-unit id="workspace.acl.filter.placeholder">
+                <source>Filter by name</source>
+            </trans-unit>
+            <trans-unit id="workspace.acl.filter.empty">
+                <source>No users found</source>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.label">
+                <source>Visibility</source>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.internal">
+                <source>Public – Any logged in editor can see and modify this workspace.</source>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.internal.info">
+                <source>Any logged in editor can see and modify this workspace.</source>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.private">
+                <source>Private – Only reviewers and administrators can access and modify this workspace.</source>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.private.info">
+                <source>Only reviewers and administrators can access and modify this workspace.</source>
+            </trans-unit>
+            <trans-unit id="workspace.visibility.isPersonal">
+                <source>This is a personal workspace and only the owner can access and modify this workspace.</source>
+            </trans-unit>
+
+            <trans-unit id="message.workspaceUpdated">
+                <source>The workspace "{workspaceName}" has been updated</source>
+            </trans-unit>
+            <trans-unit id="message.workspaceCreated">
+                <source>The workspace "{workspaceName}" has been created</source>
+            </trans-unit>
+            <trans-unit id="message.workspaceRemoved">
+                <source>The workspace "{workspaceName}" has been removed, {unpublishedNodes} changes have been discarded and {dependentWorkspaces} dependent workspaces have been rebased</source>
+            </trans-unit>
+            <trans-unit id="message.workspaceIsPersonal">
+                <source>The workspace "{workspaceName}" is personal and cannot be deleted</source>
+            </trans-unit>
+            <trans-unit id="message.workspaceRebased">
+                <source>Workspace "{dependentWorkspaceName}" has been rebased to "live" as it depends on workspace "{workspaceName}"</source>
+            </trans-unit>
+
+            <trans-unit id="error.invalidWorkspaceChain">
+                <source>The base workspaces of "{workspaceName}" cannot be resolved</source>
+            </trans-unit>
+            <trans-unit id="error.workspaceInaccessible">
+                <source>You are not permitted to access the workspace "{workspaceName}"</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

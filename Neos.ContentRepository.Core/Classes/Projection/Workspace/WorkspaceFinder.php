@@ -63,6 +63,35 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $workspace;
     }
 
+
+    public function findOneByTitle(WorkspaceTitle $title): ?Workspace
+    {
+        # TODO: Compare lowercase to prevent two workspaces "Anke" and "anke" to be created
+        $workspace = $this->workspaceRuntimeCache->getWorkspaceByTitle($title);
+        if ($workspace !== null) {
+            return $workspace;
+        }
+
+        $connection = $this->client->getConnection();
+        $workspaceRow = $connection->executeQuery(
+            '
+                SELECT * FROM ' . $this->tableName . '
+                WHERE workspaceTitle = :workspaceTitle
+            ',
+            [
+                'workspaceTitle' => $title->value,
+            ]
+        )->fetchAssociative();
+
+        if ($workspaceRow === false) {
+            return null;
+        }
+
+        $workspace = $this->createWorkspaceFromDatabaseRow($workspaceRow);
+        $this->workspaceRuntimeCache->setWorkspace($workspace);
+        return $workspace;
+    }
+
     public function findOneByCurrentContentStreamId(
         ContentStreamId $contentStreamId
     ): ?Workspace {

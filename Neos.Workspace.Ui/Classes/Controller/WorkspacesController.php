@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Neos.Neos package.
+ * This file is part of the Neos.Workspace.Ui package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -21,12 +21,14 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdsToPublis
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
-use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\Mvc\Exception\StopActionException;
+use Neos\Flow\Mvc\View\JsonView;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Neos\Domain\Model\SiteNodeName;
+use Neos\Neos\Domain\Repository\UserRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\PendingChangesProjection\ChangeFinder;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -52,7 +54,6 @@ use Neos\Diff\Renderer\Html\HtmlArrayRenderer;
 use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Flow\Annotations as Flow;
 use Neos\Error\Messages\Message;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Property\PropertyMapper;
 use Neos\Flow\Security\Context;
@@ -69,13 +70,16 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
  * The Neos Workspaces module controller
- *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class WorkspacesController extends AbstractModuleController
 {
     use ModuleTranslationTrait;
     use NodeTypeWithFallbackProvider;
+
+    protected $viewFormatToObjectNameMap = [
+        'json' => JsonView::class,
+    ];
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -95,62 +99,57 @@ class WorkspacesController extends AbstractModuleController
     #[Flow\Inject]
     protected PackageManager $packageManager;
 
+    #[Flow\Inject]
+    protected PrivilegeManagerInterface $privilegeManager;
+
+    #[Flow\Inject]
+    protected UserRepository $userRepository;
+
+    // TODO: Readd or replace when ACL is implemented via the Workspace model
+//    #[Flow\Inject]
+//    protected WorkspaceDetailsRepository $workspaceDetailsRepository;
+
     /**
-     * Display a list of unpublished content
-     *
-     * @return void
+     * Displays a list of workspaces
      */
-    public function indexAction()
+    public function indexAction(): void
     {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
         $currentAccount = $this->securityContext->getAccount();
-        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(
-            WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier())
-        );
-        if (is_null($userWorkspace)) {
-            throw new \RuntimeException('Current user has no workspace', 1645485990);
-        }
+        $userWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
+        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
 
-        $workspacesAndCounts = [
-            $userWorkspace->workspaceName->value => [
-                'workspace' => $userWorkspace,
-                'changesCounts' => $this->computeChangesCount($userWorkspace, $contentRepository),
-                'canPublish' => false,
-                'canManage' => false,
-                'canDelete' => false,
-                'workspaceOwnerHumanReadable' => $userWorkspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($userWorkspace->workspaceOwner))?->getLabel() : null
-            ]
+        $workspaceData = [
+            $userWorkspace->workspaceName->value => $this->getWorkspaceInfo($userWorkspace, $contentRepository),
         ];
 
         foreach ($contentRepository->getWorkspaceFinder()->findAll() as $workspace) {
-            /** @var \Neos\ContentRepository\Core\Projection\Workspace\Workspace $workspace */
-            // FIXME: This check should be implemented through a specialized Workspace Privilege or something similar
-            if (!$workspace->isPersonalWorkspace() && ($workspace->isInternalWorkspace() || $this->domainUserService->currentUserCanManageWorkspace($workspace))) {
-                $workspaceName = $workspace->workspaceName->value;
-                $workspacesAndCounts[$workspaceName]['workspace'] = $workspace;
-                $workspacesAndCounts[$workspaceName]['changesCounts'] =
-                    $this->computeChangesCount($workspace, $contentRepository);
-                $workspacesAndCounts[$workspaceName]['canPublish']
-                    = $this->domainUserService->currentUserCanPublishToWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['canManage']
-                    = $this->domainUserService->currentUserCanManageWorkspace($workspace);
-                $workspacesAndCounts[$workspaceName]['dependentWorkspacesCount'] = count(
-                    $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspace->workspaceName)
+            if ($this->userCanAccessWorkspace($workspace)) {
+                $workspaceData[$workspace->workspaceName->value] = $this->getWorkspaceInfo(
+                    $workspace,
+                    $contentRepository
                 );
-                $workspacesAndCounts[$workspaceName]['workspaceOwnerHumanReadable'] = $workspace->workspaceOwner ? $this->domainUserService->findByUserIdentifier(UserId::fromString($workspace->workspaceOwner))?->getLabel() : null;
             }
         }
 
-        $this->view->assign('userWorkspace', $userWorkspace);
-        $this->view->assign('workspacesAndChangeCounts', $workspacesAndCounts);
+        $this->view->assignMultiple([
+            'userWorkspace' => $userWorkspace->workspaceName->value,
+            'baseWorkspaceOptions' => $this->prepareBaseWorkspaceOptions($contentRepository),
+            'userCanManageInternalWorkspaces' => $this->privilegeManager->isPrivilegeTargetGranted(
+                'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+            ),
+            'userList' => $this->prepareOwnerOptions(),
+            'workspaces' => $workspaceData,
+            'csrfToken' => $this->securityContext->getCsrfProtectionToken(),
+            'validation' => $this->settings['validation'],
+            'flashMessages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
+        ]);
     }
-
 
     public function showAction(WorkspaceName $workspace): void
     {
+        $this->validateWorkspaceAccess($workspace);
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -177,25 +176,14 @@ class WorkspacesController extends AbstractModuleController
         ]);
     }
 
-    public function newAction(): void
-    {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository));
-    }
-
     /**
-     * Create a workspace
+     * Create a workspace with a unique name
      *
      * @Flow\Validate(argumentName="title", type="\Neos\Flow\Validation\Validator\NotEmptyValidator")
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceName $baseWorkspace Workspace the new workspace should be based on
      * @param string $visibility Visibility of the new workspace, must be either "internal" or "shared"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @return void
-     * @throws \Neos\Flow\Mvc\Exception\StopActionException
      */
     public function createAction(
         WorkspaceTitle $title,
@@ -203,73 +191,76 @@ class WorkspacesController extends AbstractModuleController
         string $visibility,
         WorkspaceDescription $description,
     ): void {
+        $success = false;
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
 
-        $workspaceName = WorkspaceName::fromString(
-            WorkspaceName::transliterateFromString($title->value)->value . '-'
-            . substr(base_convert(microtime(false), 10, 36), -5, 5)
-        );
-        while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
-            $workspaceName = WorkspaceName::fromString(
-                WorkspaceName::transliterateFromString($title->value)->value . '-'
-                . substr(base_convert(microtime(false), 10, 36), -5, 5)
-            );
-        }
+        $newWorkspace = null;
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByTitle($title);
 
-        $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
-        if (is_null($currentUserIdentifier)) {
-            throw new \InvalidArgumentException('Cannot create workspace without a current user', 1652155039);
-        }
-
-        try {
-            $contentRepository->handle(
-                CreateWorkspace::create(
-                    $workspaceName,
-                    $baseWorkspace,
-                    $title,
-                    $description,
-                    ContentStreamId::create(),
-                    $visibility === 'private' ? $currentUserIdentifier : null
-                )
-            )->block();
-        } catch (WorkspaceAlreadyExists $exception) {
+        if ($workspace instanceof Workspace) {
             $this->addFlashMessage(
                 $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
                 '',
                 Message::SEVERITY_WARNING
             );
-            $this->redirect('new');
+        } else {
+            // If a workspace with the generated name already exists, try again with a new name
+            $workspaceName = WorkspaceName::fromString(
+                WorkspaceName::transliterateFromString($title->value)->value . '-'
+                . substr(base_convert(microtime(false), 10, 36), -5, 5)
+            );
+            while ($contentRepository->getWorkspaceFinder()->findOneByName($workspaceName) instanceof Workspace) {
+                $workspaceName = WorkspaceName::fromString(
+                    WorkspaceName::transliterateFromString($title->value)->value . '-'
+                    . substr(base_convert(microtime(false), 10, 36), -5, 5)
+                );
+            }
+
+            // The user should never be null at this point but the type system doesn't know that
+            $currentUserIdentifier = $this->domainUserService->getCurrentUserIdentifier();
+            if (is_null($currentUserIdentifier)) {
+                throw new \InvalidArgumentException('Cannot create workspace without a current user', 1652155039);
+            }
+
+            try {
+                $contentRepository->handle(
+                    CreateWorkspace::create(
+                        $workspaceName,
+                        $baseWorkspace,
+                        $title,
+                        $description,
+                        ContentStreamId::create(),
+                        ($visibility === 'private' || !$this->userCanManageInternalWorkspaces(
+                            )) ? $currentUserIdentifier : null
+                    )
+                )->block();
+
+                $newWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+                $this->addFlashMessage(
+                    $this->getModuleLabel(
+                        'message.workspaceCreated',
+                        ['workspaceName' => $newWorkspace->workspaceTitle?->value]
+                    ),
+                );
+                $success = true;
+            } catch (WorkspaceAlreadyExists) {
+                $this->addFlashMessage(
+                    $this->getModuleLabel('workspaces.workspaceWithThisTitleAlreadyExists'),
+                    '',
+                    Message::SEVERITY_WARNING
+                );
+            }
         }
 
-        $this->redirect('index');
-    }
-
-    /**
-     * Edit a workspace
-     */
-    public function editAction(WorkspaceName $workspaceName): void
-    {
-        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
-            ->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
-        if (is_null($workspace)) {
-            // @todo add flash message
-            $this->redirect('index');
-            return;
-        }
-        $this->view->assign('workspace', $workspace);
-        $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspace));
-        // TODO: $this->view->assign('disableBaseWorkspaceSelector',
-        // $this->publishingService->getUnpublishedNodesCount($workspace) > 0);
-        $this->view->assign(
-            'showOwnerSelector',
-            $this->domainUserService->currentUserCanTransferOwnershipOfWorkspace($workspace)
-        );
-        $this->view->assign('ownerOptions', $this->prepareOwnerOptions());
+        $this->view->assign('value', [
+            'success' => $success,
+            'messages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
+            'workspace' => $newWorkspace ? $this->getWorkspaceInfo($newWorkspace, $contentRepository) : [],
+            // Include a new list of base workspace options which might contain the new workspace depending on its visibility
+            'baseWorkspaceOptions' => $this->prepareBaseWorkspaceOptions($contentRepository),
+        ]);
     }
 
     /**
@@ -279,8 +270,7 @@ class WorkspacesController extends AbstractModuleController
      * @param WorkspaceName $workspaceName
      * @param WorkspaceTitle $title Human friendly title of the workspace, for example "Christmas Campaign"
      * @param WorkspaceDescription $description A description explaining the purpose of the new workspace
-     * @param string $workspaceOwner Id of the owner of the workspace
-     * @return void
+     * @param ?string $workspaceOwner Id of the owner of the workspace
      */
     public function updateAction(
         WorkspaceName $workspaceName,
@@ -288,6 +278,8 @@ class WorkspacesController extends AbstractModuleController
         WorkspaceDescription $description,
         ?string $workspaceOwner
     ): void {
+        $success = false;
+
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -303,54 +295,105 @@ class WorkspacesController extends AbstractModuleController
                 '',
                 Message::SEVERITY_ERROR
             );
-            $this->redirect('index');
-            return;
-        }
-
-        if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals($description)) {
-            $contentRepository->handle(
-                RenameWorkspace::create(
-                    $workspaceName,
-                    $title,
+        } elseif (!$this->validateWorkspaceChain($workspace, $contentRepository->getWorkspaceFinder())) {
+            $this->addFlashMessage(
+                $this->getModuleLabel(
+                    'error.invalidWorkspaceChain',
+                    ['workspaceName' => $workspace->workspaceTitle]
+                ),
+                '',
+                Message::SEVERITY_ERROR
+            );
+        } else {
+            if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals(
                     $description
-                )
-            )->block();
+                )) {
+                $contentRepository->handle(
+                    RenameWorkspace::create(
+                        $workspaceName,
+                        $title,
+                        $description
+                    )
+                )->block();
+            }
+
+            if ($workspace->workspaceOwner !== $workspaceOwner) {
+                $contentRepository->handle(
+                    ChangeWorkspaceOwner::create(
+                        $workspaceName,
+                        $workspaceOwner ?: null,
+                    )
+                )->block();
+            }
+
+            // TODO: Changing the base
+            // TODO: Check & Reimplement
+//            // Get or create workspace details
+//            $workspaceDetails = $this->workspaceDetailsRepository->findOneByWorkspace($workspace);
+//            if (!$workspaceDetails) {
+//                $workspaceDetails = new WorkspaceDetails($workspace);
+//                $this->workspaceDetailsRepository->add($workspaceDetails);
+//            }
+//
+//            // Update access control list
+//            $providedAcl = $this->request->hasArgument('acl') ? $this->request->getArgument('acl') ?? [] : [];
+//            $acl = $workspace->workspaceOwner ? $providedAcl : [];
+//            $allowedUsers = array_map(fn($userName) => $this->userRepository->findByIdentifier($userName), $acl);
+//
+//            // Rebase users if they were using the workspace but lost access by the update
+//            $allowedAccounts = array_map(static fn(User $user) => (string)$user->getAccounts()->first()->getAccountIdentifier(), $allowedUsers);
+//            $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+//            foreach ($workspaceDetails->getAcl() as $prevAcl) {
+//                $aclAccount = $prevAcl->getAccounts()->first()->getAccountIdentifier();
+//                if (!in_array($aclAccount, $allowedAccounts, true)) {
+//                    $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceNameBuilder::fromAccountIdentifier($aclAccount));
+//                    if ($userWorkspace && $userWorkspace->baseWorkspaceName->value === $workspace->workspaceName->value) {
+//                        $contentRepository->handle(
+//                            ChangeBaseWorkspace::create(
+//                                $userWorkspace->workspaceName,
+//                                $liveWorkspace->workspaceName,
+//                            )
+//                        );
+//                    }
+//                }
+//            }
+//
+//            // Update workspace details
+//            $workspaceDetails->setAcl($allowedUsers);
+//            $this->workspaceDetailsRepository->update($workspaceDetails);
+//            // TODO: Check if persist is still needed
+//            //$this->persistenceManager->persistAll();
+
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+            $this->addFlashMessage($this->getModuleLabel('workspaces.workspaceHasBeenUpdated', [$title->value]));
+            $success = true;
         }
 
-        if ($workspace->workspaceOwner !== $workspaceOwner) {
-            $contentRepository->handle(
-                ChangeWorkspaceOwner::create(
-                    $workspaceName,
-                    $workspaceOwner ?: null,
-                )
-            )->block();
-        }
-
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.workspaceHasBeenUpdated',
-            [$title->value],
-            null,
-            null,
-            'Modules',
-            'Neos.Neos'
-        ) ?: 'workspaces.workspaceHasBeenUpdated');
-        $this->redirect('index');
+        $this->view->assign('value', [
+            'success' => $success,
+            'messages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
+            'workspace' => $workspace ? $this->getWorkspaceInfo($workspace, $contentRepository) : [],
+            'baseWorkspaceOptions' => $this->prepareBaseWorkspaceOptions($contentRepository),
+        ]);
     }
 
     /**
-     * Delete a workspace
+     * Delete a workspace and all contained unpublished changes.
+     * Descendent workspaces will be rebased on the live workspace.
      *
-     * @param WorkspaceName $workspaceName A workspace to delete
-     * @throws IndexOutOfBoundsException
-     * @throws InvalidFormatPlaceholderException
-     * @throws StopActionException
      * @throws DBALException
+     * @Flow\SkipCsrfProtection
      */
     public function deleteAction(WorkspaceName $workspaceName): void
     {
+        $success = false;
+
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        /** @var Workspace[] $rebasedWorkspaces */
+        $rebasedWorkspaces = [];
 
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if ($workspace === null) {
@@ -359,88 +402,97 @@ class WorkspacesController extends AbstractModuleController
                 '',
                 Message::SEVERITY_ERROR
             );
-            $this->redirect('index');
-            return;
-        }
+        } elseif ($workspace->isPersonalWorkspace()) {
+            $this->addFlashMessage(
+                $this->getModuleLabel(
+                    'message.workspaceIsPersonal',
+                    ['workspaceName' => $workspace->workspaceTitle->value]
+                ),
+                '',
+                Message::SEVERITY_ERROR
+            );
+        } else {
+//            $liveWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
 
-        if ($workspace->isPersonalWorkspace()) {
-            $this->redirect('index');
-            return;
-        }
+            // Fetch and delete dependent workspaces for target workspace
+            $dependentWorkspaces = $contentRepository->getWorkspaceFinder()->findByBaseWorkspace(
+                $workspace->workspaceName
+            );
 
-        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()
-            ->findByBaseWorkspace($workspace->workspaceName);
-        if (count($dependentWorkspaces) > 0) {
-            $dependentWorkspaceTitles = [];
-            /** @var Workspace $dependentWorkspace */
-            foreach ($dependentWorkspaces as $dependentWorkspace) {
-                $dependentWorkspaceTitles[] = $dependentWorkspace->workspaceTitle->value;
-            }
+//            // TODO: Can we rebase a workspace with unpublished nodes? Will that be prone to rebase errors?
+//            // TODO: Adjust to new API
+//            foreach ($dependentWorkspaces as $dependentWorkspace) {
+//                $dependentWorkspace->setBaseWorkspace($liveWorkspace);
+//                //$this->workspaceRepository->update($dependentWorkspace);
+//                $this->addFlashMessage(
+//                    $this->translateById('message.workspaceRebased',
+//                        [
+//                            'dependentWorkspaceName' => $dependentWorkspace->getTitle(),
+//                            'workspaceName' => $workspace->getTitle(),
+//                        ]
+//                    )
+//                    , '', Message::SEVERITY_WARNING);
+//                $rebasedWorkspaces[] = $dependentWorkspace;
+//            }
 
-            $message = $this->translator->translateById(
-                'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
-                [$workspace->workspaceTitle->value, implode(', ', $dependentWorkspaceTitles)],
-                null,
-                null,
-                'Modules',
-                'Neos.Neos'
-            ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfDependencies';
-            $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
-            $this->redirect('index');
-        }
+            if (!empty($dependentWorkspaces)) {
+                $dependentWorkspaceTitles = array_map(static fn($workspace) => $workspace->workspaceName->value,
+                    $dependentWorkspaces);
 
-        $nodesCount = 0;
-
-        try {
-            $nodesCount = $contentRepository->projectionState(ChangeFinder::class)
-                ->countByContentStreamId(
-                    $workspace->currentContentStreamId
+                $this->addFlashMessage(
+                    $this->getModuleLabel(
+                        'workspaces.workspaceCannotBeDeletedBecauseOfDependencies',
+                        [$workspace->workspaceTitle?->value, implode(', ', $dependentWorkspaceTitles)]
+                    ),
+                    '',
+                    Message::SEVERITY_ERROR
                 );
-        } catch (\Exception $exception) {
-            $message = $this->translator->translateById(
-                'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes',
-                [$workspace->workspaceTitle->value],
-                null,
-                null,
-                'Modules',
-                'Neos.Neos'
-            ) ?: 'workspaces.notDeletedErrorWhileFetchingUnpublishedNodes';
-            $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
-            $this->redirect('index');
-        }
-        if ($nodesCount > 0) {
-            $message = $this->translator->translateById(
-                'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes',
-                [$workspace->workspaceTitle->value, $nodesCount],
-                $nodesCount,
-                null,
-                'Modules',
-                'Neos.Neos'
-            ) ?: 'workspaces.workspaceCannotBeDeletedBecauseOfUnpublishedNodes';
-            $this->addFlashMessage($message, '', Message::SEVERITY_WARNING);
-            $this->redirect('index');
+            } else {
+                /** @var ChangeFinder $changeFinder */
+                $changeFinder = $contentRepository->projectionState(ChangeFinder::class);
+                $unpublishedNodes = $changeFinder->countByContentStreamId($workspace->currentContentStreamId);
+
+                if ($unpublishedNodes > 0) {
+                    $contentRepository->handle(
+                        DiscardWorkspace::create($workspaceName)
+                    )->block();
+                }
+
+                $contentRepository->handle(
+                    DeleteWorkspace::create($workspaceName)
+                )->block();
+
+//                $workspaceDetails = $this->workspaceDetailsRepository->findOneByWorkspace($workspace);
+//                if ($workspaceDetails) {
+//                    $this->workspaceDetailsRepository->remove($workspaceDetails);
+//                }
+
+                $this->addFlashMessage(
+                    $this->getModuleLabel(
+                        'message.workspaceRemoved',
+                        [
+                            'workspaceName' => $workspace->workspaceTitle?->value,
+                            'unpublishedNodes' => $unpublishedNodes,
+                            'dependentWorkspaces' => 0,
+                        ]
+                    )
+                );
+                $success = true;
+            }
         }
 
-        $contentRepository->handle(
-            DeleteWorkspace::create(
-                $workspaceName,
-            )
-        )->block();
-
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.workspaceHasBeenRemoved',
-            [$workspace->workspaceTitle->value],
-            null,
-            null,
-            'Modules',
-            'Neos.Neos'
-        ) ?: 'workspaces.workspaceHasBeenRemoved');
-        $this->redirect('index');
+        $this->view->assign('value', [
+            'success' => $success,
+            'messages' => $this->controllerContext->getFlashMessageContainer()->getMessagesAndFlush(),
+            'rebasedWorkspaces' => array_map(static fn($workspace) => $workspace->workspaceName->value,
+                $rebasedWorkspaces),
+        ]);
     }
 
     /**
      * Rebase the current users personal workspace onto the given $targetWorkspace and then
      * redirects to the $targetNode in the content module.
+     * @throws StopActionException
      */
     public function rebaseAndRedirectAction(Node $targetNode, Workspace $targetWorkspace): void
     {
@@ -480,7 +532,6 @@ class WorkspacesController extends AbstractModuleController
         );
 
         $mainRequest = $this->controllerContext->getRequest()->getMainRequest();
-        /** @var ActionRequest $mainRequest */
         $this->uriBuilder->setRequest($mainRequest);
 
         if ($this->packageManager->isPackageAvailable('Neos.Neos.Ui')) {
@@ -502,9 +553,6 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * Publish a single node
-     *
-     * @param string $nodeAddress
-     * @param WorkspaceName $selectedWorkspace
      */
     public function publishNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
@@ -527,22 +575,21 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository->handle($command)
             ->block();
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.selectedChangeHasBeenPublished',
-            [],
-            null,
-            null,
-            'Modules',
-            'Neos.Neos'
-        ) ?: 'workspaces.selectedChangeHasBeenPublished');
+        $this->addFlashMessage(
+            $this->translator->translateById(
+                'workspaces.selectedChangeHasBeenPublished',
+                [],
+                null,
+                null,
+                'Modules',
+                'Neos.Neos'
+            ) ?: 'workspaces.selectedChangeHasBeenPublished'
+        );
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**
      * Discard a a single node
-     *
-     * @param string $nodeAddress
-     * @param WorkspaceName $selectedWorkspace
      */
     public function discardNodeAction(string $nodeAddress, WorkspaceName $selectedWorkspace): void
     {
@@ -565,26 +612,27 @@ class WorkspacesController extends AbstractModuleController
         $contentRepository->handle($command)
             ->block();
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.selectedChangeHasBeenDiscarded',
-            [],
-            null,
-            null,
-            'Modules',
-            'Neos.Neos'
-        ) ?: 'workspaces.selectedChangeHasBeenDiscarded');
+        $this->addFlashMessage(
+            $this->translator->translateById(
+                'workspaces.selectedChangeHasBeenDiscarded',
+                [],
+                null,
+                null,
+                'Modules',
+                'Neos.Neos'
+            ) ?: 'workspaces.selectedChangeHasBeenDiscarded'
+        );
         $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
     }
 
     /**
      * @psalm-param list<string> $nodes
-     * @throws IndexOutOfBoundsException
-     * @throws InvalidFormatPlaceholderException
      * @throws StopActionException
      */
     public function publishOrDiscardNodesAction(array $nodes, string $action, string $selectedWorkspace): void
     {
         $selectedWorkspace = WorkspaceName::fromString($selectedWorkspace);
+        $this->validateWorkspaceAccess($selectedWorkspace);
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -608,14 +656,7 @@ class WorkspacesController extends AbstractModuleController
                 );
                 $contentRepository->handle($command)
                     ->block();
-                $this->addFlashMessage($this->translator->translateById(
-                    'workspaces.selectedChangesHaveBeenPublished',
-                    [],
-                    null,
-                    null,
-                    'Modules',
-                    'Neos.Neos'
-                ) ?: 'workspaces.selectedChangesHaveBeenPublished');
+                $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangesHaveBeenPublished'));
                 break;
             case 'discard':
                 $command = DiscardIndividualNodesFromWorkspace::create(
@@ -624,14 +665,7 @@ class WorkspacesController extends AbstractModuleController
                 );
                 $contentRepository->handle($command)
                     ->block();
-                $this->addFlashMessage($this->translator->translateById(
-                    'workspaces.selectedChangesHaveBeenDiscarded',
-                    [],
-                    null,
-                    null,
-                    'Modules',
-                    'Neos.Neos'
-                ) ?: 'workspaces.selectedChangesHaveBeenDiscarded');
+                $this->addFlashMessage($this->getModuleLabel('workspaces.selectedChangesHaveBeenDiscarded'));
                 break;
             default:
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
@@ -642,42 +676,42 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * Publishes the whole workspace
+     * @throws StopActionException
      */
-    public function publishWorkspaceAction(WorkspaceName $workspace): void
+    public function publishWorkspaceAction(WorkspaceName $selectedWorkspace): void
     {
+        $this->validateWorkspaceAccess($selectedWorkspace);
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepository->handle(
             PublishWorkspace::create(
-                $workspace
+                $selectedWorkspace
             )
         )->block();
-        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($selectedWorkspace);
         /** @var Workspace $workspace Otherwise the command handler would have thrown an exception */
         /** @var WorkspaceName $baseWorkspaceName Otherwise the command handler would have thrown an exception */
         $baseWorkspaceName = $workspace->baseWorkspaceName;
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.allChangesInWorkspaceHaveBeenPublished',
-            [
-                htmlspecialchars($workspace->workspaceName->value),
-                htmlspecialchars($baseWorkspaceName->value)
-            ],
-            null,
-            null,
-            'Modules',
-            'Neos.Neos'
-        ) ?: 'workspaces.allChangesInWorkspaceHaveBeenPublished');
+        $this->addFlashMessage(
+            $this->getModuleLabel(
+                'workspaces.allChangesInWorkspaceHaveBeenPublished',
+                [
+                    htmlspecialchars($selectedWorkspace->value),
+                    htmlspecialchars($baseWorkspaceName->value)
+                ]
+            )
+        );
         $this->redirect('index');
     }
 
     /**
      * Discards content of the whole workspace
-     *
-     * @param WorkspaceName $workspace
+     * @throws StopActionException
      */
     public function discardWorkspaceAction(WorkspaceName $workspace): void
     {
+        $this->validateWorkspaceAccess($workspace);
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -687,15 +721,38 @@ class WorkspacesController extends AbstractModuleController
             )
         )->block();
 
-        $this->addFlashMessage($this->translator->translateById(
-            'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
-            [htmlspecialchars($workspace->value)],
-            null,
-            null,
-            'Modules',
-            'Neos.Neos'
-        ) ?: 'workspaces.allChangesInWorkspaceHaveBeenDiscarded');
+        $this->addFlashMessage(
+            $this->getModuleLabel(
+                'workspaces.allChangesInWorkspaceHaveBeenDiscarded',
+                [htmlspecialchars($workspace->value)],
+            )
+        );
         $this->redirect('index');
+    }
+
+    public function getChangesAction(): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $currentAccount = $this->securityContext->getAccount();
+        $userWorkspaceName = WorkspaceNameBuilder::fromAccountIdentifier($currentAccount->getAccountIdentifier());
+        $userWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
+
+        $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
+
+        $changesByWorkspace = [
+            $userWorkspace->workspaceName->value => $this->computeChangesCount($userWorkspace, $contentRepository),
+        ];
+        foreach ($workspaces as $workspace) {
+            if ($this->userCanAccessWorkspace($workspace)) {
+                $changesByWorkspace[$workspace->workspaceName->value] = $this->computeChangesCount(
+                    $workspace,
+                    $contentRepository
+                );
+            }
+        }
+
+        $this->view->assign('value', ['changesByWorkspace' => $changesByWorkspace]);
     }
 
     /**
@@ -792,16 +849,26 @@ class WorkspacesController extends AbstractModuleController
                     $siteNodeName = $siteNode->nodeName->value;
                     // Reverse `$documentPathSegments` to start with the site node.
                     // The paths are used for grouping the nodes and for selecting a tree of nodes.
-                    $documentPath = implode('/', array_reverse(array_map(
-                        fn (NodeName $nodeName): string => $nodeName->value,
-                        $documentPathSegments
-                    )));
+                    $documentPath = implode(
+                        '/',
+                        array_reverse(
+                            array_map(
+                                fn(NodeName $nodeName): string => $nodeName->value,
+                                $documentPathSegments
+                            )
+                        )
+                    );
                     // Reverse `$nodePathSegments` to start with the site node.
                     // The paths are used for grouping the nodes and for selecting a tree of nodes.
-                    $relativePath = implode('/', array_reverse(array_map(
-                        fn (NodeName $nodeName): string => $nodeName->value,
-                        $nodePathSegments
-                    )));
+                    $relativePath = implode(
+                        '/',
+                        array_reverse(
+                            array_map(
+                                fn(NodeName $nodeName): string => $nodeName->value,
+                                $nodePathSegments
+                            )
+                        )
+                    );
                     if (!isset($siteChanges[$siteNodeName]['siteNode'])) {
                         $siteChanges[$siteNodeName]['siteNode']
                             = $this->siteRepository->findOneByNodeName(SiteNodeName::fromString($siteNodeName));
@@ -869,9 +936,7 @@ class WorkspacesController extends AbstractModuleController
             $modifiedNode->subgraphIdentity->dimensionSpacePoint,
             VisibilityConstraints::withoutRestrictions()
         );
-        $node = $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
-
-        return $node;
+        return $baseSubgraph->findNodeById($modifiedNode->nodeAggregateId);
     }
 
     /**
@@ -903,7 +968,7 @@ class WorkspacesController extends AbstractModuleController
         $renderer = new HtmlArrayRenderer();
         foreach ($changedNode->properties as $propertyName => $changedPropertyValue) {
             if (
-                $originalNode === null && empty($changedPropertyValue)
+                ($originalNode === null && empty($changedPropertyValue))
                 || (
                     isset($changeNodePropertiesDefaults[$propertyName])
                     && $changedPropertyValue === $changeNodePropertiesDefaults[$propertyName]
@@ -990,11 +1055,8 @@ class WorkspacesController extends AbstractModuleController
      * Note: It's clear that this method needs to be extracted and moved to a more universal service at some point.
      * However, since we only implemented diff-view support for this particular controller at the moment, it stays
      * here for the time being. Once we start displaying diffs elsewhere, we should refactor the diff rendering part.
-     *
-     * @param mixed $propertyValue
-     * @return string
      */
-    protected function renderSlimmedDownContent($propertyValue)
+    protected function renderSlimmedDownContent(mixed $propertyValue): string
     {
         $content = '';
         if (is_string($propertyValue)) {
@@ -1008,12 +1070,8 @@ class WorkspacesController extends AbstractModuleController
 
     /**
      * Tries to determine a label for the specified property
-     *
-     * @param string $propertyName
-     * @param Node $changedNode
-     * @return string
      */
-    protected function getPropertyLabel($propertyName, Node $changedNode)
+    protected function getPropertyLabel(string $propertyName, Node $changedNode): string
     {
         $properties = $this->getNodeType($changedNode)->getProperties();
         if (
@@ -1033,7 +1091,6 @@ class WorkspacesController extends AbstractModuleController
      * do that in these cases.
      *
      * @param array<int|string,mixed> &$diffArray
-     * @return void
      */
     protected function postProcessDiffArray(array &$diffArray): void
     {
@@ -1060,8 +1117,6 @@ class WorkspacesController extends AbstractModuleController
      * workspaces.
      * If $excludedWorkspace is set, this workspace and all its child workspaces will be excluded from the list of returned workspaces
      *
-     * @param ContentRepository $contentRepository
-     * @param Workspace|null $excludedWorkspace
      * @return array<string,?string>
      */
     protected function prepareBaseWorkspaceOptions(
@@ -1071,19 +1126,21 @@ class WorkspacesController extends AbstractModuleController
         $baseWorkspaceOptions = [];
         $workspaces = $contentRepository->getWorkspaceFinder()->findAll();
         foreach ($workspaces as $workspace) {
-
-            /** @var Workspace $workspace */
             if (
-                !$workspace->isPersonalWorkspace()
-                && $workspace !== $excludedWorkspace
+                $workspace !== $excludedWorkspace
+                && !$workspace->isPersonalWorkspace()
                 && ($workspace->isPublicWorkspace()
                     || $workspace->isInternalWorkspace()
                     || $this->domainUserService->currentUserCanManageWorkspace($workspace))
-                && (!$excludedWorkspace || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get($excludedWorkspace->workspaceName) === null)
+                && (!$excludedWorkspace
+                    || $workspaces->getBaseWorkspaces($workspace->workspaceName)->get(
+                        $excludedWorkspace->workspaceName
+                    ) === null)
             ) {
                 $baseWorkspaceOptions[$workspace->workspaceName->value] = $workspace->workspaceTitle->value;
             }
         }
+        asort($baseWorkspaceOptions, SORT_FLAG_CASE | SORT_NATURAL);
 
         return $baseWorkspaceOptions;
     }
@@ -1100,6 +1157,7 @@ class WorkspacesController extends AbstractModuleController
             /** @var User $user */
             $ownerOptions[$this->persistenceManager->getIdentifierByObject($user)] = $user->getLabel();
         }
+        asort($ownerOptions, SORT_FLAG_CASE | SORT_NATURAL);
 
         return $ownerOptions;
     }
@@ -1114,5 +1172,136 @@ class WorkspacesController extends AbstractModuleController
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($baseWorkspaceName);
 
         return $baseWorkspace;
+    }
+
+    protected function getWorkspaceInfo(Workspace $workspace, ContentRepository $contentRepository): array
+    {
+        $owner = $workspace->workspaceOwner ?
+            $this->domainUserService->findByUserIdentifier(UserId::fromString($workspace->workspaceOwner)) :
+            null;
+        $creator = $creatorName = $lastChangedDate = $lastChangedBy = $lastChangedTimestamp = $isStale = null;
+        $acl = [];
+
+        if ($owner && $workspace->isPrivateWorkspace()) {
+            $creator = $owner;
+            $creatorName = $owner->getLabel();
+        }
+
+//        $workspaceDetails = $this->workspaceDetailsRepository->findOneByWorkspace($workspace);
+//        if ($workspaceDetails) {
+//            $creator = $workspaceDetails->getCreator();
+//            if ($creator) {
+//                $creatorUser = $this->userService->getUser($creator);
+//                $creatorName = $creatorUser ? $creatorUser->getLabel() : $creator;
+//            }
+//            $isStale = !$workspace->isPersonalWorkspace() && $workspaceDetails->getLastChangedDate() && $workspaceDetails->getLastChangedDate()->getTimestamp() < time() - $this->settings['staleTime'];
+//
+//            if ($workspaceDetails->getLastChangedBy()) {
+//                $lastChangedBy = $this->userService->getUser($workspaceDetails->getLastChangedBy());
+//            }
+//            $lastChangedDate = $workspaceDetails->getLastChangedDate() ? $workspaceDetails->getLastChangedDate()->format('c') : null;
+//            $lastChangedTimestamp = $workspaceDetails->getLastChangedDate() ? $workspaceDetails->getLastChangedDate()->getTimestamp() : null;
+//            $acl = $workspaceDetails->getAcl() ?? [];
+//        }
+
+        $baseWorkspace = null;
+        if ($workspace->baseWorkspaceName !== null) {
+            $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace->baseWorkspaceName);
+        }
+
+        // TODO: Introduce a DTO for this
+        return [
+            'name' => $workspace->workspaceName->value,
+            'title' => $workspace->workspaceTitle?->value ?: '',
+            'description' => $workspace->workspaceDescription,
+            'owner' => $owner ? [
+                'id' => $workspace->workspaceOwner,
+                'label' => $owner->getLabel(),
+            ] : null,
+            'baseWorkspace' => $baseWorkspace ? [
+                'name' => $baseWorkspace->workspaceName->value,
+                'title' => $baseWorkspace->workspaceTitle?->value ?: '',
+            ] : null,
+            //'nodeCount' => $workspace->getNodeCount(),
+            'nodeCount' => 0,
+            'changesCounts' => null, // Will be retrieved async by the UI to speed up module loading time
+            'isPersonal' => $workspace->isPersonalWorkspace(),
+            'isInternal' => $workspace->isInternalWorkspace(),
+            'isStale' => $isStale,
+            'canPublish' => $this->domainUserService->currentUserCanPublishToWorkspace($workspace),
+            'canManage' => $this->domainUserService->currentUserCanManageWorkspace($workspace),
+            //'dependentWorkspacesCount' => count($this->workspaceRepository->findByBaseWorkspace($workspace)),
+            'dependentWorkspacesCount' => 0,
+            'creator' => $creator ? [
+                'id' => $creator,
+                'label' => $creatorName,
+            ] : null,
+            'lastChangedDate' => $lastChangedDate,
+            'lastChangedTimestamp' => $lastChangedTimestamp,
+            'lastChangedBy' => $lastChangedBy ? [
+                'id' => $this->getUserId($lastChangedBy),
+                'label' => $lastChangedBy->getLabel(),
+            ] : null,
+            'acl' => array_map(fn(User $user) => [
+                'id' => $this->getUserId($user),
+                'label' => $user->getLabel(),
+            ], $acl),
+        ];
+    }
+
+    /**
+     * Checks whether the current user can access the given workspace.
+     * The check via the `userService` is modified via an aspect to allow access to the workspace if the
+     * workspace is specifically allowed for the user.
+     */
+    protected function userCanAccessWorkspace(Workspace $workspace): bool
+    {
+        return !$workspace->workspaceName->isLive() && ($workspace->isInternalWorkspace(
+                ) || $this->domainUserService->currentUserCanReadWorkspace($workspace));
+    }
+
+    private function userCanManageInternalWorkspaces(): bool
+    {
+        return $this->privilegeManager->isPrivilegeTargetGranted(
+            'Neos.Neos:Backend.Module.Management.Workspaces.ManageInternalWorkspaces'
+        );
+    }
+
+    /**
+     * @throws StopActionException
+     */
+    protected function validateWorkspaceAccess(WorkspaceName $workspaceName = null): void
+    {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
+
+        if ($workspace && !$this->userCanAccessWorkspace($workspace)) {
+            $this->getModuleLabel('error.workspaceInaccessible', ['workspaceName' => $workspaceName->value]);
+            $this->redirect('index');
+        }
+    }
+
+    /**
+     * Checks whether a workspace base workspace chain can be fully resolved without circular references
+     */
+    protected function validateWorkspaceChain(Workspace $workspace, WorkspaceFinder $workspaceFinder): bool
+    {
+        $baseWorkspaces = [$workspace->workspaceName->value];
+        $currentWorkspace = $workspace;
+        while ($currentWorkspace->baseWorkspaceName && $currentWorkspace = $workspaceFinder->findOneByName(
+                $currentWorkspace->baseWorkspaceName
+            )) {
+            if (in_array($currentWorkspace->workspaceName->value, $baseWorkspaces, true)) {
+                return false;
+            }
+            $baseWorkspaces[] = $currentWorkspace->workspaceName->value;
+        }
+        return true;
+    }
+
+    protected function getUserId(User $user): string
+    {
+        return $this->persistenceManager->getIdentifierByObject($user);
     }
 }
