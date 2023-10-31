@@ -62,7 +62,7 @@ prototype(Neos.Neos:Shortcut) < prototype(Neos.Fusion:Component) {
 
     parentNode = Neos.Fusion:Value {
       targetUriTag = Neos.Neos:NodeLink {
-        node = ${props.node.parent}
+        node = ${q(node).parent().get(0)}
       }
       value = ${props.i18n.id('shortcut.clickToContinueToParentNode').arguments([this.targetUriTag]).translate()}
     }
