@@ -233,7 +233,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
         $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::fromArray([]);
+        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
         $node = new NodeRecord(
             $nodeRelationAnchorPoint,
             $event->nodeAggregateId,
@@ -272,7 +272,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ->getAnchorPointForNodeAndOriginDimensionSpacePointAndContentStream(
                 $event->nodeAggregateId,
                 /** the origin DSP of the root node is always the empty dimension ({@see whenRootNodeAggregateWithNodeWasCreated}) */
-                OriginDimensionSpacePoint::fromArray([]),
+                OriginDimensionSpacePoint::createWithoutDimensions(),
                 $event->contentStreamId
             );
         if ($rootNodeAnchorPoint === null) {
