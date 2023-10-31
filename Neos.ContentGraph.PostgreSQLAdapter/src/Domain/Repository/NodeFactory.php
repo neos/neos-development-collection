@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -92,6 +93,8 @@ final class NodeFactory
                 $this->propertyConverter
             ),
             $nodeRow['nodename'] ? NodeName::fromString($nodeRow['nodename']) : null,
+            // TODO implement {@see \Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory::mapNodeRowToNode()}
+            SubtreeTagsWithInherited::createEmpty(),
             Timestamps::create(
                 // TODO replace with $nodeRow['created'] and $nodeRow['originalcreated'] once projection has implemented support
                 self::parseDateTimeString('2023-03-17 12:00:00'),

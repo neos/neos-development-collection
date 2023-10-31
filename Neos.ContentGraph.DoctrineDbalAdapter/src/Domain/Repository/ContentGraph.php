@@ -123,7 +123,7 @@ final class ContentGraph implements ContentGraphInterface
     ): NodeAggregates {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT n.*, h.contentstreamid, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
+        $query = 'SELECT n.*, h.contentstreamid, h.name, h.subtreetags, h.dimensionspacepoint AS covereddimensionspacepoint
                     FROM ' . $this->tableNamePrefix . '_node n
                         JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                             ON h.childnodeanchor = n.relationanchorpoint
@@ -159,7 +159,7 @@ final class ContentGraph implements ContentGraphInterface
     ): iterable {
         $connection = $this->client->getConnection();
 
-        $query = 'SELECT n.*, h.contentstreamid, h.name, h.dimensionspacepoint AS covereddimensionspacepoint
+        $query = 'SELECT n.*, h.contentstreamid, h.name, h.subtreetags, h.dimensionspacepoint AS covereddimensionspacepoint
                 FROM ' . $this->tableNamePrefix . '_node n
                     JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
                         ON h.childnodeanchor = n.relationanchorpoint
@@ -190,7 +190,7 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*,
-                      h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
+                      h.name, h.subtreetags, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_hierarchyrelation h
                       JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = h.childnodeanchor
@@ -226,7 +226,7 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $query = 'SELECT p.*,
-                      ph.name, ph.contentstreamid, ph.dimensionspacepoint AS covereddimensionspacepoint,
+                      ph.name, ph.subtreetags, ph.contentstreamid, ph.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph
@@ -267,7 +267,7 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $query = 'SELECT n.*,
-                      h.name, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
+                      h.name, h.subtreetags, h.contentstreamid, h.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node n
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
@@ -387,7 +387,7 @@ final class ContentGraph implements ContentGraphInterface
     private function createChildNodeAggregateQuery(): string
     {
         return 'SELECT c.*,
-                      ch.name, ch.contentstreamid, ch.dimensionspacepoint AS covereddimensionspacepoint,
+                      ch.name, ch.subtreetags, ch.contentstreamid, ch.dimensionspacepoint AS covereddimensionspacepoint,
                       r.dimensionspacepointhash AS disableddimensionspacepointhash
                       FROM ' . $this->tableNamePrefix . '_node p
                       JOIN ' . $this->tableNamePrefix . '_hierarchyrelation ph

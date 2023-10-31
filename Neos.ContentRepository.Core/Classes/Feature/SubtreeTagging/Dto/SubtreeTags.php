@@ -59,6 +59,16 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
         return array_map(static fn (SubtreeTag $tag) => $tag->value, $this->tags);
     }
 
+    public function contain(SubtreeTag $tag): bool
+    {
+        foreach ($this->tags as $containedTag) {
+            if ($containedTag->equals($tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * @return array<SubtreeTag>
      */

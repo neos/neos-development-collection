@@ -33,6 +33,7 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -109,6 +110,7 @@ final class NodeSubjectProvider
                 $this->propertyConverter
             ),
             $nodeName,
+            SubtreeTagsWithInherited::createEmpty(),
             Timestamps::create(
                 new \DateTimeImmutable(),
                 new \DateTimeImmutable(),

@@ -21,11 +21,11 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 
 /**
- * The node disabling feature set for the hypergraph projector
+ * The subtree tagging feature set for the hypergraph projector
  *
  * @internal
  */
-trait Tagging
+trait SubtreeTagging
 {
     /**
      * @throws \Throwable

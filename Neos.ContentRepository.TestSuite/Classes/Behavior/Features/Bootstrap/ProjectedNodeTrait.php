@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap;
 
 use Behat\Gherkin\Node\TableNode;
 use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindPrecedingSiblingNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFilter;
@@ -95,6 +96,7 @@ trait ProjectedNodeTrait
             return $currentNodeAggregate->getNodeByOccupiedDimensionSpacePoint($nodeDiscriminator->originDimensionSpacePoint);
         });
     }
+
 
     /**
      * @Then /^I expect node aggregate identifier "([^"]*)" to lead to node (.*)$/
@@ -193,6 +195,36 @@ trait ProjectedNodeTrait
     {
         $this->iExpectNodeAggregateIdToLeadToNoNode($serializedNodeAggregateId);
         $this->iExpectPathToLeadToNoNode($serializedNodePath);
+    }
+
+    /**
+     * @Then /^I expect the node with aggregate identifier "([^"]*)" to be explicitly tagged "([^"]*)"$/
+     */
+    public function iExpectTheNodeWithAggregateIdentifierToBeExplicitlyTagged(string $serializedNodeAggregateId, string $serializedTag): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $expectedTag = SubtreeTag::fromString($serializedTag);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
+            $currentNode = $subgraph->findNodeById($nodeAggregateId);
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertTrue($currentNode->tags->tags->contain($expectedTag));
+            return $currentNode;
+        });
+    }
+
+    /**
+     * @Then /^I expect the node with aggregate identifier "([^"]*)" to inherit the tag "([^"]*)"$/
+     */
+    public function iExpectTheNodeWithAggregateIdentifierToInheritTheTag(string $serializedNodeAggregateId, string $serializedTag): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $expectedTag = SubtreeTag::fromString($serializedTag);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
+            $currentNode = $subgraph->findNodeById($nodeAggregateId);
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertTrue($currentNode->tags->inheritedTags->contain($expectedTag));
+            return $currentNode;
+        });
     }
 
     protected function initializeCurrentNodeFromContentGraph(callable $query): void

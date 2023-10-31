@@ -45,6 +45,7 @@ final readonly class Node
      * @param NodeType|null $nodeType The node's node type, null if unknown to the NodeTypeManager - @deprecated Don't rely on this too much, as the capabilities of the NodeType here will probably change a lot; Ask the {@see NodeTypeManager} instead
      * @param PropertyCollection $properties All properties of this node. References are NOT part of this API; To access references, {@see ContentSubgraphInterface::findReferences()} can be used; To read the serialized properties, call properties->serialized().
      * @param NodeName|null $nodeName The optional name of this node {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}
+     * @param SubtreeTagsWithInherited $tags explicit and inherited SubtreeTags of this node
      * @param Timestamps $timestamps Creation and modification timestamps of this node
      */
     private function __construct(
@@ -56,6 +57,7 @@ final readonly class Node
         public ?NodeType $nodeType,
         public PropertyCollection $properties,
         public ?NodeName $nodeName,
+        public SubtreeTagsWithInherited $tags,
         public Timestamps $timestamps,
     ) {
     }
@@ -63,9 +65,9 @@ final readonly class Node
     /**
      * @internal The signature of this method can change in the future!
      */
-    public static function create(ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, Timestamps $timestamps): self
+    public static function create(ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, SubtreeTagsWithInherited $tags, Timestamps $timestamps): self
     {
-        return new self($subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $timestamps);
+        return new self($subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $tags, $timestamps);
     }
 
     /**

@@ -90,6 +90,8 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table->addColumn('childnodeanchor', Types::STRING)
             ->setLength(255)
             ->setNotnull(true);
+        $table->addColumn('subtreetags', Types::JSON)
+            ->setDefault('{}');
         $table
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamid'])

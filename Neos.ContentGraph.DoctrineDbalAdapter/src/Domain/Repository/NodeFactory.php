@@ -17,10 +17,12 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Reference;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
@@ -52,7 +54,8 @@ final class NodeFactory
         private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly PropertyConverter $propertyConverter
-    ) {
+    )
+    {
     }
 
     /**
@@ -81,12 +84,31 @@ final class NodeFactory
             $nodeType,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
+            self::extractSubtreeTagsWithInheritedFromNodeRow($nodeRow['subtreetags']),
             Timestamps::create(
                 self::parseDateTimeString($nodeRow['created']),
                 self::parseDateTimeString($nodeRow['originalcreated']),
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
+        );
+    }
+
+    private static function extractSubtreeTagsWithInheritedFromNodeRow(string $subtreeTagsJson): SubtreeTagsWithInherited
+    {
+        $explicitTags = [];
+        $inheritedTags = [];
+        $subtreeTagsArray = json_decode($subtreeTagsJson, true, 512, JSON_THROW_ON_ERROR);
+        foreach ($subtreeTagsArray as $tagValue => $explicit) {
+            if ($explicit) {
+                $explicitTags[] = $tagValue;
+            } else {
+                $inheritedTags[] = $tagValue;
+            }
+        }
+        return SubtreeTagsWithInherited::create(
+            tags: SubtreeTags::fromStringArray($explicitTags),
+            inheritedTags: SubtreeTags::fromStringArray($inheritedTags)
         );
     }
 

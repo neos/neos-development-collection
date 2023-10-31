@@ -19,7 +19,7 @@ use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
-use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\Tagging;
+use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeModification;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeReferencing;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeRemoval;
@@ -62,7 +62,7 @@ final class HypergraphProjection implements ProjectionInterface
 {
     use ContentStreamForking;
     use NodeCreation;
-    use Tagging;
+    use SubtreeTagging;
     use NodeModification;
     use NodeReferencing;
     use NodeRemoval;
@@ -156,7 +156,7 @@ final class HypergraphProjection implements ProjectionInterface
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class,
             NodeAggregateWithNodeWasCreated::class,
-            // Tagging
+            // SubtreeTagging
             SubtreeWasTagged::class,
             SubtreeWasUntagged::class,
             // NodeModification
@@ -189,7 +189,7 @@ final class HypergraphProjection implements ProjectionInterface
             // NodeCreation
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
-            // Tagging
+            // SubtreeTagging
             SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
             SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             // NodeModification

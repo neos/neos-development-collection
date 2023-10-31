@@ -8,7 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Types\Types;
-use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\Tagging;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\SubtreeTagging;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeRemoval;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeVariation;
@@ -67,8 +67,7 @@ use Neos\EventStore\Model\EventStore\SetupResult;
 final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     use NodeVariation;
-    use Tagging;
-    use RestrictionRelations;
+    use SubtreeTagging;
     use NodeRemoval;
     use NodeMove;
 
