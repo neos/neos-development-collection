@@ -47,9 +47,9 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\NodeVariation;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\CreateRootNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeAggregateDimensions;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\SubtreeTagging;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -138,8 +138,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            AddSubtreeTag::class => $this->handleAddSubtreeTag($command, $contentRepository),
-            RemoveSubtreeTag::class => $this->handleRemoveSubtreeTag($command, $contentRepository),
+            TagSubtree::class => $this->handleAddSubtreeTag($command, $contentRepository),
+            UntagSubtreeTag::class => $this->handleRemoveSubtreeTag($command, $contentRepository),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
         };
     }

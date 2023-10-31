@@ -41,8 +41,8 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -171,8 +171,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodePeerVariantWasCreated::class,
-            SubtreeTagWasAdded::class,
-            SubtreeTagWasRemoved::class,
+            SubtreeWasTagged::class,
+            SubtreeWasUntagged::class,
         ]);
     }
 
@@ -195,8 +195,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event, $eventEnvelope),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event, $eventEnvelope),
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event, $eventEnvelope),
-            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
-            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
         };
     }

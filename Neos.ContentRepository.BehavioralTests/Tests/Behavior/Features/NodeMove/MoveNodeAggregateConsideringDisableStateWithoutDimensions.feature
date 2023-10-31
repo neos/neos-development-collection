@@ -77,7 +77,7 @@ Feature: Move a node aggregate considering disable state but without content dim
     And the graph projection is fully up to date
 
   Scenario: Move a node disabled by one of its ancestors to a new parent that is enabled
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
@@ -102,7 +102,7 @@ Feature: Move a node aggregate considering disable state but without content dim
     And I expect this node to be a child of node cs-identifier;sir-nodeward-nodington-iii;{}
 
   Scenario: Move a node disabled by itself to a new parent that is enabled
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value              |
       | contentStreamId      | "cs-identifier"    |
       | nodeAggregateId      | "nody-mc-nodeface" |
@@ -124,7 +124,7 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document" to lead to no node
 
   Scenario: Move a node that disables one of its descendants to a new parent that is enabled
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
@@ -147,13 +147,13 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by one of its ancestors to a new parent that disables itself
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"               |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -175,13 +175,13 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by itself to a new parent that disables itself
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"               |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -202,7 +202,7 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to no node
 
   Scenario: Move a node that is enabled to a new parent that disables itself
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -223,13 +223,13 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/document" to lead to no node
 
   Scenario: Move a node that disables any of its descendants to a new parent that disables itself
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"               |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -251,13 +251,13 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/document/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by one of its ancestors to a new parent that is disabled by one of its ancestors
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"               |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -278,13 +278,13 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/child-document" to lead to no node
 
   Scenario: Move a node that is disabled by itself to a new parent that is disabled by one of its ancestors
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"               |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -305,13 +305,13 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "sir-david-nodenborough" and node path "esquire/esquire-child/document" to lead to no node
 
   Scenario: Move a node that disables any of its descendants to a new parent that is disabled by one of its ancestors
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId      | "cs-identifier"          |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | affectedDimensionSpacePoints | [{}]                     |
       | tag                  | "disabled"               |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
@@ -333,7 +333,7 @@ Feature: Move a node aggregate considering disable state but without content dim
     Then I expect node aggregate identifier "nody-mc-nodeface" and node path "esquire/esquire-child/document/child-document" to lead to no node
 
   Scenario: Move a node that is enabled to a new parent that is disabled by one of its ancestors
-    Given the event SubtreeTagWasAdded was published with payload:
+    Given the event SubtreeWasTagged was published with payload:
       | Key                          | Value                        |
       | contentStreamId      | "cs-identifier"              |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |

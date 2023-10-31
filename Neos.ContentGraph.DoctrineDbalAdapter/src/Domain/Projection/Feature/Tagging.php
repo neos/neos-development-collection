@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 
 /**
  * The Tagging projection feature trait
@@ -20,7 +20,7 @@ trait Tagging
     /**
      * @throws \Throwable
      */
-    private function whenSubtreeTagWasAdded(SubtreeTagWasAdded $event): void
+    private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         $this->transactional(function () use ($event) {
 
@@ -29,7 +29,7 @@ trait Tagging
             // normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeStatement(
                 '
--- GraphProjector::whenSubtreeTagWasAdded
+-- GraphProjector::whenSubtreeWasTagged
 insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid)
 
@@ -92,7 +92,7 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     /**
      * @throws \Throwable
      */
-    private function whenSubtreeTagWasRemoved(SubtreeTagWasRemoved $event): void
+    private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         $this->transactional(function () use ($event) {
             $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(

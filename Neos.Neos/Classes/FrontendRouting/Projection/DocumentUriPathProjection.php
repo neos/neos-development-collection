@@ -27,8 +27,8 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateDimensionsWereUpdated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -122,8 +122,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             NodePeerVariantWasCreated::class,
             NodeGeneralizationVariantWasCreated::class,
             NodeSpecializationVariantWasCreated::class,
-            SubtreeTagWasAdded::class,
-            SubtreeTagWasRemoved::class,
+            SubtreeWasTagged::class,
+            SubtreeWasUntagged::class,
             NodeAggregateWasRemoved::class,
             NodePropertiesWereSet::class,
             NodeAggregateWasMoved::class,
@@ -143,8 +143,8 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             NodePeerVariantWasCreated::class => $this->whenNodePeerVariantWasCreated($event),
             NodeGeneralizationVariantWasCreated::class => $this->whenNodeGeneralizationVariantWasCreated($event),
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
-            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
-            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event, $eventEnvelope),
             NodeAggregateWasMoved::class => $this->whenNodeAggregateWasMoved($event),
@@ -423,7 +423,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
-    private function whenSubtreeTagWasAdded(SubtreeTagWasAdded $event): void
+    private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;
@@ -454,7 +454,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         }
     }
 
-    private function whenSubtreeTagWasRemoved(SubtreeTagWasRemoved $event): void
+    private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         if (!$this->getState()->isLiveContentStream($event->contentStreamId)) {
             return;

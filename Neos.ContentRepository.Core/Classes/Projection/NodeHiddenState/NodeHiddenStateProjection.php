@@ -22,8 +22,8 @@ use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionSpacePointWasMoved;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -102,8 +102,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
     public function canHandle(EventInterface $event): bool
     {
         return in_array($event::class, [
-            SubtreeTagWasAdded::class,
-            SubtreeTagWasRemoved::class,
+            SubtreeWasTagged::class,
+            SubtreeWasUntagged::class,
             ContentStreamWasForked::class,
             DimensionSpacePointWasMoved::class
         ]);
@@ -112,8 +112,8 @@ class NodeHiddenStateProjection implements ProjectionInterface
     public function apply(EventInterface $event, EventEnvelope $eventEnvelope): void
     {
         match ($event::class) {
-            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
-            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             ContentStreamWasForked::class => $this->whenContentStreamWasForked($event),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             default => throw new \InvalidArgumentException(sprintf('Unsupported event %s', get_debug_type($event))),
@@ -137,7 +137,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
     }
 
 
-    private function whenSubtreeTagWasAdded(SubtreeTagWasAdded $event): void
+    private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         $this->transactional(function () use ($event) {
             foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
@@ -160,7 +160,7 @@ class NodeHiddenStateProjection implements ProjectionInterface
         });
     }
 
-    private function whenSubtreeTagWasRemoved(SubtreeTagWasRemoved $event): void
+    private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         $this->getDatabaseConnection()->executeQuery(
             '

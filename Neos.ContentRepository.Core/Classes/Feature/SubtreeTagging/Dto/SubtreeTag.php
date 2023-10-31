@@ -12,7 +12,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Tagging\Dto;
+namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
 
 /**
  * A tag that can be added to Node aggregates that is inherited by all its descendants

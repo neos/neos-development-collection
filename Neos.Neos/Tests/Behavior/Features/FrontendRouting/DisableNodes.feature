@@ -165,7 +165,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
@@ -197,7 +197,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                   |
       | contentStreamId              | "cs-identifier"         |
       | nodeAggregateId              | "earl-o-documentbourgh" |
@@ -214,7 +214,7 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |

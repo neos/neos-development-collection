@@ -31,8 +31,8 @@ use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemove
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
@@ -168,8 +168,8 @@ class ChangeProjection implements ProjectionInterface
             NodePropertiesWereSet::class,
             NodeReferencesWereSet::class,
             NodeAggregateWithNodeWasCreated::class,
-            SubtreeTagWasAdded::class,
-            SubtreeTagWasRemoved::class,
+            SubtreeWasTagged::class,
+            SubtreeWasUntagged::class,
             NodeAggregateWasRemoved::class,
             DimensionSpacePointWasMoved::class,
             NodeGeneralizationVariantWasCreated::class,
@@ -186,8 +186,8 @@ class ChangeProjection implements ProjectionInterface
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             NodeReferencesWereSet::class => $this->whenNodeReferencesWereSet($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
-            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
-            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             NodeAggregateWasRemoved::class => $this->whenNodeAggregateWasRemoved($event),
             DimensionSpacePointWasMoved::class => $this->whenDimensionSpacePointWasMoved($event),
             NodeSpecializationVariantWasCreated::class => $this->whenNodeSpecializationVariantWasCreated($event),
@@ -272,7 +272,7 @@ class ChangeProjection implements ProjectionInterface
         );
     }
 
-    private function whenSubtreeTagWasAdded(SubtreeTagWasAdded $event): void
+    private function whenSubtreeWasTagged(SubtreeWasTagged $event): void
     {
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(
@@ -283,7 +283,7 @@ class ChangeProjection implements ProjectionInterface
         }
     }
 
-    private function whenSubtreeTagWasRemoved(SubtreeTagWasRemoved $event): void
+    private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         foreach ($event->affectedDimensionSpacePoints as $dimensionSpacePoint) {
             $this->markAsChanged(

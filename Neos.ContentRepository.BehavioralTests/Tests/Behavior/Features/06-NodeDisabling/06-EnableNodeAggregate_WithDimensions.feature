@@ -74,7 +74,7 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allSpecializations"     |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "SubtreeTagWasRemoved" with payload:
+    And event at index 11 is of type "SubtreeWasUntagged" with payload:
       | Key                          | Expected                                                  |
       | contentStreamId              | "cs-identifier"                                           |
       | nodeAggregateId              | "sir-david-nodenborough"                                  |
@@ -370,7 +370,7 @@ Feature: Enable a node aggregate
       | nodeVariantSelectionStrategy | "allVariants"            |
 
     Then I expect exactly 12 events to be published on stream with prefix "ContentStream:cs-identifier"
-    And event at index 11 is of type "SubtreeTagWasRemoved" with payload:
+    And event at index 11 is of type "SubtreeWasUntagged" with payload:
       | Key                          | Expected                                                                                       |
       | contentStreamId              | "cs-identifier"                                                                                |
       | nodeAggregateId              | "sir-david-nodenborough"                                                                       |

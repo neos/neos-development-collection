@@ -24,8 +24,8 @@ use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregate
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishIndividualNodesFromWorkspace;
@@ -104,8 +104,8 @@ trait GenericCommandExecutionAndEventPublication
             'ForkContentStream' => ForkContentStream::class,
             'ChangeNodeAggregateName' => ChangeNodeAggregateName::class,
             'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
-            'AddSubtreeTag' => AddSubtreeTag::class,
-            'RemoveSubtreeTag' => RemoveSubtreeTag::class,
+            'AddSubtreeTag' => TagSubtree::class,
+            'RemoveSubtreeTag' => UntagSubtreeTag::class,
             'MoveNodeAggregate' => MoveNodeAggregate::class,
             'SetNodeReferences' => SetNodeReferences::class,
             default => throw new \Exception(

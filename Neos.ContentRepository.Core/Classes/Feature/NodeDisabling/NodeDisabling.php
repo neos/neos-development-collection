@@ -20,9 +20,9 @@ use Neos\ContentRepository\Core\DimensionSpace;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
@@ -75,7 +75,7 @@ trait NodeDisabling
             );
 
         $events = Events::with(
-            new SubtreeTagWasAdded(
+            new SubtreeWasTagged(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
@@ -130,7 +130,7 @@ trait NodeDisabling
             );
 
         $events = Events::with(
-            new SubtreeTagWasRemoved(
+            new SubtreeWasUntagged(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Feature\Tagging;
+namespace Neos\ContentRepository\Core\Feature\SubtreeTagging;
 
 /*
  * This file is part of the Neos.ContentRepository package.
@@ -21,10 +21,10 @@ use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\Common\ConstraintChecks;
 use Neos\ContentRepository\Core\Feature\Common\NodeAggregateEventPublisher;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
@@ -36,7 +36,7 @@ trait SubtreeTagging
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    private function handleAddSubtreeTag(AddSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleAddSubtreeTag(TagSubtree $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
@@ -60,7 +60,7 @@ trait SubtreeTagging
             );
 
         $events = Events::with(
-            new SubtreeTagWasAdded(
+            new SubtreeWasTagged(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,
@@ -79,7 +79,7 @@ trait SubtreeTagging
         );
     }
 
-    public function handleRemoveSubtreeTag(RemoveSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
+    public function handleRemoveSubtreeTag(UntagSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
@@ -107,7 +107,7 @@ trait SubtreeTagging
             );
 
         $events = Events::with(
-            new SubtreeTagWasRemoved(
+            new SubtreeWasUntagged(
                 $command->contentStreamId,
                 $command->nodeAggregateId,
                 $affectedDimensionSpacePoints,

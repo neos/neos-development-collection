@@ -45,7 +45,7 @@ Feature: Run integrity violation detection regarding restriction relations
       | parentNodeAggregateId       | "sir-david-nodenborough"                                 |
       | nodeName                    | "child-document"                                         |
       | nodeAggregateClassification | "regular"                                                |
-    And the event SubtreeTagWasAdded was published with payload:
+    And the event SubtreeWasTagged was published with payload:
       | Key                          | Value                                                    |
       | contentStreamId              | "cs-identifier"                                          |
       | nodeAggregateId              | "sir-david-nodenborough"                                 |

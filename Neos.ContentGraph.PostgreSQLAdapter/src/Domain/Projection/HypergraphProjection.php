@@ -42,8 +42,8 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeGeneralizationVa
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasAdded;
-use Neos\ContentRepository\Core\Feature\Tagging\Event\SubtreeTagWasRemoved;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -157,8 +157,8 @@ final class HypergraphProjection implements ProjectionInterface
             RootNodeAggregateWithNodeWasCreated::class,
             NodeAggregateWithNodeWasCreated::class,
             // Tagging
-            SubtreeTagWasAdded::class,
-            SubtreeTagWasRemoved::class,
+            SubtreeWasTagged::class,
+            SubtreeWasUntagged::class,
             // NodeModification
             NodePropertiesWereSet::class,
             // NodeReferencing
@@ -190,8 +190,8 @@ final class HypergraphProjection implements ProjectionInterface
             RootNodeAggregateWithNodeWasCreated::class => $this->whenRootNodeAggregateWithNodeWasCreated($event),
             NodeAggregateWithNodeWasCreated::class => $this->whenNodeAggregateWithNodeWasCreated($event),
             // Tagging
-            SubtreeTagWasAdded::class => $this->whenSubtreeTagWasAdded($event),
-            SubtreeTagWasRemoved::class => $this->whenSubtreeTagWasRemoved($event),
+            SubtreeWasTagged::class => $this->whenSubtreeWasTagged($event),
+            SubtreeWasUntagged::class => $this->whenSubtreeWasUntagged($event),
             // NodeModification
             NodePropertiesWereSet::class => $this->whenNodePropertiesWereSet($event),
             // NodeReferencing

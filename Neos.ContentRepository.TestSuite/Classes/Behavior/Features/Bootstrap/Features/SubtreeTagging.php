@@ -16,9 +16,9 @@ namespace Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\Features;
 
 use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\TagSubtree;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Command\UntagSubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
@@ -52,7 +52,7 @@ trait SubtreeTagging
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = AddSubtreeTag::create(
+        $command = TagSubtree::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
@@ -77,11 +77,11 @@ trait SubtreeTagging
     }
 
     /**
-     * @Given /^the event SubtreeTagWasAdded was published with payload:$/
+     * @Given /^the event SubtreeWasTagged was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventSubtreeTagWasAddedWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventSubtreeWasTaggedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -90,16 +90,16 @@ trait SubtreeTagging
                 : $this->currentContentStreamId
         );
 
-        $this->publishEvent('SubtreeTagWasAdded', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('SubtreeWasTagged', $streamName->getEventStreamName(), $eventPayload);
     }
 
 
     /**
-     * @Given /^the event SubtreeTagWasRemoved was published with payload:$/
+     * @Given /^the event SubtreeWasUntagged was published with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theEventSubtreeTagWasRemovedWasPublishedWithPayload(TableNode $payloadTable)
+    public function theEventSubtreeWasUntaggedWasPublishedWithPayload(TableNode $payloadTable)
     {
         $eventPayload = $this->readPayloadTable($payloadTable);
         $streamName = ContentStreamEventStreamName::fromContentStreamId(
@@ -108,7 +108,7 @@ trait SubtreeTagging
                 : $this->currentContentStreamId
         );
 
-        $this->publishEvent('SubtreeTagWasRemoved', $streamName->getEventStreamName(), $eventPayload);
+        $this->publishEvent('SubtreeWasUntagged', $streamName->getEventStreamName(), $eventPayload);
     }
 
 
@@ -127,7 +127,7 @@ trait SubtreeTagging
             ? DimensionSpacePoint::fromArray($commandArguments['coveredDimensionSpacePoint'])
             : $this->currentDimensionSpacePoint;
 
-        $command = RemoveSubtreeTag::create(
+        $command = UntagSubtreeTag::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             $coveredDimensionSpacePoint,
