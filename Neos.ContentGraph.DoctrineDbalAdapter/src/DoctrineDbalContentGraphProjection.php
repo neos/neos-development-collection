@@ -67,6 +67,7 @@ use Neos\EventStore\Model\EventStore\SetupResult;
 final class DoctrineDbalContentGraphProjection implements ProjectionInterface, WithMarkStaleInterface
 {
     use NodeVariation;
+    use RestrictionRelations;
     use SubtreeTagging;
     use NodeRemoval;
     use NodeMove;

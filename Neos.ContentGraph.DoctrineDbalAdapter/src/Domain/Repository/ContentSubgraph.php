@@ -279,7 +279,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $this->addRestrictionRelationConstraints($queryBuilderInitial);
 
         $queryBuilderRecursive = $this->createQueryBuilder()
-            ->select('c.*, h.name, h.subtreetags, h.subtreetags, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
+            ->select('c.*, h.name, h.subtreetags, h.contentstreamid, p.nodeaggregateid AS parentNodeAggregateId, p.level + 1 AS level, h.position')
             ->from('tree', 'p')
             ->innerJoin('p', $this->tableNamePrefix . '_hierarchyrelation', 'h', 'h.parentnodeanchor = p.relationanchorpoint')
             ->innerJoin('p', $this->tableNamePrefix . '_node', 'c', 'c.relationanchorpoint = h.childnodeanchor')

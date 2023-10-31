@@ -19,13 +19,16 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Traversable;
 
 /**
- * @implements \IteratorIterator<SubtreeTag>
+ * @implements \IteratorAggregate<SubtreeTag>
+ * @api
  */
-final readonly class SubtreeTagsWithInherited implements \IteratorAggregate {
+final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
+{
     private function __construct(
         public SubtreeTags $tags,
         public SubtreeTags $inheritedTags,
-    ) {}
+    ) {
+    }
 
     public static function create(SubtreeTags $tags, SubtreeTags $inheritedTags): self
     {

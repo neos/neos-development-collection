@@ -54,8 +54,7 @@ trait SubtreeTagging
                     'tagPath' => '$.' . $event->tag->value,
                 ], [
                     'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
-                ]
-            );
+                ]);
 
             $this->getDatabaseConnection()->executeStatement('
                 UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
@@ -75,7 +74,6 @@ trait SubtreeTagging
             ]);
 
             if ($event->tag->value === 'disabled') {
-
                 // TODO: still unsure why we need an "INSERT IGNORE" here;
                 // normal "INSERT" can trigger a duplicate key constraint exception
                 $this->getDatabaseConnection()->executeStatement(
