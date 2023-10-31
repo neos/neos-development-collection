@@ -2,11 +2,15 @@
 #
 prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Fusion:Component) {
   attributes = Neos.Fusion:DataStructure
+  maximumLevels = 0
+  renderHiddenInIndex = false
+  calculateItemStates = false
 
   @private {
     items = Neos.Neos:BreadcrumbMenuItems {
-      @ignoreProperties = ${['attributes']}
-      @apply.props = ${props}
+      maximumLevels = ${props.maximumLevels}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      calculateItemStates = ${props.calculateItemStates}
     }
   }
 

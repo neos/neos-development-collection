@@ -165,14 +165,18 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if (!is_null($this->getItemCollection())) {
             $items = [];
             foreach ($this->getItemCollection() as $node) {
-                $childSubtree = $subgraph->findSubtree(
-                    $node->nodeAggregateId,
-                    FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
-                );
-                if ($childSubtree === null) {
-                    continue;
+                if ($this->getMaximumLevels() > 0) {
+                    $childSubtree = $subgraph->findSubtree(
+                        $node->nodeAggregateId,
+                        FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
+                    );
+                    if ($childSubtree === null) {
+                        continue;
+                    }
+                    $items[] = $this->buildMenuItemFromSubtree($childSubtree);
+                } else {
+                    $items[] = $this->buildMenuItemFromNode($node);
                 }
-                $items[] = $this->traverseChildren($childSubtree);
             }
             return $items;
         }
@@ -189,17 +193,29 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($childSubtree === null) {
             return [];
         }
-        return $this->traverseChildren($childSubtree)->getChildren();
+        return $this->buildMenuItemFromSubtree($childSubtree)->getChildren();
     }
 
-    protected function traverseChildren(Subtree $subtree): MenuItem
+    protected function buildMenuItemFromNode(Node $node): MenuItem
+    {
+        return new MenuItem(
+            $node,
+            $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
+            $node->getLabel(),
+            0,
+            [],
+            $this->buildUri($node)
+        );
+    }
+
+    protected function buildMenuItemFromSubtree(Subtree $subtree): MenuItem
     {
         $children = [];
 
         foreach ($subtree->children as $childSubtree) {
             $node = $childSubtree->node;
             if (!$this->isNodeHidden($node)) {
-                $childNode = $this->traverseChildren($childSubtree);
+                $childNode = $this->buildMenuItemFromSubtree($childSubtree);
                 $children[] = $childNode;
             }
         }

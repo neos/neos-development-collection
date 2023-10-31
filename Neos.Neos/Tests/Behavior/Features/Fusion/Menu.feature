@@ -507,27 +507,28 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     </ul>
     """
 
-#  NOTE: This scenario currently breaks because the "breadcrumb" class attribute is missing and the item states are different than expected "active" vs "normal" for homepage
-#  Scenario: BreadcrumbMenu
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:BreadcrumbMenu {
-#      # calculate menu item state to get Neos < 9 behavior
-#      calculateItemStates = true
-#    }
-#    """
-#    Then I expect the following Fusion rendering result as HTML:
-#    """html
-#    <ul class="breadcrumb">
-#      <li class="normal">
-#        <a href="/" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
-#      </li>
-#      <li class="active">
-#        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1 (a1)</a>
-#      </li>
-#      <li class="current">Neos.Neos:Test.DocumentType2a</li>
-#    </ul>
-#    """
+  Scenario: BreadcrumbMenu
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:BreadcrumbMenu {
+      # calculate menu item state to get Neos < 9 behavior
+      calculateItemStates = true
+    }
+    """
+    Then I expect the following Fusion rendering result as HTML:
+    """html
+    <ul>
+      <li class="active">
+        <a href="/" title="Neos.Neos:Site">Neos.Neos:Site</a>
+      </li>
+      <li class="active">
+        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+      </li>
+      <li class="current">
+        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+      </li>
+    </ul>
+    """

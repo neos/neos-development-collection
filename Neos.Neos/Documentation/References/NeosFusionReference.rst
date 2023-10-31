@@ -1103,7 +1103,11 @@ Menu with absolute uris:
 Neos.Neos:BreadcrumbMenuItems
 -----------------------------
 
-Create a list of of menu-items for a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__MenuItems`.
+Create a list of of menu-items for the breadcrumb (ancestor documents).
+
+:maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
+:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Example::
 
