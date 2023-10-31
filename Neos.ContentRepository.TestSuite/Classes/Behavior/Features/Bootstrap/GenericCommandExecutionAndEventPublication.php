@@ -108,8 +108,8 @@ trait GenericCommandExecutionAndEventPublication
             'SetSerializedNodeProperties' => SetSerializedNodeProperties::class,
             'DisableNodeAggregate' => DisableNodeAggregate::class,
             'EnableNodeAggregate' => EnableNodeAggregate::class,
-            'AddSubtreeTag' => TagSubtree::class,
-            'RemoveSubtreeTag' => UntagSubtreeTag::class,
+            'TagSubtree' => TagSubtree::class,
+            'UntagSubtree' => UntagSubtreeTag::class,
             'MoveNodeAggregate' => MoveNodeAggregate::class,
             'SetNodeReferences' => SetNodeReferences::class,
             default => throw new \Exception(

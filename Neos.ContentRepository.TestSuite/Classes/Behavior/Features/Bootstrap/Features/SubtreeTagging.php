@@ -38,11 +38,11 @@ trait SubtreeTagging
     abstract protected function publishEvent(string $eventType, StreamName $streamName, array $eventPayload): void;
 
     /**
-     * @Given /^the command AddSubtreeTag is executed with payload:$/
+     * @Given /^the command TagSubtree is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theCommandAddSubtreeTagIsExecutedWithPayload(TableNode $payloadTable): void
+    public function theCommandTagSubtreeIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
@@ -64,13 +64,13 @@ trait SubtreeTagging
     }
 
     /**
-     * @Given /^the command AddSubtreeTag is executed with payload and exceptions are caught:$/
+     * @Given /^the command TagSubtree is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
-    public function theCommandAddSubtreeTagIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    public function theCommandTagSubtreeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
     {
         try {
-            $this->theCommandAddSubtreeTagIsExecutedWithPayload($payloadTable);
+            $this->theCommandTagSubtreeIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }
@@ -113,11 +113,11 @@ trait SubtreeTagging
 
 
     /**
-     * @Given /^the command RemoveSubtreeTag is executed with payload:$/
+     * @Given /^the command UntagSubtree is executed with payload:$/
      * @param TableNode $payloadTable
      * @throws \Exception
      */
-    public function theCommandRemoveSubtreeTagIsExecutedWithPayload(TableNode $payloadTable): void
+    public function theCommandUntagSubtreeIsExecutedWithPayload(TableNode $payloadTable): void
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
         $contentStreamId = isset($commandArguments['contentStreamId'])
@@ -139,13 +139,13 @@ trait SubtreeTagging
     }
 
     /**
-     * @Given /^the command RemoveSubtreeTag is executed with payload and exceptions are caught:$/
+     * @Given /^the command UntagSubtree is executed with payload and exceptions are caught:$/
      * @param TableNode $payloadTable
      */
-    public function theCommandRemoveSubtreeTagIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
+    public function theCommandUntagSubtreeIsExecutedWithPayloadAndExceptionsAreCaught(TableNode $payloadTable): void
     {
         try {
-            $this->theCommandRemoveSubtreeTagIsExecutedWithPayload($payloadTable);
+            $this->theCommandUntagSubtreeIsExecutedWithPayload($payloadTable);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }

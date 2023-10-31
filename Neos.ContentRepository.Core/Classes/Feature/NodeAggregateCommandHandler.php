@@ -138,8 +138,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
             DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
             EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
-            TagSubtree::class => $this->handleAddSubtreeTag($command, $contentRepository),
-            UntagSubtreeTag::class => $this->handleRemoveSubtreeTag($command, $contentRepository),
+            TagSubtree::class => $this->handleTagSubtree($command, $contentRepository),
+            UntagSubtreeTag::class => $this->handleUntagSubtree($command, $contentRepository),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),
         };
     }

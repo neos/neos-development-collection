@@ -36,7 +36,7 @@ trait SubtreeTagging
 
     abstract protected function getInterDimensionalVariationGraph(): DimensionSpace\InterDimensionalVariationGraph;
 
-    private function handleAddSubtreeTag(TagSubtree $command, ContentRepository $contentRepository): EventsToPublish
+    private function handleTagSubtree(TagSubtree $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
@@ -79,7 +79,7 @@ trait SubtreeTagging
         );
     }
 
-    public function handleRemoveSubtreeTag(UntagSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
+    public function handleUntagSubtree(UntagSubtreeTag $command, ContentRepository $contentRepository): EventsToPublish
     {
         $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
