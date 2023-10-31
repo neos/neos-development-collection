@@ -16,6 +16,7 @@ namespace Neos\Neos\Fusion\Helper;
 
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
@@ -148,6 +149,11 @@ class NodeHelper implements ProtectedContextAwareInterface
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
+    }
+
+    public function subgraphForNode(Node $node): ContentSubgraphInterface
+    {
+        return $this->contentRepositoryRegistry->subgraphForNode($node);
     }
 
     /**
