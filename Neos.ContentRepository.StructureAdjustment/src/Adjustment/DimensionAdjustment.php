@@ -8,6 +8,7 @@ use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 class DimensionAdjustment
 {
@@ -23,7 +24,11 @@ class DimensionAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): iterable
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        try {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        } catch (NodeTypeNotFoundException) {
+            return [];
+        }
         if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
             return [];
         }
