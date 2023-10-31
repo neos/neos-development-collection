@@ -1,3 +1,4 @@
+include: resource://Neos.Fusion.FluidAdapter/Private/Fusion/Prototypes/Template.fusion
 prototype(Neos.Fusion:Template) < prototype(Neos.Fusion.FluidAdapter:Template) {
   templatePath = null
   partialRootPath = null

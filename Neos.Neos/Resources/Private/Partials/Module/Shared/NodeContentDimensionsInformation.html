@@ -1,4 +1,4 @@
-{namespace neos=Neos\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\FluidAdapter\ViewHelpers}
 <f:for each="{node.originDimensionSpacePoint.coordinates}" key="dimensionName" as="dimension">
 	<f:for each="{contentDimensions}" key="contentDimensionKey" as="contentDimension">
 		<f:if condition="{dimensionName} === {contentDimensionKey}">

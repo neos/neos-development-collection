@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers;
 
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-
 /**
  * View helper to check if a given value is an array.
  *
@@ -35,24 +33,9 @@ use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
  * string
  * (if myValue is a string)
  * </output>
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\GetTypeViewHelper
  */
-class GetTypeViewHelper extends AbstractViewHelper
+class GetTypeViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\GetTypeViewHelper
 {
-    /**
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('value', 'mixed', 'The value to get the type of');
-    }
-
-    /**
-     * @return string
-     */
-    public function render(): string
-    {
-        return gettype($this->arguments['value'] ?: $this->renderChildren());
-    }
 }

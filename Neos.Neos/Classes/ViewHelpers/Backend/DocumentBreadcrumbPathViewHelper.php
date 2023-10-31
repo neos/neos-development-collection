@@ -14,53 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
-use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
-
 /**
  * Render a bread crumb path by using the labels of documents leading to the given node path
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper
  */
-class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
+class DocumentBreadcrumbPathViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\DocumentBreadcrumbPathViewHelper
 {
-    use NodeTypeWithFallbackProvider;
-
-    #[Flow\Inject]
-    protected ContentRepositoryRegistry $contentRepositoryRegistry;
-
-    /**
-     * @var boolean
-     */
-    protected $escapeOutput = false;
-
-    public function initializeArguments(): void
-    {
-        parent::initializeArguments();
-        $this->registerArgument('node', Node::class, 'Node', true);
-    }
-
-    public function render(): mixed
-    {
-        $node = $this->arguments['node'];
-        assert($node instanceof Node);
-        $documentNodes = [];
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-
-        $currentNode = $node;
-        while ($currentNode instanceof Node) {
-            if ($this->getNodeType($currentNode)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
-                $documentNodes[] = $currentNode;
-            }
-            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);
-        }
-        $documentNodes = array_reverse($documentNodes);
-        $this->templateVariableContainer->add('documentNodes', $documentNodes);
-        $content = $this->renderChildren();
-        $this->templateVariableContainer->remove('documentNodes');
-
-        return $content;
-    }
 }

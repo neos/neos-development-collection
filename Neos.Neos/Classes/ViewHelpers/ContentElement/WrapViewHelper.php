@@ -14,13 +14,6 @@ namespace Neos\Neos\ViewHelpers\ContentElement;
  * source code.
  */
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
-use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
-use Neos\Neos\Service\ContentElementWrappingService;
-
 /**
  * A view helper for manually wrapping content editables.
  *
@@ -38,61 +31,9 @@ use Neos\Neos\Service\ContentElementWrappingService;
  *  <div>{neos:contentElement.editable(property: 'someProperty')}</div>
  * </neos:contentElement.wrap>
  * </code>
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\ContentElement\WrapViewHelper
  */
-class WrapViewHelper extends AbstractViewHelper
+class WrapViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\ContentElement\WrapViewHelper
 {
-    /**
-     * @var boolean
-     */
-    protected $escapeOutput = false;
-
-    /**
-     * @Flow\Inject
-     * @var ContentElementWrappingService
-     */
-    protected $contentElementWrappingService;
-
-    /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('node', Node::class, 'Node');
-    }
-
-
-    /**
-     * In live workspace this just renders a the content.
-     * For logged in users with access to the Backend this also adds the attributes for the RTE to work.
-     *
-     * @return string The rendered property with a wrapping tag. In the user workspace this adds some required attributes for the RTE to work
-     * @throws ViewHelperException
-     */
-    public function render(): string
-    {
-        $view = $this->viewHelperVariableContainer->getView();
-        if (!$view instanceof FusionAwareViewInterface) {
-            throw new ViewHelperException('This ViewHelper can only be used in a Fusion content element. You have to specify the "node" argument if it cannot be resolved from the Fusion context.', 1385737102);
-        }
-        $fusionObject = $view->getFusionObject();
-        if (!method_exists($fusionObject, 'getPath')) {
-            throw new ViewHelperException(
-                'This ViewHelper can only be used in a Fusion view with a path aware Fusion object.',
-                1645650713
-            );
-        }
-        $currentContext = $fusionObject->getRuntime()->getCurrentContext();
-
-        $node = $this->arguments['node'] ?? $currentContext['node'];
-
-        return $this->contentElementWrappingService->wrapContentObject(
-            $node,
-            (string)$this->renderChildren(),
-            $fusionObject->getPath()
-        ) ?: '';
-    }
 }

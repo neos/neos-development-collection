@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers\Uri;
 
 use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
-use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper;
+use Neos\Neos\FluidAdapter\ViewHelpers\Uri\ModuleViewHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 
 /**

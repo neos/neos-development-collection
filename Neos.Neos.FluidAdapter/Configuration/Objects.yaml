@@ -1,0 +1,9 @@
+Neos\Neos\FluidAdapter\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper:
+  properties:
+    configurationCache:
+      object:
+        factoryObjectName: Neos\Flow\Cache\CacheManager
+        factoryMethodName: getCache
+        arguments:
+          1:
+            value: Neos_Neos_Configuration_Version

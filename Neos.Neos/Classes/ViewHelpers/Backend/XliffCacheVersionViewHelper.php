@@ -14,26 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Service\XliffService;
-
 /**
  * ViewHelper for rendering the current version identifier for the
  * xliff cache.
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\XliffCacheVersionViewHelper
  */
-class XliffCacheVersionViewHelper extends AbstractViewHelper
+class XliffCacheVersionViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\XliffCacheVersionViewHelper
 {
-    /**
-     * @Flow\Inject
-     * @var XliffService
-     */
-    protected $xliffService;
-    /**
-     * @return string The current cache version identifier
-     */
-    public function render(): string
-    {
-        return $this->xliffService->getCacheVersion();
-    }
 }

@@ -15,8 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers;
 
 use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\FluidAdaptor\View\StandaloneView;
 
 /**
  * A View Helper to render a fluid template based on the given template path and filename.
@@ -35,45 +33,9 @@ use Neos\FluidAdaptor\View\StandaloneView;
  * (depending on template and arguments given)
  * </output>
  *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\StandaloneViewViewHelper
  * @Flow\Scope("prototype")
  */
-class StandaloneViewViewHelper extends AbstractViewHelper
+class StandaloneViewViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\StandaloneViewViewHelper
 {
-    /**
-     * @var boolean
-     */
-    protected $escapeOutput = false;
-
-    /**
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument(
-            'templatePathAndFilename',
-            'string',
-            'Path and filename of the template to render',
-            true
-        );
-        $this->registerArgument(
-            'arguments',
-            'array',
-            'Arguments to assign to the template before rendering',
-            false,
-            []
-        );
-    }
-
-    /**
-     * @return string
-     * @throws \Neos\FluidAdaptor\Exception
-     */
-    public function render(): string
-    {
-        $standaloneView = new StandaloneView($this->controllerContext->getRequest());
-        $standaloneView->setTemplatePathAndFilename($this->arguments['templatePathAndFilename']);
-        return $standaloneView->assignMultiple($this->arguments['arguments'])->render();
-    }
 }

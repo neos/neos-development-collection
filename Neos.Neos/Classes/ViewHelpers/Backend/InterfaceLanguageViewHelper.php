@@ -14,26 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Neos\Service\UserService;
-
 /**
  * ViewHelper for rendering the current backend users interface language.
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\InterfaceLanguageViewHelper
  */
-class InterfaceLanguageViewHelper extends AbstractViewHelper
+class InterfaceLanguageViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\InterfaceLanguageViewHelper
 {
-    /**
-     * @Flow\Inject
-     * @var UserService
-     */
-    protected $userService;
-
-    /**
-     * @return string The current backend users interface language
-     */
-    public function render()
-    {
-        return $this->userService->getInterfaceLanguage();
-    }
 }

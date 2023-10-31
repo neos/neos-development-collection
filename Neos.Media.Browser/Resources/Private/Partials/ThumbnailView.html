@@ -1,6 +1,6 @@
 {namespace m=Neos\Media\ViewHelpers}
 {namespace mediaBrowser=Neos\Media\Browser\ViewHelpers}
-{namespace neos=Neos\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\FluidAdapter\ViewHelpers}
 <mediaBrowser:paginate queryResult="{assetProxies}" as="paginatedAssetProxies" configuration="{itemsPerPage: 30, maximumNumberOfLinks: 7}">
     <ul class="neos-thumbnails asset-list">
         <f:alias map="{

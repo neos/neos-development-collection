@@ -15,6 +15,7 @@
         "neos/contentrepository-core": "~9.0.0",
         "neos/contentrepositoryregistry": "~9.0.0",
         "neos/contentrepository-nodeaccess": "~9.0.0",
+        "neos/neos-fluidadapter": "*",
         "neos/fusion": "*",
         "neos/fusion-afx": "*",
         "neos/fusion-form": "^1.0 || ^2.0",

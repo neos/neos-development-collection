@@ -14,52 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-
 /**
  * Displays a text-based "bar graph" giving an indication of the amount and type of
  * changes done to something. Created for use in workspace management.
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\ChangeStatsViewHelper
  */
-class ChangeStatsViewHelper extends AbstractViewHelper
+class ChangeStatsViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\ChangeStatsViewHelper
 {
-    /**
-     * @var boolean
-     */
-    protected $escapeOutput = false;
-
-    /**
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('changeCounts', 'array', 'Expected keys: new, changed, removed', true);
-    }
-
-    /**
-     * Expects an array of change count data and adds calculated ratios to the rendered child view
-     *
-     * @return string
-     */
-    public function render(): string
-    {
-        $changeCounts = $this->arguments['changeCounts'];
-
-        $this->templateVariableContainer->add('newCountRatio', $changeCounts['new'] / $changeCounts['total'] * 100);
-        $this->templateVariableContainer->add(
-            'changedCountRatio',
-            $changeCounts['changed'] / $changeCounts['total'] * 100
-        );
-        $this->templateVariableContainer->add(
-            'removedCountRatio',
-            $changeCounts['removed'] / $changeCounts['total'] * 100
-        );
-        $content = $this->renderChildren();
-        $this->templateVariableContainer->remove('newCountRatio');
-        $this->templateVariableContainer->remove('changedCountRatio');
-        $this->templateVariableContainer->remove('removedCountRatio');
-
-        return $content;
-    }
 }

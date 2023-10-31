@@ -14,11 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Fusion\FluidAdapter\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Domain\Model\RenderingMode;
-
 /**
  * ViewHelper to find out if Neos is rendering the live website.
  * Make sure you either give a node from the current context to
@@ -41,20 +36,9 @@ use Neos\Neos\Domain\Model\RenderingMode;
  * <output>
  * Shown in the backend.
  * </output>
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Rendering\LiveViewHelper
  */
-class LiveViewHelper extends AbstractViewHelper
+class LiveViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Rendering\LiveViewHelper
 {
-    use FusionContextTrait;
-
-    /**
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function render(): bool
-    {
-        $renderingMode = $this->getContextVariable('renderingMode');
-        if ($renderingMode instanceof RenderingMode) {
-            return $renderingMode->name === RenderingMode::FRONTEND;
-        }
-        return true;
-    }
 }

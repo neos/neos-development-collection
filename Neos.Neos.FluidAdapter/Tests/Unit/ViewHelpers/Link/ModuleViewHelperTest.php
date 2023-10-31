@@ -12,8 +12,8 @@ namespace Neos\Neos\Tests\Unit\ViewHelpers\Link;
  */
 
 use Neos\FluidAdaptor\Tests\Unit\ViewHelpers\ViewHelperBaseTestcase;
-use Neos\Neos\ViewHelpers\Link\ModuleViewHelper;
-use Neos\Neos\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
+use Neos\Neos\FluidAdapter\ViewHelpers\Link\ModuleViewHelper;
+use Neos\Neos\FluidAdapter\ViewHelpers\Uri\ModuleViewHelper as UriModuleViewHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\TagBuilder;

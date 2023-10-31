@@ -14,11 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\I18n\EelHelper\TranslationHelper;
-use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\ViewHelpers\TranslateViewHelper as FluidTranslateViewHelper;
-use Neos\FluidAdaptor\Core\ViewHelper;
-
 /**
  * Returns translated message using source message or key ID.
  * uses the selected backend language
@@ -70,49 +65,9 @@ use Neos\FluidAdaptor\Core\ViewHelper;
  * <output>
  * translation of the label "Untranslated label"
  * </output>
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\TranslateViewHelper
  */
-class TranslateViewHelper extends FluidTranslateViewHelper
+class TranslateViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\TranslateViewHelper
 {
-    /**
-     * @Flow\Inject
-     * @var \Neos\Neos\Service\UserService
-     */
-    protected $userService;
-
-    /**
-     * Renders the translated label.
-     *
-     * Replaces all placeholders with corresponding values if they exist in the
-     * translated label.
-     *
-     * ViewHelper arguments: @return string Translated label or source label / ID key
-     * @throws ViewHelper\Exception
-     * @see FluidTranslateViewHelper::initializeArguments
-     */
-    public function render()
-    {
-        $id = $this->arguments['id'];
-        $value = $this->arguments['value'];
-        $locale = $this->arguments['locale'];
-
-        if (is_string($id) && preg_match(TranslationHelper::I18N_LABEL_ID_PATTERN, $id) === 1) {
-            // In the longer run, this "extended ID" format should directly be resolved in the localization service
-            list($package, $source, $id) = explode(':', $id, 3);
-            $this->arguments['id'] = $id;
-            $this->arguments['package'] = $package;
-            $this->arguments['source'] = str_replace('.', '/', $source);
-        }
-
-        if ($locale === null) {
-            $this->arguments['locale'] = $this->userService->getInterfaceLanguage();
-        }
-
-        $translation = parent::render();
-        // Fallback to english label if label was not available in specific language
-        if ($translation === $id && $locale !== 'en') {
-            $this->arguments['locale'] = 'en';
-            $translation = parent::render();
-        }
-        return $translation;
-    }
 }

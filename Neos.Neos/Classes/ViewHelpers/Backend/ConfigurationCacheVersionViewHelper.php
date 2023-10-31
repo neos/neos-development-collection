@@ -14,51 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\Cache\Frontend\StringFrontend;
-use Neos\Flow\Security\Account;
-use Neos\Flow\Security\Context;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-
 /**
  * ViewHelper for rendering the current version identifier for the
  * configuration cache.
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper
  */
-class ConfigurationCacheVersionViewHelper extends AbstractViewHelper
+class ConfigurationCacheVersionViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\ConfigurationCacheVersionViewHelper
 {
-    /**
-     * @var StringFrontend
-     */
-    protected $configurationCache;
-
-    /**
-     * @Flow\Inject
-     * @var Context
-     */
-    protected $securityContext;
-
-    /**
-     * @return string The current cache version identifier
-     */
-    public function render(): string
-    {
-        /** @var ?Account $account */
-        $account = $this->securityContext->getAccount();
-
-        // Get all roles and sort them by identifier
-        $roles = $account ? array_map(static fn ($role) => $role->getIdentifier(), $account->getRoles()) : [];
-        sort($roles);
-
-        // Use the roles combination as cache key to allow multiple users sharing the same configuration version
-        $configurationIdentifier = md5(implode('_', $roles));
-        $cacheKey = 'ConfigurationVersion_' . $configurationIdentifier;
-        /** @var string|false $version */
-        $version = $this->configurationCache->get($cacheKey);
-
-        if ($version === false) {
-            $version = (string)time();
-            $this->configurationCache->set($cacheKey, $version);
-        }
-        return  $configurationIdentifier . '_' . $version;
-    }
 }

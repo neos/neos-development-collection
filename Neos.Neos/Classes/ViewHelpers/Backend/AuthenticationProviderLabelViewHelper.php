@@ -14,40 +14,11 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Backend;
 
-use Neos\Flow\Annotations as Flow;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-
 /**
  * Renders a label for the given authentication provider identifier
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Backend\AuthenticationProviderLabelViewHelper
  */
-class AuthenticationProviderLabelViewHelper extends AbstractViewHelper
+class AuthenticationProviderLabelViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Backend\AuthenticationProviderLabelViewHelper
 {
-    /**
-     * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
-     * @var array
-     * @phpstan-var array<string,mixed>
-     */
-    protected $authenticationProviderSettings;
-
-    /**
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument('identifier', 'string', 'The identifier to render the label for', true);
-    }
-
-    /**
-     * Outputs a human friendly label for the authentication provider specified by $identifier
-     *
-     * @return string
-     * @throws \Exception
-     */
-    public function render(): string
-    {
-        $identifier = $this->arguments['identifier'];
-        return ($this->authenticationProviderSettings[$identifier]['label'] ?? $identifier);
-    }
 }

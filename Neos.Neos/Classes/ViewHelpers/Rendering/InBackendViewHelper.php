@@ -14,10 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Fusion\FluidAdapter\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Domain\Model\RenderingMode;
-
 /**
  * ViewHelper to find out if Neos is rendering the backend.
  *
@@ -38,21 +34,9 @@ use Neos\Neos\Domain\Model\RenderingMode;
  * <output>
  * Shown in the backend.
  * </output>
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Rendering\InBackendViewHelper
  */
-class InBackendViewHelper extends AbstractViewHelper
+class InBackendViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Rendering\InBackendViewHelper
 {
-    use FusionContextTrait;
-
-    /**
-     * @return boolean
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function render()
-    {
-        $renderingMode = $this->getContextVariable('renderingMode');
-        if ($renderingMode instanceof RenderingMode) {
-            return $renderingMode->isEdit || $renderingMode->isPreview;
-        }
-        return false;
-    }
 }

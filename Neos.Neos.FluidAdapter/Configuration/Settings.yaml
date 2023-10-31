@@ -1,0 +1,5 @@
+Neos:
+  Neos:
+    fusion:
+      autoInclude:
+        Neos.Neos.Fusion.FluidAdapter: true

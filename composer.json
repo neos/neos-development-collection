@@ -70,6 +70,7 @@
         "neos/media-browser": "self.version",
         "neos/media": "self.version",
         "neos/neos": "self.version",
+        "neos/neos-fluidadapter": "self.version",
         "neos/nodetypes-assetlist": "self.version",
         "neos/nodetypes-basemixins": "self.version",
         "neos/nodetypes-columnlayouts": "self.version",
@@ -185,6 +186,9 @@
             ],
             "Neos\\Neos\\": [
                 "Neos.Neos/Classes"
+            ],
+            "Neos\\Neos\\FluidAdapter\\": [
+                "Neos.Neos.FluidAdapter/Classes"
             ],
             "Neos\\NodeTypes\\AssetList\\": [
                 "Neos.NodeTypes.AssetList/Classes"

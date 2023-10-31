@@ -1,4 +1,4 @@
-{namespace neos=Neos\Neos\ViewHelpers}
+{namespace neos=Neos\Neos\FluidAdapter\ViewHelpers}
 <f:for each="{roles}" as="role" iteration="iteration">
 	<span class="neos-label" title="{f:render(section: 'tooltip', arguments: {role: role})}" data-neos-toggle="tooltip" data-placement="right" data-html="true">
 		{role.name}

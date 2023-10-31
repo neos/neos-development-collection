@@ -14,11 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\ViewHelpers\Rendering;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\Fusion\FluidAdapter\ViewHelpers\FusionContextTrait;
-use Neos\Neos\Domain\Model\RenderingMode;
-
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
  *
@@ -57,41 +52,9 @@ use Neos\Neos\Domain\Model\RenderingMode;
  * <output>
  * Shown in all other cases.
  * </output>
+ *
+ * @deprecated will be removed with Neos 10 use \Neos\Neos\FluidAdapter\ViewHelpers\Rendering\InEditModeViewHelper
  */
-class InEditModeViewHelper extends AbstractViewHelper
+class InEditModeViewHelper extends \Neos\Neos\FluidAdapter\ViewHelpers\Rendering\InEditModeViewHelper
 {
-    use FusionContextTrait;
-
-    /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
-    {
-        parent::initializeArguments();
-        $this->registerArgument(
-            'mode',
-            'string',
-            'Optional rendering mode name to check if this specific mode is active'
-        );
-    }
-
-
-    /**
-     * @return boolean
-     */
-    public function render()
-    {
-        $renderingMode = $this->getContextVariable('renderingMode');
-        if ($renderingMode instanceof RenderingMode) {
-            $mode = $this->arguments['mode'];
-            if ($mode) {
-                return $renderingMode->isEdit && $renderingMode->name === $mode;
-            }
-            return $renderingMode->isEdit;
-        }
-        return false;
-    }
 }
