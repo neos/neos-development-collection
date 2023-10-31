@@ -33,18 +33,19 @@ trait FusionContextTrait
      */
     protected function getContextVariable($variableName)
     {
-        $value = null;
-
         $view = $this->viewHelperVariableContainer->getView();
         if ($view instanceof FusionAwareViewInterface) {
             $fusionObject = $view->getFusionObject();
             $currentContext = $fusionObject->getRuntime()->getCurrentContext();
             if (isset($currentContext[$variableName])) {
-                $value = $currentContext[$variableName];
+                return $currentContext[$variableName];
+            }
+            $fusionGlobals = $fusionObject->getRuntime()->fusionGlobals;
+            if ($fusionGlobals->has($variableName)) {
+                return $fusionGlobals->get($variableName);
             }
         }
-
-        return $value;
+        return null;
     }
 
     /**
