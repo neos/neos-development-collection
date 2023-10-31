@@ -71,11 +71,8 @@ class ParentsOperation extends AbstractOperation
     {
         $parents = Nodes::createEmpty();
         $findAncestorNodesFilter = FindAncestorNodesFilter::create(
-            NodeTypeConstraints::create(
-                NodeTypeNames::createEmpty(),
-                NodeTypeNames::fromArray(
-                    [NodeTypeName::fromString('Neos.ContentRepository:Root')]
-                )
+            NodeTypeConstraints::createWithDisallowedNodeTypeNames(
+                NodeTypeNames::fromStringArray(['Neos.ContentRepository:Root'])
             )
         );
 
