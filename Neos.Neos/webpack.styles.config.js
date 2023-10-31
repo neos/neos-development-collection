@@ -6,7 +6,7 @@ const stylesConfig = {
 	context: __dirname,
 	devtool: "source-map",
 	entry: {
-		Main: ["./Resources/Private/Styles/Neos.scss"],
+		Main: ["./Resources/Private/Styles/Main.scss"],
 		Lite: ["./Resources/Private/Styles/Lite.scss"],
 		Minimal: ["./Resources/Private/Styles/Minimal.scss"],
 		Login: ["./Resources/Private/Styles/Login.scss"],
