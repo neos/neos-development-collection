@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Fusion\Helper;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Helper;
 
 use Doctrine\Common\Collections\Collection;
 use Neos\Eel\ProtectedContextAwareInterface;
@@ -28,9 +31,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to true.
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $filterProperty
-     * @return array
+     * @return array<mixed>
      */
     public function filter($set, $filterProperty)
     {
@@ -40,9 +43,9 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Filter an array of objects, by only keeping the elements where each object's $filterProperty evaluates to false.
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $filterProperty
-     * @return array
+     * @return array<mixed>
      */
     public function filterNegated($set, $filterProperty)
     {
@@ -52,10 +55,10 @@ class ArrayHelper implements ProtectedContextAwareInterface
     /**
      * Internal method for filtering
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $filterProperty
      * @param boolean $negate
-     * @return array
+     * @return array<mixed>
      */
     protected function filterInternal($set, $filterProperty, $negate)
     {
@@ -64,7 +67,7 @@ class ArrayHelper implements ProtectedContextAwareInterface
         }
 
         return array_filter($set, function ($element) use ($filterProperty, $negate) {
-            $result = (boolean)ObjectAccess::getPropertyPath($element, $filterProperty);
+            $result = (bool)ObjectAccess::getPropertyPath($element, $filterProperty);
             if ($negate) {
                 $result = !$result;
             }
@@ -74,11 +77,12 @@ class ArrayHelper implements ProtectedContextAwareInterface
     }
 
     /**
-     * The input is assumed to be an array or Collection of objects. Groups this input by the $groupingKey property of each element.
+     * The input is assumed to be an array or Collection of objects.
+     * Groups this input by the $groupingKey property of each element.
      *
-     * @param array|Collection $set
+     * @param array<mixed>|Collection<int|string,mixed> $set
      * @param string $groupingKey
-     * @return array
+     * @return array<mixed>
      */
     public function groupBy($set, $groupingKey)
     {

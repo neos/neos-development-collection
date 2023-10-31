@@ -1,0 +1,85 @@
+# This docker-compose file also puts Neos into a container. This is useful for running testcases in
+# Linux instead of Mac. We need this to debug race conditions which only appear in CI.
+#
+# USAGE:
+#
+# This script must be executed at the ROOT of the distribution (in ../../../) like this:
+#
+# docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml build
+# docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml up -d
+# docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml run neos /bin/bash
+#     FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:reset
+#     ../../../../../bin/behat -c behat.yml.dist
+#     FLOW_CONTEXT=Testing/Behat ../../../../../flow raceConditionTracker:analyzeTrace
+# docker compose --project-directory . --file Packages/Neos/Neos.ContentRepository.BehavioralTests/docker-compose-full.yml down -v
+#
+# For details on how the race condition tracker works, see RaceTrackerCatchUpHook.php
+#
+# Note: the context of this dockerfile is the ROOT directory of the Flow Distribution (FLOW_PATH_ROOT)
+version: '3.5'
+services:
+  # Neos CMS
+  neos:
+    build:
+      context: .
+      dockerfile: Packages/Neos/Neos.ContentRepository.BehavioralTests/Dockerfile.full
+    environment:
+      FLOW_CONTEXT: 'Development/Docker'
+    volumes:
+      - ./composer.json:/app/composer.json:cached
+      - ./composer.lock:/app/composer.lock:cached
+      - ./Configuration/:/app/Configuration/:cached
+      # we need to override the Behat settings so that the correct DB credentials work.
+      - ./Packages/Neos/Neos.ContentRepository.BehavioralTests/deployment/neos-in-docker/Configuration/Testing/Behat/Settings.yaml:/app/Configuration/Testing/Behat/Settings.yaml:cached
+
+      # if you want to edit certain folders directly, mount them here:
+      - ./Packages/Neos/Neos.ContentRepository.BehavioralTests/:/app/Packages/Neos/Neos.ContentRepository.BehavioralTests/:cached
+      - ./Packages/Neos/Neos.ContentRepository.Core/Tests/Behavior/:/app/Packages/Neos/Neos.ContentRepository.Core/Tests/Behavior/:cached
+      - ./Packages/Neos/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/:/app/Packages/Neos/Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/:cached
+
+    ports:
+      - 8081:8081
+
+
+  mysql:
+    image: mariadb:10.8
+    environment:
+      MYSQL_ROOT_PASSWORD: 'db'
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./deployment/mariadb-initdb.d:/docker-entrypoint-initdb.d:cached
+
+    ports:
+      - 13306:3306
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+
+  postgres:
+    image: postgres:14.2
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: 'db'
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./deployment/postgres-initdb.d:/docker-entrypoint-initdb.d:cached
+
+    ports:
+      - 15432:5432
+
+  # for running race-condition tests, we use Redis as a single-threaded time store.
+  # For details on how this works, see RaceTrackerCatchUpHook.php
+  redis:
+    image: redis:7.0.4
+    ports:
+      - 6389:6379
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--maxmemory", "1500MB"]
+
+
+
+volumes:
+  mysql:
+  postgres:
+  redis_data:
+
+

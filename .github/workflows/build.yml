@@ -14,43 +14,51 @@ jobs:
       contents: read # to fetch code (actions/checkout)
 
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.static-analysis != 'no' && matrix.static-analysis || '' }} (deps: ${{ matrix.dependencies }})"
+    name: "PHP ${{ matrix.php-versions }} Test ${{ matrix.parallel-parts  }} (deps: ${{ matrix.dependencies }})"
 
     continue-on-error: ${{ matrix.experimental }}
 
     strategy:
       fail-fast: false
       matrix:
-        php-versions: ['8.0', '8.1']
+        php-versions: ['8.2']
         dependencies: ['highest']
         composer-arguments: [''] # to run --ignore-platform-reqs in experimental builds
-        static-analysis: ['no']
+
+        # we want to parallelize quite some parts of the test suite; but these need similar setup steps.
+        # that's why we parallelize via a Matrix; and not via different jobs.
+        # escr-behavioral determines the length of the build (because it is slowest). That's why we run this and
+        # all the other parts in parallel.
+        parallel-parts:
+          - linting-unit-functionaltests-mysql
+          - functionaltests-postgres
+          - escr-behavioral
         experimental: [false]
         #include:
           #- php-versions: '7.3'
-          #  static-analysis: 'psalm'
+          #  parallel-parts: 'psalm'
           #  experimental: false
           #  dependencies: 'highest'
 
           # Experimental build for PHP nightly
           #- php-versions: 'nightly'
           #  composer-arguments: '--ignore-platform-reqs'
-          #  static-analysis: 'no'
+          #  parallel-parts: 'no'
           #  experimental: true
           #  dependencies: 'highest'
 
           # Build for minimum dependencies. Fails right now, hence deactivated.
           #- php-versions: '7.1'
-          #  static-analysis: 'no'
+          #  parallel-parts: 'no'
           #  experimental: false
           #  dependencies: 'lowest'
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     services:
       mariadb:
         # see https://mariadb.com/kb/en/mariadb-server-release-dates/
         # this should be a current release, e.g. the LTS version
-        image: mariadb:10.6
+        image: mariadb:10.8
         env:
           MYSQL_USER: neos
           MYSQL_PASSWORD: neos
@@ -62,11 +70,12 @@ jobs:
       postgres:
         # see https://www.postgresql.org/support/versioning/
         # this should be a current release
-        image: postgres:14-alpine
+        image: postgres:14.2
         env:
           POSTGRES_USER: neos
           POSTGRES_PASSWORD: neos
           POSTGRES_DB: flow_functional_testing
+          POSTGRES_ROOT_PASSWORD: neos
         ports:
           - "5432:5432"
         options:  --health-cmd=pg_isready --health-interval=10s --health-timeout=5s --health-retries=3
@@ -83,6 +92,7 @@ jobs:
 
     env:
       FLOW_CONTEXT: Testing
+      NEOS_TARGET_VERSION: 9.0
       NEOS_DIST_FOLDER: neos-development-distribution
       NEOS_FOLDER: neos-development-collection
 
@@ -105,7 +115,6 @@ jobs:
         with:
           php-version: ${{ matrix.php-versions }}
           extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql, pgsql, redis, memcached, memcache, apcu
-          coverage: xdebug #optional
           ini-values: date.timezone="Africa/Tunis", opcache.fast_shutdown=0, apc.enable_cli=on
 
       - name: Checkout development distribution
@@ -123,6 +132,9 @@ jobs:
           git -C ../${{ env.NEOS_FOLDER }} checkout -b build
           composer config repositories.neos '{ "type": "path", "url": "../${{ env.NEOS_FOLDER }}", "options": { "symlink": false } }'
           composer require --no-update neos/neos-development-collection:"dev-build as ${{ env.NEOS_BRANCH_ALIAS }}"
+          # TODO workaround for not-yet-released neos/eventstore packages
+          composer require --no-update neos/eventstore:"dev-main"
+          composer require --no-update neos/eventstore-doctrineadapter:"dev-main"
 
       - name: Cache Composer packages
         id: composer-cache
@@ -155,37 +167,139 @@ jobs:
                   user: 'neos'
                   password: 'neos'
                   dbname: 'flow_functional_testing'
-              mvc:
-                routes:
-                  'Neos.Flow': TRUE
+            ContentRepositoryRegistry:
+              postgres:
+                persistence:
+                  backendOptions:
+                    host: '127.0.0.1'
+                    port: 5432
+                    driver: pdo_pgsql
+                    dbname: 'flow_functional_testing'
+                    user: 'neos'
+                    password: 'neos'
+                    charset: 'UTF8'
+
+              # We enable the race condition tracker
+              presets:
+                'default':
+                  projections:
+                    'Neos.ContentRepository:ContentGraph':
+                      catchUpHooks:
+                        'Neos.ContentRepository.BehavioralTests:RaceConditionTracker':
+                          factoryObjectName: Neos\ContentRepository\BehavioralTests\ProjectionRaceConditionTester\RaceTrackerCatchUpHookFactory
+            ContentRepository:
+              BehavioralTests:
+                raceConditionTracker:
+                  enabled: true
+                  redis:
+                    host: 127.0.0.1
+                    port: 6379
+
+          EOF
+          mkdir Configuration/Testing/Postgres
+          cat <<EOF >> Configuration/Testing/Postgres/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  port: 5432
+                  driver: pdo_pgsql
+                  charset: 'UTF8'
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'flow_functional_testing'
           EOF
           echo "Running in context '$FLOW_CONTEXT'"
-          ./flow configuration:show
-          ./flow routing:list
+          # Enable for debugging: ./flow configuration:show
+          # Enable for debugging: ./flow routing:list
 
-      #- name: Static analysis
-      #  if: matrix.static-analysis == 'psalm'
-      #  run: composer test-static
+      - name: Run Linter
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
+        run: |
+          cd Packages/Neos
+          composer lint
 
       - name: Run unit tests
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
 
       - name: Run functional tests
-        if: matrix.static-analysis == 'no'
-        run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
-
-      - name: Run behat tests
-        if: matrix.static-analysis == 'no'
-        #if: env.BEHAT == true
+        if: matrix.parallel-parts == 'linting-unit-functionaltests-mysql'
         run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
+          FLOW_CONTEXT=Testing ./flow doctrine:migrate --quiet
+          bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
+
+      - name: Run Behavioral Tests (ES CR && Neos.Neos)
+        id: escrtests
+        if: matrix.parallel-parts == 'escr-behavioral'
+        # DEBUG MODE: comment-in the next line, because we want to reach the Upload Mysql/Postgres DB dump step.
+        continue-on-error: true
+        run: |
+          echo ${{ github.workspace }}
+          ls ${{ github.workspace }}
+
+          pwd
+          mkdir -p ${{ github.workspace }}/Data/DebugDatabaseDumps
+          touch ${{ github.workspace }}/Data/DebugDatabaseDumps/keep
+
+          ./flow package:list --loading-order
+          cd Packages/Neos
+
+          # composer test:behavioral
+
+          # DEBUG MODE: ALTERNATIVELY, comment in the following lines to dump the DB.
+          # do not exit the script if the tests break; as we want to upload the database dumps afterwards.
+          set +e
+          CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION=1 composer test:behavioral:stop-on-failure
+          retVal=$?
+
+          # automatically search for race conditions
+          cd ../../
+          ./flow raceConditionTracker:analyzeTrace --store-trace ${{ github.workspace }}/Data/DebugDatabaseDumps/race-trace.ndjson
+
+          set -e
+          if [ $retVal -ne 0 ]; then
+            echo "DUMPING POSTGRES AND MYSQL DATABASE (because of error)"
+
+            echo "copying logs"
+            cp -R Data/Logs ${{ github.workspace }}/Data/DebugDatabaseDumps/Logs
+
+            sudo DEBIAN_FRONTEND=noninteractive apt -y remove mysql-client libmysqlclient-dev mysql-server
+            sudo DEBIAN_FRONTEND=noninteractive apt -y autoremove
+            sudo DEBIAN_FRONTEND=noninteractive apt -y autoclean
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client mariadb-client
+            echo "writing PW file"
+            touch ~/.pgpass
+            echo "127.0.0.1:5432:flow_functional_testing:neos:neos" > ~/.pgpass
+            chmod 600 ~/.pgpass
+
+            echo "starting pg_dump"
+            pg_dump --file=${{ github.workspace }}/Data/DebugDatabaseDumps/pg_dump.sql --format=plain --no-owner --dbname=flow_functional_testing --host=127.0.0.1 --username=neos --no-password
+            echo "pg_dump finished, starting mysqldump"
+            mysqldump --force --host=127.0.0.1 -u neos -pneos flow_functional_testing > ${{ github.workspace }}/Data/DebugDatabaseDumps/mysqldump.sql
+          fi
+          exit $retVal
+          # END OF DEBUG SCRIPT
+
+      - name: Upload Postgres/Mysql DB dump
+        uses: actions/upload-artifact@v2
+        if: matrix.parallel-parts == 'escr-behavioral'
+        with:
+          name: database-dumps
+          path: Data/DebugDatabaseDumps
+
+      - name: Fail pipeline if ES CR tests broke (after uploading artifacts)
+        if: matrix.parallel-parts == 'escr-behavioral' && steps.escrtests.outcome != 'success'
+        # we want to reach the Upload Postgres/Mysql DB dump step.
+        # Here we want to fail everything, as described in https://stackoverflow.com/a/58003436/4921449
+        run: |
+          echo '${{ toJSON(steps) }}'
+          exit 1
 
       - name: Setup Flow configuration (PGSQL)
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: |
           rm -f Configuration/Testing/Settings.yaml
           cat <<EOF >> Configuration/Testing/Settings.yaml
@@ -202,32 +316,18 @@ jobs:
                   charset: 'utf8'
                   defaultTableOptions:
                     charset: 'utf8'
-              mvc:
-                routes:
-                  'Neos.Flow': TRUE
           EOF
-
-      - name: Run unit tests (PGSQL)
-        if: matrix.static-analysis == 'no'
-        run: bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/UnitTests.xml --verbose
+          mkdir Configuration/Testing/Behat
+          cp Configuration/Testing/Settings.yaml Configuration/Testing/Behat/Settings.yaml
+          rm -Rf Data/Temporary
 
       - name: Run functional tests (PGSQL)
-        if: matrix.static-analysis == 'no'
+        if: matrix.parallel-parts == 'functionaltests-postgres'
         run: bin/phpunit --colors --stop-on-failure -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml --testsuite "Neos tests" --verbose
-
-      - name: Run behat tests (PGSQL)
-        if: matrix.static-analysis == 'no'
-        #if: env.BEHAT == true
-        run: |
-          FLOW_CONTEXT=Testing/Behat ./flow behat:setup
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:create
-          FLOW_CONTEXT=Testing/Behat ./flow doctrine:migrationversion --add --version all
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.Neos/Tests/Behavior/behat.yml.dist --tags ~@browser
-          bin/behat --stop-on-failure -f progress -c Packages/Neos/Neos.ContentRepository/Tests/Behavior/behat.yml.dist
 
   buildall:
     if: "!contains(github.event.head_commit.message, '[skip ci]') && !contains(github.event.head_commit.message, '[skip travis]')"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: CI build (matrix)
     needs: build
     steps:

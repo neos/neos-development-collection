@@ -13,7 +13,7 @@ namespace Neos\Neos\Tests\Functional\Domain\Service\Fixtures;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Neos\Domain\Service\DefaultPrototypeGeneratorInterface;
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 
 /**
  * A testable prototype generator
@@ -22,18 +22,7 @@ use Neos\ContentRepository\Domain\Model\NodeType;
  */
 class TestablePrototypeGenerator implements DefaultPrototypeGeneratorInterface
 {
-    /**
-     * @var int
-     */
-    protected $callCount = 0;
-
-    /**
-     * @return void
-     */
-    public function reset()
-    {
-        $this->callCount = 0;
-    }
+    private int $callCount = 0;
 
     /**
      * Generate nothing but just count the method call
@@ -47,10 +36,7 @@ class TestablePrototypeGenerator implements DefaultPrototypeGeneratorInterface
         return '';
     }
 
-    /**
-     * @return int
-     */
-    public function getCallCount()
+    public function getCallCount(): int
     {
         return $this->callCount;
     }

@@ -43,30 +43,30 @@
       <f:for each="{graph.edges}" as="edge">
           <line x1="{edge.x1}" y1="{edge.y1}" x2="{edge.x2}" y2="{edge.y2}" stroke-width="2" stroke="{edge.color}" opacity="{edge.opacity}" style="{edge.style}" data-from="{edge.from}" data-to="{edge.to}"/>
       </f:for>
-        <f:for each="{graph.nodes}" as="node" key="subgraphIdentifier">
-            <f:if condition="{selectedSubgraphIdentifier} == {subgraphIdentifier}">
+        <f:for each="{graph.nodes}" as="node" key="dimensionSpacePointHash">
+            <f:if condition="{selectedDimensionSpacePointHash} == {dimensionSpacePointHash}">
                 <f:then>
                     <f:link.action action="index" arguments="{type: type}">
                         <circle id="{node.id}" cx="{node.x}" cy="{node.y}" r="40" stroke="#FFFFFF" stroke-width="2" fill="{node.color}" />
                     </f:link.action>
                 </f:then>
                 <f:else>
-                    <f:link.action action="index" arguments="{type: type, subgraphIdentifier: subgraphIdentifier}">
+                    <f:link.action action="index" arguments="{type: type, dimensionSpacePointHash: dimensionSpacePointHash}">
                         <circle id="{node.id}" cx="{node.x}" cy="{node.y}" r="40" stroke="#FFFFFF" stroke-width="2" fill="{node.color}" />
                     </f:link.action>
                 </f:else>
             </f:if>
         </f:for>
     </svg>
-    <f:for each="{graph.nodes}" as="node" key="subgraphIdentifier">
-        <f:if condition="{selectedSubgraphIdentifier} == {subgraphIdentifier}">
+    <f:for each="{graph.nodes}" as="node" key="dimensionSpacePointHash">
+        <f:if condition="{selectedDimensionSpacePointHash} == {dimensionSpacePointHash}">
             <f:then>
                 <f:link.action action="index" arguments="{type: type}">
                     <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center; pointer-events: none;">{node.name}</div>
                 </f:link.action>
             </f:then>
             <f:else>
-                <f:link.action action="index" arguments="{type: type, subgraphIdentifier: subgraphIdentifier}">
+                <f:link.action action="index" arguments="{type: type, dimensionSpacePointHash: dimensionSpacePointHash}">
                     <div style="position: absolute; top: {node.textY}px; left:{node.textX}px; width: 80px; text-align: center; pointer-events: none;">{node.name}</div>
                 </f:link.action>
             </f:else>

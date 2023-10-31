@@ -6,9 +6,9 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "neos/media": "self.version",
-        "neos/content-repository": "self.version",
+        "neos/contentrepository-core": "self.version",
         "neos/neos": "self.version",
         "neos/flow": "*",
         "neos/fluid-adaptor": "*",

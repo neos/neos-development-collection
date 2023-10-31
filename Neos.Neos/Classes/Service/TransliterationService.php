@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,13 +10,15 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
 use Behat\Transliterator\Transliterator;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Service as LocalizationService;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class TransliterationService
 {
     /**
@@ -28,7 +29,8 @@ class TransliterationService
 
     /**
      * @Flow\InjectConfiguration("transliterationRules")
-     * @var boolean
+     * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $transliterationRules;
 

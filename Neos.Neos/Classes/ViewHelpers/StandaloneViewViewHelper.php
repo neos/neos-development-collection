@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
@@ -48,8 +51,19 @@ class StandaloneViewViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('templatePathAndFilename', 'string', 'Path and filename of the template to render', true);
-        $this->registerArgument('arguments', 'array', 'Arguments to assign to the template before rendering', false, []);
+        $this->registerArgument(
+            'templatePathAndFilename',
+            'string',
+            'Path and filename of the template to render',
+            true
+        );
+        $this->registerArgument(
+            'arguments',
+            'array',
+            'Arguments to assign to the template before rendering',
+            false,
+            []
+        );
     }
 
     /**

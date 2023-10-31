@@ -14,7 +14,10 @@ namespace Neos\Fusion\View;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\View\AbstractView;
-use Neos\Utility\Files;
+use Neos\Fusion\Core\FusionConfiguration;
+use Neos\Fusion\Core\FusionGlobals;
+use Neos\Fusion\Core\FusionSourceCode;
+use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\Runtime;
 use Neos\Fusion\Core\RuntimeFactory;
@@ -40,6 +43,7 @@ class FusionView extends AbstractView
     protected $supportedOptions = [
         'fusionPathPatterns' => [['resource://@package/Private/Fusion'], 'Fusion files that will be loaded if directories are given the Root.fusion is used.', 'array'],
         'fusionPath' => [null, 'The Fusion path which should be rendered; derived from the controller and action names or set by the user.', 'string'],
+        'fusionGlobals' => [null, 'Additional global variables; merged together with the "request". Must only be specified at creation.', FusionGlobals::class],
         'packageKey' => [null, 'The package key where the Fusion should be loaded from. If not given, is automatically derived from the current request.', 'string'],
         'debugMode' => [false, 'Flag to enable debug mode of the Fusion runtime explicitly (overriding the global setting).', 'boolean'],
         'enableContentCache' => [false, 'Flag to enable content caching inside Fusion (overriding the global setting).', 'boolean']
@@ -53,10 +57,8 @@ class FusionView extends AbstractView
 
     /**
      * The parsed Fusion array in its internal representation
-     *
-     * @var array
      */
-    protected $parsedFusion;
+    protected FusionConfiguration $parsedFusion;
 
     /**
      * Runtime cache of the Fusion path which should be rendered; derived from the controller
@@ -157,7 +159,26 @@ class FusionView extends AbstractView
     {
         if ($this->fusionRuntime === null) {
             $this->loadFusion();
-            $this->fusionRuntime = $this->runtimeFactory->create($this->parsedFusion, $this->controllerContext);
+
+            $fusionGlobals = $this->options['fusionGlobals'] ?? FusionGlobals::empty();
+            if (!$fusionGlobals instanceof FusionGlobals) {
+                throw new \InvalidArgumentException('View option "fusionGlobals" must be of type FusionGlobals', 1694252923947);
+            }
+            $fusionGlobals = $fusionGlobals->merge(
+                FusionGlobals::fromArray(
+                    array_filter([
+                        'request' => $this->controllerContext?->getRequest()
+                    ])
+                )
+            );
+
+            $this->fusionRuntime = $this->runtimeFactory->createFromConfiguration(
+                $this->parsedFusion,
+                $fusionGlobals
+            );
+            if (isset($this->controllerContext)) {
+                $this->fusionRuntime->setControllerContext($this->controllerContext);
+            }
         }
         if (isset($this->options['debugMode'])) {
             $this->fusionRuntime->setDebugMode($this->options['debugMode']);
@@ -178,23 +199,21 @@ class FusionView extends AbstractView
     }
 
     /**
-     * Parse all the fusion files the are in the current fusionPathPatterns
-     *
-     * @return array
+     * Parse all the fusion files that are in the current fusionPathPatterns
      */
-    protected function getMergedFusionObjectTree(): array
+    protected function getMergedFusionObjectTree(): FusionConfiguration
     {
-        $parsedFusion = [];
+        $fusionCodeCollection = [];
         $fusionPathPatterns = $this->getFusionPathPatterns();
         foreach ($fusionPathPatterns as $fusionPathPattern) {
             if (is_dir($fusionPathPattern)) {
                 $fusionPathPattern .= '/Root.fusion';
             }
             if (file_exists($fusionPathPattern)) {
-                $parsedFusion = $this->fusionParser->parse(file_get_contents($fusionPathPattern), $fusionPathPattern, $parsedFusion);
+                $fusionCodeCollection[] = FusionSourceCode::fromFilePath($fusionPathPattern);
             }
         }
-        return $parsedFusion;
+        return $this->fusionParser->parseFromSource(new FusionSourceCodeCollection(...$fusionCodeCollection));
     }
 
     /**

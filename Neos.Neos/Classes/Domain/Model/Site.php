@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Model;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Domain\Model;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,8 +31,15 @@ class Site
     /**
      * Site states
      */
-    const STATE_ONLINE = 1;
-    const STATE_OFFLINE = 2;
+    public const STATE_ONLINE = 1;
+    public const STATE_OFFLINE = 2;
+
+    /**
+     * @Flow\InjectConfiguration(path="sites")
+     * @var array
+     * @phpstan-var array<string,array<string,mixed>>
+     */
+    protected $sitesConfiguration = [];
 
     /**
      * Name of the site
@@ -57,6 +67,7 @@ class Site
 
     /**
      * @var Collection<Domain>
+     * @phpstan-var Collection<int,Domain>
      * @ORM\OneToMany(mappedBy="site")
      * @Flow\Lazy
      */
@@ -64,6 +75,7 @@ class Site
 
     /**
      * @var Domain
+     * @phpstan-var ?Domain
      * @ORM\ManyToOne
      * @ORM\Column(nullable=true)
      */
@@ -85,6 +97,7 @@ class Site
 
     /**
      * @var AssetCollection
+     * @phpstan-var ?AssetCollection
      * @ORM\ManyToOne
      */
     protected $assetCollection;
@@ -105,7 +118,7 @@ class Site
      */
     public function __toString()
     {
-        return $this->getNodeName();
+        return $this->getNodeName()->value;
     }
 
     /**
@@ -137,12 +150,12 @@ class Site
      * If you need to fetch the root node for this site, use the content
      * context, do not use the NodeDataRepository!
      *
-     * @return string The node name
+     * @return SiteNodeName The node name
      * @api
      */
-    public function getNodeName()
+    public function getNodeName(): SiteNodeName
     {
-        return $this->nodeName;
+        return SiteNodeName::fromString($this->nodeName);
     }
 
     /**
@@ -152,8 +165,11 @@ class Site
      * @return void
      * @api
      */
-    public function setNodeName($nodeName)
+    public function setNodeName(string|SiteNodeName $nodeName)
     {
+        if ($nodeName instanceof SiteNodeName) {
+            $nodeName = $nodeName->value;
+        }
         $this->nodeName = $nodeName;
     }
 
@@ -222,20 +238,20 @@ class Site
     }
 
     /**
-     * @param Collection<Domain> $domains
+     * @param Collection<int,Domain> $domains
      * @return void
      * @api
      */
     public function setDomains($domains)
     {
         $this->domains = $domains;
-        if (!$this->domains->contains($this->primaryDomain)) {
+        if (!$this->primaryDomain || !$this->domains->contains($this->primaryDomain)) {
             $this->primaryDomain = $this->getFirstActiveDomain();
         }
     }
 
     /**
-     * @return Collection<Domain>
+     * @return Collection<int,Domain>
      * @api
      */
     public function getDomains()
@@ -255,11 +271,12 @@ class Site
     }
 
     /**
-     * @return Collection<Domain>
+     * @return Collection<int,Domain>
      * @api
      */
     public function getActiveDomains()
     {
+        /** @var Collection<int, Domain> $activeDomains */
         $activeDomains = $this->domains->filter(function (Domain $domain) {
             return $domain->getActive();
         });
@@ -267,13 +284,13 @@ class Site
     }
 
     /**
-     * @return Domain|null
+     * @return ?Domain
      * @api
      */
     public function getFirstActiveDomain()
     {
         $activeDomains = $this->getActiveDomains();
-        return count($activeDomains) > 0 ? $this->getActiveDomains()->first() : null;
+        return count($activeDomains) > 0 ? ($activeDomains->first() ?: null) : null;
     }
 
     /**
@@ -303,16 +320,18 @@ class Site
     /**
      * Returns the primary domain, if one has been defined.
      *
-     * @return Domain The primary domain or NULL
+     * @return ?Domain The primary domain or NULL
      * @api
      */
-    public function getPrimaryDomain()
+    public function getPrimaryDomain(): ?Domain
     {
-        return isset($this->primaryDomain) && $this->primaryDomain->getActive() ? $this->primaryDomain : $this->getFirstActiveDomain();
+        return $this->primaryDomain instanceof Domain && $this->primaryDomain->getActive()
+            ? $this->primaryDomain
+            : $this->getFirstActiveDomain();
     }
 
     /**
-     * @return AssetCollection
+     * @return ?AssetCollection
      */
     public function getAssetCollection()
     {
@@ -349,5 +368,11 @@ class Site
      */
     public function emitSiteChanged()
     {
+    }
+
+    public function getConfiguration(): SiteConfiguration
+    {
+        // we DO NOT want recursive merge here
+        return SiteConfiguration::fromArray($this->sitesConfiguration[$this->nodeName] ?? $this->sitesConfiguration['*']);
     }
 }

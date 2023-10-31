@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Routing\Cache;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,17 @@ namespace Neos\Neos\Routing\Cache;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Routing\Cache;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * This service flushes Route caches triggered by node changes.
@@ -23,6 +29,11 @@ use Neos\ContentRepository\Domain\Model\Workspace;
  */
 class RouteCacheFlusher
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * @Flow\Inject
      * @var RouterCachingService
@@ -30,7 +41,7 @@ class RouteCacheFlusher
     protected $routeCachingService;
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $tagsToFlush = [];
 
@@ -38,18 +49,19 @@ class RouteCacheFlusher
      * Schedules flushing of the routing cache entries for the given $node
      * Note that child nodes are flushed automatically because they are tagged with all parents.
      *
-     * @param NodeInterface $node The node which has changed in some way
+     * @param Node $node The node which has changed in some way
      * @return void
      */
-    public function registerNodeChange(NodeInterface $node)
+    public function registerNodeChange(Node $node)
     {
-        if (in_array($node->getIdentifier(), $this->tagsToFlush)) {
+        $identifier = $node->nodeAggregateId->value;
+        if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
-        if (!$node->getNodeType()->isOfType('Neos.Neos:Document')) {
+        if (!$this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
             return;
         }
-        $this->tagsToFlush[] = $node->getIdentifier();
+        $this->tagsToFlush[] = $identifier;
     }
 
     /**
@@ -63,10 +75,14 @@ class RouteCacheFlusher
      * @param Workspace|null $newBaseWorkspace
      * @return void
      */
-    public function registerBaseWorkspaceChange(Workspace $workspace, Workspace $oldBaseWorkspace = null, Workspace $newBaseWorkspace = null)
-    {
-        if (!in_array($workspace->getName(), $this->tagsToFlush)) {
-            $this->tagsToFlush[] = $workspace->getName();
+    public function registerBaseWorkspaceChange(
+        Workspace $workspace,
+        Workspace $oldBaseWorkspace = null,
+        Workspace $newBaseWorkspace = null
+    ) {
+        $identifier = $workspace->workspaceName->value;
+        if (!in_array($identifier, $this->tagsToFlush)) {
+            $this->tagsToFlush[] = $identifier;
         }
     }
 

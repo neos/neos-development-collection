@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 
@@ -25,7 +28,11 @@ class ColorOfStringViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('string', 'string', 'This is hashed (MD%) and then used as base for the resulting color, if not given the children are used');
+        $this->registerArgument(
+            'string',
+            'string',
+            'This is hashed (MD%) and then used as base for the resulting color, if not given the children are used'
+        );
         $this->registerArgument('minimalBrightness', 'integer', 'Brightness, from 0 to 255', false, '50');
     }
 
@@ -61,7 +68,7 @@ class ColorOfStringViewHelper extends AbstractViewHelper
 
         $output = '#';
         for ($i = 0; $i < 3; $i++) {
-            $output .= str_pad(dechex($rgbValues[$i]), 2, 0, STR_PAD_LEFT);
+            $output .= str_pad(dechex($rgbValues[$i]), 2, '0', STR_PAD_LEFT);
         }
 
         return $output;

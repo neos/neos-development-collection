@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Controller\Backend;
 
 /*
@@ -12,15 +13,16 @@ namespace Neos\Neos\Controller\Backend;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilege;
 use Neos\Neos\Security\Authorization\Privilege\ModulePrivilegeSubject;
 use Neos\Neos\Service\IconNameMappingService;
 use Neos\Utility\Arrays;
-use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Utility\PositionalArraySorter;
 
 /**
@@ -31,7 +33,7 @@ use Neos\Utility\PositionalArraySorter;
 class MenuHelper
 {
     /**
-     * @var array
+     * @var array|null
      */
     protected $moduleListFirstLevelCache = null;
 
@@ -61,7 +63,7 @@ class MenuHelper
     /**
      * @param array $settings
      */
-    public function injectSettings(array $settings)
+    public function injectSettings(array $settings): void
     {
         $this->settings = $settings;
     }
@@ -71,6 +73,7 @@ class MenuHelper
      *
      * @param ControllerContext $controllerContext
      * @return array
+     * @throws MissingActionNameException|Exception
      */
     public function buildSiteList(ControllerContext $controllerContext): array
     {
@@ -84,6 +87,10 @@ class MenuHelper
         $domainsFound = false;
         $sites = [];
         foreach ($this->siteRepository->findOnline() as $site) {
+            // TODO: we need to check permissions here, a.k.a
+            // TODO: $node = $context->getNode(\Neos\ContentRepository\Domain\Utility\NodePaths::addNodePathSegment(SiteService::SITES_ROOT_PATH, $site->getNodeName()));
+            // TODO: if ($this->privilegeManager->isGranted(NodeTreePrivilege::class, new NodePrivilegeSubject($node))) {
+            // TODO: unfortunately, it's not so easy; because we do not know what dimension we are in...
             $uri = null;
             $active = false;
             /** @var $site Site */
@@ -121,8 +128,7 @@ class MenuHelper
     /**
      * @param ControllerContext $controllerContext
      * @return array
-     * @throws \Neos\Flow\Http\Exception
-     * @throws MissingActionNameException
+     * @throws Exception|MissingActionNameException
      */
     public function buildModuleList(ControllerContext $controllerContext): array
     {
@@ -202,7 +208,7 @@ class MenuHelper
      * @param array $moduleConfiguration
      * @param string $modulePath
      * @return array
-     * @throws \Neos\Flow\Http\Exception
+     * @throws Exception
      * @throws MissingActionNameException
      */
     protected function collectModuleData(ControllerContext $controllerContext, string $module, array $moduleConfiguration, string $modulePath): array

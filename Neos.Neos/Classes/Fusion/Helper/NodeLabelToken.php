@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,17 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Helper;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\Helper\StringHelper;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Provides a chainable interface to build a label for a nodetype
@@ -23,6 +28,10 @@ use Neos\Flow\I18n\EelHelper\TranslationHelper;
  */
 class NodeLabelToken implements ProtectedContextAwareInterface
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -61,12 +70,9 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected $postfix = '';
 
-    /**
-     * @var NodeInterface
-     */
-    protected $node = null;
+    protected Node $node;
 
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -141,21 +147,23 @@ class NodeLabelToken implements ProtectedContextAwareInterface
      */
     protected function resolveLabelFromNodeType(): void
     {
-        $this->label = $this->translationHelper->translate($this->node->getNodeType()->getLabel());
+        $this->label = $this->translationHelper->translate($this->getNodeType($this->node)->getLabel()) ?: '';
         if (empty($this->label)) {
-            $this->label = $this->node->getNodeType()->getName();
+            $this->label = $this->node->nodeTypeName->value;
         }
-        if (empty($this->postfix) && $this->node->isAutoCreated()) {
-            $this->postfix =  ' (' . $this->node->getName() . ')';
+
+        if (empty($this->postfix) && $this->node->nodeName !== null && $this->node->classification->isTethered()) {
+            $this->postfix =  ' (' . $this->node->nodeName->value . ')';
         }
     }
 
     protected function sanitiseLabel(string $label): string
     {
-        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label);
+        $label = preg_replace('/<br\\W*?\\/?>|\\x{00a0}|[^[:print:]]|\\s+/u', ' ', $label) ?: '';
         $label = strip_tags($label);
         $label = trim($label);
         $label = $this->stringHelper->cropAtWord($label, $this->length, $this->suffix);
+
         return $label;
     }
 

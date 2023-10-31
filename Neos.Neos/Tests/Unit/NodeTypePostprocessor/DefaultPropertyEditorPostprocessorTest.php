@@ -1,6 +1,6 @@
 <?php
 
-namespace Neos\Neos\Tests\Unit\Fusion;
+namespace Neos\Neos\Tests\Unit\NodeTypePostprocessor;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -12,7 +12,9 @@ namespace Neos\Neos\Tests\Unit\Fusion;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeType;
+use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
+use Neos\ContentRepository\Core\NodeType\NodeType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\Flow\Tests\UnitTestCase;
 use Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor;
 
@@ -26,8 +28,12 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
         $postprocessor = new DefaultPropertyEditorPostprocessor();
         $this->inject($postprocessor, 'dataTypesDefaultConfiguration', $dataTypesDefaultConfiguration);
         $this->inject($postprocessor, 'editorDefaultConfiguration', $editorDefaultConfiguration);
-        $mockNodeType = $this->getMockBuilder(NodeType::class)->disableOriginalConstructor()->getMock();
-        $mockNodeType->method('getName')->willReturn('Some.NodeType:Name');
+        $mockNodeType = new NodeType(
+            NodeTypeName::fromString('Some.NodeType:Name'),
+            [],
+            [],
+            new DefaultNodeLabelGeneratorFactory()
+        );
         $postprocessor->process($mockNodeType, $configuration, []);
         return $configuration;
     }
@@ -303,6 +309,9 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                                 'elementValue' => 'fromPropertyConfig',
                             ]
                         ],
+                        'elementWithEditorFromDataTypeConfigWithoutUiConfig' => [
+                            'type' => 'TypeWithDataTypeConfig'
+                        ],
                         'elementWithOverriddenEditorConfig' => [
                             'type' => 'TypeWithDataTypeConfig',
                             'ui' => [
@@ -390,6 +399,14 @@ class DefaultPropertyEditorPostprocessorTest extends UnitTestCase
                                 'value' => 'fromPropertyConfig',
                                 'dataTypeValue' => 'fromDataTypeConfig',
                                 'elementValue' => 'fromPropertyConfig',
+                            ]
+                        ],
+                        'elementWithEditorFromDataTypeConfigWithoutUiConfig' => [
+                            'type' => 'TypeWithDataTypeConfig',
+                            'ui' => [
+                                'editor' => 'EditorFromDataTypeConfig',
+                                'value' => 'fromDataTypeConfig',
+                                'dataTypeValue' => 'fromDataTypeConfig',
                             ]
                         ],
                         'elementWithOverriddenEditorConfig' => [

@@ -1,8 +1,6 @@
 
 Neos:
   Neos:
-    eventLog:
-      enabled: false
     userInterface:
       inspector:
         dataTypes:

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,17 @@ namespace Neos\Neos\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service;
+
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\Neos\Domain\Service\ContentContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**
@@ -27,7 +32,6 @@ use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
  */
 class ContentElementEditableService
 {
-
     /**
      * @Flow\Inject
      * @var PrivilegeManagerInterface
@@ -36,41 +40,52 @@ class ContentElementEditableService
 
     /**
      * @Flow\Inject
-     * @var AuthorizationService
-     */
-    protected $nodeAuthorizationService;
-
-    /**
-     * @Flow\Inject
      * @var FusionHtmlAugmenter
      */
     protected $htmlAugmenter;
 
     /**
-     * Wrap the $content identified by $node with the needed markup for the backend.
-     *
-     * @param NodeInterface $node
-     * @param string $property
-     * @param string $content
-     * @return string
+     * @Flow\Inject
+     * @var ContentRepositoryRegistry
      */
-    public function wrapContentProperty(NodeInterface $node, $property, $content)
+    protected $contentRepositoryRegistry;
+
+    public function wrapContentProperty(Node $node, string $property, string $content): string
     {
-        /** @var $contentContext ContentContext */
-        $contentContext = $node->getContext();
-        if ($contentContext->getWorkspaceName() === 'live' || !$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $node->subgraphIdentity->contentRepositoryId
+        );
+
+        if (
+            $this->isContentStreamOfLiveWorkspace(
+                $node->subgraphIdentity->contentStreamId,
+                $contentRepository
+            )
+        ) {
             return $content;
         }
 
-        if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
-            return $content;
-        }
+        // TODO: permissions
+        //if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
+        //    return $content;
+        //}
 
-        $attributes = [];
-        $attributes['class'] = 'neos-inline-editable';
-        $attributes['property'] = 'typo3:' . $property ;
-        $attributes['data-neos-node-type'] = $node->getNodeType()->getName();
+        $attributes = [
+            'data-__neos-property' => $property,
+            'data-__neos-editable-node-contextpath' => NodeAddressFactory::create($contentRepository)
+                ->createFromNode($node)
+                ->serializeForUri()
+        ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
+    }
+
+    private function isContentStreamOfLiveWorkspace(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): bool {
+        return $contentRepository->getWorkspaceFinder()
+            ->findOneByCurrentContentStreamId($contentStreamId)
+            ?->workspaceName->isLive() ?: false;
     }
 }

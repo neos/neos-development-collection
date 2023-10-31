@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Command;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Command;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
@@ -36,6 +39,7 @@ class UserCommandController extends CommandController
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="security.authentication.providers")
      * @var array
+     * @phpstan-var array<string,mixed>
      */
     protected $authenticationProviderSettings;
 
@@ -70,7 +74,8 @@ class UserCommandController extends CommandController
      * and then retrieving the user which owns that account. If an authentication provider is specified, this command
      * will look for an account identified by "username" for that specific provider.
      *
-     * @param string $username The username of the user to show. Usually refers to the account identifier of the user's Neos backend account.
+     * @param string $username The username of the user to show.
+     *                         Usually refers to the account identifier of the user's Neos backend account.
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
      */
@@ -81,6 +86,7 @@ class UserCommandController extends CommandController
             $this->outputLine('The username "%s" is not in use', [$username]);
             $this->quit(1);
         }
+        /** @var User $user */
 
         $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
         $tableRows = [$this->getTableRowForUser($user)];
@@ -102,16 +108,24 @@ class UserCommandController extends CommandController
      * Roles for the new user can optionally be specified as a comma separated list. For all roles provided by
      * Neos, the role namespace "Neos.Neos:" can be omitted.
      *
-     * @param string $username The username of the user to be created, used as an account identifier for the newly created account
+     * @param string $username The username of the user to be created,
+     *                         used as an account identifier for the newly created account
      * @param string $password Password of the user to be created
      * @param string $firstName First name of the user to be created
      * @param string $lastName Last name of the user to be created
      * @param string $roles A comma separated list of roles to assign. Examples: "Editor, Acme.Foo:Reviewer"
-     * @param string $authenticationProvider Name of the authentication provider to use for the new account. Example: "Neos.Neos:Backend"
+     * @param string $authenticationProvider Name of the authentication provider to use for the new account.
+     *                                       Example: "Neos.Neos:Backend"
      * @return void
      */
-    public function createCommand($username, $password, $firstName, $lastName, $roles = null, $authenticationProvider = null)
-    {
+    public function createCommand(
+        $username,
+        $password,
+        $firstName,
+        $lastName,
+        $roles = null,
+        $authenticationProvider = null
+    ) {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if ($user instanceof User) {
             $this->outputLine('The username "%s" is already in use', [$username]);
@@ -120,15 +134,29 @@ class UserCommandController extends CommandController
 
         try {
             if ($roles === null) {
-                $user = $this->userService->createUser($username, $password, $firstName, $lastName, null, $authenticationProvider);
+                $user = $this->userService->createUser(
+                    $username,
+                    $password,
+                    $firstName,
+                    $lastName,
+                    null,
+                    $authenticationProvider
+                );
             } else {
                 $roleIdentifiers = Arrays::trimExplode(',', $roles);
-                $user = $this->userService->createUser($username, $password, $firstName, $lastName, $roleIdentifiers, $authenticationProvider);
+                $user = $this->userService->createUser(
+                    $username,
+                    $password,
+                    $firstName,
+                    $lastName,
+                    $roleIdentifiers,
+                    $authenticationProvider
+                );
             }
 
             $roleIdentifiers = [];
+            /** @var Account $account */
             foreach ($user->getAccounts() as $account) {
-                /** @var Account $account */
                 foreach ($account->getRoles() as $role) {
                     /** @var Role $role */
                     $roleIdentifiers[$role->getIdentifier()] = true;
@@ -140,7 +168,10 @@ class UserCommandController extends CommandController
                 $this->outputLine('Created user "%s".', [$username]);
                 $this->outputLine('<b>Please note that this user currently does not have any roles assigned.</b>');
             } else {
-                $this->outputLine('Created user "%s" and assigned the following role%s: %s.', [$username, (count($roleIdentifiers) > 1 ? 's' : ''), implode(', ', $roleIdentifiers)]);
+                $this->outputLine(
+                    'Created user "%s" and assigned the following role%s: %s.',
+                    [$username, (count($roleIdentifiers) > 1 ? 's' : ''), implode(', ', $roleIdentifiers)]
+                );
             }
         } catch (\Exception $exception) {
             $this->outputLine($exception->getMessage());
@@ -180,7 +211,11 @@ class UserCommandController extends CommandController
             if ($assumeYes === true) {
                 $delete = true;
             } else {
-                $delete = $this->output->askConfirmation(sprintf('Are you sure you want to delete the user "%s" (%s) including all directly related data? (y/n) ', $username, $user->getName()));
+                $delete = $this->output->askConfirmation(sprintf(
+                    'Are you sure you want to delete the user "%s" (%s) including all directly related data? (y/n) ',
+                    $username,
+                    $user->getName()
+                ));
             }
 
             if ($delete) {
@@ -200,7 +235,8 @@ class UserCommandController extends CommandController
      * found.
      *
      * @param string $username The username of the user to be activated (globbing is supported)
-     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
+     * @param string $authenticationProvider Name of the authentication provider to use for finding the user.
+     *                                       Example: "Neos.Neos:Backend"
      * @return void
      */
     public function activateCommand($username, $authenticationProvider = null)
@@ -223,12 +259,13 @@ class UserCommandController extends CommandController
      *
      * This command deactivates a user by flagging all of its accounts as expired.
      *
-     * If an authentication provider is specified, this command will look for an account with the given username related
-     * to the given provider. Still, this command will deactivate <b>all</b> accounts of a user, once such a user has been
-     * found.
+     * If an authentication provider is specified, this command will look for an account with the given username
+     * related to the given provider. Still, this command will deactivate <b>all</b> accounts of a user,
+     * once such a user has been found.
      *
      * @param string $username The username of the user to be deactivated (globbing is supported)
-     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
+     * @param string $authenticationProvider Name of the authentication provider to use for finding the user.
+     *                                       Example: "Neos.Neos:Backend"
      * @return void
      */
     public function deactivateCommand($username, $authenticationProvider = null)
@@ -257,7 +294,8 @@ class UserCommandController extends CommandController
      *
      * @param string $username Username of the user to modify
      * @param string $password The new password
-     * @param string $authenticationProvider Name of the authentication provider to use for finding the user. Example: "Neos.Neos:Backend"
+     * @param string $authenticationProvider Name of the authentication provider to use for finding the user.
+     *                                       Example: "Neos.Neos:Backend"
      * @return void
      */
     public function setPasswordCommand($username, $password, $authenticationProvider = null)
@@ -267,6 +305,7 @@ class UserCommandController extends CommandController
             $this->outputLine('The user "%s" does not exist.', [$username]);
             $this->quit(1);
         }
+        /** @var User $user */
         $this->userService->setUserPassword($user, $password);
         $this->outputLine('The new password for user "%s" was set.', [$username]);
     }
@@ -321,7 +360,8 @@ class UserCommandController extends CommandController
      * existing accounts related to that user, regardless of its authentication provider.
      *
      * @param string $username The username of the user (globbing is supported)
-     * @param string $role Role to be removed from the user, for example "Neos.Neos:Administrator" or just "Administrator"
+     * @param string $role Role to be removed from the user,
+     *                     for example "Neos.Neos:Administrator" or just "Administrator"
      * @param string $authenticationProvider Name of the authentication provider to use. Example: "Neos.Neos:Backend"
      * @return void
      */
@@ -361,7 +401,10 @@ class UserCommandController extends CommandController
             return array_filter(
                 $this->userService->getUsers()->toArray(),
                 function ($user) use ($usernamePattern, $authenticationProviderName) {
-                    return fnmatch($usernamePattern, $this->userService->getUsername($user, $authenticationProviderName));
+                    return fnmatch(
+                        $usernamePattern,
+                        $this->userService->getUsername($user, $authenticationProviderName) ?: ''
+                    );
                 }
             );
         } else {
@@ -377,7 +420,7 @@ class UserCommandController extends CommandController
      * Prepares a table row for output with data of the given User
      *
      * @param User $user The user
-     * @return array
+     * @return array<int,mixed>
      */
     protected function getTableRowForUser(User $user)
     {
@@ -387,7 +430,9 @@ class UserCommandController extends CommandController
             /** @var Account $account */
             $authenticationProviderName = $account->getAuthenticationProviderName();
             if ($authenticationProviderName !== $this->userService->getDefaultAuthenticationProviderName()) {
-                $authenticationProviderLabel = ' (' . (isset($this->authenticationProviderSettings[$authenticationProviderName]['label']) ? $this->authenticationProviderSettings[$authenticationProviderName]['label'] : $authenticationProviderName) . ')';
+                $authenticationProviderLabel = ' ('
+                    . ($this->authenticationProviderSettings[$authenticationProviderName]['label']
+                        ?? $authenticationProviderName) . ')';
             } else {
                 $authenticationProviderLabel = '';
             }
@@ -397,6 +442,12 @@ class UserCommandController extends CommandController
                 $roleNames[] = $role->getIdentifier();
             }
         }
-        return [$user->getName()->getFullName(), $user->getPrimaryElectronicAddress(), implode(', ', $accountIdentifiers), implode(', ', $roleNames), ($user->isActive() ? 'yes' : 'no')];
+        return [
+            $user->getName()->getFullName(),
+            $user->getPrimaryElectronicAddress(),
+            implode(', ', $accountIdentifiers),
+            implode(', ', $roleNames),
+            ($user->isActive() ? 'yes' : 'no')
+        ];
     }
 }

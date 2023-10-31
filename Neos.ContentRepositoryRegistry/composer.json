@@ -1,0 +1,24 @@
+{
+    "name": "neos/contentrepositoryregistry",
+    "type": "neos-package",
+    "description": "Global registry for Neos Content Repository instances",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/flow": "*",
+        "neos/contentrepository-core": "*",
+        "symfony/property-access": "*",
+        "psr/clock": "^1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepositoryRegistry\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentRepositoryRegistry\\Tests\\": "Tests"
+        }
+    }
+}

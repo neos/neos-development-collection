@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Validation\Validator;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,10 @@ namespace Neos\Neos\Validation\Validator;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Validation\Validator;
+
 use Neos\Flow\Validation\Validator\AbstractValidator;
 
 /**
@@ -19,7 +22,7 @@ use Neos\Flow\Validation\Validator\AbstractValidator;
 class HostnameValidator extends AbstractValidator
 {
     /**
-     * @var array
+     * @var array<string,mixed>
      */
     protected $supportedOptions = [
         'ignoredHostnames' => ['', 'Hostnames that are not to be validated', 'string'],

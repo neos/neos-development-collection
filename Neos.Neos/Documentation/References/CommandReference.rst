@@ -28,6 +28,58 @@ Package *NEOS.CONTENTREPOSITORY*
 --------------------------------
 
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:show`:
+
+``neos.contentrepository:nodetypes:show``
+**************************************
+
+**Show NodeType Configuration**
+
+Shows the merged configuration (including supertypes) of a NodeType
+
+**Examples:**
+
+``./flow nodeTypes:show Vendor.Site:Content``
+
+``./flow nodeTypes:show Vendor.Site:Content --path="properties.bar"``
+
+
+Options
+^^^^^^^
+
+``--node-type-name``
+  The name of the NodeType to show
+``--path``
+  Optional path of the NodeType-configuration which will be shown
+
+
+
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:nodetypes:list`:
+
+``neos.contentrepository:nodetypes:list``
+**************************************
+
+**List NodeTypes**
+
+Lists all declared NodeTypes grouped by namespace
+
+**Examples:**
+
+``./flow nodeTypes:list --filter Vendor.Site:``
+
+``./flow nodeTypes:list --filter Vendor.Site:Document  --include-abstract``
+
+
+
+Options
+^^^^^^^
+
+``--filter``
+  Only NodeType-names containing this string will be listed
+``--include-abstract``
+  List abstract NodeTypes
+
+
 .. _`Neos Command Reference: NEOS.CONTENTREPOSITORY neos.contentrepository:node:repair`:
 
 ``neos.contentrepository:node:repair``
@@ -160,8 +212,32 @@ Options
   Only execute the given check or checks (comma separated)
 
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORY.MIGRATION`:
 
+Package *NEOS.CONTENTREPOSITORY.MIGRATION*
+-------------------
 
+.. _`Neos Command Reference: NEOS.CONTENTREPOSITORYREGISTRY neos.contentrepositoryregistry:nodemigration:migrationcreate`:
+
+``neos.contentrepositoryregistry:nodemigration:migrationcreate``
+*************************
+
+**Create a node migration for the given package key**
+
+You can specify the ``packageKey`` of your desired package. A node migration will be created in the specified package under ``/Migrations/ContentRepository/``.
+The newly created node migration contains a small template to help you to get started, and also a link to the Neos documentation about how node migrations work in Neos.
+
+Arguments
+^^^^^^^^^
+
+``--package-key``
+  The key for your package (for example ``Neos.Demo``)
+
+Example
+^^^^^^^
+
+.. code-block:: bash
+  ./flow node:migrationcreate --package-key Neos.Demo
 
 .. _`Neos Command Reference: NEOS.FLOW`:
 

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Node;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,34 +10,37 @@ namespace Neos\Neos\ViewHelpers\Node;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Node;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * ViewHelper to find the closest document node to a given node
  */
 class ClosestDocumentViewHelper extends AbstractViewHelper
 {
-    /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+        $this->registerArgument('node', Node::class, 'Node', true);
     }
 
-    /**
-     * @return NodeInterface
-     * @throws \Neos\Eel\Exception
-     */
-    public function render()
+    public function render(): ?Node
     {
-        $flowQuery = new FlowQuery([$this->arguments['node']]);
-        return $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+        /** @var Node $node */
+        $node = $this->arguments['node'];
+
+        return $this->contentRepositoryRegistry->subgraphForNode($node)
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 }

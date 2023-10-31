@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,13 +10,29 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Helper;
+
+use GuzzleHttp\Psr7\Uri;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Media\Domain\Model\AssetInterface;
-use Neos\Neos\Service\LinkingService;
+use Neos\Flow\Http\Exception as HttpException;
+use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\ResourceManagement\ResourceManager;
+use Neos\Media\Domain\Model\AssetInterface;
+use Neos\Media\Domain\Repository\AssetRepository;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Fusion\ConvertUrisImplementation;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Eel helper for the linking service
@@ -26,63 +41,148 @@ class LinkHelper implements ProtectedContextAwareInterface
 {
     /**
      * @Flow\Inject
-     * @var LinkingService
+     * @var LoggerInterface
      */
-    protected $linkingService;
+    protected $systemLogger;
 
     /**
-     * @param string|UriInterface $uri
+     * @Flow\Inject
+     * @var AssetRepository
+     */
+    protected $assetRepository;
+
+    /**
+     * @Flow\Inject
+     * @var ResourceManager
+     */
+    protected $resourceManager;
+
+    /**
+     * @Flow\Inject
+     * @var ContentRepositoryRegistry
+     */
+    protected $contentRepositoryRegistry;
+
+    /**
+     * @param string|Uri $uri
      * @return boolean
      */
-    public function hasSupportedScheme($uri)
+    public function hasSupportedScheme($uri): bool
     {
-        return $this->linkingService->hasSupportedScheme($uri);
+        return in_array($this->getScheme($uri), ['node', 'asset'], true);
     }
 
     /**
      * @param string|UriInterface $uri
      * @return string
      */
-    public function getScheme($uri)
+    public function getScheme($uri): string
     {
-        return $this->linkingService->getScheme($uri);
+        if ($uri instanceof UriInterface) {
+            return $uri->getScheme();
+        }
+
+        if (is_string($uri) && preg_match(ConvertUrisImplementation::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+            return $matches[1];
+        }
+
+        return '';
     }
 
-    /**
-     * @param string|UriInterface $uri
-     * @param NodeInterface $contextNode
-     * @param ControllerContext $controllerContext
-     * @return string
-     */
-    public function resolveNodeUri($uri, NodeInterface $contextNode, ControllerContext $controllerContext)
-    {
-        return $this->linkingService->resolveNodeUri($uri, $contextNode, $controllerContext);
+    public function resolveNodeUri(
+        string|Uri $uri,
+        Node $contextNode,
+        ControllerContext $controllerContext
+    ): ?string {
+        $targetNode = $this->convertUriToObject($uri, $contextNode);
+        if (!$targetNode instanceof Node) {
+            $this->systemLogger->info(
+                sprintf(
+                    'Could not resolve "%s" to an existing node; The node was probably deleted.',
+                    $uri
+                ),
+                LogEnvironment::fromMethodName(__METHOD__)
+            );
+            return null;
+        }
+        $contentRepository = $this->contentRepositoryRegistry->get(
+            $targetNode->subgraphIdentity->contentRepositoryId
+        );
+        $targetNodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($targetNode);
+        try {
+            $targetUri = NodeUriBuilder::fromUriBuilder($controllerContext->getUriBuilder())
+                ->uriFor($targetNodeAddress);
+        } catch (
+            HttpException
+            | NoMatchingRouteException
+            | MissingActionNameException $e
+        ) {
+            $this->systemLogger->info(sprintf(
+                'Failed to build URI for node "%s": %e',
+                $targetNode->nodeAggregateId->value,
+                $e->getMessage()
+            ), LogEnvironment::fromMethodName(__METHOD__));
+            return null;
+        }
+
+        return (string)$targetUri;
     }
 
-    /**
-     * @param string|UriInterface $uri
-     * @return string
-     */
-    public function resolveAssetUri($uri)
+    public function resolveAssetUri(string|Uri $uri): string
     {
-        return $this->linkingService->resolveAssetUri($uri);
+        if (!$uri instanceof UriInterface) {
+            $uri = new Uri($uri);
+        }
+        $asset = $this->assetRepository->findByIdentifier($uri->getHost());
+        if (!$asset instanceof AssetInterface) {
+            throw new \InvalidArgumentException(sprintf(
+                'Failed to resolve asset from URI "%s", probably the corresponding asset was deleted',
+                $uri
+            ), 1601373937);
+        }
+
+        $assetUri = $this->resourceManager->getPublicPersistentResourceUri($asset->getResource());
+
+        return is_string($assetUri) ? $assetUri : '';
     }
 
-    /**
-     * @param string|UriInterface $uri
-     * @param NodeInterface $contextNode
-     * @return NodeInterface|AssetInterface|NULL
-     */
-    public function convertUriToObject($uri, NodeInterface $contextNode = null)
-    {
-        return $this->linkingService->convertUriToObject($uri, $contextNode);
+    public function convertUriToObject(
+        string|Uri $uri,
+        Node $contextNode = null
+    ): Node|AssetInterface|null {
+        if (empty($uri)) {
+            return null;
+        }
+        if ($uri instanceof UriInterface) {
+            $uri = (string)$uri;
+        }
+
+        if (preg_match(ConvertUrisImplementation::PATTERN_SUPPORTED_URIS, $uri, $matches) === 1) {
+            switch ($matches[1]) {
+                case 'node':
+                    if ($contextNode === null) {
+                        throw new \RuntimeException(
+                            'node:// URI conversion requires a context node to be passed',
+                            1409734235
+                        );
+                    }
+                    return $this->contentRepositoryRegistry->subgraphForNode($contextNode)
+                        ->findNodeById(NodeAggregateId::fromString($matches[2]));
+                case 'asset':
+                    /** @var AssetInterface|null $asset */
+                    /** @noinspection OneTimeUseVariablesInspection */
+                    $asset = $this->assetRepository->findByIdentifier($matches[2]);
+                    return $asset;
+            }
+        }
+        return null;
     }
 
     /**
      * @param string $methodName
      * @return boolean
      */
-    public function allowsCallOfMethod($methodName)
+    public function allowsCallOfMethod($methodName): bool
     {
         return true;
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\Neos\Fusion\Helper;
 
 /*
@@ -34,8 +35,6 @@ class BackendHelper implements ProtectedContextAwareInterface
      */
     public function interfaceLanguage(): string
     {
-        $currentUser = $this->userService->getBackendUser();
-        assert($currentUser !== null, "No backend user");
         return $this->userService->getInterfaceLanguage();
     }
 

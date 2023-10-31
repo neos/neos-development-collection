@@ -62,5 +62,3 @@
     'FrontendSubRoutes':
       package: 'Neos.Neos'
       suffix:  'Frontend'
-      variables:
-        'defaultUriSuffix': '<defaultUriSuffix>'

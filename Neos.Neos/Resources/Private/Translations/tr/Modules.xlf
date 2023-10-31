@@ -159,10 +159,6 @@
 				<source>Discard selected changes</source>
         <target state="translated">Seçili değişiklikleri iptal et</target>
       </trans-unit>
-      <trans-unit id="workspaces.publishSelectedChanges" xml:space="preserve">
-				<source>Publish selected changes</source>
-        <target state="translated">Seçili değişiklikleri yayımla</target>
-      </trans-unit>
       <trans-unit id="workspaces.discardAllChanges" xml:space="preserve">
 				<source>Discard all changes</source>
         <target state="translated">Bütün değişiklikleri iptal et</target>
@@ -262,70 +258,6 @@
       <trans-unit id="workspaces.allChangesInWorkspaceHaveBeenDiscarded">
         <source>All changes from workspace "{0}" have been discarded.</source>
         <target state="translated">"{0}" çalışma alanındaki tüm değişiklikler iptal edildi.</target>
-      </trans-unit>
-      <trans-unit id="history.label" xml:space="preserve">
-				<source>History</source>
-        <target state="translated">Geçmiş</target>
-      </trans-unit>
-      <trans-unit id="history.description" xml:space="preserve">
-				<source>This module provides an overview of all relevant events affecting this Neos installation.</source>
-        <target state="translated">Bu modül bu Neos kurulumunu etkileyen tüm ilgili olaylara genel bir bakış sağlar.</target>
-      </trans-unit>
-      <trans-unit id="history.messages.hereIsWhatHappenedRecentlyInNeos" xml:space="preserve">
-				<source>Here's what happened recently in Neos</source>
-        <target state="translated">İşte son zamanlarda Neos'da olanlar</target>
-      </trans-unit>
-      <trans-unit id="history.messages.emptyHistory" xml:space="preserve">
-				<source>There have not been recorded any events yet which could be displayed in this history.</source>
-        <target state="translated">Henüz bu geçmişte gösterilebilecek herhangi bir olay kaydedildi.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.added" xml:space="preserve">
-				<source>{0} created the {1} "{2}".</source>
-        <target state="translated">{0}, {1} "{2}" oluşturdu.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.removed" xml:space="preserve">
-				<source>{0} removed the {1} "{2}".</source>
-        <target state="translated">{0}, {1} "{2}" 'yi kaldırdı.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.adopted" xml:space="preserve">
-				<source>{0} created the variant {1} of the {2} "{3}".</source>
-        <target state="translated">{0}, {2} "{3}" varyantını {1} oluşturdu.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.changed" xml:space="preserve">
-				<source>{0} modified the {1} "{2}".</source>
-        <target state="translated">{0}, {1} "{2}" değiştirdi.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.moved" xml:space="preserve">
-				<source>{0} moved the {1} "{2}".</source>
-        <target state="translated">{0}, {1} "{2}" taşıdı.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.copied" xml:space="preserve">
-				<source>{0} copied the {1} "{2}".</source>
-        <target state="translated">{0}, {1} "{2}" kopyaladı.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.renamed" xml:space="preserve">
-				<source>{0} renamed the {1} "{2}" to "{3}".</source>
-        <target state="translated">{0}, {1} "{2}" dan "{3}" olarak yeniden adlandırıldı.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.node.changedContent" xml:space="preserve">
-				<source>{0} modified content on the {1} "{2}".</source>
-        <target state="translated">{0}, {1} "{2}" içeriği değiştirdi.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.account.created" xml:space="preserve">
-				<source>{0} created a new user "{1}" for {2}.</source>
-        <target state="translated">{0}, {2} için "{1}" adlı yeni bir kullanıcı oluşturdu.</target>
-      </trans-unit>
-      <trans-unit id="history.eventDescription.account.deleted" xml:space="preserve">
-				<source>{0} deleted the account "{1}" of {2}.</source>
-        <target state="translated">{0}, {2} hesabının "{1}" hesabını sildi.</target>
-      </trans-unit>
-      <trans-unit id="history.loadMore.label" xml:space="preserve">
-				<source>Load More</source>
-        <target state="translated">Daha Fazla Yükle</target>
-      </trans-unit>
-      <trans-unit id="history.nodeRemovedInMeantime" xml:space="preserve">
-				<source>This node has been removed in the meantime</source>
-        <target state="translated">Bu düğüm bu arada kaldırıldı</target>
       </trans-unit>
       <!-- Administration -->
       <trans-unit id="administration.label" xml:space="preserve">
@@ -650,7 +582,7 @@
       </trans-unit>
       <trans-unit id="packages.tooltip.deactivate" xml:space="preserve">
 				<source>Deactivate Package</source>
-        <target state="translated">Paketi Devre Dışı Bırak</target>
+        <target state="translated">Paketi Devre Dışı Bırak </target>
       </trans-unit>
       <trans-unit id="packages.tooltip.activate" xml:space="preserve">
 				<source>Activate Package</source>
@@ -1149,6 +1081,10 @@ Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden bi
 				<source>You are not allowed to create a user with roles "{0}".</source>
         <target state="needs-translation">You are not allowed to create a user with roles "{0}".</target>
       </trans-unit>
+      <trans-unit id="users.userCreationError.title" xml:space="preserve">
+				<source>Unable to create user.</source>
+        <target state="needs-translation">Unable to create user.</target>
+      </trans-unit>
       <trans-unit id="users.userEditingDenied.editing.title" xml:space="preserve">
 				<source>User editing denied</source>
         <target state="needs-translation">User editing denied</target>
@@ -1252,6 +1188,14 @@ Yalnızca geri dönüşünü ve değişkenlerini görmek için düğümlerden bi
       <trans-unit id="userSettings.UserUpdated.body" xml:space="preserve">
 				<source>Your user has been updated.</source>
         <target state="needs-translation">Your user has been updated.</target>
+      </trans-unit>
+      <trans-unit id="userSettings.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
+      </trans-unit>
+      <trans-unit id="userAccount.passwordUpdateFailed.title" xml:space="preserve">
+				<source>Updating password failed</source>
+        <target state="needs-translation">Updating password failed</target>
       </trans-unit>
       <trans-unit id="userSettings.passwordUpdated.title" xml:space="preserve">
 				<source>Password updated</source>

@@ -2,38 +2,31 @@
 <f:layout name="BackendSubModule"/>
 
 <f:section name="subtitle">
-	<h2>{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.title})}</h2>
+	<h2>{neos:backend.translate(id: 'workspaces.editWorkspace', source: 'Modules', package: 'Neos.Neos', arguments: {0: workspace.workspaceTitle.value})}</h2>
 </f:section>
 
 <f:section name="content">
-	<f:form action="update" name="workspace" object="{workspace}">
+	<f:form action="update" name="workspace">
+		<f:form.hidden name="workspaceName" value="{workspace.workspaceName.value}"/>
 		<fieldset>
 			<div class="neos-control-group">
 				<label class="neos-control-label" for="title">{neos:backend.translate(id: 'workspaces.workspace.title', source: 'Modules', package: 'Neos.Neos')}</label>
 				<div class="neos-controls">
-					<f:form.textfield property="title" id="title" class="neos-span3" autofocus="true"/>
+					<f:form.textfield name="title" value="{workspace.workspaceTitle.value}" id="title" class="neos-span3" autofocus="true" required="required" maxlength="200" />
 				</div>
 			</div>
 
 			<div class="neos-control-group">
 				<label class="neos-control-label" for="description">{neos:backend.translate(id: 'workspaces.workspace.description', source: 'Modules', package: 'Neos.Neos')}</label>
 				<div class="neos-controls">
-					<f:form.textfield property="description" id="description" class="neos-span10"/>
+					<f:form.textfield name="description" value="{workspace.workspaceDescription.value}" id="description" class="neos-span10"/>
 				</div>
 			</div>
 
 			<div class="neos-control-group{f:validation.ifHasErrors(for: 'baseWorkspace', then: ' neos-error')}">
 				<label class="neos-control-label" for="baseWorkspace">{neos:backend.translate(id: 'workspaces.workspace.baseWorkspace', source: 'Modules', package: 'Neos.Neos')}</label>
 				<div class="neos-controls">
-					<f:if condition="{disableBaseWorkspaceSelector}">
-						<f:then>
-							<f:form.select property="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" disabled="disabled" title="{neos:backend.translate(id: 'workspaces.help.cantRebaseWorkspaceContainsChanges', source: 'Modules', package: 'Neos.Neos')}" />
-						</f:then>
-						<f:else>
-							<f:form.select property="baseWorkspace" id="baseWorkspace" options="{baseWorkspaceOptions}" />
-						</f:else>
-					</f:if>
-
+					<f:form.select name="baseWorkspace" value="{workspace.baseWorkspaceName.value}" id="baseWorkspace" options="{baseWorkspaceOptions}" disabled="disabled" title="{neos:backend.translate(id: 'workspaces.help.cantRebaseWorkspaceContainsChanges', source: 'Modules', package: 'Neos.Neos')}" />
 				</div>
 			</div>
 
@@ -41,7 +34,7 @@
 				<div class="neos-control-group">
 					<label class="neos-control-label" for="owner">{neos:backend.translate(id: 'workspaces.workspace.owner', source: 'Modules', package: 'Neos.Neos')}</label>
 					<div class="neos-controls">
-						<f:form.select property="owner" name="owner" id="owner" options="{ownerOptions}" />
+						<f:form.select name="workspaceOwner" value="{workspace.workspaceOwner}" id="owner" options="{ownerOptions}" />
 					</div>
 				</div>
 			</f:if>

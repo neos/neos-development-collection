@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\DataSource;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,10 @@ namespace Neos\Neos\Service\DataSource;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\DataSource;
+
 use Neos\Flow\Mvc\Controller\ControllerContext;
 use Neos\Neos\Exception;
 
@@ -21,7 +24,6 @@ use Neos\Neos\Exception;
  */
 abstract class AbstractDataSource implements DataSourceInterface
 {
-
     /**
      * The identifier of the operation
      *

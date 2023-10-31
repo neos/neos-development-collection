@@ -12,7 +12,7 @@
     </div>
 
     <f:if condition="{inaccessibleRelations}">
-        <table class="neos-table neos-no-hover fold-{site.site.nodeName}">
+        <table class="neos-table neos-no-hover">
             <thead>
             <tr>
                 <th>{neos:backend.translate(id: 'document', package: 'Neos.Neos')}</th>
@@ -121,14 +121,14 @@
                         </f:if>
                         </td>
                         <td>
-                            <f:if condition="{userWorkspace} == {nodeInformation.node.workspace}">
+                            <f:if condition="{userWorkspace} == {nodeInformation.workspace}">
                                 <f:then>
                                     <i class="fas fa-user"
                                        title="{neos:backend.translate(id: 'workspaces.personalWorkspace', source: 'Modules', package: 'Neos.Neos')}"
                                        data-neos-toggle="tooltip"></i>
                                 </f:then>
                                 <f:else>
-                                    <f:if condition="{nodeInformation.node.workspace.privateWorkspace}">
+                                    <f:if condition="{nodeInformation.workspace.privateWorkspace}">
                                         <f:then>
                                             <i class="fas fa-shield"
                                                title="{neos:backend.translate(id: 'workspaces.privateWorkspace', source: 'Modules', package: 'Neos.Neos')}"
@@ -142,10 +142,17 @@
                                     </f:if>
                                 </f:else>
                             </f:if>
-                            <span title="{nodeInformation.node.workspace.name}" data-neos-toggle="tooltip">{nodeInformation.node.workspace.title -> f:format.crop(maxCharacters: 25, append: '…')}</span>
+                            <span title="{nodeInformation.workspace.workspaceName.value}" data-neos-toggle="tooltip">{nodeInformation.workspace.workspaceTitle.value -> f:format.crop(maxCharacters: 25, append: '…')}</span>
                         </td>
                         <td class="neos-aRight">
-                         <span title="{nodeInformation.node.lastModificationDateTime -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip">{nodeInformation.node.lastModificationDateTime -> m:format.relativeDate()}</span>
+                            <f:if condition="{nodeInformation.node.timestamps.lastModified}">
+                              <f:then>
+                                  <span title="{nodeInformation.node.timestamps.lastModified -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip">{nodeInformation.node.timestamps.lastModified -> m:format.relativeDate()}</span>
+                              </f:then>
+                              <f:else>
+                                  <span title="{nodeInformation.node.timestamps.created -> f:format.date(format: 'Y-m-d H:i')}" data-neos-toggle="tooltip">{nodeInformation.node.timestamps.created -> m:format.relativeDate()}</span>
+                              </f:else>
+                            </f:if>
                         </td>
                     </tr>
                 </f:for>

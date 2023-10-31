@@ -18,34 +18,33 @@ use Neos\Flow\Tests\Functional\Configuration\ConfigurationValidationTest as Flow
  */
 class ConfigurationValidationTest extends FlowConfigurationValidationTest
 {
-
     /**
      * The application-contexts that are validated
      *
      * @var array<string>
      */
-    protected $contextNames = ['Development', 'Production', 'Testing'];
+    protected array $contextNames = ['Development', 'Production', 'Testing'];
 
     /**
      * The configuration-types that are validated
      *
      * @var array<string>
      */
-    protected $configurationTypes = ['Caches', 'Objects', 'Policy', 'Routes', 'Settings', 'NodeTypes'];
+    protected array $configurationTypes = ['Caches', 'Objects', 'Policy', 'Routes', 'Settings', 'NodeTypes'];
 
     /**
      * The packages that are searched for schemas
      *
      * @var array<string>
      */
-    protected $schemaPackageKeys = ['Neos.Flow', 'Neos.Neos', 'Neos.ContentRepository', 'Neos.Fusion'];
+    protected array $schemaPackageKeys = ['Neos.Flow', 'Neos.Neos', 'Neos.ContentRepository', 'Neos.Fusion'];
 
     /**
      * The packages that contain the configuration that is validated
      *
      * @var array<string>
      */
-    protected $configurationPackageKeys = [
+    protected array $configurationPackageKeys = [
         'Neos.Flow', 'Neos.FluidAdaptor', 'Neos.Eel', 'Neos.Kickstart',
         'Neos.ContentRepository', 'Neos.Neos', 'Neos.Fusion', 'Neos.Media',
         'Neos.Media.Browser'

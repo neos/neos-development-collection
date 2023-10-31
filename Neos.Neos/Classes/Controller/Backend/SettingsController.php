@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,14 +10,16 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class SettingsController extends ActionController
 {
     /**
@@ -27,7 +28,11 @@ class SettingsController extends ActionController
     public function editPreviewAction()
     {
         $this->response->setContentType('application/json');
-        $configuration = new PositionalArraySorter(Arrays::getValueByPath($this->settings, 'userInterface.editPreviewModes'));
-        return json_encode($configuration->toArray());
+        $configuration = new PositionalArraySorter(Arrays::getValueByPath(
+            $this->settings,
+            'userInterface.editPreviewModes'
+        ));
+
+        return json_encode($configuration->toArray(), JSON_THROW_ON_ERROR);
     }
 }

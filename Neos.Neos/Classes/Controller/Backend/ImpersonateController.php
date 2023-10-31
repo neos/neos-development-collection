@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,6 +10,11 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
+
+use Doctrine\Common\Collections\Collection;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
@@ -48,14 +50,14 @@ class ImpersonateController extends ActionController
     protected $defaultViewObjectName = JsonView::class;
 
     /**
-     * @var array
+     * @var array<string,class-string>
      */
     protected $viewFormatToObjectNameMap = [
         'json' => JsonView::class
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = [
         'application/json'
@@ -77,23 +79,37 @@ class ImpersonateController extends ActionController
         $controller = $this->settings['redirectOptions'][$actionName]['controller'] ?? '';
         $package = $this->settings['redirectOptions'][$actionName]['package'] ?? '';
 
-        if ($action !== '' && $controller !== '' && $package !== '' && $this->impersonateService->getImpersonation() === null) {
+        if (
+            $action !== ''
+            && $controller !== ''
+            && $package !== ''
+            && $this->impersonateService->getImpersonation() === null
+        ) {
             $this->redirectWithParentRequest($action, $controller, $package);
         }
     }
 
     /**
      * @param string $actionName Name of the action to forward to
-     * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
-     * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
-     * @param array $arguments Array of arguments for the target action
+     * @param string $controllerName Unqualified object name of the controller to forward to.
+     *                               If not specified, the current controller is used.
+     * @param string $packageKey Key of the package containing the controller to forward to.
+     *                           If not specified, the current package is assumed.
+     * @param array<mixed> $arguments Array of arguments for the target action
      * @param integer $delay (optional) The delay in seconds. Default is no delay.
      * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
      * @param string $format The format to use for the redirect URI
      * @see redirect()
      */
-    protected function redirectWithParentRequest(string $actionName, string $controllerName = null, string $packageKey = null, array $arguments = [], int $delay = 0, int $statusCode = 303, string $format = null): void
-    {
+    protected function redirectWithParentRequest(
+        string $actionName,
+        string $controllerName = null,
+        string $packageKey = null,
+        array $arguments = [],
+        int $delay = 0,
+        int $statusCode = 303,
+        string $format = null
+    ): void {
         $request = $this->getControllerContext()->getRequest()->getMainRequest();
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($request);
@@ -109,7 +125,13 @@ class ImpersonateController extends ActionController
             $uriBuilder->setFormat($format);
         }
 
-        $uri = $uriBuilder->setCreateAbsoluteUri(true)->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+        $uri = $uriBuilder->setCreateAbsoluteUri(true)->uriFor(
+            $actionName,
+            $arguments,
+            $controllerName,
+            $packageKey,
+            $subpackageKey
+        );
         $this->redirectToUri($uri, $delay, $statusCode);
     }
 
@@ -118,8 +140,10 @@ class ImpersonateController extends ActionController
      */
     public function impersonateUserWithResponseAction(User $user): void
     {
+        /** @var Collection<int,Account> $accounts */
+        $accounts = $user->getAccounts();
         /** @var Account $account */
-        $account = $user->getAccounts()->first();
+        $account = $accounts->first();
         $this->impersonateService->impersonate($account);
         $impersonateStatus = $this->getImpersonateStatus();
         $this->view->assign('value', $impersonateStatus);
@@ -140,9 +164,7 @@ class ImpersonateController extends ActionController
      */
     public function restoreWithResponseAction(): void
     {
-        /** @var Account $originalIdentity */
         $originalIdentity = $this->impersonateService->getOriginalIdentity();
-        /** @var Account $impersonateIdentity */
         $impersonateIdentity = $this->impersonateService->getImpersonation();
 
         $response['status'] = false;
@@ -169,6 +191,9 @@ class ImpersonateController extends ActionController
         $this->view->assign('value', $impersonateStatus);
     }
 
+    /**
+     * @return array<string,mixed>
+     */
     public function getImpersonateStatus(): array
     {
         $impersonateStatus = [
@@ -176,6 +201,7 @@ class ImpersonateController extends ActionController
         ];
 
         if ($this->impersonateService->isActive()) {
+            /** @var Account $currentImpersonation */
             $currentImpersonation = $this->impersonateService->getImpersonation();
             $originalIdentity = $this->impersonateService->getOriginalIdentity();
             /** @var User $user */

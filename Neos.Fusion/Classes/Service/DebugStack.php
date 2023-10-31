@@ -14,9 +14,7 @@ namespace Neos\Fusion\Service;
 use Neos\Flow\Annotations as Flow;
 use Neos\Fusion\DebugMessage;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class DebugStack
 {
     /**

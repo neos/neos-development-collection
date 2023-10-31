@@ -1,0 +1,74 @@
+# Base node, which just configures the "removed" property of the node.
+'Neos.Neos:Node':
+  label: "${Neos.Node.labelForNode(node).properties('title', 'text')}"
+  abstract: true
+  options:
+    fusion:
+      prototypeGenerator: ~
+  postprocessors:
+    'NodeTypePresetPostprocessor':
+      position: 'before IconNameMappingPostprocessor'
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\NodeTypePresetPostprocessor'
+    'IconNameMappingPostprocessor':
+      position: 'before DefaultPropertyEditorPostprocessor'
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\IconNameMappingPostprocessor'
+    'DefaultPropertyEditorPostprocessor':
+      position: 'end'
+      postprocessor: 'Neos\Neos\NodeTypePostprocessor\DefaultPropertyEditorPostprocessor'
+  ui:
+    inspector:
+      tabs:
+        default:
+          label: i18n
+          position: 10
+          icon: 'icon-pencil'
+        meta:
+          label: i18n
+          position: 20
+          icon: 'icon-cog'
+      groups:
+        default:
+          label: i18n
+          position: 10
+          icon: 'icon-pencil'
+        type:
+          label: i18n
+          tab: 'meta'
+          icon: 'icon-exchange'
+          position: 990
+        nodeInfo:
+          label: i18n
+          icon: 'icon-info'
+          tab: 'meta'
+          position: 1000
+          collapsed: true
+      views:
+        nodeInfo:
+          label: i18n
+          group: 'nodeInfo'
+          view: 'Neos.Neos/Inspector/Views/NodeInfoView'
+  properties:
+    #TODO: IS IT BREAKING TO DISABLE THESE NODE PROPERTIES BELOW WITH ES CR?
+    #_creationDateTime:
+    #  type: DateTime
+    #_lastModificationDateTime:
+    #  type: DateTime
+    #_lastPublicationDateTime:
+    #  type: DateTime
+    #_path:
+    #  type: string
+    #_name:
+    #  type: string
+    _nodeType:
+      type: string
+      ui:
+        label: i18n
+        reloadIfChanged: true
+        inspector:
+          group: 'type'
+          position: 100
+          editor: 'Neos.Neos/Inspector/Editors/NodeTypeEditor'
+          editorOptions:
+            placeholder: 'Loading ...'
+            baseNodeType: ''
+

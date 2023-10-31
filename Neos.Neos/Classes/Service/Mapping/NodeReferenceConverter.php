@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\Mapping;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,14 @@ namespace Neos\Neos\Service\Mapping;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\Mapping;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 /**
  * Converter to convert node references to their identifiers
@@ -29,7 +32,7 @@ class NodeReferenceConverter extends AbstractTypeConverter
      * @var array<string>
      * @api
      */
-    protected $sourceTypes = [NodeInterface::class, 'array'];
+    protected $sourceTypes = [Node::class, 'array'];
 
     /**
      * The target type this converter can convert to.
@@ -50,26 +53,25 @@ class NodeReferenceConverter extends AbstractTypeConverter
     /**
      * {@inheritdoc}
      *
-     * @param NodeInterface|array<NodeInterface> $source
+     * @param Node|array<Node> $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string the target type
+     * @return string|array<int,string> the target type
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ) {
         if (is_array($source)) {
             $result = [];
-            /** @var NodeInterface $node */
             foreach ($source as $node) {
-                $result[] = $node->getIdentifier();
+                $result[] = $node->nodeAggregateId->value;
             }
         } else {
-            if ($source instanceof NodeInterface) {
-                $result = $source->getIdentifier();
-            } else {
-                $result = '';
-            }
+            $result = $source->nodeAggregateId->value;
         }
 
         return $result;

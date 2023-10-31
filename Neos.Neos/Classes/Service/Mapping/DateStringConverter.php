@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Service\Mapping;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\Service\Mapping;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\Service\Mapping;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
@@ -51,16 +54,20 @@ class DateStringConverter extends AbstractTypeConverter
      *
      * @param \DateTime $source
      * @param string $targetType
-     * @param array $convertedChildProperties
+     * @param array<mixed> $convertedChildProperties
      * @param PropertyMappingConfigurationInterface $configuration
-     * @return string the target type
+     * @return ?string the target type
      */
-    public function convertFrom($source, $targetType, array $convertedChildProperties = [], PropertyMappingConfigurationInterface $configuration = null)
-    {
-        if (!$source instanceof \DateTime) {
+    public function convertFrom(
+        $source,
+        $targetType,
+        array $convertedChildProperties = [],
+        PropertyMappingConfigurationInterface $configuration = null
+    ): ?string {
+        if (!$source instanceof \DateTimeInterface) {
             return null;
         }
         $value = clone $source;
-        return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTime::W3C);
+        return $value->setTimezone(new \DateTimeZone('UTC'))->format(\DateTimeInterface::W3C);
     }
 }

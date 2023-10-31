@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Link;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,14 +10,34 @@ namespace Neos\Neos\ViewHelpers\Link;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Link;
+
+use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\FrontendRouting\NodeAddress;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Log\ThrowableStorageInterface;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Flow\Mvc\Routing\Exception\MissingActionNameException;
+use Neos\Flow\Mvc\Routing\UriBuilder;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
-use Neos\Neos\Exception as NeosException;
-use Neos\Neos\Service\LinkingService;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Service\NodeSiteResolvingService;
+use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
+use Neos\Neos\FrontendRouting\Exception\NodeNotFoundException;
+use Neos\Neos\FrontendRouting\NodeShortcutResolver;
+use Neos\Neos\FrontendRouting\NodeUriBuilder;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * A view helper for creating links with URIs pointing to nodes.
@@ -108,6 +127,10 @@ use Neos\Fusion\ViewHelpers\FusionContextTrait;
 class NodeViewHelper extends AbstractTagBasedViewHelper
 {
     use FusionContextTrait;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @var string
@@ -116,9 +139,15 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
 
     /**
      * @Flow\Inject
-     * @var LinkingService
+     * @var NodeSiteResolvingService
      */
-    protected $linkingService;
+    protected $nodeSiteResolvingService;
+
+    /**
+     * @Flow\Inject
+     * @var NodeShortcutResolver
+     */
+    protected $nodeShortcutResolver;
 
     /**
      * @Flow\Inject
@@ -130,77 +159,264 @@ class NodeViewHelper extends AbstractTagBasedViewHelper
      * Initialize arguments
      *
      * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
+     * @throws ViewHelperException
      */
     public function initializeArguments()
     {
         $this->registerUniversalTagAttributes();
-        $this->registerTagAttribute('name', 'string', 'Specifies the name of an anchor');
-        $this->registerTagAttribute('rel', 'string', 'Specifies the relationship between the current document and the linked document');
-        $this->registerTagAttribute('rev', 'string', 'Specifies the relationship between the linked document and the current document');
-        $this->registerTagAttribute('target', 'string', 'Specifies where to open the linked document');
+        $this->registerTagAttribute(
+            'name',
+            'string',
+            'Specifies the name of an anchor'
+        );
+        $this->registerTagAttribute(
+            'rel',
+            'string',
+            'Specifies the relationship between the current document and the linked document'
+        );
+        $this->registerTagAttribute(
+            'rev',
+            'string',
+            'Specifies the relationship between the linked document and the current document'
+        );
+        $this->registerTagAttribute(
+            'target',
+            'string',
+            'Specifies where to open the linked document'
+        );
 
-        $this->registerArgument('node', 'mixed', 'A node object, a string node path (absolute or relative), a string node://-uri or NULL');
-        $this->registerArgument('format', 'string', 'Format to use for the URL, for example "html" or "json"');
-        $this->registerArgument('absolute', 'boolean', 'If set, an absolute URI is rendered', false, false);
-        $this->registerArgument('arguments', 'array', 'Additional arguments to be passed to the UriBuilder (for example pagination parameters)', false, []);
-        $this->registerArgument('section', 'string', 'The anchor to be added to the URI', false, '');
-        $this->registerArgument('addQueryString', 'boolean', 'If set, the current query parameters will be kept in the URI', false, false);
-        $this->registerArgument('argumentsToBeExcludedFromQueryString', 'array', 'arguments to be removed from the URI. Only active if $addQueryString = true', false, []);
-        $this->registerArgument('baseNodeName', 'string', 'The name of the base node inside the Fusion context to use for the ContentContext or resolving relative paths', false, 'documentNode');
-        $this->registerArgument('nodeVariableName', 'string', 'The variable the node will be assigned to for the rendered child content', false, 'linkedNode');
-        $this->registerArgument('resolveShortcuts', 'boolean', 'DEPRECATED Parameter - ignored', false, true);
+        $this->registerArgument(
+            'node',
+            'mixed',
+            'A node object, a string node path (absolute or relative), a string node://-uri or NULL'
+        );
+        $this->registerArgument(
+            'format',
+            'string',
+            'Format to use for the URL, for example "html" or "json"'
+        );
+        $this->registerArgument(
+            'absolute',
+            'boolean',
+            'If set, an absolute URI is rendered',
+            false,
+            false
+        );
+        $this->registerArgument(
+            'arguments',
+            'array',
+            'Additional arguments to be passed to the UriBuilder (for example pagination parameters)',
+            false,
+            []
+        );
+        $this->registerArgument(
+            'section',
+            'string',
+            'The anchor to be added to the URI',
+            false,
+            ''
+        );
+        $this->registerArgument(
+            'addQueryString',
+            'boolean',
+            'If set, the current query parameters will be kept in the URI',
+            false,
+            false
+        );
+        $this->registerArgument(
+            'argumentsToBeExcludedFromQueryString',
+            'array',
+            'arguments to be removed from the URI. Only active if $addQueryString = true',
+            false,
+            []
+        );
+        $this->registerArgument(
+            'baseNodeName',
+            'string',
+            'The name of the base node inside the Fusion context to use for the ContentContext'
+            . ' or resolving relative paths',
+            false,
+            'documentNode'
+        );
+        $this->registerArgument(
+            'nodeVariableName',
+            'string',
+            'The variable the node will be assigned to for the rendered child content',
+            false,
+            'linkedNode'
+        );
     }
 
     /**
      * Renders the link. Renders the linked node's label if there's no child content.
      *
      * @return string The rendered link
-     * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
-     * @throws \Neos\Flow\Property\Exception
-     * @throws \Neos\Flow\Security\Exception
+     * @throws ViewHelperException
      */
     public function render(): string
     {
         $node = $this->arguments['node'];
-        $baseNode = null;
-        if (!$node instanceof NodeInterface) {
-            $baseNode = $this->getContextVariable($this->arguments['baseNodeName']);
-            if (is_string($node) && strpos($node, 'node://') === 0) {
-                $node = $this->linkingService->convertUriToObject($node, $baseNode);
+        if (!$node instanceof Node) {
+            $node = $this->getContextVariable($this->arguments['baseNodeName']);
+        }
+
+        if ($node instanceof Node) {
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $node->subgraphIdentity->contentRepositoryId
+            );
+            $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+            $nodeAddress = $nodeAddressFactory->createFromNode($node);
+        } elseif (is_string($node)) {
+            $documentNode = $this->getContextVariable('documentNode');
+            assert($documentNode instanceof Node);
+            $contentRepository = $this->contentRepositoryRegistry->get(
+                $documentNode->subgraphIdentity->contentRepositoryId
+            );
+            $nodeAddress = $this->resolveNodeAddressFromString($node, $documentNode, $contentRepository);
+            $node = $documentNode;
+        } else {
+            throw new ViewHelperException(sprintf(
+                'The "node" argument can only be a string or an instance of %s. Given: %s',
+                Node::class,
+                is_object($node) ? get_class($node) : gettype($node)
+            ), 1601372376);
+        }
+
+
+        $subgraph = $contentRepository->getContentGraph()
+            ->getSubgraph(
+                $nodeAddress->contentStreamId,
+                $nodeAddress->dimensionSpacePoint,
+                $node->subgraphIdentity->visibilityConstraints
+            );
+
+        $resolvedNode = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
+        if ($resolvedNode === null) {
+            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
+                'Failed to resolve node "%s" on subgraph "%s"',
+                $nodeAddress->nodeAggregateId->value,
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+            ), 1601372444));
+        }
+        if ($resolvedNode && $this->getNodeType($resolvedNode)->isOfType(NodeTypeNameFactory::NAME_SHORTCUT)) {
+            try {
+                $shortcutNodeAddress = $this->nodeShortcutResolver->resolveShortcutTarget(
+                    $nodeAddress,
+                    $contentRepository
+                );
+                if ($shortcutNodeAddress instanceof NodeAddress) {
+                    $resolvedNode = $subgraph
+                        ->findNodeById($shortcutNodeAddress->nodeAggregateId);
+                }
+            } catch (NodeNotFoundException | InvalidShortcutException $e) {
+                $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
+                    'Failed to resolve shortcut node "%s" on subgraph "%s"',
+                    $resolvedNode->nodeAggregateId->value,
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                ), 1601370239, $e));
             }
         }
 
-        try {
-            $uri = $this->linkingService->createNodeUri(
-                $this->controllerContext,
-                $node,
-                $baseNode,
-                $this->arguments['format'],
-                $this->arguments['absolute'],
-                $this->arguments['arguments'],
-                $this->arguments['section'],
-                $this->arguments['addQueryString'],
-                $this->arguments['argumentsToBeExcludedFromQueryString']
-            );
-            $this->tag->addAttribute('href', $uri);
-        } catch (NeosException $exception) {
-            $this->throwableStorage->logThrowable($exception);
-        } catch (NoMatchingRouteException $exception) {
-            $this->throwableStorage->logThrowable($exception);
-        }
+        $uriBuilder = new UriBuilder();
+        $uriBuilder->setRequest($this->controllerContext->getRequest()->getMainRequest());
+        $uriBuilder->setFormat($this->arguments['format'])
+            ->setCreateAbsoluteUri($this->arguments['absolute'])
+            ->setArguments($this->arguments['arguments'])
+            ->setSection($this->arguments['section'])
+            ->setAddQueryString($this->arguments['addQueryString'])
+            ->setArgumentsToBeExcludedFromQueryString($this->arguments['argumentsToBeExcludedFromQueryString']);
 
-        $linkedNode = $this->linkingService->getLastLinkedNode();
-        $this->templateVariableContainer->add($this->arguments['nodeVariableName'], $linkedNode);
+        $uri = '';
+        try {
+            $uri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+        } catch (
+            HttpException
+            | NoMatchingRouteException
+            | MissingActionNameException $e
+        ) {
+            $this->throwableStorage->logThrowable(new ViewHelperException(sprintf(
+                'Failed to build URI for node: %s: %s',
+                $nodeAddress,
+                $e->getMessage()
+            ), 1601372594, $e));
+        }
+        $this->tag->addAttribute('href', $uri);
+
+        $this->templateVariableContainer->add($this->arguments['nodeVariableName'], $resolvedNode);
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove($this->arguments['nodeVariableName']);
 
-        if ($content === null && $linkedNode !== null) {
-            $content = $linkedNode->getLabel();
+        if ($content === null && $resolvedNode !== null) {
+            $content = $resolvedNode->getLabel();
         }
 
         $this->tag->setContent($content);
         $this->tag->forceClosingTag(true);
         return $this->tag->render();
+    }
+
+    /**
+     * Converts strings like "relative/path", "/absolute/path", "~/site-relative/path"
+     * and "~" to the corresponding NodeAddress
+     *
+     * @param string $path
+     * @return NodeAddress
+     * @throws ViewHelperException
+     */
+    private function resolveNodeAddressFromString(
+        string $path,
+        Node $documentNode,
+        ContentRepository $contentRepository
+    ): NodeAddress {
+        /* @var Node $documentNode */
+        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
+        $documentNodeAddress = $nodeAddressFactory->createFromNode($documentNode);
+        if (strncmp($path, 'node://', 7) === 0) {
+            return $documentNodeAddress->withNodeAggregateId(
+                NodeAggregateId::fromString(\mb_substr($path, 7))
+            );
+        }
+        $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+            $documentNodeAddress->contentStreamId,
+            $documentNodeAddress->dimensionSpacePoint,
+            VisibilityConstraints::withoutRestrictions()
+        );
+        if (strncmp($path, '~', 1) === 0) {
+            // TODO: This can be simplified
+            // once https://github.com/neos/contentrepository-development-collection/issues/164 is resolved
+            $siteNode = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
+                $documentNodeAddress,
+                $documentNode->subgraphIdentity->contentRepositoryId
+            );
+            if ($siteNode === null) {
+                throw new ViewHelperException(sprintf(
+                    'Failed to determine site node for aggregate node "%s" and subgraph "%s"',
+                    $documentNodeAddress->nodeAggregateId->value,
+                    json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+                ), 1601366598);
+            }
+            if ($path === '~') {
+                $targetNode = $siteNode;
+            } else {
+                $targetNode = $subgraph->findNodeByPath(
+                    NodePath::fromString(substr($path, 1)),
+                    $siteNode->nodeAggregateId
+                );
+            }
+        } else {
+            $targetNode = $subgraph->findNodeByPath(
+                NodePath::fromString($path),
+                $documentNode->nodeAggregateId
+            );
+        }
+        if ($targetNode === null) {
+            throw new ViewHelperException(sprintf(
+                'Node on path "%s" could not be found for aggregate node "%s" and subgraph "%s"',
+                $path,
+                $documentNodeAddress->nodeAggregateId->value,
+                json_encode($subgraph, JSON_PARTIAL_OUTPUT_ON_ERROR)
+            ), 1601311789);
+        }
+        return $documentNodeAddress->withNodeAggregateId($targetNode->nodeAggregateId);
     }
 }

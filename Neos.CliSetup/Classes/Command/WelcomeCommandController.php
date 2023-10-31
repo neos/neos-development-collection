@@ -17,9 +17,7 @@ namespace Neos\CliSetup\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class WelcomeCommandController extends CommandController
 {
 
@@ -49,14 +47,18 @@ class WelcomeCommandController extends CommandController
                <info>./flow setup:database</info>
             2. Create the required database tables:
                <info>./flow doctrine:migrate</info>
-            3. Configure the image handler:
+            3. Set up and check the required dependencies for a Content Repository instance:
+                <info>./flow cr:setup</info>
+            4. Migrate the existing data from the Legacy Content Repository:
+                <info>./flow cr:migrateLegacyData --config '{"dbal": {"dbname": "YOUR-DATABASE-NAME"}, "resourcesPath": "/path/to/neos-8.0/Data/Persistent/Resources"}'</info>
+            5. Configure the image handler:
                <info>./flow setup:imagehandler</info>
-            4. Create an admin user:
+            6. Create an admin user:
                <info>./flow user:create --roles Administrator username password firstname lastname </info>
-            5. Create your own site package or require an existing one (choose one option):
+            7. Create your own site package or require an existing one (choose one option):
                - <info>./flow kickstart:site Vendor.Site</info>
                - <info>composer require neos/demo && ./flow flow:package:rescan</info>
-            6. Import a site or create an empty one (choose one option):
+            8. Import a site or create an empty one (choose one option):
                - <info>./flow site:import Neos.Demo</info>
                - <info>./flow site:import Vendor.Site</info>
                - <info>./flow site:create sitename Vendor.Site Vendor.Site:Document.HomePage</info>

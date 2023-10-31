@@ -1,0 +1,23 @@
+Neos:
+  ContentRepositoryRegistry:
+    presets:
+      'default':
+
+        userIdProvider:
+          factoryObjectName: Neos\Neos\UserIdProvider\UserIdProviderFactory
+
+        projections:
+          'Neos.Neos:DocumentUriPathProjection':
+            factoryObjectName: Neos\Neos\FrontendRouting\Projection\DocumentUriPathProjectionFactory
+            catchUpHooks:
+              'Neos.Neos:FlushRouteCache':
+                factoryObjectName: Neos\Neos\FrontendRouting\CatchUpHook\RouterCacheHookFactory
+
+          'Neos.Neos:PendingChangesProjection':
+            factoryObjectName: Neos\Neos\PendingChangesProjection\ChangeProjectionFactory
+          'Neos.ContentRepository:ContentGraph':
+            catchUpHooks:
+              'Neos.Neos:FlushContentCache':
+                factoryObjectName: Neos\Neos\Fusion\Cache\GraphProjectorCatchUpHookForCacheFlushingFactory
+          'Neos.Neos:AssetUsage':
+            factoryObjectName: Neos\Neos\AssetUsage\Projection\AssetUsageProjectionFactory

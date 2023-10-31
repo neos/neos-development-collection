@@ -21,9 +21,7 @@ use Neos\CliSetup\Infrastructure\Database\DatabaseConnectionService;
 use Neos\CliSetup\Infrastructure\ImageHandler\ImageHandlerService;
 use Symfony\Component\Yaml\Yaml;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class SetupCommandController extends CommandController
 {
 

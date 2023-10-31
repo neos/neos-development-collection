@@ -147,6 +147,9 @@
 			<trans-unit id="cantPublishBecauseTargetWorkspaceIsReadOnly" xml:space="preserve">
 				<source>Can't publish because the target workspace is read-only</source>
 			</trans-unit>
+			<trans-unit id="cantPublishSingleNodeInNewPage" xml:space="preserve">
+      	<source>Can't publish a single node in a new page</source>
+      </trans-unit>
 			<trans-unit id="selectTargetWorkspace" xml:space="preserve">
 				<source>Select target workspace</source>
 			</trans-unit>
@@ -726,11 +729,6 @@
 				<source>Node Tree loading error.</source>
 			</trans-unit>
 
-			<!-- FlashMessages -->
-			<trans-unit id="flashMessage.1222204027" xml:space="preserve">
-				<source>The entered username or password was wrong</source>
-			</trans-unit>
-
 			<!-- Miscellaneous -->
 			<trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>
@@ -838,6 +836,12 @@
 			</trans-unit>
 			<trans-unit id="login.loggedOut.body" xml:space="preserve">
 				<source>Successfully logged out</source>
+			</trans-unit>
+			<trans-unit id="documentTree" xml:space="preserve">
+				<source>Document Tree</source>
+			</trans-unit>
+			<trans-unit id="contentTree" xml:space="preserve">
+				<source>Content Tree</source>
 			</trans-unit>
 			<trans-unit id="impersonate.success.impersonateUser" xml:space="preserve" approved="yes">
                 <source>Switched to the new user "{0}".</source>

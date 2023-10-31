@@ -49,6 +49,7 @@ class AssetServiceTest extends AbstractTest
 
     protected function setUp(): void
     {
+        $this->markTestSkipped('Needs to be rewritten for Neos 9.0 / ES CR');
         parent::setUp();
         $this->resourceManager = $this->objectManager->get(ResourceManager::class);
         $this->assetModelMappingStrategy = $this->objectManager->get(AssetModelMappingStrategyInterface::class);

@@ -6,7 +6,7 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "php": "^8.0",
+        "php": "^8.2",
         "neos/flow": "*",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
@@ -14,7 +14,8 @@
         "neos/utility-arrays": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-unicode": "*",
-        "doctrine/orm": "^2.6"
+        "doctrine/orm": "^2.6",
+        "ext-dom": "*"
     },
     "replace": {
         "typo3/typoscript": "self.version"

@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,54 +10,57 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * source code.
  */
 
-use Neos\Eel\FlowQuery\FlowQuery;
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * Render a bread crumb path by using the labels of documents leading to the given node path
  */
 class DocumentBreadcrumbPathViewHelper extends AbstractViewHelper
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @var boolean
      */
     protected $escapeOutput = false;
 
-    /**
-     * Initialize the arguments.
-     *
-     * @return void
-     * @throws \Neos\FluidAdaptor\Core\ViewHelper\Exception
-     */
-    public function initializeArguments()
+    public function initializeArguments(): void
     {
         parent::initializeArguments();
-        $this->registerArgument('node', NodeInterface::class, 'Node', true);
+        $this->registerArgument('node', Node::class, 'Node', true);
     }
 
-    /**
-     * @return string of document nodes
-     * @throws \Neos\Eel\Exception
-     */
-    public function render(): string
+    public function render(): mixed
     {
         $node = $this->arguments['node'];
-
+        assert($node instanceof Node);
         $documentNodes = [];
-        $flowQuery = new FlowQuery([$node]);
-        $nodes = array_reverse($flowQuery->parents('[instanceof Neos.Neos:Document]')->get());
-        /** @var NodeInterface $node */
-        foreach ($nodes as $documentNode) {
-            $documentNodes[] = $documentNode;
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+
+        $currentNode = $node;
+        while ($currentNode instanceof Node) {
+            if ($this->getNodeType($currentNode)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
+                $documentNodes[] = $currentNode;
+            }
+            $currentNode = $subgraph->findParentNode($currentNode->nodeAggregateId);
         }
-        if ($node->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $documentNodes[] = $node;
-        }
+        $documentNodes = array_reverse($documentNodes);
         $this->templateVariableContainer->add('documentNodes', $documentNodes);
         $content = $this->renderChildren();
         $this->templateVariableContainer->remove('documentNodes');
+
         return $content;
     }
 }

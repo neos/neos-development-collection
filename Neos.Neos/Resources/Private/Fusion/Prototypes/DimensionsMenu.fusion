@@ -1,34 +1,29 @@
 # Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
-prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/DimensionsMenu.html'
+prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
+  attributes = Neos.Fusion:DataStructure
 
-  # the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
-  absent.attributes = Neos.Fusion:Attributes {
-    class = 'normal'
+  @private {
+    items = Neos.Neos:DimensionsMenuItems {
+      @ignoreProperties = ${['attributes']}
+      @apply.props = ${props}
+    }
   }
 
-  # if documents which are hidden in index should be rendered or not
-  renderHiddenInIndex = true
-
-  # name of the dimension to use (optional)
-  dimension = null
-
-  # list of presets, if the default order should be overridden, only used with "dimension" set
-  presets = null
-
-  # if true, items for all presets will be included, ignoring dimension constraints
-  includeAllPresets = false
-
-  @context {
-    dimension = ${this.dimension}
-    presets = ${this.presets}
-    includeAllPresets = ${this.includeAllPresets}
+  renderer = Neos.Neos:MenuItemListRenderer {
+    items = ${private.items}
+    attributes = ${props.attributes}
   }
 
-  items = Neos.Neos:DimensionsMenuItems {
-    includeAllPresets = ${includeAllPresets}
-    dimension = ${dimension}
-    presets = ${presets}
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
+
+  @cache {
+    mode = 'cached'
+    entryIdentifier {
+      documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+    }
+    entryTags {
+      1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
+    }
   }
 }
 

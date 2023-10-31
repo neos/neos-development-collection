@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,12 +10,19 @@ namespace Neos\Neos\Controller\Service;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Service;
+
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\FluidAdaptor\View\TemplateView;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 
 /**
  * REST service controller for managing content dimensions
@@ -26,7 +32,7 @@ class ContentDimensionsController extends ActionController
     use BackendUserTranslationTrait;
 
     /**
-     * @var array
+     * @var array<string,string>
      */
     protected $viewFormatToObjectNameMap = [
         'html' => TemplateView::class,
@@ -34,18 +40,15 @@ class ContentDimensionsController extends ActionController
     ];
 
     /**
-     * @var array
+     * @var array<int,string>
      */
     protected $supportedMediaTypes = [
         'text/html',
         'application/json'
     ];
 
-    /**
-     * @var ContentDimensionPresetSourceInterface
-     * @Flow\Inject
-     */
-    protected $contentDimensionPresetSource;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * Returns the full content dimensions presets as JSON object; see
@@ -55,10 +58,23 @@ class ContentDimensionsController extends ActionController
      */
     public function indexAction()
     {
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $controllerInternals = $this->contentRepositoryRegistry->buildService(
+            $contentRepositoryId,
+            new ContentDimensionsControllerInternalsFactory()
+        );
+
         if ($this->view instanceof JsonView) {
-            $this->view->assign('value', $this->contentDimensionPresetSource->getAllPresets());
+            $this->view->assign(
+                'value',
+                $controllerInternals->interDimensionalVariationGraph->getDimensionSpacePoints()
+            );
         } else {
-            $this->view->assign('contentDimensionsPresets', $this->contentDimensionPresetSource->getAllPresets());
+            $this->view->assign(
+                'contentDimensionsPresets',
+                $controllerInternals->interDimensionalVariationGraph->getDimensionSpacePoints()
+            );
         }
     }
 
@@ -76,18 +92,51 @@ class ContentDimensionsController extends ActionController
      *
      * @param string $dimensionName Name of the dimension to return presets for
      * @param array $chosenDimensionPresets An optional array of dimension names and a single preset per dimension
+     * @phpstan-param array<string,string> $chosenDimensionPresets
      * @return void
      */
-    public function showAction($dimensionName, $chosenDimensionPresets = [])
+    public function showAction($dimensionName, $chosenDimensionPresets = []): void
     {
-        if ($chosenDimensionPresets === []) {
-            $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllPresets();
-            if (!isset($contentDimensionsAndPresets[$dimensionName])) {
-                $this->throwStatus(404, sprintf('The dimension %s does not exist.', $dimensionName));
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
+        $contentDimensionSource = $contentRepository->getContentDimensionSource();
+
+        $contentDimensionId = new ContentDimensionId($dimensionName);
+        $contentDimension = $contentDimensionSource->getDimension($contentDimensionId);
+        if (is_null($contentDimension)) {
+            $this->throwStatus(404, sprintf('The dimension %s does not exist.', $dimensionName));
+        }
+
+        $interDimensionalVariationGraph = $contentRepository->getVariationGraph();
+        $allowedSubSpace = $interDimensionalVariationGraph->getDimensionSpacePoints();
+
+        $selectedDimensionSpacepoint = DimensionSpacePoint::fromArray($chosenDimensionPresets);
+        $allowedDimensionValues = [];
+        foreach ($contentDimension->values as $contentDimensionValue) {
+            $probeDimensionSpacepoint = $selectedDimensionSpacepoint->vary(
+                $contentDimensionId,
+                $contentDimensionValue->value
+            );
+
+            if ($allowedSubSpace->contains($probeDimensionSpacepoint)) {
+                $allowedDimensionValues[] = $contentDimensionValue;
             }
-            $contentDimensionsAndPresets = [$dimensionName => $contentDimensionsAndPresets[$dimensionName]];
-        } else {
-            $contentDimensionsAndPresets = $this->contentDimensionPresetSource->getAllowedDimensionPresetsAccordingToPreselection($dimensionName, $chosenDimensionPresets);
+        }
+
+        // Build Legacy Response Shape
+        $contentDimensionsAndPresets = [
+            $contentDimensionId->value => [
+                'label' => $contentDimension->getConfigurationValue('label'),
+                'icon' => $contentDimension->getConfigurationValue('icon'),
+                'presets' => []
+            ]
+        ];
+        foreach ($allowedDimensionValues as $allowedDimensionValue) {
+            $contentDimensionsAndPresets[$contentDimensionId->value]['presets'][$allowedDimensionValue->value] = [
+                'label' => $allowedDimensionValue->getConfigurationValue('label')
+            ];
         }
 
         if ($this->view instanceof JsonView) {

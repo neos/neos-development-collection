@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Neos\Neos\ResourceManagement;
@@ -14,6 +15,7 @@ namespace Neos\Neos\ResourceManagement;
  */
 
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Package\Exception\UnknownPackageException;
 use Neos\Flow\ResourceManagement\Streams\StreamWrapperInterface;
 use Psr\Http\Message\UriInterface;
 use Neos\Flow\Package\FlowPackageInterface;
@@ -29,7 +31,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     /**
      * @const string
      */
-    const SCHEME = 'nodetypes';
+    private const SCHEME = 'nodetypes';
 
     /**
      * @var resource
@@ -144,7 +146,7 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     {
         $resourceUriOrStream = $this->evaluateNodeTypesPath($path, false);
         if (is_string($resourceUriOrStream)) {
-            mkdir($resourceUriOrStream, $mode, $options&STREAM_MKDIR_RECURSIVE);
+            mkdir($resourceUriOrStream, $mode, $options & STREAM_MKDIR_RECURSIVE);
         }
     }
 
@@ -187,7 +189,8 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to stream_select().
      *
-     * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast() or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
+     * @param integer $castType Can be STREAM_CAST_FOR_SELECT when stream_select() is calling stream_cast()
+     *          or STREAM_CAST_AS_STREAM when stream_cast() is called for other uses.
      * @return resource Should return the underlying stream resource used by the wrapper, or false.
      */
     public function cast($castType)
@@ -215,7 +218,8 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      *
      * This method is called in response to feof().
      *
-     * @return boolean Should return true if the read/write position is at the end of the stream and if no more data is available to be read, or false otherwise.
+     * @return boolean Should return true if the read/write position is at the end of the stream
+     *          and if no more data is available to be read, or false otherwise.
      */
     public function isAtEof()
     {
@@ -232,7 +236,8 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      *
      * Note: If not implemented, false is assumed as the return value.
      *
-     * @return boolean Should return true if the cached data was successfully stored (or if there was no data to store), or false if the data could not be stored.
+     * @return boolean Should return true if the cached data was successfully stored (or if there was no data to store),
+     *          or false if the data could not be stored.
      */
     public function flush()
     {
@@ -287,7 +292,8 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      * @param string $path Specifies the URL that was passed to the original function.
      * @param string $mode The mode used to open the file, as detailed for fopen().
      * @param integer $options Holds additional flags set by the streams API.
-     * @param string &$openedPathAndFilename If the path is opened successfully, and STREAM_USE_PATH is set in options, opened_path should be set to the full path of the file/resource that was actually opened.
+     * @param string &$openedPathAndFilename If the path is opened successfully, and STREAM_USE_PATH is set in options,
+     *          opened_path should be set to the full path of the file/resource that was actually opened.
      * @return boolean true on success or false on failure.
      */
     public function open($path, $mode, $options, &$openedPathAndFilename)
@@ -323,7 +329,8 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      * number of bytes that were successfully read).
      *
      * @param integer $count How many bytes of data from the current position should be returned.
-     * @return string If there are less than count bytes available, return as many as are available. If no more data is available, return either false or an empty string.
+     * @return string If there are less than count bytes available, return as many as are available.
+     *          If no more data is available, return either false or an empty string.
      */
     public function read($count)
     {
@@ -465,9 +472,11 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
      *       the "@" operator it wouldn't be possible to run file_exists() on a resource without issuing a warning and
      *       the resulting exception.
      *
-     * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL. Other URL forms are not supported.
+     * @param string $path The file path or URL to stat. Note that in the case of a URL, it must be a :// delimited URL.
+     *          Other URL forms are not supported.
      * @param integer $flags Holds additional flags set by the streams API.
-     * @return array Should return as many elements as stat() does. Unknown or unavailable values should be set to a rational value (usually 0).
+     * @return array Should return as many elements as stat() does.
+     *          Unknown or unavailable values should be set to a rational value (usually 0).
      */
     public function pathStat($path, $flags)
     {
@@ -491,7 +500,10 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
     {
         $requestPathParts = explode('://', $requestedPath, 2);
         if ($requestPathParts[0] !== self::SCHEME) {
-            throw new \InvalidArgumentException('The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.', 1256052544);
+            throw new \InvalidArgumentException(
+                'The ' . __CLASS__ . ' only supports the \'' . self::SCHEME . '\' scheme.',
+                1256052544
+            );
         }
 
         $resourceUriWithoutScheme = $requestPathParts[1] ?? '';
@@ -502,8 +514,16 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
 
         try {
             $package = $this->packageManager->getPackage($packageName);
-        } catch (\Neos\Flow\Package\Exception\UnknownPackageException $packageException) {
-            throw new ResourceException(sprintf('Invalid resource URI "%s": Package "%s" is not available.', $requestedPath, $packageName), 1309269952, $packageException);
+        } catch (UnknownPackageException $packageException) {
+            throw new ResourceException(
+                sprintf(
+                    'Invalid resource URI "%s": Package "%s" is not available.',
+                    $requestedPath,
+                    $packageName
+                ),
+                1309269952,
+                $packageException
+            );
         }
 
         if (!$package instanceof FlowPackageInterface) {
@@ -511,7 +531,11 @@ class NodeTypesStreamWrapper implements StreamWrapperInterface
         }
 
         if (!$this->pathRespectsTraversalBoundaries($path)) {
-            throw new \InvalidArgumentException('The ' . __CLASS__ . ' in the \'' . self::SCHEME . '\' scheme. Does not allow to traverse out of the package.', 1665317583);
+            throw new \InvalidArgumentException(
+                'The ' . __CLASS__ . ' in the \'' . self::SCHEME . '\' scheme.'
+                    . 'Does not allow to traverse out of the package.',
+                1665317583
+            );
         }
 
         $resourceUri = Files::concatenatePaths([$package->getPackagePath(), 'NodeTypes', $path]);

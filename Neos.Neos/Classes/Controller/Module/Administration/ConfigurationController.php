@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module\Administration;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,15 @@ namespace Neos\Neos\Controller\Module\Administration;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module\Administration;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Configuration\ConfigurationManager;
 use Neos\Flow\Configuration\ConfigurationSchemaValidator;
 use Neos\Flow\Configuration\Exception\SchemaValidationException;
-use Neos\Flow\I18n\Translator;
+use Neos\Neos\Controller\Module\ModuleTranslationTrait;
 use Neos\Utility\SchemaGenerator;
 use Neos\Neos\Controller\Module\AbstractModuleController;
 use Neos\Error\Messages\Message;
@@ -25,6 +28,8 @@ use Neos\Error\Messages\Message;
  */
 class ConfigurationController extends AbstractModuleController
 {
+    use ModuleTranslationTrait;
+
     /**
      * @Flow\Inject
      * @var ConfigurationManager
@@ -42,12 +47,6 @@ class ConfigurationController extends AbstractModuleController
      * @var SchemaGenerator
      */
     protected $schemaGenerator;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
 
     /**
      * @param string $type
@@ -69,7 +68,7 @@ class ConfigurationController extends AbstractModuleController
             } catch (SchemaValidationException $exception) {
                 $this->addFlashMessage(
                     htmlspecialchars($exception->getMessage()),
-                    $this->translator->translateById('configuration.anErrorOccurredDuringValidationOfTheConfiguration.title', [], null, null, 'Modules', 'Neos.Neos'),
+                    $this->getModuleLabel('configuration.anErrorOccurredDuringValidationOfTheConfiguration.title'),
                     Message::SEVERITY_ERROR,
                     [],
                     1412373972
@@ -77,7 +76,7 @@ class ConfigurationController extends AbstractModuleController
             }
         } else {
             $this->addFlashMessage(
-                $this->translator->translateById('configuration.configurationTypeNotFound.body', [], null, null, 'Modules', 'Neos.Neos'),
+                $this->getModuleLabel('configuration.configurationTypeNotFound.body'),
                 '',
                 Message::SEVERITY_ERROR,
                 [],

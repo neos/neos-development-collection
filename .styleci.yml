@@ -1,9 +1,9 @@
 preset: psr2
 
+version: 8.2
+
 finder:
   path:
-    - "Neos.ContentRepository/Classes"
-    - "Neos.ContentRepository/Tests"
     - "Neos.Diff/Classes"
     - "Neos.Diff/Tests"
     - "Neos.Fusion/Classes"
@@ -14,8 +14,6 @@ finder:
     - "Neos.Media.Browser/Tests"
     - "Neos.Media/Classes"
     - "Neos.Media/Tests"
-    - "Neos.Neos/Classes"
-    - "Neos.Neos/Tests"
     - "Neos.NodeTypes/Classes"
     - "Neos.NodeTypes/Tests"
     - "Neos.SiteKickstarter/Classes"

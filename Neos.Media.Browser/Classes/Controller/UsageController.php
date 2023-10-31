@@ -12,22 +12,22 @@ namespace Neos\Media\Browser\Controller;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\ContentRepository\Domain\Model\Workspace;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
-use Neos\Eel\FlowQuery\FlowQuery;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Service\AssetService;
-use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Model\Dto\AssetUsageInNodeProperties;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\Neos\Domain\Service\ContentDimensionPresetSourceInterface;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\Service\UserService;
 use Neos\Neos\Domain\Service\UserService as DomainUserService;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
+use Neos\Neos\Domain\Model\Site;
 
 /**
  * Controller for asset usage handling
@@ -36,19 +36,11 @@ use Neos\Neos\Domain\Service\UserService as DomainUserService;
  */
 class UsageController extends ActionController
 {
-    use CreateContentContextTrait;
-
     /**
      * @Flow\Inject
      * @var AssetService
      */
     protected $assetService;
-
-    /**
-     * @Flow\Inject
-     * @var ContentDimensionPresetSourceInterface
-     */
-    protected $contentDimensionPresetSource;
 
     /**
      * @Flow\Inject
@@ -64,15 +56,9 @@ class UsageController extends ActionController
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
+     * @var ContentRepositoryRegistry
      */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
-     * @var WorkspaceRepository
-     */
-    protected $workspaceRepository;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -88,7 +74,10 @@ class UsageController extends ActionController
      */
     public function relatedNodesAction(AssetInterface $asset)
     {
-        $userWorkspace = $this->userService->getPersonalWorkspace();
+        $currentContentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())->contentRepositoryId;
+        $currentContentRepository = $this->contentRepositoryRegistry->get($currentContentRepositoryId);
+        $userWorkspaceName = WorkspaceName::fromString($this->userService->getPersonalWorkspaceName());
+        $userWorkspace = $currentContentRepository->getWorkspaceFinder()->findOneByName($userWorkspaceName);
 
         $usageReferences = $this->assetService->getUsageReferences($asset);
         $relatedNodes = [];
@@ -102,22 +91,27 @@ class UsageController extends ActionController
                 'usage' => $usage
             ];
 
-            if (!$usage instanceof AssetUsageInNodeProperties) {
+            if (!$usage instanceof AssetUsageReference) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
+            $contentRepository = $this->contentRepositoryRegistry->get($usage->getContentRepositoryId());
+
+            $nodeAggregate = $contentRepository->getContentGraph()->findNodeAggregateById(
+                $usage->getContentStreamId(),
+                $usage->getNodeAggregateId()
+            );
             try {
-                $nodeType = $this->nodeTypeManager->getNodeType($usage->getNodeTypeName());
+                $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeAggregate->nodeTypeName);
             } catch (NodeTypeNotFoundException $e) {
                 $nodeType = null;
             }
-            /** @var Workspace $workspace */
-            $workspace = $this->workspaceRepository->findByIdentifier($usage->getWorkspaceName());
+            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($usage->getContentStreamId());
             $accessible = $this->domainUserService->currentUserCanReadWorkspace($workspace);
 
-            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeIdentifier();
-            $inaccessibleRelation['workspaceName'] = $usage->getWorkspaceName();
+            $inaccessibleRelation['nodeIdentifier'] = $usage->getNodeAggregateId()->value;
+            $inaccessibleRelation['workspaceName'] = $workspace->workspaceName->value;
             $inaccessibleRelation['workspace'] = $workspace;
             $inaccessibleRelation['nodeType'] = $nodeType;
             $inaccessibleRelation['accessible'] = $accessible;
@@ -127,61 +121,55 @@ class UsageController extends ActionController
                 continue;
             }
 
-            $node = $this->getNodeFrom($usage);
+            $subgraph = $contentRepository->getContentGraph()->getSubgraph(
+                $usage->getContentStreamId(),
+                $usage->getOriginDimensionSpacePoint()->toDimensionSpacePoint(),
+                VisibilityConstraints::withoutRestrictions()
+            );
+
+            $node = $subgraph->findNodeById($usage->getNodeAggregateId());
             // this should actually never happen.
             if (!$node) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
-            $flowQuery = new FlowQuery([$node]);
-            $documentNode = $flowQuery->closest('[instanceof Neos.Neos:Document]')->get(0);
+            $documentNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_DOCUMENT));
             // this should actually never happen, too.
             if (!$documentNode) {
                 $inaccessibleRelations[] = $inaccessibleRelation;
                 continue;
             }
 
-            $site = $node->getContext()->getCurrentSite();
+            $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+            // this should actually never happen, too. :D
+            if (!$siteNode) {
+                $inaccessibleRelations[] = $inaccessibleRelation;
+                continue;
+            }
             foreach ($existingSites as $existingSite) {
                 /** @var Site $existingSite * */
-                $siteNodePath = '/sites/' . $existingSite->getNodeName();
-                if ($siteNodePath === $node->getPAth() || strpos($node->getPath(), $siteNodePath . '/') === 0) {
+                if ($siteNode->nodeName->equals($existingSite->getNodeName()->toNodeName())) {
                     $site = $existingSite;
                 }
             }
 
-            $relatedNodes[$site->getNodeName()]['site'] = $site;
-            $relatedNodes[$site->getNodeName()]['nodes'][] = [
+            $relatedNodes[$site->getNodeName()->value]['site'] = $site;
+            $relatedNodes[$site->getNodeName()->value]['nodes'][] = [
                 'node' => $node,
+                'workspace' => $workspace,
                 'documentNode' => $documentNode
             ];
         }
 
         $this->view->assignMultiple([
             'totalUsageCount' => count($usageReferences),
-            'nodeUsageClass' => AssetUsageInNodeProperties::class,
+            'nodeUsageClass' => AssetUsageReference::class,
             'asset' => $asset,
             'inaccessibleRelations' => $inaccessibleRelations,
             'relatedNodes' => $relatedNodes,
-            'contentDimensions' => $this->contentDimensionPresetSource->getAllPresets(),
+            'contentDimensions' => $currentContentRepository->getContentDimensionSource()->getContentDimensionsOrderedByPriority(),
             'userWorkspace' => $userWorkspace
         ]);
-    }
-
-    /**
-     * @param AssetUsageInNodeProperties $assetUsage
-     * @return NodeInterface
-     */
-    private function getNodeFrom(AssetUsageInNodeProperties $assetUsage)
-    {
-        $context = $this->_contextFactory->create(
-            [
-            'workspaceName' => $assetUsage->getWorkspaceName(),
-            'dimensions' => $assetUsage->getDimensionValues(),
-            'invisibleContentShown' => true,
-            'removedContentShown' => true]
-        );
-        return $context->getNodeByIdentifier($assetUsage->getNodeIdentifier());
     }
 }

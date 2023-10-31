@@ -64,7 +64,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     tagName = 'body'
     omitClosingTag = true
     attributes.class.@process.addNeosBackendClass = ${Array.push(value, 'neos-backend')}
-    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${documentNode.context.inBackend}
+    attributes.class.@process.addNeosBackendClass.@if.onlyRenderWhenNotInLiveWorkspace = ${renderingMode.isEdit}
   }
 
   # Content of the body tag. To be defined by the integrator.
@@ -79,20 +79,6 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
     @process.appendJavaScripts = ${value + this.javascripts}
   }
 
-  # This enables redirecting to the last visited page after login
-  lastVisitedNodeScript = Neos.Fusion:Tag {
-    @position = 'before closingBodyTag'
-
-    tagName = 'script'
-    attributes {
-      data-neos-node = ${node.contextPath}
-      src = Neos.Fusion:ResourceUri {
-        path = 'resource://Neos.Neos/Public/JavaScript/LastVisitedNode.js'
-      }
-      async = true
-    }
-  }
-
   closingBodyTag = '</body>'
   closingBodyTag.@position = 'end 100'
 
@@ -103,7 +89,7 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
   @cache {
     mode = 'cached'
     entryIdentifier {
-      documentNode = ${node}
+      documentNode = ${Neos.Caching.entryIdentifierForNode(node)}
     }
     entryTags {
       1 = ${Neos.Caching.nodeTag(node)}

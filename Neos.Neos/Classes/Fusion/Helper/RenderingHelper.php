@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Fusion\Helper;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,16 @@ namespace Neos\Neos\Fusion\Helper;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Fusion\Helper;
+
+use Neos\ContentRepository\Core\Dimension\ContentDimensionId;
+use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Configuration\ConfigurationManager;
-use Neos\ContentRepository\Domain\Service\NodeTypeManager;
-use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 /**
  * Render Content Dimension Names, Node Labels
@@ -25,62 +29,24 @@ use Neos\ContentRepository\Exception\NodeTypeNotFoundException;
 class RenderingHelper implements ProtectedContextAwareInterface
 {
     /**
-     * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @var array
-     */
-    protected $contentDimensionsConfiguration;
-
-    /**
-     * @param ConfigurationManager $configurationManager
-     * @return void
-     */
-    public function injectConfigurationManager(ConfigurationManager $configurationManager)
-    {
-        $this->contentDimensionsConfiguration = $configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_SETTINGS, 'Neos.ContentRepository.contentDimensions');
-    }
-
-    /**
      * Render a human-readable description for the passed $dimensions
      *
-     * @param array $dimensions
-     * @return string
+     * @param array<string,mixed> $dimensions
      */
-    public function renderDimensions(array $dimensions)
+    public function renderDimensions(array $dimensions): string
     {
-        $rendered = [];
-        foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
-            $dimensionConfiguration = $this->contentDimensionsConfiguration[$dimensionIdentifier];
-            $preset = $this->findPresetInDimension($dimensionConfiguration, $dimensionValue);
-            $rendered[] = $dimensionConfiguration['label'] . ' ' . $preset['label'];
-        }
-
-        return implode(', ', $rendered);
-    }
-
-    /**
-     * @param array $dimensionConfiguration
-     * @param string $dimensionValue
-     * @return array the preset matching $dimensionValue
-     */
-    protected function findPresetInDimension(array $dimensionConfiguration, $dimensionValue)
-    {
-        foreach ($dimensionConfiguration['presets'] as $preset) {
-            if (!isset($preset['values'])) {
-                continue;
-            }
-            foreach ($preset['values'] as $value) {
-                if ($value === $dimensionValue) {
-                    return $preset;
-                }
-            }
-        }
-
-        return null;
+        throw new \RuntimeException('TODO FIX ME IF NEEDED');
+//        $rendered = [];
+//        foreach ($dimensions as $dimensionIdentifier => $dimensionValue) {
+//            $dimension = $this->contentDimensionSource->getDimension(
+//                new ContentDimensionIdentifier($dimensionIdentifier)
+//            );
+//            $value = $dimension?->getValue($dimensionValue);
+//            $rendered[] = $dimension?->getConfigurationValue('label')
+//                . ' ' . $value?->getConfigurationValue('label');
+//        }
+//
+//        return implode(', ', $rendered);
     }
 
     /**
@@ -92,15 +58,16 @@ class RenderingHelper implements ProtectedContextAwareInterface
      */
     public function labelForNodeType($nodeTypeName)
     {
-        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-            $explodedNodeTypeName = explode(':', $nodeTypeName);
-
-            return end($explodedNodeTypeName);
-        }
-
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-
-        return $nodeType->getLabel();
+        throw new \RuntimeException('TODO RE-IMPLEMENT ME');
+//        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+//            $explodedNodeTypeName = explode(':', $nodeTypeName);
+//
+//            return end($explodedNodeTypeName);
+//        }
+//
+//        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+//
+//        return $nodeType->getLabel();
     }
 
     /**

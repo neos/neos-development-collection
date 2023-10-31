@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Module;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,11 +10,13 @@ namespace Neos\Neos\Controller\Module;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Module;
+
 use Neos\Flow\Annotations as Flow;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class AdministrationController extends AbstractModuleController
 {
 }

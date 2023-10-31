@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -10,6 +9,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
+
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\EelHelper\TranslationHelper;
@@ -51,11 +54,18 @@ class UserInitialsViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument('format', 'string', 'Supported are "fullFirstName", "initials" and "fullName"', false, 'initials');
+        $this->registerArgument(
+            'format',
+            'string',
+            'Supported are "fullFirstName", "initials" and "fullName"',
+            false,
+            'initials'
+        );
     }
 
     /**
-     * Render user initials or an abbreviated name for a given username. If the account was deleted, use the username as fallback.
+     * Render user initials or an abbreviated name for a given username.
+     * If the account was deleted, use the username as fallback.
      *
      * @return string
      * @throws \Neos\Neos\Domain\Exception
@@ -63,14 +73,18 @@ class UserInitialsViewHelper extends AbstractViewHelper
     public function render(): string
     {
         if (!in_array($this->arguments['format'], ['fullFirstName', 'initials', 'fullName'])) {
-            throw new \InvalidArgumentException(sprintf('Format "%s" given to backend.userInitials(), only supporting "fullFirstName", "initials" and "fullName".', $format), 1415705861);
+            throw new \InvalidArgumentException(sprintf(
+                'Format "%s" given to backend.userInitials(), only supporting "fullFirstName",'
+                    . ' "initials" and "fullName".',
+                $this->arguments['format']
+            ), 1415705861);
         }
 
         $username = (string)$this->renderChildren();
 
-        /* @var $requestedUser Person */
+        /* @var ?Person $requestedUser */
         $requestedUser = $this->domainUserService->getUser($username);
-        if ($requestedUser === null || $requestedUser->getName() === null) {
+        if ($requestedUser === null) {
             return $username;
         }
 
@@ -80,13 +94,21 @@ class UserInitialsViewHelper extends AbstractViewHelper
             $you = $translationHelper->translate('you', null, [], 'Main', 'Neos.Neos');
         }
 
-        switch ($this->arguments['format']) {
-            case 'initials':
-                return mb_substr(preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()), 0, 1) . mb_substr(preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()), 0, 1);
-            case 'fullFirstName':
-                return $you ?? trim($requestedUser->getName()->getFirstName() . ' ' . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.'));
-            case 'fullName':
-                return $you ?? $requestedUser->getName()->getFullName();
-        }
+        return match ($this->arguments['format']) {
+            'initials' => mb_substr(
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getFirstName()) ?: '',
+                0,
+                1
+            ) . mb_substr(
+                preg_replace('/[^[:alnum:][:space:]]/u', '', $requestedUser->getName()->getLastName()) ?: '',
+                0,
+                1
+            ),
+            'fullFirstName' => $you
+                ?? trim($requestedUser->getName()->getFirstName() . ' '
+                    . ltrim(mb_substr($requestedUser->getName()->getLastName(), 0, 1) . '.', '.')),
+            'fullName' => $you ?? $requestedUser->getName()->getFullName(),
+            default => '',
+        };
     }
 }

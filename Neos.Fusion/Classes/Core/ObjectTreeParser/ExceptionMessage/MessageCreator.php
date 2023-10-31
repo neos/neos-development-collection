@@ -32,9 +32,9 @@ class MessageCreator
             case '\'':
                 return "Unclosed quoted path.";
             case '{':
-                return "Unexpected block start out of context. Check your number of curly braces.";
+                return "Unexpected block start. The opening brace must be on the same line with its declaration, like: 'path {' or 'prototype(Foo:Bar) {'.";
             case '}':
-                return "Unexpected block end out of context. Check your number of curly braces.";
+                return "Unexpected block end. Check your number of curly braces.";
         }
         return "Unexpected statement starting with: {$next->charPrint()}. " . self::VALID_OBJECT_PATH;
     }

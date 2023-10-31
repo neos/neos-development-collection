@@ -31,7 +31,7 @@ use Neos\Media\Domain\Repository\TagRepository;
  */
 class TagController extends ActionController
 {
-    use AddFlashMessageTrait;
+    use AddTranslatedFlashMessageTrait;
 
     /**
      * @Flow\Inject
@@ -75,7 +75,7 @@ class TagController extends ActionController
         if ($existingTag !== null) {
             if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($existingTag)) {
                 $this->assetCollectionRepository->update($assetCollection);
-                $this->addFlashMessage('tagAlreadyExistsAndAddedToCollection', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
+                $this->addTranslatedFlashMessage('tagAlreadyExistsAndAddedToCollection', Message::SEVERITY_OK, [htmlspecialchars($label)]);
             }
         } else {
             $tag = new Tag($label);
@@ -83,7 +83,7 @@ class TagController extends ActionController
             if (($assetCollection = $this->browserState->get('activeAssetCollection')) !== null && $assetCollection->addTag($tag)) {
                 $this->assetCollectionRepository->update($assetCollection);
             }
-            $this->addFlashMessage('tagHasBeenCreated', '', Message::SEVERITY_OK, [htmlspecialchars($label)]);
+            $this->addTranslatedFlashMessage('tagHasBeenCreated', Message::SEVERITY_OK, [htmlspecialchars($label)]);
         }
         $this->redirectToAssetIndex();
     }
@@ -107,7 +107,7 @@ class TagController extends ActionController
     public function updateAction(Tag $tag)
     {
         $this->tagRepository->update($tag);
-        $this->addFlashMessage('tagHasBeenUpdated', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
+        $this->addTranslatedFlashMessage('tagHasBeenUpdated', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
         $this->redirectToAssetIndex();
     }
 
@@ -123,7 +123,7 @@ class TagController extends ActionController
             $this->assetRepository->update($asset);
         }
         $this->tagRepository->remove($tag);
-        $this->addFlashMessage('tagHasBeenDeleted', '', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
+        $this->addTranslatedFlashMessage('tagHasBeenDeleted', Message::SEVERITY_OK, [htmlspecialchars($tag->getLabel())]);
         $this->redirectToAssetIndex();
     }
 

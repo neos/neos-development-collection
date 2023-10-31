@@ -22,6 +22,16 @@
 		</f:for>
 	</f:if>
 
+	<f:for
+		each="{settings.moduleConfiguration.additionalResources.styleSheets}"
+		as="additionalResource"
+	>
+		<link
+			rel="stylesheet"
+			href="{f:uri.resource(path: additionalResource)}"
+		/>
+	</f:for>
+
 	<f:if condition="{moduleConfiguration.additionalResources.javaScripts}">
 		<f:for
 			each="{moduleConfiguration.additionalResources.javaScripts}"
@@ -73,6 +83,7 @@
 					</f:if>
 				</f:for>
 			</ul>
+			<f:render partial="Module/FlashMessages" />
 			<f:if condition="{moduleContents}">
 				{moduleContents -> f:format.raw()}
 			</f:if>
@@ -94,8 +105,11 @@
 				/>
 			</div>
 		</div>
-		<script
-			src="{f:uri.resource(path: 'JavaScript/Main.min.js', package: 'Neos.Neos')}"
-		></script>
+		<f:for
+			each="{settings.moduleConfiguration.additionalResources.javaScripts}"
+			as="additionalResource"
+		>
+			<script src="{f:uri.resource(path: additionalResource)}"></script>
+		</f:for>
 	</body>
 </f:section>

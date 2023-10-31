@@ -11,6 +11,10 @@
 Neos:
 
   Neos:
+    contentDimensions:
+      resolution:
+        uriPathSegmentDelimiter: '_'
+
     fusion:
       # if set to true, Fusion is cached on a per-site basis.
       # Depending on the size of your Fusion, will improve rendering times 20-100+ ms.
@@ -54,6 +58,14 @@ Neos:
       # Setting this to true allows to use an empty uriSegment for default dimensions.
       # The only limitation is that all segments must be unique across all dimenions.
       supportEmptySegmentForDimensions: true
+
+    sites:
+      '*':
+        uriPathSuffix: '.html'
+        contentRepository: default
+        contentDimensions:
+          resolver:
+            factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\AutoUriPathResolverFactory
 
     nodeTypes:
       groups:
@@ -259,12 +271,8 @@ Neos:
 
       defaultEditPreviewMode: inPlace
       editPreviewModes:
-        # Live mode is only configured here for consistency. You shouldn't change it.
-        live:
-          isEditingMode: false
-          isPreviewMode: false
-          fusionRenderingPath: ''
-          title: Live
+        # the system integrated rendering mode "frontend" cannot be configured
+        # frontend: {}
         inPlace:
           isEditingMode: true
           isPreviewMode: false
@@ -286,6 +294,7 @@ Neos:
 
       backendLoginForm:
         backgroundImage: 'resource://Neos.Neos/Public/Images/Login/Wallpaper.webp'
+        logoImage: 'resource://Neos.Neos/Public/Images/Login/Logo.svg'
         stylesheets:
           'Neos.Neos:DefaultStyles': 'resource://Neos.Neos/Public/Styles/Login.css'
 
@@ -293,9 +302,15 @@ Neos:
       widgetTemplatePathAndFileName: 'resource://Neos.Neos/Private/Templates/Module/Widget.html'
       # This stylesheet can be overriden in the configuration of a submodule to reference a reduced stylesheet.
       # Use `Main` for backwards compatibility
-      # Use `Lite` for a reduced variant with a less aggressive reset and other non essential styles removed.
+      # Use `Lite` for a reduced variant with a less aggressive reset and other non-essential styles removed.
       # Use `Minimal` when your module provides its own styles and Neos only needs to show the top and bottom bar.
       mainStylesheet: 'Main'
+
+      # Define additional stylesheets and javascript for all backend modules
+      additionalResources:
+        styleSheets: {}
+        javaScripts:
+          'Neos.Neos': 'resource://Neos.Neos/Public/JavaScript/Main.min.js'
 
       preferredStartModules: [ 'content','user/usersettings' ]
 
@@ -312,12 +327,6 @@ Neos:
             controller: 'Neos\Neos\Controller\Module\Management\WorkspacesController'
             description: 'Neos.Neos:Modules:workspaces.description'
             icon: fas fa-th-large
-            mainStylesheet: 'Lite'
-          history:
-            label: 'Neos.Neos:Modules:history.label'
-            controller: 'Neos\Neos\Controller\Module\Management\HistoryController'
-            description: 'Neos.Neos:Modules:history.description'
-            icon: fas fa-calendar-alt
             mainStylesheet: 'Lite'
       administration:
         label: 'Neos.Neos:Modules:administration.label'
@@ -368,6 +377,8 @@ Neos:
         label: 'Neos.Neos:Modules:user.label'
         controller: \Neos\Neos\Controller\Module\UserController
         hideInMenu: true
+        description: 'Neos.Neos:Modules:user.description'
+        icon: fas fa-users
         mainStylesheet: 'Lite'
         submodules:
           usersettings:
@@ -377,18 +388,6 @@ Neos:
             icon: fas fa-user
             mainStylesheet: 'Lite'
 
-     # Settings for the Neos Event Log (** DO NOT USE, NO PUBLIC API YET **)
-    eventLog:
-      enabled: false
-      monitorEntities:
-        Neos\Flow\Security\Account:
-          events:
-            created: Account.Created
-            deleted: Account.Deleted
-          data:
-            accountIdentifier: '${entity.accountIdentifier}'
-            authenticationProviderName: '${entity.authenticationProviderName}'
-            name: '${entity.party.name.fullName}'
     transliterationRules:
       da:
         Å: Aa
@@ -414,16 +413,12 @@ Neos:
 
     http:
       middlewares:
-        'requestUriHostParameter':
+        'detectSite':
           position: 'before routing'
-          middleware: 'Neos\Neos\Routing\RequestUriHostMiddleware'
-
+          middleware: 'Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionMiddleware'
     mvc:
       routes:
-        'Neos.Neos':
-          variables:
-            # Set this to an empty string if you prefer URLs without the ".html" suffix
-            'defaultUriSuffix': '.html'
+        'Neos.Neos': true
         # Move Neos.Media routes before default Neos routes so that they have priority
         'Neos.Media':
           position: 'before Neos.Neos'
@@ -454,18 +449,6 @@ Neos:
 
     session:
       name: Neos_Session
-
-    persistence:
-      doctrine:
-        eventListeners:
-          Neos\Neos\EventLog\Integrations\EntityIntegrationService:
-            events:
-              - onFlush
-            listener: Neos\Neos\EventLog\Integrations\EntityIntegrationService
-          Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService:
-            events:
-              - preFlush
-            listener: Neos\Neos\EventLog\Integrations\ContentRepositoryIntegrationService
 
     error:
       exceptionHandler:
@@ -503,11 +486,6 @@ Neos:
         neos-plugin: Plugins
 
   ContentRepository:
-    # This instructs neos to fallback to the given type if a node type can't be found (because it was removed or has
-    # been renamed for example). The default "Neos.Neos:FallbackNode" renders a warning in backend and is ignored
-    # in frontend rendering
-    fallbackNodeType: 'Neos.Neos:FallbackNode'
-
     # Definition of available content dimensions. Additional content dimensions may be defined in third-party packages
     # or via global settings.
     #
@@ -552,7 +530,9 @@ Neos:
       Neos.Array: Neos\Neos\Fusion\Helper\ArrayHelper
       Neos.Rendering: Neos\Neos\Fusion\Helper\RenderingHelper
       Neos.Caching: Neos\Neos\Fusion\Helper\CachingHelper
+      Neos.Dimension: Neos\Neos\Fusion\Helper\DimensionHelper
       Neos.Backend: Neos\Neos\Fusion\Helper\BackendHelper
+      Neos.Site: Neos\Neos\Fusion\Helper\SiteHelper
 
   # DocTools is a tool used by Neos Developers to help with a variety of documentation tasks.
   # These settings are only used in generating Documentation.

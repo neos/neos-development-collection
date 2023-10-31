@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\ViewHelpers\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,6 +10,10 @@ namespace Neos\Neos\ViewHelpers\Backend;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\ViewHelpers\Backend;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\Neos\Service\UserService;
@@ -20,7 +23,6 @@ use Neos\Neos\Service\UserService;
  */
 class InterfaceLanguageViewHelper extends AbstractViewHelper
 {
-
     /**
      * @Flow\Inject
      * @var UserService

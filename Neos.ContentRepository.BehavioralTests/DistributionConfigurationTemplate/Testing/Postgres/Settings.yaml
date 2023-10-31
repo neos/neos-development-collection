@@ -1,0 +1,22 @@
+#                                                                        #
+# Testing Settings                                                       #
+#                                                                        #
+# This file contains settings for various parts of the application.      #
+# Copy this file to Settings.yaml, and adjust as necessary.              #
+#                                                                        #
+# Please refer to the default settings file(s) or the manuals for        #
+# possible configuration options.                                        #
+#                                                                        #
+
+Neos:
+  Flow:
+    persistence:
+      backendOptions:
+        driver: pdo_pgsql
+        host: '127.0.0.1'
+        port: 15432
+        dbname: 'neos_behat'
+        user: 'root'
+        password: 'db'
+
+        charset: 'UTF8'

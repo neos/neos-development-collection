@@ -1,0 +1,40 @@
+name: Add Labels to Pull Request
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, edited]
+
+jobs:
+  add-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Maybe remove base branch label
+        if: github.event.action == 'edited' && github.event.changes.base.ref.from != ''
+        uses: actions-ecosystem/action-remove-labels@v1
+        with:
+          labels: ${{ github.event.changes.base.ref.from }}
+      - name: Add feature label
+        if: startsWith(github.event.pull_request.title, 'FEATURE:')
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: 'Feature'
+      - name: Add bugfix label
+        if: startsWith(github.event.pull_request.title, 'BUGFIX:')
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: 'Bug'
+      - name: Add task label
+        if: startsWith(github.event.pull_request.title, 'TASK:')
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: 'Task'
+      - name: Add target branch label
+        uses: actions-ecosystem/action-add-labels@v1
+        with:
+          labels: ${{ github.base_ref }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

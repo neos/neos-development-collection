@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Controller\Backend;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,10 +10,16 @@ namespace Neos\Neos\Controller\Backend;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Eel\FlowQuery\FlowQuery;
+declare(strict_types=1);
+
+namespace Neos\Neos\Controller\Backend;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\I18n\EelHelper\TranslationHelper;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\NoSuchArgumentException;
 use Neos\Flow\Persistence\Exception\IllegalObjectTypeException;
@@ -24,6 +29,7 @@ use Neos\Flow\Property\PropertyMappingConfiguration;
 use Neos\Flow\Property\TypeConverter\PersistentObjectConverter;
 use Neos\Flow\ResourceManagement\ResourceManager;
 use Neos\Media\Domain\Model\Asset;
+use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\Image;
 use Neos\Media\Domain\Model\ImageInterface;
 use Neos\Media\Domain\Model\ImageVariant;
@@ -34,11 +40,9 @@ use Neos\Media\Exception\ThumbnailServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Media\TypeConverter\ImageInterfaceArrayPresenter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
-use Neos\Neos\Controller\CreateContentContextTrait;
-use Neos\Neos\Domain\Model\PluginViewDefinition;
-use Neos\Neos\Domain\Model\Site;
-use Neos\Neos\Service\PluginService;
+use Neos\Neos\FrontendRouting\SiteDetection\SiteDetectionResult;
 use Neos\Neos\TypeConverter\EntityToIdentityConverter;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * The Neos ContentModule controller; providing backend functionality for the Content Module.
@@ -48,7 +52,10 @@ use Neos\Neos\TypeConverter\EntityToIdentityConverter;
 class ContentController extends ActionController
 {
     use BackendUserTranslationTrait;
-    use CreateContentContextTrait;
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -73,14 +80,6 @@ class ContentController extends ActionController
      * @var ResourceManager
      */
     protected $resourceManager;
-
-    /**
-     * The pluginService
-     *
-     * @var PluginService
-     * @Flow\Inject
-     */
-    protected $pluginService;
 
     /**
      * @Flow\Inject
@@ -110,12 +109,21 @@ class ContentController extends ActionController
      * Initialize property mapping as the upload usually comes from the Inspector JavaScript
      * @throws NoSuchArgumentException
      */
-    public function initializeUploadAssetAction()
+    public function initializeUploadAssetAction(): void
     {
-        $propertyMappingConfiguration = $this->arguments->getArgument('asset')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments->getArgument('asset')
+            ->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
-        $propertyMappingConfiguration->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
-        $propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE, true);
+        $propertyMappingConfiguration->setTypeConverterOption(
+            PersistentObjectConverter::class,
+            PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+            true
+        );
+        $propertyMappingConfiguration->setTypeConverterOption(
+            AssetInterfaceConverter::class,
+            AssetInterfaceConverter::CONFIGURATION_ONE_PER_RESOURCE,
+            true
+        );
         $propertyMappingConfiguration->allowCreationForSubProperty('resource');
     }
 
@@ -130,15 +138,30 @@ class ContentController extends ActionController
      *
      * @param Asset $asset
      * @param string $metadata Type of metadata to return ("Asset" or "Image")
-     * @param NodeInterface $node The node the new asset should be assigned to
+     * @param string $node The node the new asset should be assigned to
      * @param string $propertyName The node property name the new asset should be assigned to
      * @return string
      * @throws IllegalObjectTypeException
      * @throws \Neos\Flow\Persistence\Exception\IllegalObjectTypeException
      * @throws ThumbnailServiceException
      */
-    public function uploadAssetAction(Asset $asset, string $metadata, NodeInterface $node, string $propertyName)
+    public function uploadAssetAction(Asset $asset, string $metadata, string $node, string $propertyName)
     {
+        $nodeAddressString = $node;
+        $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
+            ->contentRepositoryId;
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromUriString($nodeAddressString);
+
+        $node = $contentRepository->getContentGraph()
+            ->getSubgraph(
+                $nodeAddress->contentStreamId,
+                $nodeAddress->dimensionSpacePoint,
+                VisibilityConstraints::withoutRestrictions()
+            )
+            ->findNodeById($nodeAddress->nodeAggregateId);
+
+
         $this->response->setContentType('application/json');
         if ($metadata !== 'Asset' && $metadata !== 'Image') {
             $this->response->setStatusCode(400);
@@ -154,7 +177,7 @@ class ContentController extends ActionController
             }
             $this->emitAssetUploaded($asset, $node, $propertyName);
         }
-        return json_encode($result);
+        return json_encode($result, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -169,7 +192,11 @@ class ContentController extends ActionController
         $this->arguments->getArgument('asset')->getPropertyMappingConfiguration()
             ->allowOverrideTargetType()
             ->allowAllProperties()
-            ->setTypeConverterOption(PersistentObjectConverter::class, PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED, true);
+            ->setTypeConverterOption(
+                PersistentObjectConverter::class,
+                PersistentObjectConverter::CONFIGURATION_CREATION_ALLOWED,
+                true
+            );
     }
 
     /**
@@ -188,7 +215,12 @@ class ContentController extends ActionController
 
         $propertyMappingConfiguration = new PropertyMappingConfiguration();
         // This will not be sent as "application/json" as we need the JSON string and not the single variables.
-        return json_encode($this->entityToIdentityConverter->convertFrom($asset, 'array', [], $propertyMappingConfiguration));
+        return json_encode($this->entityToIdentityConverter->convertFrom(
+            $asset,
+            'array',
+            [],
+            $propertyMappingConfiguration
+        ), JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -204,7 +236,7 @@ class ContentController extends ActionController
         $this->response->setContentType('application/json');
         $imageProperties = $this->getImageInterfacePreviewData($image);
 
-        return json_encode($imageProperties);
+        return json_encode($imageProperties, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -219,15 +251,16 @@ class ContentController extends ActionController
      *   "object": object properties like the __identity and __type of the object
      *
      * @param ImageInterface $image The image to retrieve meta data for
-     * @return array
+     * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
     protected function getImageInterfacePreviewData(ImageInterface $image)
     {
-        // TODO: Now that we try to support all ImageInterface implementations we should use a strategy here to get the image properties for custom implementations
+        // TODO: Now that we try to support all ImageInterface implementations we should use a strategy here
+        // to get the image properties for custom implementations
         if ($image instanceof ImageVariant) {
             $imageProperties = $this->getImageVariantPreviewData($image);
-        } else {
+        } elseif ($image instanceof Image) {
             $imageProperties = $this->getImagePreviewData($image);
         }
 
@@ -237,10 +270,10 @@ class ContentController extends ActionController
 
     /**
      * @param Image $image
-     * @return array
+     * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
-    protected function getImagePreviewData(Image $image)
+    protected function getImagePreviewData(Image $image): array
     {
         $imageProperties = [
             'originalImageResourceUri' => $this->resourceManager->getPublicPersistentResourceUri($image->getResource()),
@@ -251,7 +284,10 @@ class ContentController extends ActionController
             ],
             'mediaType' => $image->getResource()->getMediaType()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($image, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Preview'));
+        $thumbnail = $this->thumbnailService->getThumbnail(
+            $image,
+            $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Preview')
+        );
         if ($thumbnail !== null) {
             $imageProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $imageProperties['previewDimensions'] = [
@@ -264,7 +300,7 @@ class ContentController extends ActionController
 
     /**
      * @param ImageVariant $imageVariant
-     * @return array
+     * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
     protected function getImageVariantPreviewData(ImageVariant $imageVariant)
@@ -280,10 +316,19 @@ class ContentController extends ActionController
      */
     protected function initializeAssetsWithMetadataAction()
     {
-        $propertyMappingConfiguration = $this->arguments->getArgument('assets')->getPropertyMappingConfiguration();
+        $propertyMappingConfiguration = $this->arguments->getArgument('assets')
+            ->getPropertyMappingConfiguration();
         $propertyMappingConfiguration->allowAllProperties();
-        $propertyMappingConfiguration->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
-        $propertyMappingConfiguration->forProperty('*')->setTypeConverterOption(AssetInterfaceConverter::class, AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED, true);
+        $propertyMappingConfiguration->setTypeConverterOption(
+            AssetInterfaceConverter::class,
+            AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED,
+            true
+        );
+        $propertyMappingConfiguration->forProperty('*')->setTypeConverterOption(
+            AssetInterfaceConverter::class,
+            AssetInterfaceConverter::CONFIGURATION_OVERRIDE_TARGET_TYPE_ALLOWED,
+            true
+        );
     }
 
     /**
@@ -301,21 +346,23 @@ class ContentController extends ActionController
         foreach ($assets as $asset) {
             $result[] = $this->getAssetProperties($asset);
         }
-        return json_encode($result);
+        return json_encode($result, JSON_THROW_ON_ERROR);
     }
 
     /**
-     * @param Asset $asset
-     * @return array
+     * @return array<string,mixed>
      * @throws ThumbnailServiceException
      */
-    protected function getAssetProperties(Asset $asset)
+    protected function getAssetProperties(AssetInterface $asset)
     {
         $assetProperties = [
             'assetUuid' => $this->persistenceManager->getIdentifierByObject($asset),
             'filename' => $asset->getResource()->getFilename()
         ];
-        $thumbnail = $this->thumbnailService->getThumbnail($asset, $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Thumbnail'));
+        $thumbnail = $this->thumbnailService->getThumbnail(
+            $asset,
+            $this->thumbnailService->getThumbnailConfigurationForPreset('Neos.Media.Browser:Thumbnail')
+        );
         if ($thumbnail !== null) {
             $assetProperties['previewImageResourceUri'] = $this->thumbnailService->getUriForThumbnail($thumbnail);
             $assetProperties['previewSize'] = ['w' => $thumbnail->getWidth(), 'h' => $thumbnail->getHeight()];
@@ -329,47 +376,19 @@ class ContentController extends ActionController
      *
      * @param string $identifier Specifies the node to look up
      * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
+     * @param array<string,string> $dimensions Optional list of dimensions and their values which should be used
+     *                          for querying the specified node
      * @return string
      * @throws \Neos\Eel\Exception
      * @throws \Neos\Flow\Mvc\Routing\Exception\MissingActionNameException
+     * @deprecated remove with UI editors
      */
     public function pluginViewsAction($identifier = null, $workspaceName = 'live', array $dimensions = [])
     {
         $this->response->setContentType('application/json');
 
-        $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        /** @var $node NodeInterface */
-        $node = $contentContext->getNodeByIdentifier($identifier);
-
         $views = [];
-        if ($node !== null) {
-            /** @var $pluginViewDefinition PluginViewDefinition */
-            $pluginViewDefinitions = $this->pluginService->getPluginViewDefinitionsByPluginNodeType($node->getNodeType());
-            foreach ($pluginViewDefinitions as $pluginViewDefinition) {
-                $label = $pluginViewDefinition->getLabel();
-
-                $views[$pluginViewDefinition->getName()] = ['label' => $label];
-
-                $pluginViewNode = $this->pluginService->getPluginViewNodeByMasterPlugin($node, $pluginViewDefinition->getName());
-                if ($pluginViewNode === null) {
-                    continue;
-                }
-                $q = new FlowQuery([$pluginViewNode]);
-                $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-                $uri = $this->uriBuilder
-                    ->reset()
-                    ->uriFor('show', ['node' => $page], 'Frontend\Node', 'Neos.Neos');
-                $views[$pluginViewDefinition->getName()] = [
-                    'label' => $label,
-                    'pageNode' => [
-                        'title' => $page->getLabel(),
-                        'uri' => $uri
-                    ]
-                ];
-            }
-        }
-        return json_encode((object) $views);
+        return json_encode((object)$views, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -377,52 +396,30 @@ class ContentController extends ActionController
      * workspace.
      *
      * @param string $workspaceName Name of the workspace to use for querying the node
-     * @param array $dimensions Optional list of dimensions and their values which should be used for querying the specified node
+     * @param array<string,string> $dimensions Optional list of dimensions and their values
+     *                          which should be used for querying the specified node
      * @return string JSON encoded array of node path => label
      * @throws \Neos\Eel\Exception
+     * @deprecated remove with UI editors
      */
-    public function masterPluginsAction($workspaceName = 'live', array $dimensions = [])
+    public function masterPluginsAction(string $workspaceName = 'live', array $dimensions = [])
     {
         $this->response->setContentType('application/json');
-
-        $contentContext = $this->createContentContext($workspaceName, $dimensions);
-        $pluginNodes = $this->pluginService->getPluginNodesWithViewDefinitions($contentContext);
-
         $masterPlugins = [];
-        if (is_array($pluginNodes)) {
-            /** @var $pluginNode NodeInterface */
-            foreach ($pluginNodes as $pluginNode) {
-                if ($pluginNode->isRemoved()) {
-                    continue;
-                }
-                $q = new FlowQuery([$pluginNode]);
-                $page = $q->closest('[instanceof Neos.Neos:Document]')->get(0);
-                if ($page === null) {
-                    continue;
-                }
-                $translationHelper = new TranslationHelper();
-                $masterPlugins[$pluginNode->getIdentifier()] = $translationHelper->translate(
-                    'masterPlugins.nodeTypeOnPageLabel',
-                    null,
-                    ['nodeTypeName' => $translationHelper->translate($pluginNode->getNodeType()->getLabel()), 'pageLabel' => $page->getLabel()],
-                    'Main',
-                    'Neos.Neos'
-                );
-            }
-        }
-        return json_encode((object) $masterPlugins);
+
+        return json_encode((object)$masterPlugins, JSON_THROW_ON_ERROR);
     }
 
     /**
      * Signals that a new asset has been uploaded through the Neos Backend
      *
      * @param Asset $asset The uploaded asset
-     * @param NodeInterface $node The node the asset belongs to
+     * @param Node|null $node The node the asset belongs to
      * @param string $propertyName The node property name the asset is assigned to
      * @return void
      * @Flow\Signal
      */
-    protected function emitAssetUploaded(Asset $asset, NodeInterface $node, string $propertyName)
+    protected function emitAssetUploaded(Asset $asset, ?Node $node, string $propertyName)
     {
     }
 }

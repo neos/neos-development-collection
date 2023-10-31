@@ -1,0 +1,21 @@
+{
+    "name": "neos/contentrepository-testsuite",
+    "type": "neos-package",
+    "description": "Testing support suite for the Neos Content Repository. Contains fixtures and helpers for all layers of tests",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/contentrepository-core": "*",
+        "neos/contentrepository-structureadjustment": "*",
+        "neos/contentrepository-nodemigration": "*",
+        "neos/utility-arrays": "*",
+        "behat/behat": "^3.5",
+        "phpunit/phpunit": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepository\\TestSuite\\": "Classes"
+        }
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "name": "neos/contentrepository-legacynodemigration",
+    "type": "neos-package",
+    "description": "Migration from the Non-Event-Sourced to the Event-Sourced world",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "php": ">=8.2",
+        "neos/contentrepository-core": "*",
+        "neos/contentrepository-export": "*",
+        "league/flysystem": "^3"
+    },
+    "require-dev": {
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepository\\LegacyNodeMigration\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neos\\ContentRepository\\LegacyNodeMigration\\Tests\\": "Tests"
+        }
+    }
+}

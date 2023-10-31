@@ -3,7 +3,9 @@ name: Build API documentation
 on:
   workflow_dispatch:
   push:
-    branches: [ '[0-9]+.[0-9]' ]
+    # Error right now, so we need to disable this:
+    # PHP Fatal error:  Uncaught Error: Call to undefined method PhpParser\Node\IntersectionType::__toString() in phar:///bin/doctum/src/Parser/NodeVisitor.php:196
+    branches: [ '___DISABLED_BECAUSE_IT_IS_ERROR_FOR_90___[0-9]+.[0-9]' ]
 
 jobs:
   build-api-docs:
@@ -12,7 +14,8 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Build API documentation
-        uses: sudo-bot/action-doctum@v5
+        # we need this fix: https://github.com/code-lts/doctum/issues/59 so we need to run @dev
+        uses: sudo-bot/action-doctum@dev
         with:
           config-file: .doctum.php
           method: "update"
@@ -37,6 +40,10 @@ jobs:
           git config --local --unset-all "http.https://github.com/.extraheader"
           git config --global user.email "ops@neos.io"
           git config --global user.name "Neos Bot"
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No changes to commit"
+            exit 0
+          fi
           git add .
           git commit -m "TASK: Update API docs from ${{ github.ref_name }}"
 

@@ -17,21 +17,11 @@ use Neos\Fusion\Exception;
  */
 class RuntimeException extends Exception
 {
-    /**
-     * @var string
-     */
-    protected $fusionPath;
+    private string $fusionPath;
 
-    /**
-     * @param string $message
-     * @param int $code
-     * @param \Exception $previous
-     * @param null $fusionPath
-     */
-    public function __construct($message = '', $code = 0, \Exception $previous = null, $fusionPath = null)
+    public function __construct(string $message, int $code, \Exception $previous, string $fusionPath)
     {
         parent::__construct($message, $code, $previous);
-
         $this->fusionPath = $fusionPath;
     }
 

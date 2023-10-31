@@ -1,5 +1,4 @@
 <?php
-namespace Neos\Neos\Domain\Service;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -11,17 +10,22 @@ namespace Neos\Neos\Domain\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+declare(strict_types=1);
+
+namespace Neos\Neos\Domain\Service;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Repository\AssetCollectionRepository;
+use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Repository\DomainRepository;
 use Neos\Neos\Domain\Repository\SiteRepository;
-use Neos\ContentRepository\Domain\Repository\NodeDataRepository;
-use Neos\ContentRepository\Domain\Repository\WorkspaceRepository;
-use Neos\ContentRepository\Domain\Utility\NodePaths;
 
 /**
  * A service for manipulating sites
@@ -30,17 +34,6 @@ use Neos\ContentRepository\Domain\Utility\NodePaths;
  */
 class SiteService
 {
-    /**
-     * This is the node path of the root for all sites in neos.
-     */
-    const SITES_ROOT_PATH = '/sites';
-
-    /**
-     * @Flow\Inject
-     * @var NodeDataRepository
-     */
-    protected $nodeDataRepository;
-
     /**
      * @Flow\Inject
      * @var DomainRepository
@@ -55,9 +48,9 @@ class SiteService
 
     /**
      * @Flow\Inject
-     * @var WorkspaceRepository
+     * @var ContentRepositoryRegistry
      */
-    protected $workspaceRepository;
+    protected $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject
@@ -73,18 +66,14 @@ class SiteService
 
     /**
      * Remove given site all nodes for that site and all domains associated.
-     *
-     * @param Site $site
-     * @return void
      */
-    public function pruneSite(Site $site)
+    public function pruneSite(Site $site): void
     {
-        $siteNodePath = NodePaths::addNodePathSegment(static::SITES_ROOT_PATH, $site->getNodeName());
-        $this->nodeDataRepository->removeAllInPath($siteNodePath);
-        $siteNodes = $this->nodeDataRepository->findByPath($siteNodePath);
-        foreach ($siteNodes as $siteNode) {
-            $this->nodeDataRepository->remove($siteNode);
-        }
+        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
+            $site->getConfiguration()->contentRepositoryId,
+            new SiteServiceInternalsFactory()
+        );
+        $siteServiceInternals->removeSiteNode($site->getNodeName());
 
         $site->setPrimaryDomain(null);
         $this->siteRepository->update($site);
@@ -99,6 +88,8 @@ class SiteService
 
         $this->emitSitePruned($site);
     }
+
+
 
     /**
      * Remove all sites and their respective nodes and domains
@@ -117,17 +108,22 @@ class SiteService
      * Note: This is usually triggered by the ContentController::assetUploaded signal
      *
      * @param Asset $asset
-     * @param NodeInterface $node
+     * @param Node $node
      * @param string $propertyName
      * @return void
      */
-    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, NodeInterface $node, string $propertyName)
+    public function assignUploadedAssetToSiteAssetCollection(Asset $asset, Node $node, string $propertyName)
     {
-        $contentContext = $node->getContext();
-        if (!$contentContext instanceof ContentContext) {
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+        if (!$siteNode) {
+            // should not happen
             return;
         }
-        $site = $contentContext->getCurrentSite();
+        if ($siteNode->nodeName === null) {
+            return;
+        }
+        $site = $this->siteRepository->findOneByNodeName($siteNode->nodeName->value);
         if ($site === null) {
             return;
         }
@@ -148,5 +144,34 @@ class SiteService
      */
     protected function emitSitePruned(Site $site)
     {
+    }
+
+    public function createSite(
+        string $packageKey,
+        string $siteName,
+        string $nodeTypeName,
+        ?string $nodeName = null,
+        bool $inactive = false
+    ): Site {
+        $siteNodeName = NodeName::fromString($nodeName ?: $siteName);
+
+        if ($this->siteRepository->findOneByNodeName($siteNodeName->value)) {
+            throw SiteNodeNameIsAlreadyInUseByAnotherSite::butWasAttemptedToBeClaimed($siteNodeName);
+        }
+
+        // @todo use node aggregate identifier instead of node name
+        $site = new Site($siteNodeName->value);
+        $site->setSiteResourcesPackageKey($packageKey);
+        $site->setState($inactive ? Site::STATE_OFFLINE : Site::STATE_ONLINE);
+        $site->setName($siteName);
+        $this->siteRepository->add($site);
+
+        $siteServiceInternals = $this->contentRepositoryRegistry->buildService(
+            $site->getConfiguration()->contentRepositoryId,
+            new SiteServiceInternalsFactory()
+        );
+        $siteServiceInternals->createSiteNodeIfNotExists($site, $nodeTypeName);
+
+        return $site;
     }
 }

@@ -1,0 +1,81 @@
+Neos:
+  Flow:
+    # Improve debug output for node objects by ignoring large classes
+    error:
+      debugger:
+        ignoredClasses:
+          Neos\\ContentRepository\\SharedModel\\NodeType\\NodeTypeManager: true
+
+  ContentRepositoryRegistry:
+    contentRepositories:
+      default:
+        preset: default
+        contentDimensions:
+          # NOTE: Dimensions Config follows here
+
+    presets:
+      'default':
+
+        eventStore:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\EventStore\DoctrineEventStoreFactory
+
+        nodeTypeManager:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\DefaultNodeTypeManagerFactory
+
+        contentDimensionSource:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ContentDimensionSource\ConfigurationBasedContentDimensionSourceFactory
+
+        projectionCatchUpTrigger:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTriggerFactory
+
+        userIdProvider:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\UserIdProvider\StaticUserIdProviderFactory
+
+        clock:
+          factoryObjectName: Neos\ContentRepositoryRegistry\Factory\Clock\SystemClockFactory
+
+        propertyConverters:
+          DateTimeNormalizer:
+            className: Symfony\Component\Serializer\Normalizer\DateTimeNormalizer
+          ScalarNormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ScalarNormalizer
+          EnumNormalizer:
+            className: Symfony\Component\Serializer\Normalizer\BackedEnumNormalizer
+          ArrayNormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ArrayNormalizer
+          UriNormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\UriNormalizer
+          ValueObjectArrayDenormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectArrayDenormalizer
+          ValueObjectBoolDenormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectBoolDenormalizer
+          ValueObjectFloatDenormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectFloatDenormalizer
+          ValueObjectIntDenormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectIntDenormalizer
+          ValueObjectStringDenormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\ValueObjectStringDenormalizer
+          DoctrinePersistentObjectNormalizer:
+            className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\DoctrinePersistentObjectNormalizer
+          CollectionTypeDenormalizer:
+            className: Neos\ContentRepository\Core\Infrastructure\Property\Normalizer\CollectionTypeDenormalizer
+          ProxyAwareObjectNormalizer:
+            className: Neos\ContentRepositoryRegistry\Infrastructure\Property\Normalizer\ProxyAwareObjectNormalizer
+
+        projections:
+          'Neos.ContentRepository:ContentStream':
+            factoryObjectName: Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFactory
+          # NOTE: the following name must be stable, because we use it f.e. in Neos UI to register
+          # catchUpHooks for content cache flushing
+          'Neos.ContentRepository:ContentGraph':
+            factoryObjectName: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
+          'Neos.ContentRepository:Workspace':
+            factoryObjectName: Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory
+          'Neos.ContentRepository:NodeHiddenState':
+            factoryObjectName: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
+
+
+
+
+
+

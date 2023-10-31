@@ -6,7 +6,7 @@ exclude_paths:
   - 'Neos.Media.Browser/Tests/*'
   - 'Neos.SiteKickstarter/Tests/*'
   - 'Neos.NodeTypes/Tests/*'
-  - 'Neos.ContentRepository/Tests/*'
+  - 'Neos.ContentRepository.Core/Tests/*'
   - 'Neos.Fusion/Tests/*'
   - 'Neos.Diff/Tests/*'
   - 'Neos.Neos/Migrations/*'

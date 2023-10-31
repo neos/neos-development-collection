@@ -1,7 +1,4 @@
 <?php
-declare(strict_types=1);
-
-namespace Neos\Neos\Security;
 
 /*
  * This file is part of the Neos.Neos package.
@@ -13,8 +10,13 @@ namespace Neos\Neos\Security;
  * source code.
  */
 
+declare(strict_types=1);
+
+namespace Neos\Neos\Security;
+
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Aop\JoinPointInterface;
+use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Authentication\AuthenticationManagerInterface;
 use Neos\Neos\Service\ImpersonateService;
 
@@ -32,10 +34,9 @@ class ImpersonateAspect
     protected bool $alreadyLoggedAuthenticateCall = false;
 
     /**
-     * @var ImpersonateService
      * @Flow\Inject
      */
-    protected $impersonateService;
+    protected ImpersonateService $impersonateService;
 
     /**
      * @Flow\After("within(Neos\Flow\Security\Authentication\AuthenticationManagerInterface) && method(.*->authenticate())")
@@ -52,12 +53,14 @@ class ImpersonateAspect
             $this->alreadyLoggedAuthenticateCall = true;
             return;
         }
-        if ($proxy->getSecurityContext()->getAccount() === null) {
+        /** @var ?Account $account */
+        $account = $proxy->getSecurityContext()->getAccount();
+        if ($account === null) {
             $this->alreadyLoggedAuthenticateCall = true;
             return;
         }
 
-        if ($this->impersonateService && $this->impersonateService->isActive()) {
+        if ($this->impersonateService->isActive()) {
             $impersonation = $this->impersonateService->getImpersonation();
             foreach ($proxy->getSecurityContext()->getAuthenticationTokens() as $token) {
                 $token->setAccount($impersonation);

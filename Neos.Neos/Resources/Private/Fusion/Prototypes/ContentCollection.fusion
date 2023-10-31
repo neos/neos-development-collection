@@ -1,7 +1,7 @@
 # This is a helper Fusion object which is used to render all of the child elements
 # of a current node.
 prototype(Neos.Neos:ContentCollectionRenderer) < prototype(Neos.Fusion:Loop) {
-  @context.nodeAvailable = ${node && String.length(node.context.workspace.name)}
+  @context.nodeAvailable = ${node}
   # Set context removedContentShown to get removed nodes too.
   # Needed for publish function to be able to publish removed nodes.
   items = ${nodeAvailable ? q(node).children() : []}
@@ -27,7 +27,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
   attributes {
     class.@process.collectionClass = ${Array.push(value, 'neos-contentcollection')}
     data-__neos-insertion-anchor = true
-    data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${node.context.inBackend && node.context.currentRenderingMode.edit}
+    data-__neos-insertion-anchor.@if.onlyRenderInBackend = ${renderingMode.isEdit}
   }
 
   # Doesn't need to be set, if the node is a content collection.
@@ -46,7 +46,7 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
     mode = 'cached'
 
     entryIdentifier {
-      collection = ${node}
+      collection = ${Neos.Caching.entryIdentifierForNode(node)}
     }
 
     entryTags {
@@ -58,8 +58,6 @@ prototype(Neos.Neos:ContentCollection) < prototype(Neos.Fusion:Tag) {
 			# whenever one of the given nodes (for any variant) is updated.
       2 = ${Neos.Caching.nodeTag(node)}
     }
-
-    maximumLifetime = ${q(node).context({'invisibleContentShown': true}).children().cacheLifetime()}
   }
 
   @exceptionHandler = 'Neos\\Neos\\Fusion\\ExceptionHandlers\\NodeWrappingHandler'
