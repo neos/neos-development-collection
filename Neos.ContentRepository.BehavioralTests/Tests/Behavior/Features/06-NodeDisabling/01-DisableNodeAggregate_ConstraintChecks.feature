@@ -34,38 +34,34 @@ Feature: Constraint checks on node aggregate disabling
       | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
 
   Scenario: Try to disable a node aggregate in a non-existing content stream
-    When the command AddSubtreeTag is executed with payload and exceptions are caught:
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |
       | contentStreamId      | "i-do-not-exist"                       |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"                                                |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to disable a non-existing node aggregate
-    When the command AddSubtreeTag is executed with payload and exceptions are caught:
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |
       | nodeAggregateId      | "i-do-not-exist"                       |
       | nodeVariantSelectionStrategy | "allVariants"                          |
       | tag                          | "disabled"                    |
-    Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
   Scenario: Try to disable an already disabled node aggregate
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}            |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"                             |
     And the graph projection is fully up to date
 
       # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "de"}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"                             |
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 3 is of type "SubtreeTagWasAdded" with payload:
       | Key                          | Expected                               |
@@ -76,19 +72,17 @@ Feature: Constraint checks on node aggregate disabling
 
 
   Scenario: Try to disable a node aggregate in a non-existing dimension space point
-    When the command AddSubtreeTag is executed with payload and exceptions are caught:
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"}            |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"                    |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to disable a node aggregate in a dimension space point it does not cover
-    When the command AddSubtreeTag is executed with payload and exceptions are caught:
+    When the command DisableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                                  |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {"language": "en"}            |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"                    |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

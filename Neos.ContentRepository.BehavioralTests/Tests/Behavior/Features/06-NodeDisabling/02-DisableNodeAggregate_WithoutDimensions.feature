@@ -44,11 +44,10 @@ Feature: Disable a node aggregate
     And the graph projection is fully up to date
 
   Scenario: Disable node with arbitrary strategy since dimensions are not involved
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
 
     Then I expect exactly 8 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 7 is of type "SubtreeTagWasAdded" with payload:

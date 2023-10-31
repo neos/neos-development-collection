@@ -34,45 +34,40 @@ Feature: Enable a node aggregate
       | sir-david-nodenborough  | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford        | document |
 
   Scenario: Try to enable a node aggregate in a non-existing content stream
-    When the command RemoveSubtreeTag is executed with payload and exceptions are caught:
+    When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
       | contentStreamId      | "i-do-not-exist"         |
       | nodeAggregateId      | "sir-david-nodenborough" |
-        | tag                          | "disabled"     |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"
 
   Scenario: Try to enable a non-existing node aggregate
-    When the command RemoveSubtreeTag is executed with payload and exceptions are caught:
+    When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value            |
       | nodeAggregateId      | "i-do-not-exist" |
       | nodeVariantSelectionStrategy | "allVariants"    |
-      | tag                          | "disabled"       |
     Then the last command should have thrown an exception of type "NodeAggregateCurrentlyDoesNotExist"
 
     # Note: The behavior has been changed with https://github.com/neos/neos-development-collection/pull/4284 and the test was adjusted accordingly
   Scenario: Try to enable an already enabled node aggregate
-    When the command RemoveSubtreeTag is executed with payload:
+    When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
     Then I expect exactly 3 events to be published on stream with prefix "ContentStream:cs-identifier"
 
   Scenario: Try to enable a node aggregate in a non-existing dimension space point
-    When the command RemoveSubtreeTag is executed with payload and exceptions are caught:
+    When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                       |
       | nodeAggregateId      | "sir-david-nodenborough"    |
       | coveredDimensionSpacePoint   | {"undeclared": "undefined"} |
-      | tag                          | "disabled"                  |
       | nodeVariantSelectionStrategy | "allVariants"               |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
   Scenario: Try to disable a node aggregate in a dimension space point it does not cover
-    When the command RemoveSubtreeTag is executed with payload and exceptions are caught:
+    When the command EnableNodeAggregate is executed with payload and exceptions are caught:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "en"}       |
-      | tag                          | "disabled"               |
       | nodeVariantSelectionStrategy | "allVariants"            |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"

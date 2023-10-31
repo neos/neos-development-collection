@@ -71,17 +71,15 @@ Feature: Find and count nodes using the findAncestorNodes and countAncestorNodes
       | a2b             | a2b      | Neos.ContentRepository.Testing:Page        | a2                     | {}                    | {}                                       |
       | a2b1            | a2b1     | Neos.ContentRepository.Testing:Page        | a2b                     | {}                    | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {}                    | {}                                       |
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2a"       |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2b"        |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
   Scenario:

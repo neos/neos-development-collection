@@ -43,12 +43,11 @@ Feature: Creation of nodes underneath disabled nodes
     And VisibilityConstraints are set to "frontend"
 
   Scenario: Create a new node with parent disabled with strategy allSpecializations
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "disabled"           |
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
       | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
@@ -73,12 +72,11 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to node cs-identifier;nodingers-cat;{"language":"mul"}
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"mul"}
 
-    And the command RemoveSubtreeTag is executed with payload:
+    And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "disabled"           |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"de"}
@@ -94,12 +92,11 @@ Feature: Creation of nodes underneath disabled nodes
     And I expect this node to be a child of node cs-identifier;the-great-nodini;{"language":"ltz"}
 
   Scenario: Create a new node with parent disabled with strategy allVariants
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"    |
     When the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId | nodeTypeName                            | parentNodeAggregateId | nodeName     |
       | nodingers-cat           | Neos.ContentRepository.Testing:Document | the-great-nodini              | pet-document |
@@ -122,12 +119,11 @@ Feature: Creation of nodes underneath disabled nodes
     When I am in dimension space point {"language":"en"}
     And I expect node aggregate identifier "nodingers-cat" and node path "document/pet-document" to lead to no node
 
-    And the command RemoveSubtreeTag is executed with payload:
+    And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {"language":"de"}  |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"    |
     And the graph projection is fully up to date
 
     When I am in dimension space point {"language":"mul"}

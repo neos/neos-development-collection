@@ -142,13 +142,12 @@ Feature: Route cache invalidation
     And The URL "/david-nodenborough" should match the node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
     And The URL "/david-nodenborough/earl-document" should match the node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}"
 
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
     And The documenturipath projection is up to date
 
     Then No node should match URL "/david-nodenborough"

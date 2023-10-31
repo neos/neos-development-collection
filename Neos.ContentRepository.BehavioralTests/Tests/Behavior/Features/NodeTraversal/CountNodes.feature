@@ -76,11 +76,10 @@ Feature: Find nodes using the countNodes query
     When I execute the countNodes query I expect the result to be 12
 
     # count all nodes with disabled nodes
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a1"       |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
     # NOTE: countNodes() counts _all_ nodes, even disabled ones
     And I execute the countNodes query I expect the result to be 12

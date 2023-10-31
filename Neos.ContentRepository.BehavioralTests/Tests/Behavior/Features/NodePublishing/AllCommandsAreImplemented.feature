@@ -85,20 +85,18 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: hide two nodes in USER workspace
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
       | contentStreamId      | "user-cs-identifier"                   |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"               |
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
       | contentStreamId      | "user-cs-identifier"                   |
       | nodeAggregateId      | "sir-nodeward-nodington-iii"           |
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
@@ -119,20 +117,18 @@ Feature: Publishing hide/show scenario of nodes
 
   Scenario: (ShowNode) It is possible to publish showing of a node.
     # BEFORE: ensure two nodes are hidden in live (and user WS)
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
       | contentStreamId      | "cs-identifier"                        |
       | nodeAggregateId      | "sir-david-nodenborough"               |
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"               |
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                                  |
       | contentStreamId      | "cs-identifier"                        |
       | nodeAggregateId      | "sir-nodeward-nodington-iii"           |
       | coveredDimensionSpacePoint   | {}                                     |
       | nodeVariantSelectionStrategy | "allVariants"                          |
-      | tag                          | "disabled"               |
     # we need to ensure that the projections are up to date now; otherwise a content stream is forked with an out-
     # of-date base version. This means the content stream can never be merged back, but must always be rebased.
     And the graph projection is fully up to date
@@ -144,20 +140,18 @@ Feature: Publishing hide/show scenario of nodes
     And the graph projection is fully up to date
 
     # SETUP: show two nodes in USER workspace
-    Given the command RemoveSubtreeTag is executed with payload:
+    Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | contentStreamId      | "user-cs-identifier"     |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {}                       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
-    Given the command RemoveSubtreeTag is executed with payload:
+    Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                        |
       | contentStreamId      | "user-cs-identifier"         |
       | nodeAggregateId      | "sir-nodeward-nodington-iii" |
       | coveredDimensionSpacePoint   | {}                           |
       | nodeVariantSelectionStrategy | "allVariants"                |
-      | tag                          | "disabled"                   |
     And the graph projection is fully up to date
 
     When the command PublishIndividualNodesFromWorkspace is executed with payload:

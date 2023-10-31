@@ -44,18 +44,16 @@ Feature: Enable a node aggregate
     And the graph projection is fully up to date
 
   Scenario: Enable a previously disabled node with arbitrary strategy since dimensions are not involved
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
-    When the command RemoveSubtreeTag is executed with payload:
+    When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
 
     Then I expect exactly 9 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 8 is of type "SubtreeTagWasRemoved" with payload:
@@ -124,24 +122,21 @@ Feature: Enable a node aggregate
     And I expect this node to be a child of node cs-identifier;sir-david-nodenborough;{}
 
   Scenario: Enable a previously disabled node with explicitly disabled child nodes with arbitrary strategy since dimensions are not involved
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
-      | tag                  | "disabled"                 |
     And the graph projection is fully up to date
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                  | "disabled"               |
     And the graph projection is fully up to date
 
-    When the command RemoveSubtreeTag is executed with payload:
+    When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
     Then I expect exactly 10 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 9 is of type "SubtreeTagWasRemoved" with payload:
       | Key                          | Expected                 |
@@ -205,24 +200,21 @@ Feature: Enable a node aggregate
     And I expect node aggregate identifier "nody-mc-nodeface" and node path "document/child-document" to lead to no node
 
   Scenario: Enable a previously disabled node with explicitly disabled parent node with arbitrary strategy since dimensions are not involved
-    Given the command AddSubtreeTag is executed with payload:
+    Given the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | nodeAggregateId      | "sir-david-nodenborough" |
       | nodeVariantSelectionStrategy | "allVariants"       |
-      | tag                  | "disabled"               |
     And the graph projection is fully up to date
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                  | "disabled"               |
     And the graph projection is fully up to date
 
-    When the command RemoveSubtreeTag is executed with payload:
+    When the command EnableNodeAggregate is executed with payload:
       | Key                          | Value              |
       | nodeAggregateId      | "nody-mc-nodeface" |
       | nodeVariantSelectionStrategy | "allVariants"      |
-      | tag                          | "disabled"               |
     Then I expect exactly 10 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 9 is of type "SubtreeTagWasRemoved" with payload:
       | Key                          | Expected           |

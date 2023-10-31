@@ -292,11 +292,10 @@ Feature: Remove NodeAggregate
     And I expect node aggregate identifier "nodingers-kitten" and node path "pet/kitten" to lead to no node
 
   Scenario: Disable a node aggregate, completely remove it, recreate it and expect it to be enabled but have no references
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-      | tag                          | "disabled"           |
     And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value           |
@@ -348,11 +347,10 @@ Feature: Remove NodeAggregate
     And I expect this node to not be referenced
 
   Scenario: Disable a node aggregate, partially remove it, recreate it and expect the recreated nodes to be enabled and have their source's references
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value           |
       | nodeAggregateId              | "nodingers-cat" |
       | nodeVariantSelectionStrategy | "allVariants"   |
-      | tag                          | "disabled"      |
     And the graph projection is fully up to date
     And the command RemoveNodeAggregate is executed with payload:
       | Key                          | Value                |

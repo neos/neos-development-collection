@@ -251,13 +251,12 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
 
   Scenario: SubtreeTagWasAdded and SubtreeTagWasRemoved events don't update last modified timestamps
     When the current date and time is "2023-03-16T13:00:00+01:00"
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | contentStreamId              | "cs-user"            |
       | coveredDimensionSpacePoint   | {"language": "ch"}   |
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "disabled"           |
     And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     And VisibilityConstraints are set to "withoutRestrictions"
@@ -271,13 +270,12 @@ Feature: Behavior of Node timestamp properties "created", "originalCreated", "la
       | 2023-03-16 12:30:00 | 2023-03-16 12:30:00 |              |                      |
 
     When the current date and time is "2023-03-16T14:00:00+01:00"
-    And the command RemoveSubtreeTag is executed with payload:
+    And the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                |
       | contentStreamId              | "cs-user"            |
       | coveredDimensionSpacePoint   | {"language": "ch"}   |
       | nodeAggregateId              | "a"                  |
       | nodeVariantSelectionStrategy | "allSpecializations" |
-      | tag                          | "disabled"           |
     And the graph projection is fully up to date
     And I am in content stream "cs-user" and dimension space point {"language":"de"}
     Then I expect the node "a" to have the following timestamps:

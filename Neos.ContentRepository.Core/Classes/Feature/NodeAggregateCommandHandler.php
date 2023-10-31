@@ -25,6 +25,9 @@ use Neos\ContentRepository\Core\Feature\Common\TetheredNodeInternals;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNode;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Command\CreateNodeAggregateWithNodeAndSerializedProperties;
 use Neos\ContentRepository\Core\Feature\NodeCreation\NodeCreation;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\DisableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\Command\EnableNodeAggregate;
+use Neos\ContentRepository\Core\Feature\NodeDisabling\NodeDisabling;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNodeProperties;
 use Neos\ContentRepository\Core\Feature\NodeModification\NodeModification;
@@ -46,7 +49,7 @@ use Neos\ContentRepository\Core\Feature\RootNodeCreation\Command\UpdateRootNodeA
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\RootNodeHandling;
 use Neos\ContentRepository\Core\Feature\Tagging\Command\AddSubtreeTag;
 use Neos\ContentRepository\Core\Feature\Tagging\Command\RemoveSubtreeTag;
-use Neos\ContentRepository\Core\Feature\Tagging\NodeTagging;
+use Neos\ContentRepository\Core\Feature\Tagging\SubtreeTagging;
 use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
@@ -60,7 +63,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
     use ConstraintChecks;
     use RootNodeHandling;
     use NodeCreation;
-    use NodeTagging;
+    use NodeDisabling;
+    use SubtreeTagging;
     use NodeModification;
     use NodeMove;
     use NodeReferencing;
@@ -132,6 +136,8 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
                 => $this->handleCreateRootNodeAggregateWithNode($command, $contentRepository),
             UpdateRootNodeAggregateDimensions::class
                 => $this->handleUpdateRootNodeAggregateDimensions($command, $contentRepository),
+            DisableNodeAggregate::class => $this->handleDisableNodeAggregate($command, $contentRepository),
+            EnableNodeAggregate::class => $this->handleEnableNodeAggregate($command, $contentRepository),
             AddSubtreeTag::class => $this->handleAddSubtreeTag($command, $contentRepository),
             RemoveSubtreeTag::class => $this->handleRemoveSubtreeTag($command, $contentRepository),
             ChangeNodeAggregateName::class => $this->handleChangeNodeAggregateName($command, $contentRepository),

@@ -29,7 +29,7 @@ use Neos\EventStore\Model\Event\StreamName;
 /**
  * The tagging trait for behavioral tests
  */
-trait Tagging
+trait SubtreeTagging
 {
     use CRTestSuiteRuntimeVariables;
 

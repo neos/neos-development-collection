@@ -91,11 +91,10 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
       | contentStreamId | "cs-identifier"         |
       | nodeAggregateId | "a2a5"                  |
       | propertyValues  | {"integerProperty": 20} |
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a3"        |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
   Scenario:

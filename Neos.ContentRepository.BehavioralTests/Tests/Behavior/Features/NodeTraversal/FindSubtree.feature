@@ -72,11 +72,10 @@ Feature: Find nodes using the findSubtree query
       | a3              | a3       | Neos.ContentRepository.Testing:Page        | a                      | {"text": "a3"}        | {}                                       |
       | b               | b        | Neos.ContentRepository.Testing:Page        | home                   | {"text": "b"}         | {}                                       |
       | b1              | b1       | Neos.ContentRepository.Testing:Page        | b                      | {"text": "b1"}        | {}                                       |
-    And the command AddSubtreeTag is executed with payload:
+    And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a2a2a"        |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
   Scenario:

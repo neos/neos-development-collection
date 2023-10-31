@@ -30,7 +30,7 @@ use Neos\EventStore\Model\EventStream\ExpectedVersion;
 /**
  * @internal implementation detail of Command Handlers
  */
-trait NodeTagging
+trait SubtreeTagging
 {
     use ConstraintChecks;
 

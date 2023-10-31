@@ -89,13 +89,12 @@ Feature: Move dimension space point
 
   Scenario: Success Case - disabled nodes stay disabled
 
-    When the command AddSubtreeTag is executed with payload:
+    When the command DisableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | contentStreamId              | "cs-identifier"          |
       | nodeAggregateId              | "sir-david-nodenborough" |
       | coveredDimensionSpacePoint   | {"language": "de"}       |
       | nodeVariantSelectionStrategy | "allVariants"            |
-      | tag                          | "disabled"               |
     And the graph projection is fully up to date
 
     # ensure the node is disabled
