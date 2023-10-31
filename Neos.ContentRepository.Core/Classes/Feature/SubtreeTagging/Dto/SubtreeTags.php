@@ -24,7 +24,6 @@ use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
  */
 final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializable
 {
-
     /**
      * @var array<SubtreeTag>
      */

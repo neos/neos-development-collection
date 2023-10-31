@@ -21,7 +21,6 @@ namespace Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto;
  */
 final readonly class SubtreeTag implements \JsonSerializable
 {
-
     private function __construct(public string $value)
     {
         $regexPattern = '/^[a-z0-9_.]{1,30}$/';
