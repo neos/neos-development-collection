@@ -50,6 +50,7 @@ use Neos\Media\Domain\Repository\AssetCollectionRepository;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Media\Domain\Repository\TagRepository;
 use Neos\Media\Domain\Service\AssetService;
+use Neos\Media\Domain\Service\AssetVariantGenerator;
 use Neos\Media\Exception\AssetServiceException;
 use Neos\Media\TypeConverter\AssetInterfaceConverter;
 use Neos\Neos\Controller\BackendUserTranslationTrait;
@@ -139,6 +140,12 @@ class AssetController extends ActionController
      * @var \Neos\Media\Domain\Service\AssetSourceService
      */
     protected $assetSourceService;
+
+    /**
+     * @Flow\Inject
+     * @var AssetVariantGenerator
+     */
+    protected $assetVariantGenerator;
 
     /**
      * @var AssetSourceInterface[]
@@ -466,6 +473,32 @@ class AssetController extends ActionController
         } catch (AssetNotFoundExceptionInterface | AssetSourceConnectionExceptionInterface $e) {
             $this->view->assign('connectionError', $e);
         }
+    }
+
+    /**
+     * Create missing variants for the given image
+     *
+     * @param string $assetSourceIdentifier
+     * @param string $assetProxyIdentifier
+     * @param string $overviewAction
+     * @throws StopActionException
+     * @throws UnsupportedRequestTypeException
+     */
+    public function createVariantsAction(string $assetSourceIdentifier, string $assetProxyIdentifier, string $overviewAction): void
+    {
+        $assetSource = $this->assetSources[$assetSourceIdentifier];
+        $assetProxyRepository = $assetSource->getAssetProxyRepository();
+
+        $assetProxy = $assetProxyRepository->getAssetProxy($assetProxyIdentifier);
+        $asset = $this->persistenceManager->getObjectByIdentifier($assetProxy->getLocalAssetIdentifier(), Asset::class);
+
+        /** @var VariantSupportInterface $originalAsset */
+        $originalAsset = ($asset instanceof AssetVariantInterface ? $asset->getOriginalAsset() : $asset);
+
+        $this->assetVariantGenerator->createVariants($originalAsset);
+        $this->assetRepository->update($originalAsset);
+
+        $this->redirect('variants', null, null, ['assetSourceIdentifier' => $assetSourceIdentifier, 'assetProxyIdentifier' => $assetProxyIdentifier, 'overviewAction' => $overviewAction]);
     }
 
     /**
