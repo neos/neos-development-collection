@@ -13,12 +13,11 @@ Feature: Node References with Dimensions
     """yaml
     'Neos.ContentRepository.Testing:NodeWithReferences':
       properties:
-        referenceProperty:
-          type: reference
-        referencesProperty:
-          type: references
         text:
           type: string
+      references:
+        reference: {}
+        references: {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -45,7 +44,7 @@ Feature: Node References with Dimensions
     When the command SetNodeReferences is executed with payload:
       | Key                           | Value                             |
       | sourceNodeAggregateId | "source-nodandaise"               |
-      | referenceName                 | "referenceProperty"               |
+      | referenceName                 | "reference"               |
       | references                    | [{"target": "anthony-destinode"}] |
     And the graph projection is fully up to date
 
@@ -53,18 +52,18 @@ Feature: Node References with Dimensions
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
-      | referenceProperty | cs-identifier;anthony-destinode;{"language": "de"} | null       |
+      | reference | cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
       | Name              | Node                                               | Properties |
-      | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | reference | cs-identifier;source-nodandaise;{"language": "de"} | null       |
 
     When I am in content stream "cs-identifier" and dimension space point {"language": "ch"}
     Then I expect node aggregate identifier "source-nodandaise" to lead to node cs-identifier;source-nodandaise;{"language": "de"}
     And I expect this node to have the following references:
       | Name              | Node                                               | Properties |
-      | referenceProperty | cs-identifier;anthony-destinode;{"language": "de"} | null       |
+      | reference | cs-identifier;anthony-destinode;{"language": "de"} | null       |
     Then I expect node aggregate identifier "anthony-destinode" to lead to node cs-identifier;anthony-destinode;{"language": "de"}
     And I expect this node to be referenced by:
       | Name              | Node                                               | Properties |
-      | referenceProperty | cs-identifier;source-nodandaise;{"language": "de"} | null       |
+      | reference | cs-identifier;source-nodandaise;{"language": "de"} | null       |

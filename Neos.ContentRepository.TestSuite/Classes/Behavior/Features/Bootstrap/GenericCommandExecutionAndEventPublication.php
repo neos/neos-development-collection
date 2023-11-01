@@ -160,9 +160,10 @@ trait GenericCommandExecutionAndEventPublication
         Assert::assertSame($shortExceptionName, $lastCommandExceptionShortName, sprintf('Actual exception: %s (%s): %s', get_class($this->lastCommandException), $this->lastCommandException->getCode(), $this->lastCommandException->getMessage()));
         if (!is_null($expectedCode)) {
             Assert::assertSame($expectedCode, $this->lastCommandException->getCode(), sprintf(
-                'Expected exception code %s, got exception code %s instead',
+                'Expected exception code %s, got exception code %s instead; Message: %s',
                 $expectedCode,
-                $this->lastCommandException->getCode()
+                $this->lastCommandException->getCode(),
+                $this->lastCommandException->getMessage()
             ));
         }
     }

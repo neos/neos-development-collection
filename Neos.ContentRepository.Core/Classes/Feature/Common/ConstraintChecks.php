@@ -194,16 +194,20 @@ trait ConstraintChecks
         }
     }
 
-    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $propertyName): void
+    protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $referenceName): void
     {
         $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-        if (isset($nodeType->getProperties()[$propertyName->value])) {
-            $propertyType = $nodeType->getPropertyType($propertyName->value);
+        if (isset($nodeType->getReferences()[$referenceName->value])) {
+            return;
+        }
+        /** @deprecated references should be declared as references */
+        if (isset($nodeType->getProperties()[$referenceName->value])) {
+            $propertyType = $nodeType->getPropertyType($referenceName->value);
             if ($propertyType === 'reference' || $propertyType === 'references') {
                 return;
             }
         }
-        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($propertyName, $nodeTypeName);
+        throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
     }
 
     protected function requireNodeTypeToAllowNodesOfTypeInReference(
@@ -212,13 +216,15 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
         $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-        $propertyDeclaration = $nodeType->getProperties()[$referenceName->value] ?? null;
-        if (is_null($propertyDeclaration)) {
+        $referenceDeclaration = $nodeType->getReferences()[$referenceName->value]
+            ?? $nodeType->getProperties()[$referenceName->value] /** @deprecated references sould be declared as such */
+            ?? null;
+        if (is_null($referenceDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
-        if (isset($propertyDeclaration['constraints']['nodeTypes'])) {
+        if (isset($referenceDeclaration['constraints']['nodeTypes'])) {
             $nodeTypeConstraints = NodeTypeConstraintsWithSubNodeTypes::createFromNodeTypeDeclaration(
-                $propertyDeclaration['constraints']['nodeTypes'],
+                $referenceDeclaration['constraints']['nodeTypes'],
                 $this->getNodeTypeManager()
             );
             if (!$nodeTypeConstraints->matches($nodeTypeNameInQuestion)) {
@@ -637,7 +643,9 @@ trait ConstraintChecks
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
-            $referencePropertyConfig = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]
+            $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]
+                /** @deprecated references should be declared as such */
+                ?? $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]
                 ?? null;
 
             if (is_null($referencePropertyConfig)) {

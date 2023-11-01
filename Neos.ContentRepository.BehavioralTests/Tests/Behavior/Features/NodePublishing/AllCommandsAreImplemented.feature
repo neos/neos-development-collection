@@ -25,8 +25,8 @@ Feature: Publishing hide/show scenario of nodes
       properties:
         text:
           type: string
-        referenceProperty:
-          type: reference
+      references:
+        reference: {}
     'Neos.ContentRepository.Testing:Image':
       properties:
         image:
@@ -309,14 +309,14 @@ Feature: Publishing hide/show scenario of nodes
       | contentStreamId         | "user-cs-identifier"                      |
       | sourceNodeAggregateId   | "sir-david-nodenborough"                  |
       | sourceOriginDimensionSpacePoint | {}                                        |
-      | referenceName                   | "referenceProperty"                       |
+      | referenceName                   | "reference"                       |
       | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
     And the command SetNodeReferences is executed with payload:
       | Key                             | Value                                     |
       | contentStreamId         | "user-cs-identifier"                      |
       | sourceNodeAggregateId   | "nody-mc-nodeface"                        |
       | sourceOriginDimensionSpacePoint | {}                                        |
-      | referenceName                   | "referenceProperty"                       |
+      | referenceName                   | "reference"                       |
       | references                      | [{"target":"sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
@@ -331,29 +331,29 @@ Feature: Publishing hide/show scenario of nodes
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node cs-identifier;sir-david-nodenborough;{}
     And I expect this node to have the following references:
       | Name              | Node                                        | Properties |
-      | referenceProperty | cs-identifier;sir-nodeward-nodington-iii;{} | null       |
+      | reference | cs-identifier;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node cs-identifier;nody-mc-nodeface;{}
     And I expect this node to have no references
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node cs-identifier;sir-nodeward-nodington-iii;{}
     And I expect this node to have no references
     And I expect this node to be referenced by:
       | Name              | Node                                    | Properties |
-      | referenceProperty | cs-identifier;sir-david-nodenborough;{} | null       |
+      | reference | cs-identifier;sir-david-nodenborough;{} | null       |
 
     When I am in the active content stream of workspace "user-test" and dimension space point {}
     Then I expect node aggregate identifier "sir-david-nodenborough" to lead to node user-cs-identifier-modified;sir-david-nodenborough;{}
     And I expect this node to have the following references:
       | Name              | Node                                                      | Properties |
-      | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
+      | reference | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "nody-mc-nodeface" to lead to node user-cs-identifier-modified;nody-mc-nodeface;{}
     And I expect this node to have the following references:
       | Name              | Node                                                      | Properties |
-      | referenceProperty | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
+      | reference | user-cs-identifier-modified;sir-nodeward-nodington-iii;{} | null       |
     Then I expect node aggregate identifier "sir-nodeward-nodington-iii" to lead to node user-cs-identifier-modified;sir-nodeward-nodington-iii;{}
     And I expect this node to be referenced by:
       | Name              | Node                                                  | Properties |
-      | referenceProperty | user-cs-identifier-modified;nody-mc-nodeface;{}       | null       |
-      | referenceProperty | user-cs-identifier-modified;sir-david-nodenborough;{} | null       |
+      | reference | user-cs-identifier-modified;nody-mc-nodeface;{}       | null       |
+      | reference | user-cs-identifier-modified;sir-david-nodenborough;{} | null       |
 
   Scenario: (CreateNodeAggregateWithNode) It is possible to publish new nodes
     Given the command CreateWorkspace is executed with payload:

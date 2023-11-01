@@ -104,7 +104,9 @@ final class PropertyConverter
         foreach ($propertyValuesToWrite->values as $propertyName => $propertyValue) {
             // reference properties are always completely overwritten,
             // so we don't need the node properties' unset option
-            $declaredType = $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
+            $declaredType = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]['type']
+                /** @deprecated references should be declared as such */
+                ?? $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]['type'];
 
             $serializedPropertyValues[$propertyName] = $this->serializePropertyValue(
                 $declaredType,

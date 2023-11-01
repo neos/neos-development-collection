@@ -12,13 +12,12 @@ Feature: Find sibling nodes using the findPrecedingSiblingNodes and findSucceedi
       properties:
         text:
           type: string
+      references:
         refs:
-          type: references
           properties:
             foo:
               type: string
         ref:
-          type: reference
           properties:
             foo:
               type: string

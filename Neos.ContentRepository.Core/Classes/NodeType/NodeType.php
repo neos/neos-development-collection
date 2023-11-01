@@ -400,6 +400,21 @@ class NodeType
     }
 
     /**
+     * Return the array with the defined references. The key is the reference name,
+     * the value the reference configuration. There are no guarantees on how the
+     * reference configuration looks like.
+     *
+     * @return array<string,mixed>
+     * @api
+     */
+    public function getReferences(): array
+    {
+        $this->initialize();
+
+        return ($this->fullConfiguration['references'] ?? []);
+    }
+
+    /**
      * Returns the configured type of the specified property
      *
      * @param string $propertyName Name of the property
