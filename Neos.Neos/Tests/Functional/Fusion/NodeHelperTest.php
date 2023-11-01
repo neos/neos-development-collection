@@ -156,15 +156,15 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
         $now = new \DateTimeImmutable();
 
-        $this->textNode = new Node(
+        $this->textNode = Node::create(
             ContentSubgraphIdentity::create(
                 $contentRepositoryId,
                 ContentStreamId::fromString("cs"),
-                DimensionSpacePoint::fromArray([]),
+                DimensionSpacePoint::createWithoutDimensions(),
                 VisibilityConstraints::withoutRestrictions()
             ),
             NodeAggregateId::fromString("na"),
-            OriginDimensionSpacePoint::fromArray([]),
+            OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeTypeName,
             $textNodeType,

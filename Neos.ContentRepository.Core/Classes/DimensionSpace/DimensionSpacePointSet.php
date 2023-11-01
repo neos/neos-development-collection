@@ -14,8 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\DimensionSpace;
 
+use Neos\ContentRepository\Core\EventStore\EventInterface;
+
 /**
  * A set of points in the dimension space.
+ *
+ * In case this set is a member of an {@see EventInterface} as $coveredDimensionSpacePoints, you can be sure that it is not empty.
+ * There is always at least one dimension space point covered, even in a zero-dimensional content repository. {@see DimensionSpacePoint::createWithoutDimensions()}.
  *
  * E.g.: {[language => es, country => ar], [language => es, country => es]}
  * @implements \IteratorAggregate<string,DimensionSpacePoint>
@@ -89,14 +94,14 @@ final readonly class DimensionSpacePointSet implements
         return $this->points[$offset] ?? null;
     }
 
-    public function offsetSet(mixed $offset, mixed $value): void
+    public function offsetSet(mixed $offset, mixed $value): never
     {
-        // not going to happen
+        throw new \BadMethodCallException('Cannot modify immutable DimensionSpacePointSet', 1697802335);
     }
 
-    public function offsetUnset(mixed $offset): void
+    public function offsetUnset(mixed $offset): never
     {
-        // not going to happen
+        throw new \BadMethodCallException('Cannot modify immutable DimensionSpacePointSet', 1697802337);
     }
 
     public function getUnion(DimensionSpacePointSet $other): DimensionSpacePointSet

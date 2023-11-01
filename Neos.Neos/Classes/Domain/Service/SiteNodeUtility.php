@@ -48,7 +48,7 @@ final class SiteNodeUtility
      * $siteNode = $this->siteNodeUtility->findSiteNodeBySite(
      *     $site,
      *     $liveWorkspace->currentContentStreamId,
-     *     DimensionSpacePoint::fromArray([]),
+     *     DimensionSpacePoint::createWithoutDimensions(),
      *     VisibilityConstraints::frontend()
      * );
      * ```

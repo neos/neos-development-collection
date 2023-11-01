@@ -11,6 +11,10 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  * source code.
  */
 
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -65,26 +69,25 @@ class ParentsOperation extends AbstractOperation
      */
     public function evaluate(FlowQuery $flowQuery, array $arguments)
     {
-        $parents = [];
+        $parents = Nodes::createEmpty();
+        $findAncestorNodesFilter = FindAncestorNodesFilter::create(
+            NodeTypeConstraints::createWithDisallowedNodeTypeNames(
+                NodeTypeNames::fromStringArray(['Neos.ContentRepository:Root'])
+            )
+        );
+
         /* @var Node $contextNode */
         foreach ($flowQuery->getContext() as $contextNode) {
-            $node = $contextNode;
-            do {
-                $node = $this->contentRepositoryRegistry->subgraphForNode($node)
-                    ->findParentNode($node->nodeAggregateId);
-                if ($node === null) {
-                    // no parent found
-                    break;
-                }
-                // stop at sites
-                if ($node->nodeTypeName === NodeTypeName::fromString('Neos.Neos:Sites')) {
-                    break;
-                }
-                $parents[] = $node;
-            } while (true);
+            $ancestorNodes = $this->contentRepositoryRegistry
+                ->subgraphForNode($contextNode)
+                ->findAncestorNodes(
+                    $contextNode->nodeAggregateId,
+                    $findAncestorNodesFilter
+                );
+            $parents = $parents->merge($ancestorNodes);
         }
 
-        $flowQuery->setContext($parents);
+        $flowQuery->setContext(iterator_to_array($parents));
 
         if (isset($arguments[0]) && !empty($arguments[0])) {
             $flowQuery->pushOperation('filter', $arguments);

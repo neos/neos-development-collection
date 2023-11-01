@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Rendering;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Model\RenderingMode;
 
 /**
  * ViewHelper to find out if Neos is rendering a preview mode.
@@ -55,8 +58,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
  * Shown in all other cases.
  * </output>
  */
-class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
+class InPreviewModeViewHelper extends AbstractViewHelper
 {
+    use FusionContextTrait;
+
     /**
      * Initialize the arguments.
      *
@@ -67,11 +72,6 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
     {
         parent::initializeArguments();
         $this->registerArgument(
-            'node',
-            Node::class,
-            'Optional Node to use context from'
-        );
-        $this->registerArgument(
             'mode',
             'string',
             'Optional rendering mode name to check if this specific mode is active'
@@ -80,7 +80,14 @@ class InPreviewModeViewHelper extends AbstractRenderingStateViewHelper
 
     public function render(Node $node = null, string $mode = null): bool
     {
-        // TODO: implement
+        $renderingMode = $this->getContextVariable('renderingMode');
+        if ($renderingMode instanceof RenderingMode) {
+            $mode = $this->arguments['mode'];
+            if ($mode) {
+                return $renderingMode->isPreview && $renderingMode->name === $mode;
+            }
+            return $renderingMode->isPreview;
+        }
         return false;
     }
 }

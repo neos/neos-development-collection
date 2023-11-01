@@ -6,13 +6,11 @@
 root = Neos.Fusion:Case
 root {
   shortcut {
-    prototype(Neos.Neos:Page) {
-      body = Neos.Neos:Shortcut
-    }
-
+    # this code path will only be taken for backend views, as the node controller
+    # will take care of resolving the shortcut in the frontend
     @position = 'start'
     condition = ${q(node).is('[instanceof Neos.Neos:Shortcut]')}
-    type = 'Neos.Neos:Page'
+    renderer = Neos.Neos:Shortcut
   }
 
   editPreviewMode {

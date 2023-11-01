@@ -90,15 +90,15 @@ final class NodeSubjectProvider
             );
         }
         $serializedDefaultPropertyValues = SerializedPropertyValues::fromArray($defaultPropertyValues);
-        return new Node(
+        return Node::create(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),
                 ContentStreamId::fromString('cs-id'),
-                DimensionSpacePoint::fromArray([]),
+                DimensionSpacePoint::createWithoutDimensions(),
                 VisibilityConstraints::withoutRestrictions()
             ),
             NodeAggregateId::create(),
-            OriginDimensionSpacePoint::fromArray([]),
+            OriginDimensionSpacePoint::createWithoutDimensions(),
             NodeAggregateClassification::CLASSIFICATION_REGULAR,
             $nodeType->name,
             $nodeType,
