@@ -25,7 +25,6 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 final class RequestUriHostMiddleware implements MiddlewareInterface
 {
-
     /**
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $next

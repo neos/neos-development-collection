@@ -1,0 +1,53 @@
+`7.3.15 (2023-09-15) <https://github.com/neos/neos-development-collection/releases/tag/7.3.15>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Make getParent work in NodeData <https://github.com/neos/neos-development-collection/pull/4295>`_
+----------------------------------------------------------------------------------------------------------
+
+resolved: `#4283 <https://github.com/neos/neos-development-collection/issues/4283>`_
+
+**Review instructions**
+I am unsure why the dimensions were not passed to findOneByPath, but without it it does not really work.
+Also, it is kind of strange that the dimensions in findOneByPath is optional but returns nothing if it is not set.
+This fixes it for now. 
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`BUGFIX: Use correct URL to FontAwesome icons <https://github.com/neos/neos-development-collection/pull/4453>`_
+---------------------------------------------------------------------------------------------------------------
+
+**Upgrade instructions**
+
+**Review instructions**
+
+
+* Packages: ``Neos``
+
+`BUGFIX: Assign original asset collections to variant <https://github.com/neos/neos-development-collection/pull/3562>`_
+-----------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#3560 <https://github.com/neos/neos-development-collection/issues/3560>`_
+
+* Packages: ``Neos``
+
+`BUGFIX: Fix editing of Electronic Address type in Backend module <https://github.com/neos/neos-development-collection/pull/4419>`_
+-----------------------------------------------------------------------------------------------------------------------------------
+
+* Fixes: `#4418 <https://github.com/neos/neos-development-collection/issues/4418>`_
+
+* Packages: ``Neos``
+
+`TASK: Avoid potential deprecation warnings <https://github.com/neos/neos-development-collection/pull/4409>`_
+-------------------------------------------------------------------------------------------------------------
+
+``trim()`` and ``preg_match()`` expect strings, but Eel with it's loose typing might pass in different types.
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/7.3.14...7.3.15>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

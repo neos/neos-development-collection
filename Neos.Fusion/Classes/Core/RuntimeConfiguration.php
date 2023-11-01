@@ -11,7 +11,6 @@ use Neos\Utility\Arrays;
  */
 final class RuntimeConfiguration
 {
-
     /**
      * The parsed Fusion configuration
      *
@@ -63,6 +62,10 @@ final class RuntimeConfiguration
         // Fast path if complete Fusion path is in configuration cache
         if (isset($this->pathCache[$fusionPath])) {
             return $this->pathCache[$fusionPath]['c'];
+        }
+
+        if ($fusionPath === '') {
+            throw new Exception('Fusion path cannot be empty.', 1695308681);
         }
 
         // Find longest prefix of path that already is in path cache

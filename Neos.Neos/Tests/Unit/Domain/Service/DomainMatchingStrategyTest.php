@@ -44,12 +44,11 @@ class DomainMatchingStrategyTest extends UnitTestCase
             $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
             $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
             $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
-            $this->getMockBuilder(Domain::class)->disableOriginalConstructor()->setMethods(['dummy'])->getMock(),
         ];
 
         $mockDomains[0]->setHostname('neos.io');
         $mockDomains[1]->setHostname('flow.neos.io');
-        $mockDomains[3]->setHostname('yacumboolu.neos.io');
+        $mockDomains[2]->setHostname('yacumboolu.neos.io');
 
         $expectedDomains = [
             $mockDomains[1],
