@@ -176,7 +176,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         $maximumLevels = $this->getMaximumLevels();
         $lastLevels = $this->getLastLevel();
-        if ($lastLevels !== 0) {
+        if ($lastLevels !== null) {
             $depthOfEntryParentNodeAggregateId = $subgraph->countAncestorNodes(
                 $entryParentNodeAggregateId,
                 CountAncestorNodesFilter::create(

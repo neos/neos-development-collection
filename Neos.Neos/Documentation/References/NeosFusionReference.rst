@@ -969,7 +969,18 @@ Neos.Neos:Menu
 Render a menu with items for nodes.
 
 :attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
-:[key]: (mixed) all other fusion properties are passed over to :ref:`Neos_Neos__MenuItems` internally to calculate the `items`
+
+The following properties are passed over to :ref:`Neos_Neos__MenuItems` internally:
+
+:node: (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``node`` from the fusion context
+:entryLevel: (integer) Define the startingPoint of the menu relatively. Non negative values specify this as n levels below root. Negative values are n steps up from ``node`` or ``startingPoint`` if defined. Defaults to ``1`` if no ``startingPoint`` is set otherwise ``0``
+:lastLevel: (optional, integer) Restrict the depth of the menu relatively. Positive values specify this as n levels below root. Negative values specify this as n steps up from ``node``. Defaults to ``null``
+:maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
+:startingPoint: (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
+:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
+:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
+:itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
 
 Example::
 
@@ -991,8 +1002,13 @@ Neos.Neos:BreadcrumbMenu
 
 Render a breadcrumb (ancestor documents).
 
-:attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
-:[key]: (mixed) all other fusion properties are passed over to :ref:`Neos_Neos__BreadcrumbMenuItems` internally
+:attributes: (:ref:`Neos_Fusion__DataStructure`) html attributes for the rendered list
+
+The following properties are passed over to :ref:`Neos_Neos__BreadcrumbMenuItems` internally:
+
+:maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
+:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Example::
 
@@ -1013,7 +1029,14 @@ Neos.Neos:DimensionsMenu
 Create links to other node variants (e.g. variants of the current node in other dimensions).
 
 :attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
-:[key]: (mixed) all other fusion properties are passed over to :ref:`Neos_Neos__DimensionsMenuItems` internally
+
+The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMenuItems` internally:
+
+:dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
+:presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
+:includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
+:renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 .. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuMenuItems` which
    you can use directly aswell.
@@ -1037,15 +1060,17 @@ Neos.Neos:MenuItems
 
 Create a list of menu-items items for nodes.
 
-:entryLevel: (integer) Start the menu at the given depth
+:node: (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``node`` from the fusion context
+:entryLevel: (integer) Define the startingPoint of the menu relatively. Non negative values specify this as n levels below root. Negative values are n steps up from ``node`` or ``startingPoint`` if defined. Defaults to ``1`` if no ``startingPoint`` is set otherwise ``0``
+:lastLevel: (optional, integer) Restrict the depth of the menu relatively. Positive values specify this as n levels below root. Negative values specify this as n steps up from ``node``. Defaults to ``null``
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
-:startingPoint: (Node) The parent node of the first menu level (defaults to ``node`` context variable)
-:lastLevel: (integer) Restrict the menu depth by node depth (relative to site node)
-:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
+:startingPoint: (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
+:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
-:itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
-:itemUriRenderer: (:ref:`Neos_Neos__NodeUri`) prototype to use for rendering the URI of each item
-:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
+:itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
+
+Note::
 
 MenuItems item properties:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1056,6 +1081,7 @@ MenuItems item properties:
 :label: (string) Full label of the node
 :menuLevel: (integer) Menu level the item is rendered on
 :uri: (string) Frontend URI of the node
+:children: (array) array of ``MenuItem`` instances
 
 Examples:
 ^^^^^^^^^
@@ -1130,7 +1156,6 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
 :renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
-:itemUriRenderer: (:ref:`Neos_Neos__NodeUri`) prototype to use for rendering the URI of each item
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:

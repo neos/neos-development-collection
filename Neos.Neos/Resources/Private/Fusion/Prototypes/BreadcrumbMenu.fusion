@@ -1,9 +1,16 @@
 # Neos.Neos:BreadcrumbMenu provides a breadcrumb navigation based on menu items.
 #
 prototype(Neos.Neos:BreadcrumbMenu) < prototype(Neos.Fusion:Component) {
+  # html attributes for the rendered list
   attributes = Neos.Fusion:DataStructure
+
+  # (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
   maximumLevels = 0
-  renderHiddenInIndex = false
+
+  # (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+  renderHiddenInIndex = true
+
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``
   calculateItemStates = false
 
   @private {
