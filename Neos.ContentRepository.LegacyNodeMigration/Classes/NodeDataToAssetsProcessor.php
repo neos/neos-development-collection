@@ -45,15 +45,15 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
         $numberOfErrors = 0;
         foreach ($this->nodeDataRows as $nodeDataRow) {
             $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-            if ($this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            try {
                 $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-                foreach ($nodeType->getProperties() as $nodeTypePropertyName => $nodeTypePropertyValue) {
-                    $propertyTypes[$nodeTypePropertyName] = $nodeTypePropertyValue['type'] ?? null;
-                }
-            } else {
-                $this->dispatch(Severity::WARNING, 'The node type "%s" of node "%s" is not available. Falling back to "string" typed properties.', $nodeTypeName->value, $nodeDataRow['identifier']);
-                $propertyTypes = [];
+            } catch (NodeTypeNotFoundException $exception) {
+                $numberOfErrors ++;
+                $this->dispatch(Severity::ERROR, '%s. Node: "%s"', $exception->getMessage(), $nodeDataRow['identifier']);
+                continue;
             }
+            // HACK the following line is required in order to fully initialize the node type
+            $nodeType->getFullConfiguration();
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {
@@ -62,7 +62,7 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
                 continue;
             }
             foreach ($properties as $propertyName => $propertyValue) {
-                $propertyType = $propertyTypes[$propertyName] ?? 'string'; // string is the fallback, in case the property is not defined or the node type does not exist.
+                $propertyType = $nodeType->getPropertyType($propertyName);
                 foreach ($this->extractAssetIdentifiers($propertyType, $propertyValue) as $assetId) {
                     if (array_key_exists($assetId, $this->processedAssetIds)) {
                         continue;
