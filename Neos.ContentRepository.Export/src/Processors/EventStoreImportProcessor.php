@@ -61,10 +61,12 @@ final class EventStoreImportProcessor implements ProcessorInterface
 
         $keepStreamName = false;
         while (($line = fgets($eventFileResource)) !== false) {
+            $isContentStreamDefiningEvent = false;
             $event = ExportedEvent::fromJson(trim($line));
             if ($this->contentStreamId === null) {
                 $this->contentStreamId = self::extractContentStreamId($event->payload);
                 $keepStreamName = true;
+                $isContentStreamDefiningEvent = true;
             }
             if (!$keepStreamName) {
                 $event = $event->processPayload(fn(array $payload) => isset($payload['contentStreamId']) ? [...$payload, 'contentStreamId' => $this->contentStreamId->value] : $payload);
@@ -101,6 +103,10 @@ final class EventStoreImportProcessor implements ProcessorInterface
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
+            if ($isContentStreamDefiningEvent && $domainEvent instanceof ContentStreamWasCreated) {
+                // will be applied separately, so we prevent duplication here
+                continue;
+            }
             $domainEvent = DecoratedEvent::withEventId($domainEvent, EventId::fromString($event->identifier));
             if ($event->metadata !== null && $event->metadata !== []) {
                 $domainEvent = DecoratedEvent::withMetadata($domainEvent, EventMetadata::fromArray($event->metadata));
