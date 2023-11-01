@@ -56,7 +56,7 @@ class ImportService implements ContentRepositoryServiceInterface
                 $this->filesystem,
                 $this->eventStore,
                 $this->eventNormalizer,
-                $this->contentStreamIdentifier,
+                null,
             )
         ];
 
