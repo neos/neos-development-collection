@@ -18,6 +18,7 @@ parameters:
             - Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
             - Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
             - Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+            - Neos.ContentRepositoryRegistry/Classes/Command/ContentCommandController.php
 rules:
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
 #    - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule
