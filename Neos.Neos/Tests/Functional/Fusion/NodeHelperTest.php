@@ -156,7 +156,7 @@ class NodeHelperTest extends AbstractFusionObjectTest
 
         $now = new \DateTimeImmutable();
 
-        $this->textNode = new Node(
+        $this->textNode = Node::create(
             ContentSubgraphIdentity::create(
                 $contentRepositoryId,
                 ContentStreamId::fromString("cs"),
