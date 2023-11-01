@@ -479,7 +479,7 @@ class NodeType
     public function allowsChildNodeType(NodeType $nodeType): bool
     {
         $constraints = $this->getConfiguration('constraints.nodeTypes') ?: [];
-        return (new ConstraintCheck($constraints))->isNodeTypeAllowed($nodeType);
+        return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
     }
 
     /**
