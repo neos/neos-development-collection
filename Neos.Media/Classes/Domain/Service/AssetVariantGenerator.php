@@ -127,7 +127,6 @@ class AssetVariantGenerator
         $createdVariant = null;
         $preset = $this->getVariantPresets()[$presetIdentifier] ?? null;
         if ($preset instanceof VariantPreset && $preset->matchesMediaType($asset->getMediaType())) {
-
             $existingVariant = $asset->getVariant($presetIdentifier, $variantIdentifier);
             if ($existingVariant !== null) {
                 return $existingVariant;
