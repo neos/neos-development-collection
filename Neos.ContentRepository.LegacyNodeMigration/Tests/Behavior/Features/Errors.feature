@@ -100,11 +100,11 @@ Feature: Exceptional cases during migrations
     When I have the following node data rows:
       | Identifier | Path     | Properties | Node Type                 |
       | sites      | /sites   |            |                           |
-      | a          | /sites/a | not json   | Some.Package:SomeNodeType |
+      | a          | /sites/a | not json   | Some.Package:Homepage     |
     And I run the event migration
     Then I expect a MigrationError with the message
     """
-    Failed to decode properties "not json" of node "a" (type: "Some.Package:SomeNodeType"): Could not convert database value "not json" to Doctrine Type flow_json_array
+    Failed to decode properties "not json" of node "a" (type: "Some.Package:Homepage"): Could not convert database value "not json" to Doctrine Type flow_json_array
     """
 
   Scenario: Node variants with the same dimension

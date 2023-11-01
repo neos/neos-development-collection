@@ -256,15 +256,23 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         $nodeName = end($pathParts);
         assert($nodeName !== false);
         $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
+
+        $nodeType = $this->nodeTypeManager->hasNodeType($nodeTypeName) ? $this->nodeTypeManager->getNodeType($nodeTypeName) : null;
 
         $isSiteNode = $nodeDataRow['parentpath'] === '/sites';
-        if ($isSiteNode && !$nodeType->isOfType(NodeTypeNameFactory::NAME_SITE)) {
+        if ($isSiteNode && !$nodeType?->isOfType(NodeTypeNameFactory::NAME_SITE)) {
             throw new MigrationException(sprintf(
                 'The site node "%s" (type: "%s") must be of type "%s"', $nodeDataRow['identifier'], $nodeTypeName->value, NodeTypeNameFactory::NAME_SITE
             ), 1695801620);
         }
+
+        if (!$nodeType) {
+            $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
+            return;
+        }
+
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        $serializedPropertyValuesAndReferences = $this->extractPropertyValuesAndReferences($nodeDataRow, $nodeType);
 
         if ($this->isAutoCreatedChildNode($parentNodeAggregate->nodeTypeName, $nodeName) && !$this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
             // Create tethered node if the node was not found before.
