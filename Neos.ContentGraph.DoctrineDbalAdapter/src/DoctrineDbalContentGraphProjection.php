@@ -517,12 +517,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
     }
 
     /**
-     * @param NodeRelationAnchorPoint|null $parentAnchorPoint
-     * @param NodeRelationAnchorPoint|null $childAnchorPoint
-     * @param NodeRelationAnchorPoint|null $succeedingSiblingAnchorPoint
-     * @param ContentStreamId $contentStreamId
-     * @param DimensionSpacePoint $dimensionSpacePoint
-     * @return int
      * @throws \Doctrine\DBAL\DBALException
      */
     private function getRelationPosition(
@@ -589,6 +583,12 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 $contentStreamId,
                 $dimensionSpacePoint
             );
+
+        usort(
+            $hierarchyRelations,
+            fn (HierarchyRelation $relationA, HierarchyRelation $relationB): int
+                => $relationA->position <=> $relationB->position
+        );
 
         foreach ($hierarchyRelations as $relation) {
             $offset += self::RELATION_DEFAULT_OFFSET;
