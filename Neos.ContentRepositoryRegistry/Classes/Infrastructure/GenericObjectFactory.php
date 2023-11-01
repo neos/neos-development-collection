@@ -19,7 +19,10 @@ use Neos\Flow\Annotations as Flow;
  */
 final class GenericObjectFactory
 {
-    public function create(string $className, ...$arguments)
+    /**
+     * @param class-string $className
+     */
+    public function create(string $className, mixed ...$arguments): object
     {
         return new $className(...$arguments);
     }

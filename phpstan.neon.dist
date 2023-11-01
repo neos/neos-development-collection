@@ -10,6 +10,7 @@ parameters:
         - Neos.ContentRepository.NodeAccess/Classes
         - Neos.ContentRepository.StructureAdjustment/src
         - Neos.ContentRepository.TestSuite/Classes
+        - Neos.ContentRepositoryRegistry/Classes
         - Neos.Neos/Classes
     excludePaths:
         analyse:

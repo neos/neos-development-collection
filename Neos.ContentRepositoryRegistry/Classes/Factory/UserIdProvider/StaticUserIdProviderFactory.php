@@ -12,6 +12,7 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
  */
 final class StaticUserIdProviderFactory implements UserIdProviderFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): UserIdProviderInterface
     {
         return new StaticUserIdProvider(UserId::forSystemUser());
