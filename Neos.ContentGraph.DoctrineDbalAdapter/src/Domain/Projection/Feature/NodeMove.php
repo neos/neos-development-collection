@@ -44,7 +44,6 @@ trait NodeMove
         $this->transactional(function () use ($event) {
             foreach ($event->nodeMoveMappings as $moveNodeMapping) {
                 // for each materialized node in the DB which we want to adjust, we have one MoveNodeMapping.
-                /* @var \Neos\ContentRepository\Core\Feature\NodeMove\Dto\OriginNodeMoveMapping $moveNodeMapping */
                 $nodeToBeMoved = $this->getProjectionContentGraph()->findNodeByIds(
                     $event->contentStreamId,
                     $event->nodeAggregateId,
