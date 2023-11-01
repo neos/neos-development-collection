@@ -85,40 +85,6 @@ final class ContentGraph implements ContentGraphInterface
     }
 
     /**
-     * @throws DBALException
-     * @throws NodeTypeNotFoundException
-     */
-    public function findNodeByIdAndOriginDimensionSpacePoint(
-        ContentStreamId $contentStreamId,
-        NodeAggregateId $nodeAggregateId,
-        OriginDimensionSpacePoint $originDimensionSpacePoint
-    ): ?Node {
-        $connection = $this->client->getConnection();
-
-        // HINT: we check the ContentStreamId on the EDGE;
-        // as this is where we actually find out whether the node exists in the content stream
-        $nodeRow = $connection->executeQuery(
-            'SELECT n.*, h.contentstreamid, h.name FROM ' . $this->tableNamePrefix . '_node n
-                  INNER JOIN ' . $this->tableNamePrefix . '_hierarchyrelation h
-                      ON h.childnodeanchor = n.relationanchorpoint
-                  WHERE n.nodeaggregateid = :nodeAggregateId
-                  AND n.origindimensionspacepointhash = :originDimensionSpacePointHash
-                  AND h.contentstreamid = :contentStreamId',
-            [
-                'nodeAggregateId' => $nodeAggregateId->value,
-                'originDimensionSpacePointHash' => $originDimensionSpacePoint->hash,
-                'contentStreamId' => $contentStreamId->value
-            ]
-        )->fetchAssociative();
-
-        return $nodeRow ? $this->nodeFactory->mapNodeRowToNode(
-            $nodeRow,
-            $originDimensionSpacePoint->toDimensionSpacePoint(),
-            VisibilityConstraints::withoutRestrictions()
-        ) : null;
-    }
-
-    /**
      * @throws RootNodeAggregateDoesNotExist
      */
     public function findRootNodeAggregateByType(

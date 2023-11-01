@@ -90,6 +90,12 @@ final class CrCommandController extends CommandController
         }
     }
 
+    /**
+     * This will completely prune the data of the specified content repository.
+     *
+     * @param string $contentRepository name of the content repository where the data should be pruned from.
+     * @return void
+     */
     public function pruneCommand(string $contentRepository = 'default'): void
     {
         if (!$this->output->askConfirmation(sprintf("This will prune your content repository \"%s\". Are you sure to proceed? (y/n) ", $contentRepository), false)) {

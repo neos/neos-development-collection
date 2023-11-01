@@ -63,7 +63,7 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
 
     public function equal(self $other): bool
     {
-        return $this->discriminators == iterator_to_array($other->getIterator());
+        return $this->discriminators == $other->discriminators;
     }
 
     public function areSimilarTo(self $other): bool
@@ -81,7 +81,7 @@ final class NodeDiscriminators implements \IteratorAggregate, \ArrayAccess, \Jso
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->discriminators);
+        yield from $this->discriminators;
     }
 
     public function offsetGet(mixed $offset): ?NodeDiscriminator

@@ -21,7 +21,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
-use Neos\ContentRepository\Security\Service\AuthorizationService;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
 
 /**
@@ -38,12 +37,6 @@ class ContentElementEditableService
      * @var PrivilegeManagerInterface
      */
     protected $privilegeManager;
-
-    /**
-     * @Flow\Inject
-     * @var AuthorizationService
-     */
-    protected $nodeAuthorizationService;
 
     /**
      * @Flow\Inject

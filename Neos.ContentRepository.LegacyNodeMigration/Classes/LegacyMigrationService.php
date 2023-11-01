@@ -58,8 +58,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
         private readonly PropertyConverter $propertyConverter,
         private readonly EventStoreInterface $eventStore,
         private readonly ContentStreamId $contentStreamId,
-    )
-    {
+    ) {
     }
 
     public function runAllProcessors(\Closure $outputLineFn, bool $verbose = false): void
@@ -88,7 +87,7 @@ class LegacyMigrationService implements ContentRepositoryServiceInterface
             });
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($label . ': ' . $result->message ?? '');
+                throw new \RuntimeException($label . ': ' . $result->message);
             }
             $outputLineFn('  ' . $result->message);
             $outputLineFn();

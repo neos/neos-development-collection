@@ -7,7 +7,6 @@ Feature: Create a node aggregate with complex default values
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Node':
       properties:
         array:

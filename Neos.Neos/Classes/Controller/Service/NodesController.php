@@ -29,6 +29,7 @@ use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
@@ -114,7 +115,7 @@ class NodesController extends ActionController
         array|string $nodeIds = [],
         string $workspaceName = 'live',
         array $dimensions = [],
-        array $nodeTypes = ['Neos.Neos:Document'],
+        array $nodeTypes = [NodeTypeNameFactory::NAME_DOCUMENT],
         string $contextNode = null,
         array|string $nodeIdentifiers = []
     ): void {
@@ -435,7 +436,7 @@ class NodesController extends ActionController
             )->block();
 
             if ($copyContent === true) {
-                $contentNodeConstraint = NodeTypeConstraints::fromFilterString('!Neos.Neos:Document');
+                $contentNodeConstraint = NodeTypeConstraints::fromFilterString('!' . NodeTypeNameFactory::NAME_DOCUMENT);
                 $this->createNodeVariantsForChildNodes(
                     $contentStreamId,
                     $identifier,

@@ -66,7 +66,7 @@ trait NodeReferencing
             )
         );
 
-        $command = new SetNodeReferences(
+        $command = SetNodeReferences::create(
             $contentStreamId,
             NodeAggregateId::fromString($commandArguments['sourceNodeAggregateId']),
             $sourceOriginDimensionSpacePoint,

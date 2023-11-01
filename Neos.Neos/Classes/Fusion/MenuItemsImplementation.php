@@ -15,13 +15,17 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\Fusion\Exception as FusionException;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 
 /**
  * A Fusion Menu object
@@ -55,6 +59,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     protected $maximumLevels;
 
     /**
+     * Internal cache for the ancestors aggregate ids of the currentNode.
+     */
+    protected ?NodeAggregateIds $currentNodeAncestorAggregateIds = null;
+
+    /**
      * Runtime cache for the node type constraints to be applied
      */
     protected ?NodeTypeConstraints $nodeTypeConstraints = null;
@@ -86,7 +95,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     {
         $filter = $this->fusionValue('filter');
         if ($filter === null) {
-            $filter = 'Neos.Neos:Document';
+            $filter = NodeTypeNameFactory::NAME_DOCUMENT;
         }
 
         return $filter;
@@ -199,7 +208,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
         return new MenuItem(
             $node,
-            MenuItemState::normal(),
+            $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
             $node->getLabel(),
             $subtree->level,
             $children,
@@ -231,6 +240,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 1369596980
             );
         }
+
         if ($this->getEntryLevel() === 0) {
             $entryParentNode = $traversalStartingPoint;
         } elseif ($this->getEntryLevel() < 0) {
@@ -266,7 +276,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $traversedHierarchy = [];
             $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
                 $this->getNodeTypeConstraints()->withAdditionalDisallowedNodeType(
-                    NodeTypeName::fromString('Neos.Neos:Sites')
+                    NodeTypeNameFactory::forSites()
                 ),
                 $contentRepository->getNodeTypeManager()
             );
@@ -284,7 +294,6 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
             $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
         }
-
         return $entryParentNode;
     }
 
@@ -311,14 +320,30 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         } while ($shouldContinueTraversal !== false && $node !== null);
     }
 
-    protected function buildUri(Node $node): string
+    public function getCurrentNodeAncestorAggregateIds(): NodeAggregateIds
     {
-        $this->runtime->pushContextArray([
-            'itemNode' => $node,
-            'documentNode' => $node,
-        ]);
-        $uri = $this->runtime->render($this->path . '/itemUriRenderer');
-        $this->runtime->popContext();
-        return $uri;
+        if ($this->currentNodeAncestorAggregateIds instanceof NodeAggregateIds) {
+            return $this->currentNodeAncestorAggregateIds;
+        }
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
+        $currentNodeAncestors = $subgraph->findAncestorNodes(
+            $this->currentNode->nodeAggregateId,
+            FindAncestorNodesFilter::create(
+                $this->getNodeTypeConstraints()
+            )
+        );
+        $this->currentNodeAncestorAggregateIds = NodeAggregateIds::fromNodes($currentNodeAncestors);
+        return $this->currentNodeAncestorAggregateIds;
+    }
+
+    protected function calculateItemState(Node $node): MenuItemState
+    {
+        if ($node->nodeAggregateId->equals($this->currentNode->nodeAggregateId)) {
+            return MenuItemState::CURRENT;
+        }
+        if ($this->getCurrentNodeAncestorAggregateIds()->contain($node->nodeAggregateId)) {
+            return MenuItemState::ACTIVE;
+        }
+        return MenuItemState::NORMAL;
     }
 }

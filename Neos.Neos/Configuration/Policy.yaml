@@ -154,10 +154,6 @@ privilegeTargets:
       label: General access to the workspace module
       matcher: 'management/workspaces'
 
-    'Neos.Neos:Backend.Module.Management.History':
-      label: General access to the history module
-      matcher: 'management/history'
-
     'Neos.Neos:Backend.Module.Administration':
       label: General access to the administration module
       matcher: 'administration'
@@ -293,19 +289,15 @@ roles:
         privilegeTarget: 'Neos.Neos:Backend.Module.Management.Workspaces'
         permission: GRANT
 
-      -
-        privilegeTarget: 'Neos.Neos:Backend.Module.Management.History'
-        permission: GRANT
-
 
   'Neos.Neos:RestrictedEditor':
     label: Restricted Editor
-    description: Grants access to the content, media, workspace and history module. The user is allowed to publish to internal workspaces.
+    description: Grants access to the content, media, and workspace module. The user is allowed to publish to internal workspaces.
     parentRoles: ['Neos.Neos:AbstractEditor']
 
   'Neos.Neos:Editor':
     label: Editor
-    description: Grants access to the content, media, workspace and history module. The user is allowed to publish to the live workspace.
+    description: Grants access to the content, media, and workspace module. The user is allowed to publish to the live workspace.
     parentRoles: ['Neos.Neos:AbstractEditor', 'Neos.Neos:LivePublisher']
 
   'Neos.Neos:UserManager':

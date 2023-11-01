@@ -13,16 +13,16 @@ namespace Neos\ContentRepository\Core\Projection;
 final class Projections implements \IteratorAggregate
 {
     /**
-     * @var array<ProjectionInterface<ProjectionStateInterface>>
+     * @var array<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionInterface<ProjectionStateInterface>>
      */
     private array $projections;
 
     /**
-     * @param array<mixed> $projections
-     * @phpstan-ignore-next-line
+     * @param ProjectionInterface<ProjectionStateInterface> ...$projections
      */
     private function __construct(ProjectionInterface ...$projections)
     {
+        // @phpstan-ignore-next-line
         $this->projections = $projections;
     }
 
@@ -60,7 +60,8 @@ final class Projections implements \IteratorAggregate
      */
     public function get(string $projectionClassName): ProjectionInterface
     {
-        if (!$this->has($projectionClassName)) {
+        $projection = $this->projections[$projectionClassName] ?? null;
+        if (!$projection instanceof $projectionClassName) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'a projection of type "%s" is not registered in this content repository instance.',
@@ -69,8 +70,7 @@ final class Projections implements \IteratorAggregate
                 1650120813
             );
         }
-        // @phpstan-ignore-next-line
-        return $this->projections[$projectionClassName];
+        return $projection;
     }
 
     public function has(string $projectionClassName): bool
@@ -79,11 +79,10 @@ final class Projections implements \IteratorAggregate
     }
 
     /**
-     * @return \Traversable<ProjectionInterface>
-     * @phpstan-ignore-next-line
+     * @return \Traversable<ProjectionInterface<ProjectionStateInterface>>
      */
     public function getIterator(): \Traversable
     {
-        return new \ArrayIterator($this->projections);
+        yield from $this->projections;
     }
 }

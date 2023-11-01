@@ -11,7 +11,6 @@ Feature: Remove NodeAggregate
       | language   | en, de, gsw, fr | gsw->de->en, fr->en |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Document':
       properties:
         references:

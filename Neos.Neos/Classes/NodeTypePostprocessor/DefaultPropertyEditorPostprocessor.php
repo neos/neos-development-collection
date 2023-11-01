@@ -47,7 +47,7 @@ class DefaultPropertyEditorPostprocessor implements NodeTypePostprocessorInterfa
      */
     public function process(NodeType $nodeType, array &$configuration, array $options): void
     {
-        $nodeTypeName = $nodeType->getName();
+        $nodeTypeName = $nodeType->name->value;
         if (isset($configuration['properties']) && is_array($configuration['properties'])) {
             foreach ($configuration['properties'] as $propertyName => &$propertyConfiguration) {
                 if (!isset($propertyConfiguration['type'])) {

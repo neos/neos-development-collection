@@ -321,7 +321,7 @@ class WorkspaceCommandController extends CommandController
             $tableRows[] = [
                 $workspace->workspaceName->value,
                 $workspace->baseWorkspaceName?->value ?: '',
-                $workspace->workspaceTitle?->value,
+                $workspace->workspaceTitle->value,
                 $workspace->workspaceOwner ?: '',
                 $workspace->workspaceDescription->value,
                 $workspace->status->value,

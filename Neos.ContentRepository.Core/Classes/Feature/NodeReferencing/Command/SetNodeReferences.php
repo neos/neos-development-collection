@@ -25,7 +25,7 @@ final class SetNodeReferences implements CommandInterface
      * @param ReferenceName $referenceName Name of the reference to set
      * @param NodeReferencesToWrite $references Unserialized reference(s) to set
      */
-    public function __construct(
+    private function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $sourceNodeAggregateId,
         public readonly OriginDimensionSpacePoint $sourceOriginDimensionSpacePoint,

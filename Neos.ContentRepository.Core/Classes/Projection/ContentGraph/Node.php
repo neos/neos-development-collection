@@ -34,43 +34,38 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
  *
  * @api Note: The constructor is not part of the public API
  */
-final class Node
+final readonly class Node
 {
     /**
-     * @internal
+     * @param ContentSubgraphIdentity $subgraphIdentity This is part of the node's "Read Model" identity which is defined by: {@see self::subgraphIdentity} and {@see self::nodeAggregateId}
+     * @param NodeAggregateId $nodeAggregateId NodeAggregateId (identifier) of this node. This is part of the node's "Read Model" identity which is defined by: {@see self::subgraphIdentity} and {@see self::nodeAggregateId}
+     * @param OriginDimensionSpacePoint $originDimensionSpacePoint The DimensionSpacePoint the node originates in. Usually needed to address a Node in a NodeAggregate in order to update it.
+     * @param NodeAggregateClassification $classification The classification (regular, root, tethered) of this node
+     * @param NodeTypeName $nodeTypeName The node's node type name; always set, even if unknown to the NodeTypeManager
+     * @param NodeType|null $nodeType The node's node type, null if unknown to the NodeTypeManager - @deprecated Don't rely on this too much, as the capabilities of the NodeType here will probably change a lot; Ask the {@see NodeTypeManager} instead
+     * @param PropertyCollection $properties All properties of this node. References are NOT part of this API; To access references, {@see ContentSubgraphInterface::findReferences()} can be used; To read the serialized properties, call properties->serialized().
+     * @param NodeName|null $nodeName The optional name of this node {@see ContentSubgraphInterface::findChildNodeConnectedThroughEdgeName()}
+     * @param Timestamps $timestamps Creation and modification timestamps of this node
      */
-    public function __construct(
-        public readonly ContentSubgraphIdentity $subgraphIdentity,
-        /**
-         * NodeAggregateId (identifier) of this node
-         * This is part of the node's "Read Model" identity, whis is defined by:
-         * - {@see getSubgraphIdentitity}
-         * - {@see getNodeAggregateId} (this method)
-         *
-         * With the above information, you can fetch a Subgraph using {@see ContentGraphInterface::getSubgraph()}.
-         * or {@see \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry::subgraphForNode()}
-         */
-        public readonly NodeAggregateId $nodeAggregateId,
-        /**
-         * returns the DimensionSpacePoint the node is at home in. Usually needed to address a Node in a NodeAggregate
-         * in order to update it.
-         */
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateClassification $classification,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly NodeType $nodeType,
-        /**
-         * Returns all properties of this node. References are NOT part of this API;
-         * there you need to check getReference() and getReferences().
-         *
-         * To read the serialized properties, call properties->serialized().
-         *
-         * @return PropertyCollectionInterface Property values, indexed by their name
-         */
-        public readonly PropertyCollectionInterface $properties,
-        public readonly ?NodeName $nodeName,
-        public readonly Timestamps $timestamps,
+    private function __construct(
+        public ContentSubgraphIdentity $subgraphIdentity,
+        public NodeAggregateId $nodeAggregateId,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateClassification $classification,
+        public NodeTypeName $nodeTypeName,
+        public ?NodeType $nodeType,
+        public PropertyCollection $properties,
+        public ?NodeName $nodeName,
+        public Timestamps $timestamps,
     ) {
+    }
+
+    /**
+     * @internal The signature of this method can change in the future!
+     */
+    public static function create(ContentSubgraphIdentity $subgraphIdentity, NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateClassification $classification, NodeTypeName $nodeTypeName, ?NodeType $nodeType, PropertyCollection $properties, ?NodeName $nodeName, Timestamps $timestamps): self
+    {
+        return new self($subgraphIdentity, $nodeAggregateId, $originDimensionSpacePoint, $classification, $nodeTypeName, $nodeType, $properties, $nodeName, $timestamps);
     }
 
     /**
@@ -108,7 +103,7 @@ final class Node
      */
     public function getLabel(): string
     {
-        return $this->nodeType->getNodeLabelGenerator()->getLabel($this);
+        return $this->nodeType?->getNodeLabelGenerator()->getLabel($this) ?: $this->nodeTypeName->value;
     }
 
     public function equals(Node $other): bool

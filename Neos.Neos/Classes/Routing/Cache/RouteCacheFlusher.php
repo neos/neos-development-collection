@@ -16,8 +16,11 @@ namespace Neos\Neos\Routing\Cache;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Mvc\Routing\RouterCachingService;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 
 /**
  * This service flushes Route caches triggered by node changes.
@@ -26,6 +29,11 @@ use Neos\Flow\Mvc\Routing\RouterCachingService;
  */
 class RouteCacheFlusher
 {
+    use NodeTypeWithFallbackProvider;
+
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * @Flow\Inject
      * @var RouterCachingService
@@ -50,7 +58,7 @@ class RouteCacheFlusher
         if (in_array($identifier, $this->tagsToFlush)) {
             return;
         }
-        if (!$node->nodeType->isOfType('Neos.Neos:Document')) {
+        if (!$this->getNodeType($node)->isOfType(NodeTypeNameFactory::NAME_DOCUMENT)) {
             return;
         }
         $this->tagsToFlush[] = $identifier;

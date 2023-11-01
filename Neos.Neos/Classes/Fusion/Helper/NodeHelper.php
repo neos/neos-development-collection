@@ -14,23 +14,31 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion\Helper;
 
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
-use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
-use Neos\Flow\Annotations as Flow;
 use Neos\Eel\ProtectedContextAwareInterface;
 use Neos\Neos\Domain\Exception;
 use Neos\Neos\Presentation\VisualNodePath;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
+use Neos\Flow\Annotations as Flow;
 
 /**
  * Eel helper for ContentRepository Nodes
  */
 class NodeHelper implements ProtectedContextAwareInterface
 {
+    use NodeTypeWithFallbackProvider {
+        getNodeType as getNodeTypeInternal;
+    }
+
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
@@ -42,8 +50,8 @@ class NodeHelper implements ProtectedContextAwareInterface
      */
     public function nearestContentCollection(Node $node, string $nodePath): Node
     {
-        $contentCollectionType = 'Neos.Neos:ContentCollection';
-        if ($node->nodeType->isOfType($contentCollectionType)) {
+        $contentCollectionType = NodeTypeNameFactory::NAME_CONTENT_COLLECTION;
+        if ($this->isOfType($node, $contentCollectionType)) {
             return $node;
         } else {
             if ($nodePath === '') {
@@ -63,7 +71,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                 ? $subgraph->findNodeByAbsolutePath($nodePath)
                 : $subgraph->findNodeByPath($nodePath, $node->nodeAggregateId);
 
-            if ($subNode !== null && $subNode->nodeType->isOfType($contentCollectionType)) {
+            if ($subNode !== null && $this->isOfType($subNode, $contentCollectionType)) {
                 return $subNode;
             } else {
                 $nodePathOfNode = VisualNodePath::fromAncestors(
@@ -81,7 +89,7 @@ class NodeHelper implements ProtectedContextAwareInterface
                     $contentCollectionType,
                     $nodePathOfNode->value,
                     $nodePath->serializeToString(),
-                    $node->nodeType->name->value
+                    $node->nodeTypeName->value
                 ), 1389352984);
             }
         }
@@ -93,18 +101,6 @@ class NodeHelper implements ProtectedContextAwareInterface
     public function labelForNode(Node $node): NodeLabelToken
     {
         return new NodeLabelToken($node);
-    }
-
-    /**
-     * @param Node $node
-     * @return bool
-     * @deprecated Remove before Neos 9.0 !!! Use ${userInterfaceMode.isEdit || userInterfaceMode.isPreview} instead
-     */
-    public function inBackend(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return !$nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
     }
 
     /**
@@ -132,24 +128,18 @@ class NodeHelper implements ProtectedContextAwareInterface
         return AbsoluteNodePath::fromLeafNodeAndAncestors($node, $ancestors)->serializeToString();
     }
 
-    public function isLive(Node $node): bool
-    {
-        $contentRepository = $this->contentRepositoryRegistry->get($node->subgraphIdentity->contentRepositoryId);
-        $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
-        return $nodeAddressFactory->createFromNode($node)->isInLiveWorkspace();
-    }
-
     /**
      * If this node type or any of the direct or indirect super types
      * has the given name.
-     *
-     * @param Node $node
-     * @param string $nodeType
-     * @return bool
      */
     public function isOfType(Node $node, string $nodeType): bool
     {
-        return $node->nodeType->isOfType($nodeType);
+        return $this->getNodeTypeInternal($node)->isOfType($nodeType);
+    }
+
+    public function getNodeType(Node $node): NodeType
+    {
+        return $this->getNodeTypeInternal($node);
     }
 
     public function serializedNodeAddress(Node $node): string
@@ -159,6 +149,11 @@ class NodeHelper implements ProtectedContextAwareInterface
         );
         $nodeAddressFactory = NodeAddressFactory::create($contentRepository);
         return $nodeAddressFactory->createFromNode($node)->serializeForUri();
+    }
+
+    public function subgraphForNode(Node $node): ContentSubgraphInterface
+    {
+        return $this->contentRepositoryRegistry->subgraphForNode($node);
     }
 
     /**

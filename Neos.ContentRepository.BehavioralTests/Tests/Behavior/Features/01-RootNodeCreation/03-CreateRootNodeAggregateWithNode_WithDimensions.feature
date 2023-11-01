@@ -12,7 +12,6 @@ Feature: Create a root node aggregate
       | language   | mul, de, en, gsw | gsw->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository:AnotherRoot':
       superTypes:
         'Neos.ContentRepository:Root': true

@@ -7,23 +7,21 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeRemoval\Event\NodeAggregateWasRemoved;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
-use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 class DisallowedChildNodeAdjustment
 {
     use RemoveNodeAggregateTrait;
-    use LoadNodeTypeTrait;
 
     public function __construct(
         private readonly ContentRepository $contentRepository,
@@ -37,19 +35,17 @@ class DisallowedChildNodeAdjustment
      */
     public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
     {
-        $nodeType = $this->loadNodeType($nodeTypeName);
-
-        if ($nodeType === null) {
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
             // no adjustments for unknown node types
             return;
         }
 
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
-            $nodeType = $this->loadNodeType($nodeAggregate->nodeTypeName);
-            if ($nodeType === null) {
+            if (!$this->nodeTypeManager->hasNodeType($nodeAggregate->nodeTypeName)) {
                 // unknown child node type, so we skip this test as we won't be able to find out node type constraints
                 continue;
             }
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeAggregate->nodeTypeName);
 
             // Here, we iterate over the covered dimension space points of the node aggregate one by one;
             // as it can happen that the constraint is only violated in e.g. "AT", but not in "DE".
@@ -66,13 +62,13 @@ class DisallowedChildNodeAdjustment
                     ? $subgraph->findParentNode($parentNode->nodeAggregateId)
                     : null;
 
-
                 $allowedByParent = true;
                 $parentNodeType = null;
                 if ($parentNode !== null) {
-                    $parentNodeType = $this->loadNodeType($parentNode->nodeTypeName);
-                    if ($parentNodeType !== null) {
-                        $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType);
+                    if ($this->nodeTypeManager->hasNodeType($parentNode->nodeTypeName)) {
+                        $parentNodeType = $this->nodeTypeManager->getNodeType($parentNode->nodeTypeName);
+                        $allowedByParent = $parentNodeType->allowsChildNodeType($nodeType)
+                            || $nodeAggregate->nodeName && $parentNodeType->hasTetheredNode($nodeAggregate->nodeName);
                     }
                 }
 
@@ -80,14 +76,15 @@ class DisallowedChildNodeAdjustment
                 $grandparentNodeType = null;
                 if (
                     $parentNode !== null
-                    && $grandparentNode != null
+                    && $grandparentNode !== null
                     && $parentNode->classification->isTethered()
                     && !is_null($parentNode->nodeName)
                 ) {
-                    $grandparentNodeType = $this->loadNodeType($grandparentNode->nodeTypeName);
+                    $grandparentNodeType = $this->nodeTypeManager->hasNodeType($grandparentNode->nodeTypeName) ? $this->nodeTypeManager->getNodeType($grandparentNode->nodeTypeName) : null;
                     if ($grandparentNodeType !== null) {
-                        $allowedByGrandparent = $grandparentNodeType->allowsGrandchildNodeType(
-                            $parentNode->nodeName->value,
+                        $allowedByGrandparent = $this->nodeTypeManager->isNodeTypeAllowedAsChildToTetheredNode(
+                            $grandparentNodeType,
+                            $parentNode->nodeName,
                             $nodeType
                         );
                     }
@@ -101,10 +98,10 @@ class DisallowedChildNodeAdjustment
 
                     $message = sprintf(
                         '
-                        The parent node type "%s" is not allowing children of type "%s",
-                        and the grandparent node type "%s" is not allowing grandchildren of type "%s".
-                        Thus, the node is invalid at this location and should be removed.
-                    ',
+                    The parent node type "%s" is not allowing children of type "%s",
+                    and the grandparent node type "%s" is not allowing grandchildren of type "%s".
+                    Thus, the node is invalid at this location and should be removed.
+                ',
                         $parentNodeType !== null ? $parentNodeType->name->value : '',
                         $node->nodeTypeName->value,
                         $grandparentNodeType !== null ? $grandparentNodeType->name->value : '',
@@ -126,6 +123,7 @@ class DisallowedChildNodeAdjustment
             }
         }
     }
+
 
     private function removeNodeInSingleDimensionSpacePoint(
         NodeAggregate $nodeAggregate,
@@ -152,10 +150,5 @@ class DisallowedChildNodeAdjustment
             $events,
             ExpectedVersion::ANY()
         );
-    }
-
-    protected function getNodeTypeManager(): NodeTypeManager
-    {
-        return $this->nodeTypeManager;
     }
 }

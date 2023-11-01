@@ -952,10 +952,6 @@ Apenas caracteres regulares (a a z, tremas, ...) e números são permitidos.</ta
         <target state="translated">Erro ao carregar a árvore de nós.</target>
       </trans-unit>
       <!-- FlashMessages -->
-      <trans-unit id="flashMessage.1222204027" xml:space="preserve">
-				<source>The entered username or password was wrong</source>
-        <target state="translated">O nome de utilizador ou a palavra-passe estão incorretos</target>
-      </trans-unit>
       <!-- Miscellaneous -->
       <trans-unit id="masterPlugins.nodeTypeOnPageLabel" xml:space="preserve">
 				<source>"{nodeTypeName}" on page "{pageLabel}"</source>

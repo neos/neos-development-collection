@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Query;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\Driver\Result;
 
 /**
  * The interface to be implemented by projection hypergraph queries
@@ -24,8 +24,5 @@ use Doctrine\DBAL\Driver\ResultStatement;
  */
 interface ProjectionHypergraphQueryInterface
 {
-    /**
-     * @return ResultStatement<int,mixed>
-     */
-    public function execute(Connection $databaseConnection): ResultStatement;
+    public function execute(Connection $databaseConnection): Result;
 }

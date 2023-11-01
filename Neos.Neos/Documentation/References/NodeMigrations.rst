@@ -11,19 +11,18 @@ through **filters** in migration files.
 
 The Content Repository comes with a number of common transformations:
 
-- ``AddDimensions``
+- ``AddDimensionShineThrough``
 - ``AddNewProperty``
 - ``ChangeNodeType``
 - ``ChangePropertyValue``
+- ``MoveDimensionSpacePoint``
 - ``RemoveNode``
 - ``RemoveProperty``
-- ``RenameDimension``
-- ``RenameNode``
+- ``RenameNodeAggregate``
 - ``RenameProperty``
-- ``SetDimensions``
 - ``StripTagsOnProperty``
 
-They all implement the ``Neos\ContentRepository\Migration\Transformations\TransformationInterface``. Custom transformations
+They all implement the ``Neos\ContentRepository\NodeMigration\Transformation\TransformationFactoryInterface``. Custom transformations
 can be developed against that interface as well, just use the fully qualified class name for those when specifying
 which transformation to use.
 
@@ -36,70 +35,61 @@ To use node migrations to adjust a setup to changed configuration, a YAML file i
 migration by setting up filters to select what nodes are being worked on by transformations. The Content Repository
 comes with a number of filters:
 
-- ``DimensionValues``
-- ``IsRemoved``
+- ``DimensionSpacePoints``
 - ``NodeName``
 - ``NodeType``
 - ``PropertyNotEmpty``
 - ``PropertyValue``
-- ``Workspace``
 
 They all implement the ``Neos\ContentRepository\Migration\Filters\FilterInterface``. Custom filters can be developed against
 that interface as well, just use the fully qualified class name for those when specifying which filter to use.
 
-Here is an example of a migration, ``Version20140708120530.yaml``, that operates on nodes in the "live" workspace
-that are marked as removed and applies the ``RemoveNode`` transformation on them:
+Here is an example of a migration that operates on all nodes with nodetype `Neos.ContentRepository.Testing:Document` and
+changes their property name form `text` to `newText`:
 
 .. code-block:: yaml
 
-  up:
-    comments: 'Delete removed nodes that were published to "live" workspace'
-    warnings: 'There is no way of reverting this migration since the nodes will be deleted in the database.'
-    migration:
-      -
-        filters:
-          -
-            type: 'IsRemoved'
-            settings: []
-          -
-            type: 'Workspace'
-            settings:
-              workspaceName: 'live'
-        transformations:
-          -
-            type: 'RemoveNode'
-            settings: []
-
-  down:
-    comments: 'No down migration available'
+  comments: 'Rename the property of all Neos.ContentRepository.Testing:Document nodes'
+  migration:
+    -
+      filters:
+        -
+          type: 'NodeType'
+          settings:
+            nodeType: 'Neos.ContentRepository.Testing:Document'
+      transformations:
+        -
+          type: 'RenameProperty'
+          settings:
+            from: 'text'
+            to: 'newText'
 
 Like all migrations the file should be placed in a package inside the ``Migrations/ContentRepository`` folder where it will be picked
 up by the CLI tools provided with the content repository:
 
-- ``./flow node:migrationstatus``
-- ``./flow node:migrate``
+- ``./flow nodemigration:list``
+- ``./flow nodemigration:execute``
 
-Use ``./flow help <command>`` to get detailed instructions. The ``migrationstatus`` command also prints a short description
+Use ``./flow help <command>`` to get detailed instructions. The ``nodemigration:list`` command also prints a short description
 for each migration.
-
-.. note:: Node migrations in ``Migrations/TYPO3CR`` directories are also supported for historic reasons
 
 
 Transformations Reference
 -------------------------
 
-AddDimensions
+AddDimensionShineThrough
 ~~~~~~~~~~~~~
 
-Add dimensions on a node. This adds to the existing dimensions, if you need to overwrite existing dimensions, use
-SetDimensions.
+Add a Dimension Space Point (DSP) Shine-Through; basically making all content available not just in the source (original) DSP,  but also in the target-DimensionSpacePoint.
+
+NOTE: the Source Dimension Space Point must be a parent of the target Dimension Space Point.
 
 Options Reference:
 
-``dimensionValues`` (array)
-  An array of dimension names and values to set.
-``addDefaultDimensionValues`` (boolean)
-  Whether to add the default dimension values for all dimensions that were not given.
+``from`` (array)
+  Source Dimension Space Point as array. E.g. ["language" => "es", "country" => "es"]
+``to`` (array)
+  Target Dimension Space Point where the content has to shine through as array. E.g. ["language" => "es", "country" => "ar"]
 
 AddNewProperty
 ~~~~~~~~~~~~~~
@@ -110,7 +100,9 @@ Options Reference:
 
 ``newPropertyName`` (string)
   The name of the new property to be added.
-``value`` (mixed)
+``type`` (string)
+  The type of the property (e.g. string, array, DateTime, ...)
+``serializedValue`` (mixed)
   Property value to be set.
 
 ChangeNodeType
@@ -123,6 +115,11 @@ Options Reference:
 ``newType`` (string)
   The new Node Type to use as a string.
 
+``forceDeleteNonMatchingChildren`` (bool)
+  This flag allows to enforce the migration. In case of child constraint conflicts the conflicting child nodes get deleted.
+
+  Default is `false`.
+
 ChangePropertyValue
 ~~~~~~~~~~~~~~~~~~~
 
@@ -130,9 +127,9 @@ Change the value of a given property.
 
 This can apply two transformations:
 
-- If newValue is set, the value will be set to this, with any occurrences of the ``currentValuePlaceholder`` replaced
+- If newSerializedValue is set, the value will be set to this, with any occurrences of the ``currentValuePlaceholder`` replaced
   with the current value of the property.
-- If search and replace are given, that replacement will be done on the value (after applying the ``newValue``, if set).
+- If search and replace are given, that replacement will be done on the value (after applying the ``newSerializedValue``, if set).
 
 This would simply override the existing value:
 
@@ -143,7 +140,7 @@ This would simply override the existing value:
       type: 'ChangePropertyValue'
       settings:
         property: 'title'
-        newValue: 'a new value'
+        newSerializedValue: 'a new value'
 
 This would prefix the existing value:
 
@@ -154,7 +151,7 @@ This would prefix the existing value:
       type: 'ChangePropertyValue'
       settings:
         property: 'title'
-        newValue: 'this is a prefix to {current}'
+        newSerializedValue: 'this is a prefix to {current}'
 
 This would prefix existing value and then apply search/replace on the result:
 
@@ -165,7 +162,7 @@ This would prefix existing value and then apply search/replace on the result:
       type: 'ChangePropertyValue'
       settings:
         property: 'title'
-        newValue: 'this is a prefix to {current}'
+        newSerializedValue: 'this is a prefix to {current}'
         search: 'something'
         replace: 'something else'
 
@@ -179,14 +176,14 @@ value but use a different placeholder:
       type: 'ChangePropertyValue'
       settings:
         property: 'title'
-        newValue: 'this is a prefix to {__my_unique_placeholder}'
+        newSerializedValue: 'this is a prefix to {__my_unique_placeholder}'
         currentValuePlaceholder: '__my_unique_placeholder'
 
 Options Reference:
 
 ``property`` (string)
   The name of the property to change.
-``newValue`` (string)
+``newSerializedValue`` (string)
   New property value to be set.
 
   The value of the option ``currentValuePlaceholder`` (defaults to "{current}") will be used to include the current
@@ -199,10 +196,26 @@ Options Reference:
   The value of this option (defaults to ``{current}``) will be used to include the current property value into the new
   value.
 
+MoveDimensionSpacePoint
+~~~~~~~~~~
+
+Moves a dimension space point globally.
+
+``from`` (array)
+  Source Dimension Space Point as array. E.g. ["language" => "es", "country" => "es"]
+``to`` (array)
+  Target Dimension Space Point as array. E.g. ["language" => "es", "country" => "ar"]
+
+
 RemoveNode
 ~~~~~~~~~~
 
 Removes the node.
+
+``overriddenDimensionSpacePoint`` (array)
+  Dimension Space Point as array. E.g. ["country" => "ar"]
+
+  This allows to remove nodes in a virtual specialization or shine-through dimension space points.
 
 RemoveProperty
 ~~~~~~~~~~~~~~
@@ -214,27 +227,17 @@ Options Reference:
 ``property`` (string)
   The name of the property to be removed.
 
-RenameDimension
-~~~~~~~~~~~~~~~
-
-Rename a dimension.
-
-Options Reference:
-
-``newDimensionName`` (string)
-  The new name for the dimension.
-``oldDimensionName`` (string)
-  The old name of the dimension to rename.
-
-RenameNode
+RenameNodeAggregate
 ~~~~~~~~~~
 
-Rename a node.
+Rename a node aggregate.
+
+Hint: Why node aggregate, not node? The node aggregate contains all information, that are equal for a node over all dimensions. So the name of a node is stored in the node aggregate and not in each node anymore.
 
 Options Reference:
 
-``newName`` (string)
-  The new name for the node.
+``newNodeName`` (string)
+  The new name for the node aggregate.
 
 RenameProperty
 ~~~~~~~~~~~~~~
@@ -248,18 +251,6 @@ Options Reference:
 ``to`` (string)
   The new name for the property to change.
 
-
-SetDimensions
-~~~~~~~~~~~~~
-Set dimensions on a node. This always overwrites existing dimensions, if you need to add to existing dimensions, use
-AddDimensions.
-
-Options Reference:
-
-``dimensionValues`` (array)
-  An array of dimension names and values to set.
-``addDefaultDimensionValues`` (boolean)
-  Whether to add the default dimension values for all dimensions that were not given.
 
 StripTagsOnProperty
 ~~~~~~~~~~~~~~~~~~~
@@ -276,22 +267,18 @@ Options Reference:
 Filters Reference
 -----------------
 
-DimensionValues
+DimensionSpacePoints
 ~~~~~~~~~~~~~~~
 
-Filter nodes by their dimensions.
+Filter nodes by origin dimension space point.
 
 Options Reference:
 
-``dimensionValues`` (array)
-  The array of dimension values to filter for.
-``filterForDefaultDimensionValues`` (boolean)
-  Overrides the given dimensionValues with dimension defaults.
-
-IsRemoved
-~~~~~~~~~
-
-Selects nodes marked as removed.
+``points`` (array)
+  The array of dimension space point values to filter for.
+``includeSpecializations`` (boolean)
+  If set to `false` it checks for exact matches; but if set to `true`, also dimension space points "underneath" the given
+  dimension space point are matched (specializations). Default is `false`.
 
 NodeName
 ~~~~~~~~
@@ -337,15 +324,5 @@ Options Reference:
 
 ``propertyName`` (string)
   The property name to filter for with the given property value.
-``propertyValue`` (string)
+``serializedValue`` (string)
   The property value to filter for.
-
-Workspace
-~~~~~~~~~
-
-Filter nodes by workspace name.
-
-Options Reference:
-
-``workspaceName`` (string)
-  The workspace name to match on.

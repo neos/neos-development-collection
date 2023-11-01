@@ -12,7 +12,6 @@ Feature: Creation of nodes underneath disabled nodes
       | language   | mul, de, en, gsw, ltz | ltz->de->mul, gsw->de->mul, en->mul |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': {}
     'Neos.ContentRepository.Testing:Document': {}
     """
     And using identifier "default", I define a content repository

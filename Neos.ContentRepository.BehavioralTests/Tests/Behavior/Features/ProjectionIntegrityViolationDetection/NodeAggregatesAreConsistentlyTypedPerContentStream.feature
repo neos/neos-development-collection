@@ -9,7 +9,6 @@ Feature: Run projection integrity violation detection regarding node aggregate t
       | language   | de, gsw | gsw->de         |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:DocumentA': []
     'Neos.ContentRepository.Testing:DocumentB': []

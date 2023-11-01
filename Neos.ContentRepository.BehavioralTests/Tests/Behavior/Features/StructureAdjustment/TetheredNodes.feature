@@ -10,7 +10,6 @@ Feature: Tethered Nodes integrity violations
       | language   | en, de, gsw | gsw->de->en     |
     And using the following node types:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
@@ -81,7 +80,6 @@ Feature: Tethered Nodes integrity violations
   Scenario: Adjusting the schema adding a new tethered node leads to a MissingTetheredNode integrity violation
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
@@ -106,7 +104,6 @@ Feature: Tethered Nodes integrity violations
   Scenario: Adding missing tethered nodes resolves the corresponding integrity violations
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
@@ -135,7 +132,6 @@ Feature: Tethered Nodes integrity violations
   Scenario: Adding the same
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':
@@ -160,7 +156,6 @@ Feature: Tethered Nodes integrity violations
   Scenario: Adjusting the schema removing a tethered node leads to a DisallowedTetheredNode integrity violation (which can be fixed)
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document': []
     'Neos.ContentRepository.Testing:Tethered':
       properties:
@@ -184,7 +179,6 @@ Feature: Tethered Nodes integrity violations
   Scenario: Adjusting the schema changing the type of a tethered node leads to a InvalidTetheredNodeType integrity violation
     Given I change the node types in content repository "default" to:
     """yaml
-    'Neos.ContentRepository:Root': []
     'Neos.ContentRepository.Testing:Document':
       childNodes:
         'tethered-node':

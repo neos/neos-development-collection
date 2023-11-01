@@ -1,4 +1,21 @@
-prototype(Neos.NodeTypes.Html:Html) < prototype(Neos.Neos:Content) {
-    templatePath = "resource://Neos.NodeTypes.Html/Private/Templates/NodeTypes/Html.html"
-    source = ${q(node).property('source')}
+prototype(Neos.NodeTypes.Html:Html) < prototype(Neos.Neos:ContentComponent) {
+  source = ${q(node).property('source')}
+
+  attributes = Neos.Fusion:DataStructure
+  attributes.class = ''
+
+  # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
+  # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
+  # You can disable the following line with:
+  # prototype(Neos.Neos:Content) {
+  #   attributes.class.@process.nodeType >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+
+  renderer = afx`
+    <div {...props.attributes}>
+      {props.source}
+    </div>
+  `
 }

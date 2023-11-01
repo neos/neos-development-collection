@@ -70,9 +70,6 @@ final class Workspaces implements \IteratorAggregate, \Countable
 
     /**
      * Get all base workspaces (if they are included in this result set).
-     *
-     * @param WorkspaceName $workspaceName
-     * @return Workspaces
      */
     public function getBaseWorkspaces(WorkspaceName $workspaceName): Workspaces
     {
@@ -96,11 +93,11 @@ final class Workspaces implements \IteratorAggregate, \Countable
     }
 
     /**
-     * @return \ArrayIterator<int,Workspace>|Workspace[]
+     * @return \Traversable<int,Workspace>
      */
-    public function getIterator(): \ArrayIterator
+    public function getIterator(): \Traversable
     {
-        return new \ArrayIterator(array_values($this->workspaces));
+        yield from array_values($this->workspaces);
     }
 
     public function count(): int
