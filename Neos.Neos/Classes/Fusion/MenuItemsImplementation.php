@@ -57,7 +57,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Internal cache for the ancestors aggregate ids of the currentNode.
      */
-    protected ?NodeAggregateIds $currentNodeAncestorAggregateIds = null;
+    protected ?NodeAggregateIds $currentNodeRootlineAggregateIds = null;
 
     /**
      * Runtime cache for the node type constraints to be applied
@@ -75,7 +75,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * -2 = two levels above the current page
      * ...
      */
-    public function getEntryLevel(): int
+    protected function getEntryLevel(): int
     {
         return $this->fusionValue('entryLevel');
     }
@@ -83,7 +83,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * NodeType filter for nodes displayed in menu
      */
-    public function getFilter(): string
+    protected function getFilter(): string
     {
         $filter = $this->fusionValue('filter');
         if ($filter === null) {
@@ -96,7 +96,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Maximum number of levels which should be rendered in this menu.
      */
-    public function getMaximumLevels(): int
+    protected function getMaximumLevels(): int
     {
         if ($this->maximumLevels === null) {
             $this->maximumLevels = $this->fusionValue('maximumLevels');
@@ -111,7 +111,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * Return evaluated lastLevel value.
      */
-    public function getLastLevel(): ?int
+    protected function getLastLevel(): ?int
     {
         if ($this->lastLevel === null) {
             $this->lastLevel = $this->fusionValue('lastLevel');
@@ -123,7 +123,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return $this->lastLevel;
     }
 
-    public function getStartingPoint(): ?Node
+    protected function getStartingPoint(): ?Node
     {
         if ($this->startingPoint === null) {
             $this->startingPoint = $this->fusionValue('startingPoint');
@@ -135,7 +135,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * @return array<int,Node>|Nodes|null
      */
-    public function getItemCollection(): array|Nodes|null
+    protected function getItemCollection(): array|Nodes|null
     {
         return $this->fusionValue('itemCollection');
     }
@@ -149,7 +149,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function buildItems(): array
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->getCurrentNode());
         if (!is_null($this->getItemCollection())) {
             $items = [];
             foreach ($this->getItemCollection() as $node) {
@@ -192,8 +192,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
                 $maxLevelsBasedOnLastLevel = max($lastLevels - $depthOfEntryParentNodeAggregateId, 0);
                 $maximumLevels = min($maximumLevels, $maxLevelsBasedOnLastLevel);
             } elseif ($lastLevels < 0) {
-                $currentNodeAncestorAggregateIds = $this->getCurrentNodeAncestorAggregateIds();
-                $depthOfCurrentDocument = count(iterator_to_array($currentNodeAncestorAggregateIds));
+                $currentNodeAncestorAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
+                $depthOfCurrentDocument = count(iterator_to_array($currentNodeAncestorAggregateIds)) - 1;
                 $maxLevelsBasedOnLastLevel = max($depthOfCurrentDocument + $lastLevels - $depthOfEntryParentNodeAggregateId + 1, 0);
                 $maximumLevels = min($maximumLevels, $maxLevelsBasedOnLastLevel);
             }
@@ -260,8 +260,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function findMenuStartingPointAggregateId(): ?NodeAggregateId
     {
-        $fusionContext = $this->runtime->getCurrentContext();
-        $traversalStartingPoint = $this->getStartingPoint() ?: $fusionContext['node'] ?? null;
+        $traversalStartingPoint = $this->getStartingPoint() ?: $this->getCurrentNode();
 
         if (!$traversalStartingPoint instanceof Node) {
             throw new FusionException(
@@ -273,17 +272,11 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($this->getEntryLevel() === 0) {
             return $traversalStartingPoint->nodeAggregateId;
         } elseif ($this->getEntryLevel() < 0) {
-            $ancestorNodeAggregateIds = $this->getCurrentNodeAncestorAggregateIds();
-            if ($ancestorNodeAggregateIds === null) {
-                return null;
-            }
+            $ancestorNodeAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
             $ancestorNodeAggregateIdArray = array_values(iterator_to_array($ancestorNodeAggregateIds));
-            return $ancestorNodeAggregateIdArray[$this->getEntryLevel() * -1 - 1] ?? null;
+            return $ancestorNodeAggregateIdArray[$this->getEntryLevel() * -1] ?? null;
         } else {
-            $ancestorNodeAggregateIds = $this->getCurrentNodeAncestorAggregateIds();
-            if ($ancestorNodeAggregateIds === null) {
-                return null;
-            }
+            $ancestorNodeAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
             $ancestorNodeAggregateIdArray = array_reverse(array_values(iterator_to_array($ancestorNodeAggregateIds)));
             return $ancestorNodeAggregateIdArray[$this->getEntryLevel() - 1] ?? null;
         }
@@ -297,12 +290,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return $this->nodeTypeConstraints;
     }
 
-    public function getCurrentNodeAncestorAggregateIds(): NodeAggregateIds
+    protected function getCurrentNodeRootlineAggregateIds(): NodeAggregateIds
     {
-        if ($this->currentNodeAncestorAggregateIds instanceof NodeAggregateIds) {
-            return $this->currentNodeAncestorAggregateIds;
+        if ($this->currentNodeRootlineAggregateIds instanceof NodeAggregateIds) {
+            return $this->currentNodeRootlineAggregateIds;
         }
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->getCurrentNode());
         $currentNodeAncestors = $subgraph->findAncestorNodes(
             $this->currentNode->nodeAggregateId,
             FindAncestorNodesFilter::create(
@@ -314,16 +307,18 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             )
         );
 
-        $this->currentNodeAncestorAggregateIds = NodeAggregateIds::fromNodes($currentNodeAncestors);
-        return $this->currentNodeAncestorAggregateIds;
+        $this->currentNodeRootlineAggregateIds = NodeAggregateIds::create($this->currentNode->nodeAggregateId)
+            ->merge(NodeAggregateIds::fromNodes($currentNodeAncestors));
+
+        return $this->currentNodeRootlineAggregateIds;
     }
 
     protected function calculateItemState(Node $node): MenuItemState
     {
-        if ($node->nodeAggregateId->equals($this->currentNode->nodeAggregateId)) {
+        if ($node->nodeAggregateId->equals($this->getCurrentNode()->nodeAggregateId)) {
             return MenuItemState::CURRENT;
         }
-        if ($this->getCurrentNodeAncestorAggregateIds()->contain($node->nodeAggregateId)) {
+        if ($this->getCurrentNodeRootlineAggregateIds()->contain($node->nodeAggregateId)) {
             return MenuItemState::ACTIVE;
         }
         return MenuItemState::NORMAL;

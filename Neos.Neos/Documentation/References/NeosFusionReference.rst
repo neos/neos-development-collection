@@ -1006,6 +1006,7 @@ Render a breadcrumb (ancestor documents).
 
 The following properties are passed over to :ref:`Neos_Neos__BreadcrumbMenuItems` internally:
 
+:node: (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
@@ -1032,6 +1033,7 @@ Create links to other node variants (e.g. variants of the current node in other 
 
 The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMenuItems` internally:
 
+:node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
@@ -1131,6 +1133,7 @@ Neos.Neos:BreadcrumbMenuItems
 
 Create a list of of menu-items for the breadcrumb (ancestor documents).
 
+:node: (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
@@ -1160,7 +1163,7 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 
 Each ``item`` has the following properties:
 
-:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
+:node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
 :state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
 :label: (string) Label of the item (the dimension preset label)
 :menuLevel: (integer) Menu level the item is rendered on

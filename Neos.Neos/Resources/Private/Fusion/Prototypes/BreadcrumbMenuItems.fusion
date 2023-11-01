@@ -1,4 +1,8 @@
 prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
+
+  # (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
+
   # (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
   maximumLevels = 0
 
@@ -10,6 +14,7 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
 
   renderer = Neos.Fusion:Value {
     parentItems = Neos.Neos:MenuItems {
+      node = ${props.node}
       calculateItemStates = ${props.calculateItemStates}
       renderHiddenInIndex = ${props.renderHiddenInIndex}
       maximumLevels = ${props.maximumLevels}
@@ -17,6 +22,7 @@ prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
     }
 
     currentItem = Neos.Neos:MenuItems {
+      node = ${props.node}
       calculateItemStates = ${props.calculateItemStates}
       renderHiddenInIndex = true
       maximumLevels = ${props.maximumLevels}

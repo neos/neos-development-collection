@@ -1,5 +1,8 @@
 # Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
 prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
+  # (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
+
   # html attributes for the rendered list
   attributes = Neos.Fusion:DataStructure
 
@@ -18,9 +21,9 @@ prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
   # (boolean) activate the *expensive* calculation of item states defaults to ``false``
   calculateItemStates = false
 
-
   @private {
     items = Neos.Neos:DimensionsMenuItems {
+      node = ${props.node}
       renderHiddenInIndex = ${props.renderHiddenInIndex}
       dimension = ${props.dimension}
       presets = ${props.presets}

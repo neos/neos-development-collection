@@ -44,7 +44,9 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
     protected function buildItems(): array
     {
         $menuItems = [];
-        $contentRepositoryId = $this->currentNode->subgraphIdentity->contentRepositoryId;
+        $currentNode = $this->getCurrentNode();
+
+        $contentRepositoryId = $currentNode->subgraphIdentity->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get(
             $contentRepositoryId,
         );
@@ -56,28 +58,28 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
 
         $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
-        $currentDimensionSpacePoint = $this->currentNode->subgraphIdentity->dimensionSpacePoint;
+        $currentDimensionSpacePoint = $currentNode->subgraphIdentity->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
         foreach ($interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
-                    $variant = $this->currentNode;
+                    $variant = $currentNode;
                 } else {
                     $variant = $contentRepository->getContentGraph()
                         ->getSubgraph(
-                            $this->currentNode->subgraphIdentity->contentStreamId,
+                            $currentNode->subgraphIdentity->contentStreamId,
                             $dimensionSpacePoint,
-                            $this->currentNode->subgraphIdentity->visibilityConstraints,
+                            $currentNode->subgraphIdentity->visibilityConstraints,
                         )
-                        ->findNodeById($this->currentNode->nodeAggregateId);
+                        ->findNodeById($currentNode->nodeAggregateId);
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
-                        $this->currentNode->nodeAggregateId,
+                        $currentNode->nodeAggregateId,
                         $dimensionMenuItemsImplementationInternals,
                         $contentRepository
                     );

@@ -1,6 +1,9 @@
 prototype(Neos.Neos:DimensionsMenuItems) {
   @class = 'Neos\\Neos\\Fusion\\DimensionsMenuItemsImplementation'
 
+  # (Node) The current node. Defaults to ``node`` from the fusion context
+  node = ${documentNode}
+
   # (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
   renderHiddenInIndex = true
 

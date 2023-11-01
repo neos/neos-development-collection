@@ -4,8 +4,8 @@ prototype(Neos.Neos:Menu) < prototype(Neos.Fusion:Component) {
   # html attributes for the rendered list
   attributes = Neos.Fusion:DataStructure
 
-  # (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``node`` from the fusion context
-  node = ${node}
+  # (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
 
   # (integer) Define the startingPoint of the menu relatively. Non negative values specify this as n levels below root. Negative values are n steps up from ``node`` or ``startingPoint`` if defined. Defaults to ``1`` if no ``startingPoint`` is set otherwise ``0``
   entryLevel = ${this.startingPoint ? 0 : 1}
