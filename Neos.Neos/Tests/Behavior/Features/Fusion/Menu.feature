@@ -130,6 +130,22 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
+  Scenario: MenuItems (default on home page)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems
+    }
+    """
+    And the Fusion context node is "a"
+    Then I expect the following Fusion rendering result:
+    """
+    a1. (1)
+    a1a* (2)
+    a1b (2)
+
+    """
+
   Scenario: MenuItems (maximumLevels = 3)
     When I execute the following Fusion code:
     """fusion
@@ -150,23 +166,19 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-#  NOTE: This scenario currently breaks because the actual output is empty
-#  Scenario: MenuItems (entryLevel = -5)
-#    When I execute the following Fusion code:
-#    """fusion
-#    test = Neos.Neos:Test.Menu {
-#      items = Neos.Neos:MenuItems {
-#        entryLevel = -5
-#      }
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    a1. (1)
-#    a1a* (2)
-#    a1b (2)
-#
-#    """
+  Scenario: MenuItems (entryLevel = -5)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        entryLevel = -5
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+
+    """
 
 
   Scenario: MenuItems (entryLevel = -1)
@@ -235,21 +247,19 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-# NOTE: This scenario currently breaks because the actual output is "a1., a1a*, a1b"
-#  Scenario: MenuItems (lastLevel = -5)
-#    When I execute the following Fusion code:
-#    """fusion
-#    test = Neos.Neos:Test.Menu {
-#      items = Neos.Neos:MenuItems {
-#        lastLevel = -5
-#      }
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    a1. (1)
-#
-#    """
+  Scenario: MenuItems (lastLevel = -5)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        lastLevel = -5
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+
+    """
 
   Scenario: MenuItems (lastLevel = -1)
     When I execute the following Fusion code:
@@ -285,21 +295,20 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
     """
 
-#  NOTE: This scenario currently breaks because the actual output is "a1., a1a*, a1b"
-#  Scenario: MenuItems (lastLevel = 1)
-#    When I execute the following Fusion code:
-#    """fusion
-#    test = Neos.Neos:Test.Menu {
-#      items = Neos.Neos:MenuItems {
-#        lastLevel = 1
-#      }
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    a1. (1)
-#
-#    """
+  Scenario: MenuItems (lastLevel = 1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        lastLevel = 1
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a1. (1)
+
+    """
 
   Scenario: MenuItems (filter non existing node type)
     When I execute the following Fusion code:
@@ -314,22 +323,21 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """
     """
 
-#  NOTE: This scenario currently breaks because the actual output is empty
-#  Scenario: MenuItems (filter = DocumentType1)
-#    When I execute the following Fusion code:
-#    """fusion
-#    test = Neos.Neos:Test.Menu {
-#      items = Neos.Neos:MenuItems {
-#        filter = 'Neos.Neos:Test.DocumentType1'
-#      }
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    a1. (1)
-#    a1b (2)
-#
-#    """
+  Scenario: MenuItems (filter = DocumentType1)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        filter = 'Neos.Neos:Test.DocumentType1'
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a1. (1)
+    a1b (2)
+
+    """
 
   Scenario: MenuItems (filter = DocumentType2)
     When I execute the following Fusion code:
@@ -376,22 +384,21 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """
     """
 
-#  NOTE: This scenario currently breaks because the actual output is "a., a1., a1a*, a1b"
-#  Scenario: MenuItems (itemCollection document nodes)
-#    When I execute the following Fusion code:
-#    """fusion
-#    test = Neos.Neos:Test.Menu {
-#      items = Neos.Neos:MenuItems {
-#        itemCollection = ${q(site).filter('[instanceof Neos.Neos:Document]').get()}
-#      }
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    a (1)
-#    a1. (2)
-#
-#    """
+  Scenario: MenuItems (itemCollection document nodes)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems {
+        itemCollection = ${q(site).filter('[instanceof Neos.Neos:Document]').get()}
+      }
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a. (1)
+    a1. (2)
+
+    """
 
   Scenario: MenuItems (startingPoint a1b1)
     When I execute the following Fusion code:
@@ -507,27 +514,28 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     </ul>
     """
 
-#  NOTE: This scenario currently breaks because the "breadcrumb" class attribute is missing and the item states are different than expected "active" vs "normal" for homepage
-#  Scenario: BreadcrumbMenu
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:BreadcrumbMenu {
-#      # calculate menu item state to get Neos < 9 behavior
-#      calculateItemStates = true
-#    }
-#    """
-#    Then I expect the following Fusion rendering result as HTML:
-#    """html
-#    <ul class="breadcrumb">
-#      <li class="normal">
-#        <a href="/" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
-#      </li>
-#      <li class="active">
-#        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1 (a1)</a>
-#      </li>
-#      <li class="current">Neos.Neos:Test.DocumentType2a</li>
-#    </ul>
-#    """
+  Scenario: BreadcrumbMenu
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:BreadcrumbMenu {
+      # calculate menu item state to get Neos < 9 behavior
+      calculateItemStates = true
+    }
+    """
+    Then I expect the following Fusion rendering result as HTML:
+    """html
+    <ul>
+      <li class="active">
+        <a href="/" title="Neos.Neos:Site">Neos.Neos:Site</a>
+      </li>
+      <li class="active">
+        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
+      </li>
+      <li class="current">
+        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+      </li>
+    </ul>
+    """

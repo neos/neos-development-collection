@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\Error\Messages\Message;
 
 final class StructureAdjustment extends Message
@@ -41,8 +44,10 @@ final class StructureAdjustment extends Message
         $this->type = $type;
     }
 
-    public static function createForNode(
-        Node $node,
+    public static function createForNodeIdentity(
+        ContentStreamId $contentStreamId,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
+        NodeAggregateId $nodeAggregateId,
         string $type,
         string $errorMessage,
         ?\Closure $remediation = null
@@ -52,12 +57,28 @@ final class StructureAdjustment extends Message
                 . ($remediation ? '' : '!!!NOT AUTO-FIXABLE YET!!! ') . $errorMessage,
             null,
             [
-                'contentStream' => $node->subgraphIdentity->contentStreamId->value,
-                'dimensionSpacePoint' => $node->originDimensionSpacePoint->toJson(),
-                'nodeAggregateId' => $node->nodeAggregateId->value,
+                'contentStream' => $contentStreamId->value,
+                'dimensionSpacePoint' => $originDimensionSpacePoint->toJson(),
+                'nodeAggregateId' => $nodeAggregateId->value,
                 'isAutoFixable' => ($remediation !== null)
             ],
             $type,
+            $remediation
+        );
+    }
+
+    public static function createForNode(
+        Node $node,
+        string $type,
+        string $errorMessage,
+        ?\Closure $remediation = null
+    ): self {
+        return self::createForNodeIdentity(
+            $node->subgraphIdentity->contentStreamId,
+            $node->originDimensionSpacePoint,
+            $node->nodeAggregateId,
+            $type,
+            $errorMessage,
             $remediation
         );
     }

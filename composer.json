@@ -8,21 +8,22 @@
     "require": {
         "neos/flow-development-collection": "9.0.x-dev",
         "neos/neos-setup": "^2.0",
-        "php": "^8.2",
+        "league/flysystem-memory": "^3",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
         "neos/eventstore": "*",
         "neos/eventstore-doctrineadapter": "*",
+        "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
+        "ramsey/uuid": "^3.0 || ^4.0",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11",
         "neos/flow": "*",
-        "neos/neos-ui": "*",
         "behat/behat": "^3.5",
         "phpunit/phpunit": "^9.0",
         "symfony/property-access": "*",
@@ -41,8 +42,7 @@
         "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
-        "neos/kickstarter": "~9.0.0",
-        "league/flysystem-memory": "^3"
+        "neos/kickstarter": "~9.0.0"
     },
     "replace": {
         "packagefactory/atomicfusion-afx": "*",
@@ -51,7 +51,6 @@
         "typo3/neos": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
-        "neos/cli-setup": "self.version",
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
@@ -128,9 +127,6 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\CliSetup\\": [
-                "Neos.CliSetup/Classes"
-            ],
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
                 "Neos.ContentGraph.DoctrineDbalAdapter/src"
             ],
@@ -271,7 +267,6 @@
         "phpstan/phpstan": "^1.8",
         "squizlabs/php_codesniffer": "^3.6",
         "phpunit/phpunit": "^9.0",
-        "neos/behat": "*",
-        "league/flysystem-memory": "^3"
+        "neos/behat": "*"
     }
 }

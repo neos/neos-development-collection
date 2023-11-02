@@ -68,15 +68,12 @@ prototype(Neos.Neos:Page) < prototype(Neos.Fusion:Http.Message) {
   }
 
   # Content of the body tag. To be defined by the integrator.
-  body = Neos.Fusion:Template {
+  body = Neos.Fusion:Join {
     @position = 'after bodyTag'
-    node = ${node}
-    site = ${site}
 
-    # Script includes before the closing body tag should go here
+    # Scripts before the closing body tag
     javascripts = Neos.Fusion:Join
-    # This processor appends the rendered javascripts Array to the rendered template
-    @process.appendJavaScripts = ${value + this.javascripts}
+    javascripts.@position = 'end 100'
   }
 
   closingBodyTag = '</body>'

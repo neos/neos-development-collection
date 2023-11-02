@@ -6,14 +6,22 @@ namespace Neos\ContentRepository\Core\NodeType;
  * Performs node type constraint checks against a given set of constraints
  * @internal
  */
-class ConstraintCheck
+final readonly class ConstraintCheck
 {
     /**
-     * @param array<string,mixed> $constraints
+     * @param array<string,bool> $constraints
      */
-    public function __construct(
-        private readonly array $constraints
+    private function __construct(
+        private array $constraints
     ) {
+    }
+
+    /**
+     * @param array<string,bool> $constraints
+     */
+    public static function create(array $constraints): self
+    {
+        return new self($constraints);
     }
 
     public function isNodeTypeAllowed(NodeType $nodeType): bool

@@ -72,11 +72,13 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     include: resource://Neos.Fusion/Private/Fusion/Root.fusion
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
-    test = Neos.Neos:ContentCollection
+    test = Neos.Neos:ContentCollection {
+      @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ThrowingHandler'
+    }
     """
     Then I expect the following Fusion rendering error:
     """
-    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/[root]) or at the path "to-be-set-by-user". You might want to adjust your node type configuration and create the missing child node through the "flow structureadjustments:fix --node-type Neos.Neos:Site" command.
+    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/sites/a) or at the path "to-be-set-by-user". You might want to adjust your node type configuration and create the missing child node through the "./flow node:repair --node-type Neos.Neos:Test.DocumentType" command.
     """
 
   Scenario: invalid nodePath
@@ -87,11 +89,12 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
 
     test = Neos.Neos:ContentCollection {
       nodePath = 'invalid'
+      @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ThrowingHandler'
     }
     """
     Then I expect the following Fusion rendering error:
     """
-    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/[root]) or at the path "invalid". You might want to adjust your node type configuration and create the missing child node through the "flow structureadjustments:fix --node-type Neos.Neos:Site" command.
+    No content collection of type Neos.Neos:ContentCollection could be found in the current node (/sites/a) or at the path "invalid". You might want to adjust your node type configuration and create the missing child node through the "./flow node:repair --node-type Neos.Neos:Test.DocumentType" command.
     """
 
   Scenario: empty ContentCollection
