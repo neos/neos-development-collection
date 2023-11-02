@@ -26,6 +26,7 @@ use Neos\Flow\Tests\Unit\Http\Fixtures\SpyRequestHandler;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
+use Neos\Fusion\Exception\RuntimeException;
 use Neos\Neos\Domain\Service\ContentContext;
 use Neos\Neos\Routing\RequestUriHostMiddleware;
 use PHPUnit\Framework\Assert;
@@ -131,7 +132,11 @@ trait FusionTrait
         try {
             $this->renderingResult = $fusionRuntime->render($path);
         } catch (\Throwable $exception) {
-            $this->lastRenderingException = $exception;
+            if ($exception instanceof RuntimeException) {
+                $this->lastRenderingException = $exception->getPrevious();
+            } else {
+                $this->lastRenderingException = $exception;
+            }
         }
         $fusionRuntime->popContext();
     }
