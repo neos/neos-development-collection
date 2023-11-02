@@ -28,14 +28,10 @@ trait NodeDisabling
     private function whenNodeAggregateWasDisabled(NodeAggregateWasDisabled $event): void
     {
         $this->transactional(function () use ($event) {
-
-
-            // TODO: still unsure why we need an "INSERT IGNORE" here;
-            // normal "INSERT" can trigger a duplicate key constraint exception
             $this->getDatabaseConnection()->executeStatement(
                 '
 -- GraphProjector::whenNodeAggregateWasDisabled
-insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
+insert into ' . $this->getTableNamePrefix() . '_restrictionrelation
     (contentstreamid, dimensionspacepointhash, originnodeaggregateid, affectednodeaggregateid)
 
     -- we build a recursive tree
