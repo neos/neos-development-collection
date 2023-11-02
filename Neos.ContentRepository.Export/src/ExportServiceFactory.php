@@ -12,6 +12,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
  * @internal
+ * @implements ContentRepositoryServiceFactoryInterface<ExportService>
  */
 class ExportServiceFactory implements ContentRepositoryServiceFactoryInterface
 {

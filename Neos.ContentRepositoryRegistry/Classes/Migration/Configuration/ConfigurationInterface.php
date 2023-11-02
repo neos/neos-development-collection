@@ -20,7 +20,7 @@ interface ConfigurationInterface
     /**
      * Returns all available versions.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAvailableVersions();
 
@@ -35,8 +35,8 @@ interface ConfigurationInterface
     /**
      * Returns the migration configuration with the given version.
      *
-     * @param string $version
-     * @return array
+     * @param string|int $version
+     * @return array<string, mixed>
      */
     public function getMigrationVersion($version);
 }

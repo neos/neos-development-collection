@@ -101,7 +101,7 @@ class PropertyAdjustment
 
     private function addProperty(NodeAggregate $nodeAggregate, Node $node, string $propertyKey, mixed $defaultValue): EventsToPublish
     {
-        $propertyType = $node->nodeType->getPropertyType($propertyKey);
+        $propertyType = $node->nodeType?->getPropertyType($propertyKey) ?? 'string';
         $serializedPropertyValues = SerializedPropertyValues::fromArray([
             $propertyKey => new SerializedPropertyValue($defaultValue, $propertyType)
         ]);

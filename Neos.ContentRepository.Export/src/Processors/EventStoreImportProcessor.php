@@ -34,6 +34,7 @@ use Neos\Flow\Utility\Algorithms;
  */
 final class EventStoreImportProcessor implements ProcessorInterface
 {
+    /** @var array<int, \Closure> */
     private array $callbacks = [];
 
     public function __construct(
@@ -97,7 +98,7 @@ final class EventStoreImportProcessor implements ProcessorInterface
                 new Event(
                     EventId::fromString($event->identifier),
                     Event\EventType::fromString($event->type),
-                    Event\EventData::fromString(\json_encode($event->payload)),
+                    Event\EventData::fromString(\json_encode($event->payload, JSON_THROW_ON_ERROR)),
                     Event\EventMetadata::fromArray($event->metadata)
                 )
             );
@@ -188,6 +189,9 @@ final class EventStoreImportProcessor implements ProcessorInterface
         return ContentStreamId::fromString($payload['contentStreamId']);
     }
 
+    /**
+     * @phpstan-ignore-next-line currently this private method is unused ... but it does no harm keeping it
+     */
     private function dispatch(Severity $severity, string $message, mixed ...$args): void
     {
         $renderedMessage = sprintf($message, ...$args);

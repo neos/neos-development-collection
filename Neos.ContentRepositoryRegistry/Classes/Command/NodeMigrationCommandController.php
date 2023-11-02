@@ -102,13 +102,7 @@ class NodeMigrationCommandController extends CommandController
             $this->quit(1);
         }
 
-        try {
-            $createdMigration = $this->nodeMigrationGeneratorService->generateBoilerplateMigrationFileInPackage($packageKey);
-        } catch (MigrationException $e) {
-            $this->outputLine();
-            $this->outputLine('Error ' . $e->getMessage());
-            $this->quit(1);
-        }
+        $createdMigration = $this->nodeMigrationGeneratorService->generateBoilerplateMigrationFileInPackage($packageKey);
         $this->outputLine($createdMigration);
         $this->outputLine('Your node migration has been created successfully.');
     }

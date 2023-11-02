@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 class ConfigurationBasedContentDimensionSourceFactory implements ContentDimensionSourceFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ContentDimensionSourceInterface
     {
         return new ConfigurationBasedContentDimensionSource(

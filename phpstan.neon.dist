@@ -4,9 +4,13 @@ parameters:
         - Neos.ContentGraph.DoctrineDbalAdapter/src
         - Neos.ContentGraph.PostgreSQLAdapter/src
         - Neos.ContentRepository.BehavioralTests/Classes
-        - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepository.Core/Classes
+        - Neos.ContentRepository.Export/src
         - Neos.ContentRepository.LegacyNodeMigration/Classes
+        - Neos.ContentRepository.NodeAccess/Classes
+        - Neos.ContentRepository.StructureAdjustment/src
+        - Neos.ContentRepository.TestSuite/Classes
+        - Neos.ContentRepositoryRegistry/Classes
         - Neos.Neos/Classes
     excludePaths:
         analyse:
@@ -14,6 +18,7 @@ parameters:
             - Neos.Neos/Classes/Controller/Module/User/UserSettingsController.php
             - Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
             - Neos.Neos/Classes/Controller/Backend/MenuHelper.php
+            - Neos.ContentRepositoryRegistry/Classes/Command/ContentCommandController.php
 rules:
     - Neos\ContentRepository\BehavioralTests\PhpstanRules\ApiOrInternalAnnotationRule
 #    - Neos\ContentRepository\BehavioralTests\PhpstanRules\InternalMethodsNotAllowedOutsideContentRepositoryRule
