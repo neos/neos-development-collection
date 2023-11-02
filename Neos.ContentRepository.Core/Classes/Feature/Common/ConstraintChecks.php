@@ -200,13 +200,6 @@ trait ConstraintChecks
         if (isset($nodeType->getReferences()[$referenceName->value])) {
             return;
         }
-        /** @deprecated references should be declared as references */
-        if (isset($nodeType->getProperties()[$referenceName->value])) {
-            $propertyType = $nodeType->getPropertyType($referenceName->value);
-            if ($propertyType === 'reference' || $propertyType === 'references') {
-                return;
-            }
-        }
         throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
     }
 
@@ -216,9 +209,7 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
         $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-        $referenceDeclaration = $nodeType->getReferences()[$referenceName->value]
-            ?? $nodeType->getProperties()[$referenceName->value] /** @deprecated references sould be declared as such */
-            ?? null;
+        $referenceDeclaration = $nodeType->getReferences()[$referenceName->value] ?? null;
         if (is_null($referenceDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
@@ -644,8 +635,6 @@ trait ConstraintChecks
 
         foreach ($referenceProperties->values as $propertyName => $propertyValue) {
             $referencePropertyConfig = $nodeType->getReferences()[$referenceName->value]['properties'][$propertyName]
-                /** @deprecated references should be declared as such */
-                ?? $nodeType->getProperties()[$referenceName->value]['properties'][$propertyName]
                 ?? null;
 
             if (is_null($referencePropertyConfig)) {

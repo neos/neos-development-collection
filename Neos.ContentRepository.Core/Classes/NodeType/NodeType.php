@@ -502,6 +502,23 @@ class NodeType
      */
     protected function setFullConfiguration(array $fullConfiguration): void
     {
+        $referencesConfiguration = $fullConfiguration['references'] ?? [];
+        foreach ($fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            $propertyType = $propertyConfiguration['type'] ?? 'string';
+            switch ($propertyType) {
+                case 'reference':
+                    unset($propertyConfiguration['type']);
+                    $propertyConfiguration['constraints']['valueReference']['maxValue'] = 1;
+                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                    unset($fullConfiguration['properties'][$propertyName]);
+                case 'references':
+                    unset($propertyConfiguration['type']);
+                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                    unset($fullConfiguration['properties'][$propertyName]);
+                default:
+            }
+        }
+        $fullConfiguration['references'] = $referencesConfiguration;
         $this->fullConfiguration = $fullConfiguration;
     }
 }

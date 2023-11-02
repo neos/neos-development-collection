@@ -136,8 +136,7 @@ trait NodeReferencing
         }
 
         $sourceNodeType = $this->requireNodeType($sourceNodeAggregate->nodeTypeName);
-        $scopeDeclaration = $sourceNodeType->getReferences()[$command->referenceName->value]['scope']
-            ?? $sourceNodeType->getProperties()[$command->referenceName->value]['scope'] ?? '';
+        $scopeDeclaration = $sourceNodeType->getReferences()[$command->referenceName->value]['scope'] ?? '';
         $scope = PropertyScope::tryFrom($scopeDeclaration) ?: PropertyScope::SCOPE_NODE;
 
         $affectedOrigins = $scope->resolveAffectedOrigins(
