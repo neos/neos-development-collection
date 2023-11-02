@@ -1,4 +1,4 @@
-@fixtures
+@flowEntities
 Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
 
   Background:

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\ContentRepositoryRegistry\TestSuite\Behavior;
 
 use Doctrine\DBAL\Connection;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceFactoryInterface;
@@ -24,15 +23,11 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\EventStore\EventStoreInterface;
 
-require_once(__DIR__ . '/../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
-
 /**
  * The node creation trait for behavioral tests
  */
 trait CRRegistrySubjectProvider
 {
-    use FlowContextTrait;
-
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     protected ?ContentRepository $currentContentRepository = null;
@@ -42,13 +37,17 @@ trait CRRegistrySubjectProvider
      */
     protected array $alreadySetUpContentRepositories = [];
 
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract protected function getObject(string $className): object;
+
     protected function setUpCRRegistry(): void
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
     }
 
     /**

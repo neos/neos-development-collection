@@ -32,6 +32,8 @@ use PHPUnit\Framework\Assert;
 
 /**
  * Custom context trait for projection integrity violation detection specific to the Doctrine DBAL content graph adapter
+ *
+ * @todo move this class somewhere where its autoloaded
  */
 trait ProjectionIntegrityViolationDetectionTrait
 {
@@ -40,6 +42,14 @@ trait ProjectionIntegrityViolationDetectionTrait
     private DbalClient $dbalClient;
 
     protected Result $lastIntegrityViolationDetectionResult;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     protected function getTableNamePrefix(): string
     {
@@ -50,7 +60,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
-        $this->dbalClient = $this->getObjectManager()->get(DbalClient::class);
+        $this->dbalClient = $this->getObject(DbalClient::class);
     }
 
     /**

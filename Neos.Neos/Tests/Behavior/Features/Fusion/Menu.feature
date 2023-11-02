@@ -1,4 +1,4 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
   Background:
