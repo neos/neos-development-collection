@@ -1,7 +1,10 @@
 <?php
+declare(strict_types=1);
+
+namespace Neos\ContentRepositoryRegistry\TestSuite\Behavior;
 
 /*
- * This file is part of the Neos.ContentRepository.TestSuite package.
+ * This file is part of the Neos.ContentRepositoryRegistry.TestSuite package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -9,10 +12,6 @@
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
-declare(strict_types=1);
-
-namespace Neos\ContentRepositoryRegistry\TestSuite\Behavior;
 
 use Doctrine\DBAL\Connection;
 use Neos\ContentRepository\Core\ContentRepository;
@@ -24,7 +23,7 @@ use Neos\ContentRepositoryRegistry\Exception\ContentRepositoryNotFoundException;
 use Neos\EventStore\EventStoreInterface;
 
 /**
- * The node creation trait for behavioral tests
+ * The CR registry subject provider trait for behavioral tests
  */
 trait CRRegistrySubjectProvider
 {
