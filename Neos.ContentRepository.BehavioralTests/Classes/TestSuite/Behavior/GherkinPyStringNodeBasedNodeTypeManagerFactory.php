@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\BehavioralTests\TestSuite\Behavior;
 
 use Behat\Gherkin\Node\PyStringNode;
+use JsonException;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface;
 use Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorInterface;
@@ -29,23 +30,22 @@ use Symfony\Component\Yaml\Yaml;
  */
 final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeManagerFactoryInterface
 {
-    public static ?NodeTypeManager $nodeTypesToUse = null;
-
     /**
      * @param array<string,mixed> $options
      */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
-        if (!self::$nodeTypesToUse) {
-            throw new \DomainException('NodeTypeManagerFactory uninitialized');
+        if (!file_exists(self::cacheFileName($contentRepositoryId))) {
+            throw new \DomainException(sprintf('NodeTypeManagerFactory uninitialized for ContentRepository "%s"', $contentRepositoryId->value));
         }
-        return self::$nodeTypesToUse;
-    }
-
-    public static function initializeWithPyStringNode(PyStringNode $nodeTypesToUse): void
-    {
-        self::$nodeTypesToUse = new NodeTypeManager(
-            fn (): array => Yaml::parse($nodeTypesToUse->getRaw()) ?? [],
+        $nodeTypesConfigurationJson = file_get_contents(self::cacheFileName($contentRepositoryId));
+        try {
+            $nodeTypesConfiguration = json_decode($nodeTypesConfigurationJson, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new \RuntimeException(sprintf('Failed to parse JSON for node types configuration: %s', $nodeTypesConfigurationJson));
+        }
+        return new NodeTypeManager(
+            fn () => $nodeTypesConfiguration,
             new class implements NodeLabelGeneratorFactoryInterface {
                 public function create(NodeType $nodeType): NodeLabelGeneratorInterface
                 {
@@ -60,8 +60,18 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
         );
     }
 
+    public static function registerNodeTypeConfigurationForContentRepository(ContentRepositoryId $contentRepositoryId, array $nodeTypeConfiguration): void
+    {
+        file_put_contents(self::cacheFileName($contentRepositoryId), json_encode($nodeTypeConfiguration, JSON_THROW_ON_ERROR));
+    }
+
     public static function reset(): void
     {
-        self::$nodeTypesToUse = null;
+
+    }
+
+    private static function cacheFileName(ContentRepositoryId $contentRepositoryId): string
+    {
+        return '/tmp/nodeTypesConfiguration_' . $contentRepositoryId->value . '.json';
     }
 }
