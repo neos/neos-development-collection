@@ -33,50 +33,6 @@ final class NodeTypeConstraintsWithSubNodeTypes
     ) {
     }
 
-    /**
-     * @param array<string,bool> $nodeTypeDeclaration
-     */
-    public static function createFromNodeTypeDeclaration(
-        array $nodeTypeDeclaration,
-        NodeTypeManager $nodeTypeManager
-    ): self {
-        $wildCardAllowed = false;
-        $explicitlyAllowedNodeTypeNames = [];
-        $explicitlyDisallowedNodeTypeNames = [];
-        foreach ($nodeTypeDeclaration as $constraintName => $allowed) {
-            if ($constraintName === '*') {
-                $wildCardAllowed = $allowed;
-            } else {
-                if ($allowed) {
-                    $explicitlyAllowedNodeTypeNames[] = $constraintName;
-                } else {
-                    $explicitlyDisallowedNodeTypeNames[] = $constraintName;
-                }
-            }
-        }
-
-        return new self(
-            $wildCardAllowed,
-            self::expandByIncludingSubNodeTypes(
-                NodeTypeNames::fromStringArray($explicitlyAllowedNodeTypeNames),
-                $nodeTypeManager
-            ),
-            self::expandByIncludingSubNodeTypes(
-                NodeTypeNames::fromStringArray($explicitlyDisallowedNodeTypeNames),
-                $nodeTypeManager
-            )
-        );
-    }
-
-    public static function allowAll(): self
-    {
-        return new self(
-            true,
-            NodeTypeNames::createEmpty(),
-            NodeTypeNames::createEmpty(),
-        );
-    }
-
     public static function create(NodeTypeConstraints $nodeTypeConstraints, NodeTypeManager $nodeTypeManager): self
     {
         // in case there are no filters, we fall back to allowing every node type.
@@ -136,23 +92,5 @@ final class NodeTypeConstraintsWithSubNodeTypes
 
         // otherwise, we return $wildcardAllowed.
         return $this->isWildCardAllowed;
-    }
-
-    public function toFilterString(): string
-    {
-        $parts = [];
-        if ($this->isWildCardAllowed) {
-            $parts[] = '*';
-        }
-
-        foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
-            $parts[] = '!' . $nodeTypeName->value;
-        }
-
-        foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {
-            $parts[] = $nodeTypeName->value;
-        }
-
-        return implode(',', $parts);
     }
 }

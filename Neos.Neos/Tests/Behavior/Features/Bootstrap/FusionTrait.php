@@ -19,7 +19,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectedNodeTrait;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
-use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -27,6 +26,7 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Fusion\Exception\RuntimeException;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
@@ -131,7 +131,11 @@ trait FusionTrait
         try {
             $this->renderingResult = $fusionRuntime->render($path);
         } catch (\Throwable $exception) {
-            $this->lastRenderingException = $exception;
+            if ($exception instanceof RuntimeException) {
+                $this->lastRenderingException = $exception->getPrevious();
+            } else {
+                $this->lastRenderingException = $exception;
+            }
         }
         $fusionRuntime->popContext();
     }

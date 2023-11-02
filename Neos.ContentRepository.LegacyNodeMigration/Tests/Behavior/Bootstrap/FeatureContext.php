@@ -193,7 +193,7 @@ class FeatureContext implements Context
      */
     public function iExpectTheFollwingErrorsToBeLogged(TableNode $table): void
     {
-        Assert::assertSame($this->loggedErrors, $table->getColumn(0), 'Expected logged errors do not match');
+        Assert::assertSame($table->getColumn(0), $this->loggedErrors, 'Expected logged errors do not match');
         $this->loggedErrors = [];
     }
 

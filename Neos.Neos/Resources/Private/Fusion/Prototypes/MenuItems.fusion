@@ -1,15 +1,32 @@
 prototype(Neos.Neos:MenuItems) {
   @class = 'Neos\\Neos\\Fusion\\MenuItemsImplementation'
 
-  node = ${node}
+  # (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
+
+  # (integer) Define the startingPoint of the menu relatively. Non negative values specify this as n levels below root. Negative values are n steps up from ``node`` or ``startingPoint`` if defined. Defaults to ``1`` if no ``startingPoint`` is set otherwise ``0``
   entryLevel = ${this.startingPoint ? 0 : 1}
-  maximumLevels = 2
-  startingPoint = null
+
+  # (optional, integer) Restrict the depth of the menu relatively. Positive values specify this as n levels below root. Negative values specify this as n steps up from ``node``. Defaults to ``null``
   lastLevel = null
+
+  # (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
+  maximumLevels = 2
+
+  # (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
+  startingPoint = null
+
+  # (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
   filter = 'Neos.Neos:Document'
+
+  # (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
   renderHiddenInIndex = false
-  itemCollection = null
+
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``.
   calculateItemStates = false
+
+  # (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
+  itemCollection = null
 
   // This property is used internally by `MenuItemsImplementation` to render each items uri.
   // It can be modified to change behaviour for all rendered uris.
