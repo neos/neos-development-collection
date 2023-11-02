@@ -191,6 +191,44 @@ final class ContentHypergraph implements ContentGraphInterface
         );
     }
 
+    public function findParentNodeAggregateByChildDimensionSpacePoint(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
+        DimensionSpacePoint $childDimensionSpacePoint
+    ): ?NodeAggregate {
+        $query = /** @lang PostgreSQL */ '
+            SELECT n.origindimensionspacepoint, n.nodeaggregateid, n.nodetypename,
+                   n.classification, n.properties, n.nodename, ph.contentstreamid, ph.dimensionspacepoint
+                FROM ' . $this->tableNamePrefix . '_hierarchyhyperrelation ph
+                JOIN ' . $this->tableNamePrefix . '_node n ON n.relationanchorpoint = ANY(ph.childnodeanchors)
+            WHERE ph.contentstreamid = :contentStreamId
+                AND n.nodeaggregateid = (
+                    SELECT pn.nodeaggregateid
+                        FROM ' . $this->tableNamePrefix . '_node pn
+                        JOIN ' . $this->tableNamePrefix . '_hierarchyhyperrelation ch
+                            ON pn.relationanchorpoint = ch.parentnodeanchor
+                        JOIN ' . $this->tableNamePrefix . '_node cn ON cn.relationanchorpoint = ANY(ch.childnodeanchors)
+                    WHERE cn.nodeaggregateid = :childNodeAggregateId
+                        AND ch.dimensionspacepointhash = :childDimensionSpacePointHash
+                        AND ch.contentstreamid = :contentStreamId
+                )';
+        $parameters = [
+            'contentStreamId' => $contentStreamId->value,
+            'childNodeAggregateId' => $childNodeAggregateId->value,
+            'childDimensionSpacePointHash' => $childDimensionSpacePoint->hash
+        ];
+
+        $nodeRows = $this->getDatabaseConnection()->executeQuery(
+            $query,
+            $parameters
+        )->fetchAllAssociative();
+
+        return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            $nodeRows,
+            VisibilityConstraints::withoutRestrictions()
+        );
+    }
+
     /**
      * @return iterable<NodeAggregate>
      */

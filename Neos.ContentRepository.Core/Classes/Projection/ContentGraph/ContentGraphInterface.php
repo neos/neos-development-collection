@@ -104,6 +104,15 @@ interface ContentGraphInterface extends ProjectionStateInterface
     ): ?NodeAggregate;
 
     /**
+     * @internal only for consumption inside the Command Handler
+     */
+    public function findParentNodeAggregateByChildDimensionSpacePoint(
+        ContentStreamId $contentStreamId,
+        NodeAggregateId $childNodeAggregateId,
+        DimensionSpacePoint $childDimensionSpacePoint
+    ): ?NodeAggregate;
+
+    /**
      * @return iterable<NodeAggregate>
      * @internal only for consumption inside the Command Handler
      */
