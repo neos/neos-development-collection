@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Infrastructure;
+namespace Neos\ContentRepositoryRegistry\DoctrineDbalClient;
 
 /*
- * This file is part of the Neos.ContentGraph.DoctrineDbalAdapter package.
+ * This file is part of the Neos.ContentRepositoryRegistry.DoctrineDbalClient package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -25,7 +25,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * @Flow\Scope("singleton")
  */
-class DbalClient implements DbalClientInterface
+class DoctrineDbalClient implements DbalClientInterface
 {
     /**
      * @Flow\InjectConfiguration(package="Neos.Flow", path="persistence.backendOptions")
