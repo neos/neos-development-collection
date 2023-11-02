@@ -127,7 +127,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
 
-        return ProjectionStatus::createFromSchemaDiff($schemaDiff, true);
+        return ProjectionStatus::createFromSchemaDiff($schemaDiff);
     }
 
     private function setupTables(): SetupResult
