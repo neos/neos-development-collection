@@ -3,6 +3,11 @@
   "type": "neos-package",
   "license": "BSD-3-Clause",
   "description": "This is a comprehensive library for generating differences between two strings or arrays",
+  "support": {
+    "source": "https://github.com/neos/diff.git",
+    "forum": "https://discuss.neos.io/",
+    "docs": "https://docs.neos.io/"
+  },
   "require": {
     "php": "^7.3 || ^8.0"
   },

@@ -2,6 +2,11 @@
     "name": "neos/media",
     "type": "neos-package",
     "description": "The Media package",
+    "support": {
+        "source": "https://github.com/neos/media.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://neos-media.readthedocs.io"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

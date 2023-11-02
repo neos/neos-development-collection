@@ -5,6 +5,11 @@
         "GPL-3.0-or-later"
     ],
     "description": "An open source Content Application Platform based on Flow. A set of core Content Management features is resting within a larger context that allows you to build a perfectly customized experience for your users.",
+    "support": {
+        "source": "https://github.com/neos/neos.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "require": {
         "php": "^7.3 || ^8.0",
         "neos/diff": "self.version",
