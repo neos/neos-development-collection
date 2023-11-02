@@ -1,7 +1,12 @@
 {
     "name": "neos/contentrepository-export",
-    "description": "Import/Export functionality for the Event Sourced Content Repository",
     "type": "library",
+    "description": "Import/Export functionality for the Event Sourced Content Repository",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-core.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "require": {
         "php": ">=8.2",
         "neos/contentrepository-core": "*",

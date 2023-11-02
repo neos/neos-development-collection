@@ -1,7 +1,12 @@
 {
     "name": "neos/contentrepository-core",
-    "description": "Content repository, specifically made for Neos, but also usable standalone.",
     "type": "library",
+    "description": "Content repository, specifically made for Neos, but also usable standalone.",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-core.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

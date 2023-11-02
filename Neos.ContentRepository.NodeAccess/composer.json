@@ -2,6 +2,11 @@
     "name": "neos/contentrepository-nodeaccess",
     "type": "neos-package",
     "description": "The node accessor concept for the Neos Content Repository",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-nodeaccess.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
