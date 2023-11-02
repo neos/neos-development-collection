@@ -6,26 +6,32 @@ namespace Neos\ContentRepository\StructureAdjustment\Adjustment;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
 use Neos\ContentRepository\Core\DimensionSpace\VariantType;
+use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 
 class DimensionAdjustment
 {
-    protected ProjectedNodeIterator $projectedNodeIterator;
-    protected InterDimensionalVariationGraph $interDimensionalVariationGraph;
-
     public function __construct(
-        ProjectedNodeIterator $projectedNodeIterator,
-        InterDimensionalVariationGraph $interDimensionalVariationGraph
+        protected ProjectedNodeIterator $projectedNodeIterator,
+        protected InterDimensionalVariationGraph $interDimensionalVariationGraph,
+        protected NodeTypeManager $nodeTypeManager,
     ) {
-        $this->projectedNodeIterator = $projectedNodeIterator;
-        $this->interDimensionalVariationGraph = $interDimensionalVariationGraph;
     }
 
     /**
-     * @return \Generator<int,StructureAdjustment>
+     * @return iterable<int,StructureAdjustment>
      */
-    public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): \Generator
+    public function findAdjustmentsForNodeType(NodeTypeName $nodeTypeName): iterable
     {
+        try {
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        } catch (NodeTypeNotFoundException) {
+            return [];
+        }
+        if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
+            return [];
+        }
         foreach ($this->projectedNodeIterator->nodeAggregatesOfType($nodeTypeName) as $nodeAggregate) {
             foreach ($nodeAggregate->getNodes() as $node) {
                 foreach (
