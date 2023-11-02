@@ -752,47 +752,29 @@ Examples:
 Rendering a simple page:
 """"""""""""""""""""""""
 
-::
-
-	page = Page
-	page.body.templatePath = 'resource://My.Package/Private/MyTemplate.html'
-	// the following line is optional, but recommended for base CSS inclusions etc
-	page.body.sectionName = 'main'
-
-Rendering content in the body:
-""""""""""""""""""""""""""""""
-
 Fusion::
 
+	page = Neos.Neos:Page
 	page.body {
-		sectionName = 'body'
-		content.main = PrimaryContent {
-			nodePath = 'main'
-		}
-	}
-
-Fluid::
-
-	<html>
-		<body>
-			<f:section name="body">
-				<div class="container">
-					{content.main -> f:format.raw()}
-				</div>
-			</f:section>
-		</body>
-	</html
+    header = Vendor.Site:Fragment.Header
+    content = afx`
+      <div class="container">
+        <Neos.Neos:ContentCollection nodePath="main"/>
+      </div>
+    `
+    footer = Vendor.Site:Fragment.Header
+  }
 
 Including stylesheets from a template section in the head:
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-::
+Fusion::
 
-	page.head.stylesheets.mySite = Neos.Fusion:Template {
-		templatePath = 'resource://My.Package/Private/MyTemplate.html'
-		sectionName = 'stylesheets'
+	page.head.stylesheets {
+	  mySite = afx`
+	    <link rel="stylesheet" href={StaticResource.uri('Vendor.Site', 'Public/Styles/Main.css')} />
+	  `
 	}
-
 
 Adding body attributes with ``bodyTag.attributes``:
 """""""""""""""""""""""""""""""""""""""""""""""""""
@@ -819,43 +801,12 @@ Example::
 
 	page.body {
 		content {
-			main = Neos.Neos:PrimaryContent {
+			main = Neos.Neos:ContentCollection {
 				nodePath = 'main'
 			}
 			footer = Neos.Neos:ContentCollection {
 				nodePath = 'footer'
 			}
-		}
-	}
-
-.. _Neos_Neos__PrimaryContent:
-
-Neos.Neos:PrimaryContent
-------------------------
-
-Primary content rendering, extends :ref:`Neos_Fusion__Case`. This is a prototype that can be used from packages
-to extend the default content rendering (e.g. to handle specific document node types).
-
-:nodePath: (string, **required**) The relative node path of the ``ContentCollection`` (e.g. ``'main'``)
-:default: Default matcher that renders a ContentCollection
-:[key]: Additional matchers (see :ref:`Neos_Fusion__Case`)
-
-Example for basic usage::
-
-	page.body {
-		content {
-			main = Neos.Neos:PrimaryContent {
-				nodePath = 'main'
-			}
-		}
-	}
-
-Example for custom matcher::
-
-	prototype(Neos.Neos:PrimaryContent) {
-		myArticle {
-			condition = ${q(node).is('[instanceof My.Site:Article]')}
-			renderer = My.Site:ArticleRenderer
 		}
 	}
 

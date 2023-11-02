@@ -62,7 +62,7 @@ page1.body {
     teaser = Neos.Neos:ContentCollection
     teaser.nodePath = 'teaser'
 
-    main = Neos.Neos:PrimaryContent
+    main = Neos.Neos:ContentCollection
     main.nodePath = 'main'
 
     sidebar = Neos.Neos:ContentCollection

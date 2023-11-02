@@ -1,0 +1,5 @@
+# `Neos.Neos:PrimaryContent` is deprecated and will be removed in Neos 10.
+#
+prototype(Neos.Neos:PrimaryContent) < prototype(Neos.Neos:ContentCollection) {
+  nodePath = 'to-be-defined-by-user'
+}
