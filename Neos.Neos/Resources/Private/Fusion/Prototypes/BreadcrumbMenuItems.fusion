@@ -1,19 +1,34 @@
-prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Neos:MenuItems) {
-    itemCollection = ${q(documentNode).parents('[instanceof Neos.Neos:Document]').get()}
-    maximumLevels = 0
+prototype(Neos.Neos:BreadcrumbMenuItems) < prototype(Neos.Fusion:Component) {
 
-    @process {
-        // Show always the current node, event when it is hidden in index
-        addCurrent = Neos.Fusion:Value {
-            currentItem = Neos.Neos:MenuItems {
-                calculateItemStates = ${props.calculateItemStates}
-                renderHiddenInIndex = true
-                maximumLevels = 0
-                itemCollection = ${[documentNode]}
-            }
-            value = ${Array.concat(this.currentItem, value)}
-        }
+  # (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
 
-        reverseOrder = ${Array.reverse(value)}
+  # (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
+  maximumLevels = 0
+
+  # (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+  renderHiddenInIndex = true
+
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``
+  calculateItemStates = false
+
+  renderer = Neos.Fusion:Value {
+    parentItems = Neos.Neos:MenuItems {
+      node = ${props.node}
+      calculateItemStates = ${props.calculateItemStates}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      maximumLevels = ${props.maximumLevels}
+      itemCollection = ${Array.reverse(q(documentNode).parents('[instanceof Neos.Neos:Document]').get())}
     }
+
+    currentItem = Neos.Neos:MenuItems {
+      node = ${props.node}
+      calculateItemStates = ${props.calculateItemStates}
+      renderHiddenInIndex = true
+      maximumLevels = ${props.maximumLevels}
+      itemCollection = ${[documentNode]}
+    }
+
+    value = ${Array.concat(this.parentItems, this.currentItem)}
+  }
 }

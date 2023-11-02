@@ -9,15 +9,15 @@
         "neos/flow-development-collection": "9.0.x-dev",
         "neos/neos-setup": "^2.0",
         "league/flysystem-memory": "^3",
-        "php": "^8.2",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
         "neos/eventstore": "*",
         "neos/eventstore-doctrineadapter": "*",
+        "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
-        "symfony/serializer": "*",
+        "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0",
@@ -33,13 +33,13 @@
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "ext-dom": "*",
+        "neos/twitter-bootstrap": "*",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
         "neos/party": "*",
-        "neos/twitter-bootstrap": "*",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
         "neos/kickstarter": "~9.0.0"
@@ -51,7 +51,6 @@
         "typo3/neos": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
-        "neos/cli-setup": "self.version",
         "neos/contentgraph-doctrinedbaladapter": "self.version",
         "neos/contentgraph-postgresqladapter": "self.version",
         "neos/contentrepository-behavioraltests": "self.version",
@@ -111,7 +110,8 @@
             "../../bin/behat -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
             "../../bin/behat -f progress -c Neos.ContentGraph.DoctrineDbalAdapter/Tests/Behavior/behat.yml.dist",
             "../../flow doctrine:migrate --quiet; ../../flow cr:setup",
-            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml"
+            "../../bin/behat -f progress -c Neos.Neos/Tests/Behavior/behat.yml",
+            "../../bin/behat -f progress -c Neos.ContentRepository.LegacyNodeMigration/Tests/Behavior/behat.yml.dist"
         ],
         "test:behavioral:stop-on-failure": [
             "../../bin/behat -vvv --stop-on-failure -f progress -c Neos.ContentRepository.BehavioralTests/Tests/Behavior/behat.yml.dist",
@@ -128,9 +128,6 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\CliSetup\\": [
-                "Neos.CliSetup/Classes"
-            ],
             "Neos\\ContentGraph\\DoctrineDbalAdapter\\": [
                 "Neos.ContentGraph.DoctrineDbalAdapter/src"
             ],

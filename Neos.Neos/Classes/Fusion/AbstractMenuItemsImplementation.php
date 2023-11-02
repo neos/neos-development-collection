@@ -47,13 +47,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     protected $currentNode;
 
     /**
-     * Internal cache for the currentLevel tsValue.
-     *
-     * @var integer
-     */
-    protected $currentLevel;
-
-    /**
      * Internal cache for the renderHiddenInIndex property.
      *
      * @var boolean
@@ -66,13 +59,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
      * @var boolean
      */
     protected $calculateItemStates;
-
-    /**
-     * Rootline of all nodes from the current node to the site root node, keys are depth of nodes.
-     *
-     * @var array<Node>
-     */
-    protected $currentNodeRootline;
 
     #[Flow\Inject]
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -105,6 +91,19 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     }
 
     /**
+     * The node the menu is built from, all relative specifications will
+     * use this as a base
+     */
+    public function getCurrentNode(): Node
+    {
+        if ($this->currentNode === null) {
+            $this->currentNode = $this->fusionValue('node');
+        }
+
+        return $this->currentNode;
+    }
+
+    /**
      * Main API method which sends the to-be-rendered data to Fluid
      *
      * @return array<int,MenuItem>
@@ -112,9 +111,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
     public function getItems(): array
     {
         if ($this->items === null) {
-            $fusionContext = $this->runtime->getCurrentContext();
-            $this->currentNode = $fusionContext['activeNode'] ?? $fusionContext['documentNode'];
-            $this->currentLevel = 1;
             $this->items = $this->buildItems();
         }
 
@@ -161,33 +157,6 @@ abstract class AbstractMenuItemsImplementation extends AbstractFusionObject
 
         // Node is hidden depending on the _hiddenInIndex property
         return $node->getProperty('_hiddenInIndex');
-    }
-
-    /**
-     * Get the rootline from the current node up to the site node.
-     *
-     * @return array<int,Node> nodes, indexed by depth
-     */
-    protected function getCurrentNodeRootline(): array
-    {
-        if ($this->currentNodeRootline === null) {
-            $rootline = [];
-            $ancestors = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode)
-                ->findAncestorNodes(
-                    $this->currentNode->nodeAggregateId,
-                    FindAncestorNodesFilter::create()
-                );
-            foreach ($ancestors->reverse() as $i => $ancestor) {
-                if (!$ancestor->classification->isRoot()) {
-                    $rootline[$i] = $ancestor;
-                }
-            }
-            $rootline[] = $this->currentNode;
-
-            $this->currentNodeRootline = $rootline;
-        }
-
-        return $this->currentNodeRootline;
     }
 
     protected function buildUri(Node $node): string

@@ -90,7 +90,10 @@ final class EditorContentStreamZookeeper
     public function relayEditorAuthentication(Authentication\TokenInterface $token): void
     {
         $requestHandler = $this->bootstrap->getActiveRequestHandler();
-        assert($requestHandler instanceof HttpRequestHandlerInterface);
+        if (!$requestHandler instanceof HttpRequestHandlerInterface) {
+            // we might be in testing context
+            return;
+        }
         $siteDetectionResult = SiteDetectionResult::fromRequest($requestHandler->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
 

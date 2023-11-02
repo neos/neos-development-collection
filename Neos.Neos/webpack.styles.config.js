@@ -6,13 +6,14 @@ const stylesConfig = {
 	context: __dirname,
 	devtool: "source-map",
 	entry: {
-		Main: ["./Resources/Private/Styles/Neos.scss"],
+		Main: ["./Resources/Private/Styles/Main.scss"],
 		Lite: ["./Resources/Private/Styles/Lite.scss"],
 		Minimal: ["./Resources/Private/Styles/Minimal.scss"],
 		Login: ["./Resources/Private/Styles/Login.scss"],
 		Error: ["./Resources/Private/Styles/Error.scss"],
 		RawContentMode: ["./Resources/Private/Styles/RawContentMode.scss"],
 		Welcome: ["./Resources/Private/Styles/Welcome.scss"],
+		Shortcut: ["./Resources/Private/Styles/Shortcut.scss"],
 	},
 	output: {
 		path: __dirname + "/Resources/Public/Styles",

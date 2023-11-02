@@ -79,6 +79,14 @@ final class Projections implements \IteratorAggregate
     }
 
     /**
+     * @return list<class-string<ProjectionInterface<ProjectionStateInterface>>>
+     */
+    public function getClassNames(): array
+    {
+        return array_keys($this->projections);
+    }
+
+    /**
      * @return \Traversable<ProjectionInterface<ProjectionStateInterface>>
      */
     public function getIterator(): \Traversable

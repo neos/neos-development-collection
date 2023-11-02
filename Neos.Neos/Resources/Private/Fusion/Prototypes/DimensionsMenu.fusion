@@ -1,11 +1,34 @@
 # Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
 prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
+  # (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
+
+  # html attributes for the rendered list
   attributes = Neos.Fusion:DataStructure
+
+  # (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+  renderHiddenInIndex = true
+
+  # (optional, string): name of the dimension which this menu should be based on. Example: "language".
+  dimension = null
+
+  # (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
+  presets = null
+
+  # (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
+  includeAllPresets = false
+
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``
+  calculateItemStates = false
 
   @private {
     items = Neos.Neos:DimensionsMenuItems {
-      @ignoreProperties = ${['attributes']}
-      @apply.props = ${props}
+      node = ${props.node}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      dimension = ${props.dimension}
+      presets = ${props.presets}
+      includeAllPresets = ${props.includeAllPresets}
+      calculateItemStates = ${props.calculateItemStates}
     }
   }
 

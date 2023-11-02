@@ -8,6 +8,10 @@ enum ImageAdjustmentType: string
     case CROP_IMAGE = 'CROP_IMAGE';
     case QUALITY_IMAGE = 'QUALITY_IMAGE';
 
+    /**
+     * @param array<string, string> $data
+     * @return array<string, mixed>
+     */
     public function convertProperties(array $data): array
     {
         $data = array_change_key_case($data);

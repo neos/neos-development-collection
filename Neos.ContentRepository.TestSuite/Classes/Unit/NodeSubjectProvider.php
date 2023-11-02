@@ -90,7 +90,7 @@ final class NodeSubjectProvider
             );
         }
         $serializedDefaultPropertyValues = SerializedPropertyValues::fromArray($defaultPropertyValues);
-        return new Node(
+        return Node::create(
             ContentSubgraphIdentity::create(
                 ContentRepositoryId::fromString('default'),
                 ContentStreamId::fromString('cs-id'),

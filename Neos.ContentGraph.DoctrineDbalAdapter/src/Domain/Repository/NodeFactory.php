@@ -67,7 +67,7 @@ final class NodeFactory
             ? $this->nodeTypeManager->getNodeType($nodeRow['nodetypename'])
             : null;
 
-        return new Node(
+        return Node::create(
             ContentSubgraphIdentity::create(
                 $this->contentRepositoryId,
                 ContentStreamId::fromString($nodeRow['contentstreamid']),

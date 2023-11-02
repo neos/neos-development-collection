@@ -43,6 +43,7 @@ final class HypergraphProjectionFactory implements ProjectionFactoryInterface
                 $projectionFactoryDependencies->nodeTypeManager,
                 $projectionFactoryDependencies->propertyConverter
             ),
+            $projectionFactoryDependencies->contentRepositoryId,
             $projectionFactoryDependencies->nodeTypeManager,
             $tableNamePrefix
         );

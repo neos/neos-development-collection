@@ -201,6 +201,7 @@ class ChildrenOperation extends AbstractOperation
                 // Add filtered nodes to output
                 /** @var Node $filteredNode */
                 foreach ($filteredOutput as $filteredNode) {
+                    /** @phpstan-ignore-next-line undefined behaviour https://github.com/neos/neos-development-collection/issues/4507#issuecomment-1784123143 */
                     if (!isset($outputNodeAggregateIds[$filteredNode->nodeAggregateId->value])) {
                         $output[] = $filteredNode;
                     }
