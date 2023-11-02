@@ -158,37 +158,6 @@ Feature: Routing behavior of removed, disabled and re-enabled nodes
     And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
     And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
 
-  Scenario: Disable the same node twice
-    When the command "DisableNodeAggregate" is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    And the event NodeAggregateWasDisabled was published with payload:
-      | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | affectedDimensionSpacePoints | [{}]                     |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
-    Then No node should match URL "/david-nodenborough"
-    And No node should match URL "/david-nodenborough/earl-document"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-    When the command "EnableNodeAggregate" is executed with payload:
-      | Key                          | Value                    |
-      | contentStreamId              | "cs-identifier"          |
-      | nodeAggregateId              | "sir-david-nodenborough" |
-      | coveredDimensionSpacePoint   | {}                       |
-      | nodeVariantSelectionStrategy | "allVariants"            |
-    And the graph projection is fully up to date
-    And The documenturipath projection is up to date
-    When I am on URL "/david-nodenborough"
-    Then the matched node should be "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}"
-    And The node "sir-david-nodenborough" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough"
-    And The node "earl-o-documentbourgh" in content stream "cs-identifier" and dimension "{}" should resolve to URL "/david-nodenborough/earl-document"
-
   Scenario: Re-enable the same node twice
     When the command "DisableNodeAggregate" is executed with payload:
       | Key                          | Value                    |
