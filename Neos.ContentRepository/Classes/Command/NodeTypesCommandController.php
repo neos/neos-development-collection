@@ -30,7 +30,7 @@ class NodeTypesCommandController extends CommandController
      * @param ?int $level Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
      * @param ?string $path Path of the NodeType-configuration which will be shown
      */
-    public function showCommand(string $nodeTypeName, ?string $path = null, ?int $level = 0): void
+    public function showCommand(string $nodeTypeName, string $path = '', int $level = 0): void
     {
         if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
             $this->outputLine('<error>NodeType "%s" was not found!</error>', [$nodeTypeName]);
