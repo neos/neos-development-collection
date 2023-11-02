@@ -31,7 +31,6 @@ class FeatureContext implements BehatContext
     use FlowBootstrapTrait;
     use FlowEntitiesTrait;
     use BrowserTrait;
-
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
     use RoutingTrait;
