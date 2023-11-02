@@ -38,6 +38,9 @@ final class ExpandedNodeTypeCriteria
         // in case there are no filters, we fall back to allowing every node type.
         // Furthermore, if there are only negated filters,
         // we also fall back to allowing every node type (when the excludelist does not match)
+        //
+        // this logic can also be summarized to `$wildcardAllowed = $nodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty();`
+        // see https://neos-project.slack.com/archives/C3MCBK6S2/p1695996578640689
         $nodeTypeCriteriaEmpty = $nodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
             && $nodeTypeCriteria->explicitlyDisallowedNodeTypeNames->isEmpty();
         $onlyNegatedFilters = $nodeTypeCriteria->explicitlyAllowedNodeTypeNames->isEmpty()
