@@ -44,16 +44,16 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
     {
         $numberOfErrors = 0;
         foreach ($this->nodeDataRows as $nodeDataRow) {
-            $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-            try {
-                $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-            } catch (NodeTypeNotFoundException $exception) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, '%s. Node: "%s"', $exception->getMessage(), $nodeDataRow['identifier']);
+            if ($nodeDataRow['path'] === '/sites') {
+                // the sites node has no properties and is unstructured
                 continue;
             }
-            // HACK the following line is required in order to fully initialize the node type
-            $nodeType->getFullConfiguration();
+            $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
+            if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+                $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
+                continue;
+            }
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {
