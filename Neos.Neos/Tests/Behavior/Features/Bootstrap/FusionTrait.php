@@ -90,7 +90,7 @@ trait FusionTrait
         if ($this->fusionContext['documentNode'] === null) {
             throw new \RuntimeException(sprintf('Failed to find closest document node for node with aggregate id "%s"', $nodeAggregateId), 1697790940);
         }
-        $this->fusionContext['site'] = $subgraph->findClosestNode($this->fusionContext['documentNode']->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+        $this->fusionContext['site'] = $subgraph->findClosestNode($this->fusionContext['documentNode']->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($this->fusionContext['site'] === null) {
             throw new \RuntimeException(sprintf('Failed to resolve site node for node with aggregate id "%s"', $nodeAggregateId), 1697790963);
         }
