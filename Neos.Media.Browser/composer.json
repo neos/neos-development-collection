@@ -12,6 +12,7 @@
         "neos/neos": "self.version",
         "neos/flow": "*",
         "neos/fluid-adaptor": "*",
+        "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "neos/error-messages": "*",
