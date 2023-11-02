@@ -1,0 +1,61 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue;
+
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\AndCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\NegateCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\OrCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueContains;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueEndsWith;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueEquals;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueGreaterThan;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueGreaterThanOrEqual;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThan;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueLessThanOrEqual;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueStartsWith;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\PropertyCollection;
+
+final class PropertyValueCriteriaMatcher
+{
+    public static function matchesPropertyCollection(PropertyCollection $propertyCollection, PropertyValueCriteriaInterface $propertyValueCriteria): bool
+    {
+        switch (true) {
+            case $propertyValueCriteria instanceof AndCriteria:
+                return self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria1) && self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria2);
+            case $propertyValueCriteria instanceof OrCriteria:
+                return self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria1) || self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria2);
+            case $propertyValueCriteria instanceof NegateCriteria:
+                return !self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria);
+            case $propertyValueCriteria instanceof PropertyValueContains:
+                $propertyValue = $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value);
+                return (is_string($propertyValue) || $propertyValue instanceof \Stringable) ? str_contains((string)$propertyValue, $propertyValueCriteria->value) : false;
+            case $propertyValueCriteria instanceof PropertyValueEndsWith:
+                $propertyValue = $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value);
+                return (is_string($propertyValue) || $propertyValue instanceof \Stringable) ? str_ends_with((string)$propertyValue, $propertyValueCriteria->value) : false;
+            case $propertyValueCriteria instanceof PropertyValueStartsWith:
+                $propertyValue = $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value);
+                return (is_string($propertyValue) || $propertyValue instanceof \Stringable) ? str_starts_with((string)$propertyValue, $propertyValueCriteria->value) : false;
+            case $propertyValueCriteria instanceof PropertyValueEquals:
+                return $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value) == $propertyValueCriteria->value;
+            case $propertyValueCriteria instanceof PropertyValueGreaterThan:
+                return $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value) > $propertyValueCriteria->value;
+            case $propertyValueCriteria instanceof PropertyValueGreaterThanOrEqual:
+                return $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value) >= $propertyValueCriteria->value;
+            case $propertyValueCriteria instanceof PropertyValueLessThan:
+                return $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value) < $propertyValueCriteria->value;
+            case $propertyValueCriteria instanceof PropertyValueLessThanOrEqual:
+                return $propertyCollection->offsetGet($propertyValueCriteria->propertyName->value) <= $propertyValueCriteria->value;
+            default:
+                throw new \InvalidArgumentException(sprintf('Invalid/unsupported property value criteria "%s"', get_debug_type($propertyValueCriteria)), 1679561073);
+        }
+    }
+
+    public static function matchesNode(Node $node, PropertyValueCriteriaInterface $propertyValueCriteria): bool
+    {
+        return static::matchesPropertyCollection($node->properties, $propertyValueCriteria);
+    }
+}
