@@ -35,7 +35,6 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  */
 trait FusionTrait
 {
-
     use RoutingTrait;
     use ProjectedNodeTrait;
     use CRTestSuiteRuntimeVariables;
@@ -48,6 +47,14 @@ trait FusionTrait
     private ?string $fusionCode = null;
 
     private ?\Throwable $lastRenderingException = null;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     /**
      * @BeforeScenario
@@ -94,7 +101,7 @@ trait FusionTrait
      */
     public function theFusionContextRequestIs(string $requestUri = null): void
     {
-        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $requestUri);
+        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $requestUri);
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
         $this->fusionGlobalContext['request'] = ActionRequest::fromHttpRequest($httpRequest);
@@ -107,7 +114,6 @@ trait FusionTrait
     {
         $this->fusionCode = $fusionCode->getRaw();
     }
-
 
     /**
      * @When I execute the following Fusion code:
@@ -126,7 +132,7 @@ trait FusionTrait
         $fusionGlobals = FusionGlobals::fromArray($this->fusionGlobalContext);
 
         $fusionRuntime = (new RuntimeFactory())->createFromConfiguration($fusionAst, $fusionGlobals);
-        $fusionRuntime->overrideExceptionHandler($this->getObjectManager()->get(ThrowingHandler::class));
+        $fusionRuntime->overrideExceptionHandler($this->getObject(ThrowingHandler::class));
         $fusionRuntime->pushContextArray($this->fusionContext);
         try {
             $this->renderingResult = $fusionRuntime->render($path);
