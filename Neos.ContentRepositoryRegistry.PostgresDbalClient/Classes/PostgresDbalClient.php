@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Neos\ContentRepositoryRegistry\Infrastructure;
+namespace Neos\ContentRepositoryRegistry\PostgresDbalClient;
 
 /*
- * This file is part of the Neos.ContentRepositoryRegistry package.
+ * This file is part of the Neos.ContentRepositoryRegistry.PostgresDbalClient package.
  *
  * (c) Contributors of the Neos Project - www.neos.io
  *
@@ -21,7 +21,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterfa
 use Neos\Flow\Annotations as Flow;
 
 /**
- * The Doctrine DBAL client adapter
+ * The PostgreSQL-optimized Doctrine DBAL client adapter
  *
  * @Flow\Scope("singleton")
  */
