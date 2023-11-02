@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
@@ -77,7 +78,13 @@ class ContentStreamProjection implements ProjectionInterface
 
     public function getStatus(): ProjectionStatus
     {
-        return ProjectionStatus::createOk();
+        // TODO??? Worth it??
+        // if ($currentSchema->hasTable($this->tableName)) {
+        //     // added 2023-04-01
+        //     $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
+        // }
+
+        return ProjectionStatus::createFromSchemaDiff($this->calculateSchemaDiff());
     }
 
     private function setupTables(): void
@@ -93,6 +100,20 @@ class ContentStreamProjection implements ProjectionInterface
         if ($currentSchema->hasTable($this->tableName)) {
             // added 2023-04-01
             $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
+        }
+
+        $schemaDiff = $this->calculateSchemaDiff();
+        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
+            $connection->executeStatement($statement);
+        }
+    }
+
+    private function calculateSchemaDiff(): SchemaDiff
+    {
+        $connection = $this->dbalClient->getConnection();
+        $schemaManager = $connection->getSchemaManager();
+        if (!$schemaManager instanceof AbstractSchemaManager) {
+            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
         $schema = new Schema();
@@ -111,10 +132,7 @@ class ContentStreamProjection implements ProjectionInterface
         $contentStreamTable->addColumn('removed', Types::BOOLEAN)
             ->setDefault(false)
             ->setNotnull(false);
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
+        return (new Comparator())->compare($schemaManager->createSchema(), $schema);
     }
 
     public function reset(): void

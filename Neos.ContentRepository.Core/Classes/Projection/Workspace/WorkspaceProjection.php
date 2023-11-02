@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -77,10 +78,20 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
     public function getStatus(): ProjectionStatus
     {
-        return ProjectionStatus::createOk();
+        return ProjectionStatus::createFromSchemaDiff($this->calculateSchemaDiff());
     }
 
     private function setupTables(): void
+    {
+        $connection = $this->dbalClient->getConnection();
+
+        $schemaDiff = $this->calculateSchemaDiff();
+        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
+            $connection->executeStatement($statement);
+        }
+    }
+
+    private function calculateSchemaDiff(): SchemaDiff
     {
         $connection = $this->dbalClient->getConnection();
         $schemaManager = $connection->getSchemaManager();
@@ -114,10 +125,7 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 
         $workspaceTable->setPrimaryKey(['workspacename']);
 
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
+        return (new Comparator())->compare($schemaManager->createSchema(), $schema);
     }
 
     public function reset(): void

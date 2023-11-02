@@ -239,7 +239,7 @@ final class AssetUsageProjection implements ProjectionInterface
 
     public function getStatus(): ProjectionStatus
     {
-        return ProjectionStatus::createOk();
+        return ProjectionStatus::createFromSchemaDiff($this->repository->calculateSchemaDiff());
     }
 
     public function canHandle(EventInterface $event): bool

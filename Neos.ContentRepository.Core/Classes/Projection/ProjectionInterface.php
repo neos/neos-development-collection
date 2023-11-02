@@ -26,6 +26,7 @@ interface ProjectionInterface
      */
     public function setUp(): void;
 
+    // todo use Status.php and SetupResult.php???
     public function getStatus(): ProjectionStatus;
 
     public function canHandle(EventInterface $event): bool;

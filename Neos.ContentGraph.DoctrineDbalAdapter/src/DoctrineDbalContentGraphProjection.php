@@ -7,6 +7,7 @@ namespace Neos\ContentGraph\DoctrineDbalAdapter;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Schema\SchemaDiff;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeDisabling;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature\NodeMove;
@@ -117,20 +118,20 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     public function getStatus(): ProjectionStatus
     {
-        $connection = $this->dbalClient->getConnection();
-        $schemaManager = $connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1693731027816);
-        }
-
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
-
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-
-        return ProjectionStatus::createFromSchemaDiff($schemaDiff);
+        // todo also check checkpointStorage
+        return ProjectionStatus::createFromSchemaDiff($this->calculateSchemaDiff());
     }
 
-    private function setupTables(): SetupResult
+    private function setupTables(): void
+    {
+        $connection = $this->dbalClient->getConnection();
+        $schemaDiff = $this->calculateSchemaDiff();
+        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
+            $connection->executeStatement($statement);
+        }
+    }
+
+    private function calculateSchemaDiff(): SchemaDiff
     {
         $connection = $this->dbalClient->getConnection();
         $schemaManager = $connection->getSchemaManager();
@@ -140,14 +141,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
         $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
 
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
-        foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
-            $connection->executeStatement($statement);
-        }
-        return SetupResult::success('');
+        return (new Comparator())->compare($schemaManager->createSchema(), $schema);
     }
-
-
 
     public function reset(): void
     {

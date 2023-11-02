@@ -9,6 +9,7 @@ use Doctrine\DBAL\Exception as DbalException;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\SchemaDiff;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -37,22 +38,22 @@ final class AssetUsageRepository
 
     public function setup(): void
     {
-        $schemaManager = $this->dbal->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
-
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), self::databaseSchema($this->tableNamePrefix));
+        $schemaDiff = $this->calculateSchemaDiff();
         foreach ($schemaDiff->toSaveSql($this->dbal->getDatabasePlatform()) as $statement) {
             $this->dbal->executeStatement($statement);
         }
     }
 
-    private static function databaseSchema(string $tablePrefix): Schema
+    public function calculateSchemaDiff(): SchemaDiff
     {
+        $schemaManager = $this->dbal->getSchemaManager();
+        if (!$schemaManager instanceof AbstractSchemaManager) {
+            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
+        }
+
         $schema = new Schema();
 
-        $table = $schema->createTable($tablePrefix);
+        $table = $schema->createTable($this->tableNamePrefix);
         $table->addColumn('assetid', Types::STRING)
             ->setLength(40)
             ->setNotnull(true)
@@ -89,7 +90,7 @@ final class AssetUsageRepository
             ->addIndex(['nodeaggregateid'])
             ->addIndex(['origindimensionspacepointhash']);
 
-        return $schema;
+        return (new Comparator())->compare($schemaManager->createSchema(), $schema);
     }
 
     public function findUsages(AssetUsageFilter $filter): AssetUsages

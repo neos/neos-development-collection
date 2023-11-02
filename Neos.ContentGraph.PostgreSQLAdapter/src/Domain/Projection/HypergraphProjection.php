@@ -17,6 +17,7 @@ namespace Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Schema\SchemaDiff;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\ContentStreamForking;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeCreation;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Projection\Feature\NodeDisabling;
@@ -95,7 +96,6 @@ final class HypergraphProjection implements ProjectionInterface
         );
     }
 
-
     public function setUp(): void
     {
         $this->setupTables();
@@ -104,20 +104,13 @@ final class HypergraphProjection implements ProjectionInterface
 
     public function getStatus(): ProjectionStatus
     {
-        return ProjectionStatus::createOk();
+        return ProjectionStatus::createFromSchemaDiff($this->calculateSchemaDiff());
     }
 
-    private function setupTables(): SetupResult
+    private function setupTables(): void
     {
         $connection = $this->databaseClient->getConnection();
-        HypergraphSchemaBuilder::registerTypes($connection->getDatabasePlatform());
-        $schemaManager = $connection->getSchemaManager();
-        if (!$schemaManager instanceof AbstractSchemaManager) {
-            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
-        }
-
-        $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
+        $schemaDiff = $this->calculateSchemaDiff();
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);
         }
@@ -130,8 +123,19 @@ final class HypergraphProjection implements ProjectionInterface
             create index if not exists restriction_affected
                 on ' . $this->tableNamePrefix . '_restrictionhyperrelation using gin (affectednodeaggregateids);
         ');
+    }
 
-        return SetupResult::success('');
+    private function calculateSchemaDiff(): SchemaDiff
+    {
+        $connection = $this->databaseClient->getConnection();
+        HypergraphSchemaBuilder::registerTypes($connection->getDatabasePlatform());
+        $schemaManager = $connection->getSchemaManager();
+        if (!$schemaManager instanceof AbstractSchemaManager) {
+            throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
+        }
+
+        $schema = (new HypergraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
+        return (new Comparator())->compare($schemaManager->createSchema(), $schema);
     }
 
     public function reset(): void
