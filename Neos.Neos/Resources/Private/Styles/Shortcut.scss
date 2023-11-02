@@ -1,0 +1,32 @@
+#neos-shortcut {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: $grayMedium;
+	z-index: 9999;
+	@include font;
+
+	p {
+		position: relative;
+		margin: 0 auto;
+		width: 500px;
+		height: 60px;
+		top: 50%;
+		margin-top: -30px;
+		color: #fff;
+		font-size: 22px;
+		line-height: 1.4;
+		text-align: center;
+
+		a {
+			color: $blue;
+			text-decoration: none;
+
+			&:hover {
+				color: $blueLight;
+			}
+		}
+	}
+}

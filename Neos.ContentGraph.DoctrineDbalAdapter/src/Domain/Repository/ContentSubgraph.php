@@ -21,10 +21,12 @@ use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\ParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -102,6 +104,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
     private int $dynamicParameterCount = 0;
 
     public function __construct(
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly ContentStreamId $contentStreamId,
         private readonly DimensionSpacePoint $dimensionSpacePoint,
         private readonly VisibilityConstraints $visibilityConstraints,
@@ -110,6 +113,16 @@ final class ContentSubgraph implements ContentSubgraphInterface
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
+    }
+
+    public function getIdentity(): ContentSubgraphIdentity
+    {
+        return ContentSubgraphIdentity::create(
+            $this->contentRepositoryId,
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 
 /**
  * An immutable collection of NodeAggregateIds, indexed by their value
@@ -67,13 +68,10 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
         return self::fromArray(\json_decode($jsonString, true));
     }
 
-    /**
-     * @param Node[] $nodes
-     */
-    public static function fromNodes(array $nodes): self
+    public static function fromNodes(Nodes $nodes): self
     {
         return self::fromArray(
-            array_map(fn(Node $node) => $node->nodeAggregateId, $nodes)
+            array_map(fn(Node $node) => $node->nodeAggregateId, iterator_to_array($nodes))
         );
     }
 
@@ -83,6 +81,11 @@ final class NodeAggregateIds implements \IteratorAggregate, \JsonSerializable
             $this->nodeAggregateIds,
             $other->nodeAggregateIds
         ));
+    }
+
+    public function contain(NodeAggregateId $nodeAggregateId): bool
+    {
+        return array_key_exists($nodeAggregateId->value, $this->nodeAggregateIds);
     }
 
     /**

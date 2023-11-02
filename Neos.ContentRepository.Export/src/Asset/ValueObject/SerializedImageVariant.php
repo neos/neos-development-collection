@@ -71,11 +71,6 @@ final class SerializedImageVariant implements \JsonSerializable
 
     public function matches(ImageVariant $imageVariant): bool
     {
-        if (self::fromImageVariant($imageVariant)->toJson() !== $this->toJson()) {
-            \Neos\Flow\var_dump(self::fromImageVariant($imageVariant)->toJson());
-            \Neos\Flow\var_dump($this->toJson());
-            exit;
-        }
         return self::fromImageVariant($imageVariant)->toJson() === $this->toJson();
     }
 

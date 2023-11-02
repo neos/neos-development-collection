@@ -24,9 +24,11 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphSiblin
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\QueryUtility;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
@@ -69,17 +71,28 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @internal but the public {@see ContentSubgraphInterface} is API
  */
-final class ContentSubhypergraph implements ContentSubgraphInterface
+final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 {
     public function __construct(
-        private readonly ContentStreamId $contentStreamId,
-        private readonly DimensionSpacePoint $dimensionSpacePoint,
-        private readonly VisibilityConstraints $visibilityConstraints,
-        private readonly PostgresDbalClientInterface $databaseClient,
-        private readonly NodeFactory $nodeFactory,
-        private readonly NodeTypeManager $nodeTypeManager,
-        private readonly string $tableNamePrefix
+        private ContentRepositoryId $contentRepositoryId,
+        private ContentStreamId $contentStreamId,
+        private DimensionSpacePoint $dimensionSpacePoint,
+        private VisibilityConstraints $visibilityConstraints,
+        private PostgresDbalClientInterface $databaseClient,
+        private NodeFactory $nodeFactory,
+        private NodeTypeManager $nodeTypeManager,
+        private string $tableNamePrefix
     ) {
+    }
+
+    public function getIdentity(): ContentSubgraphIdentity
+    {
+        return ContentSubgraphIdentity::create(
+            $this->contentRepositoryId,
+            $this->contentStreamId,
+            $this->dimensionSpacePoint,
+            $this->visibilityConstraints
+        );
     }
 
     public function findNodeById(NodeAggregateId $nodeAggregateId): ?Node

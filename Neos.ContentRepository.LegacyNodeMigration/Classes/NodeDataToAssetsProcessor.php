@@ -17,9 +17,18 @@ use Neos\Utility\TypeHandling;
 
 final class NodeDataToAssetsProcessor implements ProcessorInterface
 {
+    /**
+     * @var array<string, true>
+     */
     private array $processedAssetIds = [];
+    /**
+     * @var array<\Closure>
+     */
     private array $callbacks = [];
 
+    /**
+     * @param iterable<int, array<string, mixed>> $nodeDataRows
+     */
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly AssetExporter $assetExporter,
@@ -35,16 +44,16 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
     {
         $numberOfErrors = 0;
         foreach ($this->nodeDataRows as $nodeDataRow) {
-            $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
-            try {
-                $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-            } catch (NodeTypeNotFoundException $exception) {
-                $numberOfErrors ++;
-                $this->dispatch(Severity::ERROR, '%s. Node: "%s"', $exception->getMessage(), $nodeDataRow['identifier']);
+            if ($nodeDataRow['path'] === '/sites') {
+                // the sites node has no properties and is unstructured
                 continue;
             }
-            // HACK the following line is required in order to fully initialize the node type
-            $nodeType->getFullConfiguration();
+            $nodeTypeName = NodeTypeName::fromString($nodeDataRow['nodetype']);
+            if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+                $this->dispatch(Severity::ERROR, 'The node type "%s" is not available. Node: "%s"', $nodeTypeName->value, $nodeDataRow['identifier']);
+                continue;
+            }
+            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
             try {
                 $properties = json_decode($nodeDataRow['properties'], true, 512, JSON_THROW_ON_ERROR);
             } catch (\JsonException $exception) {
@@ -84,12 +93,10 @@ final class NodeDataToAssetsProcessor implements ProcessorInterface
     private function extractAssetIdentifiers(string $type, mixed $value): array
     {
         if (($type === 'string' || is_subclass_of($type, \Stringable::class, true)) && is_string($value)) {
-            // @phpstan-ignore-next-line
             preg_match_all('/asset:\/\/(?<assetId>[\w-]*)/i', (string)$value, $matches, PREG_SET_ORDER);
             return array_map(static fn(array $match) => $match['assetId'], $matches);
         }
         if (is_subclass_of($type, ResourceBasedInterface::class, true)) {
-            // @phpstan-ignore-next-line
             return isset($value['__identifier']) ? [$value['__identifier']] : [];
         }
 

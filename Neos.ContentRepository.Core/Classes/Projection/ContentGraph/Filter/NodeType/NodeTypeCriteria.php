@@ -56,11 +56,25 @@ final class NodeTypeCriteria
     ) {
     }
 
+    /**
+     * We recommended to call this method with named arguments to better
+     * understand the distinction between allowed and disallowed NodeTypeNames
+     */
     public static function create(
-        NodeTypeNames $explicitlyAllowedNodeTypeNames,
-        NodeTypeNames $explicitlyDisallowedNodeTypeNames
+        NodeTypeNames $allowed,
+        NodeTypeNames $disallowed
     ): self {
-        return new self($explicitlyAllowedNodeTypeNames, $explicitlyDisallowedNodeTypeNames);
+        return new self($allowed, $disallowed);
+    }
+
+    public static function createWithAllowedNodeTypeNames(NodeTypeNames $nodeTypeNames): self
+    {
+        return new self($nodeTypeNames, NodeTypeNames::createEmpty());
+    }
+
+    public static function createWithDisallowedNodeTypeNames(NodeTypeNames $nodeTypeNames): self
+    {
+        return new self(NodeTypeNames::createEmpty(), $nodeTypeNames);
     }
 
     public static function fromFilterString(string $serializedFilters): self

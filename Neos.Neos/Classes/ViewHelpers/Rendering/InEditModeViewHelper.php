@@ -15,6 +15,9 @@ declare(strict_types=1);
 namespace Neos\Neos\ViewHelpers\Rendering;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
+use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Model\RenderingMode;
 
 /**
  * ViewHelper to find out if Neos is rendering an edit mode.
@@ -55,8 +58,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
  * Shown in all other cases.
  * </output>
  */
-class InEditModeViewHelper extends AbstractRenderingStateViewHelper
+class InEditModeViewHelper extends AbstractViewHelper
 {
+    use FusionContextTrait;
+
     /**
      * Initialize the arguments.
      *
@@ -66,11 +71,6 @@ class InEditModeViewHelper extends AbstractRenderingStateViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
-        $this->registerArgument(
-            'node',
-            Node::class,
-            'Optional Node to use context from'
-        );
         $this->registerArgument(
             'mode',
             'string',
@@ -84,7 +84,14 @@ class InEditModeViewHelper extends AbstractRenderingStateViewHelper
      */
     public function render()
     {
-        // TODO: implement
+        $renderingMode = $this->getContextVariable('renderingMode');
+        if ($renderingMode instanceof RenderingMode) {
+            $mode = $this->arguments['mode'];
+            if ($mode) {
+                return $renderingMode->isEdit && $renderingMode->name === $mode;
+            }
+            return $renderingMode->isEdit;
+        }
         return false;
     }
 }

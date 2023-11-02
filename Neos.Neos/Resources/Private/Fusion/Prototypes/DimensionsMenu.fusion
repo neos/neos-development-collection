@@ -1,34 +1,52 @@
 # Neos.Neos:DimensionsMenu provides dimension (e.g. language) menu rendering
-prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Neos:Menu) {
-  templatePath = 'resource://Neos.Neos/Private/Templates/FusionObjects/DimensionsMenu.html'
+prototype(Neos.Neos:DimensionsMenu) < prototype(Neos.Fusion:Component) {
+  # (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+  node = ${documentNode}
 
-  # the "absent" state is assigned to items for dimension (combinations) for which no node variant exists
-  absent.attributes = Neos.Fusion:DataStructure {
-    class = 'normal'
-  }
+  # html attributes for the rendered list
+  attributes = Neos.Fusion:DataStructure
 
-  # if documents which are hidden in index should be rendered or not
+  # (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
   renderHiddenInIndex = true
 
-  # name of the dimension to use (optional)
+  # (optional, string): name of the dimension which this menu should be based on. Example: "language".
   dimension = null
 
-  # list of presets, if the default order should be overridden, only used with "dimension" set
+  # (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
   presets = null
 
-  # if true, items for all presets will be included, ignoring dimension constraints
+  # (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
   includeAllPresets = false
 
-  @context {
-    dimension = ${this.dimension}
-    presets = ${this.presets}
-    includeAllPresets = ${this.includeAllPresets}
+  # (boolean) activate the *expensive* calculation of item states defaults to ``false``
+  calculateItemStates = false
+
+  @private {
+    items = Neos.Neos:DimensionsMenuItems {
+      node = ${props.node}
+      renderHiddenInIndex = ${props.renderHiddenInIndex}
+      dimension = ${props.dimension}
+      presets = ${props.presets}
+      includeAllPresets = ${props.includeAllPresets}
+      calculateItemStates = ${props.calculateItemStates}
+    }
   }
 
-  items = Neos.Neos:DimensionsMenuItems {
-    includeAllPresets = ${includeAllPresets}
-    dimension = ${dimension}
-    presets = ${presets}
+  renderer = Neos.Neos:MenuItemListRenderer {
+    items = ${private.items}
+    attributes = ${props.attributes}
+  }
+
+  @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ContextDependentHandler'
+
+  @cache {
+    mode = 'cached'
+    entryIdentifier {
+      documentNode = ${Neos.Caching.entryIdentifierForNode(documentNode)}
+    }
+    entryTags {
+      1 = ${Neos.Caching.nodeTypeTag('Neos.Neos:Document', documentNode)}
+    }
   }
 }
 

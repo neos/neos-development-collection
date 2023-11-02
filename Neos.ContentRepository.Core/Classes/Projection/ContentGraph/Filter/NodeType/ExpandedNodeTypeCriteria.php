@@ -18,7 +18,6 @@ use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 
 /**
  * Implementation detail of {@see NodeTypeCriteria}, to be used inside implementations of ContentSubgraphInterface.
@@ -32,50 +31,6 @@ final class ExpandedNodeTypeCriteria
         public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames,
         public readonly NodeTypeNames $explicitlyDisallowedNodeTypeNames
     ) {
-    }
-
-    /**
-     * @param array<string,bool> $nodeTypeDeclaration
-     */
-    public static function createFromNodeTypeDeclaration(
-        array $nodeTypeDeclaration,
-        NodeTypeManager $nodeTypeManager
-    ): self {
-        $wildCardAllowed = false;
-        $explicitlyAllowedNodeTypeNames = [];
-        $explicitlyDisallowedNodeTypeNames = [];
-        foreach ($nodeTypeDeclaration as $constraintName => $allowed) {
-            if ($constraintName === '*') {
-                $wildCardAllowed = $allowed;
-            } else {
-                if ($allowed) {
-                    $explicitlyAllowedNodeTypeNames[] = $constraintName;
-                } else {
-                    $explicitlyDisallowedNodeTypeNames[] = $constraintName;
-                }
-            }
-        }
-
-        return new self(
-            $wildCardAllowed,
-            self::expandByIncludingSubNodeTypes(
-                NodeTypeNames::fromStringArray($explicitlyAllowedNodeTypeNames),
-                $nodeTypeManager
-            ),
-            self::expandByIncludingSubNodeTypes(
-                NodeTypeNames::fromStringArray($explicitlyDisallowedNodeTypeNames),
-                $nodeTypeManager
-            )
-        );
-    }
-
-    public static function allowAll(): self
-    {
-        return new self(
-            true,
-            NodeTypeNames::createEmpty(),
-            NodeTypeNames::createEmpty(),
-        );
     }
 
     public static function create(NodeTypeCriteria $nodeTypeCriteria, NodeTypeManager $nodeTypeManager): self
@@ -137,23 +92,5 @@ final class ExpandedNodeTypeCriteria
 
         // otherwise, we return $wildcardAllowed.
         return $this->isWildCardAllowed;
-    }
-
-    public function toFilterString(): string
-    {
-        $parts = [];
-        if ($this->isWildCardAllowed) {
-            $parts[] = '*';
-        }
-
-        foreach ($this->explicitlyDisallowedNodeTypeNames as $nodeTypeName) {
-            $parts[] = '!' . $nodeTypeName->value;
-        }
-
-        foreach ($this->explicitlyAllowedNodeTypeNames as $nodeTypeName) {
-            $parts[] = $nodeTypeName->value;
-        }
-
-        return implode(',', $parts);
     }
 }

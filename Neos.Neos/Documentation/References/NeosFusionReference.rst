@@ -474,7 +474,7 @@ Example::
     value = ${1+2}
   }
 
-.. _Neos_Fusion__Tag:
+.. _Neos_Fusion__DataStructure:
 
 
 Neos.Fusion:DataStructure
@@ -694,7 +694,7 @@ Neos.Fusion:Link.Resource
 Renders a link pointing to a resource
 
 :content: (string) content of the link tag
-:href: (string,  default :ref:`Neos_Fusion__ResouceUri`) The href for the link tag
+:href: (string,  default :ref:`Neos_Fusion__ResourceUri`) The href for the link tag
 :[key]: (string) Other attributes for the link tag
 
 Example::
@@ -741,12 +741,10 @@ into rendering a page; responsible for rendering the ``<html>`` tag and everythi
 :head.titleTag: (:ref:`Neos_Fusion__Tag`) The ``<title>`` tag
 :head.javascripts: (:ref:`Neos_Fusion__Join`) Script includes in the head should go here
 :head.stylesheets: (:ref:`Neos_Fusion__Join`) Link tags for stylesheets in the head should go here
-:body.templatePath: (string) Path to a fluid template for the page body
 :bodyTag: (:ref:`Neos_Fusion__Tag`) The opening ``<body>`` tag
 :bodyTag.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for the ``<body>`` tag
-:body: (:ref:`Neos_Fusion__Template`) HTML markup for the ``<body>`` tag
+:body: (:ref:`Neos_Fusion__Join`) HTML markup for the ``<body>`` tag.
 :body.javascripts: (:ref:`Neos_Fusion__Join`) Body footer JavaScript includes
-:body.[key]: (mixed) Body template variables
 
 Examples:
 ^^^^^^^^^
@@ -966,73 +964,50 @@ Get argument in controller action::
 Neos.Neos:Menu
 --------------
 
-Render a menu with items for nodes. Extends :ref:`Neos_Fusion__Template`.
+Render a menu with items for nodes.
 
-:templatePath: (string) Override the template path
-:entryLevel: (integer) Start the menu at the given depth
+:attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
+
+The following properties are passed over to :ref:`Neos_Neos__MenuItems` internally:
+
+:node: (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``node`` from the fusion context
+:entryLevel: (integer) Define the startingPoint of the menu relatively. Non negative values specify this as n levels below root. Negative values are n steps up from ``node`` or ``startingPoint`` if defined. Defaults to ``1`` if no ``startingPoint`` is set otherwise ``0``
+:lastLevel: (optional, integer) Restrict the depth of the menu relatively. Positive values specify this as n levels below root. Negative values specify this as n steps up from ``node``. Defaults to ``null``
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
-:startingPoint: (Node) The parent node of the first menu level (defaults to ``node`` context variable)
-:lastLevel: (integer) Restrict the menu depth by node depth (relative to site node)
-:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
+:startingPoint: (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
+:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
-:itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
-:attributes: (:ref:`Neos_Fusion__DataStructure`) Extensible attributes for the whole menu
-:normal.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for normal state
-:active.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for active state
-:current.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for current state
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
+:itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
+
+Example::
+
+	menu = Neos.Neos:Menu {
+	  attributes.class = 'menu'
+	  maximumLevels = 3
+	}
 
 .. note:: The ``items`` of the ``Menu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
 
-Menu item properties:
-^^^^^^^^^^^^^^^^^^^^^
-
-:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
-:originalNode: (Node) Original node for the item
-:state: (string) Menu state of the item: ``'normal'``, ``'current'`` (the current node) or ``'active'`` (ancestor of current node)
-:label: (string) Full label of the node
-:menuLevel: (integer) Menu level the item is rendered on
-
-Examples:
-^^^^^^^^^
-
-Custom menu template:
-"""""""""""""""""""""
-
-::
-
-	menu = Neos.Neos:Menu {
-		entryLevel = 1
-		maximumLevels = 3
-		templatePath = 'resource://My.Site/Private/Templates/FusionObjects/MyMenu.html'
-	}
-
-Menu including site node:
-"""""""""""""""""""""""""
-
-::
-
-	menu = Neos.Neos:Menu {
-		itemCollection = ${q(site).add(q(site).children('[instanceof Neos.Neos:Document]')).get()}
-	}
-
-Menu with custom starting point:
-""""""""""""""""""""""""""""""""
-
-::
-
-	menu = Neos.Neos:Menu {
-		entryLevel = 2
-		maximumLevels = 1
-		startingPoint = ${q(site).children('[uriPathSegment="metamenu"]').get(0)}
-	}
+.. note:: The ``rendering`` of the ``Menu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
+   If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
 
 .. _Neos_Neos__BreadcrumbMenu:
 
 Neos.Neos:BreadcrumbMenu
 ------------------------
 
-Render a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__Menu`.
+Render a breadcrumb (ancestor documents).
+
+:attributes: (:ref:`Neos_Fusion__DataStructure`) html attributes for the rendered list
+
+The following properties are passed over to :ref:`Neos_Neos__BreadcrumbMenuItems` internally:
+
+:node: (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+:maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
+:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Example::
 
@@ -1041,105 +1016,61 @@ Example::
 .. note:: The ``items`` of the ``BreadcrumbMenu`` are internally calculated with the prototype :ref:`Neos_Neos__MenuItems` which
    you can use directly aswell.
 
+.. note:: The ``rendering`` of the ``BreadcrumbMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
+   If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
+
 .. _Neos_Neos__DimensionMenu:
 .. _Neos_Neos__DimensionsMenu:
 
 Neos.Neos:DimensionsMenu
 ------------------------
 
-Create links to other node variants (e.g. variants of the current node in other dimensions) by using this Fusion object.
+Create links to other node variants (e.g. variants of the current node in other dimensions).
 
-If the ``dimension`` setting is given, the menu will only include items for this dimension, with all other configured
-dimension being set to the value(s) of the current node. Without any ``dimension`` being configured, all possible
-variants will be included.
+:attributes: (:ref:`Neos_Fusion__DataStructure`) attributes for the whole menu
 
-If no node variant exists for the preset combination, a ``NULL`` node will be included in the item with a state ``absent``.
+The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMenuItems` internally:
 
+:node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
 :dimension: (optional, string): name of the dimension which this menu should be based on. Example: "language".
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
 :renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
-
-In the template for the menu, each ``item`` has the following properties:
-
-:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
-:state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
-:label: (string) Label of the item (the dimension preset label)
-:menuLevel: (integer) Menu level the item is rendered on
-:dimensions: (array) Dimension values of the node, indexed by dimension name
-:targetDimensions: (array) The target dimensions, indexed by dimension name and values being arrays with ``value``, ``label`` and ``isPinnedDimension``
-
-.. note:: The ``DimensionMenu`` is an alias to ``DimensionsMenu``, available for compatibility reasons only.
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 .. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
    you can use directly aswell.
 
-Examples
-^^^^^^^^
+.. note:: The ``rendering`` of the ``DimensionsMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
+   If the rendering does not suit your useCase it we recommended to create your own variants of the menu and renderer prototype.
 
-Minimal Example, outputting a menu with all configured dimension combinations::
+.. _Neos_Neos__MenuItemListRenderer:
 
-	variantMenu = Neos.Neos:DimensionsMenu
+Neos.Neos:MenuItemListRenderer
+-------------------------------
 
-This example will create two menus, one for the 'language' and one for the 'country' dimension::
+A very basic renderer that takes a list of MenuItems and renders the result as unordered list. If item states were calculated
+they are applied as classnames to the list items.
 
-	languageMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'language'
-	}
-	countryMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'country'
-	}
-
-If you only want to render a subset of the available presets or manually define a specific order for a menu,
-you can override the "presets"::
-
-	languageMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'language'
-		presets = ${['en_US', 'de_DE']} # no matter how many languages are defined, only these two are displayed.
-	}
-
-In some cases, it can be good to ignore the availability of variants when rendering a dimensions menu. Consider a
-situation with two independent menus for country and language, where the following variants of a node exist
-(language / country):
-
-- english / Germany
-- german / Germany
-- english / UK
-
-If the user selects UK, only english will be linked in the language selector. German is only available again, if the
-user switches back to Germany first. This can be changed by setting the ``includeAllPresets`` option::
-
-	languageMenu = Neos.Neos:DimensionsMenu {
-		dimension = 'language'
-		includeAllPresets = true
-	}
-
-Now the language menu will try to find nodes for all languages, if needed the menu items will point to a different
-country than currently selected. The menu tries to find a node to link to by using the current preset for the language
-(in this example) and the default presets for any other dimensions. So if fallback rules are in place and a node can be
-found, it is used.
-
-.. note:: The ``item.targetDimensions`` will contain the "intended" dimensions, so that information can be used to
-   inform the user about the potentially unexpected change of dimensions when following  such a link.
-
-Only if the current node is not available at all (even after considering default presets with their fallback rules),
-no node be assigned (so no link will be created and the items will have the ``absent`` state.)
-
-.. _Neos_Neos__MenuItems:
+:items: (array): The MenuItems as generated by :ref:`Neos_Neos__MenuItems`, :ref:`Neos_Neos__DimensionsMenuItems`, :ref:`Neos_Neos__BreadcrumbMenuItems`
+:attributes: (optional, array): The attributes to apply on the outer list
 
 Neos.Neos:MenuItems
 -------------------
 
 Create a list of menu-items items for nodes.
 
-:entryLevel: (integer) Start the menu at the given depth
+:node: (Node) The current node used to calculate the itemStates, and ``startingPoint`` (if not defined explicitly). Defaults to ``node`` from the fusion context
+:entryLevel: (integer) Define the startingPoint of the menu relatively. Non negative values specify this as n levels below root. Negative values are n steps up from ``node`` or ``startingPoint`` if defined. Defaults to ``1`` if no ``startingPoint`` is set otherwise ``0``
+:lastLevel: (optional, integer) Restrict the depth of the menu relatively. Positive values specify this as n levels below root. Negative values specify this as n steps up from ``node``. Defaults to ``null``
 :maximumLevels: (integer) Restrict the maximum depth of items in the menu (relative to ``entryLevel``)
-:startingPoint: (Node) The parent node of the first menu level (defaults to ``node`` context variable)
-:lastLevel: (integer) Restrict the menu depth by node depth (relative to site node)
-:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``
+:startingPoint: (optional, Node) The node where the menu hierarchy starts. If not specified explicitly the startingPoint is calculated from (``node`` and ``entryLevel``), defaults to ``null``
+:filter: (string) Filter items by node type (e.g. ``'!My.Site:News,Neos.Neos:Document'``), defaults to ``'Neos.Neos:Document'``. The filter is only used for fetching subItems and is ignored for determining the ``startingPoint``
 :renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered, defaults to ``false``
-:itemCollection: (array) Explicitly set the Node items for the menu (alternative to ``startingPoints`` and levels)
-:itemUriRenderer: (:ref:`Neos_Neos__NodeUri`) prototype to use for rendering the URI of each item
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``.
+:itemCollection: (optional, array of Nodes) Explicitly set the Node items for the menu (taking precedence over ``startingPoints`` and ``entryLevel`` and ``lastLevel``). The children for each ``Node`` will be fetched taking the ``maximumLevels`` property into account.
+
+Note::
 
 MenuItems item properties:
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1150,6 +1081,7 @@ MenuItems item properties:
 :label: (string) Full label of the node
 :menuLevel: (integer) Menu level the item is rendered on
 :uri: (string) Frontend URI of the node
+:children: (array) array of ``MenuItem`` instances
 
 Examples:
 ^^^^^^^^^
@@ -1197,7 +1129,12 @@ Menu with absolute uris:
 Neos.Neos:BreadcrumbMenuItems
 -----------------------------
 
-Create a list of of menu-items for a breadcrumb (ancestor documents), based on :ref:`Neos_Neos__MenuItems`.
+Create a list of of menu-items for the breadcrumb (ancestor documents).
+
+:node: (Node) The current node to render the menu for. Defaults to ``documentNode`` from the fusion context
+:maximumLevels: (integer) Restrict the maximum depth of items in the menu, defaults to ``0``
+:renderHiddenInIndex: (boolean) Whether nodes with ``hiddenInIndex`` should be rendered (the current documentNode is always included), defaults to ``false``.
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Example::
 
@@ -1220,10 +1157,11 @@ If no node variant exists for the preset combination, a ``NULL`` node will be in
 :presets: (optional, array): If set, the presets rendered will be taken from this list of preset identifiers
 :includeAllPresets: (boolean, default **false**) If TRUE, include all presets, not only allowed combinations
 :renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
+:calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
 Each ``item`` has the following properties:
 
-:node: (Node) A node instance (with resolved shortcuts) that should be used to link to the item
+:node: (Node) The current node used to calculate the Menu. Defaults to ``documentNode`` from the fusion context
 :state: (string) Menu state of the item: ``normal``, ``current`` (the current node), ``absent``
 :label: (string) Label of the item (the dimension preset label)
 :menuLevel: (integer) Menu level the item is rendered on
@@ -1470,7 +1408,7 @@ Built a URI to a controller action
 :argumentsToBeExcludedFromQueryString: (array) Query parameters to exclude for ``addQueryString``
 :absolute: (boolean) Whether to create an absolute URI
 
-.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`_Neos_Fusion__ActionUri` instead.
+.. note:: The use of ``Neos.Fusion:UriBuilder`` is deprecated. Use :ref:`Neos_Fusion__ActionUri` instead.
 
 Example::
 
@@ -1486,15 +1424,15 @@ Removed Fusion Prototypes
 The following Fusion Prototypes have been removed:
 
 .. _Neos_Fusion__Array:
-* `Neos.Fusion:Array` replaced with :ref:`_Neos_Fusion__Join`
+* `Neos.Fusion:Array` replaced with :ref:`Neos_Fusion__Join`
 .. _Neos_Fusion__RawArray:
-* `Neos.Fusion:RawArray` replaced with :ref:`_Neos_Fusion__DataStructure`
+* `Neos.Fusion:RawArray` replaced with :ref:`Neos_Fusion__DataStructure`
 .. _Neos_Fusion__Collection:
-* `Neos.Fusion:Collection` replaced with :ref:`_Neos_Fusion__Loop`
+* `Neos.Fusion:Collection` replaced with :ref:`Neos_Fusion__Loop`
 .. _Neos_Fusion__RawCollection:
-* `Neos.Fusion:RawCollection` replaced with :ref:`_Neos_Fusion__Map`
+* `Neos.Fusion:RawCollection` replaced with :ref:`Neos_Fusion__Map`
 .. _Neos_Fusion__Attributes:
-* `Neos.Fusion:Attributes` use property `attributes` in :ref:`_Neos_Fusion__Tag`
+* `Neos.Fusion:Attributes` use property `attributes` in :ref:`Neos_Fusion__Tag`
 
 
 

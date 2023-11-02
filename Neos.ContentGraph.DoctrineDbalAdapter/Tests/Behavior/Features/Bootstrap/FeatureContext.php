@@ -11,12 +11,11 @@ declare(strict_types=1);
  * source code.
  */
 
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 require_once(__DIR__ . '/ProjectionIntegrityViolationDetectionTrait.php');
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\Behat\FlowBootstrapTrait;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\ProjectionIntegrityViolationDetectionTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
@@ -33,7 +32,7 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
  */
 class FeatureContext implements BehatContext
 {
-    use FlowContextTrait;
+    use FlowBootstrapTrait;
     use ProjectionIntegrityViolationDetectionTrait;
     use CRTestSuiteTrait;
     use CRBehavioralTestsSubjectProvider;
@@ -42,11 +41,8 @@ class FeatureContext implements BehatContext
 
     public function __construct()
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+        self::bootstrapFlow();
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
         $this->setupCRTestSuiteTrait();
         $this->setupDbalGraphAdapterIntegrityViolationTrait();

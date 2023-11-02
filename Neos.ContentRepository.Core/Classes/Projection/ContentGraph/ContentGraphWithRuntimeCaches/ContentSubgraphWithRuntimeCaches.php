@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRu
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -50,6 +51,11 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         private readonly ContentSubgraphInterface $wrappedContentSubgraph,
     ) {
         $this->inMemoryCache = new InMemoryCache();
+    }
+
+    public function getIdentity(): ContentSubgraphIdentity
+    {
+        return $this->wrappedContentSubgraph->getIdentity();
     }
 
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes

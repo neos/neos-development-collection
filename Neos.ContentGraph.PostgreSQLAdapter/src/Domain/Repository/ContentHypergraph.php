@@ -23,6 +23,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\Query\HypergraphQuery;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
@@ -59,6 +60,7 @@ final class ContentHypergraph implements ContentGraphInterface
     public function __construct(
         PostgresDbalClientInterface $databaseClient,
         NodeFactory $nodeFactory,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
@@ -74,6 +76,7 @@ final class ContentHypergraph implements ContentGraphInterface
         $index = $contentStreamId->value . '-' . $dimensionSpacePoint->hash . '-' . $visibilityConstraints->getHash();
         if (!isset($this->subhypergraphs[$index])) {
             $this->subhypergraphs[$index] = new ContentSubhypergraph(
+                $this->contentRepositoryId,
                 $contentStreamId,
                 $dimensionSpacePoint,
                 $visibilityConstraints,

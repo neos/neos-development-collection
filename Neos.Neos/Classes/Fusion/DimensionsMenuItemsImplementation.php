@@ -39,12 +39,14 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
 
     /**
      * Builds the array of Menu items for this variant menu
-     * @return array<int,array<string,mixed>>
+     * @return array<int,DimensionMenuItem>
      */
     protected function buildItems(): array
     {
         $menuItems = [];
-        $contentRepositoryId = $this->currentNode->subgraphIdentity->contentRepositoryId;
+        $currentNode = $this->getCurrentNode();
+
+        $contentRepositoryId = $currentNode->subgraphIdentity->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get(
             $contentRepositoryId,
         );
@@ -56,28 +58,28 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         assert($dimensionMenuItemsImplementationInternals instanceof DimensionsMenuItemsImplementationInternals);
 
         $interDimensionalVariationGraph = $dimensionMenuItemsImplementationInternals->interDimensionalVariationGraph;
-        $currentDimensionSpacePoint = $this->currentNode->subgraphIdentity->dimensionSpacePoint;
+        $currentDimensionSpacePoint = $currentNode->subgraphIdentity->dimensionSpacePoint;
         $contentDimensionIdentifierToLimitTo = $this->getContentDimensionIdentifierToLimitTo();
         foreach ($interDimensionalVariationGraph->getDimensionSpacePoints() as $dimensionSpacePoint) {
             $variant = null;
             if ($this->isDimensionSpacePointRelevant($dimensionSpacePoint)) {
                 if ($dimensionSpacePoint->equals($currentDimensionSpacePoint)) {
-                    $variant = $this->currentNode;
+                    $variant = $currentNode;
                 } else {
                     $variant = $contentRepository->getContentGraph()
                         ->getSubgraph(
-                            $this->currentNode->subgraphIdentity->contentStreamId,
+                            $currentNode->subgraphIdentity->contentStreamId,
                             $dimensionSpacePoint,
-                            $this->currentNode->subgraphIdentity->visibilityConstraints,
+                            $currentNode->subgraphIdentity->visibilityConstraints,
                         )
-                        ->findNodeById($this->currentNode->nodeAggregateId);
+                        ->findNodeById($currentNode->nodeAggregateId);
                 }
 
                 if (!$variant && $this->includeGeneralizations() && $contentDimensionIdentifierToLimitTo) {
                     $variant = $this->findClosestGeneralizationMatchingDimensionValue(
                         $dimensionSpacePoint,
                         $contentDimensionIdentifierToLimitTo,
-                        $this->currentNode->nodeAggregateId,
+                        $currentNode->nodeAggregateId,
                         $dimensionMenuItemsImplementationInternals,
                         $contentRepository
                     );
@@ -86,12 +88,13 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
                 $metadata = $this->determineMetadata($dimensionSpacePoint, $dimensionMenuItemsImplementationInternals);
 
                 if ($variant === null || !$this->isNodeHidden($variant)) {
-                    $menuItems[] = [
-                        'node' => $variant,
-                        'state' => $this->calculateItemState($variant),
-                        'label' => $this->determineLabel($variant, $metadata),
-                        'targetDimensions' => $metadata
-                    ];
+                    $menuItems[] = new DimensionMenuItem(
+                        $variant,
+                        $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($variant) : null,
+                        $this->determineLabel($variant, $metadata),
+                        $metadata,
+                        $variant ? $this->buildUri($variant) : null
+                    );
                 }
             }
         }
@@ -100,15 +103,15 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         if ($contentDimensionIdentifierToLimitTo && $valuesToRestrictTo) {
             $order = array_flip($valuesToRestrictTo);
             usort($menuItems, function (
-                array $menuItemA,
-                array $menuItemB
+                DimensionMenuItem $menuItemA,
+                DimensionMenuItem $menuItemB
             ) use (
                 $order,
                 $contentDimensionIdentifierToLimitTo
             ) {
-                return (int)$order[$menuItemA['node']?->subgraphIdentity->dimensionSpacePoint->getCoordinate(
+                return (int)$order[$menuItemA->node?->subgraphIdentity->dimensionSpacePoint->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
-                )] <=> (int)$order[$menuItemB['node']?->subgraphIdentity->dimensionSpacePoint->getCoordinate(
+                )] <=> (int)$order[$menuItemB->node?->subgraphIdentity->dimensionSpacePoint->getCoordinate(
                     $contentDimensionIdentifierToLimitTo
                 )];
             });
@@ -218,18 +221,18 @@ class DimensionsMenuItemsImplementation extends AbstractMenuItemsImplementation
         }
     }
 
-    protected function calculateItemState(?Node $variant = null): string
+    protected function calculateItemState(?Node $variant = null): MenuItemState
     {
         if (is_null($variant)) {
-            return self::STATE_ABSENT;
+            return MenuItemState::ABSENT;
         }
 
         if ($variant === $this->currentNode) {
-            return self::STATE_CURRENT;
+            return MenuItemState::CURRENT;
         }
-
-        return self::STATE_NORMAL;
+        return MenuItemState::NORMAL;
     }
+
 
     /**
      * In some cases generalization of the other dimension values is feasible

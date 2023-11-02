@@ -1,4 +1,4 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Tests for site node child documents. These are special in that they have the first non-dimension uri path segment.
 
   Background:

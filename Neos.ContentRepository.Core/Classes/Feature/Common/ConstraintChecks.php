@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -51,7 +52,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\PropertyName;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -216,18 +217,15 @@ trait ConstraintChecks
         if (is_null($propertyDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
-        if (isset($propertyDeclaration['constraints']['nodeTypes'])) {
-            $nodeTypeConstraints = ExpandedNodeTypeCriteria::createFromNodeTypeDeclaration(
-                $propertyDeclaration['constraints']['nodeTypes'],
-                $this->getNodeTypeManager()
+
+        $constraints = $propertyDeclaration['constraints']['nodeTypes'] ?? [];
+
+        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType)) {
+            throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+                $referenceName,
+                $nodeTypeName,
+                $nodeTypeNameInQuestion
             );
-            if (!$nodeTypeConstraints->matches($nodeTypeNameInQuestion)) {
-                throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
-                    $referenceName,
-                    $nodeTypeName,
-                    $nodeTypeNameInQuestion
-                );
-            }
         }
     }
 

@@ -29,29 +29,13 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
      * @param NodeIdsToPublishOrDiscard $nodesToPublish Ids of the nodes to publish or discard
-     * @param ContentStreamId $contentStreamIdForMatchingPart The id of the new content stream that will contain all events to be published
-     * @param ContentStreamId $contentStreamIdForRemainingPart The id of the new content stream that will contain all remaining events
+     * @param ContentStreamId $contentStreamIdForMatchingPart The id of the new content stream that will contain all events to be published {@see self::withContentStreamIdForMatchingPart()}
+     * @param ContentStreamId $contentStreamIdForRemainingPart The id of the new content stream that will contain all remaining events {@see self::withContentStreamIdForRemainingPart()}
      */
     private function __construct(
         public readonly WorkspaceName $workspaceName,
         public readonly NodeIdsToPublishOrDiscard $nodesToPublish,
-        /**
-         * during the publish process, we sort the events so that the events we want to publish
-         * come first. In this process, two new content streams are generated:
-         * - the first one contains all events which we want to publish
-         * - the second one is based on the first one, and contains all the remaining events (which we want to keep
-         *   in the user workspace).
-         *
-         * This property contains the ID of the first content stream, so that this command
-         * can run fully deterministic - we need this for the test cases.
-         */
         public readonly ContentStreamId $contentStreamIdForMatchingPart,
-        /**
-         * See the description of {@see $contentStreamIdForMatchingPart}.
-         *
-         * This property contains the ID of the second content stream, so that this command
-         * can run fully deterministic - we need this for the test cases.
-         */
         public readonly ContentStreamId $contentStreamIdForRemainingPart
     ) {
     }
@@ -70,11 +54,27 @@ final class PublishIndividualNodesFromWorkspace implements CommandInterface
         );
     }
 
+    /**
+     * During the publish process, we sort the events so that the events we want to publish
+     * come first. In this process, two new content streams are generated:
+     * - the first one contains all events which we want to publish
+     * - the second one is based on the first one, and contains all the remaining events (which we want to keep
+     *   in the user workspace).
+     *
+     * This method adds the ID of the first content stream, so that the command
+     * can run fully deterministic - we need this for the test cases.
+     */
     public function withContentStreamIdForMatchingPart(ContentStreamId $contentStreamIdForMatchingPart): self
     {
         return new self($this->workspaceName, $this->nodesToPublish, $contentStreamIdForMatchingPart, $this->contentStreamIdForRemainingPart);
     }
 
+    /**
+     * See the description of {@see self::withContentStreamIdForMatchingPart()}.
+     *
+     * This property adds the ID of the second content stream, so that the command
+     * can run fully deterministic - we need this for the test cases.
+     */
     public function withContentStreamIdForRemainingPart(ContentStreamId $contentStreamIdForRemainingPart): self
     {
         return new self($this->workspaceName, $this->nodesToPublish, $this->contentStreamIdForMatchingPart, $contentStreamIdForRemainingPart);

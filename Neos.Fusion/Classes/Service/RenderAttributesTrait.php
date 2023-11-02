@@ -42,6 +42,8 @@ trait RenderAttributesTrait
                 foreach ($attributeValue as $attributeValuePart) {
                     if ($attributeValuePart instanceof \Stringable) {
                         $attributeValuePart = $attributeValuePart->__toString();
+                    } elseif ($attributeValuePart instanceof \BackedEnum) {
+                        $attributeValuePart = $attributeValuePart->value;
                     }
                     $joinedAttributeValue .= match (gettype($attributeValuePart)) {
                         'boolean', 'NULL' => '',
@@ -50,6 +52,10 @@ trait RenderAttributesTrait
                     };
                 }
                 $attributeValue = trim($joinedAttributeValue);
+            } elseif ($attributeValue instanceof \Stringable) {
+                $attributeValue = $attributeValue->__toString();
+            } elseif ($attributeValue instanceof \BackedEnum) {
+                $attributeValue = $attributeValue->value;
             }
             $encodedAttributeName = htmlspecialchars((string)$attributeName, ENT_COMPAT, 'UTF-8', false);
             if ($attributeValue === true || $attributeValue === '') {

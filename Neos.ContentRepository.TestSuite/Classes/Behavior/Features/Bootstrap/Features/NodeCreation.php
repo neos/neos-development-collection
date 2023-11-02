@@ -64,6 +64,9 @@ trait NodeCreation
             $nodeAggregateId,
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
         );
+        if (isset($commandArguments['tetheredDescendantNodeAggregateIds'])) {
+            $command = $command->withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths::fromArray($commandArguments['tetheredDescendantNodeAggregateIds']));
+        }
 
         $this->lastCommandOrEventResult = $this->currentContentRepository->handle($command);
         $this->currentRootNodeAggregateId = $nodeAggregateId;
