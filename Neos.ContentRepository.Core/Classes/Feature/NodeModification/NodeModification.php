@@ -76,6 +76,7 @@ trait NodeModification
         SetSerializedNodeProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
+        $contentStreamVersion = $contentRepository->getContentStreamFinder()->findVersionForContentStream($command->contentStreamId);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $command->contentStreamId,
@@ -112,7 +113,7 @@ trait NodeModification
                 $command,
                 Events::fromArray($events)
             ),
-            ExpectedVersion::ANY()
+            ExpectedVersion::fromVersion($contentStreamVersion->unwrap())
         );
     }
 

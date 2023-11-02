@@ -6,6 +6,7 @@ namespace Neos\ContentRepository\Core\EventStore;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Feature\ContentStreamCreation\Event\ContentStreamWasCreated;
+use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasClosed;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Event\ContentStreamWasRemoved;
 use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\DimensionShineThroughWasAdded;
@@ -67,6 +68,7 @@ final class EventNormalizer
     public function __construct()
     {
         $supportedEventClassNames = [
+            ContentStreamWasClosed::class,
             ContentStreamWasCreated::class,
             ContentStreamWasForked::class,
             ContentStreamWasRemoved::class,
