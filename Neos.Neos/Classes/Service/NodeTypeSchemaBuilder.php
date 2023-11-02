@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\Utility\Arrays;
 
 /**
  * Renders the Node Type Schema in a format the User Interface understands;
@@ -67,6 +68,11 @@ class NodeTypeSchemaBuilder
         foreach ($nodeTypes as $nodeTypeName => $nodeType) {
             if ($nodeType->isAbstract() === false) {
                 $configuration = $nodeType->getFullConfiguration();
+                $configuration['properties'] = Arrays::arrayMergeRecursiveOverrule(
+                    $configuration['properties'] ?? [],
+                    $configuration['references'] ?? [],
+                );
+                unset($configuration['references']);
                 $schema['nodeTypes'][$nodeTypeName] = $configuration;
                 $schema['nodeTypes'][$nodeTypeName]['label'] = $nodeType->getLabel();
             }
