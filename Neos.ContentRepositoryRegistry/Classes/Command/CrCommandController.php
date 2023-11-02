@@ -5,6 +5,7 @@ namespace Neos\ContentRepositoryRegistry\Command;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
+use Neos\ContentRepository\Core\Projection\ProjectionStatusType;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Service\ProjectionReplayServiceFactory;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -38,17 +39,33 @@ final class CrCommandController extends CommandController
         $this->outputLine('<success>Content Repository "%s" was set up</success>', [$contentRepositoryId->value]);
     }
 
-    public function isSetUpCommand(string $contentRepository = 'default'): void
+    public function statusCommand(string $contentRepository = 'default'): void
     {
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepository);
-        $isSetUp = $this->contentRepositoryRegistry->get($contentRepositoryId)->isSetUp();
+        $projectionStatuses = $this->contentRepositoryRegistry->get($contentRepositoryId)->getProjectionStatuses();
 
-        if (!$isSetUp) {
-            $this->outputLine('<success>Content Repository "%s" is not set up</success>', [$contentRepositoryId->value]);
+        $hasError = false;
+        foreach ($projectionStatuses as $projectionClassName => $projectionStatus) {
+            $this->output->outputLine(match ($projectionStatus->type) {
+                ProjectionStatusType::OK => sprintf('Projection "%s" <success>is ok.</success>', $projectionClassName),
+                ProjectionStatusType::REQUIRES_SETUP => sprintf('Projection "%s" <error>requires setup.</error>', $projectionClassName),
+                ProjectionStatusType::REQUIRES_REPLAY => sprintf('Projection "%s" <error>requires replay.</error>', $projectionClassName),
+            });
+            if ($projectionStatus->type !== ProjectionStatusType::OK) {
+                $hasError = true;
+            }
+            if ($projectionStatus->message) {
+                $this->output->outputLine($projectionStatus->message);
+            }
+            $this->output->outputLine();
+        }
+
+        if ($hasError) {
+            $this->outputLine('<error>Content Repository "%s" is not ready</error>', [$contentRepositoryId->value]);
             $this->quit(1);
         }
 
-        $this->outputLine('<success>Content Repository "%s" is set up</success>', [$contentRepositoryId->value]);
+        $this->outputLine('<success>Content Repository "%s" is ok</success>', [$contentRepositoryId->value]);
     }
 
     /**

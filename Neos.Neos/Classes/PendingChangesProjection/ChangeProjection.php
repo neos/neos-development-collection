@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -78,6 +79,11 @@ class ChangeProjection implements ProjectionInterface
     {
         $this->setupTables();
         $this->checkpointStorage->setup();
+    }
+
+    public function getStatus(): ProjectionStatus
+    {
+        return ProjectionStatus::createOk();
     }
 
     private function setupTables(): void

@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFai
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
@@ -72,6 +73,11 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
     {
         $this->setupTables();
         $this->checkpointStorage->setup();
+    }
+
+    public function getStatus(): ProjectionStatus
+    {
+        return ProjectionStatus::createOk();
     }
 
     private function setupTables(): void

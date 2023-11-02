@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasPublished;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -234,6 +235,11 @@ final class AssetUsageProjection implements ProjectionInterface
     {
         $this->repository->setup();
         $this->checkpointStorage->setup();
+    }
+
+    public function getStatus(): ProjectionStatus
+    {
+        return ProjectionStatus::createOk();
     }
 
     public function canHandle(EventInterface $event): bool

@@ -34,6 +34,7 @@ use Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamFinder;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\EventStore\CatchUp\CatchUp;
@@ -208,14 +209,14 @@ final class ContentRepository
         return SetupResult::success('done');
     }
 
-    public function isSetUp(): bool
+    /**
+     * @return \Traversable<class-string<ProjectionInterface<ProjectionStateInterface>>, ProjectionStatus>
+     */
+    public function getProjectionStatuses(): \Traversable
     {
         foreach ($this->projectionsAndCatchUpHooks->projections as $projection) {
-            if ($projection->isSetUp() === false) {
-                return false;
-            }
+            yield $projection::class => $projection->getStatus();
         }
-        return true;
     }
 
     public function resetProjectionStates(): void

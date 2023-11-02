@@ -47,6 +47,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVa
 use Neos\ContentRepository\Core\Feature\RootNodeCreation\Event\RootNodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
 use Neos\EventStore\Model\Event\SequenceNumber;
@@ -99,6 +100,11 @@ final class HypergraphProjection implements ProjectionInterface
     {
         $this->setupTables();
         $this->checkpointStorage->setup();
+    }
+
+    public function getStatus(): ProjectionStatus
+    {
+        return ProjectionStatus::createOk();
     }
 
     private function setupTables(): SetupResult

@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebase
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
@@ -72,6 +73,11 @@ class ContentStreamProjection implements ProjectionInterface
     {
         $this->setupTables();
         $this->checkpointStorage->setup();
+    }
+
+    public function getStatus(): ProjectionStatus
+    {
+        return ProjectionStatus::createOk();
     }
 
     private function setupTables(): void

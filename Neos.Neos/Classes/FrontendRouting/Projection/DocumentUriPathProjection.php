@@ -33,6 +33,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWas
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
+use Neos\ContentRepository\Core\Projection\ProjectionStatus;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
@@ -72,6 +73,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         $this->setupTables();
         $this->checkpointStorage->setup();
+    }
+
+    public function getStatus(): ProjectionStatus
+    {
+        return ProjectionStatus::createOk();
     }
 
     private function setupTables(): SetupResult
