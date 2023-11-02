@@ -13,7 +13,7 @@
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
         "doctrine/dbal": "^2.6",
-        "symfony/serializer": "*",
+        "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",
         "ramsey/uuid": "^3.0 || ^4.0"
