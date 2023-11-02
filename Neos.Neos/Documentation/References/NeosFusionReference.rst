@@ -741,12 +741,10 @@ into rendering a page; responsible for rendering the ``<html>`` tag and everythi
 :head.titleTag: (:ref:`Neos_Fusion__Tag`) The ``<title>`` tag
 :head.javascripts: (:ref:`Neos_Fusion__Join`) Script includes in the head should go here
 :head.stylesheets: (:ref:`Neos_Fusion__Join`) Link tags for stylesheets in the head should go here
-:body.templatePath: (string) Path to a fluid template for the page body
 :bodyTag: (:ref:`Neos_Fusion__Tag`) The opening ``<body>`` tag
 :bodyTag.attributes: (:ref:`Neos_Fusion__DataStructure`) Attributes for the ``<body>`` tag
-:body: (:ref:`Neos_Fusion__Template`) HTML markup for the ``<body>`` tag
+:body: (:ref:`Neos_Fusion__Join`) HTML markup for the ``<body>`` tag.
 :body.javascripts: (:ref:`Neos_Fusion__Join`) Body footer JavaScript includes
-:body.[key]: (mixed) Body template variables
 
 Examples:
 ^^^^^^^^^
