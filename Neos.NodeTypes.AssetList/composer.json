@@ -2,6 +2,11 @@
     "name": "neos/nodetypes-assetlist",
     "type": "neos-package",
     "description": "A simple asset list node type.",
+    "support": {
+        "source": "https://github.com/neos/nodetypes-assetlist.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

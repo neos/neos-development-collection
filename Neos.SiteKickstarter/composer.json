@@ -2,6 +2,11 @@
     "name": "neos/site-kickstarter",
     "type": "neos-package",
     "description": "A simple generator for Neos assets, like sites and plugins.",
+    "support": {
+        "source": "https://github.com/neos/neos-kickstarter.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": ["GPL-3.0-or-later"],
     "require": {
         "php": "^8.0",
