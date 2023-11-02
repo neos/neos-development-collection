@@ -2,6 +2,11 @@
     "name": "neos/media-browser",
     "type": "neos-package",
     "description": "This module allows managing of media assets including pictures, videos, audio and documents.",
+    "support": {
+        "source": "https://github.com/neos/media-browser.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

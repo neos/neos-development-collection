@@ -2,6 +2,11 @@
     "name": "neos/nodetypes-form",
     "type": "neos-package",
     "description": "A simple form node type.",
+    "support": {
+        "source": "https://github.com/neos/nodetypes-form.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
