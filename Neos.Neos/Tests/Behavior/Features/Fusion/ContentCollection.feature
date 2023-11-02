@@ -33,7 +33,9 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
     include: resource://Neos.Fusion/Private/Fusion/Root.fusion
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
-    test = Neos.Neos:ContentCollection
+    test = Neos.Neos:ContentCollection {
+      @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ThrowingHandler'
+    }
     """
     Then I expect the following Fusion rendering error:
     """
@@ -48,6 +50,7 @@ Feature: Tests for the "Neos.Neos:ContentCollection" Fusion prototype
 
     test = Neos.Neos:ContentCollection {
       nodePath = 'invalid'
+      @exceptionHandler = 'Neos\\Fusion\\Core\\ExceptionHandlers\\ThrowingHandler'
     }
     """
     Then I expect the following Fusion rendering error:
