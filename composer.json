@@ -40,7 +40,6 @@
         "typo3/neos": "self.version",
         "typo3/neos-nodetypes": "self.version",
         "typo3/neos-kickstarter": "self.version",
-        "neos/cli-setup": "self.version",
         "neos/content-repository": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
@@ -66,9 +65,6 @@
     },
     "autoload": {
         "psr-4": {
-            "Neos\\CliSetup\\": [
-                "Neos.CliSetup/Classes"
-            ],
             "Neos\\ContentRepository\\": [
                 "Neos.ContentRepository/Classes"
             ],
