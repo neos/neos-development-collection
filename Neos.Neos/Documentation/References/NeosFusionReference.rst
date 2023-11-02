@@ -474,7 +474,7 @@ Example::
     value = ${1+2}
   }
 
-.. _Neos_Fusion__Tag:
+.. _Neos_Fusion__DataStructure:
 
 
 Neos.Fusion:DataStructure
@@ -694,7 +694,7 @@ Neos.Fusion:Link.Resource
 Renders a link pointing to a resource
 
 :content: (string) content of the link tag
-:href: (string,  default :ref:`Neos_Fusion__ResouceUri`) The href for the link tag
+:href: (string,  default :ref:`Neos_Fusion__ResourceUri`) The href for the link tag
 :[key]: (string) Other attributes for the link tag
 
 Example::
@@ -1038,7 +1038,7 @@ The following fusion properties are passed over to :ref:`Neos_Neos__DimensionsMe
 :renderHiddenInIndex: (boolean, default **true**) If TRUE, render nodes which are marked as "hidded-in-index"
 :calculateItemStates: (boolean) activate the *expensive* calculation of item states defaults to ``false``
 
-.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuMenuItems` which
+.. note:: The ``items`` of the ``DimensionsMenu`` are internally calculated with the prototype :ref:`Neos_Neos__DimensionsMenuItems` which
    you can use directly aswell.
 
 .. note:: The ``rendering`` of the ``DimensionsMenu`` is performed with the prototype :ref:`Neos_Neos__MenuItemListRenderer`.
