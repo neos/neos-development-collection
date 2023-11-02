@@ -7,11 +7,11 @@ Feature: Migrating nodes with content dimensions
       | language   | en      | en, de, ch | ch->de          |
     And using the following node types:
     """yaml
-    'unstructured': {}
     'Neos.Neos:Site': {}
     'Some.Package:Homepage':
       superTypes:
         'Neos.Neos:Site': true
+    'Some.Package:Thing': {}
     """
     And using identifier "default", I define a content repository
     And I am in content repository "default"
@@ -67,10 +67,10 @@ Feature: Migrating nodes with content dimensions
       | Identifier | Path             | Node Type             | Dimension Values     |
       | sites      | /sites           | unstructured          |                      |
       | site       | /sites/site      | Some.Package:Homepage | {"language": ["de"]} |
-      | a          | /sites/site/a    | unstructured       | {"language": ["de"]} |
-      | a1         | /sites/site/a/a1 | unstructured       | {"language": ["de"]} |
-      | b          | /sites/site/b    | unstructured       | {"language": ["de"]} |
-      | a1         | /sites/site/b/a1 | unstructured       | {"language": ["ch"]} |
+      | a          | /sites/site/a    | Some.Package:Thing    | {"language": ["de"]} |
+      | a1         | /sites/site/a/a1 | Some.Package:Thing    | {"language": ["de"]} |
+      | b          | /sites/site/b    | Some.Package:Thing    | {"language": ["de"]} |
+      | a1         | /sites/site/b/a1 | Some.Package:Thing    | {"language": ["ch"]} |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                               |
@@ -88,11 +88,11 @@ Feature: Migrating nodes with content dimensions
       | Identifier | Path               | Node Type             | Dimension Values     |
       | sites      | /sites             | unstructured          |                      |
       | site       | /sites/site        | Some.Package:Homepage | {"language": ["de"]} |
-      | a          | /sites/site/a      | unstructured          | {"language": ["de"]} |
-      | a1         | /sites/site/a/a1   | unstructured          | {"language": ["de"]} |
-      | b          | /sites/site/b      | unstructured          | {"language": ["de"]} |
-      | a          | /sites/site/b/a    | unstructured          | {"language": ["ch"]} |
-      | a1         | /sites/site/b/a/a1 | unstructured          | {"language": ["ch"]} |
+      | a          | /sites/site/a      | Some.Package:Thing    | {"language": ["de"]} |
+      | a1         | /sites/site/a/a1   | Some.Package:Thing    | {"language": ["de"]} |
+      | b          | /sites/site/b      | Some.Package:Thing    | {"language": ["de"]} |
+      | a          | /sites/site/b/a    | Some.Package:Thing    | {"language": ["ch"]} |
+      | a1         | /sites/site/b/a/a1 | Some.Package:Thing    | {"language": ["ch"]} |
     And I run the event migration
     Then I expect the following events to be exported
       | Type                                | Payload                                                                                                                                                                                                                                                                                                                                 |

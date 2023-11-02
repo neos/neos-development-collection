@@ -1,5 +1,0 @@
-# legacy type for nodes without type
-'unstructured':
-  constraints:
-    nodeTypes:
-      '*': true
