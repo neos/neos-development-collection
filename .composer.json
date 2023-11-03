@@ -12,6 +12,9 @@
   },
   "suggest": {
   },
+  "provide": {
+    "neos/contentrepositoryregistry-storageclient": "self.version"
+  },
   "scripts": {
     "lint:phpcs-psr12": "../../bin/phpcs --colors --standard=PSR12 ./Neos.ContentGraph.DoctrineDbalAdapter/src ./Neos.ContentGraph.PostgreSQLAdapter/src ./Neos.ContentRepository.BehavioralTests/Classes ./Neos.ContentRepository.TestSuite/Classes ./Neos.ContentRepository.Core/Classes ./Neos.Neos/Classes",
     "lint:phpcs": [
