@@ -271,3 +271,44 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     noFilter: a1a5,a1a6,a1a7
     withFilter: a1a5,a1a6
     """
+
+  Scenario: NextUntil
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      criteria = ${q(node).nextUntil('[instanceof Neos.Neos:Test.DocumentType1]').get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    criteria: a1a5,a1a6
+    """
+
+  Scenario: PrevUntil
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      criteria = ${q(node).prevUntil('[instanceof Neos.Neos:Test.DocumentType1]').get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    criteria: a1a2,a1a3
+    """
+
+  Scenario: Siblings
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      noFilter = ${q(node).siblings().get()}
+      withFilter = ${q(node).siblings('[instanceof Neos.Neos:Test.DocumentType1]').get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    noFilter: a1a1,a1a2,a1a3,a1a5,a1a6,a1a7
+    withFilter: a1a1,a1a7
+    """
