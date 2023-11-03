@@ -1,0 +1,22 @@
+{
+    "name": "neos/contentrepositoryregistry-postgresdbalclient",
+    "type": "neos-package",
+    "description": "PostgreSQL-optimized Doctrine DBAL client for the Neos Content Repository Registry",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/flow": "^9.0",
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepositoryregistry": "self.version",
+        "neos/contentgraph-postgresqladapter": "self.version"
+    },
+    "provide": {
+        "neos/contentrepositoryregistry-storageclient": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": "Classes"
+        }
+    }
+}

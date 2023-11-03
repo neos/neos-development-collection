@@ -12,8 +12,8 @@
     ],
     "require": {
         "php": ">=8.2",
-        "neos/contentrepository-core": "*",
-        "neos/contentrepository-export": "*",
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-export": "self.version",
         "league/flysystem": "^3"
     },
     "require-dev": {
