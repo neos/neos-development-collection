@@ -302,3 +302,29 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     noFilter: a1a5,a1a6,a1a7
     withFilter: a1a5,a1a6
     """
+
+  Scenario: Unique
+    When I execute the following Fusion code:
+    """fusion
+    test = ${q([node,site,documentNode]).unique().get()}
+    test.@process.render = Neos.Neos:Test.RenderNodes
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    a1a4,a
+    """
+
+  Scenario: Remove
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      removeNode = ${q([node,site,documentNode]).remove(node).get()}
+      nothingToRemove = ${q([node,node,node]).remove(site).get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    removeNode: a
+    nothingToRemove: a1a4,a1a4,a1a4
+    """
