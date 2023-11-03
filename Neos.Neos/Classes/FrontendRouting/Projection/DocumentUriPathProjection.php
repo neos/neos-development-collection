@@ -713,7 +713,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return false;
         }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SITE);
+        return $nodeType->isOfType(NodeTypeNameFactory::forSite());
     }
 
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
@@ -724,7 +724,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return false;
         }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT);
+        return $nodeType->isOfType(NodeTypeNameFactory::forDocument());
     }
 
     private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
@@ -735,7 +735,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
             return false;
         }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SHORTCUT);
+        return $nodeType->isOfType(NodeTypeNameFactory::forShortcut());
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo
