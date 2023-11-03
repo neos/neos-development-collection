@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWri
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -191,16 +191,16 @@ trait CRTestSuiteTrait
      */
     public function theSubtreeForNodeAggregateWithNodeTypesAndLevelsDeepShouldBe(
         string $serializedNodeAggregateId,
-        string $serializedNodeTypeConstraints,
+        string $serializedNodeTypeCriteria,
         int $maximumLevels,
         TableNode $table
     ): void {
         $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
-        $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($serializedNodeTypeConstraints);
+        $nodeTypeCriteria = NodeTypeCriteria::fromFilterString($serializedNodeTypeCriteria);
         $expectedRows = $table->getHash();
 
         $subtree = $this->getCurrentSubgraph()
-            ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypeConstraints: $nodeTypeConstraints, maximumLevels: $maximumLevels));
+            ->findSubtree($nodeAggregateId, FindSubtreeFilter::create(nodeTypes: $nodeTypeCriteria, maximumLevels: $maximumLevels));
 
         /** @var Subtree[] $flattenedSubtree */
         $flattenedSubtree = [];

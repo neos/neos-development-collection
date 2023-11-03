@@ -12,14 +12,14 @@
 
 declare(strict_types=1);
 
-namespace Neos\ContentRepository\Core\Projection\ContentGraph;
+namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType;
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\Utility\Arrays;
 
 /**
- * The list of node type constraints needed for various find() operations on the node tree.
+ * The list of node type criteria needed for various find() operations on the {@see ContentSubgraphInterface}.
  *
  * This DTO is a direct representation of the user's intent, so the filter strings are translated
  * as follows:
@@ -43,12 +43,12 @@ use Neos\Utility\Arrays;
  *    and their sub node types.
  *
  * NOTE: Implementers of ContentSubgraphInterface need to take of implementing the above
- *       semantics. You can use the internal method {@see NodeTypeConstraintsWithSubNodeTypes::create}
+ *       semantics. You can use the internal method {@see ExpandedNodeTypeCriteria::create}
  *       to take sub-nodes into account.
  *
  * @api
  */
-final class NodeTypeConstraints
+final class NodeTypeCriteria
 {
     private function __construct(
         public readonly NodeTypeNames $explicitlyAllowedNodeTypeNames,

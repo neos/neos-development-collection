@@ -326,7 +326,7 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
+            FindSubtreeFilter::create(nodeTypes: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
         );
         if ($subtree === null) {
             return;
