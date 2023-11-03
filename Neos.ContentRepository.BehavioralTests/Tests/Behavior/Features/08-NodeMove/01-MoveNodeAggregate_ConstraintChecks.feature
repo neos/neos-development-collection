@@ -14,9 +14,8 @@ Feature: Move node to a new parent / within the current parent before a sibling 
 
   Background:
     Given using the following content dimensions:
-      | Identifier | Values      | Generalizations |
-      | market     | DE, CH      | CH->DE          |
-      | language   | de, gsw, fr | gsw->de         |
+      | Identifier | Values          | Generalizations     |
+      | language   | en, de, gsw, fr | gsw->de->en, fr->en |
     And using the following node types:
     """yaml
     'Neos.ContentRepository.Testing:Document': []
@@ -44,7 +43,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"de"}
+    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | contentStreamId | "cs-identifier"               |
@@ -70,7 +69,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | Key                          | Value                                     |
       | contentStreamId              | "cs-identifier"                           |
       | nodeAggregateId              | "sir-david-nodenborough"                  |
-      | dimensionSpacePoint          | {"market": "nope", "language": "neither"} |
+      | dimensionSpacePoint          | {"language": "nope"} |
       | relationDistributionStrategy | "scatter"                                 |
     Then the last command should have thrown an exception of type "DimensionSpacePointNotFound"
 
@@ -79,7 +78,7 @@ Feature: Move node to a new parent / within the current parent before a sibling 
       | Key                          | Value                              |
       | contentStreamId              | "cs-identifier"                    |
       | nodeAggregateId              | "sir-david-nodenborough"           |
-      | dimensionSpacePoint          | {"market": "DE", "language": "fr"} |
+      | dimensionSpacePoint          | {"language": "fr"} |
       | relationDistributionStrategy | "scatter"                          |
     Then the last command should have thrown an exception of type "NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint"
 
