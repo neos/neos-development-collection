@@ -12,7 +12,7 @@
     ],
     "require": {
         "neos/flow": "*",
-        "neos/contentrepository-core": "*",
+        "neos/contentrepository-core": "self.version",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "*",
         "psr/clock": "^1"
