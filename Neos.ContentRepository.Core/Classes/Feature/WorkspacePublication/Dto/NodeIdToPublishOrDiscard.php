@@ -30,6 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class NodeIdToPublishOrDiscard implements \JsonSerializable
 {
     public function __construct(
+        /** @todo do we really need this? should be unique per command, not per node in the command */
         public WorkspaceName $workspaceName,
         public NodeAggregateId $nodeAggregateId,
         public DimensionSpacePoint $dimensionSpacePoint,

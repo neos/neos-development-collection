@@ -49,6 +49,7 @@ trait NodeDisabling
         ContentRepository $contentRepository
     ): EventsToPublish {
         $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
+        \Neos\Flow\var_dump($contentStreamId->value);
         $this->requireDimensionSpacePointToExist($command->coveredDimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
             $contentStreamId,

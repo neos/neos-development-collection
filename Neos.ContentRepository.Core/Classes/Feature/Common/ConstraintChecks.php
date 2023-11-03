@@ -74,6 +74,7 @@ trait ConstraintChecks
         WorkspaceName $workspaceName,
         ContentRepository $contentRepository
     ): ContentStreamId {
+        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
             ?->currentContentStreamId;
         if (!$contentStreamId || !$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {

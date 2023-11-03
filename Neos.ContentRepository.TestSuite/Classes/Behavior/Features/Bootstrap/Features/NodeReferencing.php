@@ -24,6 +24,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Command\SetNodeReferences;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
 use Neos\EventStore\Model\Event\StreamName;
 
@@ -48,9 +49,9 @@ trait NodeReferencing
     public function theCommandSetNodeReferencesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
         $sourceOriginDimensionSpacePoint = isset($commandArguments['sourceOriginDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['sourceOriginDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
@@ -67,7 +68,7 @@ trait NodeReferencing
         );
 
         $command = SetNodeReferences::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['sourceNodeAggregateId']),
             $sourceOriginDimensionSpacePoint,
             ReferenceName::fromString($commandArguments['referenceName']),

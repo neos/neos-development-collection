@@ -23,15 +23,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class RebaseWorkspace implements CommandInterface
+final readonly class RebaseWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the workspace that should be rebased
      * @param ContentStreamId $rebasedContentStreamId The id of the new content stream which is created during the rebase
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly ContentStreamId $rebasedContentStreamId
+        public WorkspaceName $workspaceName,
+        public ContentStreamId $rebasedContentStreamId
     ) {
     }
 

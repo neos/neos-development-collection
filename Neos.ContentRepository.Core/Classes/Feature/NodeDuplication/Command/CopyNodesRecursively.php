@@ -17,7 +17,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeDuplication\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeAggregateIdMapping;
 use Neos\ContentRepository\Core\Feature\NodeDuplication\Dto\NodeSubtreeSnapshot;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
@@ -40,7 +40,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class CopyNodesRecursively implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The name of the workspace this command is to be handled in
@@ -151,6 +152,21 @@ final readonly class CopyNodesRecursively implements
             $this->targetSucceedingSiblingNodeAggregateId,
             $this->targetNodeName,
             $nodeAggregateIdMapping
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeTreeToInsert,
+            $this->targetDimensionSpacePoint,
+            $this->targetParentNodeAggregateId,
+            $this->targetSucceedingSiblingNodeAggregateId,
+            $this->targetNodeName,
+            $this->nodeAggregateIdMapping
         );
     }
 }

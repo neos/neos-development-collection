@@ -16,9 +16,11 @@ namespace Neos\ContentRepository\Core\Feature\NodeRenaming\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -31,7 +33,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class ChangeNodeAggregateName implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the operation is to be performed
@@ -80,6 +83,17 @@ final readonly class ChangeNodeAggregateName implements
         return (
             $this->workspaceName->equals($nodeIdToPublish->workspaceName)
                 && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeAggregateId,
+            $this->newNodeName,
         );
     }
 }

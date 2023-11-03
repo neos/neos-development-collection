@@ -17,9 +17,11 @@ namespace Neos\ContentRepository\Core\Feature\NodeMove\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\RelationDistributionStrategy;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -43,7 +45,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class MoveNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the move operation is to be performed
@@ -114,5 +117,20 @@ final readonly class MoveNodeAggregate implements
         return $this->workspaceName === $nodeIdToPublish->workspaceName
             && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
             && $this->dimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint;
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->dimensionSpacePoint,
+            $this->nodeAggregateId,
+            $this->relationDistributionStrategy,
+            $this->newParentNodeAggregateId,
+            $this->newPrecedingSiblingNodeAggregateId,
+            $this->newSucceedingSiblingNodeAggregateId
+        );
     }
 }

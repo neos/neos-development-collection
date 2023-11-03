@@ -52,11 +52,11 @@ Feature: Individual node publication
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                               |
       | workspaceName                   | "user-test"                                                                                                         |
-      | nodesToPublish                  | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
+      | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                      |
     And the graph projection is fully up to date
 
-    And I am in content stream "cs-identifier"
+    And I am in the active content stream of workspace "live"
 
     Then I expect a node identified by cs-identifier;sir-david-nodenborough;{} to exist in the content graph
 

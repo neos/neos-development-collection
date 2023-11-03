@@ -34,7 +34,7 @@ use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStream
 use Neos\ContentRepository\Core\Feature\ContentStreamRemoval\Command\RemoveContentStream;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamAlreadyExists;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\Common\PublishableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWorkspace;
@@ -78,12 +78,12 @@ use Neos\EventStore\Model\Event\EventType;
 /**
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
-final class WorkspaceCommandHandler implements CommandHandlerInterface
+final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 {
     public function __construct(
-        private readonly EventPersister $eventPersister,
-        private readonly EventStoreInterface $eventStore,
-        private readonly EventNormalizer $eventNormalizer,
+        private EventPersister $eventPersister,
+        private EventStoreInterface $eventStore,
+        private EventNormalizer $eventNormalizer,
     ) {
     }
 
@@ -380,17 +380,16 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
         foreach ($originalCommands as $i => $originalCommand) {
-            if (!($originalCommand instanceof RebasableToOtherContentStreamsInterface)) {
+            if (!($originalCommand instanceof RebasableToOtherWorkspaceInterface)) {
                 throw new \RuntimeException(
                     'ERROR: The command ' . get_class($originalCommand)
                     . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
                 );
             }
 
-            // try to apply the command on the rebased content stream
-            $commandToRebase = $originalCommand->createCopyForContentStream($rebasedContentStream);
+            // We no longer need to adjust commands to the new content stream as the workspace stays the same
             try {
-                $contentRepository->handle($commandToRebase)->block();
+                $contentRepository->handle($originalCommand)->block();
                 // if we came this far, we know the command was applied successfully.
                 $rebaseStatistics->commandRebaseSuccess();
             } catch (\Exception $e) {
@@ -409,7 +408,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     . "\n The full list of commands applied so far is: %s",
                     $workspaceContentStreamName->value,
                     $i,
-                    get_class($commandToRebase),
+                    get_class($originalCommand),
                     $baseWorkspace->workspaceName->value,
                     $baseWorkspace->currentContentStreamId->value,
                     $fullCommandListSoFar
@@ -477,7 +476,7 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
                     ), 1547815341);
                 }
                 /**
-                 * The "fromArray" might be declared via {@see RebasableToOtherContentStreamsInterface::fromArray()}
+                 * The "fromArray" might be declared via {@see RebasableToOtherWorkspaceInterface::fromArray()}
                  * or any other command can just implement it.
                  */
                 $commands[] = $commandToRebaseClass::fromArray($commandToRebasePayload);
@@ -510,9 +509,9 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         );
 
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
-        /** @var RebasableToOtherContentStreamsInterface[] $matchingCommands */
+        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $matchingCommands */
         $matchingCommands = [];
-        /** @var RebasableToOtherContentStreamsInterface[] $remainingCommands */
+        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
         $remainingCommands = [];
 
         foreach ($originalCommands as $originalCommand) {
@@ -540,14 +539,17 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         )->block();
 
         foreach ($matchingCommands as $matchingCommand) {
-            if (!($matchingCommand instanceof RebasableToOtherContentStreamsInterface)) {
+            if (!($matchingCommand instanceof RebasableToOtherWorkspaceInterface)) {
                 throw new \RuntimeException(
                     'ERROR: The command ' . get_class($matchingCommand)
                     . ' does not implement RebasableToOtherContentStreamsInterface; but it should!'
                 );
             }
 
-            $contentRepository->handle($matchingCommand->createCopyForContentStream($matchingContentStream))->block();
+            $contentRepository->handle($matchingCommand->createCopyForWorkspace(
+                $baseWorkspace->workspaceName,
+                $matchingContentStream
+            ))->block();
         }
 
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
@@ -560,15 +562,15 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         )->block();
 
         foreach ($remainingCommands as $remainingCommand) {
-            if (!$remainingCommand instanceof RebasableToOtherContentStreamsInterface) {
+            if (!$remainingCommand instanceof RebasableToOtherWorkspaceInterface) {
                 throw new \Exception(
                     'Command class ' . get_class($remainingCommand) . ' does not implement '
-                    . RebasableToOtherContentStreamsInterface::class,
+                    . RebasableToOtherWorkspaceInterface::class,
                     1645393626
                 );
             }
-            $contentRepository->handle($remainingCommand->createCopyForContentStream($remainingContentStream))
-                ->block();
+            \Neos\Flow\var_dump($remainingCommand);
+            $contentRepository->handle($remainingCommand)->block();
         }
 
         // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
@@ -656,14 +658,14 @@ final class WorkspaceCommandHandler implements CommandHandlerInterface
         )->block();
 
         foreach ($commandsToKeep as $commandToKeep) {
-            if (!$commandToKeep instanceof RebasableToOtherContentStreamsInterface) {
+            if (!$commandToKeep instanceof RebasableToOtherWorkspaceInterface) {
                 throw new \Exception(
                     'Command class ' . get_class($commandToKeep) . ' does not implement '
-                    . RebasableToOtherContentStreamsInterface::class,
+                    . RebasableToOtherWorkspaceInterface::class,
                     1645393476
                 );
             }
-            $contentRepository->handle($commandToKeep->createCopyForContentStream($newContentStream))
+            $contentRepository->handle($commandToKeep)
                 ->block();
         }
 

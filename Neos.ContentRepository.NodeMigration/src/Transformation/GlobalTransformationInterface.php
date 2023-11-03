@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\NodeMigration\Transformation;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * A globally-done transformation, like changing dimension space points globally.
@@ -25,7 +27,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 interface GlobalTransformationInterface
 {
     public function execute(
-        ContentStreamId $contentStreamForReading,
+        WorkspaceName $workspaceNameForReading,
         ContentStreamId $contentStreamForWriting
     ): CommandResult;
 }

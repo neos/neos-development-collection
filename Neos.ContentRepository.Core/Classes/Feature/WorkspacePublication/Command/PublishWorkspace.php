@@ -22,13 +22,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class PublishWorkspace implements CommandInterface
+final readonly class PublishWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the workspace to publish
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
+        public WorkspaceName $workspaceName,
     ) {
     }
 

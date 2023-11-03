@@ -135,15 +135,15 @@ trait NodeCreation
     public function theCommandCreateNodeAggregateWithNodeIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
 
         $command = CreateNodeAggregateWithNode::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
             $originDimensionSpacePoint,
@@ -183,15 +183,15 @@ trait NodeCreation
     public function theFollowingCreateNodeAggregateWithNodeCommandsAreExecuted(TableNode $table): void
     {
         foreach ($table->getHash() as $row) {
-            $contentStreamId = isset($row['contentStreamId'])
-                ? ContentStreamId::fromString($row['contentStreamId'])
-                : $this->currentContentStreamId;
+            $workspaceName = isset($row['workspaceName'])
+                ? WorkspaceName::fromString($row['workspaceName'])
+                : $this->currentWorkspaceName;
             $originDimensionSpacePoint = isset($row['originDimensionSpacePoint'])
                 ? OriginDimensionSpacePoint::fromJsonString($row['originDimensionSpacePoint'])
                 : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
             $rawParentNodeAggregateId = $row['parentNodeAggregateId'];
             $command = CreateNodeAggregateWithNode::create(
-                $contentStreamId,
+                $workspaceName,
                 NodeAggregateId::fromString($row['nodeAggregateId']),
                 NodeTypeName::fromString($row['nodeTypeName']),
                 $originDimensionSpacePoint,
@@ -231,15 +231,15 @@ trait NodeCreation
     public function theCommandCreateNodeAggregateWithNodeAndSerializedPropertiesIsExecutedWithPayload(TableNode $payloadTable)
     {
         $commandArguments = $this->readPayloadTable($payloadTable);
-        $contentStreamId = isset($commandArguments['contentStreamId'])
-            ? ContentStreamId::fromString($commandArguments['contentStreamId'])
-            : $this->currentContentStreamId;
+        $workspaceName = isset($commandArguments['workspaceName'])
+            ? WorkspaceName::fromString($commandArguments['workspaceName'])
+            : $this->currentWorkspaceName;
         $originDimensionSpacePoint = isset($commandArguments['originDimensionSpacePoint'])
             ? OriginDimensionSpacePoint::fromArray($commandArguments['originDimensionSpacePoint'])
             : OriginDimensionSpacePoint::fromDimensionSpacePoint($this->currentDimensionSpacePoint);
 
         $command = CreateNodeAggregateWithNodeAndSerializedProperties::create(
-            $contentStreamId,
+            $workspaceName,
             NodeAggregateId::fromString($commandArguments['nodeAggregateId']),
             NodeTypeName::fromString($commandArguments['nodeTypeName']),
             $originDimensionSpacePoint,

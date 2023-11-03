@@ -17,10 +17,12 @@ namespace Neos\ContentRepository\Core\Feature\NodeReferencing\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -33,7 +35,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class SetSerializedNodeReferences implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
@@ -92,6 +95,19 @@ final readonly class SetSerializedNodeReferences implements
             $this->workspaceName === $nodeIdToPublish->workspaceName
                 && $this->sourceOriginDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
                 && $this->sourceNodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->sourceNodeAggregateId,
+            $this->sourceOriginDimensionSpacePoint,
+            $this->referenceName,
+            $this->references,
         );
     }
 }

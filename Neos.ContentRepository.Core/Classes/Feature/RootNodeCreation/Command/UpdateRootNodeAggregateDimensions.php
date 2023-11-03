@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -27,7 +29,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class UpdateRootNodeAggregateDimensions implements
     CommandInterface,
-    \JsonSerializable
+    \JsonSerializable,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace which the dimensions should be updated in
@@ -65,5 +68,15 @@ final readonly class UpdateRootNodeAggregateDimensions implements
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeAggregateId,
+        );
     }
 }

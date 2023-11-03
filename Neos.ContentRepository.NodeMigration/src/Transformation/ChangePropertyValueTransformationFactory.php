@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Change the value of a given property.
@@ -102,6 +103,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
+                WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
@@ -129,7 +131,7 @@ class ChangePropertyValueTransformationFactory implements TransformationFactoryI
 
                     return $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
-                            $contentStreamForWriting,
+                            $workspaceNameForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([

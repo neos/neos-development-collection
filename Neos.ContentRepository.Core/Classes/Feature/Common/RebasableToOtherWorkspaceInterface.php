@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\Common;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * This interface is implemented by **commands** which can be rebased to other Content Streams. This is basically all
@@ -25,9 +26,12 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @internal used internally for the rebasing mechanism of content streams
  */
-interface RebasableToOtherContentStreamsInterface
+interface RebasableToOtherWorkspaceInterface
 {
-    public function createCopyForContentStream(ContentStreamId $target): CommandInterface;
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): CommandInterface;
 
     /**
      * called during deserialization from metadata

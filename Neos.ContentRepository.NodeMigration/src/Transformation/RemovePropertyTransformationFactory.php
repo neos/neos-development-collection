@@ -22,6 +22,7 @@ use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetSerializedNo
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Remove the property from nodes
@@ -51,12 +52,13 @@ class RemovePropertyTransformationFactory implements TransformationFactoryInterf
             public function execute(
                 Node $node,
                 DimensionSpacePointSet $coveredDimensionSpacePoints,
+                WorkspaceName $workspaceNameForWriting,
                 ContentStreamId $contentStreamForWriting
             ): ?CommandResult {
                 if ($node->hasProperty($this->propertyName)) {
                     return $this->contentRepository->handle(
                         SetSerializedNodeProperties::create(
-                            $contentStreamForWriting,
+                            $workspaceNameForWriting,
                             $node->nodeAggregateId,
                             $node->originDimensionSpacePoint,
                             SerializedPropertyValues::fromArray([

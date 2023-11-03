@@ -63,7 +63,7 @@ Feature: Find nodes using the findChildNodeConnectedThroughEdgeName query
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |

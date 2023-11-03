@@ -39,8 +39,6 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\EventStore\Model\EventStream\ExpectedVersion;
 
 /**
- * ContentStreamCommandHandler
- *
  * @internal from userland, you'll use ContentRepository::handle to dispatch commands
  */
 final readonly class DimensionSpaceCommandHandler implements CommandHandlerInterface
@@ -69,13 +67,13 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         MoveDimensionSpacePoint $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+        $this->requireContentStream($command->contentStreamId, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $contentStreamId,
+            $command->contentStreamId,
             $contentRepository->getContentGraph()
         );
         $this->requireDimensionSpacePointToExistInConfiguration($command->target);
@@ -84,7 +82,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionSpacePointWasMoved(
-                    $contentStreamId,
+                    $command->contentStreamId,
                     $command->source,
                     $command->target
                 ),
@@ -97,13 +95,13 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         AddDimensionShineThrough $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
-        $streamName = ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
+        $this->requireContentStream($command->contentStreamId, $contentRepository);
+        $streamName = ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
             ->getEventStreamName();
 
         self::requireDimensionSpacePointToBeEmptyInContentStream(
             $command->target,
-            $contentStreamId,
+            $command->contentStreamId,
             $contentRepository->getContentGraph()
         );
         $this->requireDimensionSpacePointToExistInConfiguration($command->target);
@@ -114,7 +112,7 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             $streamName,
             Events::with(
                 new DimensionShineThroughWasAdded(
-                    $contentStreamId,
+                    $command->contentStreamId,
                     $command->source,
                     $command->target
                 )
@@ -166,10 +164,11 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
             throw DimensionSpacePointIsNoSpecialization::butWasSupposedToBe($target, $source);
         }
     }
+
     /**
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStream(
+    protected function requireContentStreamForWorkspaceName(
         WorkspaceName $workspaceName,
         ContentRepository $contentRepository
     ): ContentStreamId {
@@ -183,5 +182,20 @@ final readonly class DimensionSpaceCommandHandler implements CommandHandlerInter
         }
 
         return $contentStreamId;
+    }
+
+    /**
+     * @throws ContentStreamDoesNotExistYet
+     */
+    protected function requireContentStream(
+        ContentStreamId $contentStreamId,
+        ContentRepository $contentRepository
+    ): void {
+        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+            throw new ContentStreamDoesNotExistYet(
+                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
+                1521386692
+            );
+        }
     }
 }

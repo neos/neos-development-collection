@@ -40,7 +40,7 @@ Feature: Constraint checks on SetNodeReferences
       | workspaceDescription       | "The live workspace" |
       | newContentStreamId | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"language":"de"}
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                     | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -56,7 +56,7 @@ Feature: Constraint checks on SetNodeReferences
   Scenario: Try to reference nodes in a non-existent content stream
     When the command SetNodeReferences is executed with payload and exceptions are caught:
       | Key                           | Value                           |
-      | contentStreamId       | "i-do-not-exist"                |
+      | workspaceName       | "i-do-not-exist"                |
       | sourceNodeAggregateId | "source-nodandaise"             |
       | referenceName                 | "referenceProperty"             |
       | references                    | [{"target":"anthony-destinode"}] |

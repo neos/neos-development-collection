@@ -64,7 +64,7 @@ Feature: Change node name
       | nodeAggregateClassification   | "regular"                                |
     And the graph projection is fully up to date
     # we read the node initially, to ensure it is filled in the cache (to check whether cache clearing actually works)
-    When I am in content stream "cs-identifier" and dimension space point {}
+    When I am in the active content stream of workspace "live" and dimension space point {}
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node cs-identifier;lady-eleonode-rootford;{}
     Then I expect this node to have the following child nodes:
       | Name | NodeDiscriminator                 |

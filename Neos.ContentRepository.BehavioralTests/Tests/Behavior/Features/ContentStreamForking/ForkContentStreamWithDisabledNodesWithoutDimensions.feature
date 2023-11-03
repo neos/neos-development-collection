@@ -23,9 +23,9 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId             | "cs-identifier"               |
       | nodeAggregateId             | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -51,7 +51,6 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
     And the graph projection is fully up to date
     And the command DisableNodeAggregate is executed with payload:
       | Key                          | Value              |
-      | contentStreamId              | "cs-identifier"    |
       | nodeAggregateId              | "the-great-nodini" |
       | coveredDimensionSpacePoint   | {}                 |
       | nodeVariantSelectionStrategy | "allVariants"      |
@@ -67,7 +66,7 @@ Feature: On forking a content stream, hidden nodes should be correctly copied as
 
     # node aggregate occupation and coverage is not relevant without dimensions and thus not tested
 
-    When I am in the active content stream of workspace "live" and dimension space point {}
+    When I am in content stream "user-cs-identifier" and dimension space point {}
     And VisibilityConstraints are set to "withoutRestrictions"
     Then I expect node aggregate identifier "lady-eleonode-rootford" to lead to node user-cs-identifier;lady-eleonode-rootford;{}
     And I expect this node to have the following child nodes:

@@ -26,7 +26,7 @@ Feature: Create node variant
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
-    And I am in content stream "cs-identifier" and dimension space point {"market":"DE", "language":"gsw"}
+    And I am in the active content stream of workspace "live" and dimension space point {"market":"DE", "language":"gsw"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
       | nodeAggregateId | "lady-eleonode-rootford"      |
@@ -44,7 +44,7 @@ Feature: Create node variant
   Scenario: Try to create a variant in a content stream that does not exist yet
     When the command CreateNodeVariant is executed with payload and exceptions are caught:
       | Key             | Value                             |
-      | contentStreamId | "i-do-not-exist-yet"              |
+      | workspaceName   | "i-do-not-exist-yet"              |
       | nodeAggregateId | "sir-david-nodenborough"          |
       | sourceOrigin    | {"market":"CH", "language":"gsw"} |
       | targetOrigin    | {"market":"DE", "language":"de"}  |

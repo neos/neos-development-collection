@@ -184,6 +184,11 @@ final class WorkspaceFinder implements ProjectionStateInterface
         return $result;
     }
 
+    public function disableRuntimeCache(): void
+    {
+        $this->workspaceRuntimeCache->disableCache();
+    }
+
     /**
      * @param array<string,string> $row
      */

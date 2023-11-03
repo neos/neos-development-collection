@@ -30,9 +30,9 @@ Feature: Publishing and discard individual nodes (basics)
       | workspaceName      | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | contentStreamId | "cs-identifier"               |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -77,19 +77,19 @@ Feature: Publishing and discard individual nodes (basics)
     # modify nodes in user WS
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                    |
-      | contentStreamId           | "user-cs-identifier"     |
+      | workspaceName      | "user-test"          |
       | nodeAggregateId           | "sir-david-nodenborough" |
       | originDimensionSpacePoint | {}                       |
       | propertyValues            | {"text": "Modified t1"}  |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                   |
-      | contentStreamId           | "user-cs-identifier"    |
+      | workspaceName      | "user-test"          |
       | nodeAggregateId           | "nody-mc-nodeface"      |
       | originDimensionSpacePoint | {}                      |
       | propertyValues            | {"text": "Modified t2"} |
     And the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamId           | "user-cs-identifier"         |
+      | workspaceName      | "user-test"          |
       | nodeAggregateId           | "sir-nodeward-nodington-iii" |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"image": "Modified image"}  |
@@ -103,7 +103,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                                   |
       | workspaceName                   | "user-test"                                                                                                             |
-      | nodesToPublish                  | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                          |
     And the graph projection is fully up to date
 
@@ -175,7 +175,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command PublishIndividualNodesFromWorkspace is executed with payload:
       | Key                             | Value                                                                                                                                                                                                                                                                                                                                                   |
       | workspaceName                   | "user-test"                                                                                                                                                                                                                                                                                                                                             |
-      | nodesToPublish                  | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToPublish                  | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | contentStreamIdForRemainingPart | "user-cs-identifier-remaining"                                                                                                                                                                                                                                                                                                                          |
     And the graph projection is fully up to date
 
@@ -216,7 +216,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                | Value                                                                                                                   |
       | workspaceName      | "user-test"                                                                                                             |
-      | nodesToDiscard     | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                                |
 
     And the graph projection is fully up to date
@@ -261,7 +261,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key                | Value                                                                                                                                                                                                                                                                                                                                                   |
       | workspaceName      | "user-test"                                                                                                                                                                                                                                                                                                                                             |
-      | nodesToDiscard     | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard     | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-david-nodenborough"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "nody-mc-nodeface"}, {"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
       | newContentStreamId | "user-cs-identifier-new"                                                                                                                                                                                                                                                                                                                                |
     And the graph projection is fully up to date
 
@@ -284,7 +284,7 @@ Feature: Publishing and discard individual nodes (basics)
     When the command DiscardIndividualNodesFromWorkspace is executed with payload:
       | Key            | Value                                                                                                                   |
       | workspaceName  | "user-test"                                                                                                             |
-      | nodesToDiscard | [{"contentStreamId": "user-cs-identifier", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
+      | nodesToDiscard | [{"workspaceName": "user-test", "dimensionSpacePoint": {}, "nodeAggregateId": "sir-nodeward-nodington-iii"}] |
     And the graph projection is fully up to date
 
     # live WS does not change because of a discard

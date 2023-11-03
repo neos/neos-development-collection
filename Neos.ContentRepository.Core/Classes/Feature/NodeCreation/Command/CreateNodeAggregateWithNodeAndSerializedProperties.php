@@ -17,12 +17,14 @@ namespace Neos\ContentRepository\Core\Feature\NodeCreation\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -34,7 +36,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implements
     CommandInterface,
     \JsonSerializable,
-    MatchableWithNodeIdToPublishOrDiscardInterface
+    MatchableWithNodeIdToPublishOrDiscardInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
@@ -138,6 +141,23 @@ final readonly class CreateNodeAggregateWithNodeAndSerializedProperties implemen
             $this->workspaceName === $nodeIdToPublish->workspaceName
                 && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
                 && $this->originDimensionSpacePoint->equals($nodeIdToPublish->dimensionSpacePoint)
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeAggregateId,
+            $this->nodeTypeName,
+            $this->originDimensionSpacePoint,
+            $this->parentNodeAggregateId,
+            $this->initialPropertyValues,
+            $this->succeedingSiblingNodeAggregateId,
+            $this->nodeName,
+            $this->tetheredDescendantNodeAggregateIds
         );
     }
 }

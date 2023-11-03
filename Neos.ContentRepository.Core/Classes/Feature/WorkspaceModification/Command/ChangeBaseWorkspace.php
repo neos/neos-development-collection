@@ -13,7 +13,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class ChangeBaseWorkspace implements CommandInterface
+final readonly class ChangeBaseWorkspace implements CommandInterface
 {
     /**
      * @param WorkspaceName $workspaceName Name of the affected workspace
@@ -21,9 +21,9 @@ final class ChangeBaseWorkspace implements CommandInterface
      * @param ContentStreamId $newContentStreamId The id of the new content stream id that will be assigned to the workspace
      */
     private function __construct(
-        public readonly WorkspaceName $workspaceName,
-        public readonly WorkspaceName $baseWorkspaceName,
-        public readonly ContentStreamId $newContentStreamId,
+        public WorkspaceName $workspaceName,
+        public WorkspaceName $baseWorkspaceName,
+        public ContentStreamId $newContentStreamId,
     ) {
     }
 

@@ -15,9 +15,11 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Dto\NodeAggregateIdsByNodePaths;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -30,7 +32,8 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class CreateRootNodeAggregateWithNode implements
     CommandInterface,
-    \JsonSerializable
+    \JsonSerializable,
+    RebasableToOtherWorkspaceInterface
 {
     /**
      * @param WorkspaceName $workspaceName The workspace in which the root node should be created in
@@ -120,5 +123,17 @@ final readonly class CreateRootNodeAggregateWithNode implements
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetWorkspaceName,
+            $this->nodeAggregateId,
+            $this->nodeTypeName,
+            $this->tetheredDescendantNodeAggregateIds
+        );
     }
 }

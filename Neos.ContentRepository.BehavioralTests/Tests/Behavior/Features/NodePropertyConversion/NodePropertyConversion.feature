@@ -17,9 +17,9 @@ Feature: Node Property Conversion
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live"
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
@@ -27,7 +27,6 @@ Feature: Node Property Conversion
   Scenario: DateTime objects at Node Creation
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                              |
-      | contentStreamId       | "cs-identifier"                                    |
       | nodeAggregateId       | "nody-mc-nodeface"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
       | originDimensionSpacePoint     | {}                                                 |
@@ -45,7 +44,6 @@ Feature: Node Property Conversion
   Scenario: DateTime objects at Node Property Updating
     When the command CreateNodeAggregateWithNode is executed with payload:
       | Key                           | Value                                              |
-      | contentStreamId       | "cs-identifier"                                    |
       | nodeAggregateId       | "nody-mc-nodeface"                                 |
       | nodeTypeName                  | "Neos.ContentRepository.Testing:Content"           |
       | originDimensionSpacePoint     | {}                                                 |
@@ -55,7 +53,6 @@ Feature: Node Property Conversion
 
     When the command SetNodeProperties is executed with payload:
       | Key                       | Value                                              |
-      | contentStreamId   | "cs-identifier"                                    |
       | nodeAggregateId   | "nody-mc-nodeface"                                 |
       | originDimensionSpacePoint | {}                                                 |
       | propertyValues            | {"dateProperty": "Date:1997-07-19T19:20:30+05:00"} |

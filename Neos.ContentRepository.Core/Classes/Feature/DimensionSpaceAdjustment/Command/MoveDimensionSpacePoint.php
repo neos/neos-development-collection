@@ -16,6 +16,8 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherWorkspaceInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
@@ -29,28 +31,31 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
  */
 final readonly class MoveDimensionSpacePoint implements
     \JsonSerializable,
-    CommandInterface
+    CommandInterface,
+    RebasableToOtherWorkspaceInterface
 {
     /**
-     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in
+     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in.
+     *       This content stream is specifically created for this operation and thus not prone to conflicts,
+     *       thus we don't need the workspace name
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
     private function __construct(
-        public WorkspaceName $workspaceName,
+        public ContentStreamId $contentStreamId,
         public DimensionSpacePoint $source,
         public DimensionSpacePoint $target
     ) {
     }
 
     /**
-     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in
+     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
-    public static function create(WorkspaceName $workspaceName, DimensionSpacePoint $source, DimensionSpacePoint $target): self
+    public static function create(ContentStreamId $contentStreamId, DimensionSpacePoint $source, DimensionSpacePoint $target): self
     {
-        return new self($workspaceName, $source, $target);
+        return new self($contentStreamId, $source, $target);
     }
 
     /**
@@ -59,9 +64,20 @@ final readonly class MoveDimensionSpacePoint implements
     public static function fromArray(array $array): self
     {
         return new self(
-            WorkspaceName::fromString($array['workspaceName']),
+            ContentStreamId::fromString($array['contentStreamId']),
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
+        );
+    }
+
+    public function createCopyForWorkspace(
+        WorkspaceName $targetWorkspaceName,
+        ContentStreamId $targetContentStreamId
+    ): self {
+        return new self(
+            $targetContentStreamId,
+            $this->source,
+            $this->target
         );
     }
 
