@@ -1,7 +1,12 @@
 {
     "name": "neos/contentgraph-postgresqladapter",
-
+    "type": "library",
     "description": "The PostgreSQL database backend for the Neos content graph",
+    "support": {
+        "source": "https://github.com/neos/contentgraph-postgresqladapter.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": "GPL-3.0+",
     "require": {
         "neos/contentrepository-core": "*",

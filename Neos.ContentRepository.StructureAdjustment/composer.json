@@ -1,6 +1,12 @@
 {
     "name": "neos/contentrepository-structureadjustment",
+    "type": "library",
     "description": "Structure Adjustment Service (node repair)",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-structureadjustment.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

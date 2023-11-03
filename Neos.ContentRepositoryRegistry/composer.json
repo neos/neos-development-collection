@@ -2,6 +2,11 @@
     "name": "neos/contentrepositoryregistry",
     "type": "neos-package",
     "description": "Global registry for Neos Content Repository instances",
+    "support": {
+        "source": "https://github.com/neos/contentrepositoryregistry.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],

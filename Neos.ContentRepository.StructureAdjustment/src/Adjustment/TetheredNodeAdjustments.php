@@ -118,7 +118,7 @@ class TetheredNodeAdjustments
                 $nodeAggregate->nodeAggregateId
             );
             foreach ($tetheredNodeAggregates as $tetheredNodeAggregate) {
-                /* @var $tetheredNodeAggregate NodeAggregate */
+                assert($tetheredNodeAggregate->nodeName !== null); // it's tethered!
                 if (!isset($expectedTetheredNodes[$tetheredNodeAggregate->nodeName->value])) {
                     $foundMissingOrDisallowedTetheredNodes = true;
                     yield StructureAdjustment::createForNodeAggregate(
@@ -147,6 +147,7 @@ class TetheredNodeAdjustments
                     $actualTetheredChildNodes = [];
                     foreach ($childNodes as $childNode) {
                         if ($childNode->classification->isTethered()) {
+                            assert($childNode->nodeName !== null); // it's tethered!
                             $actualTetheredChildNodes[$childNode->nodeName->value] = $childNode;
                         }
                     }

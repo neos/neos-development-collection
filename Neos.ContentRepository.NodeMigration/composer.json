@@ -1,6 +1,12 @@
 {
     "name": "neos/contentrepository-nodemigration",
+    "type": "library",
     "description": "Node Migration",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-nodemigration.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
