@@ -16,6 +16,7 @@ readonly class DefaultNodeTypeManagerFactory implements NodeTypeManagerFactoryIn
     ) {
     }
 
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager
     {
         return new NodeTypeManager(

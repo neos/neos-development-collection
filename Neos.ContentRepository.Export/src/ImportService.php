@@ -67,7 +67,7 @@ class ImportService implements ContentRepositoryServiceInterface
             );
             $result = $processor->run();
             if ($result->severity === Severity::ERROR) {
-                throw new \RuntimeException($label . ': ' . $result->message ?? '');
+                throw new \RuntimeException($label . ': ' . ($result->message ?? ''));
             }
             $outputLineFn('  ' . $result->message);
             $outputLineFn();
@@ -77,6 +77,10 @@ class ImportService implements ContentRepositoryServiceInterface
     private function liveWorkspaceContentStreamExists(): bool
     {
         $workspaceStreamName = WorkspaceEventStreamName::fromWorkspaceName(WorkspaceName::forLive())->getEventStreamName();
-        return $this->eventStore->load($workspaceStreamName)->getIterator()->current() !== null;
+        $eventStream = $this->eventStore->load($workspaceStreamName);
+        foreach ($eventStream as $event) {
+            return true;
+        }
+        return false;
     }
 }

@@ -13,7 +13,7 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
@@ -167,7 +167,7 @@ class ChildrenOperation extends AbstractOperation
                             ->findChildNodes(
                             $contextNode->nodeAggregateId,
                             FindChildNodesFilter::create(
-                                nodeTypeConstraints: NodeTypeConstraints::create(
+                                nodeTypes: NodeTypeCriteria::create(
                                     NodeTypeNames::fromStringArray($allowedNodeTypes),
                                     NodeTypeNames::createEmpty()
                                 )
@@ -201,6 +201,7 @@ class ChildrenOperation extends AbstractOperation
                 // Add filtered nodes to output
                 /** @var Node $filteredNode */
                 foreach ($filteredOutput as $filteredNode) {
+                    /** @phpstan-ignore-next-line undefined behaviour https://github.com/neos/neos-development-collection/issues/4507#issuecomment-1784123143 */
                     if (!isset($outputNodeAggregateIds[$filteredNode->nodeAggregateId->value])) {
                         $output[] = $filteredNode;
                     }

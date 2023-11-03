@@ -1,13 +1,23 @@
-@fixtures
+@flowEntities
 Feature: Tests for the "Neos.Neos:ContentCase" Fusion prototype
 
   Background:
-    Given I have the site "a"
-    And I have the following NodeTypes configuration:
+    Given using no content dimensions
+    And using the following node types:
     """yaml
-    'unstructured': {}
-    'Neos.Neos:FallbackNode': {}
-    'Neos.Neos:Document': {}
+    'Neos.ContentRepository:Root': {}
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
+    'Neos.Neos:Document':
+      properties:
+        title:
+          type: string
+        uriPathSegment:
+          type: string
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
     'Neos.Neos:Test.DocumentType1':
       superTypes:
         'Neos.Neos:Document': true
@@ -15,11 +25,37 @@ Feature: Tests for the "Neos.Neos:ContentCase" Fusion prototype
       superTypes:
         'Neos.Neos:Document': true
     """
-    And I have the following nodes:
-      | Identifier | Path                       | Node Type                     |
-      | root       | /sites                     | unstructured                  |
-      | a          | /sites/a                   | Neos.Neos:Test.DocumentType1  |
-      | a1         | /sites/a/a1                | Neos.Neos:Test.DocumentType2  |
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+
+    When the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value             |
+      | contentStreamId | "cs-identifier"   |
+      | nodeAggregateId | "root"            |
+      | nodeTypeName    | "Neos.Neos:Sites" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  |
+      | a               | root                  | Neos.Neos:Site                |
+      | a1              | a                     | Neos.Neos:Test.DocumentType2  |
+    And A site exists for node name "a" and domain "http://localhost"
+    And the sites configuration is:
+    """yaml
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
     And the Fusion context node is "a1"
     And the Fusion context request URI is "http://localhost"
 

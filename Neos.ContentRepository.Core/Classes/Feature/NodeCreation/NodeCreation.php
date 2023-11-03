@@ -222,7 +222,6 @@ trait NodeCreation
             );
         }
 
-
         $defaultPropertyValues = SerializedPropertyValues::defaultFromNodeType($nodeType);
         $initialPropertyValues = $defaultPropertyValues->merge($command->initialPropertyValues);
 

@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRu
 
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountBackReferencesFilter;
@@ -52,6 +53,11 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         $this->inMemoryCache = new InMemoryCache();
     }
 
+    public function getIdentity(): ContentSubgraphIdentity
+    {
+        return $this->wrappedContentSubgraph->getIdentity();
+    }
+
     public function findChildNodes(NodeAggregateId $parentNodeAggregateId, FindChildNodesFilter $filter): Nodes
     {
         if (!self::isFilterEmpty($filter)) {
@@ -61,8 +67,8 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdCache();
         $parentNodeIdCache = $this->inMemoryCache->getParentNodeIdByChildNodeIdCache();
         $nodeByIdCache = $this->inMemoryCache->getNodeByNodeAggregateIdCache();
-        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypeConstraints)) {
-            return $childNodesCache->findChildNodes($parentNodeAggregateId, $filter->nodeTypeConstraints);
+        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypes)) {
+            return $childNodesCache->findChildNodes($parentNodeAggregateId, $filter->nodeTypes);
         }
         $childNodes = $this->wrappedContentSubgraph->findChildNodes($parentNodeAggregateId, $filter);
         foreach ($childNodes as $node) {
@@ -70,7 +76,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             $parentNodeIdCache->add($node->nodeAggregateId, $parentNodeAggregateId);
             $nodeByIdCache->add($node->nodeAggregateId, $node);
         }
-        $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypeConstraints, $childNodes);
+        $childNodesCache->add($parentNodeAggregateId, $filter->nodeTypes, $childNodes);
         return $childNodes;
     }
 
@@ -80,8 +86,8 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
         }
         $childNodesCache = $this->inMemoryCache->getAllChildNodesByNodeIdCache();
-        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypeConstraints)) {
-            return $childNodesCache->countChildNodes($parentNodeAggregateId, $filter->nodeTypeConstraints);
+        if ($childNodesCache->contains($parentNodeAggregateId, $filter->nodeTypes)) {
+            return $childNodesCache->countChildNodes($parentNodeAggregateId, $filter->nodeTypes);
         }
         return $this->wrappedContentSubgraph->countChildNodes($parentNodeAggregateId, $filter);
     }

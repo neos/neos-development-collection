@@ -5,7 +5,6 @@ Feature: Simple migrations without content dimensions
     Given using no content dimensions
     And using the following node types:
     """yaml
-    'unstructured': {}
     'Neos.Neos:Site': {}
     'Some.Package:Homepage':
       superTypes:

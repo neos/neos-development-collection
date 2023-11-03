@@ -1,6 +1,12 @@
 {
   "name": "neos/contentgraph-doctrinedbaladapter",
+  "type": "library",
   "description": "The Doctrine DBAL database backend for the Neos content graph",
+  "support": {
+    "source": "https://github.com/neos/contentgraph-doctrinedbaladapter.git",
+    "forum": "https://discuss.neos.io/",
+    "docs": "https://docs.neos.io/"
+  },
   "license": "GPL-3.0+",
   "require": {
     "neos/contentrepository-core": "*",

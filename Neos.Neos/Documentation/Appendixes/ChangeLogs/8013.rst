@@ -1,0 +1,171 @@
+`8.0.13 (2023-10-21) <https://github.com/neos/neos-development-collection/releases/tag/8.0.13>`_
+================================================================================================
+
+Overview of merged pull requests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+`BUGFIX: Only discard nodes in same workspace <https://github.com/neos/neos-development-collection/pull/4578>`_
+---------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#4577 <https://github.com/neos/neos-development-collection/issues/4577>`_
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Load all thumbnails for an asset to skip further requests <https://github.com/neos/neos-development-collection/pull/4624>`_
+------------------------------------------------------------------------------------------------------------------------------------
+
+For the usecase of images with responsive variants this change prevents additional database requests for each additional variant of an image.
+
+This can greatly reduce the number of queries on pages with many source tags or sources attributes for pictures and images.
+
+**Review instructions**
+
+As soon as an image is rendered in several sizes on a page the patch should skip additional db requests in the thumbnails repository.
+Persistent resources and image entities are still queried as via the node property getter and to resolve the thumbnail.
+
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Allow unsetting thumbnail presets <https://github.com/neos/neos-development-collection/pull/4516>`_
+------------------------------------------------------------------------------------------------------------
+
+* Resolves: `#3544 <https://github.com/neos/neos-development-collection/issues/3544>`_
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Don’t query for abstract nodetypes in nodedata repository <https://github.com/neos/neos-development-collection/pull/4501>`_
+--------------------------------------------------------------------------------------------------------------------------------------
+
+As abstract nodetypes don't (shouldn't) appear in the database it makes no sense to query them.
+
+This is a regression that was introduced a long time ago, when the default parameter to include abstract nodetypes was added to the ``getSubNodeTypes`` method in the ``NodeTypeManager`` without adjusting the call in the ``NodeDataRepository->getNodeTypeFilterConstraintsForDql`` which relied on the previous behaviour.
+
+The call in the method ``getNodeTypeFilterConstraints`` was fixed some years ago, but that method seems unused.
+
+* Packages: ``ContentRepository``
+
+`BUGFIX: Consistently initialize asset sources via `createFromConfiguration` <https://github.com/neos/neos-development-collection/pull/4008>`_
+----------------------------------------------------------------------------------------------------------------------------------------------
+
+fixes: `#3965 <https://github.com/neos/neos-development-collection/issues/3965>`_
+
+**The Problem**
+
+The case at hand was an asset source that uses a value object to validate the incoming asset source options. I expected to be able to define a promoted constructor property with said value object as its declared type:
+
+```php
+final class MyAssetSource implements AssetSourceInterface
+{
+    public function __construct(
+        private readonly string $assetSourceIdentifier,
+        private readonly Options $options
+    ) {
+    }
+
+   /* ... */
+}
+```
+
+...and initialize the value object in the ``createFromConfiguration`` static factory method defined by the ``AssetSourceInterface``:
+
+```php
+final class MyAssetSource implements AssetSourceInterface
+{
+   /* ... */
+
+    public static function createFromConfiguration(string $assetSourceIdentifier, array $assetSourceOptions): AssetSourceInterface
+    {
+        return new static(
+            $assetSourceIdentifier,
+            Options::fromArray($assetSourceOptions)
+        );
+    }
+}
+```
+
+This failed with a Type Error, because the ``AssetSourceService``, which is responsible for initializing asset sources, at one point does not utilize ``createFromConfiguration`` to perform initialization, but calls the asset source constructor directly:
+
+https://github.com/neos/neos-development-collection/blob/`a4791b623161259b31d2d11b343310bd7ef76507 <https://github.com/neos/neos-development-collection/commit/a4791b623161259b31d2d11b343310bd7ef76507>`_/Neos.Media/Classes/Domain/Service/AssetSourceService.php#L178
+
+**The Solution**
+
+I adjusted the aforementioned routine of the ``AssetSourceService`` to use the ``AssetSourceInterface``-defined ``createFromConfiguration`` static factory method instead of the asset source's constructor.
+
+Even though the pattern I described above only makes sense in a PHP >8.0 environment, I decided to target Neos 7.3 with this PR, because it should constitute a non-breaking bugfix.
+
+* Packages: ``Neos`` ``Media``
+
+`BUGFIX: Guard that Fusion path cannot be empty <https://github.com/neos/neos-development-collection/pull/4547>`_
+-----------------------------------------------------------------------------------------------------------------
+
+Previously in php 7.4 this ``Neos\\Fusion\\Exception\\MissingFusionObjectException`` was thrown
+
+> No Fusion object found in path ""
+
+but with php 8 this ``ValueError`` is thrown which is unexpected
+
+> strrpos(): Argument `#3 <https://github.com/neos/neos-development-collection/issues/3>``_($offset) must be contained in argument ``#1 <https://github.com/neos/neos-development-collection/issues/1>`_($haystack)
+
+This change takes care of throwing an explicit ``Neos\\Fusion\\Exception`` instead:
+
+> Fusion path cannot be empty.
+
+
+--------
+
+This error was noticed in the out of band rendering, when there is no content element wrapping: https://discuss.neos.io/t/argument-3-offset-must-be-contained-in-argument-1-haystack/6416/4
+
+<img width="593" alt="image" src="https://github.com/neos/neos-development-collection/assets/85400359/0ac8d025-3ab4-44e8-9034-eb883f0b1894">
+
+
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``Fusion``
+
+`BUGFIX: Fix `NodeType` `getTypeOfAutoCreatedChildNode` and `getPropertyType` <https://github.com/neos/neos-development-collection/pull/4482>`_
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+resolves partially `#4333 <https://github.com/neos/neos-development-collection/issues/4333>`_
+resolves partially `#4344 <https://github.com/neos/neos-development-collection/issues/4344>`_
+
+**Upgrade instructions**
+
+
+* Packages: ``Neos`` ``ContentRepository``
+
+`TASK: Fix documentation builds <https://github.com/neos/neos-development-collection/pull/4607>`_
+-------------------------------------------------------------------------------------------------
+
+… by pinning updated dependencies.
+
+**Review instructions**
+
+Best is to see if the builds succeed on RTD again with this merged…
+
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Fix paths for Neos.Media RTD rendering setup <https://github.com/neos/neos-development-collection/pull/4568>`_
+---------------------------------------------------------------------------------------------------------------------
+
+The paths need to be from the repo root, not relative to the ``.readthedocs.yaml`` file (it seems).
+
+
+* Packages: ``Neos`` ``Media``
+
+`TASK: Add configuration files for RTD <https://github.com/neos/neos-development-collection/pull/4565>`_
+--------------------------------------------------------------------------------------------------------
+
+This add ``.readthedocs.yaml`` files for the collection (handling ``Neos.Neos``) and for ``neos.Media``, to solve failing documentation rendering.
+
+**Review instructions**
+
+This can be compared to the configuration we have in place for ``Neos.Flow`` in the Flow development collection.
+
+
+* Packages: ``Media``
+
+`Detailed log <https://github.com/neos/neos-development-collection/compare/8.0.12...8.0.13>`_
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

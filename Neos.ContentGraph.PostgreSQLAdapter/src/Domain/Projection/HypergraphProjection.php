@@ -31,6 +31,7 @@ use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\ContentHypergraph;
 use Neos\ContentGraph\PostgreSQLAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\PostgreSQLAdapter\Infrastructure\PostgresDbalClientInterface;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Event\NodePropertiesWereSet;
@@ -81,6 +82,7 @@ final class HypergraphProjection implements ProjectionInterface
     public function __construct(
         private readonly PostgresDbalClientInterface $databaseClient,
         private readonly NodeFactory $nodeFactory,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix,
     ) {
@@ -221,6 +223,7 @@ final class HypergraphProjection implements ProjectionInterface
             $this->contentHypergraph = new ContentHypergraph(
                 $this->databaseClient,
                 $this->nodeFactory,
+                $this->contentRepositoryId,
                 $this->nodeTypeManager,
                 $this->tableNamePrefix
             );

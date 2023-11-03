@@ -14,13 +14,13 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Fusion;
 
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\CountAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindAncestorNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
@@ -39,34 +39,28 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
     /**
      * Internal cache for the startingPoint tsValue.
-     *
-     * @var Node
      */
-    protected $startingPoint;
+    protected ?Node $startingPoint = null;
 
     /**
      * Internal cache for the lastLevel value.
-     *
-     * @var integer
      */
-    protected $lastLevel;
+    protected ?int $lastLevel = null;
 
     /**
      * Internal cache for the maximumLevels tsValue.
-     *
-     * @var integer
      */
-    protected $maximumLevels;
+    protected ?int $maximumLevels = null;
 
     /**
      * Internal cache for the ancestors aggregate ids of the currentNode.
      */
-    protected ?NodeAggregateIds $currentNodeAncestorAggregateIds = null;
+    protected ?NodeAggregateIds $currentNodeRootlineAggregateIds = null;
 
     /**
-     * Runtime cache for the node type constraints to be applied
+     * Runtime cache for the node type criteria to be applied
      */
-    protected ?NodeTypeConstraints $nodeTypeConstraints = null;
+    protected ?NodeTypeCriteria $nodeTypeCriteria = null;
 
     /**
      * The last navigation level which should be rendered.
@@ -78,20 +72,16 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      * -1 = one level above the current page
      * -2 = two levels above the current page
      * ...
-     *
-     * @return integer
      */
-    public function getEntryLevel()
+    protected function getEntryLevel(): int
     {
         return $this->fusionValue('entryLevel');
     }
 
     /**
      * NodeType filter for nodes displayed in menu
-     *
-     * @return string
      */
-    public function getFilter()
+    protected function getFilter(): string
     {
         $filter = $this->fusionValue('filter');
         if ($filter === null) {
@@ -103,10 +93,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
     /**
      * Maximum number of levels which should be rendered in this menu.
-     *
-     * @return integer
      */
-    public function getMaximumLevels()
+    protected function getMaximumLevels(): int
     {
         if ($this->maximumLevels === null) {
             $this->maximumLevels = $this->fusionValue('maximumLevels');
@@ -120,10 +108,8 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
 
     /**
      * Return evaluated lastLevel value.
-     *
-     * @return integer
      */
-    public function getLastLevel(): int
+    protected function getLastLevel(): ?int
     {
         if ($this->lastLevel === null) {
             $this->lastLevel = $this->fusionValue('lastLevel');
@@ -135,7 +121,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         return $this->lastLevel;
     }
 
-    public function getStartingPoint(): ?Node
+    protected function getStartingPoint(): ?Node
     {
         if ($this->startingPoint === null) {
             $this->startingPoint = $this->fusionValue('startingPoint');
@@ -147,7 +133,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
     /**
      * @return array<int,Node>|Nodes|null
      */
-    public function getItemCollection(): array|Nodes|null
+    protected function getItemCollection(): array|Nodes|null
     {
         return $this->fusionValue('itemCollection');
     }
@@ -161,45 +147,89 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      */
     protected function buildItems(): array
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->getCurrentNode());
         if (!is_null($this->getItemCollection())) {
             $items = [];
             foreach ($this->getItemCollection() as $node) {
-                $childSubtree = $subgraph->findSubtree(
-                    $node->nodeAggregateId,
-                    FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
-                );
-                if ($childSubtree === null) {
-                    continue;
+                if ($this->getMaximumLevels() > 0) {
+                    $childSubtree = $subgraph->findSubtree(
+                        $node->nodeAggregateId,
+                        FindSubtreeFilter::create(nodeTypes: $this->getNodeTypeCriteria(), maximumLevels: $this->getMaximumLevels() - 1)
+                    );
+                    if ($childSubtree === null) {
+                        continue;
+                    }
+                    $items[] = $this->buildMenuItemFromSubtree($childSubtree, 1);
+                } else {
+                    $items[] = $this->buildMenuItemFromNode($node);
                 }
-                $items[] = $this->traverseChildren($childSubtree);
             }
             return $items;
         }
 
-        $entryParentNode = $this->findMenuStartingPoint();
-        if (!$entryParentNode) {
+        $entryParentNodeAggregateId = $this->findMenuStartingPointAggregateId();
+        if (!$entryParentNodeAggregateId) {
             return [];
         }
 
+        $maximumLevels = $this->getMaximumLevels();
+        $lastLevels = $this->getLastLevel();
+        if ($lastLevels !== null) {
+            $depthOfEntryParentNodeAggregateId = $subgraph->countAncestorNodes(
+                $entryParentNodeAggregateId,
+                CountAncestorNodesFilter::create(
+                    NodeTypeCriteria::createWithAllowedNodeTypeNames(
+                        NodeTypeNames::with(
+                            NodeTypeNameFactory::forDocument()
+                        )
+                    )
+                )
+            );
+
+            if ($lastLevels > 0) {
+                $maxLevelsBasedOnLastLevel = max($lastLevels - $depthOfEntryParentNodeAggregateId, 0);
+                $maximumLevels = min($maximumLevels, $maxLevelsBasedOnLastLevel);
+            } elseif ($lastLevels < 0) {
+                $currentNodeAncestorAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
+                $depthOfCurrentDocument = count(iterator_to_array($currentNodeAncestorAggregateIds)) - 1;
+                $maxLevelsBasedOnLastLevel = max($depthOfCurrentDocument + $lastLevels - $depthOfEntryParentNodeAggregateId + 1, 0);
+                $maximumLevels = min($maximumLevels, $maxLevelsBasedOnLastLevel);
+            }
+        }
+
         $childSubtree = $subgraph->findSubtree(
-            $entryParentNode->nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: $this->getNodeTypeConstraints(), maximumLevels: $this->getMaximumLevels())
+            $entryParentNodeAggregateId,
+            FindSubtreeFilter::create(
+                nodeTypes: $this->getNodeTypeCriteria(),
+                maximumLevels: $maximumLevels
+            )
         );
         if ($childSubtree === null) {
             return [];
         }
-        return $this->traverseChildren($childSubtree)->getChildren();
+        return $this->buildMenuItemFromSubtree($childSubtree)->getChildren();
     }
 
-    protected function traverseChildren(Subtree $subtree): MenuItem
+    protected function buildMenuItemFromNode(Node $node): MenuItem
+    {
+        return new MenuItem(
+            $node,
+            $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
+            $node->getLabel(),
+            0,
+            [],
+            $this->buildUri($node)
+        );
+    }
+
+    protected function buildMenuItemFromSubtree(Subtree $subtree, int $startLevel = 0): MenuItem
     {
         $children = [];
 
         foreach ($subtree->children as $childSubtree) {
             $node = $childSubtree->node;
             if (!$this->isNodeHidden($node)) {
-                $childNode = $this->traverseChildren($childSubtree);
+                $childNode = $this->buildMenuItemFromSubtree($childSubtree, $startLevel);
                 $children[] = $childNode;
             }
         }
@@ -210,7 +240,7 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
             $node,
             $this->isCalculateItemStatesEnabled() ? $this->calculateItemState($node) : null,
             $node->getLabel(),
-            $subtree->level,
+            $subtree->level + $startLevel,
             $children,
             $this->buildUri($node)
         );
@@ -223,16 +253,12 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
      *
      * If entryLevel is configured this will be taken into account as well.
      *
-     * @return Node|null
+     * @return NodeAggregateId|null
      * @throws FusionException
      */
-    protected function findMenuStartingPoint(): ?Node
+    protected function findMenuStartingPointAggregateId(): ?NodeAggregateId
     {
-        $fusionContext = $this->runtime->getCurrentContext();
-        $traversalStartingPoint = $this->getStartingPoint() ?: $fusionContext['node'] ?? null;
-
-        $contentRepositoryId = $this->currentNode->subgraphIdentity->contentRepositoryId;
-        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+        $traversalStartingPoint = $this->getStartingPoint() ?: $this->getCurrentNode();
 
         if (!$traversalStartingPoint instanceof Node) {
             throw new FusionException(
@@ -242,106 +268,55 @@ class MenuItemsImplementation extends AbstractMenuItemsImplementation
         }
 
         if ($this->getEntryLevel() === 0) {
-            $entryParentNode = $traversalStartingPoint;
+            return $traversalStartingPoint->nodeAggregateId;
         } elseif ($this->getEntryLevel() < 0) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $this->getNodeTypeConstraints(),
-                $contentRepository->getNodeTypeManager()
-            );
-            $remainingIterations = abs($this->getEntryLevel());
-            $entryParentNode = null;
-            $this->traverseUpUntilCondition(
-                $traversalStartingPoint,
-                function (Node $node) use (
-                    &$remainingIterations,
-                    &$entryParentNode,
-                    $nodeTypeConstraintsWithSubNodeTypes
-                ) {
-                    if (!$nodeTypeConstraintsWithSubNodeTypes->matches($node->nodeTypeName)) {
-                        return false;
-                    }
-
-                    if ($remainingIterations > 0) {
-                        $remainingIterations--;
-
-                        return true;
-                    } else {
-                        $entryParentNode = $node;
-
-                        return false;
-                    }
-                }
-            );
+            $ancestorNodeAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
+            $ancestorNodeAggregateIdArray = array_values(iterator_to_array($ancestorNodeAggregateIds));
+            return $ancestorNodeAggregateIdArray[$this->getEntryLevel() * -1] ?? null;
         } else {
-            $traversedHierarchy = [];
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $this->getNodeTypeConstraints()->withAdditionalDisallowedNodeType(
-                    NodeTypeNameFactory::forSites()
-                ),
-                $contentRepository->getNodeTypeManager()
-            );
-            $this->traverseUpUntilCondition(
-                $traversalStartingPoint,
-                function (Node $traversedNode) use (&$traversedHierarchy, $nodeTypeConstraintsWithSubNodeTypes) {
-                    if (!$nodeTypeConstraintsWithSubNodeTypes->matches($traversedNode->nodeTypeName)) {
-                        return false;
-                    }
-                    $traversedHierarchy[] = $traversedNode;
-                    return true;
-                }
-            );
-            $traversedHierarchy = array_reverse($traversedHierarchy);
-
-            $entryParentNode = $traversedHierarchy[$this->getEntryLevel() - 1] ?? null;
+            $ancestorNodeAggregateIds = $this->getCurrentNodeRootlineAggregateIds();
+            $ancestorNodeAggregateIdArray = array_reverse(array_values(iterator_to_array($ancestorNodeAggregateIds)));
+            return $ancestorNodeAggregateIdArray[$this->getEntryLevel() - 1] ?? null;
         }
-        return $entryParentNode;
     }
 
-    protected function getNodeTypeConstraints(): NodeTypeConstraints
+    protected function getNodeTypeCriteria(): NodeTypeCriteria
     {
-        if (!$this->nodeTypeConstraints) {
-            $this->nodeTypeConstraints = NodeTypeConstraints::fromFilterString($this->getFilter());
+        if (!$this->nodeTypeCriteria) {
+            $this->nodeTypeCriteria = NodeTypeCriteria::fromFilterString($this->getFilter());
         }
-
-        return $this->nodeTypeConstraints;
+        return $this->nodeTypeCriteria;
     }
 
-    /**
-     * the callback always gets the current Node passed as first parameter,
-     * and then its parent, and its parent etc etc.
-     * Until it has reached the root, or the return value of the closure is FALSE.
-     */
-    protected function traverseUpUntilCondition(Node $node, \Closure $callback): void
+    protected function getCurrentNodeRootlineAggregateIds(): NodeAggregateIds
     {
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        do {
-            $shouldContinueTraversal = $callback($node);
-            $node = $subgraph->findParentNode($node->nodeAggregateId);
-        } while ($shouldContinueTraversal !== false && $node !== null);
-    }
-
-    public function getCurrentNodeAncestorAggregateIds(): NodeAggregateIds
-    {
-        if ($this->currentNodeAncestorAggregateIds instanceof NodeAggregateIds) {
-            return $this->currentNodeAncestorAggregateIds;
+        if ($this->currentNodeRootlineAggregateIds instanceof NodeAggregateIds) {
+            return $this->currentNodeRootlineAggregateIds;
         }
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->currentNode);
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($this->getCurrentNode());
         $currentNodeAncestors = $subgraph->findAncestorNodes(
             $this->currentNode->nodeAggregateId,
             FindAncestorNodesFilter::create(
-                $this->getNodeTypeConstraints()
+                NodeTypeCriteria::createWithAllowedNodeTypeNames(
+                    NodeTypeNames::with(
+                        NodeTypeNameFactory::forDocument()
+                    )
+                )
             )
         );
-        $this->currentNodeAncestorAggregateIds = NodeAggregateIds::fromNodes($currentNodeAncestors);
-        return $this->currentNodeAncestorAggregateIds;
+
+        $this->currentNodeRootlineAggregateIds = NodeAggregateIds::create($this->currentNode->nodeAggregateId)
+            ->merge(NodeAggregateIds::fromNodes($currentNodeAncestors));
+
+        return $this->currentNodeRootlineAggregateIds;
     }
 
     protected function calculateItemState(Node $node): MenuItemState
     {
-        if ($node->nodeAggregateId->equals($this->currentNode->nodeAggregateId)) {
+        if ($node->nodeAggregateId->equals($this->getCurrentNode()->nodeAggregateId)) {
             return MenuItemState::CURRENT;
         }
-        if ($this->getCurrentNodeAncestorAggregateIds()->contain($node->nodeAggregateId)) {
+        if ($this->getCurrentNodeRootlineAggregateIds()->contain($node->nodeAggregateId)) {
             return MenuItemState::ACTIVE;
         }
         return MenuItemState::NORMAL;

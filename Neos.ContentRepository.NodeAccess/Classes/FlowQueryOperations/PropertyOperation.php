@@ -61,7 +61,7 @@ class PropertyOperation extends AbstractOperation
      *
      * We can only handle ContentRepository Nodes.
      *
-     * @param array $context $context onto which this operation should be applied (array or array-like object)
+     * @param array<int, mixed> $context $context onto which this operation should be applied (array or array-like object)
      * @return boolean
      */
     public function canEvaluate($context): bool
@@ -110,7 +110,11 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        if ($element->nodeType->getPropertyType($propertyName) === 'reference') {
+        $propertyType = $element->nodeType->hasProperty($propertyName)
+            ? $element->nodeType->getPropertyType($propertyName)
+            : null;
+
+        if ($propertyType === 'reference') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return (
                 $subgraph->findReferences(
@@ -120,7 +124,7 @@ class PropertyOperation extends AbstractOperation
             )?->node;
         }
 
-        if ($element->nodeType->getPropertyType($propertyName) === 'references') {
+        if ($propertyType === 'references') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return $subgraph->findReferences(
                 $element->nodeAggregateId,

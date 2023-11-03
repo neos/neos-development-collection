@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\NodeTypeChange;
 
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
@@ -90,7 +91,7 @@ trait NodeTypeChange
 
     abstract protected function createEventsForMissingTetheredNode(
         NodeAggregate $parentNodeAggregate,
-        Node $parentNode,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
@@ -206,7 +207,7 @@ trait NodeTypeChange
                         ?: NodeAggregateId::create();
                     array_push($events, ...iterator_to_array($this->createEventsForMissingTetheredNode(
                         $nodeAggregate,
-                        $node,
+                        $node->originDimensionSpacePoint,
                         $tetheredNodeName,
                         $tetheredNodeAggregateId,
                         $expectedTetheredNodeType,

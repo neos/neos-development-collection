@@ -180,7 +180,8 @@ final class ContentCommandController extends CommandController
         $this->outputLine('<success>Done!</success>');
     }
 
-    private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, ContentStreamId $contentStreamId, ContentRepository $contentRepository) {
+    private function createVariantRecursivelyInternal(int $level, NodeAggregateId $parentNodeAggregateId, ContentSubgraphInterface $sourceSubgraph, OriginDimensionSpacePoint $target, ContentStreamId $contentStreamId, ContentRepository $contentRepository): void
+    {
         $childNodes = $sourceSubgraph->findChildNodes(
             $parentNodeAggregateId,
             FindChildNodesFilter::create()

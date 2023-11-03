@@ -19,6 +19,7 @@ use Doctrine\DBAL\DBALException;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggregatesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
@@ -56,6 +57,7 @@ final class ContentGraph implements ContentGraphInterface
     public function __construct(
         private readonly DbalClientInterface $client,
         private readonly NodeFactory $nodeFactory,
+        private readonly ContentRepositoryId $contentRepositoryId,
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly string $tableNamePrefix
     ) {
@@ -70,6 +72,7 @@ final class ContentGraph implements ContentGraphInterface
         if (!isset($this->subgraphs[$index])) {
             $this->subgraphs[$index] = new ContentSubgraphWithRuntimeCaches(
                 new ContentSubgraph(
+                    $this->contentRepositoryId,
                     $contentStreamId,
                     $dimensionSpacePoint,
                     $visibilityConstraints,

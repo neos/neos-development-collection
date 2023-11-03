@@ -198,7 +198,7 @@ class NodeController extends ActionController
      * with unsafe requests from widgets or plugins that are rendered on the node
      * - For those the CSRF token is validated on the sub-request, so it is safe to be skipped here
      */
-    public function showAction(string $node, bool $showInvisible = false): void
+    public function showAction(string $node): void
     {
         $siteDetectionResult = SiteDetectionResult::fromRequest($this->request->getHttpRequest());
         $contentRepository = $this->contentRepositoryRegistry->get($siteDetectionResult->contentRepositoryId);
@@ -208,15 +208,10 @@ class NodeController extends ActionController
             throw new NodeNotFoundException('The requested node isn\'t accessible to the current user', 1430218623);
         }
 
-        $visibilityConstraints = VisibilityConstraints::frontend();
-        if ($showInvisible && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
-            $visibilityConstraints = VisibilityConstraints::withoutRestrictions();
-        }
-
         $subgraph = $contentRepository->getContentGraph()->getSubgraph(
             $nodeAddress->contentStreamId,
             $nodeAddress->dimensionSpacePoint,
-            $visibilityConstraints
+            VisibilityConstraints::frontend()
         );
 
         $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
@@ -231,7 +226,7 @@ class NodeController extends ActionController
 
         $nodeInstance = $subgraph->findNodeById($nodeAddress->nodeAggregateId);
 
-        if (is_null($nodeInstance)) {
+        if ($nodeInstance === null) {
             throw new NodeNotFoundException('The requested node does not exist', 1596191460);
         }
 
@@ -331,7 +326,7 @@ class NodeController extends ActionController
 
         $subtree = $subgraph->findSubtree(
             $nodeAggregateId,
-            FindSubtreeFilter::create(nodeTypeConstraints: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
+            FindSubtreeFilter::create(nodeTypes: '!' . NodeTypeNameFactory::NAME_DOCUMENT, maximumLevels: 20)
         );
         if ($subtree === null) {
             return;

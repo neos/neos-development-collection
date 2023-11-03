@@ -24,6 +24,13 @@
     <f:form action="update" controller="ImageVariant" package="Neos.Media.Browser" format="json" id="postHelper" method="post" useParentRequest="{isSubRequest}">
         <f:render partial="ConstraintsHiddenFields" arguments="{constraints: constraints}" />
     </f:form>
+
+    <div class="neos-footer">
+        <f:form action="createVariants" addQueryString="true">
+            <button type="submit" class="neos-button">{neos:backend.translate(id: 'createMissingVariants', package: 'Neos.Media.Browser')}</button>
+        </f:form>
+    </div>
+
 </f:section>
 
 <f:section name="Scripts">

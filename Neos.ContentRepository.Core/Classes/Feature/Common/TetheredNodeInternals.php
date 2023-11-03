@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\EventStore\Events;
 use Neos\ContentRepository\Core\Feature\NodeCreation\Event\NodeAggregateWithNodeWasCreated;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCreated;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -26,7 +27,6 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\SharedModel\User\UserId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
@@ -54,15 +54,15 @@ trait TetheredNodeInternals
      */
     protected function createEventsForMissingTetheredNode(
         NodeAggregate $parentNodeAggregate,
-        Node $parentNode,
+        OriginDimensionSpacePoint $originDimensionSpacePoint,
         NodeName $tetheredNodeName,
         ?NodeAggregateId $tetheredNodeAggregateId,
         NodeType $expectedTetheredNodeType,
         ContentRepository $contentRepository
     ): Events {
         $childNodeAggregates = $contentRepository->getContentGraph()->findChildNodeAggregatesByName(
-            $parentNode->subgraphIdentity->contentStreamId,
-            $parentNode->nodeAggregateId,
+            $parentNodeAggregate->contentStreamId,
+            $parentNodeAggregate->nodeAggregateId,
             $tetheredNodeName
         );
 
@@ -75,19 +75,53 @@ trait TetheredNodeInternals
 
         if (count($childNodeAggregates) === 0) {
             // there is no tethered child node aggregate already; let's create it!
-            return Events::with(
-                new NodeAggregateWithNodeWasCreated(
-                    $parentNode->subgraphIdentity->contentStreamId,
-                    $tetheredNodeAggregateId ?: NodeAggregateId::create(),
-                    $expectedTetheredNodeType->name,
-                    $parentNode->originDimensionSpacePoint,
-                    $parentNodeAggregate->getCoverageByOccupant($parentNode->originDimensionSpacePoint),
-                    $parentNode->nodeAggregateId,
-                    $tetheredNodeName,
-                    SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
-                    NodeAggregateClassification::CLASSIFICATION_TETHERED,
-                )
-            );
+            $nodeType = $this->nodeTypeManager->getNodeType($parentNodeAggregate->nodeTypeName);
+            if ($nodeType->isOfType(NodeTypeName::ROOT_NODE_TYPE_NAME)) {
+                $events = [];
+                $tetheredNodeAggregateId = $tetheredNodeAggregateId ?: NodeAggregateId::create();
+                // we create in one origin DSP and vary in the others
+                $creationOriginDimensionSpacePoint = null;
+                foreach ($this->getInterDimensionalVariationGraph()->getRootGeneralizations() as $rootGeneralization) {
+                    $rootGeneralizationOrigin = OriginDimensionSpacePoint::fromDimensionSpacePoint($rootGeneralization);
+                    if ($creationOriginDimensionSpacePoint) {
+                        $events[] = new NodePeerVariantWasCreated(
+                            $parentNodeAggregate->contentStreamId,
+                            $tetheredNodeAggregateId,
+                            $creationOriginDimensionSpacePoint,
+                            $rootGeneralizationOrigin,
+                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization)
+                        );
+                    } else {
+                        $events[] = new NodeAggregateWithNodeWasCreated(
+                            $parentNodeAggregate->contentStreamId,
+                            $tetheredNodeAggregateId,
+                            $expectedTetheredNodeType->name,
+                            $rootGeneralizationOrigin,
+                            $this->getInterDimensionalVariationGraph()->getSpecializationSet($rootGeneralization),
+                            $parentNodeAggregate->nodeAggregateId,
+                            $tetheredNodeName,
+                            SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
+                            NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                        );
+                        $creationOriginDimensionSpacePoint = $rootGeneralizationOrigin;
+                    }
+                }
+                return Events::fromArray($events);
+            } else {
+                return Events::with(
+                    new NodeAggregateWithNodeWasCreated(
+                        $parentNodeAggregate->contentStreamId,
+                        $tetheredNodeAggregateId ?: NodeAggregateId::create(),
+                        $expectedTetheredNodeType->name,
+                        $originDimensionSpacePoint,
+                        $parentNodeAggregate->getCoverageByOccupant($originDimensionSpacePoint),
+                        $parentNodeAggregate->nodeAggregateId,
+                        $tetheredNodeName,
+                        SerializedPropertyValues::defaultFromNodeType($expectedTetheredNodeType),
+                        NodeAggregateClassification::CLASSIFICATION_TETHERED,
+                    )
+                );
+            }
         } elseif (count($childNodeAggregates) === 1) {
             /** @var NodeAggregate $childNodeAggregate */
             $childNodeAggregate = current($childNodeAggregates);
@@ -106,9 +140,9 @@ trait TetheredNodeInternals
             }
             /** @var Node $childNodeSource Node aggregates are never empty */
             return $this->createEventsForVariations(
-                $parentNode->subgraphIdentity->contentStreamId,
+                $parentNodeAggregate->contentStreamId,
                 $childNodeSource->originDimensionSpacePoint,
-                $parentNode->originDimensionSpacePoint,
+                $originDimensionSpacePoint,
                 $parentNodeAggregate,
                 $contentRepository
             );

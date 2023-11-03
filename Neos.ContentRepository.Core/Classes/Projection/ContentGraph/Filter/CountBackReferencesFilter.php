@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -33,7 +33,7 @@ final class CountBackReferencesFilter
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeConstraints $nodeTypeConstraints,
+        public readonly ?NodeTypeCriteria $nodeTypes,
         public readonly ?SearchTerm $nodeSearchTerm,
         public readonly ?PropertyValueCriteriaInterface $nodePropertyValue,
         public readonly ?SearchTerm $referenceSearchTerm,
@@ -49,15 +49,15 @@ final class CountBackReferencesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeCriteria|string $nodeTypes = null,
         SearchTerm|string $nodeSearchTerm = null,
         PropertyValueCriteriaInterface|string $nodePropertyValue = null,
         SearchTerm|string $referenceSearchTerm = null,
         PropertyValueCriteriaInterface|string $referencePropertyValue = null,
         ReferenceName|string $referenceName = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
+        if (is_string($nodeTypes)) {
+            $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
         }
         if (is_string($nodeSearchTerm)) {
             $nodeSearchTerm = SearchTerm::fulltext($nodeSearchTerm);
@@ -74,12 +74,12 @@ final class CountBackReferencesFilter
         if (is_string($referenceName)) {
             $referenceName = ReferenceName::fromString($referenceName);
         }
-        return new self($nodeTypeConstraints, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName);
+        return new self($nodeTypes, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName);
     }
 
     public static function fromFindBackReferencesFilter(FindBackReferencesFilter $filter): self
     {
-        return new self($filter->nodeTypeConstraints, $filter->nodeSearchTerm, $filter->nodePropertyValue, $filter->referenceSearchTerm, $filter->referencePropertyValue, $filter->referenceName);
+        return new self($filter->nodeTypes, $filter->nodeSearchTerm, $filter->nodePropertyValue, $filter->referenceSearchTerm, $filter->referencePropertyValue, $filter->referenceName);
     }
 
     /**
@@ -89,7 +89,7 @@ final class CountBackReferencesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeCriteria|string $nodeTypes = null,
         SearchTerm|string $nodeSearchTerm = null,
         PropertyValueCriteriaInterface|string $nodePropertyValue = null,
         SearchTerm|string $referenceSearchTerm = null,
@@ -97,7 +97,7 @@ final class CountBackReferencesFilter
         ReferenceName|string $referenceName = null,
     ): self {
         return self::create(
-            $nodeTypeConstraints ?? $this->nodeTypeConstraints,
+            $nodeTypes ?? $this->nodeTypes,
             $nodeSearchTerm ?? $this->nodeSearchTerm,
             $nodePropertyValue ?? $this->nodePropertyValue,
             $referenceSearchTerm ?? $this->referenceSearchTerm,

@@ -1,18 +1,25 @@
-@fixtures
+@flowEntities @contentrepository
 Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
 
   Background:
-    Given I have the site "a"
-    And I have the following NodeTypes configuration:
+    Given using no content dimensions
+    And using the following node types:
     """yaml
-    'unstructured': {}
-    'Neos.Neos:FallbackNode': {}
+    'Neos.ContentRepository:Root': {}
+    'Neos.Neos:Sites':
+      superTypes:
+        'Neos.ContentRepository:Root': true
     'Neos.Neos:Document':
       properties:
         title:
           type: string
         uriPathSegment:
           type: string
+        _hiddenInIndex:
+          type: bool
+    'Neos.Neos:Site':
+      superTypes:
+        'Neos.Neos:Document': true
     'Neos.Neos:Content':
       properties:
         title:
@@ -29,21 +36,48 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     'Neos.Neos:Test.Content':
       superTypes:
         'Neos.Neos:Content': true
+
     """
-    And I have the following nodes:
-      | Identifier | Path                       | Node Type                     | Properties                                         | Hidden in index |
-      | root       | /sites                     | unstructured                  |                                                    | false           |
-      | a          | /sites/a                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a", "title": "Node a"}         | false           |
-      | a1         | /sites/a/a1                | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1", "title": "Node a1"}       | false           |
-      | a1a        | /sites/a/a1/a1a            | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a", "title": "Node a1a"}     | false           |
-      | a1b        | /sites/a/a1/a1b            | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b", "title": "Node a1b"}     | false           |
-      | a1b1       | /sites/a/a1/a1b/a1b1       | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1", "title": "Node a1b1"}   | false           |
-      | a1b1a      | /sites/a/a1/a1b/a1b1/a1b1a | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1b1a", "title": "Node a1b1a"} | false           |
-      | a1b1b      | /sites/a/a1/a1b/a1b1/a1b1b | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"} | false           |
-      | a1b2       | /sites/a/a1/a1b/a1b2       | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}   | false           |
-      | a1b3       | /sites/a/a1/a1b/a1b3       | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}   | false           |
-      | a1c        | /sites/a/a1/a1c            | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c"}     | true            |
-      | a1c1       | /sites/a/a1/a1c/a1c1       | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}   | false           |
+    And using identifier "default", I define a content repository
+    And I am in content repository "default"
+    And I am user identified by "initiating-user-identifier"
+
+    When the command CreateRootWorkspace is executed with payload:
+      | Key                | Value           |
+      | workspaceName      | "live"          |
+      | newContentStreamId | "cs-identifier" |
+    And the command CreateRootNodeAggregateWithNode is executed with payload:
+      | Key             | Value             |
+      | contentStreamId | "cs-identifier"   |
+      | nodeAggregateId | "root"            |
+      | nodeTypeName    | "Neos.Neos:Sites" |
+    And the graph projection is fully up to date
+    And I am in content stream "cs-identifier" and dimension space point {}
+    And the following CreateNodeAggregateWithNode commands are executed:
+      | nodeAggregateId | parentNodeAggregateId | nodeTypeName                  | initialPropertyValues                                                  | nodeName |
+      | a               | root                  | Neos.Neos:Site                | {"title": "Node a"}                                                    | a        |
+      | a1              | a                     | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1", "title": "Node a1"}                           | a1       |
+      | a1a             | a1                    | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1a", "title": "Node a1a"}                         | a1a      |
+      | a1b             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b", "title": "Node a1b"}                         | a1b      |
+      | a1b1            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1", "title": "Node a1b1"}                       | a1b1     |
+      | a1b1a           | a1b1                  | Neos.Neos:Test.DocumentType2a | {"uriPathSegment": "a1b1a", "title": "Node a1b1a"}                     | a1b1a    |
+      | a1b1b           | a1b1                  | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b1b", "title": "Node a1b1b"}                     | a1b1b    |
+      | a1b2            | a1b                   | Neos.Neos:Test.DocumentType2  | {"uriPathSegment": "a1b2", "title": "Node a1b2"}                       | a1b2     |
+      | a1b3            | a1b                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1b3", "title": "Node a1b3"}                       | a1b3     |
+      | a1c             | a1                    | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c", "title": "Node a1c", "_hiddenInIndex": true} | a1c      |
+      | a1c1            | a1c                   | Neos.Neos:Test.DocumentType1  | {"uriPathSegment": "a1c1", "title": "Node a1c1"}                       | a1c1     |
+    And A site exists for node name "a" and domain "http://localhost"
+    And the sites configuration is:
+    """yaml
+    Neos:
+      Neos:
+        sites:
+          '*':
+            contentRepository: default
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+    """
     And the Fusion context node is "a1a"
     And the Fusion context request URI is "http://localhost"
     And I have the following Fusion setup:
@@ -68,11 +102,17 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       renderer = Neos.Fusion:Loop {
         items = ${props.items}
         itemRenderer = afx`
-          {item.node.identifier}<Neos.Neos:Test.Menu.ItemStateIndicator state={item.state} /> ({item.menuLevel}){String.chr(10)}
+          {item.node.nodeAggregateId.value}<Neos.Neos:Test.Menu.ItemStateIndicator state={item.state.value} /> ({item.menuLevel}){String.chr(10)}
           <Neos.Neos:Test.Menu items={item.subItems} @if={item.subItems} />
         `
       }
     }
+
+    # Always calculate menu item state to get Neos < 9 behavior
+    prototype(Neos.Neos:MenuItems) {
+      calculateItemStates = true
+    }
+
     """
 
   Scenario: MenuItems (default)
@@ -82,6 +122,22 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
       items = Neos.Neos:MenuItems
     }
     """
+    Then I expect the following Fusion rendering result:
+    """
+    a1. (1)
+    a1a* (2)
+    a1b (2)
+
+    """
+
+  Scenario: MenuItems (default on home page)
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Neos:Test.Menu {
+      items = Neos.Neos:MenuItems
+    }
+    """
+    And the Fusion context node is "a"
     Then I expect the following Fusion rendering result:
     """
     a1. (1)
@@ -121,9 +177,6 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """
     Then I expect the following Fusion rendering result:
     """
-    a1. (1)
-    a1a* (2)
-    a1b (2)
 
     """
 
@@ -205,7 +258,6 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """
     Then I expect the following Fusion rendering result:
     """
-    a1. (1)
 
     """
 
@@ -343,7 +395,7 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     """
     Then I expect the following Fusion rendering result:
     """
-    a (1)
+    a. (1)
     a1. (2)
 
     """
@@ -440,19 +492,22 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     include: resource://Neos.Fusion/Private/Fusion/Root.fusion
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
-    test = Neos.Neos:Menu
+    test = Neos.Neos:Menu {
+      # calculate menu item state to get Neos < 9 behavior
+      calculateItemStates = true
+    }
     """
     Then I expect the following Fusion rendering result as HTML:
     """html
     <ul>
         <li class="active">
-            <a href="/en/a1" title="Neos.Neos:Test.DocumentType1 (a1)">Neos.Neos:Test.DocumentType1 (a1)</a>
+            <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
             <ul>
                 <li class="current">
-                    <a href="/en/a1/a1a" title="Neos.Neos:Test.DocumentType2a (a1a)">Neos.Neos:Test.DocumentType2a (a1a)</a>
+                    <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
                 </li>
                 <li class="normal">
-                    <a href="/en/a1/a1b" title="Neos.Neos:Test.DocumentType1 (a1b)">Neos.Neos:Test.DocumentType1 (a1b)</a>
+                    <a href="/a1/a1b" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
                 </li>
             </ul>
         </li>
@@ -465,17 +520,22 @@ Feature: Tests for the "Neos.Neos:Menu" and related Fusion prototypes
     include: resource://Neos.Fusion/Private/Fusion/Root.fusion
     include: resource://Neos.Neos/Private/Fusion/Root.fusion
 
-    test = Neos.Neos:BreadcrumbMenu
+    test = Neos.Neos:BreadcrumbMenu {
+      # calculate menu item state to get Neos < 9 behavior
+      calculateItemStates = true
+    }
     """
     Then I expect the following Fusion rendering result as HTML:
     """html
-    <ul class="breadcrumb">
-      <li class="normal">
-        <a href="/" title="Neos.Neos:Test.DocumentType1 (a)">Neos.Neos:Test.DocumentType1 (a)</a>
+    <ul>
+      <li class="active">
+        <a href="/" title="Neos.Neos:Site">Neos.Neos:Site</a>
       </li>
       <li class="active">
-        <a href="/en/a1" title="Neos.Neos:Test.DocumentType1 (a1)">Neos.Neos:Test.DocumentType1 (a1)</a>
+        <a href="/a1" title="Neos.Neos:Test.DocumentType1">Neos.Neos:Test.DocumentType1</a>
       </li>
-      <li class="current">Neos.Neos:Test.DocumentType2a (a1a)</li>
+      <li class="current">
+        <a href="/a1/a1a" title="Neos.Neos:Test.DocumentType2a">Neos.Neos:Test.DocumentType2a</a>
+      </li>
     </ul>
     """

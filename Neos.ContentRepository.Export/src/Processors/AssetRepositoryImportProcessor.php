@@ -34,6 +34,7 @@ use Neos\Utility\ObjectAccess;
  */
 final class AssetRepositoryImportProcessor implements ProcessorInterface
 {
+    /** @var array<int, \Closure> */
     private array $callbacks = [];
 
     public function __construct(

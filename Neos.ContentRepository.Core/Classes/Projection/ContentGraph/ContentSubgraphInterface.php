@@ -49,6 +49,15 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 interface ContentSubgraphInterface extends \JsonSerializable
 {
     /**
+     * Returns the subgraph's identity, i.e. the current perspective we look at content from, composed of
+     * * the content repository the subgraph belongs to
+     * * the ID of the content stream we are currently working in
+     * * the dimension space point we are currently looking at
+     * * the applied visibility constraints
+     */
+    public function getIdentity(): ContentSubgraphIdentity;
+
+    /**
      * Find a single node by its aggregate id
      *
      * @return Node|null the node or NULL if no node with the specified id is accessible in this subgraph
