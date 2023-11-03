@@ -530,10 +530,10 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         }
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
-        $matchingContentStream = $command->contentStreamIdForMatchingPart;
+        $matchingContentStreamId = $command->contentStreamIdForMatchingPart;
         $contentRepository->handle(
             ForkContentStream::create(
-                $matchingContentStream,
+                $matchingContentStreamId,
                 $baseWorkspace->currentContentStreamId,
             )
         )->block();
@@ -548,16 +548,21 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
 
             $contentRepository->handle($matchingCommand->createCopyForWorkspace(
                 $baseWorkspace->workspaceName,
-                $matchingContentStream
+                $matchingContentStreamId
             ))->block();
         }
 
+        // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
+        $this->publishContentStream(
+            $matchingContentStreamId,
+            $baseWorkspace->currentContentStreamId
+        )?->block();
+
         // 3) fork a new contentStream, based on the matching content stream, and apply REST
-        $remainingContentStream = $command->contentStreamIdForRemainingPart;
         $contentRepository->handle(
             ForkContentStream::create(
-                $remainingContentStream,
-                $matchingContentStream,
+                $command->contentStreamIdForRemainingPart,
+                $matchingContentStreamId
             )
         )->block();
 
@@ -569,15 +574,14 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     1645393626
                 );
             }
-            \Neos\Flow\var_dump($remainingCommand);
-            $contentRepository->handle($remainingCommand)->block();
+            \Neos\Flow\var_dump('trying');
+            try {
+                $contentRepository->handle($remainingCommand)->block();
+            } catch (\Exception $e) {
+                \Neos\Flow\var_dump($e->getMessage());
+                throw $e;
+            }
         }
-
-        // 4) if that all worked out, take EVENTS(MATCHING) and apply them to base WS.
-        $this->publishContentStream(
-            $matchingContentStream,
-            $baseWorkspace->currentContentStreamId
-        )?->block();
 
         // 5) TODO Re-target base workspace
 
@@ -588,7 +592,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             new WorkspaceWasPartiallyPublished(
                 $command->workspaceName,
                 $baseWorkspace->workspaceName,
-                $remainingContentStream,
+                $rebaseWorkspace->rebasedContentStreamId,
                 $workspace->currentContentStreamId,
                 $command->nodesToPublish,
             ),
@@ -597,7 +601,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         // to avoid dangling content streams, we need to remove our temporary content stream (whose events
         // have already been published)
         $contentRepository->handle(RemoveContentStream::create(
-            $matchingContentStream
+            $matchingContentStreamId
         ));
 
         // It is safe to only return the last command result,
@@ -843,6 +847,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function requireWorkspace(WorkspaceName $workspaceName, ContentRepository $contentRepository): Workspace
     {
+        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
@@ -861,6 +866,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->workspaceName);
         }
 
+        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);

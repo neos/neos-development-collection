@@ -137,7 +137,7 @@ Feature: Publishing hide/show scenario of nodes
       | newContentStreamId | "user-cs-identifier" |
     And the graph projection is fully up to date
 
-    # SETUP: show two nodes in USER workspace
+    # SETUP: enable two nodes in USER workspace
     Given the command EnableNodeAggregate is executed with payload:
       | Key                          | Value                    |
       | workspaceName      | "user-test"     |
@@ -240,6 +240,7 @@ Feature: Publishing hide/show scenario of nodes
       | Key                      | Value                                                                                                                               |
       | workspaceName            | "user-test"                                                                                                                         |
       | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
+      | contentStreamIdForRemainingPart | "user-cs-identifier-modified"                                                                                                       |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}
