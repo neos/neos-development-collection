@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Core\Feature\NodeVariation;
 use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\EventStore\EventsToPublish;
-use Neos\ContentRepository\Core\Feature\NodeVariation\Exception\RootNodeCannotBeVaried;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\Feature\ContentStreamEventStreamName;
 use Neos\ContentRepository\Core\Feature\NodeVariation\Command\CreateNodeVariant;
@@ -52,9 +51,9 @@ trait NodeVariation
         CreateNodeVariant $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -67,7 +66,7 @@ trait NodeVariation
         $this->requireNodeAggregateToOccupyDimensionSpacePoint($nodeAggregate, $command->sourceOrigin);
         $this->requireNodeAggregateToNotOccupyDimensionSpacePoint($nodeAggregate, $command->targetOrigin);
         $parentNodeAggregate = $this->requireProjectedParentNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $command->sourceOrigin,
             $contentRepository
@@ -78,7 +77,7 @@ trait NodeVariation
         );
 
         $events = $this->createEventsForVariations(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->sourceOrigin,
             $command->targetOrigin,
             $nodeAggregate,
@@ -86,9 +85,7 @@ trait NodeVariation
         );
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId(
-                $command->contentStreamId
-            )->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 $events

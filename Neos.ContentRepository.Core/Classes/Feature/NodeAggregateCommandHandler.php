@@ -189,15 +189,16 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
         ChangeNodeAggregateType $command,
         ContentRepository $contentRepository
     ): void {
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         foreach (
             $contentRepository->getContentGraph()->findParentNodeAggregates(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId
             ) as $parentAggregate
         ) {
@@ -222,7 +223,7 @@ final class NodeAggregateCommandHandler implements CommandHandlerInterface
             }
             foreach (
                 $contentRepository->getContentGraph()->findParentNodeAggregates(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $parentAggregate->nodeAggregateId
                 ) as $grandParentAggregate
             ) {

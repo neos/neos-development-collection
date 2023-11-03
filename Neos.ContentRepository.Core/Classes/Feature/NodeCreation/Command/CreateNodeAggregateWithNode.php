@@ -22,7 +22,7 @@ use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * CreateNodeAggregateWithNode
@@ -34,10 +34,10 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class CreateNodeAggregateWithNode implements CommandInterface
+final readonly class CreateNodeAggregateWithNode implements CommandInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
@@ -48,20 +48,20 @@ final class CreateNodeAggregateWithNode implements CommandInterface
      * @param NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds Predefined aggregate ids of tethered child nodes per path. For any tethered node that has no matching entry in this set, the node aggregate id is generated randomly. Since tethered nodes may have tethered child nodes themselves, this works for multiple levels ({@see self::withTetheredDescendantNodeAggregateIds()})
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly NodeTypeName $nodeTypeName,
-        public readonly OriginDimensionSpacePoint $originDimensionSpacePoint,
-        public readonly NodeAggregateId $parentNodeAggregateId,
-        public readonly PropertyValuesToWrite $initialPropertyValues,
-        public readonly ?NodeAggregateId $succeedingSiblingNodeAggregateId,
-        public readonly ?NodeName $nodeName,
-        public readonly NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
+        public NodeTypeName $nodeTypeName,
+        public OriginDimensionSpacePoint $originDimensionSpacePoint,
+        public NodeAggregateId $parentNodeAggregateId,
+        public PropertyValuesToWrite $initialPropertyValues,
+        public ?NodeAggregateId $succeedingSiblingNodeAggregateId,
+        public ?NodeName $nodeName,
+        public NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds,
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the create operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the create operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The unique identifier of the node aggregate to create
      * @param NodeTypeName $nodeTypeName Name of the node type of the new node
      * @param OriginDimensionSpacePoint $originDimensionSpacePoint Origin of the new node in the dimension space. Will also be used to calculate a set of dimension points where the new node will cover from the configured specializations.
@@ -70,15 +70,15 @@ final class CreateNodeAggregateWithNode implements CommandInterface
      * @param NodeName|null $nodeName The node's optional name. Set if there is a meaningful relation to its parent that should be named.
      * @param PropertyValuesToWrite|null $initialPropertyValues The node's initial property values. Will be merged over the node type's default property values
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null, ?NodeName $nodeName = null, ?PropertyValuesToWrite $initialPropertyValues = null): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, NodeTypeName $nodeTypeName, OriginDimensionSpacePoint $originDimensionSpacePoint, NodeAggregateId $parentNodeAggregateId, ?NodeAggregateId $succeedingSiblingNodeAggregateId = null, ?NodeName $nodeName = null, ?PropertyValuesToWrite $initialPropertyValues = null): self
     {
-        return new self($contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?: PropertyValuesToWrite::createEmpty(), $succeedingSiblingNodeAggregateId, $nodeName, NodeAggregateIdsByNodePaths::createEmpty());
+        return new self($workspaceName, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $parentNodeAggregateId, $initialPropertyValues ?: PropertyValuesToWrite::createEmpty(), $succeedingSiblingNodeAggregateId, $nodeName, NodeAggregateIdsByNodePaths::createEmpty());
     }
 
     public function withInitialPropertyValues(PropertyValuesToWrite $newInitialPropertyValues): self
     {
         return new self(
-            $this->contentStreamId,
+            $this->workspaceName,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,
@@ -121,7 +121,7 @@ final class CreateNodeAggregateWithNode implements CommandInterface
     public function withTetheredDescendantNodeAggregateIds(NodeAggregateIdsByNodePaths $tetheredDescendantNodeAggregateIds): self
     {
         return new self(
-            $this->contentStreamId,
+            $this->workspaceName,
             $this->nodeAggregateId,
             $this->nodeTypeName,
             $this->originDimensionSpacePoint,

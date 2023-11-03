@@ -17,46 +17,44 @@ namespace Neos\ContentRepository\Core\Feature\NodeDisabling\Command;
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\Common\MatchableWithNodeIdToPublishOrDiscardInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Dto\NodeIdToPublishOrDiscard;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeVariantSelectionStrategy;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Enable the given node aggregate in the given content stream in a dimension space point using a given strategy
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class EnableNodeAggregate implements
+final readonly class EnableNodeAggregate implements
     CommandInterface,
     \JsonSerializable,
-    RebasableToOtherContentStreamsInterface,
     MatchableWithNodeIdToPublishOrDiscardInterface
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the enable operation is to be performed
+     * @param WorkspaceName $workspaceName The workspace in which the enable operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to enable
      * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to enable it
      * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be enabled
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
-        public readonly DimensionSpacePoint $coveredDimensionSpacePoint,
-        public readonly NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
+        public DimensionSpacePoint $coveredDimensionSpacePoint,
+        public NodeVariantSelectionStrategy $nodeVariantSelectionStrategy,
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream in which the enable operation is to be performed
+     * @param WorkspaceName $workspaceName The content stream in which the enable operation is to be performed
      * @param NodeAggregateId $nodeAggregateId The identifier of the node aggregate to enable
      * @param DimensionSpacePoint $coveredDimensionSpacePoint The covered dimension space point of the node aggregate in which the user intends to enable it
      * @param NodeVariantSelectionStrategy $nodeVariantSelectionStrategy The strategy the user chose to determine which specialization variants will also be enabled
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint, NodeVariantSelectionStrategy $nodeVariantSelectionStrategy): self
     {
-        return new self($contentStreamId, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy);
+        return new self($workspaceName, $nodeAggregateId, $coveredDimensionSpacePoint, $nodeVariantSelectionStrategy);
     }
 
     /**
@@ -65,7 +63,7 @@ final class EnableNodeAggregate implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId']),
             DimensionSpacePoint::fromArray($array['coveredDimensionSpacePoint']),
             NodeVariantSelectionStrategy::from($array['nodeVariantSelectionStrategy']),
@@ -80,20 +78,10 @@ final class EnableNodeAggregate implements
         return get_object_vars($this);
     }
 
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
-        return new self(
-            $target,
-            $this->nodeAggregateId,
-            $this->coveredDimensionSpacePoint,
-            $this->nodeVariantSelectionStrategy,
-        );
-    }
-
     public function matchesNodeId(NodeIdToPublishOrDiscard $nodeIdToPublish): bool
     {
         return (
-            $this->contentStreamId === $nodeIdToPublish->contentStreamId
+            $this->workspaceName === $nodeIdToPublish->workspaceName
                 && $this->coveredDimensionSpacePoint === $nodeIdToPublish->dimensionSpacePoint
                 && $this->nodeAggregateId->equals($nodeIdToPublish->nodeAggregateId)
         );

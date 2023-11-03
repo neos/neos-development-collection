@@ -47,10 +47,10 @@ trait NodeModification
         SetNodeProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->originDimensionSpacePoint->toDimensionSpacePoint());
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -60,7 +60,7 @@ trait NodeModification
         $this->validateProperties($command->propertyValues, $nodeTypeName);
 
         $lowLevelCommand = SetSerializedNodeProperties::create(
-            $command->contentStreamId,
+            $command->workspaceName,
             $command->nodeAggregateId,
             $command->originDimensionSpacePoint,
             $this->getPropertyConverter()->serializePropertyValues(
@@ -76,9 +76,10 @@ trait NodeModification
         SetSerializedNodeProperties $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         // Check if node exists
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -95,7 +96,7 @@ trait NodeModification
             );
             foreach ($affectedOrigins as $affectedOrigin) {
                 $events[] = new NodePropertiesWereSet(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $command->nodeAggregateId,
                     $affectedOrigin,
                     $nodeAggregate->getCoverageByOccupant($affectedOrigin),
@@ -106,7 +107,7 @@ trait NodeModification
         $events = $this->mergeSplitEvents($events);
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId($command->contentStreamId)
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)
                 ->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,

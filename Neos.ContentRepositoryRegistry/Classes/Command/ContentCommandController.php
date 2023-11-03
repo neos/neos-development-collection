@@ -73,7 +73,7 @@ final class ContentCommandController extends CommandController
             ]);
             $contentRepositoryInstance->handle(
                 UpdateRootNodeAggregateDimensions::create(
-                    $workspaceInstance->currentContentStreamId,
+                    $workspaceInstance->workspaceName,
                     $rootNodeAggregate->nodeAggregateId
                 )
             )->block();

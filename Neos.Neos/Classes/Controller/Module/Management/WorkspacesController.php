@@ -518,7 +518,7 @@ class WorkspacesController extends AbstractModuleController
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->contentStreamId,
+                    $selectedWorkspace,
                     $nodeAddress->nodeAggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
@@ -556,7 +556,7 @@ class WorkspacesController extends AbstractModuleController
             $selectedWorkspace,
             NodeIdsToPublishOrDiscard::create(
                 new NodeIdToPublishOrDiscard(
-                    $nodeAddress->contentStreamId,
+                    $selectedWorkspace,
                     $nodeAddress->nodeAggregateId,
                     $nodeAddress->dimensionSpacePoint
                 )
@@ -584,7 +584,7 @@ class WorkspacesController extends AbstractModuleController
      */
     public function publishOrDiscardNodesAction(array $nodes, string $action, string $selectedWorkspace): void
     {
-        $selectedWorkspace = WorkspaceName::fromString($selectedWorkspace);
+        $selectedWorkspaceName = WorkspaceName::fromString($selectedWorkspace);
         $contentRepositoryId = SiteDetectionResult::fromRequest($this->request->getHttpRequest())
             ->contentRepositoryId;
         $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
@@ -594,7 +594,7 @@ class WorkspacesController extends AbstractModuleController
         foreach ($nodes as $node) {
             $nodeAddress = $nodeAddressFactory->createFromUriString($node);
             $nodesToPublishOrDiscard[] = new NodeIdToPublishOrDiscard(
-                $nodeAddress->contentStreamId,
+                $selectedWorkspaceName,
                 $nodeAddress->nodeAggregateId,
                 $nodeAddress->dimensionSpacePoint
             );
@@ -603,7 +603,7 @@ class WorkspacesController extends AbstractModuleController
         switch ($action) {
             case 'publish':
                 $command = PublishIndividualNodesFromWorkspace::create(
-                    $selectedWorkspace,
+                    $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
@@ -619,7 +619,7 @@ class WorkspacesController extends AbstractModuleController
                 break;
             case 'discard':
                 $command = DiscardIndividualNodesFromWorkspace::create(
-                    $selectedWorkspace,
+                    $selectedWorkspaceName,
                     NodeIdsToPublishOrDiscard::create(...$nodesToPublishOrDiscard),
                 );
                 $contentRepository->handle($command)
@@ -637,7 +637,7 @@ class WorkspacesController extends AbstractModuleController
                 throw new \RuntimeException('Invalid action "' . htmlspecialchars($action) . '" given.', 1346167441);
         }
 
-        $this->redirect('show', null, null, ['workspace' => $selectedWorkspace->value]);
+        $this->redirect('show', null, null, ['workspace' => $selectedWorkspaceName->value]);
     }
 
     /**

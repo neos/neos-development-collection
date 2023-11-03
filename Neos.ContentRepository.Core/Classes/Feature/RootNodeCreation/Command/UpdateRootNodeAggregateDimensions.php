@@ -15,9 +15,8 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\RootNodeCreation\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * change visibility of the root node aggregate. A root node aggregate must be visible in all
@@ -26,28 +25,27 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class UpdateRootNodeAggregateDimensions implements
+final readonly class UpdateRootNodeAggregateDimensions implements
     CommandInterface,
-    \JsonSerializable,
-    RebasableToOtherContentStreamsInterface
+    \JsonSerializable
 {
     /**
-     * @param ContentStreamId $contentStreamId The content stream which the dimensions should be updated in
+     * @param WorkspaceName $workspaceName The workspace which the dimensions should be updated in
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate that should be updated
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly NodeAggregateId $nodeAggregateId,
+        public WorkspaceName $workspaceName,
+        public NodeAggregateId $nodeAggregateId,
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The content stream which the dimensions should be updated in
+     * @param WorkspaceName $workspaceName The workspace which the dimensions should be updated in
      * @param NodeAggregateId $nodeAggregateId The id of the node aggregate that should be updated
      */
-    public static function create(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId): self
+    public static function create(WorkspaceName $workspaceName, NodeAggregateId $nodeAggregateId): self
     {
-        return new self($contentStreamId, $nodeAggregateId);
+        return new self($workspaceName, $nodeAggregateId);
     }
 
     /**
@@ -56,7 +54,7 @@ final class UpdateRootNodeAggregateDimensions implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             NodeAggregateId::fromString($array['nodeAggregateId'])
         );
     }
@@ -67,13 +65,5 @@ final class UpdateRootNodeAggregateDimensions implements
     public function jsonSerialize(): array
     {
         return get_object_vars($this);
-    }
-
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
-        return new self(
-            $target,
-            $this->nodeAggregateId,
-        );
     }
 }

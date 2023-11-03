@@ -16,8 +16,7 @@ namespace Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Command;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandInterface;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInterface;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * Add a Dimension Space Point Shine-Through;
@@ -32,31 +31,30 @@ use Neos\ContentRepository\Core\Feature\Common\RebasableToOtherContentStreamsInt
  *
  * @api commands are the write-API of the ContentRepository
  */
-final class AddDimensionShineThrough implements
+final readonly class AddDimensionShineThrough implements
     CommandInterface,
-    \JsonSerializable,
-    RebasableToOtherContentStreamsInterface
+    \JsonSerializable
 {
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
+     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
     private function __construct(
-        public readonly ContentStreamId $contentStreamId,
-        public readonly DimensionSpacePoint $source,
-        public readonly DimensionSpacePoint $target
+        public WorkspaceName $workspaceName,
+        public DimensionSpacePoint $source,
+        public DimensionSpacePoint $target
     ) {
     }
 
     /**
-     * @param ContentStreamId $contentStreamId The id of the content stream to perform the operation in
+     * @param WorkspaceName $workspaceName The name of the workspace to perform the operation in
      * @param DimensionSpacePoint $source source dimension space point
      * @param DimensionSpacePoint $target target dimension space point
      */
-    public static function create(ContentStreamId $contentStreamId, DimensionSpacePoint $source, DimensionSpacePoint $target): self
+    public static function create(WorkspaceName $workspaceName, DimensionSpacePoint $source, DimensionSpacePoint $target): self
     {
-        return new self($contentStreamId, $source, $target);
+        return new self($workspaceName, $source, $target);
     }
 
     /**
@@ -65,7 +63,7 @@ final class AddDimensionShineThrough implements
     public static function fromArray(array $array): self
     {
         return new self(
-            ContentStreamId::fromString($array['contentStreamId']),
+            WorkspaceName::fromString($array['workspaceName']),
             DimensionSpacePoint::fromArray($array['source']),
             DimensionSpacePoint::fromArray($array['target'])
         );
@@ -77,18 +75,9 @@ final class AddDimensionShineThrough implements
     public function jsonSerialize(): array
     {
         return [
-            'contentStreamId' => $this->contentStreamId,
+            'workspaceName' => $this->workspaceName,
             'source' => $this->source,
             'target' => $this->target,
         ];
-    }
-
-    public function createCopyForContentStream(ContentStreamId $target): self
-    {
-        return new self(
-            $target,
-            $this->source,
-            $this->target
-        );
     }
 }

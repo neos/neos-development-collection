@@ -9,8 +9,6 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer as OriginalObjectNo
  * An implementation of the ObjectNormalizer that supports Flow proxy classes
  *
  * Flow issue {@see https://github.com/neos/flow-development-collection/issues/3076#issuecomment-1790701913}
- *
- * @phpstan-ignore-next-line we extend a class which is annotated as final :(
  */
 final class ProxyAwareObjectNormalizer extends OriginalObjectNormalizer
 {

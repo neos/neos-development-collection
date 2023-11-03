@@ -39,6 +39,8 @@ trait CRTestSuiteRuntimeVariables
 
     protected ?ContentStreamId $currentContentStreamId = null;
 
+    protected ?WorkspaceName $currentWorkspaceName = null;
+
     protected ?DimensionSpacePoint $currentDimensionSpacePoint = null;
 
     protected ?VisibilityConstraints $currentVisibilityConstraints = null;
@@ -96,6 +98,14 @@ trait CRTestSuiteRuntimeVariables
     }
 
     /**
+     * @Given /^I am in workspace "([^"]*)"$/
+     */
+    public function iAmInWorkspace(string $workspaceName): void
+    {
+        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
+    }
+
+    /**
      * @Given /^I am in the active content stream of workspace "([^"]*)"$/
      * @throws \Exception
      */
@@ -105,6 +115,7 @@ trait CRTestSuiteRuntimeVariables
         if ($workspace === null) {
             throw new \Exception(sprintf('Workspace "%s" does not exist, projection not yet up to date?', $workspaceName), 1548149355);
         }
+        $this->currentWorkspaceName = WorkspaceName::fromString($workspaceName);
         $this->currentContentStreamId = $workspace->currentContentStreamId;
     }
 

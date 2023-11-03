@@ -112,10 +112,10 @@ trait NodeTypeChange
          * Constraint checks
          **************/
         // existence of content stream, node type and node aggregate
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $newNodeType = $this->requireNodeType($command->newNodeTypeName);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -133,7 +133,7 @@ trait NodeTypeChange
         foreach ($parentNodeAggregates as $parentNodeAggregate) {
             assert($parentNodeAggregate instanceof NodeAggregate);
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $newNodeType,
                 $nodeAggregate->nodeName,
                 [$parentNodeAggregate->nodeAggregateId],
@@ -165,7 +165,7 @@ trait NodeTypeChange
          **************/
         $events = [
             new NodeAggregateTypeWasChanged(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 $command->newNodeTypeName
             ),
@@ -218,9 +218,7 @@ trait NodeTypeChange
         }
 
         return new EventsToPublish(
-            ContentStreamEventStreamName::fromContentStreamId(
-                $command->contentStreamId
-            )->getEventStreamName(),
+            ContentStreamEventStreamName::fromContentStreamId($contentStreamId)->getEventStreamName(),
             NodeAggregateEventPublisher::enrichWithCommand(
                 $command,
                 Events::fromArray($events),

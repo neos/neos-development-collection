@@ -64,7 +64,6 @@ trait NodeMove
     ): NodeAggregate;
 
     /**
-     * @param MoveNodeAggregate $command
      * @return EventsToPublish
      * @throws ContentStreamDoesNotExistYet
      * @throws NodeAggregatesTypeIsAmbiguous
@@ -76,10 +75,10 @@ trait NodeMove
         MoveNodeAggregate $command,
         ContentRepository $contentRepository
     ): EventsToPublish {
-        $this->requireContentStreamToExist($command->contentStreamId, $contentRepository);
+        $contentStreamId = $this->requireContentStream($command->workspaceName, $contentRepository);
         $this->requireDimensionSpacePointToExist($command->dimensionSpacePoint);
         $nodeAggregate = $this->requireProjectedNodeAggregate(
-            $command->contentStreamId,
+            $contentStreamId,
             $command->nodeAggregateId,
             $contentRepository
         );
@@ -95,7 +94,7 @@ trait NodeMove
 
         if ($command->newParentNodeAggregateId) {
             $this->requireConstraintsImposedByAncestorsAreMet(
-                $command->contentStreamId,
+                $contentStreamId,
                 $this->requireNodeType($nodeAggregate->nodeTypeName),
                 $nodeAggregate->nodeName,
                 [$command->newParentNodeAggregateId],
@@ -103,7 +102,7 @@ trait NodeMove
             );
 
             $this->requireNodeNameToBeUncovered(
-                $command->contentStreamId,
+                $contentStreamId,
                 $nodeAggregate->nodeName,
                 $command->newParentNodeAggregateId,
                 $affectedDimensionSpacePoints,
@@ -111,7 +110,7 @@ trait NodeMove
             );
 
             $newParentNodeAggregate = $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->newParentNodeAggregateId,
                 $contentRepository
             );
@@ -122,7 +121,7 @@ trait NodeMove
             );
 
             $this->requireNodeAggregateToNotBeDescendant(
-                $command->contentStreamId,
+                $contentStreamId,
                 $newParentNodeAggregate,
                 $nodeAggregate,
                 $contentRepository
@@ -131,14 +130,14 @@ trait NodeMove
 
         if ($command->newPrecedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->newPrecedingSiblingNodeAggregateId,
                 $contentRepository
             );
         }
         if ($command->newSucceedingSiblingNodeAggregateId) {
             $this->requireProjectedNodeAggregate(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->newSucceedingSiblingNodeAggregateId,
                 $contentRepository
             );
@@ -150,7 +149,7 @@ trait NodeMove
             $originNodeMoveMappings[] = new OriginNodeMoveMapping(
                 $movedNodeOrigin,
                 $this->resolveCoverageNodeMoveMappings(
-                    $command->contentStreamId,
+                    $contentStreamId,
                     $nodeAggregate,
                     $command->newParentNodeAggregateId,
                     $command->newPrecedingSiblingNodeAggregateId,
@@ -164,14 +163,14 @@ trait NodeMove
 
         $events = Events::with(
             new NodeAggregateWasMoved(
-                $command->contentStreamId,
+                $contentStreamId,
                 $command->nodeAggregateId,
                 OriginNodeMoveMappings::create(...$originNodeMoveMappings)
             )
         );
 
         $contentStreamEventStreamName = ContentStreamEventStreamName::fromContentStreamId(
-            $command->contentStreamId
+            $contentStreamId
         );
 
         return new EventsToPublish(

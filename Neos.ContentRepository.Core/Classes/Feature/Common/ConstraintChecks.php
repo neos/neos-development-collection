@@ -56,6 +56,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithS
 use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
  * @internal implementation details of command handlers
@@ -67,19 +68,22 @@ trait ConstraintChecks
     abstract protected function getAllowedDimensionSubspace(): DimensionSpacePointSet;
 
     /**
-     * @param ContentStreamId $contentStreamId
      * @throws ContentStreamDoesNotExistYet
      */
-    protected function requireContentStreamToExist(
-        ContentStreamId $contentStreamId,
+    protected function requireContentStream(
+        WorkspaceName $workspaceName,
         ContentRepository $contentRepository
-    ): void {
-        if (!$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
+    ): ContentStreamId {
+        $contentStreamId = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName)
+            ?->currentContentStreamId;
+        if (!$contentStreamId || !$contentRepository->getContentStreamFinder()->hasContentStream($contentStreamId)) {
             throw new ContentStreamDoesNotExistYet(
-                'Content stream "' . $contentStreamId->value . '" does not exist yet.',
+                'Content stream "' . $contentStreamId?->value . '" does not exist yet.',
                 1521386692
             );
         }
+
+        return $contentStreamId;
     }
 
     /**
