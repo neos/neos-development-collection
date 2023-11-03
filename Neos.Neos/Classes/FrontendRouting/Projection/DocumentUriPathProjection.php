@@ -537,8 +537,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             if (
                 $node === null
-                || $this->nodeTypeManager->getNodeType($node->getNodeTypeName())
-                    ->isOfType(NodeTypeNameFactory::forSite())
+                || $this->isSiteNodeType($node->getNodeTypeName())
             ) {
                 // probably not a document node
                 continue;
@@ -706,10 +705,24 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
     }
 
+    private function isSiteNodeType(NodeTypeName $nodeTypeName): bool
+    {
+        // HACK: We consider the currently configured node type of the given node.
+        // This is a deliberate side effect of this projector!
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            return false;
+        }
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SITE);
+    }
+
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
     {
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            return false;
+        }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT);
     }
@@ -718,6 +731,9 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     {
         // HACK: We consider the currently configured node type of the given node.
         // This is a deliberate side effect of this projector!
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            return false;
+        }
         $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
         return $nodeType->isOfType(NodeTypeNameFactory::NAME_SHORTCUT);
     }
