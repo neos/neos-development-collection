@@ -26,6 +26,8 @@
         "neos/flow": "*",
         "behat/behat": "^3.5",
         "phpunit/phpunit": "^9.0",
+        "neos/behat": "^9.0",
+        "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "*",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
@@ -61,6 +63,9 @@
         "neos/contentrepository-nodemigration": "self.version",
         "neos/contentrepository-structureadjustment": "self.version",
         "neos/contentrepository-testsuite": "self.version",
+        "neos/contentrepositoryregistry-doctrinedbalclient": "self.version",
+        "neos/contentrepositoryregistry-postgresdbalclient": "self.version",
+        "neos/contentrepositoryregistry-testsuite": "self.version",
         "neos/contentrepositoryregistry": "self.version",
         "neos/diff": "self.version",
         "neos/fusion-afx": "self.version",
@@ -157,6 +162,15 @@
             ],
             "Neos\\ContentRepository\\TestSuite\\": [
                 "Neos.ContentRepository.TestSuite/Classes"
+            ],
+            "Neos\\ContentRepositoryRegistry\\DoctrineDbalClient\\": [
+                "Neos.ContentRepositoryRegistry.DoctrineDbalClient/Classes"
+            ],
+            "Neos\\ContentRepositoryRegistry\\PostgresDbalClient\\": [
+                "Neos.ContentRepositoryRegistry.PostgresDbalClient/Classes"
+            ],
+            "Neos\\ContentRepositoryRegistry\\TestSuite\\": [
+                "Neos.ContentRepositoryRegistry.TestSuite/Classes"
             ],
             "Neos\\ContentRepositoryRegistry\\": [
                 "Neos.ContentRepositoryRegistry/Classes"
