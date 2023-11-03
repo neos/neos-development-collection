@@ -8,7 +8,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Ordering\Ordering
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 
@@ -30,7 +30,7 @@ final class FindReferencesFilter
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeConstraints $nodeTypeConstraints,
+        public readonly ?NodeTypeCriteria $nodeTypes,
         public readonly ?SearchTerm $nodeSearchTerm,
         public readonly ?PropertyValueCriteriaInterface $nodePropertyValue,
         public readonly ?SearchTerm $referenceSearchTerm,
@@ -51,7 +51,7 @@ final class FindReferencesFilter
      * @param Pagination|array<string, mixed>|null $pagination
      */
     public static function create(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeCriteria|string $nodeTypes = null,
         SearchTerm|string $nodeSearchTerm = null,
         PropertyValueCriteriaInterface|string $nodePropertyValue = null,
         SearchTerm|string $referenceSearchTerm = null,
@@ -60,8 +60,8 @@ final class FindReferencesFilter
         Ordering|array $ordering = null,
         Pagination|array $pagination = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
+        if (is_string($nodeTypes)) {
+            $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
         }
         if (is_string($nodeSearchTerm)) {
             $nodeSearchTerm = SearchTerm::fulltext($nodeSearchTerm);
@@ -84,7 +84,7 @@ final class FindReferencesFilter
         if (is_array($pagination)) {
             $pagination = Pagination::fromArray($pagination);
         }
-        return new self($nodeTypeConstraints, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName, $ordering, $pagination);
+        return new self($nodeTypes, $nodeSearchTerm, $nodePropertyValue, $referenceSearchTerm, $referencePropertyValue, $referenceName, $ordering, $pagination);
     }
 
     /**
@@ -97,7 +97,7 @@ final class FindReferencesFilter
      * @param Pagination|array<string, mixed>|null $pagination
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeCriteria|string $nodeTypes = null,
         SearchTerm|string $nodeSearchTerm = null,
         PropertyValueCriteriaInterface|string $nodePropertyValue = null,
         SearchTerm|string $referenceSearchTerm = null,
@@ -107,7 +107,7 @@ final class FindReferencesFilter
         Pagination|array $pagination = null,
     ): self {
         return self::create(
-            $nodeTypeConstraints ?? $this->nodeTypeConstraints,
+            $nodeTypes ?? $this->nodeTypes,
             $nodeSearchTerm ?? $this->nodeSearchTerm,
             $nodePropertyValue ?? $this->nodePropertyValue,
             $referenceSearchTerm ?? $this->referenceSearchTerm,

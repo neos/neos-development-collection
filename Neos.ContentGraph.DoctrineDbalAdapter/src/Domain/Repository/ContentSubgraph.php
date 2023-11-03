@@ -61,8 +61,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Cri
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
@@ -301,8 +301,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
         if ($filter->maximumLevels !== null) {
             $queryBuilderRecursive->andWhere('p.level < :maximumLevels')->setParameter('maximumLevels', $filter->maximumLevels);
         }
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilderRecursive, $filter->nodeTypeConstraints, 'c');
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilderRecursive, $filter->nodeTypes, 'c');
         }
         $this->addRestrictionRelationConstraints($queryBuilderRecursive, 'c');
 
@@ -399,8 +399,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints, 'p');
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'p');
         }
         $nodeRows = $this->fetchCteResults(
             $queryBuilderInitial,
@@ -509,10 +509,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
         );
     }
 
-    private function addNodeTypeConstraints(QueryBuilder $queryBuilder, NodeTypeConstraints $nodeTypeConstraints, string $nodeTableAlias = 'n'): void
+    private function addNodeTypeCriteria(QueryBuilder $queryBuilder, NodeTypeCriteria $nodeTypeCriteria, string $nodeTableAlias = 'n'): void
     {
         $nodeTablePrefix = $nodeTableAlias === '' ? '' : $nodeTableAlias . '.';
-        $constraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create($nodeTypeConstraints, $this->nodeTypeManager);
+        $constraintsWithSubNodeTypes = ExpandedNodeTypeCriteria::create($nodeTypeCriteria, $this->nodeTypeManager);
         $allowanceQueryPart = '';
         if (!$constraintsWithSubNodeTypes->explicitlyAllowedNodeTypeNames->isEmpty()) {
             $allowanceQueryPart = $queryBuilder->expr()->in($nodeTablePrefix . 'nodetypename', ':explicitlyAllowedNodeTypeNames');
@@ -611,8 +611,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash);
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints);
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
         }
         if ($filter->searchTerm !== null) {
             $this->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
@@ -642,8 +642,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->andWhere('sh.contentstreamid = :contentStreamId');
         $this->addRestrictionRelationConstraints($queryBuilder, 'dn', 'dh');
         $this->addRestrictionRelationConstraints($queryBuilder, 'sn', 'sh');
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints, "{$destinationTablePrefix}n");
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes, "{$destinationTablePrefix}n");
         }
         if ($filter->nodeSearchTerm !== null) {
             $this->addSearchTermConstraints($queryBuilder, $filter->nodeSearchTerm, "{$destinationTablePrefix}n");
@@ -708,8 +708,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->orderBy('h.position', $preceding ? 'DESC' : 'ASC');
 
         $this->addRestrictionRelationConstraints($queryBuilder);
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilder, $filter->nodeTypeConstraints);
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilder, $filter->nodeTypes);
         }
         if ($filter->searchTerm !== null) {
             $this->addSearchTermConstraints($queryBuilder, $filter->searchTerm);
@@ -758,8 +758,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints, 'p');
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes, 'p');
         }
         return compact('queryBuilderInitial', 'queryBuilderRecursive', 'queryBuilderCte');
     }
@@ -799,8 +799,8 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->setParameter('contentStreamId', $this->contentStreamId->value)
             ->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
             ->setParameter('entryNodeAggregateId', $entryNodeAggregateId->value);
-        if ($filter->nodeTypeConstraints !== null) {
-            $this->addNodeTypeConstraints($queryBuilderCte, $filter->nodeTypeConstraints);
+        if ($filter->nodeTypes !== null) {
+            $this->addNodeTypeCriteria($queryBuilderCte, $filter->nodeTypes);
         }
         if ($filter->searchTerm !== null) {
             $this->addSearchTermConstraints($queryBuilderCte, $filter->searchTerm);

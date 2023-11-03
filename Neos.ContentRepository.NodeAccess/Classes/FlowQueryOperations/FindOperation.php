@@ -12,23 +12,20 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
  */
 
 use Neos\ContentRepository\Core\ContentRepository;
+use Neos\ContentRepository\Core\NodeType\NodeTypeName;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
 use Neos\ContentRepository\Core\Projection\ContentGraph\AbsoluteNodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
-use Neos\ContentRepository\Core\NodeType\NodeTypeConstraintParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\NodeType\NodeTypeName;
-use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateIds;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
-use Neos\Neos\FrontendRouting\NodeAddress;
-use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 
 /**
@@ -262,14 +259,14 @@ class FindOperation extends AbstractOperation
      */
     protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result, ContentRepository $contentRepository): array
     {
-        $nodeTypeFilter = NodeTypeConstraints::create(NodeTypeNames::with($nodeTypeName), NodeTypeNames::createEmpty());
+        $nodeTypeFilter = NodeTypeCriteria::create(NodeTypeNames::with($nodeTypeName), NodeTypeNames::createEmpty());
         foreach ($entryPoints as $entryPoint) {
             /** @var ContentSubgraphInterface $subgraph */
             $subgraph = $entryPoint['subgraph'];
 
             /** @var Node $node */
             foreach ($entryPoint['nodes'] as $node) {
-                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypeConstraints: $nodeTypeFilter)) as $descendant) {
+                foreach ($subgraph->findDescendantNodes($node->nodeAggregateId, FindDescendantNodesFilter::create(nodeTypes: $nodeTypeFilter)) as $descendant) {
                     $result[] = $descendant;
                 }
             }

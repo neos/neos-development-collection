@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 
 /**
  * Immutable filter DTO for {@see ContentSubgraphInterface::findAncestorNodes()}
  *
  * Example:
  *
- * FindAncestorNodesFilter::create(nodeTypeConstraints: 'Some.Included:NodeType,!Some.Excluded:NodeType');
+ * FindAncestorNodesFilter::create(nodeTypes: 'Some.Included:NodeType,!Some.Excluded:NodeType');
  *
  * @api for the factory methods; NOT for the inner state.
  */
@@ -21,7 +21,7 @@ final class FindAncestorNodesFilter
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeConstraints $nodeTypeConstraints
+        public readonly ?NodeTypeCriteria $nodeTypes
     ) {
     }
 
@@ -32,12 +32,12 @@ final class FindAncestorNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeConstraints|string $nodeTypeConstraints = null
+        NodeTypeCriteria|string $nodeTypes = null
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
+        if (is_string($nodeTypes)) {
+            $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
         }
-        return new self($nodeTypeConstraints);
+        return new self($nodeTypes);
     }
 
     /**
@@ -47,10 +47,10 @@ final class FindAncestorNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null
+        NodeTypeCriteria|string $nodeTypes = null
     ): self {
         return self::create(
-            $nodeTypeConstraints ?? $this->nodeTypeConstraints,
+            $nodeTypes ?? $this->nodeTypes,
         );
     }
 }
