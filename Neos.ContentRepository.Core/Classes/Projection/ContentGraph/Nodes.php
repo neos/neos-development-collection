@@ -127,8 +127,8 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @phpstan-assert-if-true Node $this->first()
-     * @phpstan-assert-if-true Node $this->last()
+     * @phpstan-assert-if-false Node $this->first()
+     * @phpstan-assert-if-false Node $this->last()
      */
     public function isEmpty(): bool
     {
