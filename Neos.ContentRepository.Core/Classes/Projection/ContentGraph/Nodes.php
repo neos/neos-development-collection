@@ -14,8 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
-use function Amp\Promise\first;
-
 /**
  * An immutable, type-safe collection of Node objects
  *
@@ -129,8 +127,8 @@ final class Nodes implements \IteratorAggregate, \ArrayAccess, \Countable
     }
 
     /**
-     * @phpstan-assert-if-false !null $this->first()
-     * @phpstan-assert-if-false !null $this->last()
+     * @phpstan-assert-if-true Node $this->first()
+     * @phpstan-assert-if-true Node $this->last()
      */
     public function isEmpty(): bool
     {
