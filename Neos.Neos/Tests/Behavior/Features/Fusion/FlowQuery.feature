@@ -312,3 +312,19 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     noFilter: a1a1,a1a2,a1a3,a1a5,a1a6,a1a7
     withFilter: a1a1,a1a7
     """
+
+  Scenario: Find
+    When the Fusion context node is "a1"
+    When I execute the following Fusion code:
+    """fusion
+    test = Neos.Fusion:DataStructure {
+      typeFilter = ${q(node).find('[instanceof Neos.Neos:Test.DocumentType2]').get()}
+      combinedFilter = ${q(node).find('[instanceof Neos.Neos:Test.DocumentType2][uriPathSegment*="b1"]').get()}
+      @process.render = Neos.Neos:Test.RenderNodesDataStructure
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    typeFilter: a1a,a1b1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6
+    combinedFilter: a1b1a
+    """
