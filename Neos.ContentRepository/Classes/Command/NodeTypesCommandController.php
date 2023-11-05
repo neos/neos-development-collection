@@ -27,8 +27,8 @@ class NodeTypesCommandController extends CommandController
      * Shows the merged configuration (including supertypes) of a NodeType
      *
      * @param string $nodeTypeName The name of the NodeType to show
-     * @param ?int $level Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
-     * @param ?string $path Path of the NodeType-configuration which will be shown
+     * @param string $path Path of the NodeType-configuration which will be shown
+     * @param int $level Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
      */
     public function showCommand(string $nodeTypeName, string $path = '', int $level = 0): void
     {
