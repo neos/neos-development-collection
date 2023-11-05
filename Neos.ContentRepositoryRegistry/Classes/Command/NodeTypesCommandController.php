@@ -100,8 +100,10 @@ class NodeTypesCommandController extends CommandController
     }
 
     /**
+     * @param array<string, mixed> $array
      * @param int $truncateLevel 0 for no truncation and 1 to only show the first keys of the array
      * @param int $currentLevel 1 for the start and will be incremented recursively
+     * @return array<string, mixed>
      */
     private static function truncateArrayAtLevel(array $array, int $truncateLevel, int $currentLevel = 1): array
     {

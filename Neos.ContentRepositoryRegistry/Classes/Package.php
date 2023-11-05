@@ -38,7 +38,6 @@ class Package extends BasePackage
         $dispatcher = $bootstrap->getSignalSlotDispatcher();
 
         $dispatcher->connect(ConfigurationManager::class, 'configurationManagerReady', function (ConfigurationManager $configurationManager) use ($bootstrap) {
-            /** @phpstan-ignore-next-line FLOW_* */
             $configurationManager->registerConfigurationType('NodeTypes', new NodeTypesLoader(new YamlSource(), FLOW_PATH_CONFIGURATION, $bootstrap));
         });
 
@@ -64,7 +63,6 @@ class Package extends BasePackage
                     }
                 }
 
-                /** @phpstan-ignore-next-line FLOW_* */
                 $nodeTypeConfigurationFileMonitor->monitorDirectory(FLOW_PATH_CONFIGURATION, 'NodeTypes(\..+)\.yaml');
 
                 $nodeTypeConfigurationFileMonitor->detectChanges();

@@ -141,7 +141,6 @@ class FilterOperation extends \Neos\Eel\FlowQuery\Operations\Object\FilterOperat
     {
         if ($operator === 'instanceof' && $value instanceof Node) {
             if ($this->operandIsSimpleType($operand)) {
-                /** @phpstan-ignore-next-line Flow does not properly declare its types here */
                 return $this->handleSimpleTypeOperand($operand, $value);
             } elseif ($operand === Node::class) {
                 return true;
