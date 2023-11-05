@@ -56,6 +56,11 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
     private DoctrineCheckpointStorage $checkpointStorage;
     private ?DocumentUriPathFinder $stateAccessor = null;
 
+    /**
+     * @var array<string, array<string, bool>>
+     */
+    private array $nodeTypeImplementsRuntimeCache = [];
+
     public function __construct(
         private readonly NodeTypeManager $nodeTypeManager,
         private readonly Connection $dbal,
@@ -537,8 +542,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
 
             if (
                 $node === null
-                || $this->nodeTypeManager->getNodeType($node->getNodeTypeName())
-                    ->isOfType(NodeTypeNameFactory::forSite())
+                || $this->isSiteNodeType($node->getNodeTypeName())
             ) {
                 // probably not a document node
                 continue;
@@ -706,20 +710,35 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         return $node->getDisableLevel() - $parentDisabledLevel !== 0;
     }
 
+    private function isSiteNodeType(NodeTypeName $nodeTypeName): bool
+    {
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forSite());
+    }
+
     private function isDocumentNodeType(NodeTypeName $nodeTypeName): bool
     {
-        // HACK: We consider the currently configured node type of the given node.
-        // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_DOCUMENT);
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forDocument());
     }
 
     private function isShortcutNodeType(NodeTypeName $nodeTypeName): bool
     {
-        // HACK: We consider the currently configured node type of the given node.
-        // This is a deliberate side effect of this projector!
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        return $nodeType->isOfType(NodeTypeNameFactory::NAME_SHORTCUT);
+        return $this->isNodeTypeOfType($nodeTypeName, NodeTypeNameFactory::forShortcut());
+    }
+
+    private function isNodeTypeOfType(NodeTypeName $nodeTypeName, NodeTypeName $superNodeTypeName): bool
+    {
+        if (!array_key_exists($superNodeTypeName->value, $this->nodeTypeImplementsRuntimeCache)) {
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value] = [];
+        }
+        if (!array_key_exists($nodeTypeName->value, $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value])) {
+            // HACK: We consider the currently configured node type of the given node.
+            // This is a deliberate side effect of this projector!
+            // Note: We could add some hash over all node type decisions to the projected read model
+            // to tell whether a replay is required (e.g. if a document node type was changed to a content type vice versa)
+            // With https://github.com/neos/neos-development-collection/issues/4468 this can be compared in the `getStatus()` implementation
+            $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value] = $this->nodeTypeManager->hasNodeType($nodeTypeName) && $this->nodeTypeManager->getNodeType($nodeTypeName)->isOfType($superNodeTypeName);
+        }
+        return $this->nodeTypeImplementsRuntimeCache[$superNodeTypeName->value][$nodeTypeName->value];
     }
 
     private function tryGetNode(\Closure $closure): ?DocumentNodeInfo

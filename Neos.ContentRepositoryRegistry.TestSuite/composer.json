@@ -1,0 +1,18 @@
+{
+    "name": "neos/contentrepositoryregistry-testsuite",
+    "type": "neos-package",
+    "description": "Testing support suite for the Neos Content Repository Registry. Contains fixtures and helpers for all layers of tests",
+    "license": [
+        "GPL-3.0-or-later"
+    ],
+    "require": {
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepositoryregistry": "self.version",
+        "neos/behat": "^9.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Neos\\ContentRepositoryRegistry\\TestSuite\\": "Classes"
+        }
+    }
+}
