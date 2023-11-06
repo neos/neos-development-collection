@@ -36,23 +36,23 @@ final class PropertyValueCriteriaMatcher
             case $propertyValueCriteria instanceof NegateCriteria:
                 return !self::matchesPropertyCollection($propertyCollection, $propertyValueCriteria->criteria);
             case $propertyValueCriteria instanceof PropertyValueContains:
-                $propertyValue =  $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
+                $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
                 return is_string($propertyValue)
-                    ? str_contains((string)$propertyValue, $propertyValueCriteria->value)
+                    ? str_contains(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value))
                     : false;
             case $propertyValueCriteria instanceof PropertyValueEndsWith:
                 $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
                 return is_string($propertyValue) ?
-                    str_ends_with((string)$propertyValue, $propertyValueCriteria->value)
+                    str_ends_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value))
                     : false;
             case $propertyValueCriteria instanceof PropertyValueStartsWith:
                 $propertyValue = $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value;
-                return (is_string($propertyValue) || $propertyValue instanceof \Stringable)
-                    ? str_starts_with((string)$propertyValue, $propertyValueCriteria->value)
+                return (is_string($propertyValue))
+                    ? str_starts_with(mb_strtolower($propertyValue), mb_strtolower($propertyValueCriteria->value))
                     : false;
             case $propertyValueCriteria instanceof PropertyValueEquals:
                 return $propertyCollection->serialized()->propertyExists($propertyValueCriteria->propertyName->value)
-                    && $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value == $propertyValueCriteria->value;
+                    && $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value === $propertyValueCriteria->value;
             case $propertyValueCriteria instanceof PropertyValueGreaterThan:
                 return $propertyCollection->serialized()->propertyExists($propertyValueCriteria->propertyName->value)
                     && $propertyCollection->serialized()->getProperty($propertyValueCriteria->propertyName->value)?->value > $propertyValueCriteria->value;
