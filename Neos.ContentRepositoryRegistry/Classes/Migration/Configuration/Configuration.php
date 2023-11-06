@@ -19,24 +19,25 @@ use Neos\ContentRepository\NodeMigration\MigrationException;
 abstract class Configuration implements ConfigurationInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>|null
      */
-    protected $availableVersions = null;
+    protected ?array $availableVersions = null;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    protected $loadedVersions = [];
+    protected array $loadedVersions = [];
 
     /**
      * Returns an array with all available versions.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function getAvailableVersions()
     {
         if ($this->availableVersions === null) {
             $this->registerAvailableVersions();
+            assert($this->availableVersions !== null);
         }
         return $this->availableVersions;
     }
@@ -59,7 +60,7 @@ abstract class Configuration implements ConfigurationInterface
      * Returns the configuration of the given version, if available.
      *
      * @param string $version
-     * @return array
+     * @return array<string, mixed>
      * @throws MigrationException
      */
     public function getMigrationVersion($version)
@@ -91,14 +92,14 @@ abstract class Configuration implements ConfigurationInterface
      * Loads a specific version into an array.
      *
      * @param string $version
-     * @return array
+     * @return array<string, mixed>
      */
     abstract protected function loadConfiguration($version);
 
     /**
      * Loads a list of available versions into an array.
      *
-     * @return array
+     * @return void
      */
     abstract protected function registerAvailableVersions();
 }

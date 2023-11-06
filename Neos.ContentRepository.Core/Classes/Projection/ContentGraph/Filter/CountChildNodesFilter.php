@@ -6,7 +6,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph\Filter;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\Criteria\PropertyValueCriteriaInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\PropertyValue\PropertyValueCriteriaParser;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
 
 /**
@@ -15,7 +15,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\SearchTerm;
  * Example:
  *
  * // create a new instance and set node type constraints
- * CountChildNodesFilter::create(nodeTypeConstraints: 'Some.Included:NodeType,!Some.Excluded:NodeType');
+ * CountChildNodesFilter::create(nodeTypes: 'Some.Included:NodeType,!Some.Excluded:NodeType');
  *
  * // create an instance from an existing FindChildNodesFilter instance
  * CountChildNodesFilter::fromFindChildNodesFilter($filter);
@@ -28,7 +28,7 @@ final class CountChildNodesFilter
      * @internal (the properties themselves are readonly; only the write-methods are API.
      */
     private function __construct(
-        public readonly ?NodeTypeConstraints $nodeTypeConstraints,
+        public readonly ?NodeTypeCriteria $nodeTypes,
         public readonly ?SearchTerm $searchTerm,
         public readonly ?PropertyValueCriteriaInterface $propertyValue,
     ) {
@@ -41,12 +41,12 @@ final class CountChildNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public static function create(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeCriteria|string $nodeTypes = null,
         SearchTerm|string $searchTerm = null,
         PropertyValueCriteriaInterface|string $propertyValue = null,
     ): self {
-        if (is_string($nodeTypeConstraints)) {
-            $nodeTypeConstraints = NodeTypeConstraints::fromFilterString($nodeTypeConstraints);
+        if (is_string($nodeTypes)) {
+            $nodeTypes = NodeTypeCriteria::fromFilterString($nodeTypes);
         }
         if (is_string($searchTerm)) {
             $searchTerm = SearchTerm::fulltext($searchTerm);
@@ -54,12 +54,12 @@ final class CountChildNodesFilter
         if (is_string($propertyValue)) {
             $propertyValue = PropertyValueCriteriaParser::parse($propertyValue);
         }
-        return new self($nodeTypeConstraints, $searchTerm, $propertyValue);
+        return new self($nodeTypes, $searchTerm, $propertyValue);
     }
 
     public static function fromFindChildNodesFilter(FindChildNodesFilter $filter): self
     {
-        return new self($filter->nodeTypeConstraints, $filter->searchTerm, $filter->propertyValue);
+        return new self($filter->nodeTypes, $filter->searchTerm, $filter->propertyValue);
     }
 
     /**
@@ -69,12 +69,12 @@ final class CountChildNodesFilter
      * @see https://www.php.net/manual/en/functions.arguments.php#functions.named-arguments
      */
     public function with(
-        NodeTypeConstraints|string $nodeTypeConstraints = null,
+        NodeTypeCriteria|string $nodeTypes = null,
         SearchTerm|string $searchTerm = null,
         PropertyValueCriteriaInterface|string $propertyValue = null,
     ): self {
         return self::create(
-            $nodeTypeConstraints ?? $this->nodeTypeConstraints,
+            $nodeTypes ?? $this->nodeTypes,
             $searchTerm ?? $this->searchTerm,
             $propertyValue ?? $this->propertyValue,
         );

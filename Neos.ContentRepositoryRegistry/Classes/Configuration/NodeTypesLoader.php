@@ -8,7 +8,7 @@ use Neos\Flow\Configuration\Loader\LoaderInterface;
 use Neos\Flow\Configuration\Source\YamlSource;
 use Neos\Flow\Core\ApplicationContext;
 use Neos\Flow\Core\Bootstrap;
-use Neos\Flow\Package\PackageInterface;
+use Neos\Flow\Package\FlowPackageInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\Files;
 
@@ -24,6 +24,7 @@ class NodeTypesLoader implements LoaderInterface
      */
     private $configurationBasePath;
 
+    /** @phpstan-ignore-next-line FLOW_PATH_CONFIGURATION not found */
     public function __construct(YamlSource $yamlSource, string $configurationBasePath = FLOW_PATH_CONFIGURATION, protected readonly ?Bootstrap $bootstrap = null)
     {
         $this->yamlSource = $yamlSource;
@@ -31,9 +32,9 @@ class NodeTypesLoader implements LoaderInterface
     }
 
     /**
-     * @param PackageInterface[] $packages
+     * @param FlowPackageInterface[] $packages
      * @param ApplicationContext $context
-     * @return array
+     * @return array<int|string, mixed>
      * @throws ParseErrorException | ConfigurationException
      */
     public function load(array $packages, ApplicationContext $context): array

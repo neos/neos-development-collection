@@ -14,6 +14,7 @@ use Neos\Media\Domain\Repository\AssetRepository;
 
 /**
  * @internal
+ * @implements ContentRepositoryServiceFactoryInterface<ImportService>
  */
 class ImportServiceFactory implements ContentRepositoryServiceFactoryInterface
 {

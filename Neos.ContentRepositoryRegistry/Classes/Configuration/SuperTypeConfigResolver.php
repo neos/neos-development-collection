@@ -21,12 +21,22 @@ namespace Neos\ContentRepositoryRegistry\Configuration;
  */
 class SuperTypeConfigResolver
 {
+    /**
+     * @var array<string, list<string>>
+     */
     private array $superTypeCache;
 
+    /**
+     * @param array<string, mixed> $fullConfiguration
+     */
     public function __construct(private readonly array $fullConfiguration)
     {
     }
 
+    /**
+     * @param string $nodeTypeName
+     * @return list<string>
+     */
     public function getSuperTypesFor(string $nodeTypeName): array
     {
         if (isset($this->superTypeCache[$nodeTypeName])) {
@@ -46,6 +56,9 @@ class SuperTypeConfigResolver
         return $enabledSuperTypesRecursively;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getLocalConfiguration(string $nodeTypeName): array
     {
         return $this->fullConfiguration[$nodeTypeName] ?? [];

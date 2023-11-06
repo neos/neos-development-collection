@@ -19,7 +19,6 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRunt
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\ProjectedNodeTrait;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Tests\FunctionalTestRequestHandler;
-use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\ThrowingHandler;
 use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
@@ -27,6 +26,7 @@ use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
 use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Fusion\Exception\RuntimeException;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
@@ -35,7 +35,6 @@ use Psr\Http\Message\ServerRequestFactoryInterface;
  */
 trait FusionTrait
 {
-
     use RoutingTrait;
     use ProjectedNodeTrait;
     use CRTestSuiteRuntimeVariables;
@@ -48,6 +47,14 @@ trait FusionTrait
     private ?string $fusionCode = null;
 
     private ?\Throwable $lastRenderingException = null;
+
+    /**
+     * @template T of object
+     * @param class-string<T> $className
+     *
+     * @return T
+     */
+    abstract private function getObject(string $className): object;
 
     /**
      * @BeforeScenario
@@ -83,7 +90,7 @@ trait FusionTrait
         if ($this->fusionContext['documentNode'] === null) {
             throw new \RuntimeException(sprintf('Failed to find closest document node for node with aggregate id "%s"', $nodeAggregateId), 1697790940);
         }
-        $this->fusionContext['site'] = $subgraph->findClosestNode($this->fusionContext['documentNode']->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+        $this->fusionContext['site'] = $subgraph->findClosestNode($this->fusionContext['documentNode']->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($this->fusionContext['site'] === null) {
             throw new \RuntimeException(sprintf('Failed to resolve site node for node with aggregate id "%s"', $nodeAggregateId), 1697790963);
         }
@@ -94,7 +101,7 @@ trait FusionTrait
      */
     public function theFusionContextRequestIs(string $requestUri = null): void
     {
-        $httpRequest = $this->objectManager->get(ServerRequestFactoryInterface::class)->createServerRequest('GET', $requestUri);
+        $httpRequest = $this->getObject(ServerRequestFactoryInterface::class)->createServerRequest('GET', $requestUri);
         $httpRequest = $this->addRoutingParameters($httpRequest);
 
         $this->fusionGlobalContext['request'] = ActionRequest::fromHttpRequest($httpRequest);
@@ -107,7 +114,6 @@ trait FusionTrait
     {
         $this->fusionCode = $fusionCode->getRaw();
     }
-
 
     /**
      * @When I execute the following Fusion code:
@@ -126,12 +132,16 @@ trait FusionTrait
         $fusionGlobals = FusionGlobals::fromArray($this->fusionGlobalContext);
 
         $fusionRuntime = (new RuntimeFactory())->createFromConfiguration($fusionAst, $fusionGlobals);
-        $fusionRuntime->overrideExceptionHandler($this->getObjectManager()->get(ThrowingHandler::class));
+        $fusionRuntime->overrideExceptionHandler($this->getObject(ThrowingHandler::class));
         $fusionRuntime->pushContextArray($this->fusionContext);
         try {
             $this->renderingResult = $fusionRuntime->render($path);
         } catch (\Throwable $exception) {
-            $this->lastRenderingException = $exception;
+            if ($exception instanceof RuntimeException) {
+                $this->lastRenderingException = $exception->getPrevious();
+            } else {
+                $this->lastRenderingException = $exception;
+            }
         }
         $fusionRuntime->popContext();
     }

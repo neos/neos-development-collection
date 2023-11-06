@@ -66,7 +66,7 @@ class FusionView extends AbstractView
         $currentNode = $this->getCurrentNode();
 
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($currentNode);
-        $currentSiteNode = $subgraph->findClosestNode($currentNode->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+        $currentSiteNode = $subgraph->findClosestNode($currentNode->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
 
         if (!$currentSiteNode) {
             throw new \RuntimeException('No site node found!', 1697053346);
@@ -196,7 +196,7 @@ class FusionView extends AbstractView
     protected function getClosestDocumentNode(Node $node): ?Node
     {
         return $this->contentRepositoryRegistry->subgraphForNode($node)
-            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_DOCUMENT));
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 
     /**

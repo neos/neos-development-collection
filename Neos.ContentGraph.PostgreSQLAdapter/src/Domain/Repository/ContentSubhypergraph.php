@@ -43,8 +43,8 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagina
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraints;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
@@ -139,12 +139,12 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints);
-        if (!is_null($filter->nodeTypeConstraints)) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $filter->nodeTypeConstraints,
+        if (!is_null($filter->nodeTypes)) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'cn');
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'cn');
         }
         if (!is_null($filter->pagination)) {
             $query = $query
@@ -217,12 +217,12 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             ->withSourceRestriction($this->visibilityConstraints)
             ->withTargetRestriction($this->visibilityConstraints);
 
-        if ($filter->nodeTypeConstraints) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $filter->nodeTypeConstraints,
+        if ($filter->nodeTypes) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'srcn');
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'srcn');
         }
         $orderings = [];
         if ($filter->referenceName) {
@@ -316,7 +316,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->findAnySiblings(
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_SUCCEEDING,
-            $filter->nodeTypeConstraints,
+            $filter->nodeTypes,
             $filter->pagination,
         );
     }
@@ -328,7 +328,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         return $this->findAnySiblings(
             $siblingNodeAggregateId,
             HypergraphSiblingQueryMode::MODE_ONLY_PRECEDING,
-            $filter->nodeTypeConstraints,
+            $filter->nodeTypes,
             $filter->pagination,
         );
     }
@@ -336,7 +336,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
     private function findAnySiblings(
         NodeAggregateId $sibling,
         HypergraphSiblingQueryMode $mode,
-        ?NodeTypeConstraints $nodeTypeConstraints = null,
+        ?NodeTypeCriteria $nodeTypeCriteria = null,
         ?Pagination $pagination = null,
     ): Nodes {
         $query = HypergraphSiblingQuery::create(
@@ -347,12 +347,12 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             $this->tableNamePrefix
         );
         $query = $query->withRestriction($this->visibilityConstraints);
-        if (!is_null($nodeTypeConstraints)) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $nodeTypeConstraints,
+        if (!is_null($nodeTypeCriteria)) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $nodeTypeCriteria,
                 $this->nodeTypeManager
             );
-            $query = $query->withNodeTypeConstraints($nodeTypeConstraintsWithSubNodeTypes, 'sn');
+            $query = $query->withNodeTypeCriteria($expandedNodeTypeCriteria, 'sn');
         }
         $query = $query->withOrdinalityOrdering($mode->isOrderingToBeReversed());
         if (!is_null($pagination)) {
@@ -383,14 +383,14 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         ];
 
         $types = [];
-        if ($filter->nodeTypeConstraints !== null) {
-            $nodeTypeConstraintsWithSubNodeTypes = NodeTypeConstraintsWithSubNodeTypes::create(
-                $filter->nodeTypeConstraints,
+        if ($filter->nodeTypes !== null) {
+            $expandedNodeTypeCriteria = ExpandedNodeTypeCriteria::create(
+                $filter->nodeTypes,
                 $this->nodeTypeManager
             );
-            $nodeTypeConstraintsClause = QueryUtility::getNodeTypeConstraintsClause($nodeTypeConstraintsWithSubNodeTypes, 'cn', $parameters, $types);
+            $nodeTypeCriteriaClause = QueryUtility::getNodeTypeCriteriaClause($expandedNodeTypeCriteria, 'cn', $parameters, $types);
         } else {
-            $nodeTypeConstraintsClause = '';
+            $nodeTypeCriteriaClause = '';
         }
 
         $query = /** @lang PostgreSQL */
@@ -438,7 +438,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
 		    AND ch.dimensionspacepointhash = :dimensionSpacePointHash
 		    ' . ($filter->maximumLevels !== null ? 'AND p.level + 1 <= :maximumLevels' : '') . '
             ' . QueryUtility::getRestrictionClause($this->visibilityConstraints, $this->tableNamePrefix, 'c') . '
-		    ' . $nodeTypeConstraintsClause . '
+		    ' . $nodeTypeCriteriaClause . '
     )
     SELECT * FROM subtree
     -- NOTE: it is crucially important that *inside* a single level, we

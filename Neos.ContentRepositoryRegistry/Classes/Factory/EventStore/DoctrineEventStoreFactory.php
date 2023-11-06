@@ -16,6 +16,7 @@ class DoctrineEventStoreFactory implements EventStoreFactoryInterface
     ) {
     }
 
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options, ClockInterface $clock): EventStoreInterface
     {
         return new DoctrineEventStore(
