@@ -92,4 +92,20 @@ final class FindPrecedingSiblingNodesFilter
             $pagination ?? $this->pagination,
         );
     }
+
+    public function without(
+        bool $nodeTypeConstraints = false,
+        bool $searchTerm = false,
+        bool $propertyValue = false,
+        bool $ordering = false,
+        bool $pagination = false,
+    ): self {
+        return self::create(
+            $nodeTypeConstraints ? null : $this->nodeTypeConstraints,
+            $searchTerm ? null : $this->searchTerm,
+            $propertyValue ? null : $this->propertyValue,
+            $ordering ? null : $this->ordering,
+            $pagination ? null : $this->pagination,
+        );
+    }
 }
