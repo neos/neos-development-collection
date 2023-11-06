@@ -103,6 +103,7 @@ Feature: Publishing hide/show scenario of nodes
       | workspaceName            | "user-test"                                                                                                                         |
       | nodesToPublish           | [{"nodeAggregateId": "sir-david-nodenborough", "workspaceName": "user-test", "dimensionSpacePoint": {}}] |
       | contentStreamIdForRemainingPart | "remaining-cs-id"                                                                                 |
+      | contentStreamIdForMatchingPart  | "matching-cs-id"                                                                                  |
     And the graph projection is fully up to date
 
     When I am in the active content stream of workspace "live" and dimension space point {}

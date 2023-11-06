@@ -24,7 +24,7 @@ Feature: Individual node publication
     And the graph projection is fully up to date
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | contentStreamId | "cs-identifier"               |
+      | workspaceName   | "live"               |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
 
@@ -41,7 +41,7 @@ Feature: Individual node publication
   ################
   Scenario: It is possible to publish a single node; and only this one is live.
     # create nodes in user WS
-    Given I am in content stream "user-cs-identifier" and dimension space point {}
+    Given I am in the active content stream of workspace "user-test" and dimension space point {}
     And the following CreateNodeAggregateWithNode commands are executed:
       | nodeAggregateId        | nodeTypeName                            | parentNodeAggregateId  | nodeName | tetheredDescendantNodeAggregateIds               |
       | sir-david-nodenborough | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | document | {} |
