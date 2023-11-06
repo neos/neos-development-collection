@@ -36,10 +36,10 @@ Feature: Change node name
       | sir-david-nodenborough | null     | Neos.ContentRepository.Testing:Document | lady-eleonode-rootford | {}                    | {"tethered": "nodewyn-tetherton"}  |
       | nody-mc-nodeface       | occupied | Neos.ContentRepository.Testing:Document | sir-david-nodenborough | {}                    | {}                                 |
 
-  Scenario: Try to rename a node aggregate in a non-existing content stream
+  Scenario: Try to rename a node aggregate in a non-existing workspace
     When the command ChangeNodeAggregateName is executed with payload and exceptions are caught:
       | Key             | Value                    |
-      | contentStreamId | "i-do-not-exist"         |
+      | workspaceName   | "i-do-not-exist"         |
       | nodeAggregateId | "sir-david-nodenborough" |
       | newNodeName     | "new-name"               |
     Then the last command should have thrown an exception of type "ContentStreamDoesNotExistYet"

@@ -14,9 +14,9 @@ Feature: If content streams are not in use anymore by the workspace, they can be
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                      | Value                                  |
-      | contentStreamId  | "cs-identifier"                        |
       | nodeAggregateId  | "root-node"                            |
       | nodeTypeName             | "Neos.ContentRepository:Root"          |
     And the graph projection is fully up to date

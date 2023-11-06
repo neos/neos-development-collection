@@ -375,6 +375,25 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             $workspace->currentContentStreamId
         );
 
+        // 2) we need to rebase the workspace so that the commands are written to the proper content stream
+        // @todo this should rather be a "Rebase was started"
+
+        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
+
+        $this->eventPersister->publishEvents(
+            new EventsToPublish(
+                $streamName,
+                Events::with(
+                    new WorkspaceWasRebased(
+                        $command->workspaceName,
+                        $rebasedContentStream,
+                        $workspace->currentContentStreamId,
+                    ),
+                ),
+                ExpectedVersion::ANY()
+            )
+        );
+
         $originalCommands = $this->extractCommandsFromContentStreamMetadata($workspaceContentStreamName);
         $rebaseStatistics = new WorkspaceRebaseStatistics();
         foreach ($originalCommands as $i => $originalCommand) {
@@ -414,8 +433,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             }
         }
 
-        $streamName = WorkspaceEventStreamName::fromWorkspaceName($command->workspaceName)->getEventStreamName();
-
         // if we got so far without an Exception, we can switch the Workspace's active Content stream.
         if (!$rebaseStatistics->hasErrors()) {
             $events = Events::with(
@@ -452,7 +469,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
     }
 
     /**
-     * @return array<int,object>
+     * @return array<int,CommandInterface>
      */
     private function extractCommandsFromContentStreamMetadata(
         ContentStreamEventStreamName $workspaceContentStreamName,
@@ -498,16 +515,15 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         PublishIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
         // 1) separate commands in two parts - the ones MATCHING the nodes from the command, and the REST
-        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $matchingCommands */
         $matchingCommands = [];
-        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
         $remainingCommands = [];
         $this->separateMatchingAndRemainingCommands($command, $workspace, $matchingCommands, $remainingCommands);
+        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $matchingCommands */
+        /** @var array<int,RebasableToOtherWorkspaceInterface&CommandInterface> $remainingCommands */
 
         // 2) fork a new contentStream, based on the base WS, and apply MATCHING
         $matchingContentStreamId = $command->contentStreamIdForMatchingPart;
@@ -575,12 +591,7 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
                     1645393626
                 );
             }
-            try {
-                $contentRepository->handle($remainingCommand)->block();
-            } catch (\Exception $e) {
-                \Neos\Flow\var_dump($e->getMessage());
-                throw $e;
-            }
+            $contentRepository->handle($remainingCommand)->block();
         }
 
         // to avoid dangling content streams, we need to remove our temporary content stream (whose events
@@ -612,7 +623,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
         DiscardIndividualNodesFromWorkspace $command,
         ContentRepository $contentRepository,
     ): EventsToPublish {
-        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $workspace = $this->requireWorkspace($command->workspaceName, $contentRepository);
         $baseWorkspace = $this->requireBaseWorkspace($workspace, $contentRepository);
 
@@ -855,7 +865,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
      */
     private function requireWorkspace(WorkspaceName $workspaceName, ContentRepository $contentRepository): Workspace
     {
-        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (is_null($workspace)) {
             throw WorkspaceDoesNotExist::butWasSupposedTo($workspaceName);
@@ -874,7 +883,6 @@ final readonly class WorkspaceCommandHandler implements CommandHandlerInterface
             throw WorkspaceHasNoBaseWorkspaceName::butWasSupposedTo($workspace->workspaceName);
         }
 
-        $contentRepository->getWorkspaceFinder()->disableRuntimeCache();
         $baseWorkspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspace->baseWorkspaceName);
         if ($baseWorkspace === null) {
             throw BaseWorkspaceDoesNotExist::butWasSupposedTo($workspace->workspaceName);

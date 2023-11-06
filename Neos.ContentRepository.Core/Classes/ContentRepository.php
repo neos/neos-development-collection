@@ -94,6 +94,7 @@ final class ContentRepository
      */
     public function handle(CommandInterface $command): CommandResult
     {
+        $this->getWorkspaceFinder()->disableRuntimeCache();
         // the commands only calculate which events they want to have published, but do not do the
         // publishing themselves
         $eventsToPublish = $this->commandBus->handle($command, $this);

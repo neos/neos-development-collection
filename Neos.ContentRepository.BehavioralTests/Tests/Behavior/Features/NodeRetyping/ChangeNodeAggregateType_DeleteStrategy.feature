@@ -66,16 +66,15 @@ Feature: Change node aggregate type - behavior of DELETE strategy
       | workspaceDescription | "The live workspace" |
       | newContentStreamId   | "cs-identifier"      |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {"language":"de"}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key             | Value                         |
-      | contentStreamId | "cs-identifier"               |
       | nodeAggregateId | "lady-eleonode-rootford"      |
       | nodeTypeName    | "Neos.ContentRepository:Root" |
     And the graph projection is fully up to date
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                           |
-      | contentStreamId           | "cs-identifier"                                 |
       | nodeAggregateId           | "sir-david-nodenborough"                        |
       | nodeTypeName              | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint | {"language":"de"}                               |
@@ -88,7 +87,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   Scenario: Try to change to a node type that disallows already present children with the delete conflict resolution strategy
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
-      | contentStreamId           | "cs-identifier"                            |
       | nodeAggregateId           | "nody-mc-nodeface"                         |
       | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint | {"language":"de"}                          |
@@ -97,7 +95,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                                            |
-      | contentStreamId | "cs-identifier"                                  |
       | nodeAggregateId | "sir-david-nodenborough"                         |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy        | "delete"                                         |
@@ -116,7 +113,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   Scenario: Try to change to a node type that disallows already present grandchildren with the delete conflict resolution strategy
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                           |
-      | contentStreamId                    | "cs-identifier"                                 |
       | nodeAggregateId                    | "parent2-na"                                    |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:ParentNodeType" |
       | originDimensionSpacePoint          | {"language":"de"}                               |
@@ -127,7 +123,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                       | Value                                      |
-      | contentStreamId           | "cs-identifier"                            |
       | nodeAggregateId           | "nody-mc-nodeface"                         |
       | nodeTypeName              | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint | {"language":"de"}                          |
@@ -137,7 +132,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key             | Value                                            |
-      | contentStreamId | "cs-identifier"                                  |
       | nodeAggregateId | "parent2-na"                                     |
       | newNodeTypeName | "Neos.ContentRepository.Testing:ParentNodeTypeB" |
       | strategy        | "delete"                                         |
@@ -163,7 +157,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   Scenario: Change node type successfully
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint          | {"language":"de"}                          |
@@ -174,7 +167,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
-      | contentStreamId | "cs-identifier"       |
       | nodeAggregateId | "nodea-identifier-de" |
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
@@ -182,7 +174,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                           | "delete"                                   |
@@ -205,7 +196,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
   Scenario: When changing node type, a non-allowed tethered node should stay (Tethered nodes are not taken into account when checking constraints)
     When the command CreateNodeAggregateWithNodeAndSerializedProperties is executed with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | nodeTypeName                       | "Neos.ContentRepository.Testing:NodeTypeA" |
       | originDimensionSpacePoint          | {"language":"de"}                          |
@@ -216,7 +206,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command CreateNodeVariant is executed with payload:
       | Key             | Value                 |
-      | contentStreamId | "cs-identifier"       |
       | nodeAggregateId | "nodea-identifier-de" |
       | sourceOrigin    | {"language":"de"}     |
       | targetOrigin    | {"language":"gsw"}    |
@@ -224,7 +213,6 @@ Feature: Change node aggregate type - behavior of DELETE strategy
 
     When the command ChangeNodeAggregateType was published with payload:
       | Key                                | Value                                      |
-      | contentStreamId                    | "cs-identifier"                            |
       | nodeAggregateId                    | "nodea-identifier-de"                      |
       | newNodeTypeName                    | "Neos.ContentRepository.Testing:NodeTypeB" |
       | strategy                           | "delete"                                   |

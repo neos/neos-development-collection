@@ -19,9 +19,9 @@ Feature: Single Node operations on live workspace
       | workspaceName              | "live"          |
       | newContentStreamId | "cs-identifier" |
     And the graph projection is fully up to date
+    And I am in the active content stream of workspace "live" and dimension space point {}
     And the command CreateRootNodeAggregateWithNode is executed with payload:
       | Key                         | Value                         |
-      | contentStreamId     | "cs-identifier"               |
       | nodeAggregateId     | "lady-eleonode-rootford"      |
       | nodeTypeName                | "Neos.ContentRepository:Root" |
     And the event NodeAggregateWithNodeWasCreated was published with payload:
@@ -39,7 +39,6 @@ Feature: Single Node operations on live workspace
   Scenario: Set property of a node
     Given the command SetNodeProperties is executed with payload:
       | Key                       | Value                        |
-      | contentStreamId   | "cs-identifier"              |
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | {}                           |
       | propertyValues            | {"text": "Hello"}            |
@@ -47,7 +46,6 @@ Feature: Single Node operations on live workspace
     Then I expect exactly 4 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 3 is of type "NodePropertiesWereSet" with payload:
       | Key                       | Expected                     |
-      | contentStreamId   | "cs-identifier"              |
       | nodeAggregateId   | "nody-mc-nodeface"           |
       | originDimensionSpacePoint | []                           |
       | propertyValues.text.value | "Hello"                      |
@@ -62,7 +60,6 @@ Feature: Single Node operations on live workspace
   Scenario: Error on invalid dimension space point
     Given the command SetNodeProperties is executed with payload and exceptions are caught:
       | Key                       | Value               |
-      | contentStreamId   | "cs-identifier"     |
       | nodeAggregateId   | "nody-mc-nodeface"  |
       | originDimensionSpacePoint | {"not": "existing"} |
       | propertyValues            | {"text": "Hello"}   |
