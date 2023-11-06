@@ -53,7 +53,10 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
         if ($site === null) {
             $site = $this->siteRepository->findFirstOnline();
         }
-        assert($site instanceof Site);
+
+        if (!$site instanceof Site) {
+            return $handler->handle($request);
+        }
 
         $siteDetectionResult = SiteDetectionResult::create($site->getNodeName(), $site->getConfiguration()->contentRepositoryId);
         return $handler->handle($siteDetectionResult->storeInRequest($request));

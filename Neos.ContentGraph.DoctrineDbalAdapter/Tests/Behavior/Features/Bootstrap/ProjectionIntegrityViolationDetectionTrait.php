@@ -25,7 +25,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentGraph\DoctrineDbalAdapter\Tests\Behavior\Features\Bootstrap\Helpers\TestingNodeAggregateId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
-use Neos\ContentRepositoryRegistry\Infrastructure\DbalClient;
+use Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient;
 use Neos\Error\Messages\Error;
 use Neos\Error\Messages\Result;
 use PHPUnit\Framework\Assert;
@@ -39,7 +39,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 {
     use CRTestSuiteRuntimeVariables;
 
-    private DbalClient $dbalClient;
+    private DoctrineDbalClient $dbalClient;
 
     protected Result $lastIntegrityViolationDetectionResult;
 
@@ -60,7 +60,7 @@ trait ProjectionIntegrityViolationDetectionTrait
 
     public function setupDbalGraphAdapterIntegrityViolationTrait()
     {
-        $this->dbalClient = $this->getObject(DbalClient::class);
+        $this->dbalClient = $this->getObject(DoctrineDbalClient::class);
     }
 
     /**
@@ -322,9 +322,9 @@ trait ProjectionIntegrityViolationDetectionTrait
      */
     public function iExpectTheIntegrityViolationDetectionResultToContainExactlyNErrors(int $expectedNumberOfErrors): void
     {
-        Assert::assertSame(
+        Assert::assertCount(
             $expectedNumberOfErrors,
-            count($this->lastIntegrityViolationDetectionResult->getErrors()),
+            $this->lastIntegrityViolationDetectionResult->getErrors(),
             'Errors were: ' . implode(', ', array_map(fn (Error $e) => $e->render(), $this->lastIntegrityViolationDetectionResult->getErrors()))
         );
     }
