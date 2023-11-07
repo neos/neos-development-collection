@@ -261,6 +261,9 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node
     {
         $node = $this->findNodeById($entryNodeAggregateId);
+        if (!$node) {
+            return null;
+        }
         if (ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
             return $node;
         }
@@ -300,6 +303,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $this->wrappedContentSubgraph->countNodes();
     }
 
+    /** @phpstan-ignore-next-line */
     private static function isFilterEmpty(object $filter): bool
     {
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
