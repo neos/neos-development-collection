@@ -97,14 +97,14 @@ final class FindDescendantNodesFilter
     }
 
     public function without(
-        bool $nodeTypeConstraints = false,
+        bool $nodeTypes = false,
         bool $searchTerm = false,
         bool $propertyValue = false,
         bool $ordering = false,
         bool $pagination = false,
     ): self {
         return self::create(
-            $nodeTypeConstraints ? null : $this->nodeTypeConstraints,
+            $nodeTypes ? null : $this->nodeTypes,
             $searchTerm ? null : $this->searchTerm,
             $propertyValue ? null : $this->propertyValue,
             $ordering ? null : $this->ordering,

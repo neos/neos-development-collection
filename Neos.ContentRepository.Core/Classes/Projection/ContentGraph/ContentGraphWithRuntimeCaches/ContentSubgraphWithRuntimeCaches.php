@@ -30,10 +30,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindReferencesFil
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSucceedingSiblingNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\ExpandedNodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
-use Neos\ContentRepository\Core\Projection\ContentGraph\NodeTypeConstraintsWithSubNodeTypes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\References;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Subtree;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -80,7 +80,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     public function countChildNodes(NodeAggregateId $parentNodeAggregateId, CountChildNodesFilter $filter): int
     {
         return $this->findChildNodes($parentNodeAggregateId, FindChildNodesFilter::create(
-            nodeTypeConstraints: $filter->nodeTypeConstraints,
+            nodeTypes: $filter->nodeTypes,
             searchTerm: $filter->searchTerm,
             propertyValue: $filter->propertyValue
         ))->count();
@@ -237,13 +237,13 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\FindAncestorNodesFilter $filter): Nodes
     {
-        if (!$filter->nodeTypeConstraints) {
+        if (!$filter->nodeTypes) {
             return $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId, $filter);
         }
         $unfiltered = $this->wrappedContentSubgraph->findAncestorNodes($entryNodeAggregateId, Filter\FindAncestorNodesFilter::create());
         $filtered = [];
         foreach ($unfiltered as $node) {
-            if (!NodeTypeConstraintsWithSubNodeTypes::create($filter->nodeTypeConstraints, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
+            if (!Filter\NodeType\ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
                 continue;
             }
             $filtered[] = $node;
@@ -254,18 +254,18 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     public function countAncestorNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountAncestorNodesFilter $filter): int
     {
         return $this->findAncestorNodes($entryNodeAggregateId, Filter\FindAncestorNodesFilter::create(
-            nodeTypeConstraints: $filter->nodeTypeConstraints
+            nodeTypes: $filter->nodeTypes
         ))->count();
     }
 
     public function findClosestNode(NodeAggregateId $entryNodeAggregateId, Filter\FindClosestNodeFilter $filter): ?Node
     {
         $node = $this->findNodeById($entryNodeAggregateId);
-        if (NodeTypeConstraintsWithSubNodeTypes::create($filter->nodeTypeConstraints, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
+        if (ExpandedNodeTypeCriteria::create($filter->nodeTypes, $this->nodeTypeManager)->matches($node->nodeTypeName)) {
             return $node;
         }
         return $this->findAncestorNodes($entryNodeAggregateId, Filter\FindAncestorNodesFilter::create(
-            nodeTypeConstraints: $filter->nodeTypeConstraints
+            nodeTypes: $filter->nodeTypes
         ))->first();
     }
 
@@ -288,7 +288,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
     public function countDescendantNodes(NodeAggregateId $entryNodeAggregateId, Filter\CountDescendantNodesFilter $filter): int
     {
         return $this->findDescendantNodes($entryNodeAggregateId, FindDescendantNodesFilter::create(
-            nodeTypeConstraints: $filter->nodeTypeConstraints,
+            nodeTypes: $filter->nodeTypes,
             searchTerm: $filter->searchTerm,
             propertyValue: $filter->propertyValue
         ))->count();
