@@ -40,7 +40,7 @@ class NextUntilOperation extends AbstractOperation
      *
      * @var integer
      */
-    protected static $priority = 100;
+    protected static $priority = 0;
 
     /**
      * @Flow\Inject
