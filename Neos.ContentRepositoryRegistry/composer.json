@@ -10,6 +10,8 @@
     "license": [
         "GPL-3.0-or-later"
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
         "neos/flow": "~9.0.0",
         "neos/contentrepository-core": "self.version",
