@@ -20,7 +20,10 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNod
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\NodeAccess\Filter\NodeFilterCriteriaGroup;
+use Neos\ContentRepository\NodeAccess\Filter\NodeFilterCriteriaGroupFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -63,6 +66,8 @@ use Neos\Flow\Annotations as Flow;
  */
 class FindOperation extends AbstractOperation
 {
+    use CreateNodeHashTrait;
+
     /**
      * {@inheritdoc}
      *
@@ -119,6 +124,30 @@ class FindOperation extends AbstractOperation
         }
 
         $selectorAndFilter = $arguments[0];
+
+        // optimized cr query for instanceof and attribute filters
+        $nodeFilterCriteriaGroup = NodeFilterCriteriaGroupFactory::createFromFizzleExpressionString($selectorAndFilter);
+        if ($nodeFilterCriteriaGroup instanceof NodeFilterCriteriaGroup) {
+            $result = Nodes::createEmpty();
+            foreach ($nodeFilterCriteriaGroup as $nodeFilterCriteria) {
+                $findDescendantNodesFilter = FindDescendantNodesFilter::create(nodeTypes: $nodeFilterCriteria->nodeTypeCriteria, propertyValue: $nodeFilterCriteria->propertyValueCriteria);
+                foreach ($contextNodes as $contextNode) {
+                    $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+                    $descendantNodes = $subgraph->findDescendantNodes($contextNode->nodeAggregateId, $findDescendantNodesFilter);
+                    $result = $result->merge($descendantNodes);
+                }
+            }
+
+            $nodesByHash = [];
+            foreach ($result as $node) {
+                $hash = $this->createNodeHash($node);
+                if (!array_key_exists($hash, $nodesByHash)) {
+                    $nodesByHash[$hash] = $node;
+                }
+            }
+            $flowQuery->setContext(array_values($nodesByHash));
+            return;
+        }
 
         $firstContextNode = reset($contextNodes);
         assert($firstContextNode instanceof Node);

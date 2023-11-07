@@ -13,9 +13,11 @@ namespace Neos\ContentRepository\NodeAccess\FlowQueryOperations;
 
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
-use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
 use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\NodeAccess\Filter\NodeFilterCriteriaGroup;
+use Neos\ContentRepository\NodeAccess\Filter\NodeFilterCriteriaGroupFactory;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Eel\FlowQuery\FizzleParser;
 use Neos\Eel\FlowQuery\FlowQuery;
@@ -75,6 +77,22 @@ class ChildrenOperation extends AbstractOperation
         $output = [];
         $outputNodeAggregateIds = [];
         if (isset($arguments[0]) && !empty($arguments[0])) {
+            // optimized cr query for instanceof and attribute filters
+            $nodeFilterCriteriaGroup = NodeFilterCriteriaGroupFactory::createFromFizzleExpressionString($arguments[0]);
+            if ($nodeFilterCriteriaGroup instanceof NodeFilterCriteriaGroup) {
+                $result = Nodes::createEmpty();
+                foreach ($nodeFilterCriteriaGroup as $nodeFilterCriteria) {
+                    $findChildNodesFilter = FindChildNodesFilter::create(nodeTypes: $nodeFilterCriteria->nodeTypeCriteria, propertyValue: $nodeFilterCriteria->propertyValueCriteria);
+                    foreach ($flowQuery->getContext() as $contextNode) {
+                        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+                        $descendantNodes = $subgraph->findChildNodes($contextNode->nodeAggregateId, $findChildNodesFilter);
+                        $result = $result->merge($descendantNodes);
+                    }
+                }
+                $flowQuery->setContext(iterator_to_array($result->getIterator()));
+                return;
+            }
+
             $parsedFilter = FizzleParser::parseFilterGroup($arguments[0]);
             if ($this->earlyOptimizationOfFilters($flowQuery, $parsedFilter)) {
                 return;
