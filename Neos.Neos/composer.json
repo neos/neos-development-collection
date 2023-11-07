@@ -25,8 +25,7 @@
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/fluid-adaptor": "~9.0.0",
         "behat/transliterator": "~1.0",
-        "neos/media": "~9.0.0",
-        "neos/content-repository": "~9.0.0"
+        "neos/media": "~9.0.0"
     },
     "suggest": {
         "neos/site-kickstarter": "Helps with creating new site packages for Neos.",
