@@ -170,10 +170,10 @@ class LoginController extends AbstractAuthenticationController
         $this->logger->debug(sprintf('Token-based login succeeded, token %s', $token));
 
         $newSession = $this->sessionManager->getSession($newSessionId);
-        if ($newSession->canBeResumed()) {
+        if ($newSession?->canBeResumed()) {
             $newSession->resume();
         }
-        if (!$newSession->isStarted()) {
+        if (!$newSession?->isStarted()) {
             $this->logger->error(sprintf(
                 'Failed resuming or starting session %s which was referred to in the login token %s.',
                 $newSessionId,
