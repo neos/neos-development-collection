@@ -393,7 +393,6 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-            return;
         } catch (SiteNodeTypeIsInvalid $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel(
@@ -406,7 +405,6 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-            return;
         } catch (SiteNodeNameIsAlreadyInUseByAnotherSite | NodeNameIsAlreadyOccupied $exception) {
             $this->addFlashMessage(
                 $this->getModuleLabel('sites.SiteCreationError.siteWithSiteNodeNameAlreadyExists.body', [$siteName]),
@@ -416,7 +414,6 @@ class SitesController extends AbstractModuleController
                 1412372375
             );
             $this->redirect('createSiteNode');
-            return;
         }
 
         $this->addFlashMessage(
