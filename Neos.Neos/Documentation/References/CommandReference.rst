@@ -19,7 +19,7 @@ commands that may be available, use::
 
   ./flow help
 
-The following reference was automatically generated from code on 2023-11-05
+The following reference was automatically generated from code on 2023-11-08
 
 
 .. _`Neos Command Reference: NEOS.CONTENTREPOSITORY`:
@@ -215,6 +215,8 @@ Options
 
 ``--path``
   Path of the NodeType-configuration which will be shown
+``--level``
+  Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
 
 
 
