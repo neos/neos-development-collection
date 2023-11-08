@@ -27,22 +27,30 @@ class NodeTypesCommandController extends CommandController
      * Shows the merged configuration (including supertypes) of a NodeType
      *
      * @param string $nodeTypeName The name of the NodeType to show
-     * @param ?string $path Path of the NodeType-configuration which will be shown
+     * @param string $path Path of the NodeType-configuration which will be shown
+     * @param int $level Truncate the configuration at this depth and show '...' (Usefully for only seeing the keys of the properties)
      */
-    public function showCommand(string $nodeTypeName, ?string $path = null): void
+    public function showCommand(string $nodeTypeName, string $path = '', int $level = 0): void
     {
-        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
-        if (!$nodeType) {
-            $this->outputLine('<b>NodeType "%s" was not found!</b>', [$nodeTypeName]);
+        if (!$this->nodeTypeManager->hasNodeType($nodeTypeName)) {
+            $this->outputLine('<error>NodeType "%s" was not found!</error>', [$nodeTypeName]);
             $this->quit();
         }
-        $yaml = Yaml::dump(
-            $path
-                ? $nodeType->getConfiguration($path)
-                : [$nodeTypeName => $nodeType->getFullConfiguration()],
-            99
-        );
-        $this->outputLine('<b>NodeType Configuration "%s":</b>', [$nodeTypeName . ($path ? ("." . $path) : "")]);
+
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+
+        if ($path && !$nodeType->hasConfiguration($path)) {
+            $this->outputLine('<b>NodeType "%s" does not have configuration "%s".</b>', [$nodeTypeName, $path]);
+            $this->quit();
+        }
+
+        $configuration = $path
+            ? self::truncateArrayAtLevel($nodeType->getConfiguration($path), $level)
+            : [$nodeTypeName => self::truncateArrayAtLevel($nodeType->getFullConfiguration(), $level)];
+
+        $yaml = Yaml::dump($configuration, 99);
+
+        $this->outputLine('<b>NodeType configuration "%s":</b>', [$nodeTypeName . ($path ? ("." . $path) : "")]);
         $this->outputLine();
         $this->outputLine($yaml);
         $this->outputLine();
@@ -77,5 +85,29 @@ class NodeTypesCommandController extends CommandController
                 $this->output->outputFormatted($nodeTypeName, [], 2);
             }
         }
+    }
+
+    /**
+     * @param int $truncateLevel 0 for no truncation and 1 to only show the first keys of the array
+     * @param int $currentLevel 1 for the start and will be incremented recursively
+     */
+    private static function truncateArrayAtLevel(array $array, int $truncateLevel, int $currentLevel = 1): array
+    {
+        if ($truncateLevel <= 0) {
+            return $array;
+        }
+        $truncatedArray = [];
+        foreach ($array as $key => $value) {
+            if ($currentLevel >= $truncateLevel) {
+                $truncatedArray[$key] = '...'; // truncated
+                continue;
+            }
+            if (!is_array($value)) {
+                $truncatedArray[$key] = $value;
+                continue;
+            }
+            $truncatedArray[$key] = self::truncateArrayAtLevel($value, $truncateLevel, $currentLevel + 1);
+        }
+        return $truncatedArray;
     }
 }
