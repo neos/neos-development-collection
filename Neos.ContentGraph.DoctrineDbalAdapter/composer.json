@@ -10,7 +10,7 @@
   "license": "GPL-3.0+",
   "require": {
     "neos/contentrepository-core": "self.version",
-    "doctrine/dbal": "*",
+    "doctrine/dbal": "^2.13",
     "doctrine/migrations": "*"
   },
   "autoload": {
