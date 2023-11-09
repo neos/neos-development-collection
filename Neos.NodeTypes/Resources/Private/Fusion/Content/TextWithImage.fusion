@@ -1,5 +1,13 @@
 prototype(Neos.NodeTypes:TextWithImage) < prototype(Neos.NodeTypes:Image) {
-  templatePath = 'resource://Neos.NodeTypes/Private/Templates/NodeTypes/TextWithImage.html'
-  text = ${q(node).property("text")}
-  text.@process.convertUris = Neos.Neos:ConvertUris
+  text = Neos.Neos:Editable {
+    property = 'text'
+  }
+
+  renderer >
+  renderer = afx`
+    <div {...props.attributes}>
+      <Neos.NodeTypes:Fragment.Image {...props}/>
+      {props.text}
+    </div>
+  `
 }

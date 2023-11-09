@@ -1,5 +1,4 @@
-prototype(Neos.NodeTypes:Image) < prototype(Neos.Neos:Content) {
-  templatePath = 'resource://Neos.NodeTypes/Private/Templates/NodeTypes/Image.html'
+prototype(Neos.NodeTypes:Image) < prototype(Neos.Neos:ContentComponent) {
   maximumWidth = 2560
   width = null
   maximumHeight = 2560
@@ -10,13 +9,32 @@ prototype(Neos.NodeTypes:Image) < prototype(Neos.Neos:Content) {
   image = ${q(node).property("image")}
   alternativeText = ${q(node).property("alternativeText")}
   link = ${q(node).property("link")}
-  loading = 'lazy'
   link.@process.convertUris = Neos.Neos:ConvertUris {
     forceConversion = true
   }
+  loading = 'lazy'
   title = ${q(node).property('title') ? q(node).property('title') : q(node).property('image').title}
   hasCaption = ${q(node).property("hasCaption")}
-  caption = ${String.trim(String.stripTags(q(node).property('caption'))) ? q(node).property('caption') : q(node).property('image').caption}
-  caption.@process.convertUris = Neos.Neos:ConvertUris
+  caption = Neos.Neos:Editable {
+    property = 'caption'
+    renderer.editable.renderer.content = ${String.trim(String.stripTags(q(props.node).property(props.property))) ? q(props.node).property(props.property) :  q(node).property('image').caption}
+  }
   alignment = ${q(node).property("alignment")}
+
+  attributes = Neos.Fusion:DataStructure
+  attributes.class = ''
+  # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
+  # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
+  # You can disable the following line with:
+  # prototype(Neos.NodeTypes:Image) {
+  #   attributes.class.@process.nodeType >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+
+  renderer = afx`
+    <div {...props.attributes}>
+      <Neos.NodeTypes:Fragment.Image {...props}/>
+    </div>
+  `
 }
