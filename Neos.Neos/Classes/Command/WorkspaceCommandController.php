@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateRootWork
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Command\CreateWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\BaseWorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Exception\WorkspaceAlreadyExists;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\DiscardWorkspace;
 use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
 use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
@@ -30,11 +31,13 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Error\Messages\Message;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Cli\Exception\StopCommandException;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Service\UserService;
+use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
  * The Workspace Command Controller
@@ -197,20 +200,18 @@ class WorkspaceCommandController extends CommandController
      */
     public function deleteCommand(string $workspace, bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
-        throw new \BadMethodCallException(
-            'Workspace removal is not supported yet',
-            1651961301
-        );
-        /*
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
+
         $workspaceName = WorkspaceName::fromString($workspace);
         if ($workspaceName->isLive()) {
             $this->outputLine('Did not delete workspace "live" because it is required for Neos CMS to work properly.');
             $this->quit(2);
         }
 
-        $workspace = $this->workspaceFinder->findOneByName($workspaceName);
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByName($workspaceName);
         if (!$workspace instanceof Workspace) {
-            $this->outputLine('Workspace "%s" does not exist', [$workspaceName]);
+            $this->outputLine('Workspace "%s" does not exist', [$workspaceName->value]);
             $this->quit(1);
         }
 
@@ -218,16 +219,16 @@ class WorkspaceCommandController extends CommandController
             $this->outputLine(
                 'Did not delete workspace "%s" because it is a personal workspace.'
                     . ' Personal workspaces cannot be deleted manually.',
-                [$workspaceName]
+                [$workspaceName->value]
             );
             $this->quit(2);
         }
 
-        $dependentWorkspaces = $this->workspaceFinder->findByBaseWorkspace($workspace);
+        $dependentWorkspaces = $contentRepository->getWorkspaceFinder()->findByBaseWorkspace($workspaceName);
         if (count($dependentWorkspaces) > 0) {
             $this->outputLine(
                 'Workspace "%s" cannot be deleted because the following workspaces are based on it:',
-                [$workspaceName]
+                [$workspaceName->value]
             );
             $this->outputLine();
             $tableRows = [];
@@ -235,9 +236,9 @@ class WorkspaceCommandController extends CommandController
 
             foreach ($dependentWorkspaces as $dependentWorkspace) {
                 $tableRows[] = [
-                    $dependentWorkspace->getWorkspaceName(),
-                    $dependentWorkspace->getWorkspaceTitle(),
-                    $dependentWorkspace->getWorkspaceDescription()
+                    $dependentWorkspace->workspaceName->value,
+                    $dependentWorkspace->workspaceTitle->value,
+                    $dependentWorkspace->workspaceDescription->value
                 ];
             }
             $this->output->outputTable($tableRows, $headerRow);
@@ -245,13 +246,12 @@ class WorkspaceCommandController extends CommandController
         }
 
         try {
-            $nodesCount = $this->publishingService->getUnpublishedNodesCount($workspace);
-            $nodesCount = 0;
+            $nodesCount = $contentRepository->projectionState(ChangeFinder::class)
+                ->countByContentStreamId(
+                    $workspace->currentContentStreamId
+                );
         } catch (\Exception $exception) {
-            $this->outputLine(
-                'An error occurred while fetching unpublished nodes from workspace %s, nothing was deleted.',
-                [$workspaceName]
-            );
+            $this->outputLine('Could not fetch unpublished nodes for workspace %s, nothing was deleted. %s', [$workspace->workspaceName->value, $exception->getMessage()]);
             $this->quit(4);
         }
 
@@ -260,19 +260,23 @@ class WorkspaceCommandController extends CommandController
                 $this->outputLine(
                     'Did not delete workspace "%s" because it contains %s unpublished node(s).'
                         . ' Use --force to delete it nevertheless.',
-                    [$workspaceName, $nodesCount]
+                    [$workspaceName->value, $nodesCount]
                 );
                 $this->quit(5);
             }
-            $this->discardCommand($workspaceName);
+            $contentRepository->handle(
+                DiscardWorkspace::create(
+                    WorkspaceName::fromString($workspace),
+                )
+            )->block();
         }
 
-        $this->workspaceCommandHandler->handlePublishIndividualNodesFromWorkspace()
-
-
-        $this->workspaceFinder->remove($workspace);
-        $this->outputLine('Deleted workspace "%s"', [$workspaceName]);
-        */
+        $contentRepository->handle(
+            DeleteWorkspace::create(
+                $workspaceName
+            )
+        )->block();
+        $this->outputLine('Deleted workspace "%s"', [$workspaceName->value]);
     }
 
     /**
