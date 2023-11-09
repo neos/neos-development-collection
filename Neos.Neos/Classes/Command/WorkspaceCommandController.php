@@ -265,9 +265,7 @@ class WorkspaceCommandController extends CommandController
                 $this->quit(5);
             }
             $contentRepository->handle(
-                DiscardWorkspace::create(
-                    WorkspaceName::fromString($workspace),
-                )
+                DiscardWorkspace::create($workspaceName)
             )->block();
         }
 
