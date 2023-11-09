@@ -71,7 +71,6 @@ class Package extends BasePackage
         });
         $dispatcher->connect(FileMonitor::class, 'filesHaveChanged', static function (string $fileMonitorIdentifier) use ($bootstrap) {
             if ($fileMonitorIdentifier === 'ContentRepository_NodeTypesConfiguration') {
-                /** @phpstan-ignore-next-line flow's object manager needs to be a template */
                 $bootstrap->getObjectManager()->get(ConfigurationManager::class)->refreshConfiguration();
             }
         });
