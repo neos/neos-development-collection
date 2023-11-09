@@ -47,18 +47,16 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
         $requestUriHost = $request->getUri()->getHost();
         try {
             if (!empty($requestUriHost)) {
+                // try to get site by domain
                 $activeDomain = $this->domainRepository->findOneByHost($requestUriHost, true);
-                if ($activeDomain !== null) {
-                    $site = $activeDomain->getSite();
-                }
+                $site = $activeDomain?->getSite();
             }
             if ($site === null) {
+                // try to get any site
                 $site = $this->siteRepository->findFirstOnline();
             }
         } catch (DatabaseException) {
-            // doctrine might have not been migrated yet or not database exists.
-            // this doesn't have to be handled here, and we should allow other middlewares / routes to work
-            return $handler->handle($request);
+            // doctrine might have not been migrated yet or no database is connected.
         }
 
         if (!$site instanceof Site) {
