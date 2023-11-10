@@ -135,9 +135,13 @@ Feature: Find and count nodes using the findChildNodes and countChildNodes queri
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "integerProperty > 22 OR integerProperty <= 19"}' I expect the nodes "a2a1,a2a4" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "booleanProperty = true"}' I expect the nodes "a2a1" to be returned
     # Test case sensitivity behavior (see https://github.com/neos/neos-development-collection/issues/4721)
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty = \"the brown Bear\""}' I expect the nodes "a2a4" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty =~ \"the brown Bear\""}' I expect the nodes "a2a4,a2a5" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty *= \"bear\""}' I expect the nodes "a2a5" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty *=~ \"bear\""}' I expect the nodes "a2a4,a2a5" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $= \"bear\""}' I expect the nodes "a2a5" to be returned
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $= \"Bear\""}' I expect the nodes "a2a4" to be returned
+    When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"propertyValue": "stringProperty $=~ \"Bear\""}' I expect the nodes "a2a4,a2a5" to be returned
 
     #  Child nodes with custom ordering
     When I execute the findChildNodes query for parent node aggregate id "a2a" and filter '{"ordering": [{"type": "propertyName", "field": "text", "direction": "ASCENDING"}]}' I expect the nodes "a2a1,a2a2,a2a4,a2a5" to be returned
