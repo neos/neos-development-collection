@@ -195,7 +195,7 @@ class ChildrenOperation extends AbstractOperation
                     });
                     $filteredFlowQuery = new FlowQuery($filteredOutput);
                     $filteredFlowQuery->pushOperation('filter', [$attributeFilters]);
-                    $filteredOutput = $filteredFlowQuery->getContext();
+                    $filteredOutput = iterator_to_array($filteredFlowQuery);
                 }
 
                 // Add filtered nodes to output

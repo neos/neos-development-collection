@@ -351,14 +351,8 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     When I execute the following Fusion code:
     """fusion
     test = Neos.Fusion:DataStructure {
-      # @todo Decide wether the changed order of the results compared to Neos 8.3 is ok
-      # Result in Neos 8.3: "typeFilter: a1a,a1b1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6"
-      # Result in Neos 9.0: "typeFilter: a1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6,a1b1a"
       typeFilter = ${q(node).find('[instanceof Neos.Neos:Test.DocumentType2]').get()}
-      # @todo Fix and re enable `combinedFilter` case
-      # Result in Neos 8.3: "combinedFilter: a1b1a"
-      # Result in Neos 9.0: "combinedFilter: a1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6,a1b1a"
-      # combinedFilter = ${q(node).find('[instanceof Neos.Neos:Test.DocumentType2][uriPathSegment*="b1"]').get()}
+      combinedFilter = ${q(node).find('[instanceof Neos.Neos:Test.DocumentType2][uriPathSegment*="b1"]').get()}
       identifier = ${q(node).find('#a1b1a').get()}
       name = ${q(node).find('a1b').get()}
       relativePath = ${q(node).find('a1b/a1b1').get()}
@@ -369,6 +363,7 @@ Feature: Tests for the "Neos.ContentRepository" Flow Query methods.
     Then I expect the following Fusion rendering result:
     """
     typeFilter: a1a,a1a2,a1b2,a1a3,a1a4,a1a5,a1a6,a1b1a
+    combinedFilter: a1b1a
     identifier: a1b1a
     name: a1b
     relativePath: a1b1
