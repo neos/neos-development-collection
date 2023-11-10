@@ -42,7 +42,7 @@ use Neos\Flow\Annotations as Flow;
  *
  * Example (absolute path):
  *
- *  q(node).find('/sites/my-site/home')
+ *  q(node).find('/<Neos.Neos:Sites>/my-site/home')
  *
  * Example (identifier):
  *
@@ -118,17 +118,24 @@ class FindOperation extends AbstractOperation
             return;
         }
 
-        /** @var Node[] $result */
-        $result = [];
         $selectorAndFilter = $arguments[0];
 
-        $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
-
-        /** @todo fetch them $elsewhere (fusion runtime?) */
         $firstContextNode = reset($contextNodes);
         assert($firstContextNode instanceof Node);
-        $contentRepository = $this->contentRepositoryRegistry->get($firstContextNode->subgraphIdentity->contentRepositoryId);
 
+        $entryPoints = $this->getEntryPoints($contextNodes);
+
+        // handle absolute node pathes and return early as fizzle cannot parse this syntax
+        if (preg_match('/^\\/<[A-Za-z0-9\\.]+\\:[A-Za-z0-9\\.]+>(\\/[a-z0-9\\-]+)*$/', $selectorAndFilter)) {
+            $nodePath = AbsoluteNodePath::tryFromString($selectorAndFilter);
+            $nodes = $this->addNodesByPath($nodePath, $entryPoints, []);
+            $flowQuery->setContext($nodes);
+            return;
+        }
+
+        /** @var Node[] $result */
+        $result = [];
+        $parsedFilter = FizzleParser::parseFilterGroup($selectorAndFilter);
         $entryPoints = $this->getEntryPoints($contextNodes);
         foreach ($parsedFilter['Filters'] as $filter) {
             $filterResults = [];
@@ -146,7 +153,7 @@ class FindOperation extends AbstractOperation
 
             if (isset($filter['AttributeFilters']) && $filter['AttributeFilters'][0]['Operator'] === 'instanceof') {
                 $nodeTypeName = NodeTypeName::fromString($filter['AttributeFilters'][0]['Operand']);
-                $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults, $contentRepository);
+                $filterResults = $this->addNodesByType($nodeTypeName, $entryPoints, $filterResults);
                 unset($filter['AttributeFilters'][0]);
                 $generatedNodes = true;
             }
@@ -257,7 +264,7 @@ class FindOperation extends AbstractOperation
      * @param array<int,Node> $result
      * @return array<int,Node>
      */
-    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result, ContentRepository $contentRepository): array
+    protected function addNodesByType(NodeTypeName $nodeTypeName, array $entryPoints, array $result): array
     {
         $nodeTypeFilter = NodeTypeCriteria::create(NodeTypeNames::with($nodeTypeName), NodeTypeNames::createEmpty());
         foreach ($entryPoints as $entryPoint) {
