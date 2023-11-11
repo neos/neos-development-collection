@@ -15,6 +15,7 @@ parameters:
         - Neos.ContentRepository.TestSuite/Classes
         - Neos.ContentRepositoryRegistry/Classes
         - Neos.Neos/Classes
+        - Neos.NodeTypes.Form/Classes
     bootstrapFiles:
         - bootstrap-phpstan.php
 rules:
