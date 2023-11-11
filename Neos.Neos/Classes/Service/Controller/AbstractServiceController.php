@@ -86,15 +86,15 @@ abstract class AbstractServiceController extends ActionController
      * TODO: This is an explicit exception handling that will be replaced by format-enabled exception handlers.
      *
      * @param ActionRequest $request The request object
-     * @param ActionResponse $response The response, modified by this handler
-     * @return void
+     * @return ActionResponse $response The response, modified by this handler
      * @throws StopActionException
      * @throws \Exception
      */
-    public function processRequest(ActionRequest $request, ActionResponse $response)
+    public function processRequest(ActionRequest $request): ActionResponse
     {
+        $response = new ActionResponse();
         try {
-            parent::processRequest($request, $response);
+            $response = parent::processRequest($request);
         } catch (StopActionException $exception) {
             throw $exception;
         } catch (\Exception $exception) {
@@ -102,6 +102,7 @@ abstract class AbstractServiceController extends ActionController
                 throw $exception;
             }
             $exceptionData = $this->convertException($exception);
+            $response = new ActionResponse();
             $response->setContentType('application/json');
             if ($exception instanceof FlowException) {
                 $response->setStatusCode($exception->getStatusCode());
@@ -114,6 +115,8 @@ abstract class AbstractServiceController extends ActionController
                 LogEnvironment::fromMethodName(__METHOD__)
             );
         }
+
+        return $response;
     }
 
     /**

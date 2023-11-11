@@ -42,6 +42,7 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+//        return $handler->handle($siteDetectionResult->storeInRequest($request));
         $requestUriHost = $request->getUri()->getHost();
         $site = null;
         if (!empty($requestUriHost)) {

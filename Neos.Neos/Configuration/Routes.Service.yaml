@@ -42,6 +42,17 @@
     '@format':     'json'
   httpMethods: ['GET']
 
+- name: 'Services - UserPreferencesController->redirect'
+  uriPattern: 'user-preferences-redir'
+  defaults:
+    '@package': 'Neos.Neos'
+    '@subpackage': 'Service'
+    '@controller': 'UserPreference'
+    '@action': 'redirect'
+    '@format': 'html'
+  httpMethods: [ 'GET' ]
+
+
 -
   name: 'Services - UserPreferencesController->update'
   uriPattern: 'user-preferences'

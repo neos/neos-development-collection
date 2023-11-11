@@ -14,25 +14,37 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service\Controller;
 
+use GuzzleHttp\Psr7\Uri;
+use Neos\Flow\Annotations as Flow;
+
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
+use Neos\Flow\Mvc\Controller\SimpleActionController;
 use Neos\Flow\Mvc\Exception\StopActionException;
 use Neos\Neos\Domain\Model\User;
+use Neos\Neos\Domain\Service\UserService;
 
 /**
  * Service Controller for user preferences
  */
-class UserPreferenceController extends AbstractServiceController
+class UserPreferenceController extends SimpleActionController
 {
-    /**
-     * @return string json encoded user preferences
-     */
-    public function indexAction(): string
-    {
-        $this->response->setContentType('application/json');
+    #[Flow\Inject]
+    protected UserService $domainUserService;
 
-        return json_encode(
+    /**
+     * @return ActionResponse json encoded user preferences
+     */
+    public function indexAction(ActionRequest $request): ActionResponse
+    {
+        $response = new ActionResponse();
+        $response->setContentType('application/json');
+        $response->setContent(json_encode(
             $this->domainUserService->getCurrentUser()?->getPreferences()->getPreferences(),
             JSON_THROW_ON_ERROR
-        );
+        ));
+
+        return $response;
     }
 
     /**

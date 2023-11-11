@@ -101,9 +101,7 @@ class ModuleController extends ActionController
 
         $moduleRequest->setArgument('__moduleConfiguration', $moduleConfiguration);
 
-        $moduleResponse = new ActionResponse();
-
-        $this->dispatcher->dispatch($moduleRequest, $moduleResponse);
+        $moduleResponse = $this->dispatcher->dispatch($moduleRequest);
 
         if ($moduleResponse->getRedirectUri() !== null) {
             $this->redirectToUri($moduleResponse->getRedirectUri(), 0, $moduleResponse->getStatusCode());
