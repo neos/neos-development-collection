@@ -122,7 +122,14 @@ trait FusionTrait
         self::$bootstrap->setActiveRequestHandler($requestHandler);
         $this->throwExceptionIfLastRenderingLedToAnError();
         $this->renderingResult = null;
-        $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString($this->fusionCode . chr(10) . $fusionCode->getRaw()));
+        $fusionAst = (new Parser())->parseFromSource(FusionSourceCodeCollection::fromString($this->fusionCode . chr(10) . $fusionCode->getRaw())->union(
+            // make sure all exceptions are thrown. Not needed with Neos 9
+            FusionSourceCodeCollection::fromString(<<<FUSION
+            $path {
+                @exceptionHandler = 'Neos\\\\Fusion\\\\Core\\\\ExceptionHandlers\\\\ThrowingHandler'
+            }
+            FUSION)
+        ));
         $uriBuilder = new UriBuilder();
         $uriBuilder->setRequest($this->fusionRequest);
         $controllerContext = new ControllerContext($this->fusionRequest, new ActionResponse(), new Arguments(), $uriBuilder);
