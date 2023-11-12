@@ -176,18 +176,18 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI to non-existing asset: .
     """
 
-#  Scenario: URI to existing asset
-#    When an asset exists with id "362f3049-b9bb-454d-8769-6b35167e471e"
-#    And I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ConvertUris {
-#      value = 'Some value with node URI: asset://362f3049-b9bb-454d-8769-6b35167e471e.'
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    Some value with node URI: http://localhost/_Resources/Testing/Persistent/d0a1342bcb0e515bea83269427d8341d5f62a43d/test.svg.
-#    """
+  Scenario: URI to existing asset
+    When an asset exists with id "362f3049-b9bb-454d-8769-6b35167e471e"
+    And I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with node URI: asset://362f3049-b9bb-454d-8769-6b35167e471e.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI: http://localhost/_Resources/Testing/Persistent/d0a1342bcb0e515bea83269427d8341d5f62a43d/test.svg.
+    """
