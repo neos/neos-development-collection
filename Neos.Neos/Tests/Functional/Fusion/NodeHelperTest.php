@@ -15,9 +15,9 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValue;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
+use Neos\ContentRepository\Core\Infrastructure\Property\PropertyConverter;
 use Neos\ContentRepository\Core\NodeType\DefaultNodeLabelGeneratorFactory;
 use Neos\ContentRepository\Core\NodeType\NodeType;
-use Neos\ContentRepository\Core\NodeType\NodeTypeManager;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphIdentity;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
@@ -27,9 +27,9 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\ContentRepository\TestSuite\Unit\NodeSubjectProvider;
 use Neos\Fusion\Tests\Functional\FusionObjects\AbstractFusionObjectTest;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\Serializer\Serializer;
 
 /**
  * Testcase for the Fusion NodeLabel helper
@@ -121,7 +121,6 @@ class NodeHelperTest extends AbstractFusionObjectTest
     {
         $this->markTestSkipped('Skipped until we find a better way to mock node read models (see https://github.com/neos/neos-development-collection/issues/4317)');
         parent::setUp();
-        $nodeSubjectProvider = new NodeSubjectProvider();
 
         $nodeTypeName = NodeTypeName::fromString('Neos.Neos:Content.Text');
         // todo injecting the mocked nodeType in the node doesnt matter, as the nodeType is fetched from the nodeTypeManager in the NodeHelper
@@ -133,25 +132,19 @@ class NodeHelperTest extends AbstractFusionObjectTest
                     'label' => 'Content.Text'
                 ]
             ],
-            new NodeTypeManager(
-                fn () => [],
-                new DefaultNodeLabelGeneratorFactory()
-            ),
             new DefaultNodeLabelGeneratorFactory()
         );
 
         $textNodeProperties = new PropertyCollection(
             SerializedPropertyValues::fromArray([
-                'title' => new SerializedPropertyValue(
-                    'Some title',
-                    'string'
-                ),
-                'text' => new SerializedPropertyValue(
-                    'Some text',
-                    'string'
-                ),
+                'title' => new SerializedPropertyValue('Some title', 'string'),
+                'text' => new SerializedPropertyValue('Some text', 'string'),
             ]),
-            $nodeSubjectProvider->propertyConverter
+            new PropertyConverter(
+                new Serializer([
+                    // todo
+                ])
+            )
         );
 
         $now = new \DateTimeImmutable();
