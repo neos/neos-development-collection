@@ -47,17 +47,18 @@ class NodeMigrationCommandController extends CommandController
      * Do the configured migrations in the given migration.
      *
      * @param string $version The version of the migration configuration you want to use.
-     * @param string $workspace The workspace where the migration should be applied; by default "live"
-     * @param ?string $targetWorkspace The workspace where the migration result should end; by default "live". If set to null, each migration creates a new workspace for selectiv publishing.
+     * @param string $sourceWorkspace The workspace where the migration should be applied; by default "live"
+     * @param bool $publishOnSuccess If true, the changes get published automatically after successful apply (default: true).
      * @param boolean $force Confirm application of this migration, only needed if the given migration contains any warnings.
+     * @param string $contentRepositoryIdentifier
      * @return void
      * @throws StopCommandException
      * @see neos.contentrepositoryregistry:nodemigration:execute
      */
-    public function executeCommand(string $version, string $workspace = 'live', ?string $targetWorkspace = 'live', bool $force = false, string $contentRepositoryIdentifier = 'default'): void
+    public function executeCommand(string $version, string $sourceWorkspace = 'live', bool $publishOnSuccess = true, bool $force = false, string $contentRepositoryIdentifier = 'default'): void
     {
-        $workspace = WorkspaceName::fromString($workspace);
-        $targetWorkspace = $targetWorkspace === null ?: WorkspaceName::fromString($targetWorkspace);
+        $sourceWorkspaceName = WorkspaceName::fromString($sourceWorkspace);
+        $targetWorkspaceName = WorkspaceName::fromString(sprintf('migration-%s-%s', $sourceWorkspaceName->value, $version));
         $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
 
         try {
@@ -75,18 +76,25 @@ class NodeMigrationCommandController extends CommandController
             $nodeMigrationService->executeMigration(
                 new ExecuteMigration(
                     $migrationConfiguration,
-                    $workspace,
-                    $targetWorkspace,
+                    $sourceWorkspaceName,
+                    $targetWorkspaceName,
+                    $publishOnSuccess
                 )
             );
 
-            // Rebase depending workspaces?
-
             $this->outputLine();
             $this->outputLine('Successfully applied migration.');
+            if ($publishOnSuccess) {
+                $this->outputLine('You should rebase all outdated workspaces to ensure every workspace get the changes immediately. `./flow workspace:rebaseoutdated`');
+            } else {
+                $this->outputLine(sprintf('We created a workspace "%s" for review. Please review changes an publish them to "%s".', $targetWorkspaceName->value, $sourceWorkspaceName->value));
+                $this->outputLine('You should rebase all outdated workspaces after publishing to ensure every workspace get the changes immediately. `./flow workspace:rebaseoutdated`');
+            }
+
         } catch (MigrationException $e) {
             $this->outputLine();
-            $this->outputLine('Error: ' . $e->getMessage());
+            $this->outputLine('Error on applying node migrations:');
+            $this->outputLine($e->getMessage());
             $this->quit(1);
         }
     }

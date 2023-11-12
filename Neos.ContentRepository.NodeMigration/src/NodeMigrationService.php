@@ -17,6 +17,11 @@ use Neos\ContentRepository\Core\SharedModel\Exception\WorkspaceDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceDescription;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceTitle;
+use Neos\ContentRepository\Core\Projection\Workspace\Workspace;
+use Neos\Neos\PendingChangesProjection\ChangeProjection;
+use Neos\ContentRepository\Core\Feature\WorkspacePublication\Command\PublishWorkspace;
+use Neos\ContentRepository\Core\Feature\WorkspaceModification\Command\DeleteWorkspace;
+use Neos\Neos\PendingChangesProjection\ChangeFinder;
 
 /**
  * Node Migrations are manually written adjustments to the Node tree;
@@ -58,39 +63,54 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
 
     public function executeMigration(ExecuteMigration $command): void
     {
-        $workspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getWorkspaceName());
-        if ($workspace === null) {
+        $sourceWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getSourceWorkspaceName());
+        if ($sourceWorkspace === null) {
             throw new WorkspaceDoesNotExist(sprintf(
                 'The workspace %s does not exist',
-                $command->getWorkspaceName()->value
+                $command->getSourceWorkspaceName()->value
             ), 1611688225);
         }
 
-        if ($command->getTargetWorkspaceName() !== null) {
-            $targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName());
-        }
+        $targetWorkspaceWasCreated = false;
+        if ($targetWorkspace = $this->contentRepository->getWorkspaceFinder()->findOneByName($command->getTargetWorkspaceName())) {
+            if (!$this->workspaceIsEmpty($targetWorkspace)) {
+                throw new MigrationException(sprintf('Target workspace "%s" already exists an is not empty. Please clear the workspace before.', $targetWorkspace->workspaceName->value));
+            }
 
-        if ($targetWorkspace) {
             $targetContentStreamId = $targetWorkspace->currentContentStreamId;
+
         } else {
             $targetContentStreamId = ContentStreamId::create();
             $this->contentRepository->handle(
                 CreateWorkspace::create(
-                    $command->getTargetWorkspaceName() ?? WorkspaceName::fromString($targetContentStreamId->value),
-                    $workspace->workspaceName,
-                    WorkspaceTitle::fromString($command->getTargetWorkspaceName()?->value ?? $targetContentStreamId->value),
+                    $command->getTargetWorkspaceName(),
+                    $sourceWorkspace->workspaceName,
+                    WorkspaceTitle::fromString($command->getTargetWorkspaceName()->value),
                     WorkspaceDescription::fromString(''),
                     $targetContentStreamId,
                 )
             )->block();
+            $targetWorkspaceWasCreated = true;
         }
         foreach ($command->getMigrationConfiguration()->getMigration() as $migrationDescription) {
             /** array $migrationDescription */
             $this->executeSubMigrationAndBlock(
                 $migrationDescription,
-                $workspace->currentContentStreamId,
+                $sourceWorkspace->currentContentStreamId,
                 $targetContentStreamId
             );
+        }
+
+        if ($command->getPublishOnSuccess() === true) {
+            $this->contentRepository->handle(
+                PublishWorkspace::create($command->getTargetWorkspaceName())
+            );
+
+            if ($targetWorkspaceWasCreated === true) {
+                $this->contentRepository->handle(
+                    DeleteWorkspace::create($command->getTargetWorkspaceName())
+                );
+            }
         }
     }
 
@@ -179,5 +199,12 @@ class NodeMigrationService implements ContentRepositoryServiceInterface
                 }
             }
         }
+    }
+
+    private function workspaceIsEmpty(Workspace $workspace): bool
+    {
+        return $this->contentRepository
+                ->projectionState(ChangeFinder::class)
+                ->countByContentStreamId($workspace->currentContentStreamId) === 0;
     }
 }
