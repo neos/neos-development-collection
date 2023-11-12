@@ -23,6 +23,46 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
+ * This event represents the **Translation** use case, i.e. variant creation across non-connected dimensions.
+ *
+ * This event means: "Copy all properties (and references) of the given node from the source to the target dimension."
+ *
+ *
+ * ## Background: What is Node Variation?
+ *
+ * Node Variation is the process of creating a materialized copy of an existing node across dimensions.
+ * As example, node1,language=en to node1,language=de. The materialized nodes then have properties on their own,
+ * and do not shine through from their original variant.
+ *
+ * **Types of Node Variation**
+ *
+ * Let's take the following dimension graph (with fallbacks ch=>de, and at=>de):
+ *
+ * ```
+ *     ┌─────┐    ┌────┐
+ *     │ de  │    │ en │
+ *     └──▲──┘    └────┘
+ *        │
+ *    ┌───┴───┐
+ * ┌──┴─┐  ┌──┴─┐
+ * │ ch │  │ at │
+ * └────┘  └────┘
+ * ```
+ *
+ * - **Translation**: Variant creation across non-connected dimensions is implemented by
+ *   {@see NodePeerVariantWasCreated} - this is most common for translating content, e.g.
+ *   from `de` to `en`, from `ch` to `at` or from `en` to `at` (and vice versa).
+ *
+ *   ^^^^^^^ WE ARE HERE (in this event)
+ *
+ * - **Materialization**: If content exists e.g. in `de` and by default shines through to both
+ *   `ch` and `at`; if you want to disable this shine-through and **override** content e.g.
+ *   in `ch`, this is implemented by {@see NodeSpecializationVariantWasCreated}.
+ *
+ * - **Generalization**: If content exists in a specialized variant (e.g. `at`) and you want to
+ *   create the generalized variant (`de` in the example above), you need {@see NodeGeneralizationVariantWasCreated}.
+ *
+ *
  * @api events are the persistence-API of the content repository
  */
 final class NodePeerVariantWasCreated implements
@@ -33,8 +73,21 @@ final class NodePeerVariantWasCreated implements
     public function __construct(
         public readonly ContentStreamId $contentStreamId,
         public readonly NodeAggregateId $nodeAggregateId,
+        /**
+         * The source which should be translated (i.e. whose properties should be copied)
+         */
         public readonly OriginDimensionSpacePoint $sourceOrigin,
+
+        /**
+         * The target dimension (where the content should be copied *to*)
+         */
         public readonly OriginDimensionSpacePoint $peerOrigin,
+
+        /**
+         * Because {@see $peerOrigin} can have nested dimensions underneath (e.g. in the example above from `en` to `de`)
+         * this is the multiplied-out list of dimensions where the translation will be *visible in*. Will at least
+         * contain {@see $peerOrigin}, but could have additional dimensions as well.
+         */
         public readonly DimensionSpacePointSet $peerCoverage,
     ) {
     }
