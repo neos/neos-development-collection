@@ -19,11 +19,11 @@ use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Property\PropertyMappingConfigurationInterface;
 use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
-use Neos\Fusion\Core\Cache\ContentCache;
+use Neos\Fusion\Core\Cache\RuntimeContentCache;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
- * and deserialize the context. {@see ContentCache::serializeContext()}
+ * and deserialize the context. {@see RuntimeContentCache::serializeContext()}
  *
  * Converter implementation {@see JsonStringToNodeConverter}
  *

@@ -27,7 +27,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
- * and deserialize the context. {@see ContentCache::serializeContext()}
+ * and deserialize the context. {@see RuntimeContentCache::serializeContext()}
  *
  * Serialized implementation {@see NodeToJsonStringSerializer}
  *
