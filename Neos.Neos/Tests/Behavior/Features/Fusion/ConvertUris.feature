@@ -114,21 +114,20 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Some value with node URI: /a1.
     """
 
-#  NOTE: This scenario currently breaks because the rel attribute is just "noopener" instead of "noopener external"
-#  Scenario: Anchor tag without node or asset URI
-#    When I execute the following Fusion code:
-#    """fusion
-#    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
-#    include: resource://Neos.Neos/Private/Fusion/Root.fusion
-#
-#    test = Neos.Neos:ConvertUris {
-#      value = 'some <a href="https://neos.io">Link</a>'
-#    }
-#    """
-#    Then I expect the following Fusion rendering result:
-#    """
-#    some <a target="_blank" rel="noopener external" href="https://neos.io">Link</a>
-#    """
+  Scenario: Anchor tag without node or asset URI
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'some <a href="https://neos.io">Link</a>'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    some <a target="_blank" rel="noopener external" href="https://neos.io">Link</a>
+    """
 
 #  NOTE: This scenario currently breaks because it leads to an exception "Could not resolve a route and its corresponding URI for the given parameters"
 #  Scenario: Anchor tag with node URI to non-existing node
