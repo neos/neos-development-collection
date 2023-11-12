@@ -188,7 +188,7 @@ Feature: Routing functionality with multiple content dimensions
                         en: ''
     """
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -258,7 +258,7 @@ Feature: Routing functionality with multiple content dimensions
                         en: ''
     """
     And the node "carl-destinode" in content stream "cs-identifier" and dimension '{"market":"DE", "language":"at"}' should not resolve to an URL
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -

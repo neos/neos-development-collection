@@ -31,13 +31,17 @@ trait MigrationsTrait
     use CRTestSuiteRuntimeVariables;
 
     /**
-     * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName:
      */
-    public function iRunTheFollowingNodeMigration(string $workspaceName, string $contentStreams, PyStringNode $string): void
+    public function iRunTheFollowingNodeMigration(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string, bool $publishingOnSuccess = true): void
     {
-        // TODO: Replace ContentStream with Workspace
         $migrationConfiguration = new MigrationConfiguration(Yaml::parse($string->getRaw()));
-        $command = new ExecuteMigration($migrationConfiguration, WorkspaceName::fromString($workspaceName), null);
+        $command = new ExecuteMigration(
+            $migrationConfiguration,
+            WorkspaceName::fromString($sourceWorkspaceName),
+            WorkspaceName::fromString($targetWorkspaceName),
+            $publishingOnSuccess
+        );
 
         /** @var NodeMigrationService $nodeMigrationService */
         $nodeMigrationService = $this->getContentRepositoryService(new NodeMigrationServiceFactory());
@@ -45,12 +49,20 @@ trait MigrationsTrait
     }
 
     /**
-     * @When I run the following node migration for workspace :workspaceName, creating content streams :contentStreams and exceptions are caught:
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName, without publishing on success:
      */
-    public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $workspaceName, string $contentStreams, PyStringNode $string): void
+    public function iRunTheFollowingNodeMigrationWithoutPublishingOnSuccess(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string): void
+    {
+        $this->iRunTheFollowingNodeMigration($sourceWorkspaceName, $targetWorkspaceName, $string, false);
+    }
+
+    /**
+     * @When I run the following node migration for workspace :sourceWorkspaceName, creating target workspace :targetWorkspaceName and exceptions are caught:
+     */
+    public function iRunTheFollowingNodeMigrationAndExceptionsAreCaught(string $sourceWorkspaceName, string $targetWorkspaceName, PyStringNode $string): void
     {
         try {
-            $this->iRunTheFollowingNodeMigration($workspaceName, $contentStreams, $string);
+            $this->iRunTheFollowingNodeMigration($sourceWorkspaceName, $targetWorkspaceName, $string);
         } catch (\Exception $exception) {
             $this->lastCommandException = $exception;
         }

@@ -43,7 +43,7 @@ Feature: Remove Property
 
 
   Scenario: Fixed newValue
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -71,7 +71,7 @@ Feature: Remove Property
     And I expect this node to have no properties
 
   Scenario: Ignoring transformation if property does not exist on node
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -

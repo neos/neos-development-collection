@@ -57,7 +57,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
   Scenario: change materialized "de" node, should shine through in "ch", but not in "en"
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -129,7 +129,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | targetOrigin    | {"language":"ch"}        |
     And the graph projection is fully up to date
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -176,7 +176,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | targetOrigin    | {"language":"ch"}        |
     And the graph projection is fully up to date
 
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -215,7 +215,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
 
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = FALSE - default)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
@@ -252,7 +252,7 @@ Feature: Change Property Value across dimensions; and test DimensionSpacePoints 
       | text | "Original text" |
 
   Scenario: matching only happens based on originDimensionSpacePoint, not on visibleDimensionSpacePoints - we try to change CH, but should not see any modification (includeSpecializations = TRUE)
-    When I run the following node migration for workspace "live", creating content streams "migration-cs":
+    When I run the following node migration for workspace "live", creating target workspace "migration-workspace":
     """yaml
     migration:
       -
