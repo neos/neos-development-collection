@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace Neos\Neos\TypeConverter;
 
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
@@ -24,13 +23,14 @@ use Neos\Fusion\Core\Cache\ContentCache;
 
 /**
  * !!! Only needed for uncached Fusion segments; as in Fusion ContentCache, the PropertyMapper is used to serialize
- * and deserialize the context.
- * {@see ContentCache::serializeContext()}
+ * and deserialize the context. {@see ContentCache::serializeContext()}
+ *
+ * Converter implementation {@see JsonStringToNodeConverter}
  *
  * @Flow\Scope("singleton")
  * @deprecated
  */
-class NodeConverter extends AbstractTypeConverter
+class NodeToJsonStringSerializer extends AbstractTypeConverter
 {
     /**
      * @Flow\Inject
@@ -65,9 +65,23 @@ class NodeConverter extends AbstractTypeConverter
         array $subProperties = [],
         PropertyMappingConfigurationInterface $configuration = null
     ) {
+        assert($source instanceof Node);
+
         $contentRepository = $this->contentRepositoryRegistry->get(
             $source->subgraphIdentity->contentRepositoryId
         );
-        return NodeAddressFactory::create($contentRepository)->createFromNode($source)->serializeForUri();
+
+        $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId($source->subgraphIdentity->contentStreamId);
+
+        if (!$workspace) {
+            return new \Neos\Error\Messages\Error('Could not fetch workspace for node (%s) in content stream (%s).', 1699780153, [$source->nodeAggregateId->value, $source->subgraphIdentity->contentStreamId->value]);
+        }
+
+        return json_encode([
+            'contentRepositoryId' => $source->subgraphIdentity->contentRepositoryId->value,
+            'workspaceName' => $workspace->workspaceName->value,
+            'dimensionSpacePoint' => $source->subgraphIdentity->dimensionSpacePoint->jsonSerialize(),
+            'nodeAggregateId' => $source->nodeAggregateId->value
+        ], JSON_THROW_ON_ERROR);
     }
 }
