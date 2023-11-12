@@ -20,6 +20,7 @@ use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractTagBasedViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\ViewHelpers\FusionContextTrait;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**
@@ -114,7 +115,15 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
         }
         $this->tag->setContent($content);
 
-        return $this->contentElementEditableService->wrapContentProperty($node, $propertyName, (string)$this->tag->render());
+        $output = (string)$this->tag->render();
+
+        /** @var RenderingMode $renderingMode */
+        $renderingMode = $this->getContextVariable('renderingMode');
+        if (!$renderingMode->isEdit) {
+            return $output;
+        }
+
+        return $this->contentElementEditableService->wrapContentProperty($node, $propertyName, $output);
     }
 
     /**

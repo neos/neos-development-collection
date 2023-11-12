@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
@@ -65,6 +66,12 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     public function evaluate()
     {
         $content = $this->getValue();
+
+        /** @var RenderingMode $renderingMode */
+        $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+        if (!$renderingMode->isEdit) {
+            return $content;
+        }
 
         $node = $this->fusionValue('node');
         if (!$node instanceof Node) {

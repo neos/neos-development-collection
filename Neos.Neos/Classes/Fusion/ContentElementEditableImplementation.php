@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\FusionObjects\AbstractFusionObject;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementEditableService;
 
 /**
@@ -56,17 +57,23 @@ class ContentElementEditableImplementation extends AbstractFusionObject
     {
         $content = $this->getValue();
 
+        /** @var RenderingMode $renderingMode */
+        $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+        if (!$renderingMode->isEdit) {
+            return $content;
+        }
+
         $node = $this->fusionValue('node');
         if (!$node instanceof Node) {
             return $content;
         }
 
-        /** @var string $property */
-        $property = $this->fusionValue('property');
-
         if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             return $content;
         }
+
+        /** @var string $property */
+        $property = $this->fusionValue('property');
 
         return $this->contentElementEditableService->wrapContentProperty($node, $property, $content);
     }

@@ -24,6 +24,7 @@ use Neos\Flow\Utility\Environment;
 use Neos\FluidAdaptor\View\StandaloneView;
 use Neos\Fusion\Core\ExceptionHandlers\AbstractRenderingExceptionHandler;
 use Neos\Fusion\Core\ExceptionHandlers\HtmlMessageHandler;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
 use Psr\Http\Message\ResponseInterface;
 
@@ -86,14 +87,11 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            $contentRepositoryId = $documentNode->subgraphIdentity->contentRepositoryId;
-            $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
-            $workspace = $contentRepository->getWorkspaceFinder()->findOneByCurrentContentStreamId(
-                $documentNode->subgraphIdentity->contentStreamId
-            );
+            /** @var RenderingMode $renderingMode */
+            $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
             if (
-                $workspace && !$workspace->workspaceName->isLive()
-                && $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+                $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
+                && $renderingMode->isEdit
             ) {
                 $isBackend = true;
                 $fluidView->assign(
