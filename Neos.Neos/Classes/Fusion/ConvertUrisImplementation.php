@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Fusion;
 
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\Flow\Log\Utility\LogEnvironment;
+use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -26,6 +28,7 @@ use Neos\Fusion\FusionObjects\AbstractFusionObject;
 use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Repository\AssetRepository;
 use Neos\Neos\Domain\Exception as NeosException;
+use Psr\Log\LoggerInterface;
 
 /**
  * A Fusion Object that converts link references in the format "<type>://<UUID>" to proper URIs
@@ -80,6 +83,12 @@ class ConvertUrisImplementation extends AbstractFusionObject
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    /**
+     * @Flow\Inject
+     * @var LoggerInterface
+     */
+    protected $systemLogger;
 
     /**
      * Convert URIs matching a supported scheme with generated URIs
@@ -139,10 +148,11 @@ class ConvertUrisImplementation extends AbstractFusionObject
                         $uriBuilder = new UriBuilder();
                         $uriBuilder->setRequest($this->runtime->getControllerContext()->getRequest());
                         $uriBuilder->setCreateAbsoluteUri($absolute);
-
-                        // TODO: multi-site ....
-                        // -> different object than NodeAddress which also contains the CR Identifier.
-                        $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+                        try {
+                            $resolvedUri = (string)NodeUriBuilder::fromUriBuilder($uriBuilder)->uriFor($nodeAddress);
+                        } catch (NoMatchingRouteException) {
+                            $this->systemLogger->info(sprintf('Could not resolve "%s" to a live node uri. The node was probably deleted.', $matches[0]), LogEnvironment::fromMethodName(__METHOD__));
+                        }
                         $this->runtime->addCacheTag('node', $matches[2]);
                         break;
                     case 'asset':
