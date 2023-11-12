@@ -17,6 +17,7 @@ namespace Neos\Neos\Fusion;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Flow\Log\Utility\LogEnvironment;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -123,15 +124,17 @@ class ConvertUrisImplementation extends AbstractFusionObject
             ), 1382624087);
         }
 
+        /** @var RenderingMode $renderingMode */
+        $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+        if ($renderingMode->isEdit && $this->fusionValue('forceConversion') !== true) {
+            return $text;
+        }
+
         $contentRepository = $this->contentRepositoryRegistry->get(
             $node->subgraphIdentity->contentRepositoryId
         );
 
         $nodeAddress = NodeAddressFactory::create($contentRepository)->createFromNode($node);
-
-        if (!$nodeAddress->isInLiveWorkspace() && !($this->fusionValue('forceConversion'))) {
-            return $text;
-        }
 
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
