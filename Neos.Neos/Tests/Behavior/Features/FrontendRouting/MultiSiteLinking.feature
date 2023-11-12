@@ -66,8 +66,15 @@ Feature: Linking between multiple websites
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'site-1':
+            preset: default
+            uriPathSuffix: ''
+            contentDimensions:
+              resolver:
+                factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory
+          'site-2':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

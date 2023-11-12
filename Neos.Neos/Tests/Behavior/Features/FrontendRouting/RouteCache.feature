@@ -58,8 +58,9 @@ Feature: Route cache invalidation
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\NoopResolverFactory

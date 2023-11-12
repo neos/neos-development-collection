@@ -74,8 +74,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               defaultDimensionSpacePoint:
                 market: DE
@@ -114,8 +115,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               defaultDimensionSpacePoint:
                 market: DE
@@ -173,8 +175,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -242,8 +245,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -309,8 +313,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
@@ -373,8 +378,9 @@ Feature: Routing functionality with multiple content dimensions
     Neos:
       Neos:
         sites:
-          '*':
-            contentRepository: default
+          'node1':
+            preset: default
+            uriPathSuffix: ''
             contentDimensions:
               resolver:
                 factoryClassName: Neos\Neos\FrontendRouting\DimensionResolution\Resolver\UriPathResolverFactory
