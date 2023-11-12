@@ -209,4 +209,6 @@ interface ContentSubgraphInterface extends \JsonSerializable
      * @internal this method might change without further notice.
      */
     public function countNodes(): int;
+
+    public function jsonSerialize(): ContentSubgraphIdentity;
 }

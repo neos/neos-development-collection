@@ -262,7 +262,7 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return array_filter(get_object_vars($filter), static fn ($value) => $value !== null) === [];
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): ContentSubgraphIdentity
     {
         return $this->wrappedContentSubgraph->jsonSerialize();
     }
