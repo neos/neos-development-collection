@@ -163,7 +163,6 @@ class WorkspacesController extends AbstractModuleController
         if (is_null($workspaceObj)) {
             /** @todo add flash message */
             $this->redirect('index');
-            return;
         }
         $this->view->assignMultiple([
             'selectedWorkspace' => $workspaceObj,
@@ -259,7 +258,6 @@ class WorkspacesController extends AbstractModuleController
         if (is_null($workspace)) {
             // @todo add flash message
             $this->redirect('index');
-            return;
         }
         $this->view->assign('workspace', $workspace);
         $this->view->assign('baseWorkspaceOptions', $this->prepareBaseWorkspaceOptions($contentRepository, $workspace));
@@ -304,7 +302,6 @@ class WorkspacesController extends AbstractModuleController
                 Message::SEVERITY_ERROR
             );
             $this->redirect('index');
-            return;
         }
 
         if (!$workspace->workspaceTitle->equals($title) || !$workspace->workspaceDescription->equals($description)) {
@@ -360,12 +357,10 @@ class WorkspacesController extends AbstractModuleController
                 Message::SEVERITY_ERROR
             );
             $this->redirect('index');
-            return;
         }
 
         if ($workspace->isPersonalWorkspace()) {
             $this->redirect('index');
-            return;
         }
 
         $dependentWorkspaces = $contentRepository->getWorkspaceFinder()

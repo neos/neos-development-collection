@@ -11,13 +11,13 @@
         "GPL-3.0-or-later"
     ],
     "require": {
-        "neos/eventstore": "*",
-        "neos/eventstore-doctrineadapter": "*",
+        "neos/eventstore": "~1.0.0",
+        "neos/eventstore-doctrineadapter": "~1.0.0",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
         "neos/utility-arrays": "*",
-        "doctrine/dbal": "^2.6",
+        "doctrine/dbal": "^2.13",
         "symfony/serializer": "^6.3",
         "psr/clock": "^1",
         "behat/transliterator": "~1.0",

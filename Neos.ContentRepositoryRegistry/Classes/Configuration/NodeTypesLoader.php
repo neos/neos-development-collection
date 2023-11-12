@@ -24,7 +24,6 @@ class NodeTypesLoader implements LoaderInterface
      */
     private $configurationBasePath;
 
-    /** @phpstan-ignore-next-line FLOW_PATH_CONFIGURATION not found */
     public function __construct(YamlSource $yamlSource, string $configurationBasePath = FLOW_PATH_CONFIGURATION, protected readonly ?Bootstrap $bootstrap = null)
     {
         $this->yamlSource = $yamlSource;

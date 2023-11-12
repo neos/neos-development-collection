@@ -6,13 +6,10 @@
     ],
     "type": "neos-package-collection",
     "require": {
-        "neos/flow-development-collection": "9.0.x-dev",
-        "neos/neos-setup": "^2.0",
-        "league/flysystem-memory": "^3",
         "doctrine/dbal": "^2.8",
         "doctrine/migrations": "*",
-        "neos/eventstore": "*",
-        "neos/eventstore-doctrineadapter": "*",
+        "neos/eventstore": "~1.0.0",
+        "neos/eventstore-doctrineadapter": "~1.0.0",
         "php": "^8.2",
         "neos/error-messages": "*",
         "neos/utility-objecthandling": "*",
@@ -28,20 +25,20 @@
         "phpunit/phpunit": "^9.0",
         "neos/behat": "^9.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
-        "symfony/property-access": "*",
+        "symfony/property-access": "^5.4|^6.0",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
         "neos/utility-unicode": "*",
         "doctrine/orm": "^2.6",
         "ext-dom": "*",
-        "neos/twitter-bootstrap": "*",
+        "neos/twitter-bootstrap": "^3.0.6",
         "neos/utility-files": "*",
         "neos/utility-mediatypes": "*",
         "doctrine/common": "^2.7 || ^3.0",
         "neos/imagine": "^3.1.0",
         "imagine/imagine": "*",
-        "neos/party": "*",
+        "neos/party": "~7.0.3",
         "neos/fusion-form": "^1.0 || ^2.0",
         "neos/form": "*",
         "neos/kickstarter": "~9.0.0"
@@ -285,6 +282,7 @@
         "phpstan/phpstan": "^1.8",
         "squizlabs/php_codesniffer": "^3.6",
         "phpunit/phpunit": "^9.0",
-        "neos/behat": "*"
+        "neos/behat": "*",
+        "league/flysystem-memory": "^3"
     }
 }

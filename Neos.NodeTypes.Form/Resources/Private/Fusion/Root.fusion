@@ -1,9 +1,34 @@
 # Form Fusion Object
-prototype(Neos.NodeTypes.Form:Form) < prototype(Neos.Neos:Content) {
+prototype(Neos.NodeTypes.Form:Form) < prototype(Neos.Neos:ContentComponent) {
   templatePath = 'resource://Neos.NodeTypes.Form/Private/Templates/NodeTypes/Form.html'
-  presetName = 'default'
+  formPresetName = 'default'
   formIdentifier = ${q(node).property('formIdentifier')}
   overrideConfiguration = Neos.Fusion:DataStructure
+
+  attributes = Neos.Fusion:DataStructure
+  attributes.class = ''
+  # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
+  # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
+  # You can disable the following line with:
+  # prototype(Neos.NodeTypes.Form:Form) {
+  #   attributes.class.@process.nodeType >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+
+  renderer = afx`
+    <div {...props.attributes}>
+      <p @if.showEditHint={!props.formIdentifier && renderingMode.isEdit}>
+        {Translation.id('content.noValidFormIdentifier').package('Neos.NodeTypes.Form').source('NodeTypes/Form')}
+      </p>
+      <Neos.Fusion:Template @if.hasForm={props.formIdentifier}
+                            templatePath={props.templatePath}
+                            formIdentifier={props.formIdentifier}
+                            presetName={props.formPresetName}
+                            overrideConfiguration={props.overrideConfiguration}/>
+    </div>
+  `
+
   @cache {
     mode = 'uncached'
     context {
@@ -12,3 +37,4 @@ prototype(Neos.NodeTypes.Form:Form) < prototype(Neos.Neos:Content) {
     }
   }
 }
+
