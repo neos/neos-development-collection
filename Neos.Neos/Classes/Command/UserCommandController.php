@@ -422,6 +422,14 @@ class UserCommandController extends CommandController
                 $roleNames[] = $role->getIdentifier();
             }
         }
-        return [$user->getName()->getFullName(), $user->getPrimaryElectronicAddress(), implode(', ', $accountIdentifiers), implode(', ', $roleNames), ($user->isActive() ? 'yes' : 'no')];
+        return [
+            $user->getName()->getFullName(),
+            $user->getPrimaryElectronicAddress() ?? 'No Primary Electronic Address set',
+            implode(', ', $accountIdentifiers),
+            implode(', ', $roleNames),
+            ($user->isActive() ? 'yes' : 'no'),
+            $account->getCreationDate()->format('Y-m-d'),
+            $account->getExpirationDate() !== null ? $account->getExpirationDate()->format('Y-m-d') : 'never',
+        ];
     }
 }
