@@ -158,12 +158,12 @@ class SiteCommandController extends CommandController
 
         foreach ($sites as $site) {
             /** @var Site $site */
-            array_push($availableSites, [
+            $availableSites[] = [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName()->value,
                 'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
-            ]);
+            ];
             if (strlen($site->getName()) > $longestSiteName) {
                 $longestSiteName = strlen($site->getName());
             }

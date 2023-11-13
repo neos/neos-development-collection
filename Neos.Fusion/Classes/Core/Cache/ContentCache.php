@@ -40,30 +40,31 @@ use Neos\Fusion\Exception\CacheException;
  * Note: If you choose a different cache backend for this content cache, make sure that it is one implementing
  *       TaggableBackendInterface.
  *
+ * @internal
  * @Flow\Scope("singleton")
  */
 class ContentCache
 {
-    const CACHE_SEGMENT_START_TOKEN = "\x02";
-    const CACHE_SEGMENT_END_TOKEN = "\x03";
-    const CACHE_SEGMENT_SEPARATOR_TOKEN = "\x1f";
+    public const CACHE_SEGMENT_START_TOKEN = "\x02";
+    public const CACHE_SEGMENT_END_TOKEN = "\x03";
+    public const CACHE_SEGMENT_SEPARATOR_TOKEN = "\x1f";
 
-    const CACHE_SEGMENT_MARKER = 'CONTENT_CACHE';
+    public const CACHE_SEGMENT_MARKER = 'CONTENT_CACHE';
 
-    const CACHE_PLACEHOLDER_REGEX = "/\x02CONTENT_CACHE(?P<identifier>[a-f0-9]+)\x03CONTENT_CACHE/";
-    const EVAL_PLACEHOLDER_REGEX = "/\x02CONTENT_CACHE(?P<command>[^\x02\x1f\x03]+)\x1fCONTENT_CACHE(?P<data>[^\x02\x1f\x03]+)\x03CONTENT_CACHE/";
+    public const CACHE_PLACEHOLDER_REGEX = "/\x02CONTENT_CACHE(?P<identifier>[a-f0-9]+)\x03CONTENT_CACHE/";
+    public const EVAL_PLACEHOLDER_REGEX = "/\x02CONTENT_CACHE(?P<command>[^\x02\x1f\x03]+)\x1fCONTENT_CACHE(?P<data>[^\x02\x1f\x03]+)\x03CONTENT_CACHE/";
 
-    const MAXIMUM_NESTING_LEVEL = 32;
+    public const MAXIMUM_NESTING_LEVEL = 32;
 
     /**
      * A cache entry tag that will be used by default to flush an entry on "every" change - whatever that means to
      * the application.
      */
-    const TAG_EVERYTHING = 'Everything';
+    public const TAG_EVERYTHING = 'Everything';
 
-    const SEGMENT_TYPE_CACHED = 'cached';
-    const SEGMENT_TYPE_UNCACHED = 'uncached';
-    const SEGMENT_TYPE_DYNAMICCACHED = 'dynamiccached';
+    public const SEGMENT_TYPE_CACHED = 'cached';
+    public const SEGMENT_TYPE_UNCACHED = 'uncached';
+    public const SEGMENT_TYPE_DYNAMICCACHED = 'dynamiccached';
 
     /**
      * @var StringFrontend

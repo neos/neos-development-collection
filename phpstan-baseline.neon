@@ -146,11 +146,6 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Frontend/NodeController.php
 
 		-
-			message: "#^Call to method getFullName\\(\\) on an unknown class Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\PersonName\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
 			message: "#^Cannot call method getName\\(\\) on Neos\\\\Neos\\\\Domain\\\\Model\\\\User\\|null\\.$#"
 			count: 2
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
@@ -186,18 +181,8 @@ parameters:
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$personName contains unknown class Neos\\\\Neos\\\\Controller\\\\Module\\\\Administration\\\\PersonName\\.$#"
-			count: 1
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
 			message: "#^Parameter \\#1 \\$messageBody of method Neos\\\\Flow\\\\Mvc\\\\Controller\\\\AbstractController\\:\\:addFlashMessage\\(\\) expects string, string\\|null given\\.$#"
 			count: 16
-			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function htmlspecialchars expects string, Neos\\\\Party\\\\Domain\\\\Model\\\\PersonName given\\.$#"
-			count: 1
 			path: Neos.Neos/Classes/Controller/Module/Administration/UsersController.php
 
 		-

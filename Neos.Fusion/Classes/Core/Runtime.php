@@ -54,16 +54,16 @@ class Runtime
     /**
      * Internal constants defining how evaluate should work in case of an error
      */
-    const BEHAVIOR_EXCEPTION = 'Exception';
+    public const BEHAVIOR_EXCEPTION = 'Exception';
 
-    const BEHAVIOR_RETURNNULL = 'NULL';
+    public const BEHAVIOR_RETURNNULL = 'NULL';
 
     /**
      * Internal constants defining a status of how evaluate was evaluated
      */
-    const EVALUATION_EXECUTED = 'Executed';
+    public const EVALUATION_EXECUTED = 'Executed';
 
-    const EVALUATION_SKIPPED = 'Skipped';
+    public const EVALUATION_SKIPPED = 'Skipped';
 
     /**
      * @var \Neos\Eel\CompilingEvaluator
