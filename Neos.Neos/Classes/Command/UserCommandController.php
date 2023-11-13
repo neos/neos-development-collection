@@ -19,6 +19,7 @@ use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Security\Account;
 use Neos\Flow\Security\Exception\NoSuchRoleException;
 use Neos\Flow\Security\Policy\Role;
+use Neos\Party\Domain\Model\ElectronicAddress;
 use Neos\Utility\Arrays;
 use Neos\Neos\Domain\Model\User;
 use Neos\Neos\Domain\Service\UserService;
@@ -55,7 +56,7 @@ class UserCommandController extends CommandController
         $users = $this->userService->getUsers();
 
         $tableRows = [];
-        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
+        $headerRow = ['Name', 'Primary Electronic Address', 'Account(s)', 'Role(s)', 'Active', 'Created at', 'Expires at'];
 
         foreach ($users as $user) {
             $tableRows[] = $this->getTableRowForUser($user);
@@ -83,15 +84,38 @@ class UserCommandController extends CommandController
     {
         $user = $this->userService->getUser($username, $authenticationProvider);
         if (!$user instanceof User) {
-            $this->outputLine('The username "%s" is not in use', [$username]);
+            $this->outputLine('The username "%s" does not exist', [$username]);
             $this->quit(1);
         }
-        /** @var User $user */
 
-        $headerRow = ['Name', 'Email', 'Account(s)', 'Role(s)', 'Active'];
-        $tableRows = [$this->getTableRowForUser($user)];
+        $this->outputLine('<b>First name:</b> %s', [$user->getName()->getFirstName()]);
+        $this->outputLine('<b>Last name:</b> %s', [$user->getName()->getLastName()]);
+        $this->outputLine('<b>Backend Language:</b> %s', [$user->getPreferences()->getInterfaceLanguage() ?? 'Use system default']);
 
-        $this->output->outputTable($tableRows, $headerRow);
+        $this->outputLine();
+        $this->outputLine('<b>Electronic address(es):</b>');
+        $this->output->outputTable(
+            array_map(static fn (ElectronicAddress $electronicAddress) => [
+                $electronicAddress->getType(),
+                $electronicAddress->getIdentifier(),
+                $electronicAddress->getUsage(),
+                $electronicAddress === $user->getPrimaryElectronicAddress() ? 'yes' : 'no',
+            ], $user->getElectronicAddresses()->toArray()),
+            ['Type', 'Identifier', 'Usage', 'Primary?'],
+        );
+        $this->outputLine();
+        $this->outputLine('<b>Account:</b>');
+        $this->output->outputTable(
+            array_map(static fn (Account $account) => [
+                $account->getAccountIdentifier(),
+                implode(', ', $account->getRoles()),
+                $account->getAuthenticationProviderName(),
+                $account->isActive() ? 'yes' : 'no',
+                $account->getCreationDate()->format('Y-m-d'),
+                $account->getExpirationDate() !== null ? $account->getExpirationDate()->format('Y-m-d') : 'never',
+            ], $user->getAccounts()->toArray()),
+            ['Identifier', 'Role', 'Provider', 'Active', 'Created at', 'Expires at'],
+        );
     }
 
     /**
@@ -444,10 +468,12 @@ class UserCommandController extends CommandController
         }
         return [
             $user->getName()->getFullName(),
-            $user->getPrimaryElectronicAddress(),
+            $user->getPrimaryElectronicAddress() ?? 'No Primary Electronic Address set',
             implode(', ', $accountIdentifiers),
             implode(', ', $roleNames),
-            ($user->isActive() ? 'yes' : 'no')
+            ($user->isActive() ? 'yes' : 'no'),
+            $account->getCreationDate()->format('Y-m-d'),
+            $account->getExpirationDate() !== null ? $account->getExpirationDate()->format('Y-m-d') : 'never',
         ];
     }
 }
