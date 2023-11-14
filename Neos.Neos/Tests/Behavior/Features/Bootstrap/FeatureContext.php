@@ -11,7 +11,6 @@
  */
 
 use Behat\Behat\Context\Context as BehatContext;
-use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Neos\Behat\FlowBootstrapTrait;
 use Neos\Behat\FlowEntitiesTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
@@ -50,7 +49,7 @@ class FeatureContext implements BehatContext
         $this->environment = $this->getObject(Environment::class);
         $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
-        $this->setupCRTestSuiteTrait(true);
+        $this->setupCRTestSuiteTrait();
     }
 
     /*
@@ -63,7 +62,7 @@ class FeatureContext implements BehatContext
     /**
      * @BeforeScenario
      */
-    public function resetContentRepositoryComponents(BeforeScenarioScope $scope): void
+    public function resetContentRepositoryComponents(): void
     {
         GherkinTableNodeBasedContentDimensionSourceFactory::reset();
         GherkinPyStringNodeBasedNodeTypeManagerFactory::reset();
