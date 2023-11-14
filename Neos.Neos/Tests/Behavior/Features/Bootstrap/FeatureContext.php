@@ -73,9 +73,6 @@ class FeatureContext implements BehatContext
      */
     public function resetPersistenceManagerAndFeedbackCollection()
     {
-        // FIXME: we have some strange race condition between the scenarios; my theory is that
-        // somehow projectors still run in the background when we start from scratch...
-        sleep(2);
         $this->getObject(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
         // FIXME: FeedbackCollection is a really ugly, hacky SINGLETON; so it needs to be RESET!
         $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
