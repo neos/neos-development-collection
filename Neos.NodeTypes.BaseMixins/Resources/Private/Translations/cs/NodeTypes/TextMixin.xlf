@@ -3,8 +3,9 @@
   <file original="" product-name="Neos.NodeTypes.BaseMixins" source-language="en" datatype="plaintext" target-language="cs">
     <body>
       <trans-unit id="properties.text.ui.inline.editorOptions.placeholder" xml:space="preserve">
-				<source><![CDATA[<p>Enter text here</p>]]></source>
-			<target state="needs-translation"><![CDATA[<p>Enter text here</p>]]></target></trans-unit>
+				<source>&lt;p&gt;Enter text here&lt;/p&gt;</source>
+        <target state="translated">&lt;p&gt;Zde zadejte text&lt;/p&gt;</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
