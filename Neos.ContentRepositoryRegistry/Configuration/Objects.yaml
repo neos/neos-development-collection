@@ -33,3 +33,12 @@ Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection
       value: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
+
+
+'Neos.ContentRepositoryRegistry:CacheCatchUpStates':
+  className: Neos\Cache\Frontend\VariableFrontend
+  factoryObjectName: Neos\Flow\Cache\CacheManager
+  factoryMethodName: getCache
+  arguments:
+    1:
+      value: Neos_ContentRepositoryRegistry_CatchUpStates

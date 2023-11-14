@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepositoryRegistry\Command;
 
+use Neos\Cache\Frontend\VariableFrontend;
 use Neos\ContentRepository\Core\Projection\CatchUpOptions;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
@@ -25,6 +26,13 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
     protected $contentRepositoryRegistry;
 
     /**
+     * @Flow\Inject(name="Neos.ContentRepositoryRegistry:CacheCatchUpStates")
+     * @var VariableFrontend
+     */
+    protected $catchUpStatesCache;
+
+
+    /**
      * @param string $contentRepositoryIdentifier
      * @param class-string<ProjectionInterface<ProjectionStateInterface>> $projectionClassName fully qualified class name of the projection to catch up
      * @internal
@@ -33,5 +41,6 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
     {
         $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryIdentifier));
         $contentRepository->catchUpProjection($projectionClassName, CatchUpOptions::create());
+        $this->catchUpStatesCache->remove(md5($contentRepositoryIdentifier . $projectionClassName) . 'RUNNING');
     }
 }
