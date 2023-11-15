@@ -10,6 +10,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\ContentRepositoryRegistry\Factory\ProjectionCatchUpTrigger\SubprocessProjectionCatchUpTrigger;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepositoryRegistry\Service\AsynchronousCatchUpRunnerState;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 
@@ -23,13 +24,13 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
      * @Flow\Inject
      * @var ContentRepositoryRegistry
      */
-    protected $contentRepositoryRegistry;
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
      * @Flow\Inject(name="Neos.ContentRepositoryRegistry:CacheCatchUpStates")
      * @var VariableFrontend
      */
-    protected $catchUpStatesCache;
+    protected VariableFrontend $catchUpStatesCache;
 
 
     /**
@@ -39,8 +40,10 @@ class SubprocessProjectionCatchUpCommandController extends CommandController
      */
     public function catchupCommand(string $contentRepositoryIdentifier, string $projectionClassName): void
     {
-        $contentRepository = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString($contentRepositoryIdentifier));
+        $contentRepositoryId = ContentRepositoryId::fromString($contentRepositoryIdentifier);
+        $runnerState = AsynchronousCatchUpRunnerState::create($contentRepositoryId, $projectionClassName, $this->catchUpStatesCache);
+        $contentRepository = $this->contentRepositoryRegistry->get($contentRepositoryId);
         $contentRepository->catchUpProjection($projectionClassName, CatchUpOptions::create());
-        $this->catchUpStatesCache->remove(md5($contentRepositoryIdentifier . $projectionClassName) . 'RUNNING');
+        $runnerState->setStopped();
     }
 }
