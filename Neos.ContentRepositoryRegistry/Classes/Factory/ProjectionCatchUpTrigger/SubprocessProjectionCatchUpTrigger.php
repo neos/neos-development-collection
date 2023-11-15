@@ -38,7 +38,7 @@ class SubprocessProjectionCatchUpTrigger implements ProjectionCatchUpTriggerInte
     {
         // modelled after https://github.com/neos/Neos.EventSourcing/blob/master/Classes/EventPublisher/JobQueueEventPublisher.php#L103
         // and https://github.com/Flowpack/jobqueue-common/blob/master/Classes/Queue/FakeQueue.php
-        $queuedProjections = array_map(fn($projection) => $this->startCatchUpWithQueueing($projection), iterator_to_array($projections->getIterator()));
+        $queuedProjections = array_map($this->startCatchUpWithQueueing(...), iterator_to_array($projections));
         $queuedProjections = array_filter($queuedProjections);
 
         $attempts = 0;
