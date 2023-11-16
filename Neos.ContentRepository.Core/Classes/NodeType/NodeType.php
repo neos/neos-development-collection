@@ -155,6 +155,29 @@ class NodeType
             $this->fullConfiguration['childNodes'] = $sorter->toArray();
         }
 
+        // migrate old property like references to references
+        $referencesConfiguration = $this->fullConfiguration['references'] ?? [];
+        foreach ($this->fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
+            $propertyType = $propertyConfiguration['type'] ?? 'string';
+            switch ($propertyType) {
+                case 'reference':
+                    unset($propertyConfiguration['type']);
+                    $propertyConfiguration['constraints']['maxItems'] = 1;
+                    // @deprecated remove with 10
+                    // used to ensure that the FlowQuery property operation will return the node directly but not an array of nodes
+                    $propertyConfiguration['__legacyPropertyType'] = 'reference';
+                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                    unset($this->fullConfiguration['properties'][$propertyName]);
+                    break;
+                case 'references':
+                    unset($propertyConfiguration['type']);
+                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
+                    unset($this->fullConfiguration['properties'][$propertyName]);
+                    break;
+            }
+        }
+        $this->fullConfiguration['references'] = $referencesConfiguration;
+
         return $this->fullConfiguration;
     }
 
@@ -530,27 +553,6 @@ class NodeType
      */
     protected function setFullConfiguration(array $fullConfiguration): void
     {
-        $referencesConfiguration = $fullConfiguration['references'] ?? [];
-        foreach ($fullConfiguration['properties'] ?? [] as $propertyName => $propertyConfiguration) {
-            $propertyType = $propertyConfiguration['type'] ?? 'string';
-            switch ($propertyType) {
-                case 'reference':
-                    unset($propertyConfiguration['type']);
-                    $propertyConfiguration['constraints']['maxItems'] = 1;
-                    // @deprecated remove with 10
-                    // used to ensure that the FlowQuery property operation will return the node directly but not an array of nodes
-                    $propertyConfiguration['__legacyPropertyType'] = 'reference';
-                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
-                    unset($fullConfiguration['properties'][$propertyName]);
-                    break;
-                case 'references':
-                    unset($propertyConfiguration['type']);
-                    $referencesConfiguration[$propertyName] = $propertyConfiguration;
-                    unset($fullConfiguration['properties'][$propertyName]);
-                    break;
-            }
-        }
-        $fullConfiguration['references'] = $referencesConfiguration;
         $this->fullConfiguration = $fullConfiguration;
     }
 }

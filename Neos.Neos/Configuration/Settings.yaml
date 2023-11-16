@@ -226,12 +226,6 @@ Neos:
             editor: Neos.Neos/Inspector/Editors/DateTimeEditor
             editorOptions:
               format: d-m-Y
-          reference:
-            typeConverter: Neos\Neos\Service\Mapping\NodeReferenceConverter
-            editor: Neos.Neos/Inspector/Editors/ReferenceEditor
-          references:
-            typeConverter: Neos\Neos\Service\Mapping\NodeReferenceConverter
-            editor: Neos.Neos/Inspector/Editors/ReferencesEditor
         editors:
           Neos.Neos/Inspector/Editors/CodeEditor:
             editorOptions:
