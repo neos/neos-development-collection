@@ -20,6 +20,7 @@ use Neos\Eel\FlowQuery\FlowQuery;
 use Neos\Eel\FlowQuery\FlowQueryException;
 use Neos\Eel\FlowQuery\Operations\AbstractOperation;
 use Neos\Flow\Annotations as Flow;
+use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
 use Neos\Utility\ObjectAccess;
 
 /**
@@ -55,6 +56,8 @@ class PropertyOperation extends AbstractOperation
      * @var ContentRepositoryRegistry
      */
     protected $contentRepositoryRegistry;
+
+    use NodeTypeWithFallbackProvider;
 
     /**
      * {@inheritdoc}
@@ -110,11 +113,9 @@ class PropertyOperation extends AbstractOperation
             return ObjectAccess::getPropertyPath($element, substr($propertyName, 1));
         }
 
-        $propertyType = $element->nodeType->hasProperty($propertyName)
-            ? $element->nodeType->getPropertyType($propertyName)
-            : null;
-
-        if ($propertyType === 'reference') {
+        // legacy layer for single references which have been migrated dynamically.
+        // users still expect them to return a single node instead of an array.
+        if ($this->getNodeType($element)->hasReference($propertyName) && ($element->nodeType->getReferences()[$propertyName]['__legacyPropertyType'] ?? '') === 'reference') {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return (
                 $subgraph->findReferences(
@@ -124,7 +125,7 @@ class PropertyOperation extends AbstractOperation
             )?->node;
         }
 
-        if ($propertyType === 'references') {
+        if ($this->getNodeType($element)->hasReference($propertyName)) {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($element);
             return $subgraph->findReferences(
                 $element->nodeAggregateId,

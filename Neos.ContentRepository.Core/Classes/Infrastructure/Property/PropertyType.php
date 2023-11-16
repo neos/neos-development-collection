@@ -64,9 +64,6 @@ final class PropertyType
         PropertyName $propertyName,
         NodeTypeName $nodeTypeName
     ): self {
-        if ($declaration === 'reference' || $declaration === 'references') {
-            throw PropertyTypeIsInvalid::becauseItIsReference($propertyName, $nodeTypeName);
-        }
         $type = self::tryFromString($declaration);
         if (!$type) {
             throw PropertyTypeIsInvalid::becauseItIsUndefined($propertyName, $declaration, $nodeTypeName);
@@ -76,9 +73,6 @@ final class PropertyType
 
     private static function tryFromString(string $declaration): ?self
     {
-        if ($declaration === 'reference' || $declaration === 'references') {
-            return null;
-        }
         if ($declaration === 'bool' || $declaration === 'boolean') {
             return self::bool();
         }

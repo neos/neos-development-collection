@@ -75,8 +75,14 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
                 $defaultValue = json_encode($defaultValue);
             }
 
+            if ($nodeType->hasReference($propertyName)) {
+                throw new \InvalidArgumentException(
+                    'References cannot be serialized; you need to use the SetNodeReferences command instead.',
+                    1700154728
+                );
+            }
+
             $propertyTypeFromSchema = $nodeType->getPropertyType($propertyName);
-            self::assertTypeIsNoReference($propertyTypeFromSchema);
 
             $values[$propertyName] = new SerializedPropertyValue($defaultValue, $propertyTypeFromSchema);
         }
@@ -87,15 +93,6 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     public static function fromJsonString(string $jsonString): self
     {
         return self::fromArray(\json_decode($jsonString, true));
-    }
-
-    private static function assertTypeIsNoReference(string $propertyTypeFromSchema): void
-    {
-        if ($propertyTypeFromSchema === 'reference' || $propertyTypeFromSchema === 'references') {
-            throw new \RuntimeException(
-                'TODO: references cannot be serialized; you need to use the SetNodeReferences command instead.'
-            );
-        }
     }
 
     public function merge(self $other): self

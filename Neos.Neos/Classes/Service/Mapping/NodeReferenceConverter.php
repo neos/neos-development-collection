@@ -22,6 +22,7 @@ use Neos\Flow\Property\TypeConverter\AbstractTypeConverter;
 /**
  * Converter to convert node references to their identifiers
  *
+ * @deprecated todo remove
  * @Flow\Scope("singleton")
  */
 class NodeReferenceConverter extends AbstractTypeConverter

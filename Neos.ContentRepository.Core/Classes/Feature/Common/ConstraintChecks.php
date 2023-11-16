@@ -204,7 +204,7 @@ trait ConstraintChecks
     protected function requireNodeTypeToDeclareReference(NodeTypeName $nodeTypeName, ReferenceName $referenceName): void
     {
         $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-        if (isset($nodeType->getReferences()[$referenceName->value])) {
+        if ($nodeType->hasReference($referenceName->value)) {
             return;
         }
         throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
@@ -216,12 +216,7 @@ trait ConstraintChecks
         NodeTypeName $nodeTypeNameInQuestion
     ): void {
         $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-        $referenceDeclaration = $nodeType->getReferences()[$referenceName->value] ?? null;
-        if (is_null($referenceDeclaration)) {
-            throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
-        }
-
-        $constraints = $referenceDeclaration['constraints']['nodeTypes'] ?? [];
+        $constraints = $nodeType->getReferences()[$referenceName->value]['constraints']['nodeTypes'] ?? [];
 
         if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeConstraintsAreNotMatched(

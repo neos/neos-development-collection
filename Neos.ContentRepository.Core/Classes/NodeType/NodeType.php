@@ -400,6 +400,16 @@ class NodeType
     }
 
     /**
+     * Check if the property is configured in the schema.
+     */
+    public function hasReference(string $referenceName): bool
+    {
+        $this->initialize();
+
+        return isset($this->fullConfiguration['references'][$referenceName]);
+    }
+
+    /**
      * Return the array with the defined references. The key is the reference name,
      * the value the reference configuration. There are no guarantees on how the
      * reference configuration looks like.
@@ -527,6 +537,9 @@ class NodeType
                 case 'reference':
                     unset($propertyConfiguration['type']);
                     $propertyConfiguration['constraints']['maxItems'] = 1;
+                    // @deprecated remove with 10
+                    // used to ensure that the FlowQuery property operation will return the node directly but not an array of nodes
+                    $propertyConfiguration['__legacyPropertyType'] = 'reference';
                     $referencesConfiguration[$propertyName] = $propertyConfiguration;
                     unset($fullConfiguration['properties'][$propertyName]);
                     break;
