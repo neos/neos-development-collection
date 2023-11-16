@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Neos\ContentRepository\Core\Infrastructure;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
@@ -20,6 +23,7 @@ final class DbalSchemaFactory
 {
     /**
      * The NodeAggregateId is limited to 64 ascii characters and therefore we should do the same in the database.
+     *
      * @see NodeAggregateId
      */
     public static function addColumnForNodeAggregateId(Table $table, string $columnName, bool $notNull): Table
