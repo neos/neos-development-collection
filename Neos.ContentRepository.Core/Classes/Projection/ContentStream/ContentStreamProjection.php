@@ -18,6 +18,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaConfig;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
@@ -34,6 +35,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -89,17 +91,14 @@ class ContentStreamProjection implements ProjectionInterface
             $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
         }
 
-        $schema = new Schema();
+        $schema = DbalSchemaFactory::createEmptySchema($schemaManager);
         $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
+        $contentStreamTable = DbalSchemaFactory::addColumnForContentStreamId($contentStreamTable, 'contentStreamId', true);
         $contentStreamTable->addColumn('version', Types::INTEGER)
             ->setNotnull(true);
-        $contentStreamTable->addColumn('sourceContentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(false);
-        $contentStreamTable->addColumn('state', Types::STRING)
+        $contentStreamTable = DbalSchemaFactory::addColumnForContentStreamId($contentStreamTable, 'sourceContentStreamId', false);
+        // Should become a DB ENUM or int (latter needs adaption to code)
+        $contentStreamTable->addColumn('state', Types::BINARY)
             ->setLength(20)
             ->setNotnull(true);
         $contentStreamTable->addColumn('removed', Types::BOOLEAN)

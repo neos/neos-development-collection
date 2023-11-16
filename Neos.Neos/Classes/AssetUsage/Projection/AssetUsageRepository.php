@@ -10,6 +10,7 @@ use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\ForwardCompatibility\Result;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\Neos\AssetUsage\Dto\AssetUsageNodeAddress;
@@ -42,16 +43,15 @@ final class AssetUsageRepository
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), self::databaseSchema($this->tableNamePrefix));
+        $schema = DbalSchemaFactory::createEmptySchema($schemaManager);
+        $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), self::databaseSchema($this->tableNamePrefix, $schema));
         foreach ($schemaDiff->toSaveSql($this->dbal->getDatabasePlatform()) as $statement) {
             $this->dbal->executeStatement($statement);
         }
     }
 
-    private static function databaseSchema(string $tablePrefix): Schema
+    private static function databaseSchema(string $tablePrefix, Schema $schema): Schema
     {
-        $schema = new Schema();
-
         $table = $schema->createTable($tablePrefix);
         $table->addColumn('assetid', Types::STRING)
             ->setLength(40)
@@ -61,21 +61,10 @@ final class AssetUsageRepository
             ->setLength(40)
             ->setNotnull(false)
             ->setDefault(null);
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true)
-            ->setDefault('');
-        $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true)
-            ->setDefault('');
-        $table->addColumn('origindimensionspacepoint', Types::TEXT)
-            ->setNotnull(false);
-        $table->addColumn('origindimensionspacepointhash', Types::STRING)
-            // this is an MD5(...), so 32 chars long
-            ->setLength(32)
-            ->setNotnull(true)
-            ->setDefault('');
+        $table = DbalSchemaFactory::addColumnForContentStreamId($table, 'contentstreamid', true);
+        $table = DbalSchemaFactory::addColumnForNodeAggregateId($table, 'nodeaggregateid', true);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePoint($table, 'origindimensionspacepoint', false);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePoint($table, 'origindimensionspacepointhash', true);
         $table->addColumn('propertyname', Types::STRING)
             ->setLength(255)
             ->setNotnull(true)

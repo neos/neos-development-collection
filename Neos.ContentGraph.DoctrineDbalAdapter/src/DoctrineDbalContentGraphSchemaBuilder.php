@@ -2,22 +2,26 @@
 
 namespace Neos\ContentGraph\DoctrineDbalAdapter;
 
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 
 /**
  * @internal
  */
 class DoctrineDbalContentGraphSchemaBuilder
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     public function __construct(
-        private readonly string $tableNamePrefix,
+        private readonly string $tableNamePrefix
     ) {
     }
 
-    public function buildSchema(): Schema
+    public function buildSchema(AbstractSchemaManager $schemaManager): Schema
     {
-        $schema = new Schema();
+        $schema = DbalSchemaFactory::createEmptySchema($schemaManager);
 
         $this->createNodeTable($schema);
         $this->createHierarchyRelationTable($schema);
@@ -29,27 +33,19 @@ class DoctrineDbalContentGraphSchemaBuilder
 
     private function createNodeTable(Schema $schema): void
     {
-
         $table = $schema->createTable($this->tableNamePrefix . '_node');
-        $table->addColumn('relationanchorpoint', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(false);
-        $table->addColumn('origindimensionspacepoint', Types::TEXT)
-            ->setNotnull(false);
-        $table->addColumn('origindimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $table->addColumn('nodetypename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('properties', Types::TEXT) // TODO longtext?
-        ->setNotnull(true);
+        $table = DbalSchemaFactory::addColumnForNodeAnchorPoint($table, 'relationanchorpoint');
+        $table = DbalSchemaFactory::addColumnForNodeAggregateId($table, 'nodeaggregateid', false);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePoint($table, 'origindimensionspacepoint', false);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePointHash($table, 'origindimensionspacepointhash', false);
+        $table = DbalSchemaFactory::addColumnForNodeTypeName($table, 'nodetypename');
+        $table->addColumn('properties', Types::TEXT)
+            ->setNotnull(true)
+            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
         $table->addColumn('classification', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
+            ->setLength(20)
+            ->setNotnull(true)
+            ->setCustomSchemaOption('charset', 'binary');
         $table->addColumn('created', Types::DATETIME_IMMUTABLE)
             ->setDefault('CURRENT_TIMESTAMP')
             ->setNotnull(true);
@@ -73,27 +69,20 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table = $schema->createTable($this->tableNamePrefix . '_hierarchyrelation');
         $table->addColumn('name', Types::STRING)
             ->setLength(255)
-            ->setNotnull(false);
+            ->setNotnull(false)
+            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
         $table->addColumn('position', Types::INTEGER)
             ->setNotnull(true);
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepoint', Types::TEXT)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('parentnodeanchor', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('childnodeanchor', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
+        $table = DbalSchemaFactory::addColumnForContentStreamId($table, 'contentstreamid', true);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePoint($table, 'dimensionspacepoint', true);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePointHash($table, 'dimensionspacepointhash', true);
+        $table = DbalSchemaFactory::addColumnForNodeAnchorPoint($table, 'parentnodeanchor');
+        $table = DbalSchemaFactory::addColumnForNodeAnchorPoint($table, 'childnodeanchor');
         $table
             ->addIndex(['childnodeanchor'])
             ->addIndex(['contentstreamid'])
             ->addIndex(['parentnodeanchor'])
+            ->addIndex(['contentstreamid', 'childnodeanchor', 'dimensionspacepointhash'])
             ->addIndex(['contentstreamid', 'dimensionspacepointhash']);
     }
 
@@ -102,17 +91,16 @@ class DoctrineDbalContentGraphSchemaBuilder
         $table = $schema->createTable($this->tableNamePrefix . '_referencerelation');
         $table->addColumn('name', Types::STRING)
             ->setLength(255)
-            ->setNotnull(true);
+            ->setNotnull(true)
+            ->setCustomSchemaOption('charset', 'ascii')
+            ->setCustomSchemaOption('collation', 'ascii_general_ci');
         $table->addColumn('position', Types::INTEGER)
             ->setNotnull(true);
-        $table->addColumn('nodeanchorpoint', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
+        $table = DbalSchemaFactory::addColumnForNodeAnchorPoint($table, 'nodeanchorpoint');
         $table->addColumn('properties', Types::TEXT)
-            ->setNotnull(false);
-        $table->addColumn('destinationnodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
+            ->setNotnull(false)
+            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
+        $table = DbalSchemaFactory::addColumnForNodeAggregateId($table, 'destinationnodeaggregateid', true);
 
         $table
             ->setPrimaryKey(['name', 'position', 'nodeanchorpoint']);
@@ -121,18 +109,10 @@ class DoctrineDbalContentGraphSchemaBuilder
     private function createRestrictionRelationTable(Schema $schema): void
     {
         $table = $schema->createTable($this->tableNamePrefix . '_restrictionrelation');
-        $table->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $table->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $table->addColumn('originnodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        $table->addColumn('affectednodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
+        $table = DbalSchemaFactory::addColumnForContentStreamId($table, 'contentstreamid', true);
+        $table = DbalSchemaFactory::addColumnForDimensionSpacePointHash($table, 'dimensionspacepointhash', true);
+        $table = DbalSchemaFactory::addColumnForNodeAggregateId($table, 'originnodeaggregateid', true);
+        $table = DbalSchemaFactory::addColumnForNodeAggregateId($table, 'affectednodeaggregateid', true);
 
         $table
             ->setPrimaryKey([

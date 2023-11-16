@@ -17,7 +17,6 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -25,6 +24,7 @@ use Neos\ContentRepository\Core\Feature\DimensionSpaceAdjustment\Event\Dimension
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasDisabled;
 use Neos\ContentRepository\Core\Feature\NodeDisabling\Event\NodeAggregateWasEnabled;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\EventStore\CatchUp\CheckpointStorageInterface;
 use Neos\EventStore\DoctrineAdapter\DoctrineCheckpointStorage;
@@ -65,19 +65,12 @@ class NodeHiddenStateProjection implements ProjectionInterface
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $schema = new Schema();
+        $schema = DbalSchemaFactory::createEmptySchema($schemaManager);
         $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('nodeaggregateid', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('dimensionspacepointhash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('dimensionspacepoint', Types::TEXT)
-            ->setNotnull(false);
+        $contentStreamTable = DbalSchemaFactory::addColumnForContentStreamId($contentStreamTable, 'contentstreamid', true);
+        $contentStreamTable = DbalSchemaFactory::addColumnForNodeAggregateId($contentStreamTable, 'nodeaggregateid', false);
+        $contentStreamTable = DbalSchemaFactory::addColumnForDimensionSpacePointHash($contentStreamTable, 'dimensionspacepointhash', false);
+        $contentStreamTable = DbalSchemaFactory::addColumnForDimensionSpacePoint($contentStreamTable, 'dimensionspacepoint', false);
         $contentStreamTable->addColumn('hidden', Types::BOOLEAN)
             ->setDefault(false)
             ->setNotnull(false);
