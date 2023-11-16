@@ -32,6 +32,13 @@ final readonly class SerializedNodeReferences implements \IteratorAggregate, \Co
 
     private function __construct(SerializedNodeReference ...$references)
     {
+        $existingTargets = [];
+        foreach ($references as $reference) {
+            if (isset($existingTargets[$reference->targetNodeAggregateId->value])) {
+                throw new \InvalidArgumentException(sprintf('Duplicate entry in references to write. Target "%s" already exists in collection.', $reference->targetNodeAggregateId->value), 1700150910);
+            }
+            $existingTargets[$reference->targetNodeAggregateId->value] = true;
+        }
         $this->references = $references;
     }
 

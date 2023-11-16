@@ -181,3 +181,11 @@ Feature: Constraint checks on SetNodeReferences
       | referenceName         | "referenceWithProperties"                                                                      |
       | references            | [{"target":"anthony-destinode", "properties":{"postalAddress": "28 31st of February Street"}}] |
     Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1658406762
+
+  Scenario: Node reference cannot hold multiple targets to the same node
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                             | Value                            |
+      | sourceNodeAggregateId           | "source-nodandaise"              |
+      | referenceName                   | "references"                      |
+      | references                      | [{"target":"anthony-destinode"}, {"target":"anthony-destinode"}] |
+    Then the last command should have thrown an exception of type "InvalidArgumentException" with code 1700150910
