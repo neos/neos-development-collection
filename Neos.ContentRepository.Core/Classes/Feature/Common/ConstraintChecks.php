@@ -19,6 +19,7 @@ use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
+use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -191,7 +192,11 @@ trait ConstraintChecks
     protected function requireNodeTypeToDeclareProperty(NodeTypeName $nodeTypeName, PropertyName $propertyName): void
     {
         $nodeType = $this->getNodeTypeManager()->getNodeType($nodeTypeName->value);
-        if (!isset($nodeType->getProperties()[$propertyName->value])) {
+        if (!$nodeType->hasProperty($propertyName->value)) {
+            throw PropertyCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt(
+                $propertyName,
+                $nodeTypeName
+            );
         }
     }
 
