@@ -12,7 +12,8 @@
 
 use Behat\Behat\Context\Context as BehatContext;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Neos\Behat\Tests\Behat\FlowContextTrait;
+use Neos\Behat\FlowBootstrapTrait;
+use Neos\Behat\FlowEntitiesTrait;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\CRBehavioralTestsSubjectProvider;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinPyStringNodeBasedNodeTypeManagerFactory;
 use Neos\ContentRepository\BehavioralTests\TestSuite\Behavior\GherkinTableNodeBasedContentDimensionSourceFactory;
@@ -24,13 +25,11 @@ use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteTrai
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\MigrationsTrait;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Utility\Environment;
-use Neos\Utility\Files;
-
-require_once(__DIR__ . '/../../../../../../Application/Neos.Behat/Tests/Behat/FlowContextTrait.php');
 
 class FeatureContext implements BehatContext
 {
-    use FlowContextTrait;
+    use FlowBootstrapTrait;
+    use FlowEntitiesTrait;
     use BrowserTrait;
 
     use CRTestSuiteTrait;
@@ -45,12 +44,9 @@ class FeatureContext implements BehatContext
 
     public function __construct()
     {
-        if (self::$bootstrap === null) {
-            self::$bootstrap = $this->initializeFlow();
-        }
-        $this->objectManager = self::$bootstrap->getObjectManager();
-        $this->environment = $this->objectManager->get(Environment::class);
-        $this->contentRepositoryRegistry = $this->objectManager->get(ContentRepositoryRegistry::class);
+        self::bootstrapFlow();
+        $this->environment = $this->getObject(Environment::class);
+        $this->contentRepositoryRegistry = $this->getObject(ContentRepositoryRegistry::class);
 
         $this->setupCRTestSuiteTrait(true);
     }
@@ -72,13 +68,13 @@ class FeatureContext implements BehatContext
         // FIXME: we have some strange race condition between the scenarios; my theory is that
         // somehow projectors still run in the background when we start from scratch...
         sleep(2);
-        $this->getObjectManager()->get(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
+        $this->getObject(\Neos\Flow\Persistence\PersistenceManagerInterface::class)->clearState();
         // FIXME: FeedbackCollection is a really ugly, hacky SINGLETON; so it needs to be RESET!
-        $this->getObjectManager()->get(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
+        $this->getObject(\Neos\Neos\Ui\Domain\Model\FeedbackCollection::class)->reset();
 
         // The UserService has a runtime cache - which we need to reset as well as our users get new IDs.
         // Did I already mention I LOVE in memory caches? ;-) ;-) ;-)
-        $userService = $this->getObjectManager()->get(\Neos\Neos\Domain\Service\UserService::class);
+        $userService = $this->getObject(\Neos\Neos\Domain\Service\UserService::class);
         \Neos\Utility\ObjectAccess::setProperty($userService, 'runtimeUserCache', [], true);
     }
 

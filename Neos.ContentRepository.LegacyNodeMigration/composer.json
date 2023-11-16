@@ -2,13 +2,18 @@
     "name": "neos/contentrepository-legacynodemigration",
     "type": "neos-package",
     "description": "Migration from the Non-Event-Sourced to the Event-Sourced world",
+    "support": {
+        "source": "https://github.com/neos/contentrepository-legacynodemigration.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
     "require": {
         "php": ">=8.2",
-        "neos/contentrepository-core": "*",
-        "neos/contentrepository-export": "*",
+        "neos/contentrepository-core": "self.version",
+        "neos/contentrepository-export": "self.version",
         "league/flysystem": "^3"
     },
     "require-dev": {

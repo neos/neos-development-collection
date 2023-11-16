@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
  */
 class SubprocessProjectionCatchUpTriggerFactory implements ProjectionCatchUpTriggerFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): ProjectionCatchUpTriggerInterface
     {
         return new CatchUpTriggerWithSynchronousOption(

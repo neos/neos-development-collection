@@ -1,4 +1,29 @@
-prototype(Neos.NodeTypes.AssetList:AssetList) < prototype(Neos.Neos:Content) {
-  templatePath = "resource://Neos.NodeTypes.AssetList/Private/Templates/NodeTypes/AssetList.html"
+prototype(Neos.NodeTypes.AssetList:AssetList) < prototype(Neos.Neos:ContentComponent) {
   assets = ${q(node).property('assets')}
+
+  attributes = Neos.Fusion:DataStructure
+  attributes.class = ''
+  # The following is used to automatically append a class attribute that reflects the underlying node type of a Fusion object,
+  # for example "neos-nodetypes-form", "neos-nodetypes-headline", "neos-nodetypes-html", "neos-nodetypes-image", "neos-nodetypes-menu" and "neos-nodetypes-text"
+  # You can disable the following line with:
+  # prototype(Neos.NodeTypes.AssetList:AssetList) {
+  #   attributes.class.@process.nodeType >
+  # }
+  # in your site's Fusion if you don't need that behavior.
+  attributes.class.@process.nodeType = ${Array.push(value, String.toLowerCase(String.pregReplace(node.nodeTypeName.value, '/[[:^alnum:]]/', '-')))}
+
+  @if.render = ${this.assets || renderingMode.isEdit}
+
+  renderer = afx`
+    <ul {...props.attributes}>
+      <li @if.inEditMode={!props.assets && renderingMode.isEdit}>
+        {Translation.id('content.emptyAssetList').package('Neos.NodeTypes.AssetList').source('NodeTypes/AssetList')}
+      </li>
+      <Neos.Fusion:Loop items={props.assets} itemName="asset">
+        <li>
+          <Neos.Fusion:Link.Resource href.resource={asset.resource}>{asset.resource.filename}</Neos.Fusion:Link.Resource>
+        </li>
+      </Neos.Fusion:Loop>
+    </ul>
+  `
 }

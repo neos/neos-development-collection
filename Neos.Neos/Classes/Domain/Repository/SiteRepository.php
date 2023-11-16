@@ -111,7 +111,7 @@ class SiteRepository extends Repository
      * ```php
      * $siteNode = $subgraph->findClosestNode(
      *     $node->nodeAggregateId,
-     *     FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE)
+     *     FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE)
      * );
      * ```
      *

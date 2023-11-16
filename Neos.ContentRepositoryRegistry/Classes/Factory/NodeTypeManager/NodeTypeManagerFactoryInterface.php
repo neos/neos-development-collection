@@ -7,5 +7,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 
 interface NodeTypeManagerFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): NodeTypeManager;
 }

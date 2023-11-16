@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Exception\ContentStreamDoesNotExistYet;
 use Neos\ContentRepository\Core\SharedModel\Exception\DimensionSpacePointIsNotYetOccupied;
@@ -213,18 +214,15 @@ trait ConstraintChecks
         if (is_null($referenceDeclaration)) {
             throw ReferenceCannotBeSet::becauseTheNodeTypeDoesNotDeclareIt($referenceName, $nodeTypeName);
         }
-        if (isset($referenceDeclaration['constraints']['nodeTypes'])) {
-            $nodeTypeConstraints = NodeTypeConstraintsWithSubNodeTypes::createFromNodeTypeDeclaration(
-                $referenceDeclaration['constraints']['nodeTypes'],
-                $this->getNodeTypeManager()
+
+        $constraints = $referenceDeclaration['constraints']['nodeTypes'] ?? [];
+
+        if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType)) {
+            throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+                $referenceName,
+                $nodeTypeName,
+                $nodeTypeNameInQuestion
             );
-            if (!$nodeTypeConstraints->matches($nodeTypeNameInQuestion)) {
-                throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
-                    $referenceName,
-                    $nodeTypeName,
-                    $nodeTypeNameInQuestion
-                );
-            }
         }
     }
 

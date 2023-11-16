@@ -202,7 +202,6 @@ class CrCommandController extends CommandController
 
     private static function defaultResourcesPath(): string
     {
-        // @phpstan-ignore-next-line
         return FLOW_PATH_DATA . 'Persistent/Resources';
     }
 }

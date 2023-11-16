@@ -3,9 +3,6 @@ Neos\ContentRepositoryRegistry\ContentRepositoryRegistry:
     1:
       setting: Neos.ContentRepositoryRegistry
 
-Neos\ContentRepository\Core\Infrastructure\DbalClientInterface:
-  className: Neos\ContentRepositoryRegistry\Infrastructure\DbalClient
-
 Neos\ContentRepository\Core\NodeType\NodeLabelGeneratorFactoryInterface:
   className: Neos\ContentRepositoryRegistry\Factory\NodeTypeManager\ObjectManagerBasedNodeLabelGeneratorFactory
 
@@ -19,26 +16,6 @@ Neos\ContentRepository\Core\Projection\ContentStream\ContentStreamProjectionFact
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
-
-Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory
-    2:
-      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
-
-Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory:
-  scope: singleton
-  factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
-  arguments:
-    1:
-      value: Neos\ContentGraph\PostgreSQLAdapter\HypergraphProjectionFactory
-    2:
-      object: 'Neos\ContentRepositoryRegistry\Infrastructure\PostgresDbalClient'
-
-
 Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
@@ -48,7 +25,6 @@ Neos\ContentRepository\Core\Projection\Workspace\WorkspaceProjectionFactory:
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
-
 Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory:
   scope: singleton
   factoryObjectName: Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory
@@ -57,5 +33,3 @@ Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection
       value: Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjectionFactory
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
-
-

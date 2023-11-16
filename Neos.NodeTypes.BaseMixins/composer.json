@@ -2,6 +2,11 @@
     "name": "neos/nodetypes-basemixins",
     "type": "neos-package",
     "description": "Base mixins which are useful across projects.",
+    "support": {
+        "source": "https://github.com/neos/nodetypes-basemixins.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
