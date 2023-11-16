@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
 use Neos\ContentRepository\Core\DimensionSpace\Exception\DimensionSpacePointNotFound;
+use Neos\ContentRepository\Core\Feature\NodeReferencing\Dto\SerializedNodeReferences;
 use Neos\ContentRepository\Core\NodeType\ConstraintCheck;
 use Neos\ContentRepository\Core\SharedModel\Exception\PropertyCannotBeSet;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
@@ -223,10 +224,28 @@ trait ConstraintChecks
         $constraints = $referenceDeclaration['constraints']['nodeTypes'] ?? [];
 
         if (!ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType)) {
-            throw ReferenceCannotBeSet::becauseTheConstraintsAreNotMatched(
+            throw ReferenceCannotBeSet::becauseTheNodeTypeConstraintsAreNotMatched(
                 $referenceName,
                 $nodeTypeName,
                 $nodeTypeNameInQuestion
+            );
+        }
+    }
+
+    protected function requireNodeTypeToAllowCountOfReferencesInReference(SerializedNodeReferences $nodeReferences, ReferenceName $referenceName, NodeTypeName $nodeTypeName): void
+    {
+        $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName->value);
+
+        $maxItems = $nodeType->getReferences()[$referenceName->value]['constraints']['maxItems'] ?? null;
+        if ($maxItems === null) {
+            return;
+        }
+
+        if ($maxItems < count($nodeReferences)) {
+            throw ReferenceCannotBeSet::becauseTheItemsCountConstraintsAreNotMatched(
+                $referenceName,
+                $nodeTypeName,
+                count($nodeReferences)
             );
         }
     }
@@ -641,7 +660,7 @@ trait ConstraintChecks
                 ?? null;
 
             if (is_null($referencePropertyConfig)) {
-                throw ReferenceCannotBeSet::becauseTheItDoesNotDeclareAProperty(
+                throw ReferenceCannotBeSet::becauseTheReferenceDoesNotDeclareTheProperty(
                     $referenceName,
                     $nodeTypeName,
                     PropertyName::fromString($propertyName)

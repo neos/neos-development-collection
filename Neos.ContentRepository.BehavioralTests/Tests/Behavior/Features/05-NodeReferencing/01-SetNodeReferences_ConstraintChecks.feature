@@ -14,7 +14,9 @@ Feature: Constraint checks on SetNodeReferences
         nonReferenceProperty:
           type: string
       references:
-        reference: {}
+        reference:
+          constraints:
+            maxItems: 1
         references: {}
         constrainedReference:
           constraints:
@@ -111,6 +113,14 @@ Feature: Constraint checks on SetNodeReferences
       | referenceName         | "reference"                           |
       | references            | [{"target":"lady-eleonode-rootford"}] |
     Then the last command should have thrown an exception of type "NodeAggregateIsRoot"
+
+  Scenario: Try to set references exceeding the maxItems count
+    When the command SetNodeReferences is executed with payload and exceptions are caught:
+      | Key                             | Value                            |
+      | sourceNodeAggregateId           | "source-nodandaise"              |
+      | referenceName                   | "reference"                      |
+      | references                      | [{"target":"anthony-destinode"}, {"target":"berta-destinode"}] |
+    Then the last command should have thrown an exception of type "ReferenceCannotBeSet" with code 1700150156
 
   Scenario: Try to reference a node aggregate of a type not matching the constraints
     When the command SetNodeReferences is executed with payload and exceptions are caught:

@@ -526,14 +526,15 @@ class NodeType
             switch ($propertyType) {
                 case 'reference':
                     unset($propertyConfiguration['type']);
-                    $propertyConfiguration['constraints']['valueReference']['maxValue'] = 1;
+                    $propertyConfiguration['constraints']['maxItems'] = 1;
                     $referencesConfiguration[$propertyName] = $propertyConfiguration;
                     unset($fullConfiguration['properties'][$propertyName]);
+                    break;
                 case 'references':
                     unset($propertyConfiguration['type']);
                     $referencesConfiguration[$propertyName] = $propertyConfiguration;
                     unset($fullConfiguration['properties'][$propertyName]);
-                default:
+                    break;
             }
         }
         $fullConfiguration['references'] = $referencesConfiguration;

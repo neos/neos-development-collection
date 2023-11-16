@@ -116,6 +116,12 @@ trait NodeReferencing
         );
         $this->requireNodeTypeToDeclareReference($sourceNodeAggregate->nodeTypeName, $command->referenceName);
 
+        $this->requireNodeTypeToAllowCountOfReferencesInReference(
+            $command->references,
+            $command->referenceName,
+            $sourceNodeAggregate->nodeTypeName
+        );
+
         foreach ($command->references as $reference) {
             assert($reference instanceof SerializedNodeReference);
             $destinationNodeAggregate = $this->requireProjectedNodeAggregate(
