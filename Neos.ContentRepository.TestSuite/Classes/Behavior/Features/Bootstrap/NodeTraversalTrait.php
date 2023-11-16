@@ -166,7 +166,7 @@ trait NodeTraversalTrait
         $edgeName = NodeName::fromString($edgeNameSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        $actualNode = $this->getCurrentSubgraph()->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
+        $actualNode = $this->getCurrentSubgraph()->findChildNodeByNodeName($parentNodeAggregateId, $edgeName);
         Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 

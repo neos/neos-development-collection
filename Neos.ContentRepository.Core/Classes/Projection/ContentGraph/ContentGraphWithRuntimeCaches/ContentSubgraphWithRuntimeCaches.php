@@ -175,17 +175,17 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $this->wrappedContentSubgraph->findNodeByAbsolutePath($path);
     }
 
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node
+    public function findChildNodeByNodeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdCache();
-        if ($namedChildNodeCache->contains($parentNodeAggregateId, $edgeName)) {
-            return $namedChildNodeCache->get($parentNodeAggregateId, $edgeName);
+        if ($namedChildNodeCache->contains($parentNodeAggregateId, $nodeName)) {
+            return $namedChildNodeCache->get($parentNodeAggregateId, $nodeName);
         }
-        $node = $this->wrappedContentSubgraph->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
+        $node = $this->wrappedContentSubgraph->findChildNodeByNodeName($parentNodeAggregateId, $nodeName);
         if ($node === null) {
             return null;
         }
-        $namedChildNodeCache->add($parentNodeAggregateId, $edgeName, $node);
+        $namedChildNodeCache->add($parentNodeAggregateId, $nodeName, $node);
         $this->inMemoryCache->getNodeByNodeAggregateIdCache()->add($node->nodeAggregateId, $node);
         return $node;
     }

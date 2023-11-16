@@ -143,7 +143,7 @@ class ChildrenOperation extends AbstractOperation
                         $resolvedNode = $contextNode;
                         while (($nodePathSegment = array_shift($currentPathSegments)) && !is_null($resolvedNode)) {
                             $resolvedNode = $this->contentRepositoryRegistry->subgraphForNode($resolvedNode)
-                                ->findChildNodeConnectedThroughEdgeName(
+                                ->findChildNodeByNodeName(
                                 $resolvedNode->nodeAggregateId,
                                 NodeName::fromString($nodePathSegment)
                             );

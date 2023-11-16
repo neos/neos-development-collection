@@ -161,7 +161,7 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iRememberNodeAggregateIdOfNodesChildAs(string $parentNodeAggregateId, string $childNodeName, string $indexName): void
     {
-        $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findChildNodeConnectedThroughEdgeName(
+        $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findChildNodeByNodeName(
             NodeAggregateId::fromString($parentNodeAggregateId),
             NodeName::fromString($childNodeName)
         )->nodeAggregateId;

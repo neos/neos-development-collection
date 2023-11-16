@@ -287,9 +287,9 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             : null;
     }
 
-    public function findChildNodeConnectedThroughEdgeName(
+    public function findChildNodeByNodeName(
         NodeAggregateId $parentNodeAggregateId,
-        NodeName $edgeName
+        NodeName $nodeName
     ): ?Node {
         $query = HypergraphChildQuery::create(
             $this->contentStreamId,
@@ -298,7 +298,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         );
         $query = $query->withDimensionSpacePoint($this->dimensionSpacePoint)
             ->withRestriction($this->visibilityConstraints)
-            ->withChildNodeName($edgeName);
+            ->withChildNodeName($nodeName);
 
         $nodeRow = $query->execute($this->getDatabaseConnection())->fetchAssociative();
 
@@ -519,7 +519,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
         $currentNode = $startingNode;
         foreach ($path->getParts() as $edgeName) {
             // id exists here :)
-            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            $currentNode = $this->findChildNodeByNodeName($currentNode->nodeAggregateId, $edgeName);
             if ($currentNode === null) {
                 return null;
             }

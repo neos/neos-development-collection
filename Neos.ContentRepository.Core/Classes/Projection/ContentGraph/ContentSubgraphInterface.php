@@ -103,9 +103,9 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find a single child node by its name
      *
-     * @return Node|null the node that is connected to its parent with the specified $edgeName, or NULL if no matching node exists or the parent node is not accessible
+     * @return Node|null the node that is connected to its parent with the specified $nodeName, or NULL if no matching node exists or the parent node is not accessible
      */
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node;
+    public function findChildNodeByNodeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node;
 
     /**
      * Recursively find all nodes above the $entryNodeAggregateId that match the specified $filter and return them as a flat list

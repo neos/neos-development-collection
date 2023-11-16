@@ -73,7 +73,7 @@ class TetheredNodeAdjustments
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                    $tetheredNode = $subgraph->findChildNodeByNodeName(
                         $nodeAggregate->nodeAggregateId,
                         $tetheredNodeName
                     );
