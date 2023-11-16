@@ -58,6 +58,14 @@ final readonly class NodeReferencesToWrite implements \IteratorAggregate, \Count
         ));
     }
 
+    /**
+     * Unset all references for this reference name.
+     */
+    public static function createEmpty(): self
+    {
+        return new self();
+    }
+
     public static function fromNodeAggregateIds(NodeAggregateIds $nodeAggregateIds): self
     {
         return new self(...array_map(
