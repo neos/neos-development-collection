@@ -87,8 +87,8 @@ class PageHandler extends AbstractRenderingExceptionHandler
         }
 
         if (!is_null($documentNode)) {
-            /** @var RenderingMode $renderingMode */
             $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+            assert($renderingMode instanceof RenderingMode);
             if (
                 $this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')
                 && $renderingMode->isEdit

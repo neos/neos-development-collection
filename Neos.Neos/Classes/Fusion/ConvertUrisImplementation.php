@@ -124,8 +124,8 @@ class ConvertUrisImplementation extends AbstractFusionObject
             ), 1382624087);
         }
 
-        /** @var RenderingMode $renderingMode */
         $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+        assert($renderingMode instanceof RenderingMode);
         if ($renderingMode->isEdit && $this->fusionValue('forceConversion') !== true) {
             return $text;
         }

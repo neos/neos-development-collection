@@ -67,8 +67,8 @@ class ContentElementWrappingImplementation extends AbstractFusionObject
     {
         $content = $this->getValue();
 
-        /** @var RenderingMode $renderingMode */
         $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+        assert($renderingMode instanceof RenderingMode);
         if (!$renderingMode->isEdit) {
             return $content;
         }

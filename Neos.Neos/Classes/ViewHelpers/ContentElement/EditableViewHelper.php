@@ -117,8 +117,8 @@ class EditableViewHelper extends AbstractTagBasedViewHelper
 
         $output = (string)$this->tag->render();
 
-        /** @var RenderingMode $renderingMode */
         $renderingMode = $this->getContextVariable('renderingMode');
+        assert($renderingMode instanceof RenderingMode);
         if (!$renderingMode->isEdit) {
             return $output;
         }

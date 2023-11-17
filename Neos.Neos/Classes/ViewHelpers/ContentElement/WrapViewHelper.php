@@ -87,8 +87,8 @@ class WrapViewHelper extends AbstractViewHelper
             );
         }
 
-        /** @var RenderingMode $renderingMode */
         $renderingMode = $fusionObject->getRuntime()->fusionGlobals->get('renderingMode');
+        assert($renderingMode instanceof RenderingMode);
         if (!$renderingMode->isEdit) {
             return (string)$this->renderChildren();
         }

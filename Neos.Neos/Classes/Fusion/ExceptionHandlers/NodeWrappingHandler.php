@@ -74,8 +74,8 @@ class NodeWrappingHandler extends AbstractRenderingExceptionHandler
             /** @var Node $node */
             $node = $currentContext['node'];
 
-            /** @var RenderingMode $renderingMode */
             $renderingMode = $this->runtime->fusionGlobals->get('renderingMode');
+            assert($renderingMode instanceof RenderingMode);
             $applicationContext = $this->environment->getContext();
 
             if (!$renderingMode->isEdit) {
