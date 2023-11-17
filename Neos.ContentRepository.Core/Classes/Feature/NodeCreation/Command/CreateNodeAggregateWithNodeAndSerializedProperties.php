@@ -30,7 +30,7 @@ use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
  * The properties of {@see CreateNodeAggregateWithNode} are directly serialized; and then this command
  * is called and triggers the actual processing.
  *
- * @api commands are the write-API of the ContentRepository
+ * @internal implementation detail, use {@see CreateNodeAggregateWithNode} instead.
  */
 final class CreateNodeAggregateWithNodeAndSerializedProperties implements
     CommandInterface,
