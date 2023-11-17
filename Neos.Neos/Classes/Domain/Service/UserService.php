@@ -685,7 +685,7 @@ class UserService
      */
     public function currentUserCanPublishToWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->workspaceName->isLive()) {
+        if ($workspace->isPublicWorkspace()) {
             return $this->securityContext->hasRole('Neos.Neos:LivePublisher');
         }
 
@@ -709,7 +709,7 @@ class UserService
      */
     public function currentUserCanReadWorkspace(Workspace $workspace): bool
     {
-        if ($workspace->workspaceName->isLive() || $workspace->workspaceOwner === null) {
+        if ($workspace->isPublicWorkspace()) {
             return true;
         }
 

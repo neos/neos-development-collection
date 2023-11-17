@@ -19,6 +19,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\FluidAdaptor\Core\ViewHelper\AbstractViewHelper;
 use Neos\FluidAdaptor\Core\ViewHelper\Exception as ViewHelperException;
 use Neos\Fusion\FusionObjects\Helpers\FusionAwareViewInterface;
+use Neos\Neos\Domain\Model\RenderingMode;
 use Neos\Neos\Service\ContentElementWrappingService;
 
 /**
@@ -85,6 +86,13 @@ class WrapViewHelper extends AbstractViewHelper
                 1645650713
             );
         }
+
+        $renderingMode = $fusionObject->getRuntime()->fusionGlobals->get('renderingMode');
+        assert($renderingMode instanceof RenderingMode);
+        if (!$renderingMode->isEdit) {
+            return (string)$this->renderChildren();
+        }
+
         $currentContext = $fusionObject->getRuntime()->getCurrentContext();
 
         $node = $this->arguments['node'] ?? $currentContext['node'];

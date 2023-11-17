@@ -55,7 +55,7 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     """
     And the Fusion context node is "a"
     And the Fusion context request URI is "http://localhost"
-
+    And the Fusion renderingMode is "frontend"
   Scenario: Default output
     When I execute the following Fusion code:
     """fusion
@@ -111,6 +111,22 @@ Feature: Tests for the "Neos.Neos:ConvertUris" Fusion prototype
     Then I expect the following Fusion rendering result:
     """
     Some value with node URI: /a1.
+    """
+
+  Scenario: URI preserved in edit mode
+    Given the Fusion renderingMode is "inPlace"
+    When I execute the following Fusion code:
+    """fusion
+    include: resource://Neos.Fusion/Private/Fusion/Root.fusion
+    include: resource://Neos.Neos/Private/Fusion/Root.fusion
+
+    test = Neos.Neos:ConvertUris {
+      value = 'Some value with node URI: node://a1.'
+    }
+    """
+    Then I expect the following Fusion rendering result:
+    """
+    Some value with node URI: node://a1.
     """
 
   Scenario: Anchor tag without node or asset URI
