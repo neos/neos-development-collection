@@ -38,6 +38,8 @@ class FeatureContext implements BehatContext
     use MigrationsTrait;
     use FusionTrait;
 
+    use AssetTrait;
+
     protected Environment $environment;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -50,6 +52,13 @@ class FeatureContext implements BehatContext
 
         $this->setupCRTestSuiteTrait(true);
     }
+
+    /*
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     *  Please don't add any generic step definitions here and use   *
+     *  a dedicated trait instead to keep this main class tidied up. *
+     * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+     */
 
     /**
      * @BeforeScenario
