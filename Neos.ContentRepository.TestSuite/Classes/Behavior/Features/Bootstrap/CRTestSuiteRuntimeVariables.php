@@ -21,6 +21,7 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\User\UserId;
@@ -161,9 +162,9 @@ trait CRTestSuiteRuntimeVariables
      */
     public function iRememberNodeAggregateIdOfNodesChildAs(string $parentNodeAggregateId, string $childNodeName, string $indexName): void
     {
-        $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findChildNodeByNodeName(
+        $this->rememberedNodeAggregateIds[$indexName] = $this->getCurrentSubgraph()->findNodeByPath(
+            NodePath::fromString($childNodeName),
             NodeAggregateId::fromString($parentNodeAggregateId),
-            NodeName::fromString($childNodeName)
         )->nodeAggregateId;
     }
 

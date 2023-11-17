@@ -287,7 +287,7 @@ final readonly class ContentSubhypergraph implements ContentSubgraphInterface
             : null;
     }
 
-    public function findChildNodeByNodeName(
+    private function findChildNodeConnectedThroughEdgeName(
         NodeAggregateId $parentNodeAggregateId,
         NodeName $nodeName
     ): ?Node {

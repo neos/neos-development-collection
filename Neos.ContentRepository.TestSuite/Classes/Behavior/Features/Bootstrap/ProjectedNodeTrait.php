@@ -456,7 +456,7 @@ trait ProjectedNodeTrait
             Assert::assertTrue($expectedParentDiscriminator->equals($actualParentDiscriminator), 'Parent discriminator does not match. Expected was ' . json_encode($expectedParentDiscriminator) . ', given was ' . json_encode($actualParentDiscriminator));
 
             $expectedChildDiscriminator = NodeDiscriminator::fromNode($currentNode);
-            $child = $subgraph->findChildNodeByNodeName($parent->nodeAggregateId, $currentNode->nodeName);
+            $child = $subgraph->findNodeByPath(NodePath::fromNodeNames($currentNode->nodeName), $parent->nodeAggregateId);
             $actualChildDiscriminator = NodeDiscriminator::fromNode($child);
             Assert::assertTrue($expectedChildDiscriminator->equals($actualChildDiscriminator), 'Child discriminator does not match. Expected was ' . json_encode($expectedChildDiscriminator) . ', given was ' . json_encode($actualChildDiscriminator));
         });
