@@ -316,9 +316,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         }
 
         foreach ($decodedProperties as $propertyName => $propertyValue) {
-            $type = $nodeType->getPropertyType($propertyName);
-
-            if ($type === 'reference' || $type === 'references') {
+            if ($nodeType->hasReference($propertyName)) {
                 if (!empty($propertyValue)) {
                     if (!is_array($propertyValue)) {
                         $propertyValue = [$propertyValue];
@@ -328,6 +326,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 continue;
             }
 
+            $type = $nodeType->getPropertyType($propertyName);
             // In the old `Node`, we call the property mapper to convert the returned properties from NodeData;
             // so we need to do the same here.
             try {
