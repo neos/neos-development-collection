@@ -25,11 +25,11 @@ use Neos\ContentRepository\Core\SharedModel\Node\ReferenceName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
- * Set property values for a given node (internal implementation).
+ * Set property values for a given node.
  *
  * The property values contain the serialized types already, and include type information.
  *
- * @api commands are the write-API of the ContentRepository
+ * @internal implementation detail, use {@see SetNodeReferences} instead.
  */
 final class SetSerializedNodeReferences implements
     CommandInterface,
