@@ -4,4 +4,3 @@ include: ErrorCase.fusion
 include: RootCase.fusion
 include: RawContentMode.fusion
 include: Override/*.fusion
-include: Error/Root.fusion
