@@ -18,6 +18,7 @@ use Neos\ContentRepository\Core\ContentRepository;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\ContentSubgraphWithRuntimeCaches;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentGraphWithRuntimeCaches\InMemoryCache;
 use Neos\ContentRepository\Core\Projection\ContentGraph\ContentSubgraphInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindSubtreeFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Nodes;
@@ -34,7 +35,6 @@ use Neos\Flow\Security\Context as SecurityContext;
 use Neos\Flow\Session\SessionInterface;
 use Neos\Flow\Utility\Now;
 use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\Domain\Service\NodeSiteResolvingService;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\RenderingModeService;
 use Neos\Neos\FrontendRouting\Exception\InvalidShortcutException;
@@ -103,12 +103,6 @@ class NodeController extends ActionController
      */
     protected $view;
 
-    /**
-     * @Flow\Inject
-     * @var NodeSiteResolvingService
-     */
-    protected $nodeSiteResolvingService;
-
     #[Flow\Inject]
     protected RenderingModeService $renderingModeService;
 
@@ -145,10 +139,7 @@ class NodeController extends ActionController
             $visibilityConstraints
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
+        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
@@ -214,10 +205,7 @@ class NodeController extends ActionController
             VisibilityConstraints::frontend()
         );
 
-        $site = $this->nodeSiteResolvingService->findSiteNodeForNodeAddress(
-            $nodeAddress,
-            $siteDetectionResult->contentRepositoryId
-        );
+        $site = $subgraph->findClosestNode($nodeAddress->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if ($site === null) {
             throw new NodeNotFoundException("TODO: SITE NOT FOUND; should not happen (for address " . $nodeAddress);
         }
