@@ -2,6 +2,11 @@
     "name": "neos/nodetypes-contentreferences",
     "type": "neos-package",
     "description": "A simple content reference node type.",
+    "support": {
+        "source": "https://github.com/neos/nodetypes-contentreferences.git",
+        "forum": "https://discuss.neos.io/",
+        "docs": "https://docs.neos.io/"
+    },
     "license": [
         "GPL-3.0-or-later"
     ],
