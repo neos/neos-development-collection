@@ -49,8 +49,14 @@ final class AbsoluteNodePath implements \JsonSerializable
     }
 
     /**
-     * The ancestors must be ordered with the root node first, so if you call this using
-     * {@see ContentSubgraphInterface::findAncestorNodes()}, you need to call ${@see Nodes::reverse()} first
+     * The ancestors must be ordered with the root node first.
+     *
+     * If you want to retrieve the path of a node using {@see ContentSubgraphInterface::findAncestorNodes()}, you need to reverse the order first {@see Nodes::reverse()}
+     *
+     * ```php
+     * $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())->reverse();
+     * $absoluteNodePath = AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
+     * ```
      */
     public static function fromLeafNodeAndAncestors(Node $leafNode, Nodes $ancestors): self
     {

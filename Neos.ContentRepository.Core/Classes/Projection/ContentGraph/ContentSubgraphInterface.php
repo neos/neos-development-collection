@@ -190,7 +190,7 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Determine the absolute path of a node
      *
-     * @deprecated use ${@see self::findAncestorNodes()} instead
+     * @deprecated use {@see self::findAncestorNodes()} in combination with {@see AbsoluteNodePath::fromLeafNodeAndAncestors()} instead
      * @throws \InvalidArgumentException if the node path could not be retrieved because it is inaccessible or contains no valid path. The latter can happen if any node in the hierarchy has no name
      */
     public function retrieveNodePath(NodeAggregateId $nodeAggregateId): AbsoluteNodePath;
