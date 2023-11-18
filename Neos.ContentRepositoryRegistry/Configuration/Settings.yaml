@@ -1,5 +1,11 @@
 Neos:
   Flow:
+    persistence:
+      doctrine:
+        migrations:
+          ignoredTables:
+            'cr_.*': true
+
     # Improve debug output for node objects by ignoring large classes
     error:
       debugger:
