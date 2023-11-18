@@ -165,23 +165,46 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
 
     public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
-        // TODO implement runtime caches
-        return $this->wrappedContentSubgraph->findNodeByPath($path, $startingNodeAggregateId);
+        // this implementation is copied from the DoctrineAdapter to make it cache-able
+        $startingNode = $this->findNodeById($startingNodeAggregateId);
+
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path, $startingNode)
+            : null;
     }
 
     public function findNodeByAbsolutePath(AbsoluteNodePath $path): ?Node
     {
-        // TODO implement runtime caches
-        return $this->wrappedContentSubgraph->findNodeByAbsolutePath($path);
+        // this implementation is copied from the DoctrineAdapter to make it cache-able
+        $startingNode = $this->findRootNodeByType($path->rootNodeTypeName);
+
+        return $startingNode
+            ? $this->findNodeByPathFromStartingNode($path->path, $startingNode)
+            : null;
     }
 
-    public function findChildNodeByNodeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
+    private function findNodeByPathFromStartingNode(NodePath $path, Node $startingNode): ?Node
+    {
+        $currentNode = $startingNode;
+
+        foreach ($path->getParts() as $edgeName) {
+            $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
+            if ($currentNode === null) {
+                return null;
+            }
+        }
+        return $currentNode;
+    }
+
+    private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $namedChildNodeCache = $this->inMemoryCache->getNamedChildNodeByNodeIdCache();
         if ($namedChildNodeCache->contains($parentNodeAggregateId, $nodeName)) {
             return $namedChildNodeCache->get($parentNodeAggregateId, $nodeName);
         }
-        $node = $this->wrappedContentSubgraph->findChildNodeByNodeName($parentNodeAggregateId, $nodeName);
+        // naturally we would want to call $wrappedContentSubgraph->findChildNodeConnectedThroughEdgeName here,
+        // but this is not part of the interface and private. Calling find by path with a single segment does the same
+        $node = $this->wrappedContentSubgraph->findNodeByPath(NodePath::fromNodeNames($nodeName), $parentNodeAggregateId);
         if ($node === null) {
             return null;
         }

@@ -229,6 +229,11 @@ final class ContentSubgraph implements ContentSubgraphInterface
             : null;
     }
 
+    /**
+     * Find a single child node by its name
+     *
+     * @return Node|null the node that is connected to its parent with the specified $nodeName, or NULL if no matching node exists or the parent node is not accessible
+     */
     private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
