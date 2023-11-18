@@ -139,7 +139,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
         $unresolvedUris = [];
         $absolute = $this->fusionValue('absolute');
 
-        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($node, $nodeAddress, &$unresolvedUris, $absolute) {
+        $processedContent = preg_replace_callback(self::PATTERN_SUPPORTED_URIS, function (array $matches) use ($nodeAddress, &$unresolvedUris, $absolute) {
             $resolvedUri = null;
             switch ($matches[1]) {
                 case 'node':
@@ -174,10 +174,13 @@ class ConvertUrisImplementation extends AbstractFusionObject
 
             return $resolvedUri;
         }, $text);
+        assert($processedContent !== null, 'preg_* error');
 
         if ($unresolvedUris !== []) {
             $processedContent = preg_replace('/<a(?:\s+[^>]*)?\s+href="(node|asset):\/\/[^"]+"[^>]*>(.*?)<\/a>/', '$2', $processedContent);
+            assert($processedContent !== null, 'preg_* error');
             $processedContent = preg_replace(self::PATTERN_SUPPORTED_URIS, '', $processedContent);
+            assert($processedContent !== null, 'preg_* error');
         }
 
         $processedContent = $this->replaceLinkTargets($processedContent);
@@ -228,6 +231,7 @@ class ConvertUrisImplementation extends AbstractFusionObject
             },
             $processedContent
         );
+        assert($processedContent !== null, 'preg_* error');
         return $processedContent;
     }
 
@@ -249,7 +253,9 @@ class ConvertUrisImplementation extends AbstractFusionObject
                 return $content;
             }
             // Add the attribute to the list
-            return \preg_replace('/' . $attribute . '="(.*?)"/', sprintf('%s="$1 %s"', $attribute, $value), $content);
+            $result = \preg_replace('/' . $attribute . '="(.*?)"/', sprintf('%s="$1 %s"', $attribute, $value), $content);
+            assert($result !== null, 'preg_* error');
+            return $result;
         }
 
         // Add the missing attribute with the value
