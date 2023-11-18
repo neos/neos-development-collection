@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Infrastructure;
 
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\NodeType\NodeTypeName;
@@ -26,15 +28,12 @@ final class DbalSchemaFactory
      *
      * @see NodeAggregateId
      */
-    public static function addColumnForNodeAggregateId(Table $table, string $columnName, bool $notNull): Table
+    public static function columnForNodeAggregateId(string $columnName): Column
     {
-        $table->addColumn($columnName, Types::STRING)
-                ->setLength(64)
-                ->setNotnull($notNull)
-                ->setCustomSchemaOption('charset', 'ascii')
-                ->setCustomSchemaOption('collation', 'ascii_general_ci');
-
-        return $table;
+        return (new Column($columnName, Type::getType(Types::STRING)))
+            ->setLength(64)
+            ->setCustomSchemaOption('charset', 'ascii')
+            ->setCustomSchemaOption('collation', 'ascii_general_ci');
     }
 
     /**
@@ -47,14 +46,11 @@ final class DbalSchemaFactory
      *
      * @see ContentStreamId
      */
-    public static function addColumnForContentStreamId(Table $table, string $columnName, bool $notNull): Table
+    public static function columnForContentStreamId(string $columnName): Column
     {
-        $table->addColumn($columnName, Types::STRING)
+        return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(36)
-            ->setNotnull($notNull)
             ->setCustomSchemaOption('charset', 'binary');
-
-        return $table;
     }
 
     /**
@@ -65,13 +61,11 @@ final class DbalSchemaFactory
      * A simpler and faster format would be preferable though, int or a shorter binary format if possible. Fortunately
      * this is a pure projection information and therefore could change by replay.
      */
-    public static function addColumnForNodeAnchorPoint(Table $table, string $columnName): Table
+    public static function columnForNodeAnchorPoint(string $columnName): Column
     {
-        $table->addColumn($columnName, Types::BINARY)
+        return (new Column($columnName, Type::getType(Types::BINARY)))
             ->setLength(36)
             ->setNotnull(true);
-
-        return $table;
     }
 
     /**
@@ -82,14 +76,11 @@ final class DbalSchemaFactory
      *
      * @see DimensionSpacePoint
      */
-    public static function addColumnForDimensionSpacePoint(Table $table, string $columnName, bool $notNull): Table
+    public static function columnForDimensionSpacePoint(string $columnName): Column
     {
-        $table->addColumn($columnName, Types::TEXT)
-            ->setNotnull($notNull)
+        return (new Column($columnName, Type::getType(Types::TEXT)))
             ->setDefault('{}')
             ->setCustomSchemaOption('collation', 'utf8mb4_unicode_520_ci');
-
-        return $table;
     }
 
     /**
@@ -100,14 +91,11 @@ final class DbalSchemaFactory
      *
      * @see DimensionSpacePoint
      */
-    public static function addColumnForDimensionSpacePointHash(Table $table, string $columnName, bool $notNull): Table
+    public static function columnForDimensionSpacePointHash(string $columnName): Column
     {
-        $table->addColumn($columnName, Types::BINARY)
+        return (new Column($columnName, Type::getType(Types::BINARY)))
             ->setLength(32)
-            ->setDefault('')
-            ->setNotnull($notNull);
-
-        return $table;
+            ->setDefault('');
     }
 
     /**
@@ -115,24 +103,27 @@ final class DbalSchemaFactory
      *
      * @see NodeTypeName
      */
-    public static function addColumnForNodeTypeName(Table $table, string $columnName): Table
+    public static function columnForNodeTypeName(string $columnName): Column
     {
-        $table->addColumn($columnName, Types::STRING)
+        return (new Column($columnName, Type::getType(Types::STRING)))
             ->setLength(255)
             ->setNotnull(true)
             ->setCustomSchemaOption('charset', 'ascii')
             ->setCustomSchemaOption('collation', 'ascii_general_ci');
-
-        return $table;
     }
 
-    public static function createEmptySchema(AbstractSchemaManager $schemaManager): Schema
+    /**
+     * @param AbstractSchemaManager $schemaManager
+     * @param Table[] $tables
+     * @return Schema
+     */
+    public static function createSchemaWithTables(AbstractSchemaManager $schemaManager, array $tables): Schema
     {
         $schemaConfig = $schemaManager->createSchemaConfig();
         $schemaConfig->setDefaultTableOptions([
             'charset' => 'utf8mb4'
         ]);
 
-        return new Schema([], [], $schemaConfig);
+        return new Schema($tables, [], $schemaConfig);
     }
 }

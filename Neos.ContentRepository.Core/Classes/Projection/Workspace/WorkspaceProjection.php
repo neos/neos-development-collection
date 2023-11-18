@@ -16,7 +16,10 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -84,36 +87,18 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schema = DbalSchemaFactory::createEmptySchema($schemaManager);
-        $workspaceTable = $schema->createTable($this->tableName);
-        $workspaceTable->addColumn('workspacename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true)
-            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
-        $workspaceTable->addColumn('baseworkspacename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false)
-            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
-        $workspaceTable->addColumn('workspacetitle', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true)
-            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
-        $workspaceTable->addColumn('workspacedescription', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true)
-            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
-        $workspaceTable->addColumn('workspaceowner', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false)
-            ->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION);
-        $workspaceTable = DbalSchemaFactory::addColumnForContentStreamId($workspaceTable, 'currentcontentstreamid', true);
-        $workspaceTable->addColumn('status', Types::STRING)
-            ->setLength(20)
-            ->setNotnull(false)
-            ->setCustomSchemaOption('charset', 'binary');
-
+        $workspaceTable = new Table($this->tableName, [
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('baseworkspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacetitle', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacedescription', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspaceowner', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
+            (new Column('status', Type::getType(Types::STRING)))->setLength(20)->setNotnull(false)->setCustomSchemaOption('charset', 'binary')
+        ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
 
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable]);
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);

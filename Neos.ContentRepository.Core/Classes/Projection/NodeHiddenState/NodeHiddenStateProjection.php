@@ -16,7 +16,10 @@ namespace Neos\ContentRepository\Core\Projection\NodeHiddenState;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\ContentStreamForking\Event\ContentStreamWasForked;
@@ -65,19 +68,19 @@ class NodeHiddenStateProjection implements ProjectionInterface
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-        $schema = DbalSchemaFactory::createEmptySchema($schemaManager);
-        $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable = DbalSchemaFactory::addColumnForContentStreamId($contentStreamTable, 'contentstreamid', true);
-        $contentStreamTable = DbalSchemaFactory::addColumnForNodeAggregateId($contentStreamTable, 'nodeaggregateid', false);
-        $contentStreamTable = DbalSchemaFactory::addColumnForDimensionSpacePointHash($contentStreamTable, 'dimensionspacepointhash', false);
-        $contentStreamTable = DbalSchemaFactory::addColumnForDimensionSpacePoint($contentStreamTable, 'dimensionspacepoint', false);
-        $contentStreamTable->addColumn('hidden', Types::BOOLEAN)
-            ->setDefault(false)
-            ->setNotnull(false);
 
-        $contentStreamTable->setPrimaryKey(
+        $nodeHiddenStateTable = new Table($this->tableName, [
+            DbalSchemaFactory::columnForContentStreamId('contentstreamid')->setNotNull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeaggregateid')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('dimensionspacepointhash')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePoint('dimensionspacepoint')->setNotNull(false),
+            (new Column('hidden', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+        ]);
+        $nodeHiddenStateTable->setPrimaryKey(
             ['contentstreamid', 'nodeaggregateid', 'dimensionspacepointhash']
         );
+
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$nodeHiddenStateTable]);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
