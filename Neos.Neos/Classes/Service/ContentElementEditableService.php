@@ -14,14 +14,12 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Service;
 
-use Neos\ContentRepository\Core\ContentRepository;
-use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
-use Neos\Neos\FrontendRouting\NodeAddressFactory;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Fusion\Service\HtmlAugmenter as FusionHtmlAugmenter;
+use Neos\Neos\FrontendRouting\NodeAddressFactory;
 
 /**
  * The content element editable service adds the necessary markup around
@@ -56,15 +54,6 @@ class ContentElementEditableService
             $node->subgraphIdentity->contentRepositoryId
         );
 
-        if (
-            $this->isContentStreamOfLiveWorkspace(
-                $node->subgraphIdentity->contentStreamId,
-                $contentRepository
-            )
-        ) {
-            return $content;
-        }
-
         // TODO: permissions
         //if (!$this->nodeAuthorizationService->isGrantedToEditNode($node)) {
         //    return $content;
@@ -78,14 +67,5 @@ class ContentElementEditableService
         ];
 
         return $this->htmlAugmenter->addAttributes($content, $attributes, 'span');
-    }
-
-    private function isContentStreamOfLiveWorkspace(
-        ContentStreamId $contentStreamId,
-        ContentRepository $contentRepository
-    ): bool {
-        return $contentRepository->getWorkspaceFinder()
-            ->findOneByCurrentContentStreamId($contentStreamId)
-            ?->workspaceName->isLive() ?: false;
     }
 }

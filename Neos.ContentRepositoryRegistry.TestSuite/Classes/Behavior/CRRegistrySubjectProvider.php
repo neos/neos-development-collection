@@ -34,7 +34,7 @@ trait CRRegistrySubjectProvider
     /**
      * @var array<ContentRepositoryId>
      */
-    protected array $alreadySetUpContentRepositories = [];
+    protected static array $alreadySetUpContentRepositories = [];
 
     /**
      * @template T of object
@@ -62,8 +62,9 @@ trait CRRegistrySubjectProvider
         $eventTableName = sprintf('cr_%s_events', $contentRepositoryId);
         $databaseConnection->executeStatement('TRUNCATE ' . $eventTableName);
 
-        if (!in_array($contentRepository->id, $this->alreadySetUpContentRepositories)) {
+        if (!in_array($contentRepository->id, self::$alreadySetUpContentRepositories)) {
             $contentRepository->setUp();
+            self::$alreadySetUpContentRepositories[] = $contentRepository->id;
         }
         $contentRepository->resetProjectionStates();
     }

@@ -80,14 +80,12 @@ trait CRTestSuiteTrait
     use WorkspaceDiscarding;
     use WorkspacePublishing;
 
-    protected function setupCRTestSuiteTrait(bool $alwaysRunCrSetup = false): void
+    protected function setupCRTestSuiteTrait(): void
     {
         if (getenv('CATCHUPTRIGGER_ENABLE_SYNCHRONOUS_OPTION')) {
             CatchUpTriggerWithSynchronousOption::enableSynchronicityForSpeedingUpTesting();
         }
     }
-
-    private static bool $wasContentRepositorySetupCalled = false;
 
     /**
      * @BeforeScenario
