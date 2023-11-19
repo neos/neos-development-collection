@@ -1,5 +1,5 @@
 @contentrepository @adapters=DoctrineDBAL,Postgres
-Feature: Find nodes using the findChildNodeByNodeName query
+Feature: Find nodes using the findNodeByPath query with node name as path argument
 
   Background:
     Given using the following content dimensions:
@@ -88,15 +88,15 @@ Feature: Find nodes using the findChildNodeByNodeName query
     And the graph projection is fully up to date
 
   Scenario:
-    # findChildNodeByNodeName queries without results
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "non-existing" and edge name "non-existing" I expect no node to be returned
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "home" and edge name "non-existing" I expect no node to be returned
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "non-existing" and edge name "home" I expect no node to be returned
+    # findNodeByPath queries without results
+    When I execute the findNodeByPath query for parent node aggregate id "non-existing" and node name "non-existing" as path I expect no node to be returned
+    When I execute the findNodeByPath query for parent node aggregate id "home" and node name "non-existing" as path I expect no node to be returned
+    When I execute the findNodeByPath query for parent node aggregate id "non-existing" and node name "home" as path I expect no node to be returned
     # node "a2a2" is disabled and should not be returned
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "a2a" and edge name "a2a2" I expect no node to be returned
+    When I execute the findNodeByPath query for parent node aggregate id "a2a" and node name "a2a2" as path I expect no node to be returned
     # node "a2a2" is disabled and should not lead to results if specified as parent node id
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "a2a2" and edge name "a2a2a" I expect no node to be returned
+    When I execute the findNodeByPath query for parent node aggregate id "a2a2" and node name "a2a2a" as path I expect no node to be returned
 
-    # findChildNodeByNodeName queries with results
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "home" and edge name "contact" I expect the node "contact" to be returned
-    When I execute the findChildNodeByNodeName query for parent node aggregate id "a2a" and edge name "a2a1" I expect the node "a2a1" to be returned
+    # findNodeByPath queries with results
+    When I execute the findNodeByPath query for parent node aggregate id "home" and node name "contact" as path I expect the node "contact" to be returned
+    When I execute the findNodeByPath query for parent node aggregate id "a2a" and node name "a2a1" as path I expect the node "a2a1" to be returned

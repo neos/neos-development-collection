@@ -157,8 +157,8 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findChildNodeByNodeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect no node to be returned
-     * @When I execute the findChildNodeByNodeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect the node :expectedNodeIdSerialized to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect no node to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect the node :expectedNodeIdSerialized to be returned
      */
     public function iExecuteTheFindChildNodeByNodeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
     {
