@@ -198,7 +198,7 @@ trait NodeTypeChange
                     VisibilityConstraints::withoutRestrictions()
                 );
                 $tetheredNode = $subgraph->findNodeByPath(
-                    NodePath::fromNodeNames($tetheredNodeName),
+                    $tetheredNodeName,
                     $node->nodeAggregateId
                 );
                 if ($tetheredNode === null) {

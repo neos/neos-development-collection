@@ -21,7 +21,7 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * Example:
  * root path: '' is resolved to []
- * non-root path: 'my-site/main' is resolved to ~ ['my-site', 'main']
+ * non-root path: 'my-document/main' is resolved to ~ ['my-document', 'main']
  *
  * It describes the hierarchy path of a node to an ancestor node in a subgraph.
  *
@@ -29,8 +29,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  *
  * ```php
  * $subgraph->findNodeByPath(
- *     NodePath::fromNodeNames(NodeName::fromString("main")),
- *     $parentNodeAggregateId
+ *     NodePath::fromString("my-document/main"),
+ *     $siteNodeAggregateId
  * )
  * ```
  *

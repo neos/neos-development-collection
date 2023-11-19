@@ -163,8 +163,10 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
         return $parentNode;
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
+        $path = $path instanceof NodeName ? NodePath::fromNodeNames($path) : $path;
+
         // this implementation is copied from the DoctrineAdapter to make it cache-able
         $startingNode = $this->findNodeById($startingNodeAggregateId);
 
@@ -203,8 +205,8 @@ final class ContentSubgraphWithRuntimeCaches implements ContentSubgraphInterface
             return $namedChildNodeCache->get($parentNodeAggregateId, $nodeName);
         }
         // naturally we would want to call $wrappedContentSubgraph->findChildNodeConnectedThroughEdgeName here,
-        // but this is not part of the interface and private. Calling find by path with a single segment does the same
-        $node = $this->wrappedContentSubgraph->findNodeByPath(NodePath::fromNodeNames($nodeName), $parentNodeAggregateId);
+        // but this is not part of the interface and private. Calling find with a single segment does the same
+        $node = $this->wrappedContentSubgraph->findNodeByPath($nodeName, $parentNodeAggregateId);
         if ($node === null) {
             return null;
         }

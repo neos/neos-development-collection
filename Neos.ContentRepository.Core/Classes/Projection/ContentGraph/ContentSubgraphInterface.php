@@ -174,10 +174,12 @@ interface ContentSubgraphInterface extends \JsonSerializable
     /**
      * Find a single node underneath $startingNodeAggregateId that matches the specified $path
      *
+     * If a node name as $path is given it will be treated as path with a single segment.
+     *
      * NOTE: This operation is most likely to be deprecated since the concept of node paths is not really used in the core, and it has some logical issues
      * @return Node|null the node that matches the given $path, or NULL if no node on that path is accessible
      */
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node;
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node;
 
     /**
      * Find a single node underneath that matches the specified absolute $path

@@ -77,7 +77,7 @@ final class SiteNodeUtility
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);
 
         $siteNode = $subgraph->findNodeByPath(
-            NodePath::fromNodeNames($site->getNodeName()->toNodeName()),
+            $site->getNodeName()->toNodeName(),
             $rootNode->nodeAggregateId
         );
 

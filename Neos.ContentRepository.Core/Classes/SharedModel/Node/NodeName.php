@@ -25,6 +25,15 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
  *
  * Multiple node names describe a node path {@see NodePath}
  *
+ * To fetch the child node that is connected with the parent via the name "main" use the subgraph's: {@see ContentSubgraphInterface::findNodeByPath()}
+ *
+ * ```php
+ * $subgraph->findNodeByPath(
+ *     NodeName::fromString("main"),
+ *     $parentNodeAggregateId
+ * )
+ * ```
+ *
  * @api
  */
 final class NodeName implements \JsonSerializable

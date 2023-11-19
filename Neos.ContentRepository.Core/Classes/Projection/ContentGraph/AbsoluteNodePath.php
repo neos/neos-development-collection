@@ -24,10 +24,19 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * Example:
  * root path: '/<Neos.ContentRepository:Root>' results in
  *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": []}
- * non-root path: '/<Neos.ContentRepository:Root>/my/site' results in
- *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my","site"]}
+ * non-root path: '/<Neos.ContentRepository:Root>/my-site/main' results in
+ *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my-site", "main"]}
  *
  * It describes the hierarchy path of a node to and including its root node in a subgraph.
+ *
+ * To fetch a node via an absolute path use the subgraph: {@see ContentSubgraphInterface::findNodeByAbsolutePath()}
+ *
+ * ```php
+ * $subgraph->findNodeByAbsolutePath(
+ *     AbsoluteNodePath::fromString("/<Neos.Neos:Sites>/my-site/main")
+ * )
+ * ```
+ *
  * @api
  */
 final class AbsoluteNodePath implements \JsonSerializable

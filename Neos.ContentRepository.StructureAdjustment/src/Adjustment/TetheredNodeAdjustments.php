@@ -75,7 +75,7 @@ class TetheredNodeAdjustments
                         VisibilityConstraints::withoutRestrictions()
                     );
                     $tetheredNode = $subgraph->findNodeByPath(
-                        NodePath::fromNodeNames($tetheredNodeName),
+                        $tetheredNodeName,
                         $nodeAggregate->nodeAggregateId,
                     );
                     if ($tetheredNode === null) {
