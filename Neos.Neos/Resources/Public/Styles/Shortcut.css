@@ -1,1 +1,59 @@
-#neos-shortcut {position: fixed;top: 0;left: 0;width: 100%;height: 100%;background-color: #323232;z-index: 9999;font-family: "Noto Sans", sans-serif;-webkit-font-smoothing: antialiased;}#neos-shortcut p {position: relative;margin: 0 auto;width: 500px;height: 60px;top: 50%;margin-top: -30px;color: #fff;font-size: 22px;line-height: 1.4;text-align: center;}#neos-shortcut p a {color: #00b5ff;text-decoration: none;}#neos-shortcut p a:hover {color: #39c6ff;}
+/* Color palette */
+/* Sizes & margins */
+/* Components */
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Noto Sans"), local("NotoSans"), url(../Fonts/NotoSans-Regular.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Noto Sans Bold"), local("NotoSans-Bold"), url(../Fonts/NotoSans-Bold.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Noto Sans Italic"), local("NotoSans-Italic"), url(../Fonts/NotoSans-Italic.woff2) format("woff2");
+}
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 700;
+  src: local("Noto Sans Bold Italic"), local("NotoSans-BoldItalic"), url(../Fonts/NotoSans-BoldItalic.woff2) format("woff2");
+}
+#neos-shortcut {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #323232;
+  z-index: 9999;
+  font-family: "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+#neos-shortcut p {
+  position: relative;
+  margin: 0 auto;
+  width: 500px;
+  height: 60px;
+  top: 50%;
+  margin-top: -30px;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1.4;
+  text-align: center;
+}
+#neos-shortcut p a {
+  color: #00b5ff;
+  text-decoration: none;
+}
+#neos-shortcut p a:hover {
+  color: #39c6ff;
+}
+
+/*# sourceMappingURL=Shortcut.css.map*/

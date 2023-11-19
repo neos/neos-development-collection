@@ -9,7 +9,7 @@
     },
     "require": {
         "php": ">=8.2",
-        "neos/contentrepository-core": "*",
+        "neos/contentrepository-core": "self.version",
         "league/flysystem": "^3",
         "webmozart/assert": "^1.11"
     },

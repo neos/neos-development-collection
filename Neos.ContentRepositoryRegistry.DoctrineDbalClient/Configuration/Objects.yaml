@@ -1,0 +1,11 @@
+Neos\ContentRepository\Core\Infrastructure\DbalClientInterface:
+  className: 'Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient'
+
+Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory:
+  scope: singleton
+  factoryObjectName: 'Neos\ContentRepositoryRegistry\Infrastructure\GenericObjectFactory'
+  arguments:
+    1:
+      value: 'Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjectionFactory'
+    2:
+      object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
