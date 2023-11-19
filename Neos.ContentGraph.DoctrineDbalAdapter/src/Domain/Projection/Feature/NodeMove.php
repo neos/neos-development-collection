@@ -69,27 +69,24 @@ trait NodeMove
                     );
 
                     // do the move (depending on how the move target is specified)
-                    switch (true) {
-                        case $newLocation->destination instanceof SucceedingSiblingNodeMoveDestination:
-                            $newParentNodeAggregateId = $this->moveNodeBeforeSucceedingSibling(
-                                $event->contentStreamId,
-                                $nodeToBeMoved,
-                                $newLocation->coveredDimensionSpacePoint,
-                                $newLocation->destination
-                            );
-                            break;
-                        case $newLocation->destination instanceof ParentNodeMoveDestination:
-                            $newParentNodeAggregateId = $newLocation->destination->nodeAggregateId;
-                            $this->moveNodeIntoParent(
-                                $event->contentStreamId,
-                                $nodeToBeMoved,
-                                $newLocation->coveredDimensionSpacePoint,
-                                $newLocation->destination
-                            );
-                            break;
-                        default:
-                            throw new \RuntimeException('TODO');
+                    $newParentNodeAggregateId = match ($newLocation->destination::class) {
+                        SucceedingSiblingNodeMoveDestination::class => $this->moveNodeBeforeSucceedingSibling(
+                            $event->contentStreamId,
+                            $nodeToBeMoved,
+                            $newLocation->coveredDimensionSpacePoint,
+                            $newLocation->destination
+                        ),
+                        ParentNodeMoveDestination::class => $newLocation->destination->nodeAggregateId,
+                    };
+                    if ($newLocation->destination instanceof ParentNodeMoveDestination) {
+                        $this->moveNodeIntoParent(
+                            $event->contentStreamId,
+                            $nodeToBeMoved,
+                            $newLocation->coveredDimensionSpacePoint,
+                            $newLocation->destination
+                        );
                     }
+                    $this->moveSubtreeTags($event->contentStreamId, $event->nodeAggregateId, $newParentNodeAggregateId, $newLocation->coveredDimensionSpacePoint);
 
                     // re-build restriction relations
                     $this->cascadeRestrictionRelations(

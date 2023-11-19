@@ -46,7 +46,7 @@ Feature: Tag subtree without dimensions
       | Key                          | Value         |
       | nodeAggregateId              | "a1"          |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "some_tag"    |
+      | tag                          | "tag1"        |
 
     Then I expect exactly 14 events to be published on stream with prefix "ContentStream:cs-identifier"
     And event at index 13 is of type "SubtreeWasTagged" with payload:
@@ -54,24 +54,51 @@ Feature: Tag subtree without dimensions
       | contentStreamId              | "cs-identifier" |
       | nodeAggregateId              | "a1"            |
       | affectedDimensionSpacePoints | [[]]            |
-      | tag                          | "some_tag"      |
+      | tag                          | "tag1"          |
 
     When the graph projection is fully up to date
     And I am in content stream "cs-identifier"
     Then I expect the graph projection to consist of exactly 12 nodes
 
     When I am in content stream "cs-identifier" and dimension space point {}
-    Then I expect the node with aggregate identifier "a1" to be explicitly tagged "some_tag"
-    Then I expect the node with aggregate identifier "a1a" to inherit the tag "some_tag"
-    Then I expect the node with aggregate identifier "a1a1" to inherit the tag "some_tag"
-    Then I expect the node with aggregate identifier "a1a1b" to inherit the tag "some_tag"
+    Then I expect the node with aggregate identifier "a1" to be explicitly tagged "tag1"
+    Then I expect the node with aggregate identifier "a1a" to inherit the tag "tag1"
+    Then I expect the node with aggregate identifier "a1a1" to inherit the tag "tag1"
+    Then I expect the node with aggregate identifier "a1a1b" to inherit the tag "tag1"
 
     When the command TagSubtree is executed with payload:
       | Key                          | Value         |
       | nodeAggregateId              | "a1a1"        |
       | nodeVariantSelectionStrategy | "allVariants" |
-      | tag                          | "some_tag"    |
-    Then I expect the node with aggregate identifier "a1" to be explicitly tagged "some_tag"
-    Then I expect the node with aggregate identifier "a1a" to inherit the tag "some_tag"
-    Then I expect the node with aggregate identifier "a1a1" to be explicitly tagged "some_tag"
-    Then I expect the node with aggregate identifier "a1a1b" to inherit the tag "some_tag"
+      | tag                          | "tag1"        |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "b"           |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag2"        |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "b1"          |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag3"        |
+    And the command TagSubtree is executed with payload:
+      | Key                          | Value         |
+      | nodeAggregateId              | "a1a"         |
+      | nodeVariantSelectionStrategy | "allVariants" |
+      | tag                          | "tag4"        |
+    And the graph projection is fully up to date
+    Then I expect the node with aggregate identifier "a1" to be explicitly tagged "tag1"
+    Then I expect the node with aggregate identifier "a1a" to inherit the tag "tag1"
+    Then I expect the node with aggregate identifier "a1a1" to be explicitly tagged "tag1"
+    Then I expect the node with aggregate identifier "a1a1b" to inherit the tag "tag1"
+
+    When the command MoveNodeAggregate is executed with payload:
+      | Key                      | Value           |
+      | contentStreamId          | "cs-identifier" |
+      | nodeAggregateId          | "a1a"           |
+      | newParentNodeAggregateId | "b1"            |
+    And the graph projection is fully up to date
+    Then I expect the node with aggregate identifier "a1a" to not contain the tag "tag1"
+    Then I expect the node with aggregate identifier "a1a" to be explicitly tagged "tag4"
+    And I expect the node with aggregate identifier "a1a" to inherit the tag "tag2"
+    And I expect the node with aggregate identifier "a1a" to inherit the tag "tag3"

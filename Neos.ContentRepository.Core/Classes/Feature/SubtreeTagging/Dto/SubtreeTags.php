@@ -39,11 +39,16 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
     }
 
     /**
-     * @param array<string> $array
+     * @param array<SubtreeTag> $tags
      */
-    public static function fromStringArray(array $array): self
+    public static function fromArray(array $tags): self
     {
-        return new self(...array_map(SubtreeTag::fromString(...), $array));
+        return new self(...$tags);
+    }
+
+    public static function fromStrings(string ...$tags): self
+    {
+        return new self(...array_map(SubtreeTag::fromString(...), $tags));
     }
 
     public function isEmpty(): bool
@@ -67,6 +72,15 @@ final readonly class SubtreeTags implements \IteratorAggregate, \JsonSerializabl
             }
         }
         return false;
+    }
+
+    /**
+     * @param \Closure(SubtreeTag): mixed $callback
+     * @return array<mixed>
+     */
+    public function map(\Closure $callback): array
+    {
+        return array_map($callback, $this->tags);
     }
 
     /**

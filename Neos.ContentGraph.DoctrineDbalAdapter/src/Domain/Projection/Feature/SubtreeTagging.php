@@ -5,8 +5,15 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\Feature;
 
 use Doctrine\DBAL\Connection;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasTagged;
 use Neos\ContentRepository\Core\Feature\SubtreeTagging\Event\SubtreeWasUntagged;
+use Neos\ContentRepository\Core\Projection\ContentGraph\SubtreeTagsWithInherited;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
+use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 
 /**
  * The subtree tagging projection feature trait
@@ -45,8 +52,10 @@ trait SubtreeTagging
                     WHERE
                       NOT JSON_CONTAINS_PATH(dh.subtreetags, \'one\', :tagPath)
                   )
-                  SELECT id FROM cte
+                  SELECT DISTINCT id FROM cte
                 )
+                  AND h.contentstreamid = :contentStreamId
+                  AND h.dimensionspacepointhash in (:dimensionSpacePointHashes)
                 ', [
                     'contentStreamId' => $event->contentStreamId->value,
                     'nodeAggregateId' => $event->nodeAggregateId->value,
@@ -145,13 +154,130 @@ insert ignore into ' . $this->getTableNamePrefix() . '_restrictionrelation
     private function whenSubtreeWasUntagged(SubtreeWasUntagged $event): void
     {
         $this->transactional(function () use ($event) {
-            $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
-                $event->contentStreamId,
-                $event->nodeAggregateId,
-                $event->affectedDimensionSpacePoints
-            );
+            $this->getDatabaseConnection()->executeStatement('
+                UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                SET h.subtreetags = JSON_REMOVE(h.subtreetags, :tagPath)
+                WHERE h.childnodeanchor IN (
+                  WITH RECURSIVE cte (id) AS (
+                    SELECT ch.childnodeanchor
+                    FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation ch
+                    INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.childnodeanchor
+                    WHERE
+                      n.nodeaggregateid = :nodeAggregateId
+                      AND ch.contentstreamid = :contentStreamId
+                      AND ch.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                    UNION ALL
+                    SELECT
+                      dh.childnodeanchor
+                    FROM
+                      cte
+                      JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.id
+                    WHERE
+                      JSON_EXTRACT(dh.subtreetags, :tagPath) != TRUE
+                  )
+                  SELECT DISTINCT id FROM cte
+                )
+                  AND h.contentstreamid = :contentStreamId
+                  AND h.dimensionspacepointhash in (:dimensionSpacePointHashes)
+                ', [
+                'contentStreamId' => $event->contentStreamId->value,
+                'nodeAggregateId' => $event->nodeAggregateId->value,
+                'dimensionSpacePointHashes' => $event->affectedDimensionSpacePoints->getPointHashes(),
+                'tagPath' => '$.' . $event->tag->value,
+            ], [
+                'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
+            ]);
+
+
+            if ($event->tag->value === 'disabled') {
+                $this->removeOutgoingRestrictionRelationsOfNodeAggregateInDimensionSpacePoints(
+                    $event->contentStreamId,
+                    $event->nodeAggregateId,
+                    $event->affectedDimensionSpacePoints
+                );
+            }
         });
     }
+
+    private function moveSubtreeTags(ContentStreamId $contentStreamId, NodeAggregateId $nodeAggregateId, NodeAggregateId $newParentNodeAggregateId, DimensionSpacePoint $coveredDimensionSpacePoint): void
+    {
+        //$this->transactional(function () use ($contentStreamId, $nodeAggregateId, $newParentNodeAggregateId, $coveredDimensionSpacePoint) {
+            $nodeSubtreeTags = $this->subtreeTagsForNode($nodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
+            $newParentSubtreeTags = $this->subtreeTagsForNode($newParentNodeAggregateId, $contentStreamId, $coveredDimensionSpacePoint);
+            $newSubtreeTags = [];
+            foreach ($nodeSubtreeTags->tags as $tag) {
+                $newSubtreeTags[$tag->value] = true;
+            }
+            foreach ($newParentSubtreeTags as $tag) {
+                $newSubtreeTags[$tag->value] = null;
+            }
+
+            $this->getDatabaseConnection()->executeStatement('
+                UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                SET h.subtreetags = JSON_MERGE_PATCH(:newParentTags, JSON_MERGE_PATCH(\'{}\', h.subtreetags))
+                WHERE h.childnodeanchor IN (
+                  WITH RECURSIVE cte (id) AS (
+                    SELECT ch.childnodeanchor
+                    FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation ch
+                    INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = ch.parentnodeanchor
+                    WHERE
+                      n.nodeaggregateid = :nodeAggregateId
+                      AND ch.contentstreamid = :contentStreamId
+                      AND ch.dimensionspacepointhash = :dimensionSpacePointHash
+                    UNION ALL
+                    SELECT
+                      dh.childnodeanchor
+                    FROM
+                      cte
+                      JOIN ' . $this->getTableNamePrefix() . '_hierarchyrelation dh ON dh.parentnodeanchor = cte.id
+                  )
+                  SELECT id FROM cte
+                )
+                ', [
+                'contentStreamId' => $contentStreamId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
+                'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
+                'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR),
+            ]);
+            $this->getDatabaseConnection()->executeStatement('
+                UPDATE ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = h.childnodeanchor
+                SET h.subtreetags = :newParentTags
+                WHERE
+                  n.nodeaggregateid = :nodeAggregateId
+                  AND h.contentstreamid = :contentStreamId
+                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            ', [
+                'contentStreamId' => $contentStreamId->value,
+                'nodeAggregateId' => $nodeAggregateId->value,
+                'dimensionSpacePointHash' => $coveredDimensionSpacePoint->hash,
+                'newParentTags' => json_encode($newSubtreeTags, JSON_THROW_ON_ERROR),
+            ]);
+
+        //});
+    }
+
+    private function subtreeTagsForNode(NodeAggregateId $nodeAggregateId, ContentStreamId $contentStreamId, DimensionSpacePoint $dimensionSpacePoint): SubtreeTagsWithInherited
+    {
+        $subtreeTagsJson = $this->getDatabaseConnection()->fetchOne('
+                SELECT h.subtreetags FROM ' . $this->getTableNamePrefix() . '_hierarchyrelation h
+                INNER JOIN ' . $this->getTableNamePrefix() . '_node n ON n.relationanchorpoint = h.childnodeanchor
+                WHERE
+                  n.nodeaggregateid = :nodeAggregateId
+                  AND h.contentstreamid = :contentStreamId
+                  AND h.dimensionspacepointhash = :dimensionSpacePointHash
+            ', [
+            'nodeAggregateId' => $nodeAggregateId->value,
+            'contentStreamId' => $contentStreamId->value,
+            'dimensionSpacePointHash' => $dimensionSpacePoint->hash,
+        ]);
+        if ($subtreeTagsJson === null) {
+            throw new \RuntimeException(sprintf('Failed to fetch SubtreeTags for node "%s" in content subgraph "%s@%s"', $nodeAggregateId->value, $dimensionSpacePoint->toJson(), $contentStreamId->value), 1698838865);
+        }
+        return NodeFactory::extractSubtreeTagsWithInheritedFromJson($subtreeTagsJson);
+    }
+
+
 
     abstract protected function getDatabaseConnection(): Connection;
 

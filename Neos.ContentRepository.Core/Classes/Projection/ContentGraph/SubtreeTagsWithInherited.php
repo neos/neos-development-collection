@@ -47,7 +47,11 @@ final readonly class SubtreeTagsWithInherited implements \IteratorAggregate
 
     public function getIterator(): Traversable
     {
-        yield from $this->tags;
-        yield from $this->inheritedTags;
+        foreach ($this->tags as $tag) {
+            yield $tag;
+        }
+        foreach ($this->inheritedTags as $tag) {
+            yield $tag;
+        }
     }
 }

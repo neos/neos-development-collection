@@ -83,31 +83,13 @@ final class NodeFactory
             $nodeType,
             $this->createPropertyCollectionFromJsonString($nodeRow['properties']),
             isset($nodeRow['name']) ? NodeName::fromString($nodeRow['name']) : null,
-            self::extractSubtreeTagsWithInheritedFromNodeRow($nodeRow['subtreetags']),
+            self::extractSubtreeTagsWithInheritedFromJson($nodeRow['subtreetags']),
             Timestamps::create(
                 self::parseDateTimeString($nodeRow['created']),
                 self::parseDateTimeString($nodeRow['originalcreated']),
                 isset($nodeRow['lastmodified']) ? self::parseDateTimeString($nodeRow['lastmodified']) : null,
                 isset($nodeRow['originallastmodified']) ? self::parseDateTimeString($nodeRow['originallastmodified']) : null,
             ),
-        );
-    }
-
-    private static function extractSubtreeTagsWithInheritedFromNodeRow(string $subtreeTagsJson): SubtreeTagsWithInherited
-    {
-        $explicitTags = [];
-        $inheritedTags = [];
-        $subtreeTagsArray = json_decode($subtreeTagsJson, true, 512, JSON_THROW_ON_ERROR);
-        foreach ($subtreeTagsArray as $tagValue => $explicit) {
-            if ($explicit) {
-                $explicitTags[] = $tagValue;
-            } else {
-                $inheritedTags[] = $tagValue;
-            }
-        }
-        return SubtreeTagsWithInherited::create(
-            tags: SubtreeTags::fromStringArray($explicitTags),
-            inheritedTags: SubtreeTags::fromStringArray($inheritedTags)
         );
     }
 
@@ -336,6 +318,24 @@ final class NodeFactory
                 )
             );
         }
+    }
+
+    public static function extractSubtreeTagsWithInheritedFromJson(string $subtreeTagsJson): SubtreeTagsWithInherited
+    {
+        $explicitTags = [];
+        $inheritedTags = [];
+        $subtreeTagsArray = json_decode($subtreeTagsJson, true, 512, JSON_THROW_ON_ERROR);
+        foreach ($subtreeTagsArray as $tagValue => $explicit) {
+            if ($explicit) {
+                $explicitTags[] = $tagValue;
+            } else {
+                $inheritedTags[] = $tagValue;
+            }
+        }
+        return SubtreeTagsWithInherited::create(
+            tags: SubtreeTags::fromStrings(...$explicitTags),
+            inheritedTags: SubtreeTags::fromStrings(...$inheritedTags)
+        );
     }
 
     private static function parseDateTimeString(string $string): \DateTimeImmutable

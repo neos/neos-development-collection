@@ -227,6 +227,21 @@ trait ProjectedNodeTrait
         });
     }
 
+    /**
+     * @Then /^I expect the node with aggregate identifier "([^"]*)" to not contain the tag "([^"]*)"$/
+     */
+    public function iExpectTheNodeWithAggregateIdentifierToNotContainTheTag(string $serializedNodeAggregateId, string $serializedTag): void
+    {
+        $nodeAggregateId = NodeAggregateId::fromString($serializedNodeAggregateId);
+        $expectedTag = SubtreeTag::fromString($serializedTag);
+        $this->initializeCurrentNodeFromContentSubgraph(function (ContentSubgraphInterface $subgraph) use ($nodeAggregateId, $expectedTag) {
+            $currentNode = $subgraph->findNodeById($nodeAggregateId);
+            Assert::assertNotNull($currentNode, 'No node could be found by node aggregate id "' . $nodeAggregateId->value . '" in content subgraph "' . $this->currentDimensionSpacePoint->toJson() . '@' . $this->currentContentStreamId->value . '"');
+            Assert::assertFalse($currentNode->tags->contain($expectedTag), sprintf('Node with id "%s" in content subgraph "%s@%s", was not expected to contain the subtree tag "%s" but it does', $nodeAggregateId->value, $this->currentDimensionSpacePoint->toJson(), $this->currentContentStreamId->value, $expectedTag->value));
+            return $currentNode;
+        });
+    }
+
     protected function initializeCurrentNodeFromContentGraph(callable $query): void
     {
         $this->currentNode = $query($this->currentContentRepository->getContentGraph());

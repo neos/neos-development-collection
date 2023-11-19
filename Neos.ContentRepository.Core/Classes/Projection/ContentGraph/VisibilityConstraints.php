@@ -14,6 +14,9 @@ declare(strict_types=1);
 
 namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTag;
+use Neos\ContentRepository\Core\Feature\SubtreeTagging\Dto\SubtreeTags;
+
 /**
  * The context parameters value object
  *
@@ -21,32 +24,31 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
  *
  * @api
  */
-final class VisibilityConstraints
+final readonly class VisibilityConstraints
 {
-    protected bool $disabledContentShown = false;
-
-    private function __construct(bool $disabledContentShown)
+    private function __construct(
+        public SubtreeTags $excludedTags,
+    )
     {
-        $this->disabledContentShown = $disabledContentShown;
     }
 
     public function isDisabledContentShown(): bool
     {
-        return $this->disabledContentShown;
+        return $this->excludedTags->contain(SubtreeTag::fromString('disabled'));
     }
 
     public function getHash(): string
     {
-        return md5('disabled' . $this->disabledContentShown);
+        return md5(implode('|', $this->excludedTags->toStringArray()));
     }
 
-    public static function withoutRestrictions(): VisibilityConstraints
+    public static function withoutRestrictions(): self
     {
-        return new VisibilityConstraints(true);
+        return new self(SubtreeTags::createEmpty());
     }
 
     public static function frontend(): VisibilityConstraints
     {
-        return new VisibilityConstraints(false);
+        return new self(SubtreeTags::fromStrings('disabled'));
     }
 }
