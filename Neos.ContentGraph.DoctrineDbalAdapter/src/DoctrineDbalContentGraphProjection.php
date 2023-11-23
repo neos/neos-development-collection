@@ -122,7 +122,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema();
+        $schema = (new DoctrineDbalContentGraphSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
@@ -807,7 +807,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                         'nodeanchorpoint' => $nodeAnchorPoint?->value,
                         'destinationnodeaggregateid' => $reference->targetNodeAggregateId->value,
                         'properties' => $reference->properties
-                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR)
+                            ? \json_encode($reference->properties, JSON_THROW_ON_ERROR & JSON_FORCE_OBJECT)
                             : null
                     ]);
                     $position++;

@@ -3,7 +3,7 @@
 Neos ViewHelper Reference
 #########################
 
-This reference was automatically generated from code on 2023-05-01
+This reference was automatically generated from code on 2023-11-22
 
 
 .. _`Neos ViewHelper Reference: neos:backend.authenticationProviderLabel`:
@@ -762,13 +762,6 @@ ViewHelper to find out if Neos is rendering the backend.
 
 
 
-Arguments
-*********
-
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
-
-
-
 
 Examples
 ********
@@ -806,8 +799,6 @@ ViewHelper to find out if Neos is rendering an edit mode.
 
 Arguments
 *********
-
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Optional Node to use context from
 
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
@@ -868,8 +859,6 @@ ViewHelper to find out if Neos is rendering a preview mode.
 Arguments
 *********
 
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Optional Node to use context from
-
 * ``mode`` (string, *optional*): Optional rendering mode name to check if this specific mode is active
 
 
@@ -925,13 +914,6 @@ the ViewHelper or have "node" set as template variable at least.
 
 :Implementation: Neos\\Neos\\ViewHelpers\\Rendering\\LiveViewHelper
 
-
-
-
-Arguments
-*********
-
-* ``node`` (Neos\ContentRepository\Core\Projection\ContentGraph\Node, *optional*): Node
 
 
 

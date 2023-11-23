@@ -86,8 +86,7 @@ final class DocumentUriPathProjection implements ProjectionInterface, WithMarkSt
         if (!$schemaManager instanceof AbstractSchemaManager) {
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
-
-        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema();
+        $schema = (new DocumentUriPathSchemaBuilder($this->tableNamePrefix))->buildSchema($schemaManager);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
