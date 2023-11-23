@@ -263,8 +263,8 @@ trait NodeTraversalTrait
         $subgraph = $this->getCurrentSubgraph();
 
         $actualNodeIds = array_map(static fn(Node $node) => $node->nodeAggregateId->value, iterator_to_array($subgraph->findDescendantNodes($entryNodeAggregateId, $filter)));
-        // Note: In contrast to other similar checks, in this case we use assertEquals() instead of assertSame() because the order of descendant nodes is not completely deterministic (@see https://github.com/neos/neos-development-collection/issues/4769)
-        Assert::assertEquals($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
+        // Note: In contrast to other similar checks, in this case we use assertEqualsCanonicalizing() instead of assertSame() because the order of descendant nodes is not completely deterministic (@see https://github.com/neos/neos-development-collection/issues/4769)
+        Assert::assertEqualsCanonicalizing($expectedNodeIds, $actualNodeIds, 'findDescendantNodes returned an unexpected result');
         $actualCount = $subgraph->countDescendantNodes($entryNodeAggregateId, CountDescendantNodesFilter::fromFindDescendantNodesFilter($filter));
         Assert::assertSame($expectedTotalCount ?? count($expectedNodeIds), $actualCount, 'countDescendantNodes returned an unexpected result');
     }
