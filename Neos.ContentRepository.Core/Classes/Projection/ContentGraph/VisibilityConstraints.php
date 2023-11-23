@@ -28,8 +28,7 @@ final readonly class VisibilityConstraints
 {
     private function __construct(
         public SubtreeTags $excludedTags,
-    )
-    {
+    ) {
     }
 
     public function isDisabledContentShown(): bool
