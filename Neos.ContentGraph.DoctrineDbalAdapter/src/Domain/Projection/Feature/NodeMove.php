@@ -88,7 +88,7 @@ trait NodeMove
                     }
                     $this->moveSubtreeTags($event->contentStreamId, $event->nodeAggregateId, $newParentNodeAggregateId, $newLocation->coveredDimensionSpacePoint);
 
-                    // re-build restriction relations
+                    // re-build restriction relations TODO remove
                     $this->cascadeRestrictionRelations(
                         $event->contentStreamId,
                         $newParentNodeAggregateId,
