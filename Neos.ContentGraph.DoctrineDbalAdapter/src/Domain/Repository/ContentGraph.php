@@ -406,7 +406,8 @@ final class ContentGraph implements ContentGraphInterface
                           AND r.dimensionspacepointhash = ph.dimensionspacepointhash
                       WHERE p.nodeaggregateid = :parentNodeAggregateId
                       AND ph.contentstreamid = :contentStreamId
-                      AND ch.contentstreamid = :contentStreamId';
+                      AND ch.contentstreamid = :contentStreamId
+                      ORDER BY ch.position';
     }
 
     /**
