@@ -10,5 +10,6 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
  */
 interface UserIdProviderFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options): UserIdProviderInterface;
 }

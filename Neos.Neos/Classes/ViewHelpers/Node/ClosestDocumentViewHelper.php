@@ -41,6 +41,6 @@ class ClosestDocumentViewHelper extends AbstractViewHelper
         $node = $this->arguments['node'];
 
         return $this->contentRepositoryRegistry->subgraphForNode($node)
-            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_DOCUMENT));
+            ->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_DOCUMENT));
     }
 }

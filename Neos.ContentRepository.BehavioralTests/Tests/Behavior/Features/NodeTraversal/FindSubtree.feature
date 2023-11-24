@@ -108,7 +108,7 @@ Feature: Find nodes using the findSubtree query
      b
       b1
     """
-    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:NonExisting"}' I expect the following tree:
     """
     home
     """
@@ -124,7 +124,7 @@ Feature: Find nodes using the findSubtree query
      b
       b1
     """
-    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage"}' I expect the following tree:
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage"}' I expect the following tree:
     """
     home
      a
@@ -137,7 +137,7 @@ Feature: Find nodes using the findSubtree query
      b
       b1
     """
-    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage", "maximumLevels": 3}' I expect the following tree:
+    When I execute the findSubtree query for entry node aggregate id "home" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page,Neos.ContentRepository.Testing:SpecialPage", "maximumLevels": 3}' I expect the following tree:
     """
     home
      a

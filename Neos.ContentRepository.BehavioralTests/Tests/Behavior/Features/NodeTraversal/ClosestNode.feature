@@ -84,14 +84,14 @@ Feature: Find nodes using the findClosestNode query
 
   Scenario:
     # findClosestNode queries without results
-#    When I execute the findClosestNode query for entry node aggregate id "non-existing" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect no node to be returned
+#    When I execute the findClosestNode query for entry node aggregate id "non-existing" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect no node to be returned
 #    # a2a2a is disabled
-#    When I execute the findClosestNode query for entry node aggregate id "a2a2a" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect no node to be returned
+#    When I execute the findClosestNode query for entry node aggregate id "a2a2a" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect no node to be returned
 #    # a2b is disabled
-#    When I execute the findClosestNode query for entry node aggregate id "a2b1" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect no node to be returned
+#    When I execute the findClosestNode query for entry node aggregate id "a2b1" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect no node to be returned
 
     # findClosestNode queries with results
-    When I execute the findClosestNode query for entry node aggregate id "a2a2b" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:Page"}' I expect the node "a2a2b" to be returned
-    When I execute the findClosestNode query for entry node aggregate id "a2a2b" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the node "a2a" to be returned
-    When I execute the findClosestNode query for entry node aggregate id "a2a2b" and filter '{"nodeTypeConstraints": "!Neos.ContentRepository.Testing:Page,!Neos.ContentRepository.Testing:SpecialPage"}' I expect the node "home" to be returned
-    When I execute the findClosestNode query for entry node aggregate id "a2a" and filter '{"nodeTypeConstraints": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the node "a2a" to be returned
+    When I execute the findClosestNode query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:Page"}' I expect the node "a2a2b" to be returned
+    When I execute the findClosestNode query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the node "a2a" to be returned
+    When I execute the findClosestNode query for entry node aggregate id "a2a2b" and filter '{"nodeTypes": "!Neos.ContentRepository.Testing:Page,!Neos.ContentRepository.Testing:SpecialPage"}' I expect the node "home" to be returned
+    When I execute the findClosestNode query for entry node aggregate id "a2a" and filter '{"nodeTypes": "Neos.ContentRepository.Testing:SpecialPage"}' I expect the node "a2a" to be returned

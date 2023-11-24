@@ -25,6 +25,7 @@ use Neos\Flow\Persistence\QueryInterface;
 use Neos\Flow\Persistence\QueryResultInterface;
 use Neos\Flow\Persistence\Repository;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\ResourceManagement\PersistentResource;
 use Neos\Media\Domain\Model\Asset;
 use Neos\Media\Domain\Model\AssetCollection;
 use Neos\Media\Domain\Model\AssetInterface;
@@ -36,6 +37,7 @@ use Neos\Media\Exception\AssetServiceException;
 /**
  * A repository for Assets
  *
+ * @method iterable<int, AssetInterface> findByResource(PersistentResource $resource)
  * @Flow\Scope("singleton")
  */
 class AssetRepository extends Repository

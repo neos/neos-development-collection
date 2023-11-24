@@ -13,11 +13,6 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryServiceInterface;
  */
 class StructureAdjustmentServiceFactory implements ContentRepositoryServiceFactoryInterface
 {
-
-    /**
-     * @param ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies
-     * @return ContentRepositoryServiceInterface
-     */
     public function build(ContentRepositoryServiceFactoryDependencies $serviceFactoryDependencies): StructureAdjustmentService
     {
         return new StructureAdjustmentService(

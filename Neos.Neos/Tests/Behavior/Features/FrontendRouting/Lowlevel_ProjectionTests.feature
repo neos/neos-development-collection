@@ -1,4 +1,4 @@
-@fixtures @contentrepository
+@flowEntities @contentrepository
 Feature: Low level tests covering the inner behavior of the routing projection
 
   Background:

@@ -43,7 +43,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     }
 
     /**
-     * @param array<string,mixed> $propertyValues
+     * @param array<string,array{type:string,value:mixed}|SerializedPropertyValue|null> $propertyValues
      */
     public static function fromArray(array $propertyValues): self
     {
@@ -129,6 +129,9 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
         );
     }
 
+    /**
+     * @phpstan-assert-if-true !null $this->getProperty()
+     */
     public function propertyExists(string $propertyName): bool
     {
         return isset($this->values[$propertyName]);

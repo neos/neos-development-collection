@@ -16,8 +16,10 @@ namespace Neos\ContentRepository\Core\Projection\Workspace;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
@@ -33,6 +35,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -48,6 +51,8 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     /**
      * @var WorkspaceFinder|null Cache for the workspace finder returned by {@see getState()},
      * so that always the same instance is returned
@@ -82,32 +87,18 @@ class WorkspaceProjection implements ProjectionInterface, WithMarkStaleInterface
             throw new \RuntimeException('Failed to retrieve Schema Manager', 1625653914);
         }
 
-        $schema = new Schema();
-        $workspaceTable = $schema->createTable($this->tableName);
-        $workspaceTable->addColumn('workspacename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $workspaceTable->addColumn('baseworkspacename', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $workspaceTable->addColumn('workspacetitle', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $workspaceTable->addColumn('workspacedescription', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $workspaceTable->addColumn('workspaceowner', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
-        $workspaceTable->addColumn('currentcontentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(false);
-        $workspaceTable->addColumn('status', Types::STRING)
-            ->setLength(50)
-            ->setNotnull(false);
-
+        $workspaceTable = new Table($this->tableName, [
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('baseworkspacename', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacetitle', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspacedescription', Type::getType(Types::STRING)))->setLength(255)->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            (new Column('workspaceowner', Type::getType(Types::STRING)))->setLength(255)->setNotnull(false)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION),
+            DbalSchemaFactory::columnForContentStreamId('currentcontentstreamid')->setNotNull(true),
+            (new Column('status', Type::getType(Types::STRING)))->setLength(20)->setNotnull(false)->setCustomSchemaOption('charset', 'binary')
+        ]);
         $workspaceTable->setPrimaryKey(['workspacename']);
 
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$workspaceTable]);
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);

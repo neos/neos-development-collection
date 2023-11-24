@@ -115,7 +115,7 @@ class SiteService
     public function assignUploadedAssetToSiteAssetCollection(Asset $asset, Node $node, string $propertyName)
     {
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypeConstraints: NodeTypeNameFactory::NAME_SITE));
+        $siteNode = $subgraph->findClosestNode($node->nodeAggregateId, FindClosestNodeFilter::create(nodeTypes: NodeTypeNameFactory::NAME_SITE));
         if (!$siteNode) {
             // should not happen
             return;

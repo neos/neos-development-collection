@@ -8,5 +8,6 @@ use Psr\Clock\ClockInterface;
 
 interface EventStoreFactoryInterface
 {
+    /** @param array<string, mixed> $options */
     public function build(ContentRepositoryId $contentRepositoryId, array $options, ClockInterface $clock): EventStoreInterface;
 }

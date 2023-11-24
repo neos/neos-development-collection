@@ -260,7 +260,7 @@ class NodeTypeManager
 
         $constraints = Arrays::arrayMergeRecursiveOverrule($constraints, $childNodeConstraintConfiguration);
 
-        return (new ConstraintCheck($constraints))->isNodeTypeAllowed($nodeType);
+        return ConstraintCheck::create($constraints)->isNodeTypeAllowed($nodeType);
     }
 
     /**

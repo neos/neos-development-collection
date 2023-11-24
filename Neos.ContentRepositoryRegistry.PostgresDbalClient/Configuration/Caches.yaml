@@ -1,0 +1,5 @@
+Neos_ContentGraph_PostgreSQLAdapter_ProcessedEvents:
+  frontend: Neos\Cache\Frontend\VariableFrontend
+  backend: Neos\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 400
