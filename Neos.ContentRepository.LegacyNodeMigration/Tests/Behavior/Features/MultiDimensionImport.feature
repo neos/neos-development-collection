@@ -88,8 +88,7 @@ Feature: Migrating nodes with moved nodes in multiple content dimensions
       | NodePeerVariantWasCreated           | {"nodeAggregateId": "node-a-column", "sourceOrigin":{"language":"de"},"peerOrigin":{"language":"en"},"peerCoverage":[{"language":"en"}]} |
       | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId": "node-a-column-column0", "parentNodeAggregateId": "node-a-column",  "coveredDimensionSpacePoints": [{"language": "de"}]} |
       | NodePeerVariantWasCreated           | {"nodeAggregateId": "node-a-column-column0", "sourceOrigin":{"language":"de"},"peerOrigin":{"language":"en"},"peerCoverage":[{"language":"en"}]} |
-      | NodePeerVariantWasCreated           | {"nodeAggregateId": "moved-node", "sourceOrigin":{"language":"de"},"peerOrigin":{"language":"en"},"peerCoverage":[{"language":"en"}]} |
-      | NodeAggregateWasMoved               | {"nodeAggregateId": "moved-node", "nodeMoveMappings":[{"movedNodeOrigin":{"language":"en"},"newLocations":[{"coveredDimensionSpacePoint":{"language":"en"},"newSucceedingSibling":{"nodeAggregateId":"node-a-column-column0","originDimensionSpacePoint":{"language":"de"},"parentNodeAggregateId":"node-b-column-column0","parentOriginDimensionSpacePoint":{"language":"de"}}}]}]} |
+      | NodeAggregateWithNodeWasCreated     | {"nodeAggregateId":"moved-node-4b1a2ad4b77d435ef57ad8254afd9ef6","nodeTypeName":"Neos.Neos:Content","originDimensionSpacePoint":{"language":"de"},"coveredDimensionSpacePoints":[{"language":"en"}],"parentNodeAggregateId":"node-a-column-column0","nodeName":"node-a-text","initialPropertyValues":[],"nodeAggregateClassification":"regular","succeedingNodeAggregateId":null} |
     And I expect exactly 17 nodes to be imported
 
 
