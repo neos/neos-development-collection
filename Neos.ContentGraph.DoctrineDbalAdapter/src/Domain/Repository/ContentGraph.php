@@ -317,7 +317,7 @@ final class ContentGraph implements ContentGraphInterface
     ): iterable {
         $connection = $this->client->getConnection();
 
-        $query = $this->createChildNodeAggregateQuery();
+        $query = $this->createChildNodeAggregateQuery() . ' ORDER BY ch.position';
 
         $parameters = [
             'parentNodeAggregateId' => $parentNodeAggregateId->value,
@@ -344,7 +344,8 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery() . '
-                      AND ch.name = :relationName';
+                      AND ch.name = :relationName
+                      ORDER BY ch.position';
 
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
@@ -371,7 +372,8 @@ final class ContentGraph implements ContentGraphInterface
         $connection = $this->client->getConnection();
 
         $query = $this->createChildNodeAggregateQuery() . '
-                      AND c.classification = :tetheredClassification';
+                      AND c.classification = :tetheredClassification
+                      ORDER BY ch.position';
 
         $parameters = [
             'contentStreamId' => $contentStreamId->value,
