@@ -220,7 +220,8 @@ trait GenericCommandExecutionAndEventPublication
             $key = $assertionTableRow['Key'];
             $actualValue = Arrays::getValueByPath($actualEventPayload, $key);
 
-            if ($key === 'affectedDimensionSpacePoints') {
+            // Note: For dimension space points we switch to an array comparison because the order is not deterministic (@see https://github.com/neos/neos-development-collection/issues/4769)
+            if ($key === 'affectedDimensionSpacePoints' || $key === 'affectedOccupiedDimensionSpacePoints') {
                 $expected = DimensionSpacePointSet::fromJsonString($assertionTableRow['Expected']);
                 $actual = DimensionSpacePointSet::fromArray($actualValue);
                 Assert::assertTrue($expected->equals($actual), 'Actual Dimension Space Point set "' . json_encode($actualValue) . '" does not match expected Dimension Space Point set "' . $assertionTableRow['Expected'] . '"');
