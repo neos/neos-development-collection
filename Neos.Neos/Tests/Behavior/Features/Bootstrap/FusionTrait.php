@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 
 use Behat\Gherkin\Node\PyStringNode;
-use Behat\Gherkin\Node\TableNode;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindClosestNodeFilter;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\TestSuite\Behavior\Features\Bootstrap\CRTestSuiteRuntimeVariables;
@@ -24,9 +23,9 @@ use Neos\Fusion\Core\FusionGlobals;
 use Neos\Fusion\Core\FusionSourceCodeCollection;
 use Neos\Fusion\Core\Parser;
 use Neos\Fusion\Core\RuntimeFactory;
-use Neos\Neos\Domain\Model\RenderingMode;
-use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Fusion\Exception\RuntimeException;
+use Neos\Neos\Domain\Service\NodeTypeNameFactory;
+use Neos\Neos\Domain\Service\RenderingModeService;
 use PHPUnit\Framework\Assert;
 use Psr\Http\Message\ServerRequestFactoryInterface;
 
@@ -68,12 +67,12 @@ trait FusionTrait
     }
 
     /**
-     * @When I am in Fusion rendering mode:
+     * @When the Fusion renderingMode is :requestUri
      */
-    public function iAmInFusionRenderingMode(TableNode $renderingModeData): void
+    public function iAmInFusionRenderingMode(string $renderingModeName): void
     {
-        $data = $renderingModeData->getHash()[0];
-        $this->fusionGlobalContext['renderingMode'] = new RenderingMode($data['name'] ?? 'Testing', strtolower($data['isEdit'] ?? 'false') === 'true', strtolower($data['isPreview'] ?? 'false') === 'true', $data['title'] ?? 'Testing', $data['fusionPath'] ?? 'root', []);
+        $renderingMode = $this->getObject(RenderingModeService::class)->findByName($renderingModeName);
+        $this->fusionGlobalContext['renderingMode'] = $renderingMode;
     }
 
     /**

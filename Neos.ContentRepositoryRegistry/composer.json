@@ -10,11 +10,13 @@
     "license": [
         "GPL-3.0-or-later"
     ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "require": {
-        "neos/flow": "*",
+        "neos/flow": "~9.0.0",
         "neos/contentrepository-core": "self.version",
         "neos/contentrepositoryregistry-storageclient": "self.version",
-        "symfony/property-access": "*",
+        "symfony/property-access": "^5.4|^6.0",
         "psr/clock": "^1"
     },
     "autoload": {

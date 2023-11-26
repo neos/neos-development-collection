@@ -16,8 +16,12 @@ namespace Neos\ContentRepository\Core\Projection\ContentStream;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaConfig;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
 use Neos\ContentRepository\Core\Feature\Common\EmbedsContentStreamAndNodeAggregateId;
@@ -34,6 +38,7 @@ use Neos\ContentRepository\Core\Feature\WorkspacePublication\Event\WorkspaceWasP
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceRebaseFailed;
 use Neos\ContentRepository\Core\Feature\WorkspaceRebase\Event\WorkspaceWasRebased;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -89,22 +94,17 @@ class ContentStreamProjection implements ProjectionInterface
             $connection->executeStatement(sprintf("UPDATE %s SET state='FORKED' WHERE state='REBASING'; ", $this->tableName));
         }
 
-        $schema = new Schema();
-        $contentStreamTable = $schema->createTable($this->tableName);
-        $contentStreamTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('version', Types::INTEGER)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('sourceContentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(false);
-        $contentStreamTable->addColumn('state', Types::STRING)
-            ->setLength(20)
-            ->setNotnull(true);
-        $contentStreamTable->addColumn('removed', Types::BOOLEAN)
-            ->setDefault(false)
-            ->setNotnull(false);
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [
+            (new Table($this->tableName, [
+                DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotnull(true),
+                (new Column('version', Type::getType(Types::INTEGER)))->setNotnull(true),
+                DbalSchemaFactory::columnForContentStreamId('sourceContentStreamId')->setNotnull(false),
+                // Should become a DB ENUM (unclear how to configure with DBAL) or int (latter needs adaption to code)
+                (new Column('state', Type::getType(Types::BINARY)))->setLength(20)->setNotnull(true),
+                (new Column('removed', Type::getType(Types::BOOLEAN)))->setDefault(false)->setNotnull(false)
+            ]))
+        ]);
+
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
             $connection->executeStatement($statement);

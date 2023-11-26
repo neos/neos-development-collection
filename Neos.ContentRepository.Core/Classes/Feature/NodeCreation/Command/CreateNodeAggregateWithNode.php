@@ -25,10 +25,8 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 
 /**
- * CreateNodeAggregateWithNode
+ * Creates a new node aggregate with a new node.
  *
- * Creates a new node aggregate with a new node in the given `contentStreamId`
- * with the given `nodeAggregateId` and `originDimensionSpacePoint`.
  * The node will be appended as child node of the given `parentNodeId` which must cover the given
  * `originDimensionSpacePoint`.
  *

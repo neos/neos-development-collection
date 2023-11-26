@@ -164,7 +164,6 @@ class LoginController extends AbstractAuthenticationController
         if ($newSessionId === false) {
             $this->logger->warning(sprintf('Token-based login failed, non-existing or expired token %s', $token));
             $this->redirect('index');
-            return;
         }
 
         $this->logger->debug(sprintf('Token-based login succeeded, token %s', $token));
@@ -211,13 +210,11 @@ class LoginController extends AbstractAuthenticationController
      *
      * @param ActionRequest|null $originalRequest The request that was intercepted by the security framework,
      *                                            NULL if there was none
-     * @phpstan-ignore-next-line Flow does not properly declare its return type here
-     * @return void
      * @throws SessionNotStartedException
      * @throws StopActionException
      * @throws \Neos\Flow\Mvc\Exception\NoSuchArgumentException
      */
-    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null): void
+    protected function onAuthenticationSuccess(ActionRequest $originalRequest = null): null
     {
         if ($this->view instanceof JsonView) {
             $this->view->assign(
@@ -227,6 +224,7 @@ class LoginController extends AbstractAuthenticationController
                     'csrfToken' => $this->securityContext->getCsrfProtectionToken()
                 ]
             );
+            return null;
         } else {
             if ($originalRequest !== null) {
                 // Redirect to the location that redirected to the login form because the user was nog logged in
@@ -268,11 +266,8 @@ class LoginController extends AbstractAuthenticationController
     /**
      * Disable the default error flash message
      *
-     *
-     * @phpstan-ignore-next-line Flow does not properly declare its types here
-     * @return false
      */
-    protected function getErrorFlashMessage(): bool
+    protected function getErrorFlashMessage(): false
     {
         return false;
     }

@@ -15,7 +15,6 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting;
 
 use GuzzleHttp\Psr7\Uri;
-use Neos\Neos\FrontendRouting\NodeAddress;
 use Neos\Flow\Http\Exception as HttpException;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Exception\NoMatchingRouteException;
@@ -60,13 +59,14 @@ final class NodeUriBuilder
      *
      * @param NodeAddress $nodeAddress
      * @return UriInterface
-     * @throws NoMatchingRouteException | MissingActionNameException | HttpException
+     * @throws NoMatchingRouteException if the node address does not exist
      */
     public function uriFor(NodeAddress $nodeAddress): UriInterface
     {
         if (!$nodeAddress->isInLiveWorkspace()) {
             return $this->previewUriFor($nodeAddress);
         }
+        /** @noinspection PhpUnhandledExceptionInspection */
         return new Uri($this->uriBuilder->uriFor('show', ['node' => $nodeAddress], 'Frontend\Node', 'Neos.Neos'));
     }
 
@@ -76,7 +76,7 @@ final class NodeUriBuilder
      *
      * @param NodeAddress $nodeAddress
      * @return UriInterface
-     * @throws NoMatchingRouteException | MissingActionNameException | HttpException
+     * @throws NoMatchingRouteException if the node address does not exist
      */
     public function previewUriFor(NodeAddress $nodeAddress): UriInterface
     {
