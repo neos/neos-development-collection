@@ -15,12 +15,24 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\SharedModel\Node;
 
 use Behat\Transliterator\Transliterator;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 
 /**
- * The Node name is the "path part" of the node; i.e. when accessing the node "/foo" via path,
+ * The Node name is the "path part" of the node; i.e. when accessing the node "/foo" via path {@see NodePath},
  * the node name is "foo".
  *
  * Semantically it describes the hierarchical relation of a node to its parent, e.g. "main" denotes the main child node.
+ *
+ * Multiple node names describe a node path {@see NodePath}
+ *
+ * To fetch the child node that is connected with the parent via the name "main" use the subgraph's: {@see ContentSubgraphInterface::findNodeByPath()}
+ *
+ * ```php
+ * $subgraph->findNodeByPath(
+ *     NodeName::fromString("main"),
+ *     $parentNodeAggregateId
+ * )
+ * ```
  *
  * @api
  */

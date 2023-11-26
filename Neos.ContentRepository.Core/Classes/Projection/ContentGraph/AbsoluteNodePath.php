@@ -24,10 +24,19 @@ use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
  * Example:
  * root path: '/<Neos.ContentRepository:Root>' results in
  *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": []}
- * non-root path: '/<Neos.ContentRepository:Root>/my/site' results in
- *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my","site"]}
+ * non-root path: '/<Neos.ContentRepository:Root>/my-site/main' results in
+ *      ~ {"rootNodeTypeName": "Neos.ContentRepository:Root", "path": ["my-site", "main"]}
  *
  * It describes the hierarchy path of a node to and including its root node in a subgraph.
+ *
+ * To fetch a node via an absolute path use the subgraph: {@see ContentSubgraphInterface::findNodeByAbsolutePath()}
+ *
+ * ```php
+ * $subgraph->findNodeByAbsolutePath(
+ *     AbsoluteNodePath::fromString("/<Neos.Neos:Sites>/my-site/main")
+ * )
+ * ```
+ *
  * @api
  */
 final class AbsoluteNodePath implements \JsonSerializable
@@ -49,8 +58,14 @@ final class AbsoluteNodePath implements \JsonSerializable
     }
 
     /**
-     * The ancestors must be ordered with the root node first, so if you call this using
-     * {@see ContentSubgraphInterface::findAncestorNodes()}, you need to call ${@see Nodes::reverse()} first
+     * The ancestors must be ordered with the root node first.
+     *
+     * If you want to retrieve the path of a node using {@see ContentSubgraphInterface::findAncestorNodes()}, you need to reverse the order first {@see Nodes::reverse()}
+     *
+     * ```php
+     * $ancestors = $this->findAncestorNodes($leafNode->nodeAggregateId, FindAncestorNodesFilter::create())->reverse();
+     * $absoluteNodePath = AbsoluteNodePath::fromLeafNodeAndAncestors($leafNode, $ancestors);
+     * ```
      */
     public static function fromLeafNodeAndAncestors(Node $leafNode, Nodes $ancestors): self
     {

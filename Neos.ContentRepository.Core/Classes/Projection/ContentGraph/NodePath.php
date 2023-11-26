@@ -17,13 +17,23 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 
 /**
- * The relative node path is a collection of NodeNames. If it contains no elements, it is considered root.
+ * The relative node path is a collection of node names {@see NodeName}. If it contains no elements, it is considered root.
  *
  * Example:
  * root path: '' is resolved to []
- * non-root path: 'my/site' is resolved to ~ ['my', 'site']
+ * non-root path: 'my-document/main' is resolved to ~ ['my-document', 'main']
  *
  * It describes the hierarchy path of a node to an ancestor node in a subgraph.
+ *
+ * To fetch a node on a path use the subgraph: {@see ContentSubgraphInterface::findNodeByPath()}
+ *
+ * ```php
+ * $subgraph->findNodeByPath(
+ *     NodePath::fromString("my-document/main"),
+ *     $siteNodeAggregateId
+ * )
+ * ```
+ *
  * @api
  */
 final class NodePath implements \JsonSerializable

@@ -211,8 +211,10 @@ final class ContentSubgraph implements ContentSubgraphInterface
         return $this->fetchNode($queryBuilder);
     }
 
-    public function findNodeByPath(NodePath $path, NodeAggregateId $startingNodeAggregateId): ?Node
+    public function findNodeByPath(NodePath|NodeName $path, NodeAggregateId $startingNodeAggregateId): ?Node
     {
+        $path = $path instanceof NodeName ? NodePath::fromNodeNames($path) : $path;
+
         $startingNode = $this->findNodeById($startingNodeAggregateId);
 
         return $startingNode
@@ -229,7 +231,12 @@ final class ContentSubgraph implements ContentSubgraphInterface
             : null;
     }
 
-    public function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $edgeName): ?Node
+    /**
+     * Find a single child node by its name
+     *
+     * @return Node|null the node that is connected to its parent with the specified $nodeName, or NULL if no matching node exists or the parent node is not accessible
+     */
+    private function findChildNodeConnectedThroughEdgeName(NodeAggregateId $parentNodeAggregateId, NodeName $nodeName): ?Node
     {
         $queryBuilder = $this->createQueryBuilder()
             ->select('cn.*, h.name, h.contentstreamid')
@@ -239,7 +246,7 @@ final class ContentSubgraph implements ContentSubgraphInterface
             ->where('pn.nodeaggregateid = :parentNodeAggregateId')->setParameter('parentNodeAggregateId', $parentNodeAggregateId->value)
             ->andWhere('h.contentstreamid = :contentStreamId')->setParameter('contentStreamId', $this->contentStreamId->value)
             ->andWhere('h.dimensionspacepointhash = :dimensionSpacePointHash')->setParameter('dimensionSpacePointHash', $this->dimensionSpacePoint->hash)
-            ->andWhere('h.name = :edgeName')->setParameter('edgeName', $edgeName->value);
+            ->andWhere('h.name = :edgeName')->setParameter('edgeName', $nodeName->value);
         $this->addRestrictionRelationConstraints($queryBuilder, 'cn');
         return $this->fetchNode($queryBuilder);
     }
@@ -472,7 +479,6 @@ final class ContentSubgraph implements ContentSubgraphInterface
         $currentNode = $startingNode;
 
         foreach ($path->getParts() as $edgeName) {
-            // id exists here :)
             $currentNode = $this->findChildNodeConnectedThroughEdgeName($currentNode->nodeAggregateId, $edgeName);
             if ($currentNode === null) {
                 return null;
