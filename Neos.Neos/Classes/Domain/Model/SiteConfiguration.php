@@ -14,6 +14,21 @@ use Neos\Flow\Annotations as Flow;
 final class SiteConfiguration
 {
     /**
+     * @param ContentRepositoryId $contentRepositoryId
+     * @param string $contentDimensionResolverFactoryClassName
+     * @param array<string,mixed> $contentDimensionResolverOptions
+     * @param DimensionSpacePoint $defaultDimensionSpacePoint
+     */
+    private function __construct(
+        public readonly ContentRepositoryId $contentRepositoryId,
+        public readonly string $contentDimensionResolverFactoryClassName,
+        public readonly array $contentDimensionResolverOptions,
+        public readonly DimensionSpacePoint $defaultDimensionSpacePoint,
+        public readonly string $uriPathSuffix,
+    ) {
+    }
+
+    /**
      * @param array<string,mixed> $configuration
      * @return static
      */
@@ -42,20 +57,5 @@ final class SiteConfiguration
             $defaultDimensionSpacePoint,
             $uriPathSuffix,
         );
-    }
-
-    /**
-     * @param ContentRepositoryId $contentRepositoryId
-     * @param string $contentDimensionResolverFactoryClassName
-     * @param array<string,mixed> $contentDimensionResolverOptions
-     * @param DimensionSpacePoint $defaultDimensionSpacePoint
-     */
-    private function __construct(
-        public readonly ContentRepositoryId $contentRepositoryId,
-        public readonly string $contentDimensionResolverFactoryClassName,
-        public readonly array $contentDimensionResolverOptions,
-        public readonly DimensionSpacePoint $defaultDimensionSpacePoint,
-        public readonly string $uriPathSuffix,
-    ) {
     }
 }
