@@ -3,7 +3,7 @@
 TYPO3 Fluid ViewHelper Reference
 ################################
 
-This reference was automatically generated from code on 2023-05-01
+This reference was automatically generated from code on 2023-11-24
 
 
 .. _`TYPO3 Fluid ViewHelper Reference: f:alias`:
@@ -109,7 +109,7 @@ Container tag
 
     <f:cache.disable>
        Some output or Fluid code
-    </f:cache.disble>
+    </f:cache.disable>
 
 Additional output is also not compilable because of the ViewHelper
 
@@ -277,7 +277,7 @@ Exception if it contains syntax errors. You can put child nodes in
 CDATA tags to avoid this.
 
 Using this ViewHelper won't have a notable effect on performance,
-especially once the template is parsed.  However it can lead to reduced
+especially once the template is parsed.  However, it can lead to reduced
 readability. You can use layouts and partials to split a large template
 into smaller parts. Using self-descriptive names for the partials can
 make comments redundant.
@@ -617,7 +617,7 @@ Arguments
 
 * ``reverse`` (boolean, *optional*): If TRUE, iterates in reverse
 
-* ``iteration`` (string, *optional*): The name of the variable to store iteration information (index, cycle, isFirst, isLast, isEven, isOdd)
+* ``iteration`` (string, *optional*): The name of the variable to store iteration information (index, cycle, total, isFirst, isLast, isEven, isOdd)
 
 
 
@@ -1141,7 +1141,27 @@ Arguments
 f:or
 ----
 
-If content is empty use alternative text
+Or ViewHelper
+
+If content is null use alternative text.
+
+Usage of f:or
+=============
+
+::
+
+    {f:variable(name:'fallback',value:'this is not the variable you\'re looking for')}
+    {undefinedVariable -> f:or(alternative:fallback)}
+
+Usage of ternary operator
+=========================
+
+In some cases (e.g. when you want to check for empty instead of null)
+it might be more handy to use a ternary operator instead of f:or
+
+::
+
+    {emptyVariable ?: 'this is an alterative text'}
 
 :Implementation: TYPO3Fluid\\Fluid\\ViewHelpers\\OrViewHelper
 
@@ -1151,9 +1171,9 @@ If content is empty use alternative text
 Arguments
 *********
 
-* ``content`` (mixed, *optional*): Content to check if empty
+* ``content`` (mixed, *optional*): Content to check if null
 
-* ``alternative`` (mixed, *optional*): Alternative if content is empty
+* ``alternative`` (mixed, *optional*): Alternative if content is null
 
 * ``arguments`` (array, *optional*): Arguments to be replaced in the resulting string, using sprintf
 
@@ -1267,8 +1287,6 @@ Arguments
 * ``partial`` (string, *optional*): Partial to render, with or without section
 
 * ``delegate`` (string, *optional*): Optional PHP class name of a permanent, included-in-app ParsedTemplateInterface implementation to override partial/section
-
-* ``renderable`` (TYPO3Fluid\Fluid\Core\Rendering\RenderableInterface, *optional*): Instance of a RenderableInterface implementation to be rendered
 
 * ``arguments`` (array, *optional*): Array of variables to be transferred. Use {_all} for all variables
 

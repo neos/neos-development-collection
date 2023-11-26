@@ -17,8 +17,10 @@ namespace Neos\Neos\PendingChangesProjection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Comparator;
-use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\EventStore\EventInterface;
@@ -35,6 +37,7 @@ use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodePeerVariantWasCr
 use Neos\ContentRepository\Core\Feature\NodeVariation\Event\NodeSpecializationVariantWasCreated;
 use Neos\ContentRepository\Core\Feature\WorkspaceCreation\Event\RootWorkspaceWasCreated;
 use Neos\ContentRepository\Core\Infrastructure\DbalClientInterface;
+use Neos\ContentRepository\Core\Infrastructure\DbalSchemaFactory;
 use Neos\ContentRepository\Core\Projection\ProjectionInterface;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
@@ -50,6 +53,8 @@ use Neos\EventStore\Model\EventEnvelope;
  */
 class ChangeProjection implements ProjectionInterface
 {
+    private const DEFAULT_TEXT_COLLATION = 'utf8mb4_unicode_520_ci';
+
     /**
      * @var ChangeFinder|null Cache for the ChangeFinder returned by {@see getState()},
      * so that always the same instance is returned
@@ -103,31 +108,18 @@ class ChangeProjection implements ProjectionInterface
             }
         }
 
-        $schema = new Schema();
-        $changeTable = $schema->createTable($this->tableNamePrefix);
-        $changeTable->addColumn('contentStreamId', Types::STRING)
-            ->setLength(40)
-            ->setNotnull(true);
-        $changeTable->addColumn('created', Types::BOOLEAN)
-            ->setNotnull(true);
-        $changeTable->addColumn('changed', Types::BOOLEAN)
-            ->setNotnull(true);
-        $changeTable->addColumn('moved', Types::BOOLEAN)
-            ->setNotnull(true);
-
-        $changeTable->addColumn('nodeAggregateId', Types::STRING)
-            ->setLength(64)
-            ->setNotnull(true);
-        $changeTable->addColumn('originDimensionSpacePoint', Types::TEXT)
-            ->setNotnull(false);
-        $changeTable->addColumn('originDimensionSpacePointHash', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(true);
-        $changeTable->addColumn('deleted', Types::BOOLEAN)
-            ->setNotnull(true);
-        $changeTable->addColumn('removalAttachmentPoint', Types::STRING)
-            ->setLength(255)
-            ->setNotnull(false);
+        $changeTable = new Table($this->tableNamePrefix, [
+            DbalSchemaFactory::columnForContentStreamId('contentStreamId')->setNotNull(true),
+            (new Column('created', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            (new Column('changed', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            (new Column('moved', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            DbalSchemaFactory::columnForNodeAggregateId('nodeAggregateId')->setNotNull(true),
+            DbalSchemaFactory::columnForDimensionSpacePoint('originDimensionSpacePoint')->setNotNull(false),
+            DbalSchemaFactory::columnForDimensionSpacePointHash('originDimensionSpacePointHash')->setNotNull(true),
+            (new Column('deleted', Type::getType(Types::BOOLEAN)))->setNotnull(true),
+            // Despite the name suggesting this might be an anchor point of sorts, this is a nodeAggregateId type
+            DbalSchemaFactory::columnForNodeAggregateId('removalAttachmentPoint')->setNotNull(false)
+        ]);
 
         $changeTable->setPrimaryKey([
             'contentStreamId',
@@ -135,16 +127,13 @@ class ChangeProjection implements ProjectionInterface
             'originDimensionSpacePointHash'
         ]);
 
-        $liveContentStreamsTable = $schema->createTable($this->tableNamePrefix . '_livecontentstreams');
-        $liveContentStreamsTable->addColumn('contentstreamid', Types::STRING)
-            ->setLength(40)
-            ->setDefault('')
-            ->setNotnull(true);
-        $liveContentStreamsTable->addColumn('workspacename', Types::STRING)
-            ->setLength(255)
-            ->setDefault('')
-            ->setNotnull(true);
+        $liveContentStreamsTable = new Table($this->tableNamePrefix . '_livecontentstreams', [
+            DbalSchemaFactory::ColumnForContentStreamId('contentstreamid')->setNotNull(true),
+            (new Column('workspacename', Type::getType(Types::STRING)))->setLength(255)->setDefault('')->setNotnull(true)->setCustomSchemaOption('collation', self::DEFAULT_TEXT_COLLATION)
+        ]);
         $liveContentStreamsTable->setPrimaryKey(['contentstreamid']);
+
+        $schema = DbalSchemaFactory::createSchemaWithTables($schemaManager, [$changeTable, $liveContentStreamsTable]);
 
         $schemaDiff = (new Comparator())->compare($schemaManager->createSchema(), $schema);
         foreach ($schemaDiff->toSaveSql($connection->getDatabasePlatform()) as $statement) {
