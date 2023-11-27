@@ -14,14 +14,17 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Repository;
 
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
-use Neos\Flow\Persistence\QueryResultInterface;
-use Neos\Flow\Persistence\Repository;
 use Neos\Neos\Domain\Exception as NeosException;
 use Neos\Neos\Domain\Model\Site;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\Domain\Model\SiteNodeName;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteNodeUtility;
@@ -32,10 +35,8 @@ use Neos\Neos\Utility\NodeTypeWithFallbackProvider;
  *
  * @Flow\Scope("singleton")
  * @api
- * @method QueryResultInterface|Site[] findByNodeName(string $nodeName)
- * @method QueryResultInterface|Site[] findByState(int $state)
  */
-class SiteRepository extends Repository
+class SiteRepository
 {
     use NodeTypeWithFallbackProvider;
 
@@ -43,18 +44,47 @@ class SiteRepository extends Repository
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
 
     /**
-     * @var array<string,string>
+     * @Flow\InjectConfiguration(path="sites")
+     * @var array
+     * @phpstan-var array<string,array<string,mixed>>
      */
-    protected $defaultOrderings = [
-        'name' => QueryInterface::ORDER_ASCENDING,
-        'nodeName' => QueryInterface::ORDER_ASCENDING
-    ];
+    protected $sitesConfiguration = [];
 
     /**
      * @Flow\InjectConfiguration(package="Neos.Neos", path="defaultSiteNodeName")
      * @var string
      */
     protected $defaultSiteNodeName;
+
+    public function findOnline(): iterable
+    {
+        return $this->findAll();
+    }
+
+    public function findAll(): iterable
+    {
+        $cr = $this->contentRepositoryRegistry->get(ContentRepositoryId::fromString('default'));
+
+        $liveWorkspace = $cr->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+
+        $sitesNodeAggregate = $cr->getContentGraph()->findRootNodeAggregateByType(
+            $liveWorkspace->currentContentStreamId,
+            NodeTypeNameFactory::forSites()
+        );
+
+        $sites = $cr->getContentGraph()->findChildNodeAggregates(
+            $liveWorkspace->currentContentStreamId,
+            $sitesNodeAggregate->nodeAggregateId
+        );
+
+        $legacySites = [];
+
+        foreach ($sites as $site) {
+            $legacySites[] = Site::fromSiteNodeAggregate($site);
+        }
+
+        return $legacySites;
+    }
 
     /**
      * Finds the first site
@@ -64,20 +94,10 @@ class SiteRepository extends Repository
      */
     public function findFirst(): ?Site
     {
-        /** @var ?Site $result */
-        $result = $this->createQuery()->execute()->getFirst();
-
-        return $result;
-    }
-
-    /**
-     * Find all sites with status "online"
-     *
-     * @return QueryResultInterface<Site>
-     */
-    public function findOnline(): QueryResultInterface
-    {
-        return $this->findByState(Site::STATE_ONLINE);
+        foreach ($this->findAll() as $site) {
+            return $site;
+        }
+        return null;
     }
 
     /**
@@ -85,23 +105,34 @@ class SiteRepository extends Repository
      */
     public function findFirstOnline(): ?Site
     {
-        /** @var ?Site $site */
-        $site = $this->findOnline()->getFirst();
-
-        return $site;
+        return $this->findFirst();
     }
 
     public function findOneByNodeName(string|SiteNodeName $nodeName): ?Site
     {
-        $query = $this->createQuery();
-        /** @var ?Site $site */
-        $site = $query->matching(
-            $query->equals('nodeName', $nodeName)
-        )
-            ->execute()
-            ->getFirst();
+        $config = SiteConfiguration::fromArray($this->sitesConfiguration[is_string($nodeName) ? $nodeName : $nodeName->value] ?? $this->sitesConfiguration['*']);
 
-        return $site;
+        $cr = $this->contentRepositoryRegistry->get($config->contentRepositoryId);
+
+        $liveWorkspace = $cr->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+
+        $sitesNodeAggregate = $cr->getContentGraph()->findRootNodeAggregateByType(
+            $liveWorkspace->currentContentStreamId,
+            NodeTypeNameFactory::forSites()
+        );
+
+        $sites = $cr->getContentGraph()->findChildNodeAggregatesByName(
+            $liveWorkspace->currentContentStreamId,
+            $sitesNodeAggregate->nodeAggregateId,
+            NodeName::fromString(is_string($nodeName) ? $nodeName : $nodeName->value)
+        );
+
+        foreach ($sites as $site) {
+            break;
+        }
+
+        /** @var NodeAggregate $site */
+        return Site::fromSiteNodeAggregate($site);
     }
 
     /**

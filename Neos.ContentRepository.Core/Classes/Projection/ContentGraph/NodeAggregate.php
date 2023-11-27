@@ -16,6 +16,7 @@ namespace Neos\ContentRepository\Core\Projection\ContentGraph;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePointSet;
+use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeAggregateDoesCurrentlyNotCoverDimensionSpacePoint;
@@ -85,6 +86,11 @@ final class NodeAggregate
     public function getNodes(): iterable
     {
         return array_values($this->nodesByOccupiedDimensionSpacePoint);
+    }
+
+    public function getContentRepositoryId(): ContentRepositoryId
+    {
+        return current($this->nodesByOccupiedDimensionSpacePoint)->subgraphIdentity->contentRepositoryId;
     }
 
     public function getNodeByOccupiedDimensionSpacePoint(

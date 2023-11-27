@@ -14,14 +14,19 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Command;
 
+use Neos\ContentRepository\Core\Feature\NodeModification\Command\SetNodeProperties;
+use Neos\ContentRepository\Core\Feature\NodeModification\Dto\PropertyValuesToWrite;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeNameIsAlreadyOccupied;
 use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
+use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cli\CommandController;
 use Neos\Flow\Package\PackageManager;
 use Neos\Flow\Persistence\PersistenceManagerInterface;
 use Neos\Neos\Domain\Exception\SiteNodeNameIsAlreadyInUseByAnotherSite;
 use Neos\Neos\Domain\Exception\SiteNodeTypeIsInvalid;
+use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\Domain\Repository\SiteRepository;
 use Neos\Neos\Domain\Service\NodeTypeNameFactory;
 use Neos\Neos\Domain\Service\SiteService;
@@ -109,6 +114,25 @@ class SiteCommandController extends CommandController
         );
     }
 
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
+    public function setPropertiesCommand(string $siteNodeName, string $siteResourcesPackageKey = '', string $name = '')
+    {
+        $site = $this->siteRepository->findOneByNodeName($siteNodeName);
+        $cr = $this->contentRepositoryRegistry->get($site->siteNodeAggregate->getContentRepositoryId());
+
+        $cr->handle(SetNodeProperties::create(
+            $site->siteNodeAggregate->contentStreamId,
+            $site->siteNodeAggregate->nodeAggregateId,
+            current(iterator_to_array($site->siteNodeAggregate->occupiedDimensionSpacePoints)),
+            PropertyValuesToWrite::fromArray(array_filter([
+                'siteResourcesPackageKey' => $siteResourcesPackageKey,
+                'name' => $name
+            ]))
+        ))->block();
+    }
+
     /**
      * Remove site with content and related data (with globbing)
      *
@@ -144,9 +168,9 @@ class SiteCommandController extends CommandController
      */
     public function listCommand()
     {
-        $sites = $this->siteRepository->findAll();
+        $sites = iterator_to_array($this->siteRepository->findAll());
 
-        if ($sites->count() === 0) {
+        if (count($sites) === 0) {
             $this->outputLine('No sites available');
             $this->quit(0);
         }
@@ -161,7 +185,7 @@ class SiteCommandController extends CommandController
             array_push($availableSites, [
                 'name' => $site->getName(),
                 'nodeName' => $site->getNodeName()->value,
-                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey(),
+                'siteResourcesPackageKey' => $site->getSiteResourcesPackageKey() ?? '-',
                 'status' => ($site->getState() === SITE::STATE_ONLINE) ? 'online' : 'offline'
             ]);
             if (strlen($site->getName()) > $longestSiteName) {
@@ -170,7 +194,7 @@ class SiteCommandController extends CommandController
             if (strlen($site->getNodeName()->value) > $longestNodeName) {
                 $longestNodeName = strlen($site->getNodeName()->value);
             }
-            if (strlen($site->getSiteResourcesPackageKey()) > $longestSiteResource) {
+            if (strlen($site->getSiteResourcesPackageKey() ?? '') > $longestSiteResource) {
                 $longestSiteResource = strlen($site->getSiteResourcesPackageKey());
             }
         }
@@ -245,7 +269,7 @@ class SiteCommandController extends CommandController
     protected function findSitesByNodeNamePattern($siteNodePattern)
     {
         return array_filter(
-            $this->siteRepository->findAll()->toArray(),
+            iterator_to_array($this->siteRepository->findAll()),
             function (Site $site) use ($siteNodePattern) {
                 return fnmatch($siteNodePattern, $site->getNodeName()->value);
             }

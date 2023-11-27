@@ -8,3 +8,20 @@
   abstract: true
   superTypes:
     'Neos.Neos:Document': true
+
+  properties:
+    name:
+      scope: nodeAggregate
+      type: string
+    domains:
+      scope: nodeAggregate
+      type: array<Neos\\Neos\\Domain\\Model\\Domain>
+    primaryDomain:
+      scope: nodeAggregate
+      type: Neos\\Neos\\Domain\\Model\\Domain
+    siteResourcesPackageKey:
+      scope: nodeAggregate
+      type: string
+    assetCollection:
+      scope: nodeAggregate
+      type: Neos\\Media\\Domain\\Model\\AssetCollection

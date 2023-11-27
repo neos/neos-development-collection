@@ -54,13 +54,6 @@ class Domain implements CacheAwareInterface
     protected $port;
 
     /**
-     * @var Site
-     * @ORM\ManyToOne(inversedBy="domains")
-     * @Flow\Validate(type="NotEmpty")
-     */
-    protected $site;
-
-    /**
      * If domain is active
      *
      * @var boolean
@@ -145,6 +138,7 @@ class Domain implements CacheAwareInterface
      */
     public function setSite(Site $site)
     {
+        throw new \BadMethodCallException();
         $this->site = $site;
     }
 
@@ -156,6 +150,7 @@ class Domain implements CacheAwareInterface
      */
     public function getSite()
     {
+        throw new \BadMethodCallException();
         return $this->site;
     }
 

@@ -17,13 +17,14 @@ namespace Neos\Neos\Domain\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 use Neos\Media\Domain\Model\AssetCollection;
 
 /**
  * Domain model of a site
  *
- * @Flow\Entity
  * @api
  */
 class Site
@@ -31,6 +32,7 @@ class Site
     /**
      * Site states
      */
+    // todo to be removed
     public const STATE_ONLINE = 1;
     public const STATE_OFFLINE = 2;
 
@@ -66,8 +68,8 @@ class Site
     protected $nodeName;
 
     /**
-     * @var Collection<Domain>
-     * @phpstan-var Collection<int,Domain>
+     * @var array<Domain>
+     * @phpstan-var array<int,Domain>
      * @ORM\OneToMany(mappedBy="site")
      * @Flow\Lazy
      */
@@ -87,6 +89,7 @@ class Site
      * @var integer
      * @Flow\Validate(type="NumberRange", options={ "minimum"=1, "maximum"=2 })
      */
+    // todo to be removed
     protected $state = self::STATE_OFFLINE;
 
     /**
@@ -107,11 +110,36 @@ class Site
      *
      * @param string $nodeName Node name of this site in the content repository
      */
-    public function __construct($nodeName)
+    private function __construct($nodeName, public readonly NodeAggregate $siteNodeAggregate)
     {
         $this->nodeName = $nodeName;
-        $this->domains = new ArrayCollection();
     }
+
+    public static function fromSiteNodeAggregate(NodeAggregate $siteNodeAggregate): self
+    {
+        foreach ($siteNodeAggregate->getNodes() as $oneSiteNode) {
+            break;
+        }
+        /** @var Node $oneSiteNode */
+
+        assert($siteNodeAggregate->nodeName !== null);
+        $legacySite = new self($siteNodeAggregate->nodeName->value, $siteNodeAggregate);
+
+        if ($oneSiteNode->hasProperty('siteResourcesPackageKey')) {
+            $legacySite->setSiteResourcesPackageKey($oneSiteNode->getProperty('siteResourcesPackageKey'));
+        }
+
+        if ($oneSiteNode->hasProperty('assetCollection')) {
+            $legacySite->setSiteResourcesPackageKey($oneSiteNode->getProperty('assetCollection'));
+        }
+
+        if ($oneSiteNode->hasProperty('name')) {
+            $legacySite->setName($oneSiteNode->getProperty('name'));
+        }
+
+        return $legacySite;
+    }
+
 
     /**
      * @return string
@@ -265,6 +293,7 @@ class Site
      */
     public function hasActiveDomains()
     {
+        return false;
         return $this->domains->exists(function ($index, Domain $domain) {
             return $domain->getActive();
         });
