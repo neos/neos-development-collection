@@ -88,6 +88,20 @@ final class PropertyCollection implements \ArrayAccess, \IteratorAggregate, \Cou
         }
     }
 
+    public function filter(\Closure $fn): self
+    {
+        $filtered = [];
+        foreach ($this->serializedPropertyValues as $propertyName => $propertyValue) {
+           if ($fn($propertyName)) {
+               $filtered[$propertyName] = $propertyValue;
+           }
+        }
+        return new self(
+            SerializedPropertyValues::fromArray($filtered),
+            $this->propertyConverter
+        );
+    }
+
     public function serialized(): SerializedPropertyValues
     {
         return $this->serializedPropertyValues;

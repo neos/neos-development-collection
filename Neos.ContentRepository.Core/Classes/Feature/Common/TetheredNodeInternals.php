@@ -133,12 +133,7 @@ trait TetheredNodeInternals
                 );
             }
 
-            $childNodeSource = null;
-            foreach ($childNodeAggregate->getNodes() as $node) {
-                $childNodeSource = $node;
-                break;
-            }
-            /** @var Node $childNodeSource Node aggregates are never empty */
+            $childNodeSource = $childNodeAggregate->getSingleNodeIndependentOfItsDimension();
             return $this->createEventsForVariations(
                 $parentNodeAggregate->contentStreamId,
                 $childNodeSource->originDimensionSpacePoint,

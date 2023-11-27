@@ -114,12 +114,7 @@ final readonly class SerializedPropertyValues implements \IteratorAggregate, \Co
     {
         $propertyValuesByScope = [];
         foreach ($this->values as $propertyName => $propertyValue) {
-            $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
-            if (is_string($declaration)) {
-                $scope = PropertyScope::from($declaration);
-            } else {
-                $scope = PropertyScope::SCOPE_NODE;
-            }
+            $scope = PropertyScope::fromNodeTypeDeclaration($nodeType, $propertyName);
             $propertyValuesByScope[$scope->value][$propertyName] = $propertyValue;
         }
 

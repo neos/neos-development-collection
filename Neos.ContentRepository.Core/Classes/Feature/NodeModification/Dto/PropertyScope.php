@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\ContentRepository\Core\Feature\NodeModification\Dto;
 
 use Neos\ContentRepository\Core\DimensionSpace\InterDimensionalVariationGraph;
+use Neos\ContentRepository\Core\NodeType\NodeType;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePointSet;
@@ -41,6 +42,16 @@ enum PropertyScope: string implements \JsonSerializable
      * The "nodeAggregate" scope, meaning that all variants, e.g. all nodes in the aggregate will be modified
      */
     case SCOPE_NODE_AGGREGATE = 'nodeAggregate';
+
+    public static function fromNodeTypeDeclaration(NodeType $nodeType, string $propertyName): self
+    {
+        $declaration = $nodeType->getProperties()[$propertyName]['scope'] ?? null;
+        if (is_string($declaration)) {
+            return PropertyScope::from($declaration);
+        } else {
+            return PropertyScope::SCOPE_NODE;
+        }
+    }
 
     public function resolveAffectedOrigins(
         OriginDimensionSpacePoint $origin,
