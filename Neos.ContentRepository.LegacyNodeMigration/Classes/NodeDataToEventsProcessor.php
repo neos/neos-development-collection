@@ -281,7 +281,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
             $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $specializations, $parentNodeAggregate->nodeAggregateId, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_TETHERED, null));
         } elseif ($this->visitedNodes->containsNodeAggregate($nodeAggregateId)) {
             // Create node variant, BOTH for tethered and regular nodes
-            $this->createNodeVariant($nodeAggregateId, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate, $nodeName);
+            $this->createNodeVariant($nodeAggregateId, $originDimensionSpacePoint, $serializedPropertyValuesAndReferences, $parentNodeAggregate);
         } else {
             // create node aggregate
             $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamId, $nodeAggregateId, $nodeTypeName, $originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateId, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, null));
@@ -358,7 +358,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
      * NOTE: We prioritize specializations/generalizations over peer variants ("ch" creates a specialization variant of "de" rather than a peer of "en" if both has been seen before).
      * For that reason we loop over all previously visited dimension space points until we encounter a specialization/generalization. Otherwise, the last NodePeerVariantWasCreated will be used
      */
-    private function createNodeVariant(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValuesAndReferences $serializedPropertyValuesAndReferences, VisitedNodeAggregate $parentNodeAggregate, NodeName $nodeName): void
+    private function createNodeVariant(NodeAggregateId $nodeAggregateId, OriginDimensionSpacePoint $originDimensionSpacePoint, SerializedPropertyValuesAndReferences $serializedPropertyValuesAndReferences, VisitedNodeAggregate $parentNodeAggregate): void
     {
         $alreadyVisitedOriginDimensionSpacePoints = $this->visitedNodes->alreadyVisitedOriginDimensionSpacePoints($nodeAggregateId);
         $coveredDimensionSpacePoints = $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint(), true, $alreadyVisitedOriginDimensionSpacePoints->toDimensionSpacePointSet());
@@ -380,19 +380,7 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
         if ($variantCreatedEvent === null) {
             throw new MigrationException(sprintf('Node "%s" for dimension %s was already created previously', $nodeAggregateId->value, $originDimensionSpacePoint->toJson()), 1656057201);
         }
-        // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
-        // If the parent node aggregate id differs, we need to move the just created variant to the new location
-        $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);
-        if (
-            $variantSourceOriginDimensionSpacePoint &&
-            !$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)
-        ) {
-            $nodeAggregateId = NodeAggregateId::fromString($nodeAggregateId->value . '-' . md5($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId->value));
-
-            $this->exportEvent(new NodeAggregateWithNodeWasCreated($this->contentStreamId, $nodeAggregateId, $nodeAggregate->nodeTypeName, $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint, $this->interDimensionalVariationGraph->getSpecializationSet($originDimensionSpacePoint->toDimensionSpacePoint()), $parentNodeAggregate->nodeAggregateId, $nodeName, $serializedPropertyValuesAndReferences->serializedPropertyValues, NodeAggregateClassification::CLASSIFICATION_REGULAR, null));
-        } else {
-            $this->exportEvent($variantCreatedEvent);
-        }
+        $this->exportEvent($variantCreatedEvent);
         if ($serializedPropertyValuesAndReferences->serializedPropertyValues->count() > 0) {
             $this->exportEvent(
                 new NodePropertiesWereSet(
@@ -404,35 +392,35 @@ final class NodeDataToEventsProcessor implements ProcessorInterface
                 )
             );
         }
-//        // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
-//        // If the parent node aggregate id differs, we need to move the just created variant to the new location
-//        $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);
-//        if (
-//            $variantSourceOriginDimensionSpacePoint &&
-//            !$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)
-//        ) {
-//            $this->exportEvent(new NodeAggregateWasMoved(
-//                $this->contentStreamId,
-//                $nodeAggregateId,
-//                OriginNodeMoveMappings::fromArray([
-//                    new OriginNodeMoveMapping(
-//                        $originDimensionSpacePoint,
-//                        CoverageNodeMoveMappings::create(
-//                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
-//                                $originDimensionSpacePoint->toDimensionSpacePoint(),
-//                                SucceedingSiblingNodeMoveDestination::create(
-//                                    $parentNodeAggregate->nodeAggregateId,
-//                                    $variantSourceOriginDimensionSpacePoint,
-//
-//                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId,
-//                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint
-//                                )
-//                            )
-//                        )
-//                    )
-//                ])
-//            ));
-//        }
+        // When we specialize/generalize, we create a node variant at exactly the same tree location as the source node
+        // If the parent node aggregate id differs, we need to move the just created variant to the new location
+        $nodeAggregate = $this->visitedNodes->getByNodeAggregateId($nodeAggregateId);
+        if (
+            $variantSourceOriginDimensionSpacePoint &&
+            !$parentNodeAggregate->nodeAggregateId->equals($nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId)
+        ) {
+            $this->exportEvent(new NodeAggregateWasMoved(
+                $this->contentStreamId,
+                $nodeAggregateId,
+                OriginNodeMoveMappings::fromArray([
+                    new OriginNodeMoveMapping(
+                        $originDimensionSpacePoint,
+                        CoverageNodeMoveMappings::create(
+                            CoverageNodeMoveMapping::createForNewSucceedingSibling(
+                                $originDimensionSpacePoint->toDimensionSpacePoint(),
+                                SucceedingSiblingNodeMoveDestination::create(
+                                    $parentNodeAggregate->nodeAggregateId,
+                                    $variantSourceOriginDimensionSpacePoint,
+
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->parentNodeAggregateId,
+                                    $nodeAggregate->getVariant($variantSourceOriginDimensionSpacePoint)->originDimensionSpacePoint
+                                )
+                            )
+                        )
+                    )
+                ])
+            ));
+        }
     }
 
     private function isAutoCreatedChildNode(NodeTypeName $parentNodeTypeName, NodeName $nodeName): bool

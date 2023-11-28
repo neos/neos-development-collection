@@ -154,7 +154,7 @@ class FeatureContext implements Context
      */
     public function iImportAllEvents(string $contentStream = 'contentStream') : void
     {
-        $eventNormalizer = $this->getObject(EventNormalizer::class);
+        $eventNormalizer = $this->getObjectManager()->get(EventNormalizer::class);
         $eventStore = (new \ReflectionClass($this->currentContentRepository))
             ->getProperty('eventStore')
             ->getValue($this->currentContentRepository);
