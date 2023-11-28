@@ -91,7 +91,9 @@ class ConvertUrisImplementationTest extends UnitTestCase
 
         $this->mockContext = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
         $this->mockContext->expects(self::any())->method('getWorkspace')->will(self::returnValue($this->mockWorkspace));
-        $this->mockContext->expects(self::any())->method('getWorkspaceName')->willReturnCallback(fn () => $this->mockWorkspace->getName());
+        $this->mockContext->expects(self::any())->method('getWorkspaceName')->willReturnCallback(function () {
+            return $this->mockWorkspace->getName();
+        });
 
         $this->mockNode = $this->getMockBuilder(NodeInterface::class)->getMock();
         $this->mockNode->expects(self::any())->method('getContext')->will(self::returnValue($this->mockContext));
