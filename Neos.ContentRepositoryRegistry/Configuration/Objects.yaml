@@ -34,7 +34,6 @@ Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection
     2:
       object: 'Neos\ContentRepository\Core\Infrastructure\DbalClientInterface'
 
-
 'Neos.ContentRepositoryRegistry:CacheCatchUpStates':
   className: Neos\Cache\Frontend\VariableFrontend
   factoryObjectName: Neos\Flow\Cache\CacheManager

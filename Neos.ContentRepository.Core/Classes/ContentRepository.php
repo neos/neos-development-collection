@@ -36,6 +36,7 @@ use Neos\ContentRepository\Core\Projection\ProjectionsAndCatchUpHooks;
 use Neos\ContentRepository\Core\Projection\ProjectionStateInterface;
 use Neos\ContentRepository\Core\Projection\Workspace\WorkspaceFinder;
 use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
+use Neos\ContentRepositoryRegistry\Service\CatchUpDeduplicationQueue;
 use Neos\EventStore\CatchUp\CatchUp;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Model\Event\EventMetadata;
@@ -79,6 +80,7 @@ final class ContentRepository
         private readonly ContentDimensionSourceInterface $contentDimensionSource,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly CatchUpDeduplicationQueue $catchUpDeduplicationQueue,
     ) {
     }
 
@@ -191,6 +193,7 @@ final class ContentRepository
         }
         $catchUp->run($eventStream);
         $catchUpHook?->onAfterCatchUp();
+        $this->catchUpDeduplicationQueue->releaseCatchUpLock($projectionClassName);
     }
 
     public function setUp(): SetupResult

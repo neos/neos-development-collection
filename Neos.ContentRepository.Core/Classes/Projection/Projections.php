@@ -93,4 +93,8 @@ final class Projections implements \IteratorAggregate
     {
         yield from $this->projections;
     }
+    public function isEmpty(): bool
+    {
+        return count($this->projections) === 0;
+    }
 }

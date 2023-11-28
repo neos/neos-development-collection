@@ -6,16 +6,15 @@ namespace Neos\ContentRepository\Core\EventStore;
 
 use Neos\ContentRepository\Core\CommandHandler\CommandResult;
 use Neos\ContentRepository\Core\CommandHandler\PendingProjections;
-use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 use Neos\ContentRepository\Core\Projection\WithMarkStaleInterface;
+use Neos\ContentRepositoryRegistry\Service\CatchUpDeduplicationQueue;
 use Neos\EventStore\EventStoreInterface;
 use Neos\EventStore\Exception\ConcurrencyException;
 use Neos\EventStore\Model\Event;
 use Neos\EventStore\Model\Event\EventId;
 use Neos\EventStore\Model\Event\EventMetadata;
 use Neos\EventStore\Model\Events;
-use Neos\EventStore\Model\EventStore\CommitResult;
 
 /**
  * Internal service to persist {@see EventInterface} with the proper normalization, and triggering the
@@ -27,7 +26,7 @@ final class EventPersister
 {
     public function __construct(
         private readonly EventStoreInterface $eventStore,
-        private readonly ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger,
+        private readonly CatchUpDeduplicationQueue $catchUpDeduplicationQueue,
         private readonly EventNormalizer $eventNormalizer,
         private readonly Projections $projections,
     ) {
@@ -67,7 +66,7 @@ final class EventPersister
                 $projection->markStale();
             }
         }
-        $this->projectionCatchUpTrigger->triggerCatchUp($pendingProjections->projections);
+        $this->catchUpDeduplicationQueue->requestCatchUp($pendingProjections->projections);
 
         // The CommandResult can be used to block until projections are up to date.
         return new CommandResult($pendingProjections, $commitResult);
