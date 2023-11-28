@@ -55,7 +55,7 @@ final class SiteDetectionMiddleware implements MiddlewareInterface
                 // try to get any site
                 $site = $this->siteRepository->findFirstOnline();
             }
-        } catch (DatabaseException) {
+        } catch (DatabaseException) { // todo
             // doctrine might have not been migrated yet or no database is connected.
         }
 

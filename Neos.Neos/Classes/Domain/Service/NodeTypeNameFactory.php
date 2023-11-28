@@ -27,6 +27,8 @@ final class NodeTypeNameFactory
     public const NAME_SHORTCUT = 'Neos.Neos:Shortcut';
     public const NAME_SITE = 'Neos.Neos:Site';
     public const NAME_SITES = 'Neos.Neos:Sites';
+    public const NAME_DOMAIN = 'Neos.Neos:Domain';
+    public const NAME_DOMAINS = 'Neos.Neos:Domains';
 
     public static function forContent(): NodeTypeName
     {
@@ -61,5 +63,15 @@ final class NodeTypeNameFactory
     public static function forSites(): NodeTypeName
     {
         return NodeTypeName::fromString(self::NAME_SITES);
+    }
+
+    public static function forDomain(): NodeTypeName
+    {
+        return NodeTypeName::fromString(self::NAME_DOMAIN);
+    }
+
+    public static function forDomains(): NodeTypeName
+    {
+        return NodeTypeName::fromString(self::NAME_DOMAINS);
     }
 }

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\Core\Dimension\ContentDimensionSourceInterface;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\Model\SiteConfiguration;
@@ -45,7 +46,7 @@ final class UriPathResolverFactory implements DimensionResolverFactoryInterface
             Segments::fromArray($siteConfiguration->contentDimensionResolverOptions['segments'] ?? []),
             Separator::fromString($siteConfiguration->contentDimensionResolverOptions['separator'] ?? '_'),
             $contentRepository->getContentDimensionSource(),
-            $siteConfiguration->defaultDimensionSpacePoint,
+            $siteConfiguration->defaultDimensionSpacePoint ?? DimensionSpacePoint::createWithoutDimensions(),
         );
     }
 }

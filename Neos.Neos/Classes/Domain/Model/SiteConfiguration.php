@@ -23,7 +23,7 @@ final class SiteConfiguration
         public readonly ContentRepositoryId $contentRepositoryId,
         public readonly string $contentDimensionResolverFactoryClassName,
         public readonly array $contentDimensionResolverOptions,
-        public readonly DimensionSpacePoint $defaultDimensionSpacePoint,
+        public readonly ?DimensionSpacePoint $defaultDimensionSpacePoint,
         public readonly string $uriPathSuffix,
     ) {
     }
@@ -46,7 +46,9 @@ final class SiteConfiguration
         );
         $contentDimensionResolverOptions = $configuration['contentDimensions']['resolver']['options'] ?? [];
 
-        $defaultDimensionSpacePoint = DimensionSpacePoint::fromArray($configuration['contentDimensions']['defaultDimensionSpacePoint'] ?? []);
+        $defaultDimensionSpacePoint = isset($configuration['contentDimensions']['defaultDimensionSpacePoint'])
+            ? DimensionSpacePoint::fromArray($configuration['contentDimensions']['defaultDimensionSpacePoint'])
+            : null;
 
         $uriPathSuffix = $configuration['uriPathSuffix'] ?? '';
 

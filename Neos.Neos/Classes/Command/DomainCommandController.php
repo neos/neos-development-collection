@@ -64,36 +64,19 @@ class DomainCommandController extends CommandController
             $this->outputLine('<error>No site found with nodeName "%s".</error>', [$siteNodeName]);
             $this->quit(1);
         }
-        /** @var Site $site */
 
         $domains = $this->domainRepository->findByHostname($hostname);
-        if ($domains->count() > 0) {
+        if (count($domains) > 0) {
             $this->outputLine('<error>The host name "%s" is not unique.</error>', [$hostname]);
             $this->quit(1);
         }
 
-        $domain = new Domain();
-        if ($scheme !== null) {
-            $domain->setScheme($scheme);
-        }
-        if ($port !== null) {
-            $domain->setPort($port);
-        }
-        $domain->setSite($site);
-        $domain->setHostname($hostname);
-
-        $domainValidator = $this->validatorResolver->getBaseValidatorConjunction(Domain::class);
-        $result = $domainValidator->validate($domain);
-        if ($result->hasErrors()) {
-            foreach ($result->getFlattenedErrors() as $propertyName => $errors) {
-                /** @var array<Error> $errors */
-                $firstError = array_pop($errors);
-                $this->outputLine('<error>Validation failed for "' . $propertyName . '": ' . $firstError . '</error>');
-                $this->quit(1);
-            }
-        }
-
-        $this->domainRepository->add($domain);
+        $this->domainRepository->handleAddNewDomain(
+            $site,
+            $hostname,
+            $scheme,
+            $port
+        );
 
         $this->outputLine('Domain entry created.');
     }
@@ -119,9 +102,9 @@ class DomainCommandController extends CommandController
 
         $availableDomains = [];
         foreach ($domains as $domain) {
-            /** @var \Neos\Neos\Domain\Model\Domain $domain */
+            $site = $this->siteRepository->findByDomain($domain);
             $availableDomains[] = [
-                'nodeName' => $domain->getSite()->getNodeName(),
+                'nodeName' => $site?->getNodeName() ?? '-',
                 'hostname' => (string)$domain,
                 'active' => $domain->getActive() ? 'active' : 'inactive'
             ];
@@ -144,12 +127,7 @@ class DomainCommandController extends CommandController
             $this->quit(1);
         }
         foreach ($domains as $domain) {
-            $site = $domain->getSite();
-            if ($site->getPrimaryDomain() === $domain) {
-                $site->setPrimaryDomain(null);
-                $this->siteRepository->update($site);
-            }
-            $this->domainRepository->remove($domain);
+            $this->domainRepository->handleRemoveDomain($domain);
             $this->outputLine('Domain entry "%s" deleted.', [$domain->getHostname()]);
         }
     }
@@ -162,6 +140,7 @@ class DomainCommandController extends CommandController
      */
     public function activateCommand($hostname)
     {
+        throw new \BadMethodCallException();
         $domains = $this->findDomainsByHostnamePattern($hostname);
         if (empty($domains)) {
             $this->outputLine('<error>No domain found for hostname-pattern "%s".</error>', [$hostname]);
@@ -203,7 +182,7 @@ class DomainCommandController extends CommandController
     protected function findDomainsByHostnamePattern($hostnamePattern)
     {
         return array_filter(
-            $this->domainRepository->findAll()->toArray(),
+            $this->domainRepository->findAll(),
             function ($domain) use ($hostnamePattern) {
                 return fnmatch($hostnamePattern, $domain->getHostname());
             }

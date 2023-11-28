@@ -137,6 +137,8 @@ class Site
             $legacySite->setName($oneSiteNode->getProperty('name'));
         }
 
+        $legacySite->setState(self::STATE_ONLINE);
+
         return $legacySite;
     }
 

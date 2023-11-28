@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Neos\Neos\FrontendRouting\DimensionResolution\Resolver;
 
 use Neos\ContentRepository\Core\Dimension\ContentDimension;
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Neos\Domain\Model\SiteConfiguration;
@@ -71,7 +72,7 @@ final class AutoUriPathResolverFactory implements DimensionResolverFactoryInterf
                     $segments,
                     Separator::fromString('-'),
                     $contentRepository->getContentDimensionSource(),
-                    $siteConfiguration->defaultDimensionSpacePoint
+                    $siteConfiguration->defaultDimensionSpacePoint ?? DimensionSpacePoint::createWithoutDimensions()
                 );
             default:
                 throw new AutoUriPathResolverConfigurationException(

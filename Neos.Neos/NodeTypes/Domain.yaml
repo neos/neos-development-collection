@@ -1,0 +1,12 @@
+'Neos.Neos:Domain':
+  final: true
+  properties:
+    hostname:
+      scope: nodeAggregate
+      type: string
+    scheme:
+      scope: nodeAggregate
+      type: string
+    port:
+      scope: nodeAggregate
+      type: integer

@@ -14,15 +14,21 @@ declare(strict_types=1);
 
 namespace Neos\Neos\Domain\Repository;
 
+use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
+use Neos\ContentRepository\Core\DimensionSpace\OriginDimensionSpacePoint;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindBackReferencesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\Pagination\Pagination;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeName;
 use Neos\ContentRepository\Core\SharedModel\Workspace\WorkspaceName;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Persistence\QueryInterface;
 use Neos\Neos\Domain\Exception as NeosException;
+use Neos\Neos\Domain\Model\Domain;
 use Neos\Neos\Domain\Model\Site;
 use Neos\Neos\Domain\Model\SiteConfiguration;
 use Neos\Neos\Domain\Model\SiteNodeName;
@@ -55,6 +61,40 @@ class SiteRepository
      * @var string
      */
     protected $defaultSiteNodeName;
+
+    public function findByDomain(Domain $domain): ?Site
+    {
+        $cr = $this->contentRepositoryRegistry->get($domain->domainNodeAggregate->getContentRepositoryId());
+        $liveWorkspace = $cr->getWorkspaceFinder()->findOneByName(WorkspaceName::forLive());
+
+        $rootGeneralizations = $cr->getVariationGraph()->getRootGeneralizations();
+        $arbitraryDimensionSpacePoint = reset($rootGeneralizations);
+
+        $subgraph = $cr->getContentGraph()->getSubgraph(
+            $liveWorkspace->currentContentStreamId,
+            $arbitraryDimensionSpacePoint,
+            VisibilityConstraints::frontend()
+        );
+
+        $siteReferences = $subgraph->findBackReferences(
+            $domain->domainNodeAggregate->nodeAggregateId,
+            FindBackReferencesFilter::create(
+                nodeTypes: NodeTypeNameFactory::NAME_SITE,
+                pagination: Pagination::fromLimitAndOffset(1, 0)
+            )
+        );
+
+        if (count($siteReferences) < 1) {
+            return null;
+        }
+
+        return Site::fromSiteNodeAggregate(
+            $cr->getContentGraph()->findNodeAggregateById(
+                $liveWorkspace->currentContentStreamId,
+                $siteReferences->getNodes()->first()->nodeAggregateId
+            )
+        );
+    }
 
     public function findOnline(): iterable
     {

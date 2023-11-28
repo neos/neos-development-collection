@@ -15,6 +15,8 @@ declare(strict_types=1);
 namespace Neos\Neos\Domain\Model;
 
 use Doctrine\ORM\Mapping as ORM;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\Flow\Annotations as Flow;
 use Neos\Cache\CacheAwareInterface;
 
@@ -23,7 +25,6 @@ use Neos\Cache\CacheAwareInterface;
  *
  * It is used to connect a site root node to a specific hostname.
  *
- * @Flow\Entity
  * @Flow\Scope("prototype")
  */
 class Domain implements CacheAwareInterface
@@ -59,6 +60,34 @@ class Domain implements CacheAwareInterface
      * @var boolean
      */
     protected $active = true;
+
+    public function __construct(public readonly NodeAggregate $domainNodeAggregate)
+    {
+    }
+
+    public static function fromDomainNodeAggregate(NodeAggregate $domainNodeAggregate): self
+    {
+        foreach ($domainNodeAggregate->getNodes() as $oneDomainNode) {
+            break;
+        }
+        /** @var Node $oneDomainNode */
+
+        $legacyDomain = new self($domainNodeAggregate);
+
+        if ($oneDomainNode->hasProperty('hostname')) {
+            $legacyDomain->setHostname($oneDomainNode->getProperty('hostname'));
+        }
+
+        if ($oneDomainNode->hasProperty('scheme')) {
+            $legacyDomain->setScheme($oneDomainNode->getProperty('scheme'));
+        }
+
+        if ($oneDomainNode->hasProperty('port')) {
+            $legacyDomain->setPort($oneDomainNode->getProperty('port'));
+        }
+
+        return $legacyDomain;
+    }
 
     /**
      * Sets the hostname

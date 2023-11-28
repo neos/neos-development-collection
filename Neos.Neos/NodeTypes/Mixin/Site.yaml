@@ -15,10 +15,16 @@
       type: string
     domains:
       scope: nodeAggregate
-      type: array<Neos\\Neos\\Domain\\Model\\Domain>
+      type: references
+      constraints:
+        nodeTypes:
+          Neos.Neos:Domain: true
     primaryDomain:
       scope: nodeAggregate
-      type: Neos\\Neos\\Domain\\Model\\Domain
+      type: reference
+      constraints:
+        nodeTypes:
+          Neos.Neos:Domain: true
     siteResourcesPackageKey:
       scope: nodeAggregate
       type: string

@@ -1,0 +1,7 @@
+'Neos.Neos:Domains':
+  superTypes:
+    'Neos.ContentRepository:Root': true
+  constraints:
+    nodeTypes:
+      '*': false
+      'Neos.Neos:Domain': true
