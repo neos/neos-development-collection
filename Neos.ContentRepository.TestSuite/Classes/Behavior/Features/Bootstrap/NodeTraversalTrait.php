@@ -157,16 +157,16 @@ trait NodeTraversalTrait
     }
 
     /**
-     * @When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect no node to be returned
-     * @When I execute the findChildNodeConnectedThroughEdgeName query for parent node aggregate id :parentNodeIdSerialized and edge name :edgeNameSerialized I expect the node :expectedNodeIdSerialized to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect no node to be returned
+     * @When I execute the findNodeByPath query for parent node aggregate id :parentNodeIdSerialized and node name :edgeNameSerialized as path I expect the node :expectedNodeIdSerialized to be returned
      */
-    public function iExecuteTheFindChildNodeConnectedThroughEdgeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
+    public function iExecuteTheFindChildNodeByNodeNameQueryIExpectTheFollowingNodes(string $parentNodeIdSerialized, string $edgeNameSerialized, string $expectedNodeIdSerialized = null): void
     {
         $parentNodeAggregateId = NodeAggregateId::fromString($parentNodeIdSerialized);
         $edgeName = NodeName::fromString($edgeNameSerialized);
         $expectedNodeAggregateId = $expectedNodeIdSerialized !== null ? NodeAggregateId::fromString($expectedNodeIdSerialized) : null;
 
-        $actualNode = $this->getCurrentSubgraph()->findChildNodeConnectedThroughEdgeName($parentNodeAggregateId, $edgeName);
+        $actualNode = $this->getCurrentSubgraph()->findNodeByPath($edgeName, $parentNodeAggregateId);
         Assert::assertSame($actualNode?->nodeAggregateId->value, $expectedNodeAggregateId?->value);
     }
 

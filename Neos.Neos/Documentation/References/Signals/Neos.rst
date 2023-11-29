@@ -3,7 +3,7 @@
 Neos Signals Reference
 ======================
 
-This reference was automatically generated from code on 2023-11-24
+This reference was automatically generated from code on 2023-11-26
 
 
 .. _`Neos Signals Reference: AbstractModuleController (``Neos\Neos\Controller\Module\AbstractModuleController``)`:
