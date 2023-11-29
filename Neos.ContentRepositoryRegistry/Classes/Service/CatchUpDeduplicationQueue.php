@@ -7,7 +7,9 @@ use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
 
 /**
- *
+ * This encapsulates logic to provide exactly once catchUps
+ * across multiple processes, leaving the way catchUps are done
+ * to the ProjectionCatchUpTriggerInterface.
  */
 final readonly class CatchUpDeduplicationQueue
 {
@@ -35,19 +37,19 @@ final readonly class CatchUpDeduplicationQueue
      */
     public function releaseCatchUpLock(string $projectionClassName): void
     {
-        $this->setStopped($projectionClassName);
+        $this->catchUpLock->remove($this->cacheKeyRunning($projectionClassName));
     }
 
     private function triggerCatchUpAndReturnQueued(Projections $projections): Projections
     {
-        $passToCatchUp = [];
+        $projectionsToCatchUp = [];
         $queuedProjections = [];
         foreach ($projections as $projection) {
             if (!$this->isRunning($projection::class)) {
                 $this->run($projection::class);
                 // We are about to start a catchUp and can therefore discard any queue that exists right now, apparently someone else is waiting for it.
                 $this->dequeue($projection::class);
-                $passToCatchUp[] = $projection;
+                $projectionsToCatchUp[] = $projection;
                 continue;
             }
 
@@ -57,7 +59,7 @@ final readonly class CatchUpDeduplicationQueue
             }
         }
 
-        $this->projectionCatchUpTrigger->triggerCatchUp(Projections::fromArray($passToCatchUp));
+        $this->projectionCatchUpTrigger->triggerCatchUp(Projections::fromArray($projectionsToCatchUp));
 
         return Projections::fromArray($queuedProjections);
     }
@@ -104,15 +106,6 @@ final readonly class CatchUpDeduplicationQueue
     private function run(string $projectionClassName): void
     {
         $this->catchUpLock->set($this->cacheKeyRunning($projectionClassName), 1);
-    }
-
-    /**
-     * @param class-string $projectionClassName
-     * @return void
-     */
-    private function setStopped(string $projectionClassName): void
-    {
-        $this->catchUpLock->remove($this->cacheKeyRunning($projectionClassName));
     }
 
     /**
