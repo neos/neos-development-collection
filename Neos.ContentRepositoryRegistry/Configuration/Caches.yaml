@@ -8,4 +8,4 @@ Neos_ContentRepositoryRegistry_CatchUpStates:
   frontend: Neos\Cache\Frontend\VariableFrontend
   backend: Neos\Cache\Backend\FileBackend
   backendOptions:
-    defaultLifetime: 30
+    defaultLifetime: 20

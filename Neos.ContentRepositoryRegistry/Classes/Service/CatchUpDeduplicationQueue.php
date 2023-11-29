@@ -22,12 +22,21 @@ final readonly class CatchUpDeduplicationQueue
     public function requestCatchUp(Projections $projections): void
     {
         $queuedProjections = $this->triggerCatchUpAndReturnQueued($projections);
+
+        /*
+         * Due to the random nature of the retry delay (see below)
+         * we define an absolute time limit spend in this loop as
+         * end condition in case we cannot resolve the queue before.
+         * */
+        $startTime = $currentTime = microtime(true);
         $attempts = 0;
         /** @phpstan-ignore-next-line */
-        while ($queuedProjections->isEmpty() === false) {
+        while ($queuedProjections->isEmpty() === false && ($currentTime - $startTime) < 20) {
+            // incrementally slower retries with some randomness to allow for tie breaks if parallel processes are in this loop.
             usleep(random_int(100, 100 + $attempts) + ($attempts * $attempts * 10));
             $queuedProjections = $this->retryQueued($queuedProjections);
             $attempts++;
+            $currentTime = microtime(true);
         }
     }
 
