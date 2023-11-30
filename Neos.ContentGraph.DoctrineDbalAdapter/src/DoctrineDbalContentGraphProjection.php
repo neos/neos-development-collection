@@ -16,6 +16,7 @@ use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\HierarchyRelation;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRecord;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ContentGraph;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\NodeFactory;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\ProjectionContentGraph;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -83,6 +84,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private DbalCheckpointStorage $checkpointStorage;
 
+    private DimensionSpacePoints $dimensionSpacePoints;
+
     public function __construct(
         private readonly DbalClientInterface $dbalClient,
         private readonly NodeFactory $nodeFactory,
@@ -96,6 +99,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             $this->tableNamePrefix . '_checkpoint',
             self::class
         );
+
+        $this->dimensionSpacePoints = new DimensionSpacePoints($this->dbalClient->getConnection(), $this->tableNamePrefix);
     }
 
     protected function getProjectionContentGraph(): ProjectionContentGraph
@@ -175,6 +180,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_hierarchyrelation');
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_referencerelation');
         $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_restrictionrelation');
+        $connection->executeQuery('TRUNCATE table ' . $this->tableNamePrefix . '_dimensionspacepoints');
     }
 
     public function canHandle(EventInterface $event): bool
@@ -644,7 +650,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   childnodeanchor,
                   `name`,
                   position,
-                  dimensionspacepoint,
                   dimensionspacepointhash,
                   contentstreamid
                 )
@@ -653,7 +658,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   h.childnodeanchor,
                   h.name,
                   h.position,
-                  h.dimensionspacepoint,
                   h.dimensionspacepointhash,
                   "' . $event->newContentStreamId->value . '" AS contentstreamid
                 FROM
@@ -1111,6 +1115,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private function whenDimensionSpacePointWasMoved(DimensionSpacePointWasMoved $event): void
     {
+        $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
         $this->transactional(function () use ($event) {
             // the ordering is important - we first update the OriginDimensionSpacePoints, as we need the
             // hierarchy relations for this query. Then, we update the Hierarchy Relations.
@@ -1150,7 +1155,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 '
                 UPDATE ' . $this->tableNamePrefix . '_hierarchyrelation h
                     SET
-                        h.dimensionspacepoint = :newDimensionSpacePoint,
                         h.dimensionspacepointhash = :newDimensionSpacePointHash
                     WHERE
                       h.dimensionspacepointhash = :originalDimensionSpacePointHash
@@ -1159,7 +1163,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 [
                     'originalDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => $event->target->toJson(),
                     'contentStreamId' => $event->contentStreamId->value
                 ]
             );
@@ -1185,6 +1188,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
 
     private function whenDimensionShineThroughWasAdded(DimensionShineThroughWasAdded $event): void
     {
+        $this->dimensionSpacePoints->insertDimensionSpacePoint($event->target);
         $this->transactional(function () use ($event) {
             // 1) hierarchy relations
             $this->getDatabaseConnection()->executeStatement(
@@ -1194,7 +1198,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   childnodeanchor,
                   `name`,
                   position,
-                  dimensionspacepoint,
                   dimensionspacepointhash,
                   contentstreamid
                 )
@@ -1203,7 +1206,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                   h.childnodeanchor,
                   h.name,
                   h.position,
-                 :newDimensionSpacePoint AS dimensionspacepoint,
                  :newDimensionSpacePointHash AS dimensionspacepointhash,
                   h.contentstreamid
                 FROM
@@ -1214,7 +1216,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     'contentStreamId' => $event->contentStreamId->value,
                     'sourceDimensionSpacePointHash' => $event->source->hash,
                     'newDimensionSpacePointHash' => $event->target->hash,
-                    'newDimensionSpacePoint' => $event->target->toJson(),
                 ]
             );
 

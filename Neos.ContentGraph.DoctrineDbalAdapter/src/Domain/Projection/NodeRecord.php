@@ -15,7 +15,9 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\DBAL\Types\Types;
+use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository\DimensionSpacePoints;
 use Neos\ContentRepository\Core\Feature\NodeModification\Dto\SerializedPropertyValues;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Timestamps;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
@@ -55,7 +57,6 @@ final class NodeRecord
             $tableNamePrefix . '_node',
             [
                 'nodeaggregateid' => $this->nodeAggregateId->value,
-                'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
                 'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
                 'properties' => json_encode($this->properties),
                 'nodetypename' => $this->nodeTypeName->value,
@@ -138,9 +139,11 @@ final class NodeRecord
         ?NodeName $nodeName,
         Timestamps $timestamps,
     ): self {
+        $dimensionSpacePoints = new DimensionSpacePoints($databaseConnection, $tableNamePrefix);
+        $dimensionSpacePoints->insertDimensionSpacePointByHashAndCoordinates($originDimensionSpacePointHash, $originDimensionSpacePoint);
+
         $databaseConnection->insert($tableNamePrefix . '_node', [
             'nodeaggregateid' => $nodeAggregateId->value,
-            'origindimensionspacepoint' => json_encode($originDimensionSpacePoint),
             'origindimensionspacepointhash' => $originDimensionSpacePointHash,
             'properties' => json_encode($properties),
             'nodetypename' => $nodeTypeName->value,
