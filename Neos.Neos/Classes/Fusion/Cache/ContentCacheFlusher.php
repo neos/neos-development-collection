@@ -27,6 +27,10 @@ use Neos\Media\Domain\Model\AssetInterface;
 use Neos\Media\Domain\Model\AssetVariantInterface;
 use Psr\Log\LoggerInterface;
 use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId;
+use Neos\Media\Domain\Service\AssetService;
+use Neos\Neos\AssetUsage\Dto\AssetUsageReference;
+use Neos\Flow\Persistence\PersistenceManagerInterface;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 
 /**
  * This service flushes Fusion content caches triggered by node changes.
@@ -36,17 +40,19 @@ use Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryI
  *   This is the relevant case if publishing a workspace
  *   - where we f.e. need to flush the cache for Live.
  *
- * @Flow\Scope("singleton")
  */
+#[Flow\Scope('singleton')]
 class ContentCacheFlusher
 {
     #[Flow\InjectConfiguration(path: "fusion.contentCacheDebugMode")]
     protected bool $debugMode;
 
-
     public function __construct(
-        protected ContentCache $contentCache,
-        protected LoggerInterface $systemLogger,
+        protected readonly ContentCache $contentCache,
+        protected readonly LoggerInterface $systemLogger,
+        protected readonly AssetService $assetService,
+        protected readonly PersistenceManagerInterface $persistenceManager,
+        protected readonly ContentRepositoryRegistry $contentRepositoryRegistry,
     ) {
     }
 
@@ -251,55 +257,24 @@ class ContentCacheFlusher
     {
         // In Nodes only assets are referenced, never asset variants directly. When an asset
         // variant is updated, it is passed as $asset, but since it is never "used" by any node
-        // no flushing of corresponding entries happens. Thus we instead us the original asset
+        // no flushing of corresponding entries happens. Thus we instead use the original asset
         // of the variant.
         if ($asset instanceof AssetVariantInterface) {
             $asset = $asset->getOriginalAsset();
         }
 
-        // TODO: re-implement this based on the code below
-
-        /*
-        if (!$asset->isInUse()) {
+        if (!$this->assetService->isInUse($asset)) {
             return;
         }
 
-        $cachingHelper = $this->getCachingHelper();
-
+        $tagsToFlush = [];
         foreach ($this->assetService->getUsageReferences($asset) as $reference) {
-            if (!$reference instanceof AssetUsageInNodeProperties) {
+            if (!$reference instanceof AssetUsageReference) {
                 continue;
             }
-
-            $workspaceHash = $cachingHelper->renderWorkspaceTagForContextNode($reference->getWorkspaceName());
-            $this->securityContext->withoutAuthorizationChecks(function () use ($reference, &$node) {
-                $node = $this->getContextForReference($reference)->getNodeByIdentifier($reference->getNodeIdentifier());
-            });
-
-            if (!$node instanceof Node) {
-                $this->systemLogger->warning(sprintf(
-                    'Found a node reference from node with identifier %s in workspace %s to asset %s,'
-                        . ' but the node could not be fetched.',
-                    $reference->getNodeIdentifier(),
-                    $reference->getWorkspaceName(),
-                    $this->persistenceManager->getIdentifierByObject($asset)
-                ), LogEnvironment::fromMethodName(__METHOD__));
-                continue;
-            }
-
-            $this->registerNodeChange($node);
-
-            $assetIdentifier = $this->persistenceManager->getIdentifierByObject($asset);
-            // @see RuntimeContentCache.addTag
-            $tagName = 'AssetDynamicTag_' . $workspaceHash . '_' . $assetIdentifier;
-            $this->addTagToFlush(
-                $tagName,
-                sprintf(
-                    'which were tagged with "%s" because asset "%s" has changed.',
-                    $tagName,
-                    $assetIdentifier
-                )
-            );
-        }*/
+            $contentRepository = $this->contentRepositoryRegistry->get($reference->getContentRepositoryId());
+            $this->flushNodeAggregate($contentRepository, $reference->getContentStreamId(), $reference->getNodeAggregateId());
+        }
+        $this->flushTags($tagsToFlush);
     }
 }
