@@ -154,6 +154,7 @@ final class ContentGraph implements ContentGraphInterface
 
         /** @var \Traversable<NodeAggregate> $nodeAggregates The factory will return a NodeAggregate since the array is not empty */
         $nodeAggregates = $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -177,6 +178,7 @@ final class ContentGraph implements ContentGraphInterface
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -203,6 +205,7 @@ final class ContentGraph implements ContentGraphInterface
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -233,6 +236,7 @@ final class ContentGraph implements ContentGraphInterface
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -271,6 +275,7 @@ final class ContentGraph implements ContentGraphInterface
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -286,6 +291,7 @@ final class ContentGraph implements ContentGraphInterface
     ): iterable {
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId);
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -305,6 +311,7 @@ final class ContentGraph implements ContentGraphInterface
             ->setParameter('relationName', $name->value);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -323,6 +330,7 @@ final class ContentGraph implements ContentGraphInterface
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            /** @phpstan-ignore-next-line  */
             $queryBuilder->execute()->fetchAllAssociative(),
             VisibilityConstraints::withoutRestrictions()
         );
@@ -365,6 +373,7 @@ final class ContentGraph implements ContentGraphInterface
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
             ]);
         $dimensionSpacePoints = [];
+        /** @phpstan-ignore-next-line  */
         foreach ($queryBuilder->execute()->fetchAllAssociative() as $hierarchyRelationData) {
             $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = DimensionSpacePoint::fromJsonString($hierarchyRelationData['dimensionspacepoint']);
         }
@@ -376,11 +385,13 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from($this->tableNamePrefix . '_node');
+        /** @phpstan-ignore-next-line  */
         return (int)$queryBuilder->execute()->fetchOne();
     }
 
     public function findUsedNodeTypeNames(): iterable
     {
+        /** @phpstan-ignore-next-line  */
         $rows = $this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
             ->from($this->tableNamePrefix . '_node')
