@@ -17,6 +17,7 @@ namespace Neos\Neos\Domain\Service;
 
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
@@ -75,9 +76,9 @@ final class SiteNodeUtility
         );
         $rootNode = $rootNodeAggregate->getNodeByCoveredDimensionSpacePoint($dimensionSpacePoint);
 
-        $siteNode = $subgraph->findChildNodeConnectedThroughEdgeName(
-            $rootNode->nodeAggregateId,
-            $site->getNodeName()->toNodeName()
+        $siteNode = $subgraph->findNodeByPath(
+            $site->getNodeName()->toNodeName(),
+            $rootNode->nodeAggregateId
         );
 
         if (!$siteNode) {
