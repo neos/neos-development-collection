@@ -15,8 +15,10 @@ declare(strict_types=1);
 namespace Neos\ContentGraph\DoctrineDbalAdapter\Domain\Repository;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Driver\Exception as DriverException;
+use Doctrine\DBAL\Exception as DBALException;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Result;
 use Neos\ContentGraph\DoctrineDbalAdapter\DoctrineDbalContentGraphProjection;
 use Neos\ContentGraph\DoctrineDbalAdapter\Domain\Projection\NodeRelationAnchorPoint;
 use Neos\ContentRepository\Core\DimensionSpace\DimensionSpacePoint;
@@ -33,7 +35,6 @@ use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindRootNodeAggre
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregates;
 use Neos\ContentRepository\Core\Projection\ContentGraph\VisibilityConstraints;
-use Neos\ContentRepository\Core\SharedModel\Exception\NodeTypeNotFoundException;
 use Neos\ContentRepository\Core\SharedModel\Exception\RootNodeAggregateDoesNotExist;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateClassification;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
@@ -151,14 +152,7 @@ final class ContentGraph implements ContentGraphInterface
                 ->andWhere('n.nodetypename = :nodeTypeName')
                 ->setParameter('nodeTypeName', $filter->nodeTypeName->value);
         }
-
-        /** @var \Traversable<NodeAggregate> $nodeAggregates The factory will return a NodeAggregate since the array is not empty */
-        $nodeAggregates = $this->nodeFactory->mapNodeRowsToNodeAggregates(
-            $queryBuilder->execute()->fetchAllAssociative(),
-            VisibilityConstraints::withoutRestrictions()
-        );
-
-        return NodeAggregates::fromArray(iterator_to_array($nodeAggregates));
+        return NodeAggregates::fromArray(iterator_to_array($this->mapQueryBuilderToNodeAggregates($queryBuilder)));
     }
 
     public function findNodeAggregatesByType(
@@ -175,17 +169,9 @@ final class ContentGraph implements ContentGraphInterface
                 'contentStreamId' => $contentStreamId->value,
                 'nodeTypeName' => $nodeTypeName->value,
             ]);
-
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
-            $queryBuilder->execute()->fetchAllAssociative(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
-    /**
-     * @throws DBALException
-     * @throws \Exception
-     */
     public function findNodeAggregateById(
         ContentStreamId $contentStreamId,
         NodeAggregateId $nodeAggregateId
@@ -203,15 +189,13 @@ final class ContentGraph implements ContentGraphInterface
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
-            $queryBuilder->execute()->fetchAllAssociative(),
+            $this->fetchRows($queryBuilder),
             VisibilityConstraints::withoutRestrictions()
         );
     }
 
     /**
      * @return iterable<NodeAggregate>
-     * @throws DBALException
-     * @throws \Exception
      */
     public function findParentNodeAggregates(
         ContentStreamId $contentStreamId,
@@ -232,16 +216,9 @@ final class ContentGraph implements ContentGraphInterface
                 'contentStreamId' => $contentStreamId->value
             ]);
 
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
-            $queryBuilder->execute()->fetchAllAssociative(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
-    /**
-     * @throws DBALException
-     * @throws \Exception
-     */
     public function findParentNodeAggregateByChildOriginDimensionSpacePoint(
         ContentStreamId $contentStreamId,
         NodeAggregateId $childNodeAggregateId,
@@ -271,29 +248,24 @@ final class ContentGraph implements ContentGraphInterface
             ]);
 
         return $this->nodeFactory->mapNodeRowsToNodeAggregate(
-            $queryBuilder->execute()->fetchAllAssociative(),
+            $this->fetchRows($queryBuilder),
             VisibilityConstraints::withoutRestrictions()
         );
     }
 
     /**
      * @return iterable<NodeAggregate>
-     * @throws DBALException|\Exception
      */
     public function findChildNodeAggregates(
         ContentStreamId $contentStreamId,
         NodeAggregateId $parentNodeAggregateId
     ): iterable {
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId);
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
-            $queryBuilder->execute()->fetchAllAssociative(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     /**
      * @return iterable<NodeAggregate>
-     * @throws DBALException|NodeTypeNotFoundException
      */
     public function findChildNodeAggregatesByName(
         ContentStreamId $contentStreamId,
@@ -303,16 +275,11 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId)
             ->andWhere('ch.name = :relationName')
             ->setParameter('relationName', $name->value);
-
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
-            $queryBuilder->execute()->fetchAllAssociative(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     /**
      * @return iterable<NodeAggregate>
-     * @throws DBALException|NodeTypeNotFoundException
      */
     public function findTetheredChildNodeAggregates(
         ContentStreamId $contentStreamId,
@@ -321,11 +288,7 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->buildChildNodeAggregateQuery($parentNodeAggregateId, $contentStreamId)
             ->andWhere('cn.classification = :tetheredClassification')
             ->setParameter('tetheredClassification', NodeAggregateClassification::CLASSIFICATION_TETHERED->value);
-
-        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
-            $queryBuilder->execute()->fetchAllAssociative(),
-            VisibilityConstraints::withoutRestrictions()
-        );
+        return $this->mapQueryBuilderToNodeAggregates($queryBuilder);
     }
 
     /**
@@ -335,7 +298,6 @@ final class ContentGraph implements ContentGraphInterface
      * @param OriginDimensionSpacePoint $parentNodeOriginDimensionSpacePoint
      * @param DimensionSpacePointSet $dimensionSpacePointsToCheck
      * @return DimensionSpacePointSet
-     * @throws DBALException
      */
     public function getDimensionSpacePointsOccupiedByChildNodeName(
         ContentStreamId $contentStreamId,
@@ -365,7 +327,7 @@ final class ContentGraph implements ContentGraphInterface
                 'dimensionSpacePointHashes' => Connection::PARAM_STR_ARRAY,
             ]);
         $dimensionSpacePoints = [];
-        foreach ($queryBuilder->execute()->fetchAllAssociative() as $hierarchyRelationData) {
+        foreach ($this->fetchRows($queryBuilder) as $hierarchyRelationData) {
             $dimensionSpacePoints[$hierarchyRelationData['dimensionspacepointhash']] = DimensionSpacePoint::fromJsonString($hierarchyRelationData['dimensionspacepoint']);
         }
         return new DimensionSpacePointSet($dimensionSpacePoints);
@@ -376,15 +338,22 @@ final class ContentGraph implements ContentGraphInterface
         $queryBuilder = $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from($this->tableNamePrefix . '_node');
-        return (int)$queryBuilder->execute()->fetchOne();
+        $result = $queryBuilder->execute();
+        if (!$result instanceof Result) {
+            throw new \RuntimeException(sprintf('Failed to count nodes. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701444550);
+        }
+        try {
+            return (int)$result->fetchOne();
+        } catch (DriverException | DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444590, $e);
+        }
     }
 
     public function findUsedNodeTypeNames(): iterable
     {
-        $rows = $this->createQueryBuilder()
+        $rows = $this->fetchRows($this->createQueryBuilder()
             ->select('DISTINCT nodetypename')
-            ->from($this->tableNamePrefix . '_node')
-            ->execute()->fetchAllAssociative();
+            ->from($this->tableNamePrefix . '_node'));
         return array_map(static fn (array $row) => NodeTypeName::fromString($row['nodetypename']), $rows);
     }
 
@@ -419,5 +388,33 @@ final class ContentGraph implements ContentGraphInterface
     private function createQueryBuilder(): QueryBuilder
     {
         return $this->client->getConnection()->createQueryBuilder();
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @return iterable<NodeAggregate>
+     */
+    private function mapQueryBuilderToNodeAggregates(QueryBuilder $queryBuilder): iterable
+    {
+        return $this->nodeFactory->mapNodeRowsToNodeAggregates(
+            $this->fetchRows($queryBuilder),
+            VisibilityConstraints::withoutRestrictions()
+        );
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    private function fetchRows(QueryBuilder $queryBuilder): array
+    {
+        $result = $queryBuilder->execute();
+        if (!$result instanceof Result) {
+            throw new \RuntimeException(sprintf('Failed to execute query. Expected result to be of type %s, got: %s', Result::class, get_debug_type($result)), 1701443535);
+        }
+        try {
+            return $result->fetchAllAssociative();
+        } catch (DriverException | DBALException $e) {
+            throw new \RuntimeException(sprintf('Failed to fetch rows from database: %s', $e->getMessage()), 1701444358, $e);
+        }
     }
 }
