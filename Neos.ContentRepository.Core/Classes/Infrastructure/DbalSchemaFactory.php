@@ -63,8 +63,7 @@ final class DbalSchemaFactory
      */
     public static function columnForNodeAnchorPoint(string $columnName): Column
     {
-        return (new Column($columnName, Type::getType(Types::BINARY)))
-            ->setLength(36)
+        return (new Column($columnName, Type::getType(Types::BIGINT)))
             ->setNotnull(true);
     }
 

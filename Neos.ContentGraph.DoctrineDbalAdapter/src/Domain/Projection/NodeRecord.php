@@ -52,7 +52,6 @@ final class NodeRecord
     public function addToDatabase(Connection $databaseConnection, string $tableNamePrefix): void
     {
         $databaseConnection->insert($tableNamePrefix . '_node', [
-            'relationanchorpoint' => $this->relationAnchorPoint->value,
             'nodeaggregateid' => $this->nodeAggregateId->value,
             'origindimensionspacepoint' => json_encode($this->originDimensionSpacePoint),
             'origindimensionspacepointhash' => $this->originDimensionSpacePointHash,
@@ -69,6 +68,8 @@ final class NodeRecord
             'lastmodified' => Types::DATETIME_IMMUTABLE,
             'originallastmodified' => Types::DATETIME_IMMUTABLE,
         ]);
+
+        $this->relationAnchorPoint = NodeRelationAnchorPoint::fromInteger((int)$databaseConnection->lastInsertId());
     }
 
     /**
@@ -118,7 +119,7 @@ final class NodeRecord
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            NodeRelationAnchorPoint::fromString($databaseRow['relationanchorpoint']),
+            NodeRelationAnchorPoint::fromInteger((int)$databaseRow['relationanchorpoint']),
             NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],

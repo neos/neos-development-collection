@@ -441,6 +441,8 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             ),
         );
 
+        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+
         // reconnect parent relations
         $missingParentRelations = $visibleInDimensionSpacePoints->points;
 
@@ -466,7 +468,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                     $this->connectHierarchy(
                         $contentStreamId,
                         $parentNode->relationAnchorPoint,
-                        $nodeRelationAnchorPoint,
+                        $node->relationAnchorPoint,
                         new DimensionSpacePointSet([$dimensionSpacePoint]),
                         $succeedingSibling?->relationAnchorPoint,
                         $nodeName
@@ -474,8 +476,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 }
             }
         }
-
-        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
     }
 
     /**
@@ -1114,7 +1114,7 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 ]
             );
             while ($res = $rel->fetchAssociative()) {
-                $relationAnchorPoint = NodeRelationAnchorPoint::fromString($res['relationanchorpoint']);
+                $relationAnchorPoint = NodeRelationAnchorPoint::fromInteger($res['relationanchorpoint']);
                 $this->updateNodeRecordWithCopyOnWrite(
                     $event->contentStreamId,
                     $relationAnchorPoint,

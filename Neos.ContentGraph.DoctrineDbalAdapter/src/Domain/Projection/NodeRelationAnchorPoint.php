@@ -24,28 +24,28 @@ use Neos\ContentRepository\Core\SharedModel\Id\UuidFactory;
 class NodeRelationAnchorPoint implements \JsonSerializable
 {
     private function __construct(
-        public readonly string $value
+        public readonly int $value
     ) {
     }
 
     public static function create(): self
     {
-        return new self(UuidFactory::create());
+        return new self(-1);
     }
 
     public static function forRootEdge(): self
     {
-        return new self('00000000-0000-0000-0000-000000000000');
+        return new self(0);
     }
 
-    public static function fromString(string $value): self
+    public static function fromInteger(int $value): self
     {
         return new self($value);
     }
 
     public function jsonSerialize(): string
     {
-        return $this->value;
+        return (string)$this->value;
     }
 
     public function equals(self $other): bool
