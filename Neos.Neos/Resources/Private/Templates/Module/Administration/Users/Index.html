@@ -24,13 +24,13 @@
 			<table class="neos-table users-table">
 					<thead>
 						<tr>
-							<th>
+							<th title="{neos:backend.translate(id: 'users.sortBy.fullName', source: 'Modules', package: 'Neos.Neos')}">
 								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'name.fullName', labelIdentifier:'users.name'}" />
 							</th>
-							<th>
+							<th title="{neos:backend.translate(id: 'users.sortBy.accountsAndRoles', source: 'Modules', package: 'Neos.Neos')}">
 								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'accounts.accountIdentifier', labelIdentifier:'users.accountsAndRoles'}" />
 							</th>
-							<th>
+							<th title="{neos:backend.translate(id: 'users.sortBy.lastLogin', source: 'Modules', package: 'Neos.Neos')}">
 								<f:render section="headerLabel" arguments="{sortDirection:sortDirection, sortBy:sortBy, sortingField:'accounts.lastSuccessfulAuthenticationDate', labelIdentifier:'users.lastLogin'}" />
 							</th>
 							<th>&nbsp;</th>
