@@ -41,3 +41,20 @@ Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection
   arguments:
     1:
       value: Neos_ContentRepositoryRegistry_CatchUpStates
+
+'Neos.ContentRepositoryRegistry:DbalConnection':
+  className: Doctrine\DBAL\Connection
+  factoryObjectName: Neos\ContentRepositoryRegistry\DoctrineDbalClient\DoctrineDbalClient
+  factoryMethodName: getConnection
+
+'Neos.ContentRepositoryRegistry:QueueLockStorage':
+  className: Symfony\Component\Lock\Store\DoctrineDbalStore
+  arguments:
+    1:
+      object: 'Neos.ContentRepositoryRegistry:DbalConnection'
+
+'Neos.ContentRepositoryRegistry:QueueLockFactory':
+  className: Symfony\Component\Lock\LockFactory
+  arguments:
+    1:
+      object: 'Neos.ContentRepositoryRegistry:QueueLockStorage'

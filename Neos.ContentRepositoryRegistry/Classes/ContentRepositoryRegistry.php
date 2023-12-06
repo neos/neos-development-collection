@@ -32,6 +32,9 @@ use Neos\Flow\ObjectManagement\ObjectManagerInterface;
 use Neos\Utility\Arrays;
 use Neos\Utility\PositionalArraySorter;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\PersistingStoreInterface;
+use Symfony\Component\Lock\Store\DoctrineDbalStore;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Serializer;
@@ -238,14 +241,20 @@ final class ContentRepositoryRegistry
         }
         $projectionCatchUpTrigger = $projectionCatchUpTriggerFactory->build($contentRepositoryId, $contentRepositorySettings['projectionCatchUpTrigger']['options'] ?? []);
 
-        $catchUpStateCache = $this->objectManager->get('Neos.ContentRepositoryRegistry:CacheCatchUpStates');
-        if (!$catchUpStateCache instanceof FrontendInterface) {
-            throw InvalidConfigurationException::fromMessage('The virtual object "Neos.ContentRepositoryRegistry:CacheCatchUpStates" must provide a Cache Frontend, but is "%s".', get_debug_type($catchUpStateCache));
+        $catchUpStateLockStorage = $this->objectManager->get('Neos.ContentRepositoryRegistry:QueueLockStorage');
+        if (!$catchUpStateLockStorage instanceof PersistingStoreInterface) {
+            throw InvalidConfigurationException::fromMessage('The virtual object "Neos.ContentRepositoryRegistry:QueueLockStorage" must provide a \Symfony\Component\Lock\PersistingStoreInterface, but is "%s".', get_debug_type($catchUpStateLockStorage));
+        }
+        if ($catchUpStateLockStorage instanceof DoctrineDbalStore) {
+            try {
+                // hack to ensure tables exist for Dbal
+                $catchUpStateLockStorage->createTable();
+            } catch (\Doctrine\DBAL\Exception\TableExistsException $_) {}
         }
 
         return new CatchUpDeduplicationQueue(
             $contentRepositoryId,
-            $catchUpStateCache,
+            new LockFactory($catchUpStateLockStorage),
             $projectionCatchUpTrigger
         );
     }

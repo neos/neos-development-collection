@@ -1,10 +1,10 @@
 <?php
 namespace Neos\ContentRepositoryRegistry\Service;
 
-use Neos\Cache\Frontend\FrontendInterface;
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
 use Neos\ContentRepository\Core\Projection\ProjectionCatchUpTriggerInterface;
 use Neos\ContentRepository\Core\Projection\Projections;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * This encapsulates logic to provide exactly once catchUps
@@ -15,7 +15,7 @@ final readonly class CatchUpDeduplicationQueue
 {
     public function __construct(
         private ContentRepositoryId $contentRepositoryId,
-        private FrontendInterface $catchUpLock,
+        private LockFactory $lockFactoy,
         private ProjectionCatchUpTriggerInterface $projectionCatchUpTrigger
     ) {}
 
@@ -46,7 +46,8 @@ final readonly class CatchUpDeduplicationQueue
      */
     public function releaseCatchUpLock(string $projectionClassName): void
     {
-        $this->catchUpLock->remove($this->cacheKeyRunning($projectionClassName));
+        $runningLock = $this->lockFactoy->createLock($this->cacheKeyRunning($projectionClassName));
+        $runningLock->isAcquired() && $runningLock->release();
     }
 
     private function triggerCatchUpAndReturnQueued(Projections $projections): Projections
@@ -54,16 +55,16 @@ final readonly class CatchUpDeduplicationQueue
         $projectionsToCatchUp = [];
         $queuedProjections = [];
         foreach ($projections as $projection) {
-            if (!$this->isRunning($projection::class)) {
-                $this->run($projection::class);
+            $runningLock = $this->lockFactoy->createLock($this->cacheKeyRunning($projection::class));
+            $queuedLock = $this->lockFactoy->createLock($this->cacheKeyQueued($projection::class));
+            if ($runningLock->acquire()) {
                 // We are about to start a catchUp and can therefore discard any queue that exists right now, apparently someone else is waiting for it.
-                $this->dequeue($projection::class);
+                $queuedLock->release();
                 $projectionsToCatchUp[] = $projection;
                 continue;
             }
 
-            if (!$this->isQueued($projection::class)) {
-                $this->queue($projection::class);
+            if ($queuedLock->acquire()) {
                 $queuedProjections[] = $projection;
             }
         }
@@ -77,16 +78,19 @@ final readonly class CatchUpDeduplicationQueue
     {
         $passToCatchUp = [];
         $stillQueuedProjections = [];
+
         foreach ($queuedProjections as $projection) {
-            if (!$this->isQueued($projection::class)) {
+            $runningLock = $this->lockFactoy->createLock($this->cacheKeyRunning($projection::class));
+            $queuedLock = $this->lockFactoy->createLock($this->cacheKeyQueued($projection::class));
+
+            if (!$queuedLock->isAcquired()) {
                 // was dequeued, we can drop it
                 continue;
             }
 
-            if (!$this->isRunning($projection::class)) {
-                $this->run($projection::class);
+            if ($runningLock->acquire()) {
                 // We are about to start a catchUp and can therefore discard any queue that exists right now, apparently someone else is waiting for it.
-                $this->dequeue($projection::class);
+                $queuedLock->release();
                 $passToCatchUp[] = $projection;
                 continue;
             }
@@ -97,51 +101,6 @@ final readonly class CatchUpDeduplicationQueue
         $this->projectionCatchUpTrigger->triggerCatchUp(Projections::fromArray($passToCatchUp));
 
         return Projections::fromArray($stillQueuedProjections);
-    }
-
-    /**
-     * @param class-string $projectionClassName
-     * @return bool
-     */
-    private function isRunning(string $projectionClassName): bool
-    {
-        return $this->catchUpLock->has($this->cacheKeyRunning($projectionClassName));
-    }
-
-    /**
-     * @param class-string $projectionClassName
-     * @return void
-     */
-    private function run(string $projectionClassName): void
-    {
-        $this->catchUpLock->set($this->cacheKeyRunning($projectionClassName), 1);
-    }
-
-    /**
-     * @param class-string $projectionClassName
-     * @return bool
-     */
-    private function isQueued(string $projectionClassName): bool
-    {
-        return $this->catchUpLock->has($this->cacheKeyQueued($projectionClassName));
-    }
-
-    /**
-     * @param class-string $projectionClassName
-     * @return void
-     */
-    private function queue(string $projectionClassName): void
-    {
-        $this->catchUpLock->set($this->cacheKeyQueued($projectionClassName), 1);
-    }
-
-    /**
-     * @param class-string $projectionClassName
-     * @return void
-     */
-    private function dequeue(string $projectionClassName): void
-    {
-        $this->catchUpLock->remove($this->cacheKeyQueued($projectionClassName));
     }
 
     /**

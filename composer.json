@@ -26,6 +26,7 @@
         "neos/behat": "^9.0",
         "neos/contentrepositoryregistry-storageclient": "self.version",
         "symfony/property-access": "^5.4|^6.0",
+        "symfony/lock": "^6.0.0",
         "neos/fluid-adaptor": "*",
         "neos/cache": "*",
         "neos/eel": "*",
