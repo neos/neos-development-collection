@@ -618,8 +618,8 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $name = $newName !== null ? $newName : $this->getName();
         $referenceParentNode = $referenceNode->getParent();
 
-        if ($referenceParentNode !== $this->getParent() && $referenceParentNode->getNode($name) !== null) {
-            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $name), 1292503468);
+        if ($referenceParentNode !== $this->getParent() && $referenceParentNode->getNode($name) === $this) {
+            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $this->getPath()), 1292503468);
         }
 
         if (($referenceParentNode instanceof Node && !$referenceParentNode->willChildNodeBeAutoCreated($name)) && !$referenceParentNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
@@ -665,8 +665,8 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
         $name = $newName !== null ? $newName : $this->getName();
         $referenceParentNode = $referenceNode->getParent();
 
-        if ($referenceParentNode !== $this->getParent() && $referenceParentNode->getNode($name) !== null) {
-            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $name), 1292503469);
+        if ($referenceParentNode !== $this->getParent() && $referenceParentNode->getNode($name) === $this) {
+            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $this->getPath()), 1292503469);
         }
 
         if (($referenceParentNode instanceof Node && !$referenceParentNode->willChildNodeBeAutoCreated($name)) && !$referenceParentNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
@@ -711,8 +711,8 @@ class Node implements NodeInterface, CacheAwareInterface, TraversableNodeInterfa
 
         $name = $newName !== null ? $newName : $this->getName();
 
-        if ($referenceNode !== $this->getParent() && $referenceNode->getNode($name) !== null) {
-            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $name), 1292503470);
+        if ($referenceNode !== $this->getParent() && $referenceNode->getNode($name) === $this) {
+            throw new NodeExistsException(sprintf('Node with path "%s" already exists.', $this->getPath()), 1292503470);
         }
 
         if (($referenceNode instanceof Node && !$referenceNode->willChildNodeBeAutoCreated($name)) && !$referenceNode->isNodeTypeAllowedAsChildNode($this->getNodeType())) {
