@@ -11,6 +11,7 @@ use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMapping;
 use Neos\ContentRepository\Core\Feature\NodeMove\Dto\CoverageNodeMoveMappings;
 use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindChildNodesFilter;
 use Neos\ContentRepository\Core\Projection\ContentGraph\NodeAggregate;
+use Neos\ContentRepository\Core\Projection\ContentGraph\NodePath;
 use Neos\ContentRepository\Core\SharedModel\Node\NodeAggregateId;
 use Neos\ContentRepository\Core\SharedModel\Workspace\ContentStreamId;
 use Neos\ContentRepository\Core\Feature\NodeMove\Event\NodeAggregateWasMoved;
@@ -73,9 +74,9 @@ class TetheredNodeAdjustments
                         $originDimensionSpacePoint->toDimensionSpacePoint(),
                         VisibilityConstraints::withoutRestrictions()
                     );
-                    $tetheredNode = $subgraph->findChildNodeConnectedThroughEdgeName(
+                    $tetheredNode = $subgraph->findNodeByPath(
+                        $tetheredNodeName,
                         $nodeAggregate->nodeAggregateId,
-                        $tetheredNodeName
                     );
                     if ($tetheredNode === null) {
                         $foundMissingOrDisallowedTetheredNodes = true;
