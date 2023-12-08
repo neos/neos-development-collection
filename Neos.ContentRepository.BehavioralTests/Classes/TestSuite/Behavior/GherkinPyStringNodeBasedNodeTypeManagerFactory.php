@@ -72,6 +72,6 @@ final class GherkinPyStringNodeBasedNodeTypeManagerFactory implements NodeTypeMa
 
     private static function cacheFileName(ContentRepositoryId $contentRepositoryId): string
     {
-        return '/tmp/nodeTypesConfiguration_' . $contentRepositoryId->value . '.json';
+        return sys_get_temp_dir() . 'nodeTypesConfiguration_' . $contentRepositoryId->value . '.json';
     }
 }

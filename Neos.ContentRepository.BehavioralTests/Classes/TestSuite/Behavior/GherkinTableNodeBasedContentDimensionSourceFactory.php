@@ -34,6 +34,6 @@ class GherkinTableNodeBasedContentDimensionSourceFactory implements ContentDimen
 
     private static function cacheFileName(ContentRepositoryId $contentRepositoryId): string
     {
-        return '/tmp/contentDimensionsConfiguration_' . $contentRepositoryId->value . '.json';
+        return sys_get_temp_dir() . 'contentDimensionsConfiguration_' . $contentRepositoryId->value . '.json';
     }
 }
