@@ -268,8 +268,9 @@ class AssetRepository extends Repository
             return;
         }
 
-        $constraints = $query->getConstraint();
-        $query->matching($query->logicalAnd([$constraints, $query->contains('assetCollections', $assetCollection)]));
+        $query->getQueryBuilder()->andWhere(
+            $query->contains('assetCollections', $assetCollection)
+        );
     }
 
     /**
