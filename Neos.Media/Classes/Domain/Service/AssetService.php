@@ -323,7 +323,9 @@ class AssetService
                     $variant->refresh();
                     foreach ($variant->getAdjustments() as $adjustment) {
                         if (method_exists($adjustment, 'refit') && $this->imageService->getImageSize($originalAssetResource) !== $this->imageService->getImageSize($resource)) {
-                            $adjustment->refit($asset);
+                            if ($asset instanceof ImageInterface && $asset->getWidth() !== null && $asset->getHeight() !== null) {
+                                $adjustment->refit($asset);
+                            }
                         }
                     }
                     $this->getRepository($variant)->update($variant);
