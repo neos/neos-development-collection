@@ -14,6 +14,15 @@ final readonly class ConstraintCheck
     private function __construct(
         private array $constraints
     ) {
+        foreach ($this->constraints as $constraint => $value) {
+            /** @phpstan-ignore-next-line */
+            if (!(is_string($constraint) && is_bool($value))) {
+                throw new \RuntimeException(
+                    sprintf('Constraints must be declared as an array of NodeType names with boolean as values. Got %s.', json_encode([$constraint => $value])),
+                    1702374249
+                );
+            }
+        }
     }
 
     /**
