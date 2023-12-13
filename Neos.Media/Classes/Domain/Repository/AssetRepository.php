@@ -287,7 +287,7 @@ class AssetRepository extends Repository
         }
 
         $constraints = $query->getConstraint();
-        $query->matching($query->logicalAnd([$constraints], $query->logicalAnd($variantsConstraints)));
+        $query->matching($query->logicalAnd([$constraints, $query->logicalAnd($variantsConstraints)]));
     }
 
     /**
