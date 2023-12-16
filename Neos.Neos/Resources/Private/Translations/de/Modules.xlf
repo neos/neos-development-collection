@@ -554,15 +554,12 @@
       </trans-unit>
       <trans-unit id="users.sortBy.fullName" xml:space="preserve">
 				<source>Sort by first and last name</source>
-        <target>Sortiere nach Vor- und Nachname</target>
       </trans-unit>
       <trans-unit id="users.sortBy.accountsAndRoles" xml:space="preserve">
 				<source>Sort by user accounts and roles</source>
-        <target>Sortiere nach Benutzerkonten und Rollen</target>
       </trans-unit>
       <trans-unit id="users.sortBy.lastLogin" xml:space="preserve">
 				<source>Sort by last login</source>
-        <target>Sortieren nach letzter Anmeldung</target>
       </trans-unit>
       <trans-unit id="packages.label" xml:space="preserve" approved="yes">
 				<source>Package Management</source>
