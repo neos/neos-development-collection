@@ -81,7 +81,8 @@ final class ContentRepository
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
         private readonly LockFactory $lockFactory,
-    ) {}
+    ) {
+    }
 
     /**
      * The only API to send commands (mutation intentions) to the system.

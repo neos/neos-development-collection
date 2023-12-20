@@ -1,4 +1,5 @@
 <?php
+
 namespace Neos\ContentRepository\Core\Projection;
 
 use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
@@ -8,8 +9,9 @@ use Neos\ContentRepository\Core\Factory\ContentRepositoryId;
  */
 final class ProjectionCatchUpLockIdentifier
 {
-
-    private function __construct(public string $value) {}
+    private function __construct(public string $value)
+    {
+    }
 
     private static function generateIdentifier(ContentRepositoryId $contentRepositoryId, string $projectionClassName): string
     {
