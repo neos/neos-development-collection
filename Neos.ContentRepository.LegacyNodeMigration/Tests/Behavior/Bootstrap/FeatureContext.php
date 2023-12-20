@@ -62,6 +62,11 @@ class FeatureContext implements Context
      */
     private array $loggedErrors = [];
 
+    /**
+     * @var array<string>
+     */
+    private array $loggedWarnings = [];
+
     private ContentRepository $contentRepository;
 
     protected ContentRepositoryRegistry $contentRepositoryRegistry;
@@ -141,6 +146,8 @@ class FeatureContext implements Context
         $migration->onMessage(function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
             }
         });
         $this->lastMigrationResult = $migration->run();
@@ -186,10 +193,19 @@ class FeatureContext implements Context
     /**
      * @Then I expect the following errors to be logged
      */
-    public function iExpectTheFollwingErrorsToBeLogged(TableNode $table): void
+    public function iExpectTheFollowingErrorsToBeLogged(TableNode $table): void
     {
         Assert::assertSame($table->getColumn(0), $this->loggedErrors, 'Expected logged errors do not match');
         $this->loggedErrors = [];
+    }
+
+    /**
+     * @Then I expect the following warnings to be logged
+     */
+    public function iExpectTheFollowingWarningsToBeLogged(TableNode $table): void
+    {
+        Assert::assertSame($table->getColumn(0), $this->loggedWarnings, 'Expected logged warnings do not match');
+        $this->loggedWarnings = [];
     }
 
     /**
@@ -307,6 +323,8 @@ class FeatureContext implements Context
         $migration->onMessage(function (Severity $severity, string $message) {
             if ($severity === Severity::ERROR) {
                 $this->loggedErrors[] = $message;
+            } elseif ($severity === Severity::WARNING) {
+                $this->loggedWarnings[] = $message;
             }
         });
         $this->lastMigrationResult = $migration->run();
