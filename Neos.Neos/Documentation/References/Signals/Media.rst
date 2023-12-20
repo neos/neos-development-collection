@@ -3,7 +3,7 @@
 Media Signals Reference
 =======================
 
-This reference was automatically generated from code on 2023-12-19
+This reference was automatically generated from code on 2023-12-20
 
 
 .. _`Media Signals Reference: AssetCollectionController (``Neos\Media\Browser\Controller\AssetCollectionController``)`:
