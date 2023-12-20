@@ -146,6 +146,7 @@ final class ContentRepositoryRegistry
                 $this->buildCatchUpDeduplicationQueue($contentRepositoryId, $contentRepositorySettings),
                 $this->buildUserIdProvider($contentRepositoryId, $contentRepositorySettings),
                 $clock,
+                $this->objectManager->get('Neos.ContentRepositoryRegistry:QueueLockStorage')
             );
         } catch (\Exception $exception) {
             throw InvalidConfigurationException::fromException($contentRepositoryId, $exception);
@@ -254,7 +255,7 @@ final class ContentRepositoryRegistry
 
         return new CatchUpDeduplicationQueue(
             $contentRepositoryId,
-            new LockFactory($catchUpStateLockStorage),
+            $catchUpStateLockStorage,
             $projectionCatchUpTrigger
         );
     }

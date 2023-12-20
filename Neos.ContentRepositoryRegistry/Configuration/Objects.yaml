@@ -52,9 +52,3 @@ Neos\ContentRepository\Core\Projection\NodeHiddenState\NodeHiddenStateProjection
   arguments:
     1:
       object: 'Neos.ContentRepositoryRegistry:DbalConnection'
-
-'Neos.ContentRepositoryRegistry:QueueLockFactory':
-  className: Symfony\Component\Lock\LockFactory
-  arguments:
-    1:
-      object: 'Neos.ContentRepositoryRegistry:QueueLockStorage'

@@ -33,6 +33,8 @@ use Neos\ContentRepository\Core\SharedModel\User\UserIdProviderInterface;
 use Neos\ContentRepositoryRegistry\Service\CatchUpDeduplicationQueue;
 use Neos\EventStore\EventStoreInterface;
 use Psr\Clock\ClockInterface;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\PersistingStoreInterface;
 use Symfony\Component\Serializer\Serializer;
 
 /**
@@ -55,6 +57,7 @@ final class ContentRepositoryFactory
         private readonly CatchUpDeduplicationQueue $catchUpDeduplicationQueue,
         private readonly UserIdProviderInterface $userIdProvider,
         private readonly ClockInterface $clock,
+        private readonly PersistingStoreInterface $lockStorage
     ) {
         $contentDimensionZookeeper = new ContentDimensionZookeeper($contentDimensionSource);
         $interDimensionalVariationGraph = new InterDimensionalVariationGraph(
@@ -100,7 +103,7 @@ final class ContentRepositoryFactory
                 $this->projectionFactoryDependencies->contentDimensionSource,
                 $this->userIdProvider,
                 $this->clock,
-                $this->catchUpDeduplicationQueue
+                new LockFactory($this->lockStorage)
             );
         }
         return $this->contentRepository;
