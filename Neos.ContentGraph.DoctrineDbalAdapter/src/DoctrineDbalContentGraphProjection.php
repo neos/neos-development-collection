@@ -234,27 +234,26 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
      */
     private function whenRootNodeAggregateWithNodeWasCreated(RootNodeAggregateWithNodeWasCreated $event, EventEnvelope $eventEnvelope): void
     {
-        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
-        $node = new NodeRecord(
-            $nodeRelationAnchorPoint,
-            $event->nodeAggregateId,
-            $originDimensionSpacePoint->coordinates,
-            $originDimensionSpacePoint->hash,
-            SerializedPropertyValues::createEmpty(),
-            $event->nodeTypeName,
-            $event->nodeAggregateClassification,
-            null,
-            Timestamps::create(
-                $eventEnvelope->recordedAt,
-                self::initiatingDateTime($eventEnvelope),
+        $this->transactional(function () use ($event, $eventEnvelope) {
+            $originDimensionSpacePoint = OriginDimensionSpacePoint::createWithoutDimensions();
+            $node = NodeRecord::createNewInDatabase(
+                $this->getDatabaseConnection(),
+                $this->tableNamePrefix,
+                $event->nodeAggregateId,
+                $originDimensionSpacePoint->coordinates,
+                $originDimensionSpacePoint->hash,
+                SerializedPropertyValues::createEmpty(),
+                $event->nodeTypeName,
+                $event->nodeAggregateClassification,
                 null,
-                null,
-            ),
-        );
+                Timestamps::create(
+                    $eventEnvelope->recordedAt,
+                    self::initiatingDateTime($eventEnvelope),
+                    null,
+                    null,
+                ),
+            );
 
-        $this->transactional(function () use ($node, $event) {
-            $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
             $this->connectHierarchy(
                 $event->contentStreamId,
                 NodeRelationAnchorPoint::forRootEdge(),
@@ -423,9 +422,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         ?NodeName $nodeName,
         EventEnvelope $eventEnvelope,
     ): void {
-        $nodeRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $node = new NodeRecord(
-            $nodeRelationAnchorPoint,
+        $node = NodeRecord::createNewInDatabase(
+            $this->getDatabaseConnection(),
+            $this->tableNamePrefix,
             $nodeAggregateId,
             $originDimensionSpacePoint->jsonSerialize(),
             $originDimensionSpacePoint->hash,
@@ -440,8 +439,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 null,
             ),
         );
-
-        $node->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
         // reconnect parent relations
         $missingParentRelations = $visibleInDimensionSpacePoints->points;
@@ -960,9 +957,9 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
         OriginDimensionSpacePoint $originDimensionSpacePoint,
         EventEnvelope $eventEnvelope,
     ): NodeRecord {
-        $copyRelationAnchorPoint = NodeRelationAnchorPoint::create();
-        $copy = new NodeRecord(
-            $copyRelationAnchorPoint,
+        return NodeRecord::createNewInDatabase(
+            $this->getDatabaseConnection(),
+            $this->tableNamePrefix,
             $sourceNode->nodeAggregateId,
             $originDimensionSpacePoint->coordinates,
             $originDimensionSpacePoint->hash,
@@ -977,9 +974,6 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
                 null,
             ),
         );
-        $copy->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
-
-        return $copy;
     }
 
     private function whenNodeAggregateTypeWasChanged(NodeAggregateTypeWasChanged $event, EventEnvelope $eventEnvelope): void
@@ -1015,11 +1009,11 @@ final class DoctrineDbalContentGraphProjection implements ProjectionInterface, W
             // thus we do not care about different DimensionSpacePoints here (but we copy all edges)
 
             // 1) fetch node, adjust properties, assign new Relation Anchor Point
-            /** @var NodeRecord $copiedNode The anchor point appears in a content stream, so there must be a node */
-            $copiedNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
-            $copiedNode->relationAnchorPoint = NodeRelationAnchorPoint::create();
+            /** @var NodeRecord $originalNode The anchor point appears in a content stream, so there must be a node */
+            $originalNode = $this->projectionContentGraph->getNodeByAnchorPoint($anchorPoint);
+            $copiedNode = NodeRecord::createCopyFromNodeRecord($this->getDatabaseConnection(), $this->tableNamePrefix, $originalNode);
             $result = $operations($copiedNode);
-            $copiedNode->addToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
+            $copiedNode->updateToDatabase($this->getDatabaseConnection(), $this->tableNamePrefix);
 
             // 2) reconnect all edges belonging to this content stream to the new "copied node".
             // IMPORTANT: We need to reconnect BOTH the incoming and outgoing edges.
