@@ -86,13 +86,13 @@ final class NodeRecord
     }
 
     /**
-     * @param array<string,string> $databaseRow
+     * @param array<string,mixed> $databaseRow
      * @throws \Exception
      */
     public static function fromDatabaseRow(array $databaseRow): self
     {
         return new self(
-            NodeRelationAnchorPoint::fromInteger((int)$databaseRow['relationanchorpoint']),
+            NodeRelationAnchorPoint::fromInteger($databaseRow['relationanchorpoint']),
             NodeAggregateId::fromString($databaseRow['nodeaggregateid']),
             json_decode($databaseRow['origindimensionspacepoint'], true),
             $databaseRow['origindimensionspacepointhash'],
