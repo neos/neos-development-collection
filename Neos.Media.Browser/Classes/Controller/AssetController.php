@@ -421,7 +421,6 @@ class AssetController extends ActionController
                 }
             }
 
-
             $this->view->assignMultiple([
                 'tags' => $tags,
                 'assetProxy' => $assetProxy,
