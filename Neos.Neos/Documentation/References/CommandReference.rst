@@ -170,7 +170,7 @@ Arguments
 ^^^^^^^^^
 
 ``--cache-identifier``
-
+  
 
 
 
@@ -1994,7 +1994,7 @@ Options
 ``--simulate``
   If set, this command will only tell what it would do instead of doing it right away
 ``--quiet``
-
+  
 
 
 
@@ -2756,7 +2756,7 @@ Options
 ``--owner``
   The identifier of a User to own the workspace
 ``--content-repository-identifier``
-
+  
 
 
 
@@ -2775,7 +2775,7 @@ Arguments
 ^^^^^^^^^
 
 ``--name``
-
+  
 
 
 
@@ -2783,7 +2783,7 @@ Options
 ^^^^^^^
 
 ``--content-repository-identifier``
-
+  
 
 
 
@@ -2846,7 +2846,7 @@ Options
 ^^^^^^^
 
 ``--content-repository-identifier``
-
+  
 
 
 
@@ -2894,7 +2894,7 @@ Options
 ^^^^^^^
 
 ``--content-repository-identifier``
-
+  
 
 
 
