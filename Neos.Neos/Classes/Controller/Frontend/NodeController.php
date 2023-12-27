@@ -302,7 +302,7 @@ class NodeController extends ActionController
         } else {
             $resolvedUri = $resolvedTarget;
         }
-        
+
         $this->redirectToUri($resolvedUri, statusCode: $this->shortcutRedirectHttpStatusCode);
     }
 
